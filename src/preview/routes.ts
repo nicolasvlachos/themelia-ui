@@ -13,6 +13,8 @@ export type Route = {
 	summary?: string
 	/** The import lines the page shows; absent on a page about a concept. */
 	imports?: RouteImport[]
+	/** The file under pages/, which also names the page's generated API tables. */
+	page: string
 	component: ComponentType
 	/** The tier the page's module sits in: the sidebar group. */
 	group: string
@@ -76,6 +78,7 @@ function toRoute(entry: RouteData, group: string, section?: string): Route {
 		label: entry.label,
 		summary: entry.summary,
 		imports: entry.imports,
+		page: entry.page,
 		component: componentOf(entry),
 		group,
 		section,

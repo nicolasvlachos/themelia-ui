@@ -1,8 +1,8 @@
 /**
- * The tier table, read from the generated component index at build time, so the counts
- * come from the index, never prose. The tiers are the sidebar's groups.
+ * The tier table. The counts come from the package's component index by way of
+ * src/preview/generated/gallery.json, never prose. The tiers are the sidebar's groups.
  */
-import index from "../../../docs/generated/component-index.json"
+import gallery from "../generated/gallery.json"
 
 export interface TierSummary {
 	/** The tier id the component index uses, e.g. `blocks`. */
@@ -23,8 +23,7 @@ const TIER_TEXT: { id: string; label: string; holds: string }[] = [
 	{ id: "blocks", label: "Blocks", holds: "a subject-shaped composition of the tiers below" },
 ]
 
-const counts = new Map<string, number>()
-for (const entry of index.modules) counts.set(entry.tier, (counts.get(entry.tier) ?? 0) + 1)
+const counts = new Map<string, number>(gallery.tiers.map((tier) => [tier.id, tier.modules]))
 
 export const TIERS: TierSummary[] = TIER_TEXT.filter((tier) => counts.has(tier.id)).map((tier) => ({
 	...tier,

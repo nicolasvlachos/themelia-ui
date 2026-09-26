@@ -110,24 +110,14 @@ for (const doc of DOCS) {
 }
 
 /*
- * A generated file that no longer matches its generator. Docs read the API snapshot and
- * dist/, so `scripts/verify.mjs` runs this after the build and `api-snapshot`.
+ * A committed generated file that no longer matches its generator. They read the build's
+ * output (docs/generated, dist/), so `scripts/verify.mjs` runs this after the build. The
+ * generated documentation itself is build output and not committed, so it cannot be stale.
  */
 const GENERATED = [
-  { file: 'docs/generated/composition-ladder.md', by: 'scripts/gen-composition-ladder.mjs' },
-  { file: 'docs/generated/imports.md', by: 'scripts/gen-consumer-docs.mjs' },
-  { file: 'docs/generated/public-api.md', by: 'scripts/gen-consumer-docs.mjs' },
-  { file: 'docs/generated/profiles.md', by: 'scripts/gen-consumer-docs.mjs' },
-  { file: 'docs/generated/component-index.json', by: 'scripts/gen-consumer-docs.mjs' },
   { file: 'src/preview/generated/gallery.json', by: 'scripts/gen-gallery.mjs' },
-  { file: 'src/preview/generated/api-tables.json', by: 'scripts/gen-api-tables.mjs' },
-  { file: 'docs/generated/components/INDEX.md', by: 'scripts/gen-consumer-docs.mjs' },
-  { file: 'docs/generated/migration-broad-imports.md', by: 'scripts/gen-migration-map.mjs' },
-  { file: 'docs/generated/migration.md', by: 'scripts/gen-migration-map.mjs' },
   { file: 'tests/README.md', by: 'scripts/gen-test-docs.mjs' },
   { file: 'src/styles/tailwind.css', by: 'scripts/gen-tailwind-bridge.mjs' },
-  { file: 'docs/build/recipes.md', by: 'scripts/gen-consumer-docs.mjs' },
-  { file: 'docs/generated/recipes.json', by: 'scripts/gen-consumer-docs.mjs' },
   /* The assistant skill ships in the tarball. */
   { file: '.agents/skills/themelia-ui/SKILL.md', by: 'scripts/gen-agent-skill.mjs' },
   { file: '.agents/skills/themelia-ui/references/imports.md', by: 'scripts/gen-agent-skill.mjs' },
@@ -138,12 +128,6 @@ const GENERATED = [
   { file: 'CONTRIBUTING.md', by: 'scripts/gen-status-docs.mjs' },
 ]
 
-/* Per-module references are dynamic because the manifest owns the module set. */
-if (existsSync('docs/generated/components')) {
-  for (const name of readdirSync('docs/generated/components').filter((name) => name.endsWith('.md'))) {
-    if (name !== 'INDEX.md') GENERATED.push({ file: `docs/generated/components/${name}`, by: 'scripts/gen-consumer-docs.mjs' })
-  }
-}
 // Every shipped guide is checked, not only the index and imports table.
 {
   const directory = '.agents/skills/themelia-ui/references'

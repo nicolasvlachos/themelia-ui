@@ -195,18 +195,23 @@ gate.
 
 A generated file names its generator in its first lines. Regenerate it; never edit it by hand.
 
-`npm run docs:sync-skill` rebuilds the documentation in dependency order. It builds the
-package and checks the API snapshot, then regenerates the consumer reference, the API
-tables of the documentation site, the composition ladder, the packaged skill,
-`tests/README.md` and the status block at the end of this file. It stops when the API has changed: accept the change first, as described in
-[API compatibility](#api-compatibility).
+The generated documentation is build output and is not committed. `npm run build:lib` writes
+`docs/generated` and `docs/build` next to `dist/`, and the package ships them. The
+documentation site writes its API tables, `src/preview/generated/api/<page>.json`, when its
+dev server starts or a build begins.
+
+`npm run docs:sync-skill` regenerates the committed files in dependency order. It builds the
+package and checks the API snapshot, then regenerates the gallery data, the packaged skill,
+`tests/README.md` and the status block at the end of this file. It stops when the API has
+changed: accept the change first, as described in [API compatibility](#api-compatibility).
 
 | Output | Generator | Source |
 | --- | --- | --- |
-| `docs/generated`: imports, public API, profiles, the component index and pages, recipes; and `docs/build/recipes.md` | `gen-consumer-docs.mjs` | The manifest, the built declarations and their JSDoc, `architecture/selection.json`, `architecture/component-guidance.json` and the preview examples |
-| `src/preview/generated/api-tables.json`, the documentation site's API tables | `gen-api-tables.mjs` | The TypeScript source: props, members, doc comments and destructuring defaults, for the keys the pages' `PropTable`s name |
-| `docs/generated/composition-ladder.md` | `gen-composition-ladder.mjs` | The declarations and the recipes |
-| The migration pages in `docs/generated` | `gen-migration-map.mjs`, run by `npm run gen:architecture` | `architecture/migrations.json` and the module barrels |
+| `docs/generated`: imports, public API, profiles, the component index and pages, recipes; and `docs/build/recipes.md` (not committed) | `gen-consumer-docs.mjs`, run by `npm run build:lib` | The manifest, the built declarations and their JSDoc, `architecture/selection.json`, `architecture/component-guidance.json` and the preview examples |
+| `docs/generated/composition-ladder.md` (not committed) | `gen-composition-ladder.mjs`, run by `npm run build:lib` | The declarations and the recipes |
+| The migration pages in `docs/generated` (not committed) | `gen-migration-map.mjs`, run by `npm run build:lib` and `npm run gen:architecture` | `architecture/migrations.json` and the module barrels |
+| `src/preview/generated/api/<page>.json`, each page's API tables (not committed) | `gen-api-tables.mjs`, run by the docs site's Vite config | The TypeScript source: props, members, doc comments and destructuring defaults, for the keys the pages' `PropTable`s name |
+| `src/preview/generated/gallery.json`, the gallery cards and the tier counts | `gen-gallery.mjs` | The component index and the page table |
 | `.agents/skills/themelia-ui`, which ships in the package | `gen-agent-skill.mjs` | The component index and `docs/learn` |
 | The suites table in `tests/README.md` | `gen-test-docs.mjs` | The opening comment of each spec |
 | The status block below | `gen-status-docs.mjs` | `package.json`, the manifest and oxlint |

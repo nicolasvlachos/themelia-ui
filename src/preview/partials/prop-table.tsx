@@ -1,9 +1,10 @@
-import { Fragment, type ReactNode } from "react"
+import { Fragment, Suspense, use, type ReactNode } from "react"
+import { useLocation } from "react-router-dom"
 
 import { Stack } from "@/components/base/structure"
 import { Heading, Text } from "@/components/base/typography"
 
-import tables from "../generated/api-tables.json"
+import { ROUTES } from "../routes"
 import { withCodeSpans } from "./code-spans"
 import styles from "../preview.module.css"
 
@@ -54,10 +55,30 @@ type ApiEntry = {
 	returns?: { type: string; description?: string; ref?: string; members?: ApiMember[] }
 }
 
-const API: Record<string, ApiEntry | undefined> = tables.symbols
+type ApiData = Record<string, ApiEntry | undefined>
 
-function entryFor(key: string): ApiEntry {
-	const entry = API[key]
+/*
+ * Each page's tables are a chunk of their own, src/preview/generated/api/<page>.json, which
+ * scripts/gen-api-tables.mjs writes when the dev server starts or a build begins: a page
+ * loads the declarations it documents and nothing else.
+ */
+const PAGE_TABLES = import.meta.glob<{ default: { symbols: ApiData } }>("../generated/api/*.json")
+const loaded = new Map<string, Promise<ApiData>>()
+
+function tablesFor(page: string): Promise<ApiData> {
+	let tables = loaded.get(page)
+	if (!tables) {
+		const load = PAGE_TABLES[`../generated/api/${page}.json`]
+		tables = load
+			? load().then((module) => module.default.symbols)
+			: Promise.reject(new Error(`PropTable: no API tables for the page "${page}". Run node scripts/gen-api-tables.mjs.`))
+		loaded.set(page, tables)
+	}
+	return tables
+}
+
+function entryFor(api: ApiData, key: string): ApiEntry {
+	const entry = api[key]
 	if (!entry) {
 		throw new Error(
 			`PropTable: "${key}" is not a public declaration. Regenerate with node scripts/gen-api-tables.mjs; ` +
@@ -67,9 +88,9 @@ function entryFor(key: string): ApiEntry {
 	return entry
 }
 
-function membersOf(holder: { ref?: string; members?: ApiMember[] } | undefined): ApiMember[] {
+function membersOf(api: ApiData, holder: { ref?: string; members?: ApiMember[] } | undefined): ApiMember[] {
 	if (holder?.members) return holder.members
-	const target = holder?.ref ? API[holder.ref] : undefined
+	const target = holder?.ref ? api[holder.ref] : undefined
 	return target?.props ?? target?.members ?? []
 }
 
@@ -77,16 +98,16 @@ function membersOf(holder: { ref?: string; members?: ApiMember[] } | undefined):
  * What `owner` lists: a component's props, a type's members, a function's first parameter,
  * or with `()` what a hook returns. A dotted path walks into a member: `UIConfig.typography`.
  */
-function resolveOwner(owner: string) {
+function resolveOwner(api: ApiData, owner: string) {
 	const [head = "", ...path] = owner.split(".")
 	const returns = head.endsWith("()")
 	const key = returns ? head.slice(0, -2) : head
-	const entry = entryFor(key)
-	let rows = returns ? membersOf(entry.returns) : (entry.props ?? entry.members ?? membersOf(entry.parameters?.[0]))
+	const entry = entryFor(api, key)
+	let rows = returns ? membersOf(api, entry.returns) : (entry.props ?? entry.members ?? membersOf(api, entry.parameters?.[0]))
 	for (const name of path) {
 		const member = rows.find((row) => row.name === name)
 		if (!member) throw new Error(`PropTable: "${owner}" names no member "${name}".`)
-		rows = membersOf(member)
+		rows = membersOf(api, member)
 	}
 	return { key, entry, rows, inherits: returns || path.length > 0 ? [] : (entry.extends ?? []) }
 }
@@ -246,13 +267,13 @@ function Table({ rows, label = "Component API", head = ["Prop", "Type", "Default
 }
 
 /** Exports with their signatures, or a type's text where there is no signature. */
-function Exports({ names }: { names: string[] }) {
+function Exports({ api, names }: { api: ApiData; names: string[] }) {
 	return (
 		<Table
 			label="Exports"
 			head={["Export", "Signature", "Kind", "Description"]}
 			rows={names.map((name) => {
-				const entry = entryFor(name)
+				const entry = entryFor(api, name)
 				return {
 					name,
 					type: entry.signature ?? entry.type ?? entry.extends?.join(", ") ?? "—",
@@ -276,7 +297,7 @@ function Exports({ names }: { names: string[] }) {
  * The data holds only what the pages name, so a new `owner` needs a run of
  * `node scripts/gen-api-tables.mjs`, which also fails on a name the package does not declare.
  */
-export function PropTable({ owner, owners, symbols, rows }: {
+export function PropTable({ rows, ...props }: {
 	owner?: string
 	owners?: string[]
 	symbols?: string[]
@@ -287,12 +308,29 @@ export function PropTable({ owner, owners, symbols, rows }: {
 	rows?: PropRow[]
 }) {
 	if (rows) return <Table rows={rows} />
+	return (
+		<Suspense fallback={null}>
+			<GeneratedTable {...props} />
+		</Suspense>
+	)
+}
+
+/** The tables of the page being shown, loaded with it. */
+function usePageTables(): ApiData {
+	const { pathname } = useLocation()
+	const page = ROUTES.find((route) => route.path === pathname)?.page
+	if (!page) throw new Error(`PropTable: ${pathname} is not a documentation page.`)
+	return use(tablesFor(page))
+}
+
+function GeneratedTable({ owner, owners, symbols }: { owner?: string; owners?: string[]; symbols?: string[] }) {
+	const api = usePageTables()
 
 	if (owner) {
-		const found = resolveOwner(owner)
+		const found = resolveOwner(api, owner)
 		const line = inheritsLine(found.inherits, found.rows.length)
 		/* A function whose first parameter is not an object has no rows: its signature says it all. */
-		if (found.rows.length === 0 && !line && found.entry.signature) return <Exports names={[found.key]} />
+		if (found.rows.length === 0 && !line && found.entry.signature) return <Exports api={api} names={[found.key]} />
 		return (
 			<>
 				{found.rows.length > 0 && <Table rows={found.rows.map(toRow)} />}
@@ -314,7 +352,7 @@ export function PropTable({ owner, owners, symbols, rows }: {
 		return (
 			<>
 				{owners.map((name) => {
-					const found = resolveOwner(name)
+					const found = resolveOwner(api, name)
 					const line = inheritsLine(found.inherits, found.rows.length)
 					/* A part's heading sits nearer its own table than the table before it. */
 					return (
@@ -340,7 +378,7 @@ export function PropTable({ owner, owners, symbols, rows }: {
 		)
 	}
 
-	if (symbols) return <Exports names={symbols} />
+	if (symbols) return <Exports api={api} names={symbols} />
 
 	throw new Error("PropTable: pass owner, owners, symbols or rows.")
 }

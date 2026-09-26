@@ -37,8 +37,11 @@ const buildScripts = [...buildCommand.matchAll(/scripts\/[\w.-]+\.mjs/g)].map((m
  */
 const SOURCE_GLOBS = ['src', 'vite.lib.config.ts', 'vite.shared.ts', 'tsconfig.json', ...buildScripts]
 
+/* The docs site is not a library input, and its generated tables change after a build. */
+const NOT_INPUTS = new Set(['src/preview'])
+
 function newest(target, latest = { mtime: 0, file: null }) {
-  if (!existsSync(target)) return latest
+  if (!existsSync(target) || NOT_INPUTS.has(target)) return latest
   const info = statSync(target)
   if (!info.isDirectory()) {
     return info.mtimeMs > latest.mtime ? { mtime: info.mtimeMs, file: target } : latest
@@ -243,8 +246,10 @@ for (const dep of optionalPeers) {
  * Whole-dist ceiling (both module formats, declarations, CSS, tokens.json, tailwind.css): a
  * ratchet against accidental bloat. Raise it only for reviewed published surface, never for
  * a bundled dependency or sourcemaps; per-recipe consumer CSS budgets are gated elsewhere.
+ * Last raised for the doc comments on every documented prop, which both declaration formats
+ * carry.
  */
-const MAX_DIST_KB = 5_233
+const MAX_DIST_KB = 5_650
 
 const maps = bundlesAndAssets.filter((file) => file.endsWith('.map'))
 if (maps.length) {

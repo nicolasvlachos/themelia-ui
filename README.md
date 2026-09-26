@@ -41,7 +41,7 @@ npm install themelia-ui
 ```
 
 React 19 and `react-dom` are required peers. Every other peer is optional and needed only by
-the modules that use it; the [import table](docs/generated/imports.md) lists which.
+the modules that use it; the [import table](https://unpkg.com/themelia-ui/docs/generated/imports.md) lists which.
 
 Themelia supports Chrome and Edge 125, Firefox 121 and Safari 16.4 or newer. Builds and
 server rendering need Node 20.19 or newer.
@@ -85,7 +85,7 @@ Three kinds of stylesheet are published:
 | `themelia-ui/core.css` | The theme variables, the layer order, the Geist typefaces and the base element styles. No component rules. |
 
 A module whose components draw nothing has no stylesheet. The
-[import table](docs/generated/imports.md) lists the JavaScript and CSS path of every module.
+[import table](https://unpkg.com/themelia-ui/docs/generated/imports.md) lists the JavaScript and CSS path of every module.
 
 ### In a browser bundle
 
@@ -353,13 +353,14 @@ Guides:
 - [Troubleshooting](docs/learn/troubleshooting.md)
 - [Verifying a consuming application](docs/learn/verification.md)
 
-Reference:
+Reference, generated from the source when the package is built. It ships in the package
+under `node_modules/themelia-ui/docs`, and the links open the latest published copy:
 
-- [Component catalogue](docs/generated/components/INDEX.md)
-- [Public API index](docs/generated/public-api.md)
-- [JavaScript, CSS and optional-peer imports](docs/generated/imports.md)
+- [Component catalogue](https://unpkg.com/themelia-ui/docs/generated/components/INDEX.md)
+- [Public API index](https://unpkg.com/themelia-ui/docs/generated/public-api.md)
+- [JavaScript, CSS and optional-peer imports](https://unpkg.com/themelia-ui/docs/generated/imports.md)
 - [Theme variables](src/styles/TOKENS.md)
-- [Recipes](docs/build/recipes.md)
+- [Recipes](https://unpkg.com/themelia-ui/docs/build/recipes.md)
 
 Upgrading and support:
 

@@ -20,7 +20,7 @@ import { RULES } from './verify-css.mjs'
 
 const node = (file) => `node scripts/${file}.mjs`
 
-/** `dist` checks run after the build; the rest run beside it. */
+/** `dist` checks run after the build, which also writes docs/generated; the rest run beside it. */
 const CHECKS = [
   /* Vitest allows `.only` unless CI is set; a focused test must fail the run on any machine. */
   { id: 'unit', command: 'npx vitest run --allowOnly=false' },
@@ -30,8 +30,9 @@ const CHECKS = [
   { id: 'strings', command: node('verify-strings') },
   { id: 'docs-coverage', command: node('verify-docs-coverage') },
   { id: 'architecture', command: node('verify-architecture-manifest') },
-  { id: 'migrations', command: node('verify-migrations') },
-  { id: 'consumer-scripts', command: 'node --test scripts/consumer/*.test.mjs scripts/tailwind-bridge.test.mjs' },
+  /* Both read docs/generated, which the build writes: the migration map and the component index. */
+  { id: 'migrations', command: node('verify-migrations'), dist: true },
+  { id: 'consumer-scripts', command: 'node --test scripts/consumer/*.test.mjs scripts/tailwind-bridge.test.mjs', dist: true },
   { id: 'api-snapshot', command: node('verify-api-snapshot'), dist: true },
   { id: 'css-budget', command: node('css-budget'), dist: true },
   /* Runs the generators and compares their output, so it goes last and alone. */

@@ -11,6 +11,9 @@ Documents are grouped by audience. The first three directories ship in the npm p
 
 ## The generated surface
 
+Generated from the source by the package build and shipped in the package, not committed to
+the repository: in a clone, `npm run build:lib` writes it.
+
 ```text
 docs/generated/imports.md               every module's exact JS and CSS import
 docs/generated/public-api.md            every public symbol, its subpath, its page

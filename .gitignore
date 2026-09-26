@@ -40,3 +40,9 @@ examples/consumer-*/node_modules/
 
 # The browser suites build the preview app here.
 dist-test
+
+# Generated documentation is build output: `npm run build:lib` writes it and the package ships
+# it. The docs site's API tables are written when its dev server starts or a build begins.
+docs/generated/
+docs/build/
+src/preview/generated/api/
