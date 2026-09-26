@@ -47,29 +47,27 @@ The package ships three kinds of stylesheet:
 [`imports.md`](../generated/imports.md) gives each module's stylesheet path. A module whose
 components draw nothing has no stylesheet.
 
-### With an ESM bundler
+### With a bundler
 
-Vite, webpack, Rspack, Next.js and other bundlers that handle CSS imports resolve the
-package's ESM build, and its entries import their own CSS: every entry imports `core.css`,
-and every chunk imports the stylesheets of the components it holds. Importing a component is
+The package is ES modules, and its entries import their own CSS: every entry imports
+`core.css`, and every chunk imports the stylesheets of the components it holds. In Vite,
+webpack, Rspack, Next.js and other bundlers that handle CSS imports, importing a component is
 enough to style it.
 
 The examples in these docs also import the module stylesheet beside the component. It names
-the same files, which the bundler includes once, and it keeps the page styled where the
-JavaScript carries no CSS.
+the same files, which the bundler includes once, and it keeps the CSS a page loads visible in
+application source.
 
-### Where the JavaScript carries no CSS
+### Where Node runs the package
 
-- **CommonJS.** The `require` build imports no stylesheets, because Node cannot load one.
-  Import the module stylesheets, or `style.css`, from your application's CSS entry.
-- **Server rendering.** Node cannot run the ESM build unbundled: its first `.css` import
-  throws `ERR_UNKNOWN_FILE_EXTENSION`. Let the framework bundle the package for the server
-  (in Vite, `ssr: { noExternal: ["themelia-ui"] }`), or resolve it with `require`. The
-  stylesheets still have to reach the document, so import them where your framework collects
-  global CSS, such as its root layout.
-- **Test runners.** Vitest leaves dependencies in `node_modules` to Node, which throws on the
-  same import. Inline the package so Vite transforms it; Vitest then replaces its CSS with
-  empty modules:
+Node cannot load a stylesheet: run unbundled, an entry's first `.css` import throws
+`ERR_UNKNOWN_FILE_EXTENSION`. Let the tool that runs the code process the package instead.
+
+- **Server rendering.** Let the framework bundle the package for the server (in Vite,
+  `ssr: { noExternal: ["themelia-ui"] }`). The stylesheets still have to reach the document,
+  so import them where your framework collects global CSS, such as its root layout.
+- **Test runners.** Vitest leaves dependencies in `node_modules` to Node. Inline the package
+  so Vite transforms it; Vitest then replaces its CSS with empty modules:
 
   ```ts fragment — vitest.config.ts, merged into your existing config
   import { defineConfig } from "vitest/config"
@@ -79,8 +77,8 @@ JavaScript carries no CSS.
   })
   ```
 
-  Jest resolves the CommonJS build, which imports no CSS; map `\.css$` to a stub, as usual,
-  for the stylesheets your own modules import.
+  Jest transforms nothing in `node_modules` by default. Exempt the package in
+  `transformIgnorePatterns`, and map `\.css$` to a stub in `moduleNameMapper`.
 
 ### `core.css` on its own
 

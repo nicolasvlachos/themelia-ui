@@ -1,8 +1,8 @@
 /*
- * Every family that reaches a hook (lib/rsc-manifest.mjs) must open with "use client" in
- * both dist bundles, and no server-pure family may carry it. Position is the check: the
- * directive counts only as the first statement, so after an import it is an inert string.
- * Fails on missing, not-first, over-marked, or fewer than 100 bundles checked.
+ * Every family that reaches a hook (lib/rsc-manifest.mjs) must open with "use client" in its
+ * dist bundle, and no server-pure family may carry it. Position is the check: the directive
+ * counts only as the first statement, so after an import it is an inert string. Fails on
+ * missing, not-first, over-marked, or a classified family with no bundle to check.
  */
 import { existsSync, readFileSync } from 'node:fs'
 
@@ -27,33 +27,30 @@ const { client, server } = classifyFamilies()
 let checked = 0
 
 for (const family of client) {
-  for (const ext of ['js', 'cjs']) {
-    const file = `dist/${family.id}.${ext}`
-    if (!existsSync(file)) continue
-    checked++
-    const source = readFileSync(file, 'utf8')
-    if (!source.includes(DIRECTIVE)) {
-      failures.push(`missing     ${file} has no "use client" — it reaches a hook via ${family.reason}`)
-    } else if (!leadingDirective(source)) {
-      failures.push(`not-first   ${file} has "use client" but not as the first statement, so it is an inert string`)
-    }
+  const file = `dist/${family.id}.js`
+  if (!existsSync(file)) continue
+  checked++
+  const source = readFileSync(file, 'utf8')
+  if (!source.includes(DIRECTIVE)) {
+    failures.push(`missing     ${file} has no "use client" — it reaches a hook via ${family.reason}`)
+  } else if (!leadingDirective(source)) {
+    failures.push(`not-first   ${file} has "use client" but not as the first statement, so it is an inert string`)
   }
 }
 
 /* A server-pure family marked "use client" drags itself and its imports onto the client. */
 for (const family of server) {
-  for (const ext of ['js', 'cjs']) {
-    const file = `dist/${family.id}.${ext}`
-    if (!existsSync(file)) continue
-    checked++
-    if (readFileSync(file, 'utf8').includes(DIRECTIVE)) {
-      failures.push(`over-marked ${file} is server-pure and declares "use client"`)
-    }
+  const file = `dist/${family.id}.js`
+  if (!existsSync(file)) continue
+  checked++
+  if (readFileSync(file, 'utf8').includes(DIRECTIVE)) {
+    failures.push(`over-marked ${file} is server-pure and declares "use client"`)
   }
 }
 
-/* Non-vacuity: a run that checked nothing would pass silently. */
-if (checked < 100) failures.push(`only ${checked} bundle(s) were checked — the classification found almost nothing`)
+/* Non-vacuity: a family with no bundle would otherwise pass unchecked. */
+const unchecked = client.length + server.length - checked
+if (unchecked > 0) failures.push(`${unchecked} classified family/families have no bundle in dist/ to check`)
 
 if (failures.length) {
   console.log(`FAIL verify rsc — ${failures.length} problem(s)\n`)
@@ -62,6 +59,5 @@ if (failures.length) {
 }
 console.log(
   `PASS verify rsc — ${checked} bundles: ${client.length} client-interactive families carry ` +
-    `"use client" as their first statement in ESM and CJS, and ${server.length} server-pure ` +
-    'families carry none.',
+    `"use client" as their first statement, and ${server.length} server-pure families carry none.`,
 )

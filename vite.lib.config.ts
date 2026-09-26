@@ -150,7 +150,7 @@ function shipStyleSources(): Plugin {
 			 * that is not a happy accident but an impossibility: a consumer importing two families
 			 * fixes the order by whichever they imported first. So `core.css` declares it, and
 			 * every family sheet contains only `@layer components { … }` — which is why core
-			 * must be imported before any of them, and why every ESM entry imports it.
+			 * must be imported before any of them, and why every entry imports it.
 			 */
 			const source = readFileSync(resolve(root, "src/styles/index.css"), "utf8")
 			const order = source.match(/@layer\s+([a-z,\s]+);/)?.[0]?.replace(/\s+/g, " ")
@@ -254,12 +254,8 @@ function shipStyleSources(): Plugin {
 			const bytes = (file: string) => statSync(resolve(root, "dist", file)).size
 
 			/*
-			 * ESM entries import their own CSS; CJS entries do not.
-			 *
-			 * A bundler resolves the import and a consumer gets the styles for what they used.
-			 * Node cannot `require()` a stylesheet, so the CJS build stays executable and its
-			 * consumers import `core.css` plus the families they use explicitly — which the
-			 * generated migration and import docs spell out.
+			 * Entries import their own CSS: a bundler resolves the import, and a consumer gets the
+			 * styles for exactly what they used.
 			 */
 			/*
 			 * Core first, on every entry that has any CSS at all — including the ones whose own
@@ -282,11 +278,6 @@ function shipStyleSources(): Plugin {
 			}
 
 			for (const [chunkFile, files] of cssByChunk) {
-				/*
-				 * ESM only. The CJS build must stay executable in Node, `import "./x.css"` inside a
-				 * `.cjs` file is a syntax error there, and the chunk map holds both formats.
-				 */
-				if (!chunkFile.endsWith(".js")) continue
 				const js = resolve(root, "dist", chunkFile)
 				if (!existsSync(js)) continue
 				const depth = chunkFile.split("/").length - 1
@@ -328,9 +319,7 @@ function shipStyleSources(): Plugin {
 			 * It is a directive PROLOGUE: it counts only while it is the first statement in the
 			 * module. Two separate loops above prepend stylesheet imports, and each one pushes
 			 * the banner down into an ordinary string expression — present in the file, visible
-			 * to a grep, and meaningless to every RSC bundler. The CJS output stays correct,
-			 * because nothing injects CSS into it, so the fault would ship half right and
-			 * grep-clean.
+			 * to a grep, and meaningless to every RSC bundler.
 			 *
 			 * One pass at the end rather than a fix at each injection site, because the next
 			 * loop to prepend something would reintroduce it. `verify rsc` asserts the position
@@ -377,7 +366,7 @@ export default defineConfig({
 				"src/App.tsx",
 				"src/main.tsx",
 				/* Tests are not a published surface. Every test suffix is listed: a declaration
-				 * emitted here ships, and gen-cjs-declarations gives it a `.d.cts` twin too. */
+				 * emitted here ships. */
 				"**/*.spec.ts",
 				"**/*.test.ts",
 				"**/*.test.tsx",
@@ -415,8 +404,9 @@ export default defineConfig({
 		sourcemap: false,
 		lib: {
 			entry: discoverEntries(),
-			formats: ["es", "cjs"],
-			fileName: (format, entry) => `${entry}.${format === "es" ? "js" : "cjs"}`,
+			/* ESM only: an entry imports its own stylesheets, which only a module-aware tool loads. */
+			formats: ["es"],
+			fileName: (_format, entry) => `${entry}.js`,
 		},
 		rollupOptions: {
 			/*
@@ -433,9 +423,6 @@ export default defineConfig({
 				// resolve.alias runs, so without this the kit would ship imports of "@/components".
 				!id.startsWith("@/"),
 			output: {
-				// Chunk names are left to Vite: it is what gives CJS chunks a .cjs extension, and
-				// a shared chunk named .js inside a "type": "module" package is parsed as ESM and
-				// breaks every require().
 				assetFileNames: "assets/[name][extname]",
 				/*
 				 * `"use client"` on the entries that need it.

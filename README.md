@@ -89,13 +89,14 @@ A module whose components draw nothing has no stylesheet. The
 
 ### In a browser bundle
 
-The ESM build imports its own CSS: each module entry that has styles imports `core.css`, and
-the code it loads imports the stylesheets it uses. In a bundler that handles CSS imports,
-such as Vite, webpack or Rspack, importing a component brings its styles with it.
+The package is ES modules, and its entries import their own CSS: each module entry that has
+styles imports `core.css`, and the code it loads imports the stylesheets it uses. In a bundler
+that handles CSS imports, such as Vite, webpack or Rspack, importing a component brings its
+styles with it.
 
 Import the stylesheets explicitly as well: `style.css` once, or each module's sheet beside
-its import. With the CommonJS build, an explicit import is the only way the styles load, and
-everywhere it keeps the CSS a page loads visible in your source:
+its import. It names the same files, which the bundler includes once, and it keeps the CSS a
+page loads visible in your source:
 
 ```tsx
 import { Button } from "themelia-ui/base/buttons"
@@ -107,15 +108,11 @@ import "themelia-ui/layout/page.css"
 Import `core.css` on its own only when your own CSS needs the theme variables before any
 module stylesheet loads.
 
-### On the server, in tests and in scripts
+### On the server and in tests
 
-Node cannot load a stylesheet, so it matters which build Node resolves:
-
-- **`require()`** resolves the CommonJS build, which imports no CSS. It runs in Node as it
-  is; load the styles in the client bundle.
-- **`import`** resolves the ESM build. Loaded by Node directly, its stylesheet imports fail
-  with `ERR_UNKNOWN_FILE_EXTENSION`. Have the tool that runs your server or tests process
-  the package instead:
+Node cannot load a stylesheet: run by Node directly, the package's stylesheet imports fail
+with `ERR_UNKNOWN_FILE_EXTENSION`. Have the tool that runs your server or tests process the
+package instead:
 
 ```ts
 // vite.config.ts: server rendering with Vite, or a framework built on it
@@ -125,8 +122,9 @@ export default defineConfig({ ssr: { noExternal: ["themelia-ui"] } })
 export default defineConfig({ test: { server: { deps: { inline: ["themelia-ui"] } } } })
 ```
 
-The server needs only the modules to load; the styles still reach the page through the
-client bundle.
+Jest transforms nothing in `node_modules` by default: exempt the package in
+`transformIgnorePatterns` and map `\.css$` to a stub in `moduleNameMapper`. The server needs
+only the modules to load; the styles still reach the page through the client bundle.
 
 ## Imports and tiers
 

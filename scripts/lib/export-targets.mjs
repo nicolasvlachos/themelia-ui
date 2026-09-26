@@ -1,7 +1,7 @@
 /*
- * The single reader of package.json exports entries, which nest by condition
- * (`{ import: { types, default }, require: { types, default } }`). Scripts read entries
- * through here instead of reaching for keys, so a shape change has one place to land.
+ * The single reader of package.json exports entries (`{ types, default }`, or a string for a
+ * stylesheet or data file). Scripts read entries through here instead of reaching for keys, so
+ * a shape change has one place to land.
  */
 
 /** Every file an entry points at, flattened, with wildcards left in. */
@@ -11,13 +11,7 @@ export function targetPaths(value) {
   return Object.values(value).flatMap((nested) => targetPaths(nested))
 }
 
-/**
- * The declaration file a consumer resolves for an entry: `import.types` (what the API
- * snapshot describes), else a flat `types` from an older package.json.
- */
+/** The declaration file a consumer resolves for an entry; null for a stylesheet or data file. */
 export function typesFor(value) {
-  if (typeof value !== 'object' || value === null) return null
-  if (typeof value.import === 'object' && value.import?.types) return value.import.types
-  if (typeof value.types === 'string') return value.types
-  return null
+  return typeof value?.types === 'string' ? value.types : null
 }

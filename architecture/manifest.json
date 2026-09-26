@@ -1978,7 +1978,7 @@
     },
     {
       "export": "./core.css",
-      "reason": "Reset, tokens, themes and typography: the half every module depends on, and the sheet that declares the layer order. Imported first by every ESM entry, and by hand in a CJS consumer."
+      "reason": "Reset, tokens, themes and typography: the half every module depends on, and the sheet that declares the layer order. Imported first by every entry."
     },
     {
       "export": "./tailwind.css",

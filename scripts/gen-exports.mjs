@@ -1,7 +1,7 @@
 /*
  * Writes package.json "exports" for every manifest family, plus stylesheets and data files,
  * from what the library build emitted, so no subpath points at a missing file. Runs last in
- * `build:lib`; exits 1 when a family's JS, CJS or declarations were not emitted. Writes the
+ * `build:lib`; exits 1 when a family's JS or declarations were not emitted. Writes the
  * "exports" field only (the skill's imports.md belongs to gen-agent-skill.mjs).
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
@@ -39,27 +39,17 @@ const missing = []
 
 for (const entry of [...new Set(entries)].sort()) {
   const js = `./${DIST}/${entry}.js`
-  const cjs = `./${DIST}/${entry}.cjs`
-  if (!existsSync(js.slice(2)) || !existsSync(cjs.slice(2))) {
+  if (!existsSync(js.slice(2))) {
     missing.push(entry)
     continue
   }
   const types = typesFor(entry)
   if (!types) missing.push(`${entry} (types)`)
-  /* Written by gen-cjs-declarations.mjs, with relative specifiers rewritten to .cjs. */
-  const typesCjs = types ? types.replace(/\.d\.ts$/, '.d.cts') : null
-  if (typesCjs && !existsSync(typesCjs)) missing.push(`${entry} (cjs types)`)
 
   const subpath = entry === 'index' ? '.' : `./${entry}`
 
-  /*
-   * Each condition carries its own declaration: the package is "type": "module", so one .d.ts
-   * would give `require` ESM types. "types" stays first, since the first matching condition wins.
-   */
-  exportsMap[subpath] = {
-    import: { ...(types ? { types: `./${types}` } : {}), default: js },
-    require: { ...(typesCjs ? { types: `./${typesCjs}` } : {}), default: cjs },
-  }
+  /* ESM only. "types" stays first, since the first matching condition wins. */
+  exportsMap[subpath] = { ...(types ? { types: `./${types}` } : {}), default: js }
 }
 
 
@@ -67,8 +57,8 @@ for (const entry of [...new Set(entries)].sort()) {
 exportsMap['./style.css'] = './dist/style.css'
 exportsMap['./styles/*'] = './dist/styles/*'
 /*
- * Exact family stylesheets for CJS, SSR frameworks and explicit imports (ESM entries already
- * import their CSS). Each is an @import index over css/, so the bytes exist once.
+ * Exact module stylesheets for SSR frameworks and explicit imports (the JavaScript entries
+ * already import their CSS). Each is an @import index over css/, so the bytes exist once.
  */
 let cssTargets = 0
 for (const entry of [...new Set(entries)].sort()) {

@@ -4,6 +4,11 @@
 
 ### Breaking
 
+- The package is ES modules only. The CommonJS build and its `.cjs` and `.d.cts` files are
+  gone, each export has one JavaScript target, and the package is about 2 MB smaller. Every
+  entry imports its own CSS, so where Node runs the package unbundled, let the tool that runs
+  it process the package: `ssr.noExternal` in Vite, `test.server.deps.inline` in Vitest; in
+  Jest, exempt it in `transformIgnorePatterns` and map `\.css$` to a stub.
 - `Scope` takes `render` instead of `as`, like every component that can become a different
   element: `<Scope vars={vars} as="section">` becomes
   `<Scope vars={vars} render={<section />}>`. It also passes the element's own props through

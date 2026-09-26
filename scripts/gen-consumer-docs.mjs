@@ -69,9 +69,9 @@ const importLines = [
   'siblings do not exist, because one specifier would pull an entire tier and every optional',
   'peer inside it. The root carries the provider and the display primitives, both peer-free.',
   '',
-  'Import the stylesheet column beside the exact JavaScript subpath. ESM bundlers also',
-  "discover each module's rules through the import graph, but the explicit form behaves the",
-  'same in CJS and makes the selected CSS visible in application source.',
+  'Import the stylesheet column beside the exact JavaScript subpath. A bundler also finds',
+  "each module's rules through the import graph; the explicit form names the same files and",
+  'makes the selected CSS visible in application source.',
   '',
 ]
 for (const profile of ['general', 'admin']) {

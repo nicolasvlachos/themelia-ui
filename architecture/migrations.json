@@ -710,6 +710,14 @@
       "mechanical": false,
       "why": "The carousel scrolled to a slide's offsetLeft, which RTL clamps to 0, so next did nothing; the index compared offsets that only increase in LTR.",
       "action": "Nothing; RTL carousels now navigate."
+    },
+    {
+      "kind": "behaviour",
+      "from": "A CommonJS build behind the require condition, carrying no stylesheet imports",
+      "to": "ES modules only; every entry imports its own CSS",
+      "mechanical": false,
+      "why": "The CommonJS build doubled every entry and declaration file to serve code that runs outside a bundler; bundlers, frameworks and test runners all load ES modules.",
+      "action": "Import the package from ES modules, or through a bundler that loads it for CommonJS code. Where Node runs it unbundled, let the tool process it: `ssr.noExternal` in Vite, `test.server.deps.inline` in Vitest; in Jest, exempt it in `transformIgnorePatterns` and map `\\.css$` to a stub."
     }
   ],
   "data": [

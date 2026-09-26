@@ -2,20 +2,18 @@
  * Gates the built package: dist/ and the package.json exports that point into it. A library
  * build succeeds while emitting bundles a consumer cannot import, so each rule below names a
  * failure that would otherwise surface only in a consumer's project. Findings are prefixed
- * by rule: stale, missing-target, undeclared-import, unresolved-alias, cjs-esm-chunk, loads,
- * peer-leak, weight, license, orphan-css, layer-order, css-bare-specifier, css-unresolved.
+ * by rule: stale, missing-target, undeclared-import, unresolved-alias, loads, peer-leak,
+ * weight, license, orphan-css, layer-order, css-bare-specifier, css-unresolved.
  * Needs `npm run build:lib` first.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
-
-import { createRequire } from 'node:module'
 import { dirname, resolve as resolvePath } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 import { cssSpecifierFindings } from './lib/css-specifiers.mjs'
 import { targetPaths } from './lib/export-targets.mjs'
 import { readManifest } from './lib/read-architecture-manifest.mjs'
 
-const require = createRequire(import.meta.url)
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
 const failures = []
 
@@ -54,7 +52,7 @@ function newest(target, latest = { mtime: 0, file: null }) {
 }
 
 /* Only what the library build emits: dist/ also holds docs-site assets it never rewrites. */
-const EMITTED = /\.(js|cjs|css)$|\.d\.ts$/
+const EMITTED = /\.(js|css)$|\.d\.ts$/
 
 function oldest(target, earliest = { mtime: Infinity, file: null }) {
   const info = statSync(target)
@@ -82,16 +80,14 @@ if (newestSource.mtime > oldestBuilt.mtime) {
 /* ── missing-target ─────────────────────────────────────────────────────────────── */
 let targets = 0
 for (const [subpath, value] of Object.entries(pkg.exports ?? {})) {
-  /* Targets nest by condition: `{ import: { types, default }, require: { … } }`. */
-  const paths = targetPaths(value)
-  for (const p of paths) {
+  for (const p of targetPaths(value)) {
     if (p.includes('*')) continue
     targets++
     if (!existsSync(p.replace(/^\.\//, ''))) failures.push(`missing-target  ${subpath} → ${p}`)
   }
 }
 
-/* ── undeclared-import, unresolved-alias, cjs-esm-chunk ─────────────────────────── */
+/* ── undeclared-import, unresolved-alias ────────────────────────────────────────── */
 function walkAll(dir, acc = []) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const p = `${dir}/${entry.name}`
@@ -103,7 +99,7 @@ function walkAll(dir, acc = []) {
 
 // Everything that ships, not just JS, for the weight rule.
 const bundlesAndAssets = walkAll('dist')
-const bundles = bundlesAndAssets.filter((file) => /\.(js|cjs)$/.test(file))
+const bundles = bundlesAndAssets.filter((file) => file.endsWith('.js'))
 /*
  * Every bare import a bundle makes must be a dependency, a peer or a Node builtin; anything
  * else fails at the consumer's import. publint and peer-leak do not see this.
@@ -125,10 +121,7 @@ const packageOf = (specifier) => {
 
 for (const file of bundles) {
   const source = readFileSync(file, 'utf8')
-  for (const match of [
-    ...source.matchAll(/(?:from|import)\s*\(?\s*["']([^"'.][^"']*)["']/g),
-    ...source.matchAll(/require\(\s*["']([^"'.][^"']*)["']\)/g),
-  ]) {
+  for (const match of source.matchAll(/(?:from|import)\s*\(?\s*["']([^"'.][^"']*)["']/g)) {
     const specifier = match[1]
     /* `from` and `import(` also occur in strings; skip captures not shaped like a specifier. */
     if (!SPECIFIER.test(specifier)) continue
@@ -138,48 +131,27 @@ for (const file of bundles) {
   }
 }
 
-/*
- * unresolved-alias: Vite's `external` predicate sees raw specifiers before resolve.alias.
- * cjs-esm-chunk: a .js chunk required from .cjs is parsed as ESM ("type": "module") and throws.
- */
+/* unresolved-alias: Vite's `external` predicate sees raw specifiers before resolve.alias. */
 for (const file of bundles) {
-  const source = readFileSync(file, 'utf8')
-  if (/(from|require\()\s*["']@\//.test(source)) failures.push(`unresolved-alias  ${file}`)
-  if (file.endsWith('.cjs')) {
-    for (const m of source.matchAll(/require\(["'](\.[^"']+)["']\)/g)) {
-      if (m[1].endsWith('.js')) failures.push(`cjs-esm-chunk  ${file} requires ${m[1]}`)
-    }
+  if (/(?:from|import)\s*\(?\s*["']@\//.test(readFileSync(file, 'utf8'))) {
+    failures.push(`unresolved-alias  ${file}`)
   }
 }
 
 /* ── loads ──────────────────────────────────────────────────────────────────────── */
 
 /*
- * CJS must execute in Node and import no CSS (its consumers import stylesheets themselves).
- * ESM entries import their stylesheets, which Node cannot run, so for ESM check only that
- * every stylesheet named was emitted: a missing one renders a component unstyled.
+ * Sample entries execute in Node, with stylesheets stubbed where a framework would load them.
+ * Only a stylesheet that resolved reaches the stub, so one an entry names but the build did
+ * not emit fails here: in a consumer's bundle it is a component rendered unstyled.
  */
+const { loaded: stylesheets } = await import('./lib/stub-css.mjs')
 const sample = ['index', 'primitives', 'base/buttons', 'base/cards', 'features/table', 'ui-provider']
-let cssLinks = 0
 for (const entry of sample) {
-  const esm = `dist/${entry}.js`
-  const cjs = `dist/${entry}.cjs`
-  if (!existsSync(esm)) continue
-
-  const source = readFileSync(esm, 'utf8')
-  for (const match of source.matchAll(/^import\s+["']([^"']+\.css)["']/gm)) {
-    const target = resolvePath(dirname(esm), match[1])
-    cssLinks++
-    if (!existsSync(target)) failures.push(`loads(esm)  ${entry} names ${match[1]}, which was not emitted`)
-  }
-  if (/^\s*import\s+["'][^"']+\.css["']/m.test(readFileSync(cjs, 'utf8'))) {
-    failures.push(`loads(cjs)  ${entry} imports a stylesheet — Node cannot require() one`)
-  }
-
   try {
-    require(resolvePath(process.cwd(), cjs))
+    await import(pathToFileURL(resolvePath(`dist/${entry}.js`)).href)
   } catch (error) {
-    failures.push(`loads(cjs)  ${entry} — ${error.message.split('\n')[0]}`)
+    failures.push(`loads  ${entry} — ${error.message.split('\n')[0]}`)
   }
 }
 
@@ -243,13 +215,11 @@ for (const dep of optionalPeers) {
 /* ── weight ─────────────────────────────────────────────────────────────────────── */
 
 /*
- * Whole-dist ceiling (both module formats, declarations, CSS, tokens.json, tailwind.css): a
- * ratchet against accidental bloat. Raise it only for reviewed published surface, never for
- * a bundled dependency or sourcemaps; per-recipe consumer CSS budgets are gated elsewhere.
- * Last raised for the doc comments on every documented prop, which both declaration formats
- * carry.
+ * Whole-dist ceiling (JavaScript, declarations, CSS, tokens.json, tailwind.css): a ratchet
+ * against accidental bloat. Raise it only for reviewed published surface, never for a bundled
+ * dependency or sourcemaps; per-recipe consumer CSS budgets are gated elsewhere.
  */
-const MAX_DIST_KB = 5_650
+const MAX_DIST_KB = 3_650
 
 const maps = bundlesAndAssets.filter((file) => file.endsWith('.map'))
 if (maps.length) {
@@ -315,7 +285,7 @@ if (failures.length) {
 }
 console.log(
   `PASS verify package — ${Object.keys(pkg.exports).length} subpaths, ${targets} targets present, ` +
-    `${bundles.length} bundles clean, ${sample.length} CJS entries execute in Node and ${cssLinks} ESM stylesheet links resolve, ` +
+    `${bundles.length} bundles clean, ${sample.length} entries execute in Node with ${stylesheets.size} stylesheets resolved, ` +
     `${optionalPeers.length} optional peers contained across ${checked} checks, ` +
     'every bare import declared, ' +
     `stylesheet complete and layer-ordered, ${cssSpecifiers.sheets} sheets import only relative files, ` +

@@ -1,13 +1,15 @@
 /*
  * Runs consumers against the `npm pack` tarball (in a tmpdir) — what type-checking cannot see.
- * Fixtures: peer-leak (general subpaths load with no optional peers), cjs, ssr, two-roots,
+ * Fixtures: peer-leak (general subpaths load with no optional peers), admin, ssr, two-roots,
  * vite (bundled CSS layering, narrow and deduplicated), tailwind (layer order), tiptap (with
- * peers, in a separate unpacked copy so its links cannot reach the absent-peer fixtures),
- * skill-install / skill-finder (the shipped consumer scripts). Fails if any fixture fails.
+ * peers, in a separate unpacked copy so its links cannot reach the absent-peer fixtures).
+ * The Node fixtures preload scripts/lib/stub-css.mjs, standing in for the framework that loads
+ * each entry's stylesheets. Fails if any fixture fails.
  */
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 const ANSI = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g')
 import { tmpdir } from 'node:os'
@@ -49,12 +51,13 @@ const clean = manifest.families.filter(
 const admin = manifest.families.filter((family) => family.profile === 'admin')
 
 const failures = []
+const stubCss = pathToFileURL(resolve('scripts/lib/stub-css.mjs')).href
 
 function run(label, source, directory = root) {
-  const file = `${directory}/${label}.cjs`
+  const file = `${directory}/${label}.mjs`
   writeFileSync(file, source)
   try {
-    const out = execFileSync('node', [file], { encoding: 'utf8', cwd: directory })
+    const out = execFileSync('node', ['--import', stubCss, file], { encoding: 'utf8', cwd: directory })
     return out.trim()
   } catch (error) {
     /* The useful line: Node's stack starts with `throw err;` and a caret. */
@@ -70,36 +73,31 @@ function run(label, source, directory = root) {
 }
 
 /* 1 — every peer-free general subpath loads with no optional peers on disk. */
-const cjsList = clean
-  .map((family) => `${name}${family.export.slice(1)}`)
-  .filter((subpath) => pkg.exports[`.${subpath.slice(name.length)}`]?.require)
+const generalList = clean.map((family) => `${name}${family.export.slice(1)}`)
 run(
   'peer-leak',
-  `const subpaths = ${JSON.stringify(cjsList)}\n` +
-    'for (const subpath of subpaths) {\n' +
-    '  const loaded = require(subpath)\n' +
-    '  if (!loaded || typeof loaded !== "object") throw new Error(subpath + " exported nothing")\n' +
-    '}\n' +
+  `const subpaths = ${JSON.stringify(generalList)}\n` +
+    'for (const subpath of subpaths) await import(subpath)\n' +
     'console.log(subpaths.length)\n',
 )
 
 /* 2 — the admin profile loads too. */
 run(
-  'cjs',
+  'admin',
   `const subpaths = ${JSON.stringify(admin.map((f) => `${name}${f.export.slice(1)}`))}\n` +
-    'for (const subpath of subpaths) require(subpath)\n' +
-    `require(${JSON.stringify(name)})\n` +
+    'for (const subpath of subpaths) await import(subpath)\n' +
+    `await import(${JSON.stringify(name)})\n` +
     'console.log("ok")\n',
 )
 
 /* 3 — server rendering, through the provider and a component that draws. */
 run(
   'ssr',
-  'const React = require("react")\n' +
-    'const { renderToString } = require("react-dom/server")\n' +
-    `const { CSPProvider, UIProvider } = require(${JSON.stringify(`${name}/ui-provider`)})\n` +
-    `const { Badge } = require(${JSON.stringify(`${name}/base/badge`)})\n` +
-    `const { Money } = require(${JSON.stringify(`${name}/primitives`)})\n` +
+  'import React from "react"\n' +
+    'import { renderToString } from "react-dom/server"\n' +
+    `import { CSPProvider, UIProvider } from ${JSON.stringify(`${name}/ui-provider`)}\n` +
+    `import { Badge } from ${JSON.stringify(`${name}/base/badge`)}\n` +
+    `import { Money } from ${JSON.stringify(`${name}/primitives`)}\n` +
     'const html = renderToString(\n' +
     '  React.createElement(CSPProvider, { nonce: "fixture-nonce" },\n' +
     '    React.createElement(UIProvider, { config: { colorScheme: "dark", money: { defaultCurrency: "EUR" } } },\n' +
@@ -114,10 +112,9 @@ run(
 /* 4 — two roots, rendered independently, must not share configuration. */
 run(
   'two-roots',
-  'const React = require("react")\n' +
-    'const { renderToString } = require("react-dom/server")\n' +
-    `const { UIProvider } = require(${JSON.stringify(`${name}/ui-provider`)})\n` +
-    `const { UIScope } = require(${JSON.stringify(`${name}/ui-provider`)})\n` +
+  'import React from "react"\n' +
+    'import { renderToString } from "react-dom/server"\n' +
+    `import { UIProvider, UIScope } from ${JSON.stringify(`${name}/ui-provider`)}\n` +
     'const tree = (density) => React.createElement(UIProvider, { config: { density } },\n' +
     '  React.createElement(UIScope, { transparent: false }, React.createElement("span", null, density)))\n' +
     'const compact = renderToString(tree("compact"))\n' +
@@ -176,9 +173,9 @@ function buildViteApp(dir, main) {
 }
 
 /*
- * 5 — a real Vite build of the ESM entries and family stylesheets. There is deliberately no
+ * 5 — a real Vite build of the entries and family stylesheets. There is deliberately no
  * separate core import: each family CSS entry must `@import "../core.css"` itself, or the
- * cascade-order assertion fails. (`verify package` checks the CJS entry carries no CSS.)
+ * cascade-order assertion fails.
  */
 mkdirSync(`${root}/app/src`, { recursive: true })
 for (const dep of ['vite', '@vitejs/plugin-react']) {
@@ -242,7 +239,7 @@ try {
   const js = assets.find((file) => file.endsWith('.js'))
   const css = assets.find((file) => file.endsWith('.css'))
   if (!js) throw new Error('no JS emitted')
-  if (!css) throw new Error('no CSS emitted — the ESM entry did not carry its stylesheet')
+  if (!css) throw new Error('no CSS emitted — the entry did not carry its stylesheet')
   const bundledCss = readFileSync(`${root}/app/dist/assets/${css}`, 'utf8')
   assertLayerOrder(bundledCss, 'family sheets')
   /*
@@ -476,13 +473,13 @@ function tiptapFixture() {
   writeFileSync(`${directory}/package.json`, JSON.stringify({ name: 'tiptap-consumer', private: true, type: 'module' }))
 
   run('tiptap-ssr', [
-    'const React = require("react")',
-    'const { renderToString } = require("react-dom/server")',
-    `const { UIProvider } = require(${JSON.stringify(`${name}/ui-provider`)})`,
-    `const { RichTextEditor } = require(${JSON.stringify(`${name}/features/rich-text-editor`)})`,
-    `const { CommentComposer } = require(${JSON.stringify(`${name}/features/comments`)})`,
-    `const { ActivityLog } = require(${JSON.stringify(`${name}/features/activities`)})`,
-    `const { createTiptapEngine } = require(${JSON.stringify(`${name}/features/rich-text-editor/tiptap`)})`,
+    'import React from "react"',
+    'import { renderToString } from "react-dom/server"',
+    `import { UIProvider } from ${JSON.stringify(`${name}/ui-provider`)}`,
+    `import { RichTextEditor } from ${JSON.stringify(`${name}/features/rich-text-editor`)}`,
+    `import { CommentComposer } from ${JSON.stringify(`${name}/features/comments`)}`,
+    `import { ActivityLog } from ${JSON.stringify(`${name}/features/activities`)}`,
+    `import { createTiptapEngine } from ${JSON.stringify(`${name}/features/rich-text-editor/tiptap`)}`,
     'if (typeof createTiptapEngine !== "function") throw new Error("the adapter factory did not load")',
     'if (typeof document !== "undefined") throw new Error("SSR fixture unexpectedly has a DOM")',
     'const h = React.createElement',
@@ -560,9 +557,8 @@ if (failures.length) {
   process.exit(1)
 }
 console.log(
-  `PASS verify consumer-fixtures — ${cjsList.length} peer-free general subpaths and ` +
+  `PASS verify consumer-fixtures — ${generalList.length} peer-free general subpaths and ` +
     `${admin.length} admin subpaths load from a packed tarball without optional peers; ` +
     `SSR, two independent roots and a Vite build all succeed; Tailwind: ${tailwind}; ` +
-    'the separate TipTap consumer loads four subpaths, server-renders three editor surfaces and bundles their ESM/CSS; ' +
-    'the packed skill installs to both targets and its finder answers from node_modules.',
+    'the separate TipTap consumer loads four subpaths, server-renders three editor surfaces and bundles their JS and CSS.',
 )

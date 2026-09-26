@@ -75,12 +75,12 @@ application adapter unless the documented public hooks are insufficient.
 
 ## Vite, Next.js, and CSS entrypoints
 
-Through a bundler, the ESM build loads each component's CSS, and the exact module stylesheet
-can sit beside the import. In a framework that restricts where global CSS may be imported,
+Through a bundler, each component's entry loads its CSS, and the exact module stylesheet can
+sit beside the import. In a framework that restricts where global CSS may be imported,
 collect the same module stylesheets in its permitted application or route-layout entry. Do
 not replace them with source paths. `style.css` loads every module; prefer module
-stylesheets when a route uses a few. Server rendering, the CommonJS build and test runners
-are covered in [Loading the CSS](installation.md#loading-the-css).
+stylesheets when a route uses a few. Server rendering and test runners are covered in
+[Loading the CSS](installation.md#loading-the-css).
 
 Server-rendered HTML and the client bundle must load the same theme tokens before hydration.
 Apply the theme attribute and provider configuration from the same persisted value to avoid
