@@ -262,9 +262,8 @@ portals, strict CSP, or streaming SSR. Read `references/theming.md` before defin
 | file | open it when |
 | --- | --- |
 <!-- GENERATED:index-row by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
-| `references/components/INDEX.json` | choosing a component. 97 modules with `publicImport`, `publicSymbols`, and the `chooseWhen` / `avoidWhen` / `alternatives` that say which one to reach for. The machine surface — filter it, do not read it. |
+| `node_modules/themelia-ui/docs/generated/component-index.json` | choosing a component. 97 modules with `import`, `symbols`, and the `chooseWhen` / `avoidWhen` / `alternatives` that say which one to reach for. The machine surface: search it with `find-component.mjs` rather than reading it whole. |
 <!-- /GENERATED:index-row -->
-| `references/components/INDEX.md` | opening one complete generated module API reference |
 | `references/imports.md` | confirming exact imports and optional-peer ownership |
 | `references/installation.md` | installing the package and choosing CSS delivery |
 | `references/theming.md` | changing color, radius, density, scale, typography, DTCG, or Tailwind integration |

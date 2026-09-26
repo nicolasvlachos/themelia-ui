@@ -2,7 +2,8 @@
 
 ## 2.0.2 — 2026-09-26
 
-Fixes two packaging defects present since 1.0.3 and one scoping defect. No API changes.
+Fixes two packaging defects present since 1.0.3 and one scoping defect, and ships a smaller
+skill. No API changes.
 
 - `themelia-ui/primitives.css` compiles under Tailwind v4. It imported its neighbours by bare
   file name, which `@tailwindcss/cli`, `@tailwindcss/postcss` and `@tailwindcss/vite` before
@@ -17,6 +18,10 @@ Fixes two packaging defects present since 1.0.3 and one scoping defect. No API c
   `theme.colors`, `theme.vars`, type sizes and fonts. Semantic colours are declared again at
   every scope boundary, so the nested scope painted the kit's defaults while `useUIConfig()`
   reported the merged values. Each scope now writes the merged overrides on its element.
+- The packaged skill is 136 KB instead of 2.4 MB. It no longer copies the per-module API
+  references and the component index, which ship under `docs/generated`; it names them there,
+  and `find-component.mjs` reads the index from there with unchanged output. Re-run the skill
+  installer to replace an installed copy.
 
 If you switched to `themelia-ui/style.css` to work around either packaging defect, you can
 switch back.

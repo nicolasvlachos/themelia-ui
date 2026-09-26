@@ -342,5 +342,5 @@ callbacks are illustrative: verify persistence and browser behaviour in your app
   are not compatibility surfaces. Public props, exported parts, hooks, `data-slot`, BEM
   hooks, and global theme tokens are.
 
-Open [the module API index](components/INDEX.md) after choosing a module. It
+Open the module API index (`node_modules/themelia-ui/docs/generated/components/INDEX.md`) after choosing a module. It
 contains every public declaration and the live recipes attributed to that module.

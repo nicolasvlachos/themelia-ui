@@ -130,7 +130,6 @@ const GENERATED = [
   /* The assistant skill ships in the tarball. */
   { file: '.agents/skills/themelia-ui/SKILL.md', by: 'scripts/gen-agent-skill.mjs' },
   { file: '.agents/skills/themelia-ui/references/imports.md', by: 'scripts/gen-agent-skill.mjs' },
-  { file: '.agents/skills/themelia-ui/references/components/INDEX.json', by: 'scripts/gen-agent-skill.mjs' },
   /*
    * The generator rewrites only CONTRIBUTING's status block between its markers and copies the
    * rest through, so a whole-file comparison checks exactly the part it owns.
@@ -138,14 +137,10 @@ const GENERATED = [
   { file: 'CONTRIBUTING.md', by: 'scripts/gen-status-docs.mjs' },
 ]
 
-/* Per-family references are dynamic because the manifest owns the family set. */
+/* Per-module references are dynamic because the manifest owns the module set. */
 if (existsSync('docs/generated/components')) {
   for (const name of readdirSync('docs/generated/components').filter((name) => name.endsWith('.md'))) {
-    const doc = `components/${name}`
-    if (name !== 'INDEX.md') {
-      GENERATED.push({ file: `docs/generated/${doc}`, by: 'scripts/gen-consumer-docs.mjs' })
-    }
-    GENERATED.push({ file: `.agents/skills/themelia-ui/references/${doc}`, by: 'scripts/gen-agent-skill.mjs' })
+    if (name !== 'INDEX.md') GENERATED.push({ file: `docs/generated/components/${name}`, by: 'scripts/gen-consumer-docs.mjs' })
   }
 }
 // Every shipped guide is checked, not only the index and imports table.

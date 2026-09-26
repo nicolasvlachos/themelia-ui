@@ -15,7 +15,7 @@ Documents are grouped by audience. The first three directories ship in the npm p
 docs/generated/imports.md               every module's exact JS and CSS import
 docs/generated/public-api.md            every public symbol, its subpath, its page
 docs/generated/profiles.md              which modules each profile ships
-docs/generated/component-index.json     the machine-readable catalogue the packaged skill is built from
+docs/generated/component-index.json     the machine-readable catalogue the component finder and the skill read
 docs/generated/components/              one complete API reference per module
 docs/generated/recipes.json             live-preview recipes, keyed by task
 ```

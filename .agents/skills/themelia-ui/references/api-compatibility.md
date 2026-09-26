@@ -32,6 +32,6 @@ only where a module reference documents it; few modules set it. Do not depend on
 paths, internal aliases, hashed CSS Module classes, undocumented DOM nesting, or
 component-owned custom properties.
 
-The generated [module references](components/INDEX.md) are the exact API
+The generated module references (`node_modules/themelia-ui/docs/generated/components/INDEX.md`) are the exact API
 inventory for the package version you installed. The changelog (`node_modules/themelia-ui/CHANGELOG.md`) records
 migrations and behavioural changes between versions.

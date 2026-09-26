@@ -36,13 +36,12 @@ test('the published package uses the Themelia identity', () => {
   assert.equal(manifest.name, PACKAGE_NAME)
 })
 
-test('the tarball carries the consumer skill and its index', () => {
+test('the tarball carries the consumer skill and the component index it names', () => {
   for (const required of [
     `${SKILL_PATH}/SKILL.md`,
-    `${SKILL_PATH}/references/components/INDEX.json`,
-    `${SKILL_PATH}/references/components/INDEX.md`,
-    `${SKILL_PATH}/references/components/base--buttons.md`,
     `${SKILL_PATH}/references/imports.md`,
+    'docs/generated/component-index.json',
+    'docs/generated/components/INDEX.md',
     'docs/README.md',
     'docs/learn/composition.md',
     'docs/learn/framework-wiring.md',
@@ -125,7 +124,7 @@ test('every installed-package path the skill names exists in the tarball', () =>
 test('consumer prose does not instruct agents to use maintainer-only scripts or missing skills', () => {
   const offenders = []
   for (const file of listFiles(SOURCE)) {
-    if (!file.endsWith('.md') || file.startsWith('references/components/')) continue
+    if (!file.endsWith('.md')) continue
     const body = readFileSync(join(SOURCE, file), 'utf8')
     if (/`(?:token-system|css-tokens)`\s+skill/.test(body)) offenders.push(`${file}: missing skill`)
     if (/`(?:scripts\/(?:verify|theme-manifest|strings-exceptions)[^`]*|npm run (?:verify|tokens:)[^`]*)`/.test(body)) {
@@ -139,25 +138,21 @@ test('consumer prose does not instruct agents to use maintainer-only scripts or 
   assert.deepEqual(offenders, [])
 })
 
-test('the packed component index keeps one navigable API link per family', () => {
-  const body = readFileSync(join(SOURCE, 'references/components/INDEX.md'), 'utf8')
+test('the packed component index keeps one navigable API link per module', () => {
+  const body = readFileSync('docs/generated/components/INDEX.md', 'utf8')
   const links = [...body.matchAll(/\[API\]\((\.\/[^)]+\.md)\)/g)]
-  const index = JSON.parse(
-    readFileSync(join(SOURCE, 'references/components/INDEX.json'), 'utf8'),
-  )
-  assert.equal(links.length, index.families.length)
+  const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
+  assert.equal(links.length, Object.keys(index.families).length)
 })
 
 test('the skill optional-peer table agrees with the component index', () => {
   const skill = readFileSync(join(SOURCE, 'SKILL.md'), 'utf8')
-  const index = JSON.parse(
-    readFileSync(join(SOURCE, 'references/components/INDEX.json'), 'utf8'),
-  )
+  const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
   const byPeer = new Map()
-  for (const family of index.families) {
-    for (const peer of family.optionalPeers) {
+  for (const entry of Object.values(index.families)) {
+    for (const peer of entry.optionalPeers) {
       if (!byPeer.has(peer)) byPeer.set(peer, [])
-      byPeer.get(peer).push(family.family)
+      byPeer.get(peer).push(entry.id)
     }
   }
   for (const [peer, families] of byPeer) {
@@ -185,7 +180,7 @@ test('the shipped scripts run from an extracted tarball, the way a consumer gets
     for (const target of ['.agents', '.claude']) {
       assert.ok(readFileSync(join(app, target, 'skills/themelia-ui/SKILL.md'), 'utf8').includes('name: themelia-ui'))
     }
-    assert.ok(existsSync(join(app, '.agents/skills/themelia-ui/references/components/INDEX.json')))
+    assert.ok(existsSync(join(app, '.agents/skills/themelia-ui/references/imports.md')))
 
     assert.match(run('find-component.mjs', ['menu bar across the top']), /base\/menubar[\s\S]*with\s+base\/dropdown-menu/)
     assert.match(run('find-component.mjs', ['key value facts']), new RegExp(`${PACKAGE_NAME}/base/display\\.css`))

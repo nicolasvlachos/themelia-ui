@@ -10,11 +10,34 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
-export const INDEX_PATH = resolve(HERE, '..', '..', '.agents/skills/themelia-ui/references/components/INDEX.json')
+export const INDEX_PATH = resolve(HERE, '..', '..', 'docs/generated/component-index.json')
+
+/** One catalogue entry in the shape the finder searches and `--json` prints. */
+const toRecord = (entry) => ({
+  family: entry.id,
+  layer: entry.layer,
+  profile: entry.profile,
+  status: entry.status,
+  publicImport: entry.import,
+  cssImport: entry.css,
+  publicSymbols: entry.symbols,
+  components: entry.components,
+  componentGuidance: entry.componentGuidance,
+  doc: entry.documentation,
+  apiDoc: entry.apiDoc,
+  chooseWhen: entry.chooseWhen ?? null,
+  avoidWhen: entry.avoidWhen ?? null,
+  alternatives: entry.alternatives ?? [],
+  composeWith: entry.composeWith ?? [],
+  optionalPeers: entry.optionalPeers,
+  dependsOnFamilies: entry.dependsOnFamilies,
+  previews: entry.previews ?? [],
+  recipes: entry.recipes ?? [],
+})
 
 export function loadIndex(path = INDEX_PATH) {
   if (!existsSync(path)) throw new Error(`the packaged component index is missing at ${path}`)
-  return JSON.parse(readFileSync(path, 'utf8')).families
+  return Object.values(JSON.parse(readFileSync(path, 'utf8')).families).map(toRecord)
 }
 
 const text = (value) => (Array.isArray(value) ? value.join(' ') : String(value ?? ''))
@@ -216,7 +239,7 @@ export function runFinderCli(args = process.argv.slice(2), io = console) {
     io.error(
       `no component matches ${JSON.stringify(parsed.query)}.\n` +
         '  Try a shorter term, a public symbol, or fewer filters.\n' +
-        '  The full index is at .agents/skills/themelia-ui/references/components/INDEX.json.',
+        '  The full index is at node_modules/themelia-ui/docs/generated/component-index.json.',
     )
     return 1
   }

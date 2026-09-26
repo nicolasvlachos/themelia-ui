@@ -19,7 +19,7 @@ test('the canonical skill exists where the installer looks for it', () => {
   assert.ok(existsSync(SOURCE), `no skill at ${SOURCE}`)
   const files = listFiles(SOURCE)
   assert.ok(files.includes('SKILL.md'), 'no SKILL.md')
-  assert.ok(files.includes('references/components/INDEX.json'), 'no component index')
+  assert.ok(files.includes('references/imports.md'), 'no import reference')
   assert.ok(files.length >= 10, `only ${files.length} files in the skill`)
 })
 
@@ -34,7 +34,7 @@ test('both targets are installed by default', () => {
     installSkill({ project: dir })
     for (const relative of Object.values(TARGET_DIRECTORIES)) {
       assert.ok(existsSync(join(dir, relative, 'SKILL.md')), `${relative} missing`)
-      assert.ok(existsSync(join(dir, relative, 'references/components/INDEX.json')), `${relative} index missing`)
+      assert.ok(existsSync(join(dir, relative, 'references/imports.md')), `${relative} references missing`)
     }
   } finally {
     rmSync(dir, { recursive: true, force: true })
