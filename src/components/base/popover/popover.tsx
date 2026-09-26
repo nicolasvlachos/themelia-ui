@@ -15,7 +15,15 @@ const PopoverAnchorContext = React.createContext<{
 	setAnchor: (element: Element | null) => void
 } | null>(null)
 
-function Popover({ ...props }: PopoverPrimitive.Root.Props) {
+interface PopoverProps extends PopoverPrimitive.Root.Props, Pick<PopoverPrimitive.Root.Props, "onOpenChange"> {}
+
+/**
+ * The root: holds the open state its trigger and panel share. `onOpenChange` receives Base
+ * UI's `eventDetails`, which says what an outside interaction does: `eventDetails.reason` is
+ * `"outside-press"`, and `eventDetails.cancel()` keeps the panel open through a click that
+ * belongs to it.
+ */
+function Popover({ ...props }: PopoverProps) {
 	const [anchor, setAnchor] = React.useState<Element | null>(null)
 	const value = React.useMemo(() => ({ anchor, setAnchor }), [anchor])
 	return (
@@ -36,12 +44,20 @@ function inferNativeButton(element: unknown): boolean {
 	return !("href" in elementProps)
 }
 
+/**
+ * What opens the panel. It is separate from `PopoverAnchor`, so a toolbar button can open a
+ * panel anchored to the thing it acts on.
+ */
 function PopoverTrigger({
 	nativeButton,
 	render,
 	children,
 	...props
 }: PopoverPrimitive.Trigger.Props & {
+	/**
+	 * Whether the element the trigger renders is a real `<button>`. Inferred from `render`
+	 * when omitted: an element with an `href` is not, so a link keeps its semantics.
+	 */
 	nativeButton?: boolean
 }) {
 	const safeRender: PopoverPrimitive.Trigger.Props["render"] =
@@ -67,12 +83,17 @@ function PopoverTrigger({
 	)
 }
 
+/**
+ * What the panel points at, when that is not what opens it: a panel opened by a toolbar
+ * button but anchored to the selection it acts on, or opened by a row's menu and anchored
+ * to the row.
+ */
 function PopoverAnchor({
 	render,
 	children,
 	...props
 }: React.ComponentPropsWithoutRef<"span"> & {
-	/** The element this anchor becomes (docs/adr/0005); `children` stays the content. */
+	/** The element this anchor becomes, in place of a `span`; `children` stays the content. */
 	render?: React.ReactElement
 }) {
 	const registry = React.useContext(PopoverAnchorContext)
@@ -93,15 +114,26 @@ function PopoverAnchor({
 }
 
 export type PopoverContentProps = PopoverPrimitive.Popup.Props &
+	Pick<PopoverPrimitive.Popup.Props, "initialFocus" | "finalFocus"> &
 	Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+		/**
+		 * Keeps the panel in place in the DOM. Portalling is the default because an ancestor
+		 * that clips or transforms would otherwise cut the panel off.
+		 */
 		disablePortal?: boolean
-		/** `flush` drops the surface padding for content that owns its own insets. */
+		/**
+		 * The panel's own inset. `flush` drops it for content that draws its own edges — a
+		 * calendar, a list that runs to the border.
+		 */
 		inset?: "padded" | "flush"
 		/**
-		 * Surface width: a CSS length, `"auto"` to size to the content, or `"trigger"` to match
-		 * the trigger. Defaults to a fixed reading width. Same vocabulary as DropdownMenuContent.
+		 * Surface width: a CSS length, `"trigger"` to match the control it opened from — what a
+		 * select-like panel wants — or `"auto"` to size to the content, capped by the space
+		 * actually available. Defaults to a fixed reading width. Same vocabulary as
+		 * DropdownMenuContent.
 		 */
 		width?: string | number | "auto" | "trigger"
+		/** Floor for the width. */
 		minWidth?: string | number
 		/** Ceiling for `width="auto"`. Defaults to the space actually available. */
 		maxWidth?: string | number
@@ -109,6 +141,12 @@ export type PopoverContentProps = PopoverPrimitive.Popup.Props &
 		container?: UIPortalContainer
 	}
 
+/**
+ * The panel. It sits against its anchor at `side` and `align`, and flips when the chosen
+ * side has no room; `sideOffset` and `alignOffset` are the gap to the anchor along each
+ * axis. `initialFocus` and `finalFocus`, from Base UI's popup, decide where focus lands on
+ * open and returns on close; `false` leaves it where it is.
+ */
 function PopoverContent({
 	container,
 	className,
@@ -170,10 +208,15 @@ function PopoverContent({
 	return <PopoverPrimitive.Portal container={portalContainer}>{content}</PopoverPrimitive.Portal>
 }
 
+/** The band at the top of the panel, for its title and description. */
 function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
 	return <div data-slot="popover-header" className={cx("popover-header--component", styles.header, className)} {...props} />
 }
 
+/**
+ * The panel's heading, wired to its accessible name. Without a title and description the
+ * panel announces as an unnamed group.
+ */
 function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
 	return (
 		<PopoverPrimitive.Title
@@ -184,6 +227,7 @@ function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
 	)
 }
 
+/** Supporting text, wired to the panel's accessible description. */
 function PopoverDescription({ className, ...props }: PopoverPrimitive.Description.Props) {
 	return (
 		<PopoverPrimitive.Description
@@ -195,6 +239,7 @@ function PopoverDescription({ className, ...props }: PopoverPrimitive.Descriptio
 	)
 }
 
+/** The band at the bottom of the panel, for its actions. */
 function PopoverFooter({ className, ...props }: React.ComponentProps<"div">) {
 	return <div data-slot="popover-footer" className={cx("popover-footer--component", styles.footer, className)} {...props} />
 }

@@ -39,9 +39,12 @@ function resolveVocabulary(vocabulary?: Partial<OrderStatusVocabulary>): OrderSt
 
 export interface OrderHeaderProps extends Omit<ComponentProps<"div">, "children"> {
 	orderNumber: string
-	/** Where the goods are. */
+	/** Where the goods are. Independent of payment. */
 	fulfillmentStatus?: FulfillmentStatus
-	/** Where the money is. */
+	/**
+	 * Where the money is. Both statuses, one, or neither reads correctly — an order with
+	 * nothing to ship has no fulfillment state to state.
+	 */
 	paymentStatus?: PaymentStatus
 	/** Already formatted. */
 	placedAt?: string
@@ -49,6 +52,7 @@ export interface OrderHeaderProps extends Omit<ComponentProps<"div">, "children"
 	source?: string
 	actions?: ActionDefinition[]
 	strings?: Partial<OrderHeaderStrings>
+	/** Overrides the words for either axis without touching the tones, which stay derived. */
 	vocabulary?: Partial<OrderStatusVocabulary>
 }
 
@@ -115,12 +119,23 @@ export interface FulfillmentGroupProps extends Omit<ComponentProps<"div">, "chil
 	location?: ReactNode
 	/** A standing fact about the group — "Shipping not required". */
 	notice?: ReactNode
-	/** The glyph beside the notice. A component, so the group sizes it. */
+	/**
+	 * The glyph beside the notice. A component rather than a node, so the group sizes it:
+	 * one passed as a child arrives at lucide's own 24px default — three lines tall against
+	 * the text it annotates.
+	 */
 	noticeIcon?: LucideIcon
+	/** The rows, as data. */
 	items?: OrderLine[]
-	/** Overrides `items` entirely, for a caller who needs the rows themselves. */
+	/**
+	 * Replaces `items` wholesale, for a caller who needs control of a row — the same seam
+	 * Accordion offers.
+	 */
 	children?: ReactNode
-	/** The first renders as a button; the rest collapse into an overflow menu. */
+	/**
+	 * The first renders as a button; the rest collapse into an overflow menu. One array, so
+	 * the menu cannot duplicate the button.
+	 */
 	actions?: ActionDefinition[]
 	strings?: Partial<FulfillmentGroupStrings>
 	vocabulary?: Partial<OrderStatusVocabulary>
@@ -200,7 +215,7 @@ export function FulfillmentGroup({
 export interface SummaryLine {
 	id?: string
 	label: ReactNode
-	/** A middle column — "3 items", "20%". */
+	/** A middle column — "3 items", "20%" — so counts and rates align down a stack. */
 	note?: ReactNode
 	/** Already formatted, including its currency. */
 	amount: string
@@ -209,14 +224,21 @@ export interface SummaryLine {
 }
 
 export interface OrderSummaryProps extends Omit<ComponentProps<typeof ContentBlock>, "children"> {
-	/** What was ordered — subtotal, discount, shipping, tax. */
+	/**
+	 * What was ordered — subtotal, discount, shipping, tax. Goods and payments render as
+	 * separate panels, and a line's `note` is a middle column, so counts and rates align down
+	 * a stack.
+	 */
 	goods: SummaryLine[]
 	/** The line the eye should land on. */
 	total: SummaryLine
-	/** What has actually moved — paid, refunded, balance. */
+	/** What has actually moved — paid, refunded, balance. A separate panel from the goods. */
 	payments?: SummaryLine[]
 	paymentStatus?: PaymentStatus
-	/** A standing caveat about the balance, not an error. */
+	/**
+	 * Standing information about the balance, rendered `role="note"` — a caveat, not an
+	 * error: nothing has gone wrong yet.
+	 */
 	alert?: ReactNode
 	strings?: Partial<OrderSummaryStrings>
 	vocabulary?: Partial<OrderStatusVocabulary>

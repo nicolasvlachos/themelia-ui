@@ -8,12 +8,15 @@ import { cx } from "@/lib/cx"
 
 import styles from "./toolbar.module.css"
 
-export interface ToolbarProps extends ToolbarPrimitive.Root.Props {}
+export interface ToolbarProps
+	extends ToolbarPrimitive.Root.Props,
+		Pick<ToolbarPrimitive.Root.Props, "orientation" | "disabled" | "loopFocus"> {}
 
 /**
- * A named set of related controls with one tab stop and orientation-aware arrow
- * navigation. Supply `aria-label` or `aria-labelledby` whenever no visible label names
- * the set.
+ * A named set of related controls: `role="toolbar"`, with one roving tab stop and
+ * orientation-aware arrow navigation. `orientation`, `disabled` and `loopFocus` come from
+ * Base UI's toolbar root. Supply `aria-label` or `aria-labelledby` whenever no visible label
+ * names the set.
  */
 export function Toolbar({ className, ...props }: ToolbarProps) {
 	return (
@@ -25,8 +28,11 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
 	)
 }
 
-export interface ToolbarGroupProps extends ToolbarPrimitive.Group.Props {}
+export interface ToolbarGroupProps
+	extends ToolbarPrimitive.Group.Props,
+		Pick<ToolbarPrimitive.Group.Props, "disabled"> {}
 
+/** Groups related items, and can disable the group as one unit. */
 export function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
 	return (
 		<ToolbarPrimitive.Group
@@ -44,6 +50,10 @@ export interface ToolbarButtonProps
 	render?: React.ReactElement
 }
 
+/**
+ * A toolbar item rendered through the kit Button: Base UI owns the navigation behaviour, the
+ * Button its look. It takes `tone`, `buttonStyle`, `iconOnly`, `loading` and `render`.
+ */
 export function ToolbarButton({
 	render,
 	tone = "neutral",
@@ -77,6 +87,7 @@ export function ToolbarButton({
 
 export interface ToolbarLinkProps extends ToolbarPrimitive.Link.Props {}
 
+/** An anchor item that joins the same roving-focus order. */
 export function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
 	return (
 		<ToolbarPrimitive.Link
@@ -89,6 +100,7 @@ export function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
 
 export interface ToolbarInputProps extends ToolbarPrimitive.Input.Props {}
 
+/** A native input item that joins the same roving-focus order. */
 export function ToolbarInput({ className, ...props }: ToolbarInputProps) {
 	return (
 		<ToolbarPrimitive.Input
@@ -102,6 +114,7 @@ export function ToolbarInput({ className, ...props }: ToolbarInputProps) {
 
 export interface ToolbarSeparatorProps extends ToolbarPrimitive.Separator.Props {}
 
+/** A rule between items. It takes the orientation opposite to the toolbar's. */
 export function ToolbarSeparator({ className, ...props }: ToolbarSeparatorProps) {
 	return (
 		<ToolbarPrimitive.Separator

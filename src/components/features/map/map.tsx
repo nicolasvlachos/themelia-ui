@@ -103,15 +103,18 @@ function useIsDark(map: LeafletMapInstance) {
 }
 
 export type MapProps = Omit<MapContainerProps, "zoomControl"> & {
+	/** Where the map opens, with `zoom`. */
 	center: LatLngExpression
 	/**
-	 * Minimum height: a named step or any CSS length. The map still grows to fill a flex
-	 * parent that gives it room.
+	 * Minimum height: `sm`, `md` and `lg` are 16, 24 and 36rem, or any CSS length. A MINIMUM, not
+	 * a fixed height — the map still grows to fill a flex parent that gives it room, which is what
+	 * a map docked beside a list needs.
 	 */
 	height?: "sm" | "md" | "lg" | (string & {})
 	/**
-	 * `framed` draws a border and radius; `flush` removes both, for a map that is the panel
-	 * itself (a sheet body, a full-bleed hero).
+	 * `framed` draws the border and radius the tiles need against a page of the same colour.
+	 * `flush` removes both, for a map that IS the panel rather than one sitting inside it — a
+	 * sheet's body, a full-bleed hero.
 	 */
 	surface?: "framed" | "flush"
 	ref?: Ref<LeafletMapInstance>
@@ -120,6 +123,10 @@ export type MapProps = Omit<MapContainerProps, "zoomControl"> & {
 
 const MAP_HEIGHT = { sm: styles.heightSm, md: styles.heightMd, lg: styles.heightLg }
 
+/**
+ * A Leaflet map in the kit's vocabulary. Everything else from react-leaflet's MapContainer
+ * passes through, except `zoomControl` — MapZoomControl replaces it.
+ */
 export function Map({
 	zoom = 15,
 	maxZoom = 18,
@@ -168,7 +175,9 @@ interface MapTileLayerOption {
 }
 
 interface MapLayerGroupOption {
+	/** Names the group in the layers control, and registers it with the enclosing MapLayers. */
 	name: string
+	/** Disables the group's checkbox in the layers control. */
 	disabled?: boolean
 }
 
@@ -198,15 +207,27 @@ const DEFAULT_TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 const DEFAULT_ATTRIBUTION =
 	'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 
-export type MapTileLayerProps = Partial<TileLayerProps> & {
-	/** Names the layer in the layer control. */
-	name?: string
-	/** Swapped in when the dark theme is active. */
-	darkUrl?: string
-	darkAttribution?: string
-	ref?: Ref<TileLayer>
-}
+export type MapTileLayerProps = Partial<TileLayerProps> &
+	Partial<Pick<TileLayerProps, "url" | "attribution">> & {
+		/**
+		 * Names the layer in the layer control, and registers it with the enclosing MapLayers under
+		 * that name.
+		 */
+		name?: string
+		/**
+		 * Swapped in when the dark theme is active. The default tiles are inverted in dark mode,
+		 * since there is no key-less dark basemap; passing `darkUrl` removes the filter.
+		 */
+		darkUrl?: string
+		darkAttribution?: string
+		ref?: Ref<TileLayer>
+	}
 
+/**
+ * A base map. Give it a `name` and it registers itself with the enclosing MapLayers, which is
+ * how the layers control knows what to offer without being told twice. Without a `url` it draws
+ * OpenStreetMap's own tiles — the only basemap that renders with no key.
+ */
 export function MapTileLayer({
 	name: nameProp,
 	url,
@@ -252,6 +273,7 @@ export function MapTileLayer({
 export type MapLayerGroupProps = LayerGroupProps &
 	MapLayerGroupOption & { ref?: Ref<LayerGroup> }
 
+/** A toggleable group of overlays, registered with the enclosing MapLayers by `name`. */
 export function MapLayerGroup({ name, disabled, ...props }: MapLayerGroupProps) {
 	const context = useMapLayersContext()
 
@@ -266,6 +288,10 @@ export function MapLayerGroup({ name, disabled, ...props }: MapLayerGroupProps) 
 export type MapFeatureGroupProps = LayerGroupProps &
 	MapLayerGroupOption & { ref?: Ref<FeatureGroup> }
 
+/**
+ * A toggleable group of overlays that also answers as one shape for events and bounds, which is
+ * what the drawing tools edit against.
+ */
 export function MapFeatureGroup({ name, disabled, ...props }: MapFeatureGroupProps) {
 	const context = useMapLayersContext()
 
@@ -279,13 +305,25 @@ export function MapFeatureGroup({ name, disabled, ...props }: MapFeatureGroupPro
 
 export interface MapLayersProps {
 	children?: ReactNode
-	/** Must name a MapTileLayer. The first registered one wins when it does not. */
+	/**
+	 * Names a MapTileLayer. Naming nothing REPORTS through `onError` and shows the first
+	 * registered layer, rather than throwing — a typo should not take down the page.
+	 */
 	defaultTileLayer?: string
+	/** The layer groups switched on at first, by name. */
 	defaultLayerGroups?: string[]
-	/** Hears about a `defaultTileLayer` or `defaultLayerGroups` naming nothing. */
+	/**
+	 * Hears about a `defaultTileLayer` or `defaultLayerGroups` naming nothing — a typo that would
+	 * otherwise show an empty map and no reason for it.
+	 */
 	onError?: (error: Error) => void
 }
 
+/**
+ * Holds the registry every named layer reports into. Tile layers become a radio group and
+ * layer groups a checkbox list in MapLayersControl — no array to keep in step with the
+ * children.
+ */
 export function MapLayers({
 	defaultTileLayer,
 	defaultLayerGroups,
@@ -363,11 +401,18 @@ export function MapLayers({
 }
 
 export interface MapLayersControlProps extends ComponentProps<"button"> {
+	/** Heads the tile layers' radio group. */
 	tileLayersLabel?: string
+	/** Heads the layer groups' checkboxes. */
 	layerGroupsLabel?: string
+	/** The corner it anchors to. */
 	position?: MapControlPosition
 }
 
+/**
+ * The layer picker. It throws when mounted outside MapLayers rather than rendering an empty
+ * menu, because a control with nothing to control is a wiring mistake, not a state.
+ */
 export function MapLayersControl({
 	tileLayersLabel,
 	layerGroupsLabel,
@@ -457,7 +502,10 @@ export function MapLayersControl({
 
 export type MapMarkerProps = Omit<MarkerProps, "icon"> &
 	Pick<DivIconOptions, "iconAnchor" | "bgPos" | "popupAnchor" | "tooltipAnchor"> & {
-		/** Rendered to a string and handed to Leaflet as a div icon. */
+		/**
+		 * Rendered to a string and handed to Leaflet as a div icon. The accessible name is written
+		 * onto the element after Leaflet builds it, because Leaflet builds it outside React.
+		 */
 		icon?: ReactNode
 		ariaLabel?: string
 		ref?: Ref<Marker>
@@ -537,6 +585,10 @@ export type MapMarkerClusterGroupProps = Omit<
 	icon?: (markerCount: number) => ReactNode
 }
 
+/**
+ * Collapses markers into counted clusters as the map zooms out. Above a few hundred pins the map
+ * stops being readable and starts being a texture.
+ */
 export function MapMarkerClusterGroup({
 	polygonOptions = { className: styles.shape },
 	spiderLegPolylineOptions = { className: styles.shape },
@@ -561,10 +613,20 @@ export function MapMarkerClusterGroup({
 	)
 }
 
+/**
+ * A circle sized in metres, so it grows as the map zooms in — MapCircleMarker is sized in
+ * pixels, and the difference matters the moment someone zooms. Like every shape primitive it
+ * takes the kit's tokens for stroke and fill, so a drawn area matches the surface it sits on.
+ */
 export function MapCircle({ className, ...props }: CircleProps & { ref?: Ref<Circle> }) {
 	return <LeafletCircle className={cx("map-circle--component", styles.shape, className)} {...props} />
 }
 
+/**
+ * A circle sized in pixels, so it keeps its size at every zoom — MapCircle is sized in metres.
+ * Like every shape primitive it takes the kit's tokens for stroke and fill, so a drawn area
+ * matches the surface it sits on.
+ */
 export function MapCircleMarker({
 	className,
 	...props
@@ -572,18 +634,31 @@ export function MapCircleMarker({
 	return <LeafletCircleMarker className={cx("map-circle-marker--component", styles.shape, className)} {...props} />
 }
 
+/** A line, taking the kit's tokens for stroke so it matches the surface it sits on. */
 export function MapPolyline({ className, ...props }: PolylineProps & { ref?: Ref<Polyline> }) {
 	return <LeafletPolyline className={cx("map-polyline--component", styles.shape, className)} {...props} />
 }
 
+/**
+ * A polygon, taking the kit's tokens for stroke and fill so a drawn area matches the surface it
+ * sits on.
+ */
 export function MapPolygon({ className, ...props }: PolygonProps & { ref?: Ref<Polygon> }) {
 	return <LeafletPolygon className={cx("map-polygon--component", styles.shape, className)} {...props} />
 }
 
+/**
+ * A rectangle, taking the kit's tokens for stroke and fill so a drawn area matches the surface
+ * it sits on.
+ */
 export function MapRectangle({ className, ...props }: RectangleProps & { ref?: Ref<Rectangle> }) {
 	return <LeafletRectangle className={cx("map-rectangle--component", styles.shape, className)} {...props} />
 }
 
+/**
+ * Attached to a marker or a shape, a popup is clicked open and stays. A popup is where an
+ * action belongs; a tooltip cannot hold one.
+ */
 export function MapPopup({
 	className,
 	...props
@@ -592,12 +667,18 @@ export function MapPopup({
 }
 
 export type MapTooltipProps = Omit<TooltipProps, "offset"> & {
+	/** The side of its anchor it sits on. */
 	side?: "top" | "right" | "bottom" | "left"
 	/** Distance from the anchor, in pixels. */
 	sideOffset?: number
 	ref?: Ref<Tooltip>
 }
 
+/**
+ * Attached to a marker or a shape, a tooltip comes and goes with the pointer, so it cannot hold
+ * an action; that is what a popup is for. It takes a `side` and an offset, and Leaflet's own tip
+ * is removed, because a single built-in tip cannot sit on a side this component chose.
+ */
 export function MapTooltip({
 	className,
 	children,
@@ -631,6 +712,7 @@ export function MapTooltip({
 /* ── Controls ─────────────────────────────────────────────────────────────────────── */
 
 export interface MapControlContainerProps extends ComponentProps<"div"> {
+	/** The corner it anchors to. */
 	position?: MapControlPosition
 }
 
@@ -715,6 +797,7 @@ export interface MapFullscreenControlProps extends ComponentProps<"button"> {
 	position?: MapControlPosition
 }
 
+/** Toggles the map in and out of full screen. */
 export function MapFullscreenControl({
 	position = "top-right",
 	className,
@@ -785,6 +868,11 @@ export interface MapLocateControlProps
 	position?: MapControlPosition
 }
 
+/**
+ * Find-me. It draws a pulse at the fix rather than only recentring, because a map that jumps
+ * with no mark leaves the reader hunting for what moved. `watch` follows the device; the watch
+ * is stopped on unmount, since one left running keeps the radio awake.
+ */
 export function MapLocateControl({
 	watch = false,
 	onLocationFound,
@@ -867,6 +955,7 @@ export interface MapSearchControlProps extends PlaceAutocompleteProps {
 	position?: MapControlPosition
 }
 
+/** Place search over the map: a PlaceAutocomplete in one of the control corners. */
 export function MapSearchControl({
 	position = "top-left",
 	className,
@@ -901,10 +990,18 @@ function useMapDrawContext() {
 }
 
 export interface MapDrawControlProps extends ComponentProps<"div"> {
+	/**
+	 * Fires on create, edit, and delete, with the FeatureGroup — call `toGeoJSON()` on it to
+	 * persist.
+	 */
 	onLayersChange?: (layers: FeatureGroup) => void
 	position?: MapControlPosition
 }
 
+/**
+ * The drawing toolbar. It composes the tool buttons, so a caller who wants only two of them
+ * mounts those two instead of configuring the toolbar out.
+ */
 export function MapDrawControl({
 	onLayersChange,
 	position = "bottom-left",
@@ -1041,6 +1138,10 @@ function MapDrawShapeButton<T extends Draw.Feature>({
 const DRAW_SHAPE_OPTIONS = { color: "var(--primary)", opacity: 1, weight: 2 }
 const DRAW_ERROR_OPTIONS = { color: "var(--destructive)" }
 
+/**
+ * The drawing button for a marker. Each shape's button takes Leaflet's own draw options for that
+ * shape, so nothing is re-declared here.
+ */
 export function MapDrawMarker(props: DrawOptions.MarkerOptions) {
 	return (
 		<MapDrawShapeButton
@@ -1066,6 +1167,10 @@ export function MapDrawMarker(props: DrawOptions.MarkerOptions) {
 	)
 }
 
+/**
+ * The drawing button for a line. Each shape's button takes Leaflet's own draw options for that
+ * shape, so nothing is re-declared here.
+ */
 export function MapDrawPolyline({
 	showLength = false,
 	drawError = DRAW_ERROR_OPTIONS,
@@ -1092,6 +1197,10 @@ export function MapDrawPolyline({
 	)
 }
 
+/**
+ * The drawing button for a circle. Each shape's button takes Leaflet's own draw options for that
+ * shape, so nothing is re-declared here.
+ */
 export function MapDrawCircle({
 	showRadius = false,
 	shapeOptions = DRAW_SHAPE_OPTIONS,
@@ -1107,6 +1216,10 @@ export function MapDrawCircle({
 	)
 }
 
+/**
+ * The drawing button for a rectangle. Each shape's button takes Leaflet's own draw options for that
+ * shape, so nothing is re-declared here.
+ */
 export function MapDrawRectangle({
 	showArea = false,
 	shapeOptions = DRAW_SHAPE_OPTIONS,
@@ -1122,6 +1235,10 @@ export function MapDrawRectangle({
 	)
 }
 
+/**
+ * The drawing button for a polygon. Each shape's button takes Leaflet's own draw options for that
+ * shape, so nothing is re-declared here.
+ */
 export function MapDrawPolygon({
 	drawError = DRAW_ERROR_OPTIONS,
 	shapeOptions = DRAW_SHAPE_OPTIONS,
@@ -1205,6 +1322,7 @@ function MapDrawActionButton<T extends EditToolbar.Edit | EditToolbar.Delete>({
 	)
 }
 
+/** Edits the shapes in the drawing's feature group. */
 export function MapDrawEdit({
 	selectedPathOptions = {
 		color: "var(--primary)",
@@ -1247,6 +1365,7 @@ export function MapDrawEdit({
 	)
 }
 
+/** Deletes shapes from the drawing's feature group. */
 export function MapDrawDelete() {
 	const context = useMapDrawContext()
 	if (!context) throw new Error("MapDrawDelete must be used inside <MapDrawControl>.")
@@ -1262,6 +1381,10 @@ export function MapDrawDelete() {
 	)
 }
 
+/**
+ * Undo for the current edit or delete: it steps back what that mode has staged, rather than the
+ * whole session. Outside one there is nothing to undo — leaflet-draw has already committed it.
+ */
 export function MapDrawUndo({ className, ...props }: ComponentProps<"button">) {
 	const context = useMapDrawContext()
 	if (!context) throw new Error("MapDrawUndo must be used inside <MapDrawControl>.")

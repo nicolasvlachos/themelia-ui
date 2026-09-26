@@ -34,15 +34,23 @@ export interface UseMentionsOptions<TResource extends string = string>
 	editorRef?: RefObject<MentionEditorHandle | null>
 }
 
+/** What `useMentions` returns: the picker's state, the search state, and the editor's wiring. */
 export interface UseMentionsReturn<TResource extends string = string>
 	extends UseMentionsSearchReturn<TResource> {
 	pickerOpen: boolean
 	setPickerOpen: (open: boolean) => void
 	/** True while the picker is open because of an inline trigger, not the button. */
 	triggerActive: boolean
-	/** Wire to the editor's caret-change callback. */
+	/**
+	 * Wire to the editor's caret-change callback. The trigger must follow start-of-line or
+	 * whitespace, so an email address does not open the picker at its @.
+	 */
 	handleCaretChange: () => void
-	/** Registers the mention, writes the chip into the editor, closes the picker. */
+	/**
+	 * Registers the mention, writes the chip into the editor, closes the picker. The chip is
+	 * written in ONE editor operation — deleting the needle and inserting separately leaves a
+	 * frame where the caret is elsewhere.
+	 */
 	pickSuggestion: (suggestion: MentionSuggestion<TResource>) => Mention<TResource>
 }
 
@@ -56,6 +64,10 @@ interface TriggerState {
 /** Escapes a trigger character for use inside a character class. */
 const escapeForClass = (char: string) => char.replace(/[.*+?^${}()|[\]\\^-]/g, "\\$&")
 
+/**
+ * The search state plus trigger detection from the text before the caret. Any editor
+ * implementing `MentionEditorHandle` plugs in; the kit's rich-text editor does.
+ */
 export function useMentions<TResource extends string = string>(
 	options: UseMentionsOptions<TResource> = {},
 ): UseMentionsReturn<TResource> {

@@ -25,11 +25,13 @@ type SharedProps = SpanProps & {
 }
 
 export interface RatioProps extends SharedProps {
+	/** The count. */
 	value?: number | null
 	/** What the value is counted against. Without it the component renders the value alone. */
 	total?: number | null
 	/** `words` reads "3 of 10" (prose); `fraction` reads "3/10" (tables). */
 	format?: "words" | "fraction"
+	/** The connectors — "of", and the fraction separator. */
 	strings?: Partial<RatioStrings>
 }
 
@@ -63,6 +65,7 @@ export function Ratio({
 }
 
 export interface RatingProps extends SharedProps {
+	/** The score. Shown to at most one decimal, so 4 stays 4. */
 	value?: number | null
 	/** The top of the scale. Five unless said otherwise, which is the common instrument. */
 	max?: number
@@ -74,6 +77,7 @@ export interface RatingProps extends SharedProps {
 	 * number a reader has to guess the meaning of.
 	 */
 	hideMax?: boolean
+	/** The connector — "out of". */
 	strings?: Partial<RatingStrings>
 }
 

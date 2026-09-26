@@ -8,19 +8,25 @@ import type { UIConfig } from "./types"
 import { useIPhoneInputZoom } from "./use-iphone-input-zoom"
 
 export interface UIScopeProps extends useRender.ComponentProps<"div"> {
-	/** Merged over the nearest enclosing scope or root. */
+	/**
+	 * Its own overrides only, merged over the nearest enclosing scope or root; inherited
+	 * values already cascade in.
+	 */
 	config?: UIConfig
 	/**
 	 * Removes the element from layout with `display: contents`; custom properties still
-	 * inherit. Set `false` when the scope should be a real box, such as a themed panel.
+	 * inherit through it, because inheritance does not depend on the box. Set `false` when
+	 * the scope should be a real box, such as a themed panel.
 	 */
 	transparent?: boolean
 }
 
 /**
  * `<UIScope>` — a region with its own tokens. Nests freely; writes the custom properties
- * its merged config names and never touches the document. `render` picks the element, e.g.
- * `<UIScope render={<aside />}>`, for places a `div` is invalid.
+ * its merged config names and never touches the document: a region governs its subtree,
+ * and reaching past it is the root's job, and only when asked. `render` picks the element
+ * — Base UI's contract, the same one Item and Stack use — e.g. `<UIScope render={<aside />}>`,
+ * for places a `div` is invalid.
  */
 export function UIScope({
 	config,

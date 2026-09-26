@@ -12,25 +12,43 @@ import styles from "./copyable.module.css"
 
 export interface CopyableProps
 	extends Omit<ComponentPropsWithoutRef<"span">, "children" | "onCopy" | "onError"> {
-	/** Value written to the clipboard. */
+	/** What lands on the clipboard. */
 	value: string
-	/** Display content, when it differs from the copied value. */
+	/**
+	 * Shown instead of the raw value, when it differs from what is copied. A rich node is
+	 * rendered as-is.
+	 */
 	displayValue?: ReactNode
-	/** Monospace the display content. For ids, keys, and hashes. */
+	/**
+	 * Monospaced, tabular figures for the display content — for an id, a key or a hash, where
+	 * one character matters.
+	 */
 	mono?: boolean
-	/** Truncates the display content at the width the caller allots. */
+	/** Truncates the display content at the width the caller allots, keeping the button in view. */
 	truncate?: boolean
 	/**
-	 * Sizes the trigger to the text rather than a control's height, for values inside a list
-	 * row. The target keeps its minimum hit area.
+	 * Sizes the trigger to the text rather than to a control's height. A control's height is
+	 * right beside a field and wrong inside a list row where the value is a description under
+	 * a title: there the button is twice the height of the line it belongs to, and the row's
+	 * rhythm bends around it. Every behaviour is unchanged, and the target keeps its minimum
+	 * hit area; what it gives up is the pointer target a standalone control is entitled to.
 	 */
 	compact?: boolean
-	/** Overrides this control's own copy. */
+	/**
+	 * Overrides this control's own copy. The name changes between `copy` and `copied`, because
+	 * the confirmation is the name for a screen reader.
+	 */
 	strings?: Partial<CopyableStrings>
-	/** Suppresses the toasts. The copied state on the control is the confirmation then. */
+	/** Suppresses both toasts. The copied state on the control is the confirmation then. */
 	silent?: boolean
+	/** Passed to the copy control, for a tone or a treatment that suits the surface. */
 	buttonProps?: Omit<ButtonProps, "children" | "onClick" | "type">
+	/** Called with the value once it is on the clipboard. */
 	onCopy?: (value: string) => void
+	/**
+	 * Called when the clipboard refuses — an insecure origin, a denied permission. A copy that
+	 * fails silently is worse than one that never offered.
+	 */
 	onError?: (error: unknown) => void
 }
 

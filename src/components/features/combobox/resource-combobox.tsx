@@ -44,6 +44,10 @@ export interface ResourceComboboxProps<T>
 		| "renderItem"
 		| "error"
 	> {
+	/**
+	 * Fetches the options for a query. Debounce, abort, and the race guard are owned for you,
+	 * and the query arrives trimmed. Honour `signal`, so an abort does not surface as a failure.
+	 */
 	fetcher: ResourceComboboxFetcher<T>
 	/** Controlled. Omit entirely to let the component own the selection. */
 	value?: T | null
@@ -60,7 +64,11 @@ export interface ResourceComboboxProps<T>
 	defaultOpen?: boolean
 	/** Clears the query when the popup closes. Defaults to `false`. A failed query is always kept for retry. */
 	clearSearchOnClose?: boolean
-	/** A further wait before the fetcher runs, after the loading state is showing. For rate-limited endpoints. */
+	/**
+	 * A further wait before the fetcher runs, after the loading state is showing. For
+	 * rate-limited endpoints: the reader sees something is happening, and the request that
+	 * would have been refused is never made.
+	 */
 	requestDelay?: number
 	onAfterFetch?: (items: T[], context: ResourceComboboxFetcherArgs) => void
 	/** Aborted and superseded requests never reach this. */
@@ -77,13 +85,23 @@ export interface ResourceComboboxProps<T>
 	limit?: number
 	/** Characters required before fetching. Defaults to `0` (unlike `AsyncCombobox`'s `3`); an empty input follows `preload`. */
 	minSearchLength?: number
-	/** Fetches with an empty query, so there is something to look at before typing. */
+	/**
+	 * Fetches with an empty query as the popup opens, without waiting out the debounce, so
+	 * there is something to look at before typing. Off, an empty field asks the reader to type
+	 * instead of claiming there are no results.
+	 */
 	preload?: boolean
 	errorMessage?: ReactNode
 	renderError?: (context: ResourceComboboxErrorContext) => ReactNode
 	strings?: Partial<AsyncComboboxStrings>
 }
 
+/**
+ * A self-fetching picker: give it a `fetcher` and it owns debounce, abort and the race guard.
+ * Browsable from the first keystroke, and preloaded on mount so the list is there on open. A
+ * failed fetch replaces the list content, as `AsyncCombobox`'s `showListContent` does when
+ * off, but keeps the selection and the query, for retry.
+ */
 export function ResourceCombobox<T>({
 	fetcher,
 	onAfterFetch,

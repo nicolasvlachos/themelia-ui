@@ -39,6 +39,10 @@ GlobalSearchStrings
 
 Kind: callable.
 
+The command palette's panel. It does not search: `query` is controlled and `results` are
+given; debounce, endpoint and ranking belong to the app. It owns the regions, grouping, and
+an arrow-key highlight.
+
 ```text
 ({ results, query, onQueryChange, onResultSelect, onClose, loading, idleSections, groupLabels, autoFocus, strings, slots, tabs, className, }: GlobalSearchProps<TGroup>) => import("react").JSX.Element
 ```
@@ -55,6 +59,9 @@ Kind: interface.
 ### `GlobalSearchDialog`
 
 Kind: callable.
+
+The palette presentation over ActionDialog: focus trap, portal, scroll lock, and a dialog
+role — none of which a hand-rolled fixed backdrop has.
 
 ```text
 ({ open, onOpenChange, contentClassName, className, strings, autoFocus, ...search }: GlobalSearchDialogProps<TGroup>) => import("react").JSX.Element
@@ -76,6 +83,8 @@ Extends: `Omit<GlobalSearchProps<TGroup>, "onClose">`.
 
 Kind: callable.
 
+What the palette shows after a search that found nothing.
+
 ```text
 ({ title, hint, className }: GlobalSearchEmptyStateProps) => import("react").JSX.Element
 ```
@@ -93,6 +102,9 @@ Kind: interface.
 ### `GlobalSearchFooter`
 
 Kind: callable.
+
+The keyboard-hint strip under the list. It is the only place a reader is told which three
+keys the palette answers to.
 
 ```text
 ({ navigateLabel, openLabel, closeLabel, escKey, trailing, className, }: GlobalSearchFooterProps) => import("react").JSX.Element
@@ -127,6 +139,9 @@ A static section shown while the query is too short to search on.
 ### `GlobalSearchIdleState`
 
 Kind: callable.
+
+What the palette shows before there is anything to search: recent queries and curated
+suggestions, both supplied by the consumer — the palette does not remember anything itself.
 
 ```text
 ({ sections, fallbackIcons, className, }: GlobalSearchIdleStateProps) => import("react").JSX.Element
@@ -183,18 +198,18 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `results` | no | `readonly GlobalSearchResult<TGroup>[]` |  |
-| `query` | yes | `string` | Controlled. The palette never searches; it renders what it is given. |
-| `onQueryChange` | yes | `(query: string) => void` |  |
-| `onResultSelect` | no | `(result: GlobalSearchResult<TGroup>) => void` |  |
-| `onClose` | no | `() => void` | Fires on Escape. The dialog presentation wires this to closing itself. |
-| `loading` | no | `boolean` | Swaps the input's clear button for a spinner and shows the loading region. |
-| `idleSections` | no | `readonly GlobalSearchIdleSection[]` |  |
-| `groupLabels` | no | `Partial<Record<TGroup, ReactNode>>` | Names a group in the tab strip and above its results. Otherwise the key shows. |
+| `results` | no | `readonly GlobalSearchResult<TGroup>[]` | One shape for every kind, with optional parts: avatar OR thumbnail, a badge, meta, tags, a<br>timestamp, a trailing figure. A union per kind would be honest about the data and useless<br>for a list that renders them all the same way. |
+| `query` | yes | `string` | Controlled, always. The palette never searches; it renders what it is given. |
+| `onQueryChange` | yes | `(query: string) => void` | Receives every edit to `query`. |
+| `onResultSelect` | no | `(result: GlobalSearchResult<TGroup>) => void` | Fires on click and on Enter, with the whole result including its free-form `data`. |
+| `onClose` | no | `() => void` | Fires on Escape. The dialog presentation wires this to closing itself; a panel embedded in<br>a page usually wants it too. |
+| `loading` | no | `boolean` | Swaps the input's clear control for a spinner and shows the loading region. Hidden results<br>cannot be selected while the loading region is visible. |
+| `idleSections` | no | `readonly GlobalSearchIdleSection[]` | Recent queries and curated suggestions. The palette has no memory of its own — whose<br>recents these are is a question only the app can answer. |
+| `groupLabels` | no | `Partial<Record<TGroup, ReactNode>>` | Names a group in the tab strip and above its results. Without it the raw key shows, which<br>is a useful default only while you are wiring it up. |
 | `autoFocus` | no | `boolean` |  |
 | `strings` | no | `Partial<GlobalSearchStrings>` |  |
-| `slots` | no | `GlobalSearchSlots<TGroup>` |  |
-| `tabs` | no | `readonly GlobalSearchTab<TGroup>[]` | Replaces the auto-generated "All + one per group" strip. |
+| `slots` | no | `GlobalSearchSlots<TGroup>` | `input`, `tabs`, `idle`, `empty`, `loading`, `footer`, and `renderResult` — every region,<br>replaceable one at a time. |
+| `tabs` | no | `readonly GlobalSearchTab<TGroup>[]` | Replaces the auto-generated "All + one per group" strip, for a fixed set of tabs that<br>should not appear and disappear with the results. |
 | `className` | no | `string` |  |
 
 ### `GlobalSearchRenderResultContext`
@@ -216,7 +231,7 @@ Kind: interface.
 | `id` | yes | `string` |  |
 | `title` | yes | `string` | The only line guaranteed to render. |
 | `subtitle` | no | `string` |  |
-| `group` | yes | `TGroup` | The bucket this lands in. Also a tab, unless `tabs` says otherwise. |
+| `group` | yes | `TGroup` | The bucket this lands in. Tabs and group headings are both generated from the groups that<br>actually returned something, unless `tabs` says otherwise. |
 | `avatar` | no | `{ src?: string; initials: string; tone?: GlobalSearchTone; }` |  |
 | `thumbnail` | no | `{ src?: string; icon?: ReactNode; tone?: GlobalSearchTone; }` |  |
 | `meta` | no | `GlobalSearchMeta[]` |  |
@@ -230,6 +245,9 @@ Kind: interface.
 ### `GlobalSearchResultRow`
 
 Kind: callable.
+
+One rich result — its media, title, context and trailing figure. Exported so a consumer
+rendering their own groups keeps the row's highlight and keyboard behaviour.
 
 ```text
 ({ result, active, query, onSelect, onMouseEnter, onFocus, className, }: GlobalSearchResultRowProps<TGroup>) => import("react").JSX.Element
@@ -298,6 +316,9 @@ Kind: interface.
 
 Kind: callable.
 
+The group filter strip, built on OverflowTabBar rather than Tabs: these narrow one list
+rather than switching between panels, and the distinction decides what the arrow keys do.
+
 ```text
 ({ value, onValueChange, tabs, counts, className, }: GlobalSearchTabsProps<TGroup>) => import("react").JSX.Element
 ```
@@ -327,6 +348,10 @@ IconBadgeTone
 ### `useGlobalSearch`
 
 Kind: callable.
+
+The palette's active row, active tab and key handling — `grouped`, `tabCounts`, `activeTab`,
+`flat`, `activeIndex` and `onKeyDown` — for a palette whose markup is entirely yours. `flat`
+is both what the rows render and what the keys walk, so the highlight and Enter always agree.
 
 ```text
 ({ results, query, onResultSelect, onClose, }: UseGlobalSearchOptions<TGroup>) => UseGlobalSearchResult<TGroup>

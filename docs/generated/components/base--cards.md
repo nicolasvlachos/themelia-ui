@@ -31,6 +31,10 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The single surface primitive. Slot props (`title`, `description`, `actions`, `footerText`,
+…) cover the common shape; `CardHeader`, `CardContent` and `CardFooter` are exported for
+composing.
+
 **Use when:** A bounded surface with a coordinated header, body and footer.
 
 **Avoid when:** Only grouping content within an existing surface or temporarily interrupting a task.
@@ -57,6 +61,9 @@ ActionDefinition
 
 Kind: callable.
 
+A card's commands as buttons. One array decides which action is primary and how the rest
+follow, so a page of cards cannot disagree about it.
+
 ```text
 ({ actions, separator, align, fullWidthPrimary, renderLink, className, ...props }: CardActionStripProps) => import("react").JSX.Element | null
 ```
@@ -69,11 +76,11 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `actions` | yes | `ActionDefinition[]` |  |
-| `separator` | no | `boolean` | A rule above the strip, for a card whose content runs right into it. |
-| `align` | no | `"start" \| "end" \| "between"` |  |
-| `fullWidthPrimary` | no | `boolean` | Stretches the first action, for a narrow card where two buttons will not fit. |
-| `renderLink` | no | `ActionLinkRenderer` | Routes `href` actions through the app's router. |
+| `actions` | yes | `ActionDefinition[]` | The commands, as the overflow menu takes them. The first is the primary action; the rest<br>follow in outline unless an entry sets its own `buttonStyle`. |
+| `separator` | no | `boolean` | A rule above the strip, ruling it off from content that runs right into it. |
+| `align` | no | `"start" \| "end" \| "between"` | Where the buttons sit along the strip. |
+| `fullWidthPrimary` | no | `boolean` | Stretches the first action, for a card whose action is the point, or a narrow card where<br>two buttons will not fit. |
+| `renderLink` | no | `LinkRenderer` | Routes `href` actions through the app's router. |
 
 ### `CardAlertTone`
 
@@ -116,8 +123,9 @@ above. The title truncates rather than pushing the controls off the row.
 
 Kind: callable.
 
-Makes a whole card one target with a covering link (wrapping the card would nest its
-controls inside an anchor). Interactive children are lifted above it in CSS.
+Stretches an anchor across the whole card, so the card is one tab stop rather than a grid
+of them (wrapping the card would nest its controls inside an anchor). Interactive children
+are lifted above it in CSS.
 
 ```text
 ({ label, className, ...props }: CardPrimaryActionProps) => import("react").JSX.Element
@@ -127,11 +135,11 @@ controls inside an anchor). Interactive children are lifted above it in CSS.
 
 Kind: interface.
 
-Extends: `ComponentProps<"a">`.
+Extends: `ComponentProps<"a">`, `Pick<ComponentProps<"a">, "href">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | yes | `string` | Names the target. The card's own title is not enough — many cards share one. |
+| `label` | yes | `string` | The link's accessible name. The visible title is not necessarily the destination, and<br>many cards share one. |
 
 ### `CardProps`
 
@@ -142,34 +150,38 @@ Extends: `Omit<React.ComponentProps<"div">, "title">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `icon` | no | `React.ReactNode` | Leading glyph on the title line. |
-| `title` | no | `React.ReactNode` |  |
+| `title` | no | `React.ReactNode` | Header copy. The title truncates rather than pushing header controls off the row. |
 | `titleSuffix` | no | `React.ReactNode` | Badges, status, or counts immediately after the title. |
-| `tooltip` | no | `React.ReactNode` | Explanatory copy behind a focusable info button on the title line — for a definition or<br>caveat too long for the description. |
-| `description` | no | `React.ReactNode` |  |
-| `surface` | no | `CardSurface` | Outer chrome. |
+| `tooltip` | no | `React.ReactNode` | Explanatory copy behind an info button on the title line — for a definition or caveat<br>too long for the description. A real focusable button, not a `title` attribute;<br>`strings.tooltip` names it. |
+| `description` | no | `React.ReactNode` | Header copy under the title. |
+| `surface` | no | `CardSurface` | Outer chrome. `framed`, the bezel, is the default; `card` is the plain panel. Change it<br>for a whole product once with `UIProvider` `defaults.card.surface`. @default "framed" |
 | `headerStart` | no | `React.ReactNode` | Full-width row above the title — an eyebrow or breadcrumb. Rare. |
 | `headerEnd` | no | `React.ReactNode` | Metadata or a secondary control before the action and overflow menu. |
 | `headerAction` | no | `React.ReactNode` | A single control at the end of the header. Use `actions` for a list of commands. |
-| `actions` | no | `CardAction[]` | Overflow commands, collapsed into one menu trigger. |
-| `titleLevel` | no | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | Renders the title as a heading of this level. Unset, the title is a span that heading<br>navigation can't find; set it when the card titles a page section. |
-| `media` | no | `React.ReactNode` | A full-bleed strip above the header — a cover image, an illustration, a preview. |
-| `alert` | no | `React.ReactNode` | Banner between header and content. A plain string is wrapped for you. |
-| `alertTone` | no | `CardAlertTone` |  |
-| `contentTop` | no | `React.ReactNode` |  |
-| `contentBottom` | no | `React.ReactNode` |  |
+| `actions` | no | `CardAction[]` | Overflow commands, collapsed into one menu trigger and rendered by the shared<br>`ActionMenu`: a destructive entry moves last and is separated. |
+| `titleLevel` | no | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | Renders the title as a heading of this level, for a card that heads a page or a region.<br>Unset, the title is a span that heading navigation can't find. |
+| `media` | no | `React.ReactNode` | A full-bleed strip above the header — a cover image, a map, a brand band — clipped to<br>the card's top corners. |
+| `alert` | no | `React.ReactNode` | Banner between header and content. A plain string is wrapped in an `Alert`. |
+| `alertTone` | no | `CardAlertTone` | Tone of the alert band. |
+| `contentTop` | no | `React.ReactNode` | Content inside the content inset, above `children`. |
+| `contentBottom` | no | `React.ReactNode` | Content inside the content inset, below `children`. |
 | `footerText` | no | `React.ReactNode` | Muted text in the footer band. |
 | `footerSlot` | no | `React.ReactNode` | Footer band under the content — a single primary action fits well here. |
-| `headerDivider` | no | `boolean` |  |
-| `footerDivider` | no | `boolean` |  |
+| `headerDivider` | no | `boolean` | A rule between the header and the content. `UIProvider` defaults can change it. @default false |
+| `footerDivider` | no | `boolean` | A rule between the content and the footer. @default false |
 | `expandable` | no | `boolean \| { collapsedMaxHeight?: number \| string; }` | Clips content to a collapsed height with a fade, and adds a toggle. `true` uses<br>`--card-collapsed-height`; the object form sets the height for this card only. |
-| `expanded` | no | `boolean` |  |
-| `defaultExpanded` | no | `boolean` |  |
-| `onExpandedChange` | no | `(expanded: boolean) => void` |  |
-| `strings` | no | `Partial<CardStrings>` | Overrides this card's own copy — the info glyph, the overflow trigger, the disclosure. |
+| `expanded` | no | `boolean` | Whether an expandable card's content is expanded, for controlled expansion. |
+| `defaultExpanded` | no | `boolean` | Whether an expandable card starts expanded, for uncontrolled expansion. |
+| `onExpandedChange` | no | `(expanded: boolean) => void` | Called with the new state when the reader expands or collapses the content. |
+| `strings` | no | `Partial<CardStrings>` | Overrides this card's own copy — the info glyph, the overflow trigger, and the<br>disclosure control's name in each state. |
 
 ### `CardSkeleton`
 
 Kind: callable.
+
+A placeholder that reserves the real card's box, so the page doesn't reflow when content
+lands. Matching the surface and the line count is the whole job: a placeholder of the wrong
+shape moves the page twice.
 
 ```text
 ({ surface, showHeader, lines, label, className, ...props }: CardSkeletonProps) => import("react").JSX.Element
@@ -183,10 +195,10 @@ Extends: `Omit<ComponentProps<"div">, "title">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `surface` | no | `CardSurface` | Match the real card's surface. Unset, it takes the card's default (the provider's<br>`defaults.card.surface`, framed out of the box). |
+| `surface` | no | `CardSurface` | Match the real card's surface. Unset, it takes the card's default (the provider's<br>`defaults.card.surface`, framed out of the box). @default "framed" |
 | `showHeader` | no | `boolean` | Reserves the header's height. |
-| `lines` | no | `number` |  |
-| `label` | no | `string` |  |
+| `lines` | no | `number` | Lines of content to reserve. Match the real card's. |
+| `label` | no | `string` | What the placeholder announces while it waits. Unset, the skeleton's own loading copy. |
 
 ### `CardStrings`
 
@@ -216,6 +228,45 @@ Kind: const.
 ```text
 CardStrings
 ```
+
+### `LinkRenderer`
+
+Kind: type.
+
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
+
+```tsx fragment — declaration JSDoc excerpt
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
+```
+
+```text
+(props: LinkRenderProps) => ReactElement
+```
+
+### `LinkRenderProps`
+
+Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `href` | no | `string` | Destination. When absent, render non-interactive content. |
+| `children` | yes | `ReactNode` |  |
+| `className` | no | `string` |  |
+| `target` | no | `string` |  |
+| `rel` | no | `string` |  |
+| `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
+| `"aria-label"` | no | `string` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ## Preview recipes
 

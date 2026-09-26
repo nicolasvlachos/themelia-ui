@@ -31,6 +31,9 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A native scroll-snap track with controls. Script only reports the current slide and
+scrolls to a chosen one.
+
 ```text
 ({ children, orientation, controls, showDots, dotStyle, strings, label, className, viewportClassName, ...props }: CarouselProps) => import("react").JSX.Element
 ```
@@ -39,7 +42,8 @@ Kind: callable.
 
 Kind: callable.
 
-A previous/next control placed by the caller rather than by the root.
+A single previous/next control placed by the caller rather than by the root, for composing
+your own layout with `controls="none"`. Must sit inside a `Carousel`.
 
 ```text
 ({ direction, className, children, ...props }: CarouselControlProps) => import("react").JSX.Element
@@ -63,13 +67,14 @@ Extends: `ComponentProps<"button">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `direction` | yes | `"previous" \| "next"` |  |
+| `direction` | yes | `"previous" \| "next"` | Which way the control moves the track. |
 
 ### `CarouselDots`
 
 Kind: callable.
 
-The position indicators, placed by the caller.
+The position indicators on their own, placed by the caller outside the track. Must sit
+inside a `Carousel`.
 
 ```text
 ({ dotStyle, className, ...props }: CarouselDotsProps) => import("react").JSX.Element
@@ -83,7 +88,7 @@ Extends: `ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `dotStyle` | no | `"dot" \| "pill"` |  |
+| `dotStyle` | no | `"dot" \| "pill"` | `pill` stretches the active indicator instead of only recolouring it. |
 
 ### `CarouselOrientation`
 
@@ -101,18 +106,20 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `children` | yes | `ReactNode` |  |
-| `orientation` | no | `CarouselOrientation` |  |
-| `controls` | no | `CarouselControlPlacement` |  |
+| `children` | yes | `ReactNode` | The slides, usually `CarouselSlide`s. |
+| `orientation` | no | `CarouselOrientation` | Which axis snaps. |
+| `controls` | no | `CarouselControlPlacement` | Where the previous/next buttons sit: `outside` the track, `overlay` on its edges, or<br>`none` when you compose your own with `CarouselControl`. |
 | `showDots` | no | `boolean` | Shows the position indicators, and lets them be clicked. |
-| `dotStyle` | no | `"dot" \| "pill"` |  |
-| `strings` | no | `Partial<CarouselStrings>` | Overrides this carousel's own copy — the region name and the two controls. |
-| `label` | no | `string` |  |
-| `viewportClassName` | no | `string` |  |
+| `dotStyle` | no | `"dot" \| "pill"` | `pill` stretches the active indicator instead of only recolouring it. |
+| `strings` | no | `Partial<CarouselStrings>` | Overrides this carousel's own copy — the region name, the two icon-only controls, and<br>each pagination dot. It travels through the context, so a control placed with<br>`CarouselControl` is named by the same override as one the root rendered. |
+| `label` | no | `string` | Names the region for assistive technology; unset, `strings.label` does. A carousel with<br>no name is an unexplained scroll box, and a page with two needs two names. |
+| `viewportClassName` | no | `string` | Styles the scroll container rather than the outer frame — for a carousel that needs its<br>own padding inside the clip. |
 
 ### `CarouselSlide`
 
 Kind: callable.
+
+One slide of the track, announced as a slide.
 
 ```text
 ({ size, className, style, ...props }: CarouselSlideProps) => import("react").JSX.Element
@@ -152,6 +159,9 @@ CarouselStrings
 ### `useCarousel`
 
 Kind: callable.
+
+The track's position, its slide count, and the scroll helpers, for a fully custom control
+surface. Must be called inside a `Carousel`.
 
 ```text
 () => { index: number; count: number; atStart: boolean; atEnd: boolean; scrollToSlide: (index: number) => void; strings: CarouselStrings; }

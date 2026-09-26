@@ -38,6 +38,10 @@ function highlight(text: string, query: string): ReactNode {
 	)
 }
 
+/**
+ * One rich result — its media, title, context and trailing figure. Exported so a consumer
+ * rendering their own groups keeps the row's highlight and keyboard behaviour.
+ */
 export function GlobalSearchResultRow<TGroup extends string = string>({
 	result, active = false, query = "", onSelect, onMouseEnter, onFocus, className,
 }: GlobalSearchResultRowProps<TGroup>) {

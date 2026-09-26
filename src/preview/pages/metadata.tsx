@@ -52,20 +52,7 @@ export function MetadataPage() {
 			</Example>
 
 			<Example id="metadata-api" title="MetadataList API">
-				<PropTable owner="MetadataList"
-					rows={[
-						{ name: "items", type: "MetadataListItem[]", required: true, description: "label, value, and optionally description, tooltip, icon, emptyLabel, render. Returns null when the list is empty, so a caller can render it unconditionally." },
-						{ name: "layout", type: '"grid" | "rows" | "inline"', default: '"grid"', description: "One component because the three carry the same data — a screen that switches between them changes a prop, not its items." },
-						{ name: "columns", type: "1 | 2 | 3 | 4 | breakpoints", default: "2", description: "A ceiling for the grid layout. A plain number picks a responsive recipe; an object sets the breakpoints itself." },
-						{ name: "density", type: '"default" | "compact"', default: '"default"', description: "Tightens the rhythm and drops the value a size." },
-						{ name: "title / titleSeparator", type: "ReactNode / boolean", description: "A label above the facts, and the rule beneath it." },
-						{ name: "separator", type: "string", default: '": "', description: "Between a label and its value in the inline layout." },
-						{ name: "itemSeparator", type: "boolean | string", default: "false", description: "Between facts. A rule in the rows layout; a character in the inline one." },
-						{ name: "emptyLabel", type: "ReactNode", default: "—", description: "For a fact whose value is absent. A dash says 'we looked'; an omitted row does not." },
-						{ name: "item.tooltip", api: "MetadataListItem.tooltip", type: "ReactNode", description: "Adds an info trigger beside the label. Its accessible name is built from the label through strings.formatInfoLabel — a function, not a suffix, because word order differs by language." },
-						{ name: "item.render", api: "MetadataListItem.render", type: "(item) => ReactNode", description: "Takes over the value entirely, for the one fact none of the kinds cover." },
-					]}
-				/>
+				<PropTable owners={["MetadataList", "MetadataListItem"]} />
 			</Example>
 
 		</ComponentPage>

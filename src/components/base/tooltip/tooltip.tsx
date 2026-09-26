@@ -7,11 +7,19 @@ import { useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
 import styles from "./tooltip.module.css"
 
 // No delay of its own: Base UI's default (600ms) applies unless the app sets one.
+/**
+ * Shares one open delay, `delay`, across every tooltip inside it. Wrap the app once rather
+ * than each tooltip.
+ */
 function TooltipProvider({
 	delay,
 	delayDuration,
 	...props
-}: TooltipPrimitive.Provider.Props & { delayDuration?: number }) {
+}: TooltipPrimitive.Provider.Props &
+	Pick<TooltipPrimitive.Provider.Props, "delay"> & {
+		/** `delay` under another name, in milliseconds. It wins when both are given. */
+		delayDuration?: number
+	}) {
 	return (
 		<TooltipPrimitive.Provider
 			data-slot="tooltip-provider"
@@ -44,11 +52,15 @@ function Tooltip({ open, defaultOpen, onOpenChange, ...props }: TooltipPrimitive
 	)
 }
 
+/**
+ * What the tip anchors to, passed as `render`. It must be a real focusable element, so the
+ * tip opens on keyboard focus and not only on hover.
+ */
 function TooltipTrigger({
 	render,
 	children,
 	...props
-}: TooltipPrimitive.Trigger.Props) {
+}: TooltipPrimitive.Trigger.Props & Pick<TooltipPrimitive.Trigger.Props, "render">) {
 	const description = useContext(TooltipDescriptionContext)
 	const safeRender: TooltipPrimitive.Trigger.Props["render"] =
 		typeof render === "function"
@@ -74,6 +86,7 @@ function TooltipTrigger({
 	)
 }
 
+/** The tip. Short — a sentence, not a paragraph. */
 function TooltipContent({
 	container,
 	className,

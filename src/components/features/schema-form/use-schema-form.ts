@@ -59,6 +59,11 @@ function definedErrors(errors?: SchemaFormErrors): SchemaFormErrors {
 	return next
 }
 
+/**
+ * The values, the errors, and `validate()` without any of the rendering. Server `errors` win
+ * over local messages for the same key; local messages clear on the field's next change,
+ * server messages stay until the consumer replaces them.
+ */
 export function useSchemaForm({
 	fields,
 	value,

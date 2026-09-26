@@ -41,6 +41,9 @@ The affirmative answer. Closes on click unless the handler prevents it.
 
 Kind: callable.
 
+The answer that backs out. Both answers close the dialog; `AlertDialogAction` is the one
+that commits. With no dismissal and no corner close, they are the only ways out.
+
 ```text
 ({ className, ...props }: AnswerProps) => React.JSX.Element
 ```
@@ -48,6 +51,11 @@ Kind: callable.
 ### `AlertDialogContent`
 
 Kind: callable.
+
+A centred surface that demands an answer. It fixes `placement` to centre and announces as
+`alertdialog`; both dismissal routes are fixed off and the corner close is off by
+default, so the backdrop and Escape never decide for the reader. `modality`, `surface`
+and `initialFocusRef` are OverlayContent's props.
 
 ```text
 ({ className, ...props }: Omit<OverlayContentProps, "placement" | "dismissal">) => React.JSX.Element

@@ -47,30 +47,7 @@ export function PageLayoutPage() {
 			</Example>
 
 			<Example id="page-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "PageHeading title", type: "ReactNode", description: "A string is wrapped in a Heading at `level`; a node is rendered as given." },
-						{ name: "PageHeading level", type: "1 | 2 | 3 | 4 | 5 | 6", default: "1", description: "The heading ELEMENT, for the document outline. Not the type size." },
-						{ name: "PageHeading eyebrow", type: "ReactNode", description: "Above the title. A string becomes a DisplayLabel." },
-						{ name: "PageHeading badge / badges", type: "PageHeadingBadge[]", description: "Data, not nodes — { label, tone } — so their colour comes from the kit's vocabulary." },
-						{ name: "PageHeading leading", type: "ReactNode", description: "Left of the whole column. The description indents with it." },
-						{ name: "PageHeading titlePrefix", type: "ReactNode", description: "Left of the title LINE, centred on it. The description still starts at the title's edge." },
-						{ name: "PageHeading titleSuffix / afterDescription", type: "ReactNode", description: "After the badges on the title line, and directly under the description." },
-						{ name: "PageHeading withSeparator", type: "boolean", default: "false", description: "A rule beneath the block." },
-						{ name: "PageHeader backHref / onBack", type: "string / () => void", description: "Either one shows the back control. With an href it is a real link." },
-						{ name: "PageHeader titleIcon", type: "ComponentType", description: "Decorative by default; titleIconHref or onTitleIconClick makes it a control with a name." },
-						{ name: "PageHeader titleBadges", type: "PageHeadingBadge[]", description: "Passed through to the heading." },
-						{ name: "PageHeader slots", type: "{ back, beforeTitle, afterDescription, actions }", description: "Replaces a structural region without forking the header." },
-						{ name: "PageHeader renderLink", type: "LayoutLinkRenderer", description: "Routes the back control and the title icon. Without it they are plain anchors." },
-						{ name: "PageActions actions", type: "PageAction[]", description: "ActionDefinition plus placement." },
-						{ name: "PageActions display", type: '"inline" | "menu" | "auto"', default: '"auto"', description: "auto watches the viewport and collapses below breakpoint." },
-						{ name: "PageActions maxInlineActions", type: "number", default: "3", description: "How many render as buttons before the rest overflow." },
-						{ name: "PageActions breakpoint", type: "number", default: "1040", description: "The width at or below which auto collapses." },
-						{ name: "Page header", type: "PageHeaderProps", description: "Omit for a page that supplies its own header." },
-						{ name: "Page maxWidth / gutter", type: "ContainerMaxWidth / ContainerGutter", default: '"xl" / "md"', description: "Handed to the Container underneath." },
-						{ name: "Page bodyProps", type: 'ComponentProps<"div">', description: "For a page that needs to address the body region directly." },
-					]}
-				/>
+				<PropTable owners={["PageHeading", "PageHeader", "PageActions", "Page"]} />
 			</Example>
 		</ComponentPage>
 	)

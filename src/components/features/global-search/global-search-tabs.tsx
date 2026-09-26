@@ -18,6 +18,10 @@ export interface GlobalSearchTabsProps<TGroup extends string = string> {
 	className?: string
 }
 
+/**
+ * The group filter strip, built on OverflowTabBar rather than Tabs: these narrow one list
+ * rather than switching between panels, and the distinction decides what the arrow keys do.
+ */
 export function GlobalSearchTabs<TGroup extends string = string>({
 	value,
 	onValueChange,

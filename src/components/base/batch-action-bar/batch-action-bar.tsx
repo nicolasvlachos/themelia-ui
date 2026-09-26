@@ -20,10 +20,11 @@ export interface BatchActionBarProps {
 	selectedCount: number
 	/** Optional denominator for the summary. Omit when the total is unknown or unbounded. */
 	totalCount?: number
-	/** Omit to render no clear control — a selection the user cannot drop needs a reason. */
+	/** Drops the selection. Omit to render no clear control — a selection the user cannot drop needs a reason. */
 	onClear?: () => void
 	/** `floating` docks to the bottom centre of the viewport; `inline` sits in flow. */
 	placement?: BatchActionBarPlacement
+	/** Overrides this bar's own copy: `summary(selected, total)`, `clear`, and the region's accessible `label`. */
 	strings?: StringsProp<BatchActionBarStrings>
 	/** The bulk actions. Buttons, a menu, whatever the surface needs. */
 	children?: ReactNode

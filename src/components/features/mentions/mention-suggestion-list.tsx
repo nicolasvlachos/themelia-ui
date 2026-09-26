@@ -25,6 +25,10 @@ export interface MentionKindTabsProps<TResource extends string = string> {
 	focusable?: boolean
 }
 
+/**
+ * The kind tabs, one of the parts both mention surfaces are built from, so the inline panel and
+ * the popover cannot drift into showing the same data two ways.
+ */
 export function MentionKindTabs<TResource extends string = string>({
 	kinds,
 	activeKind,
@@ -99,6 +103,10 @@ export interface MentionRowsProps<TResource extends string = string> {
 	id?: string
 }
 
+/**
+ * The suggestion rows, one of the parts both mention surfaces are built from, so the inline
+ * panel and the popover cannot drift into showing the same data two ways.
+ */
 export function MentionRows<TResource extends string = string>({
 	suggestions,
 	activeKind,

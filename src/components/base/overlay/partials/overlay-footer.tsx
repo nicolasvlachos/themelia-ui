@@ -5,7 +5,10 @@ import { cx } from "@/lib/cx"
 
 import styles from "../overlay.module.css"
 
-/** Fixed footer region: trailing actions on a tinted surface. */
+/**
+ * The fixed footer region: trailing actions on a tinted surface. It holds its edge while
+ * the body scrolls.
+ */
 export const OverlayFooter = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
 	function OverlayFooter({ className, ...props }, ref) {
 		return (

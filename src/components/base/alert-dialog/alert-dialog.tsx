@@ -13,6 +13,12 @@ import {
 } from "@/components/base/overlay"
 import { cx } from "@/lib/cx"
 
+/**
+ * A centred surface that demands an answer. It fixes `placement` to centre and announces as
+ * `alertdialog`; both dismissal routes are fixed off and the corner close is off by
+ * default, so the backdrop and Escape never decide for the reader. `modality`, `surface`
+ * and `initialFocusRef` are OverlayContent's props.
+ */
 export function AlertDialogContent({
 	className,
 	...props
@@ -45,6 +51,10 @@ export function AlertDialogAction({ className, ...props }: AnswerProps) {
 	return <OverlayClose className={cx("alert-dialog--action", className)} {...props} />
 }
 
+/**
+ * The answer that backs out. Both answers close the dialog; `AlertDialogAction` is the one
+ * that commits. With no dismissal and no corner close, they are the only ways out.
+ */
 export function AlertDialogCancel({ className, ...props }: AnswerProps) {
 	return <OverlayClose className={cx("alert-dialog--cancel", className)} {...props} />
 }

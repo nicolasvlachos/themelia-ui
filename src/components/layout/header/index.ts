@@ -15,4 +15,4 @@ export type {
 	HeaderNotificationsProps, HeaderSearchProps, HeaderToolButtonProps, HeaderToolPopoverProps,
 	HeaderUserMenuProps, NotificationTone,
 } from "./header.types"
-export type { LayoutLinkRenderer, LayoutLinkRenderProps } from "@/lib/navigation"
+export type { LinkRenderer, LinkRenderProps } from "@/lib/navigation"

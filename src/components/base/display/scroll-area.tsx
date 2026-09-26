@@ -8,6 +8,10 @@ import { cx } from "@/lib/cx"
 
 import styles from "./display.module.css"
 
+/**
+ * A scroll container with the kit's scrollbar treatment, contained so reaching the end
+ * doesn't scroll the page behind. Give it a max height; it does not impose one.
+ */
 export function ScrollArea({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div

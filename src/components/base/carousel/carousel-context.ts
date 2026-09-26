@@ -15,6 +15,10 @@ export const CarouselContext = createContext<{
 	strings: CarouselStrings
 } | null>(null)
 
+/**
+ * The track's position, its slide count, and the scroll helpers, for a fully custom control
+ * surface. Must be called inside a `Carousel`.
+ */
 export function useCarousel() {
 	const context = useContext(CarouselContext)
 	if (!context) throw new Error("Carousel parts must be used inside a <Carousel />.")

@@ -31,8 +31,11 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
-A store with its own queue and timers, for a second, isolated Toaster (a host app and an
-embedded widget). Most apps use the default `toastStore`.
+An independent queue with its own timers and its own bound `toast()`, for a second,
+isolated Toaster — a host application and an embedded widget. With only the module-level
+queue, one for the whole realm, two Toasters on a page would render the same toasts, and
+`pauseAll` would walk a timer map neither owned. The singleton stays the default, because
+`toast("Saved")` working with no wiring is the point of it.
 
 ```text
 () => ToastStore
@@ -66,10 +69,12 @@ ToastFn
 
 Kind: interface.
 
+A button on a toast's pill.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | yes | `string` |  |
-| `onClick` | yes | `() => void` |  |
+| `label` | yes | `string` | The button's text. |
+| `onClick` | yes | `() => void` | Runs on press, before the toast is dismissed. |
 
 ### `Toaster`
 
@@ -88,14 +93,14 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `position` | no | `ToastPosition` |  |
-| `duration` | no | `number` | Default lifetime in ms. A toast with its own `duration` still wins. |
-| `visibleToasts` | no | `number` | Maximum toasts on screen. Older ones are dropped from the render, not the store. |
-| `closeButton` | no | `boolean` |  |
+| `position` | no | `ToastPosition` | One of six: top or bottom, crossed with start, center, or end. Bottom stacks grow<br>upward so the newest is nearest the edge. `UIProvider` defaults can change it. @default "bottom-end" |
+| `duration` | no | `number` | Default lifetime in ms. A toast with its own `duration` still wins. `UIProvider`<br>defaults can change it. @default 4000 |
+| `visibleToasts` | no | `number` | Maximum toasts on screen — a cap on the render, not the store: older ones are dropped<br>from the render, and a capped toast still runs its timer and `onDismiss`. `UIProvider`<br>defaults can change it. @default 3 |
+| `closeButton` | no | `boolean` | Shows each toast's dismiss control. `UIProvider` defaults can change it. @default true |
 | `strings` | no | `Partial<ToasterStrings>` | Overrides this region's own copy — its name, and each toast's dismiss. |
 | `className` | no | `string` |  |
-| `store` | no | `ToastStore` | The queue this Toaster renders. Defaults to the singleton `toast()` writes to; pass a<br>`createToastStore()` instance for independent Toasters (a host app and an embedded widget). |
-| `container` | no | `UIPortalContainer` | Where the toast region renders. Defaults to the nearest `UIPortalHost`, else<br>`document.body`, so scoped density and theme apply. |
+| `store` | no | `ToastStore` | The queue this Toaster renders, dismisses and pauses. Defaults to the singleton<br>`toast()` writes to; pass a `createToastStore()` instance to isolate it — a host app and<br>an embedded widget. |
+| `container` | no | `UIPortalContainer` | Where the toast region renders. Defaults to the nearest `UIPortalHost`, else<br>`document.body` — so toasts raised inside a scoped region are drawn with that region's<br>density and theme. |
 
 ### `ToasterStrings`
 
@@ -110,14 +115,16 @@ Kind: interface.
 
 Kind: interface.
 
+What a toast carries beyond its title, passed as `toast(title, options)`.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `id` | no | `string` |  |
-| `description` | no | `ReactNode` |  |
+| `id` | no | `string` | Reusing an on-screen id updates that toast in place rather than stacking a second one. |
+| `description` | no | `ReactNode` | A second line under the title. |
 | `icon` | no | `ReactNode` | Replaces the status glyph. |
-| `duration` | no | `number` | Milliseconds before auto-dismissal. `Infinity` pins it open. |
-| `action` | no | `ToastAction` |  |
-| `cancel` | no | `ToastAction` |  |
+| `duration` | no | `number` | Lifetime in milliseconds before auto-dismissal. `Infinity` pins it open. Falls back to<br>the Toaster's `duration`. |
+| `action` | no | `ToastAction` | A button on the pill — the undo for something that already happened. It dismisses the<br>toast after running. |
+| `cancel` | no | `ToastAction` | A second, quieter button on the pill. Dismisses the toast after running. |
 | `onDismiss` | no | `(id: string) => void` | Called after the toast leaves, whichever way it left. |
 
 ### `ToastPosition`

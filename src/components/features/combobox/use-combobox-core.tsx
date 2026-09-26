@@ -131,6 +131,11 @@ export interface UseComboboxCoreReturn<T> {
 	handleScroll: (event: Event) => void
 }
 
+/**
+ * The list state every picker shares: the threshold, the selection merged ahead of the
+ * results, the groups, the create row and the pager. The pickers differ only in what
+ * selected means, the field, and where the results come from.
+ */
 export function useComboboxCore<T>({
 	items,
 	searchValue,

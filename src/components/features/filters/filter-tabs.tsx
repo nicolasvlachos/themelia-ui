@@ -10,6 +10,10 @@ import type { ActiveFilter, FilterTab } from "./filters.types"
 import styles from "./filters.module.css"
 
 export interface FilterTabsProps {
+	/**
+	 * Saved sets. A tab is active only when every preset is applied AND nothing else is — so it
+	 * stops looking selected the moment the reader narrows further.
+	 */
 	tabs: FilterTab[]
 	/** Compact saved-view control using the same presets and matching as the tab row. */
 	display?: "tabs" | "select"
@@ -32,6 +36,11 @@ function presetsToFilters(
 		}))
 }
 
+/**
+ * Saved filter sets as tabs, or as a compact select via `display`. Both compare values and
+ * operators exactly, preserve range endpoint order, and replace previous narrowing. `label`
+ * names the control; `strings.customView` describes a changed selection.
+ */
 export function FilterTabs({ tabs, display = "tabs", label, className }: FilterTabsProps) {
 	const { activeFilters, filters, replaceFilters, isNavigating, strings } = useFilters()
 

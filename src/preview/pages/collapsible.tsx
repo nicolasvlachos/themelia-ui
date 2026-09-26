@@ -12,13 +12,8 @@ export function CollapsiblePage() {
 			/>
 
 			<Example id="collapsible-api" title="API">
-				<PropTable owner="Collapsible"
-					rows={[
-						{ name: "open / defaultOpen", type: "boolean", description: "Controlled and uncontrolled state." },
-						{ name: "onOpenChange", type: "(open: boolean) => void", description: "Fires on every toggle, from the pointer or the keyboard." },
-						{ name: "CollapsibleTrigger", type: "component", description: "The control. Carries aria-expanded and points at the content." },
-					]}
-				/>
+				<PropTable owner="Collapsible" />
+				<PropTable symbols={["CollapsibleTrigger", "CollapsibleContent"]} />
 			</Example>
 		</ComponentPage>
 	)

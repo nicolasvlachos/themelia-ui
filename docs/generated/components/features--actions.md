@@ -59,6 +59,9 @@ Kind: interface.
 
 Kind: interface.
 
+One action, defined once and read from every surface: what it is called, where it appears, how
+it asks, and what it runs.
+
 Extends: `Omit<ActionPresentation, 'visible' | 'disabled'>`.
 
 | member | required | type | description / documented default |
@@ -75,11 +78,11 @@ Extends: `Omit<ActionPresentation, 'visible' | 'disabled'>`.
 | `disabled` | no | `ActionPredicate<TPayload>` |  |
 | `permission` | no | `ActionPermission` |  |
 | `roles` | no | `ActionRoles` |  |
-| `modality` | no | `'none' \| ActionModalityConfig<TPayload, TValues, TResult>` |  |
-| `request` | no | `ActionRequestConfig<TPayload, TValues>` |  |
+| `modality` | no | `'none' \| ActionModalityConfig<TPayload, TValues, TResult>` | How the action asks. The outlet renders it; no surface needs its own dialog. `"none"`, or no<br>modality, runs the action at once. |
+| `request` | no | `ActionRequestConfig<TPayload, TValues>` | A declarative request, run by `requestRunner` — for apps whose actions are mostly HTTP. |
 | `requestRunner` | no | `ActionRequestRunner<TResult>` |  |
 | `run` | no | `BivariantCallback<[ context: ActionRunContext<TPayload, TValues> ], TResult \| Promise<TResult>>` |  |
-| `parseErrors` | no | `ActionErrorParser` |  |
+| `parseErrors` | no | `ActionErrorParser` | Turns a failure into field errors, so a form modality can show them inline. |
 | `successMessage` | no | `ActionMessage<TPayload, TValues, TResult>` |  |
 | `errorMessage` | no | `ActionMessage<TPayload, TValues, TResult>` |  |
 | `onStart` | no | `BivariantCallback<[ event: ActionLifecycleEvent<TPayload, TValues, TResult> ], void>` |  |
@@ -182,6 +185,10 @@ Kind: interface.
 ### `ActionHttpError`
 
 Kind: class.
+
+The `Error` createHttpActionRunner throws for a failed response, carrying `status`,
+`statusText`, `body` and the `Response`, plus the body's own `errors` when it has them. What
+`parseErrors` receives for an HTTP failure.
 
 ### `ActionHttpErrorOptions`
 
@@ -291,6 +298,9 @@ Kind: type.
 
 Kind: callable.
 
+Renders the active action's modality — alert, dialog, or drawer. Mount one inside the
+`ActionProvider`; every surface that runs an action with a `modality` then shares it.
+
 ```text
 ({ strings }?: ActionOverlayOutletProps) => import("react").JSX.Element | null
 ```
@@ -347,6 +357,8 @@ boolean | BivariantCallback<[context: ActionContext<TPayload>], boolean>
 ### `ActionProvider`
 
 Kind: callable.
+
+Owns the action registry and the run state. Mount one near the app shell.
 
 ```text
 ({ actions, runtime, feedback, guards, parseErrors, requestRunner, onOverlayOpenChange, onRunningChange, children, }: ActionProviderProps<TPayload, TValues, TResult>) => ReactNode
@@ -512,6 +524,9 @@ Kind: interface.
 
 Kind: callable.
 
+Declarative registration, for actions that belong to a subtree rather than a component.
+Registers `actions` under `scope` while mounted, and surfaces inside it resolve in that scope.
+
 ```text
 ({ scope, actions, children, }: ActionScopeProps<TPayload, TValues, TResult>) => ReactNode
 ```
@@ -629,6 +644,8 @@ ActionOverlayStrings
 
 Kind: callable.
 
+Identity helper that keeps the generics inferred.
+
 ```text
 (definition: ActionDefinition<TPayload, TValues, TResult>) => ActionDefinition<TPayload, TValues, TResult>
 ```
@@ -636,6 +653,9 @@ Kind: callable.
 ### `defineDeleteAction`
 
 Kind: callable.
+
+`defineAction` for a destructive action: its tone defaults to `"destructive"`, and its
+modality to a destructive `"alert"`.
 
 ```text
 (definition: Omit<ActionDefinition<TPayload, undefined, TResult>, 'modality'> & { modality: Omit<ActionModalityConfig<TPayload, undefined, TResult>, 'type' | 'tone'> & Partial<Pick<ActionModalityConfig<TPayload, undefined, TResult>, 'type' | 'tone'>>; }) => ActionDefinition<TPayload, undefined, TResult>
@@ -645,6 +665,9 @@ Kind: callable.
 
 Kind: callable.
 
+`defineAction` for an action that asks through a form: the modality's `type` defaults to
+`"dialog"`.
+
 ```text
 (definition: Omit<ActionDefinition<TPayload, TValues, TResult>, 'modality'> & { modality: Omit<ActionModalityConfig<TPayload, TValues, TResult>, 'type'> & Partial<Pick<ActionModalityConfig<TPayload, TValues, TResult>, 'type'>>; }) => ActionDefinition<TPayload, TValues, TResult>
 ```
@@ -652,6 +675,8 @@ Kind: callable.
 ### `defineSilentAction`
 
 Kind: callable.
+
+`defineAction` for an action that runs without asking: its modality is `"none"`.
 
 ```text
 (definition: Omit<ActionDefinition<TPayload, TValues, TResult>, 'modality'>) => ActionDefinition<TPayload, TValues, TResult>
@@ -785,6 +810,9 @@ Kind: callable.
 
 Kind: callable.
 
+One action by id, when a surface is not the right shape. `null` when none is registered in
+scope or it is not visible.
+
 ```text
 (actionId: string, options?: UseActionOptions<TPayload>) => ResolvedAction<TPayload, TValues, TResult> | null
 ```
@@ -804,6 +832,8 @@ Kind: interface.
 
 Kind: callable.
 
+The nearest `ActionScope`'s id, or the global scope. For a surface resolving its own actions.
+
 ```text
 () => string
 ```
@@ -811,6 +841,9 @@ Kind: callable.
 ### `useActionSnapshot`
 
 Kind: callable.
+
+Subscribes to the whole store. Prefer a narrower hook — this re-renders on any registry or
+run change.
 
 ```text
 () => ActionStoreSnapshot
@@ -820,6 +853,9 @@ Kind: callable.
 
 Kind: callable.
 
+The store itself, for logic the hooks do not cover. Throws outside an `ActionProvider` rather
+than returning null.
+
 ```text
 () => ActionStore
 ```
@@ -827,6 +863,8 @@ Kind: callable.
 ### `useActionSurface`
 
 Kind: callable.
+
+The actions for one surface, already filtered by visibility, permission, and guards.
 
 ```text
 (options: ActionSurfaceOptions<TPayload>) => ResolvedAction<TPayload, TValues, TResult>[]
@@ -836,6 +874,9 @@ Kind: callable.
 
 Kind: callable.
 
+Whichever action is currently open, or `null`. The outlet reads this; a bespoke outlet would
+too.
+
 ```text
 () => ResolvedAction<TPayload, TValues, TResult> | null
 ```
@@ -843,6 +884,9 @@ Kind: callable.
 ### `useLocalAction`
 
 Kind: callable.
+
+One action registered for the lifetime of the component that declares it, for a definition no
+other surface needs.
 
 ```text
 (definition: ActionDefinition<TPayload, TValues, TResult>, options?: UseLocalActionOptions<TPayload>) => ResolvedAction<TPayload, TValues, TResult> | null
@@ -861,6 +905,9 @@ Extends: `UseActionOptions<TPayload>`.
 ### `useRegisterActions`
 
 Kind: callable.
+
+Registers `actions` for as long as the calling component is mounted, under `options.scope` or
+else the nearest `ActionScope`'s.
 
 ```text
 (actions: readonly ActionDefinition<TPayload, TValues, TResult>[], options?: ActionRegistrationOptions) => void

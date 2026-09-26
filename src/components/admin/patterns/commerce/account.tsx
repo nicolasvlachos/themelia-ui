@@ -263,8 +263,9 @@ export interface InventoryLevelProps extends Omit<ComponentProps<typeof ContentB
 	productName: string
 	/** The chosen option, when the product has any. */
 	variant?: string
+	/** Units on hand. Zero reads as out, which is checked before low. */
 	stock: number
-	/** Below this, the level reads as low rather than healthy. */
+	/** At or below this, the level reads as low rather than healthy. */
 	reorderLevel: number
 	/** The gauge's upper bound. */
 	maxStock: number

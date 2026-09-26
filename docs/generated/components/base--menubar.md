@@ -35,6 +35,13 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The bar. Its menus are `DropdownMenu` roots, each holding a `MenubarTrigger` and a
+`DropdownMenuContent` with every row the dropdown menu offers.
+
+The menu itself is the dropdown menu module's, not a copy under a second name — so
+groups, labels, checkbox and radio items, submenus and the portal are the dropdown
+menu's parts too, and a reader who has learned one has learned the other.
+
 ```text
 ({ className, ...props }: MenubarProps) => import("react").JSX.Element
 ```
@@ -51,7 +58,9 @@ No own members are present in the normalized public snapshot.
 
 Kind: callable.
 
-One menu's word in the bar. Place it inside a `DropdownMenu`, beside its content.
+One menu's word in the bar, placed inside a `DropdownMenu` beside its
+`DropdownMenuContent`. Once a menu is open, moving along the bar opens the next without
+a second click — which is what makes a menubar a menubar rather than a row of dropdowns.
 
 ```text
 ({ className, ...props }: MenuPrimitive.Trigger.Props) => import("react").JSX.Element

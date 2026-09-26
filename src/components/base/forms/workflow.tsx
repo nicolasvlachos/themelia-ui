@@ -22,17 +22,24 @@ function isSimpleText(value: ReactNode): value is string | number | bigint {
 /* ── Section ──────────────────────────────────────────────────────────────────── */
 
 export interface FormSectionProps {
+	/** The header line. */
 	title?: ReactNode
+	/** The copy under the title. */
 	description?: ReactNode
-	/** Controls in the section header. */
+	/** Controls on the title's own line. */
 	actions?: ReactNode
 	children?: ReactNode
+	/** A footer below the fields. */
 	footer?: ReactNode
-	/** Outer chrome. Use `flat` when the section already sits inside a card. */
+	/**
+	 * Outer chrome. Use `flat` when the section already sits inside a card, which is most of
+	 * them.
+	 */
 	surface?: CardSurface
 	className?: string
 }
 
+/** A titled group of fields, on a card's surface. */
 export function FormSection({
 	title,
 	description,
@@ -63,12 +70,17 @@ export interface FormActionsBarProps {
 	children?: ReactNode
 	/** Status or context before the actions — "Last saved 2 minutes ago". */
 	leading?: ReactNode
+	/** The actions, in place of `children`. It wins when both are given. */
 	trailing?: ReactNode
-	/** Pins the bar to the bottom of its nearest scrolling ancestor. */
+	/**
+	 * Pins the bar to the foot of its nearest scrolling ancestor, for a form longer than the
+	 * viewport.
+	 */
 	sticky?: boolean
 	className?: string
 }
 
+/** A form's actions in one row, with room for status before them. */
 export function FormActionsBar({ children, leading, trailing, sticky = false, className }: FormActionsBarProps) {
 	const actions = trailing ?? children
 
@@ -99,9 +111,11 @@ export function FormActionsBar({ children, leading, trailing, sticky = false, cl
 /* ── Error summary ────────────────────────────────────────────────────────────── */
 
 export interface ErrorSummaryProps {
-	/** Overrides the counted heading. */
+	/** Replaces the heading, which otherwise counts the list. */
 	title?: ReactNode
+	/** Copy under the heading. */
 	description?: ReactNode
+	/** The problems, one per item. An item may link to its field. */
 	errors?: readonly ReactNode[]
 	/** A control beside the summary — "Review the first problem". */
 	action?: ReactNode
@@ -170,11 +184,16 @@ export interface DirtyStateBannerProps {
 	description?: ReactNode
 	/** Save and discard, usually. */
 	actions?: ReactNode
+	/**
+	 * Deliberately narrower than `AlertTone`: unsaved work is neither an error nor a
+	 * success.
+	 */
 	tone?: Extract<AlertTone, "neutral" | "info" | "warning">
 	strings?: StringsProp<DirtyStateBannerStrings>
 	className?: string
 }
 
+/** Tells the reader there are unsaved changes, with the actions that resolve them. */
 export function DirtyStateBanner({
 	title,
 	description,
@@ -199,6 +218,10 @@ export function DirtyStateBanner({
 export type SubmitState = "idle" | "submitting" | "succeeded"
 
 export interface SubmitStateButtonProps extends Omit<ButtonProps, "loading" | "children"> {
+	/**
+	 * Drives the label and the disabled state. The label is the message, so a spinner never
+	 * replaces the answer.
+	 */
 	state?: SubmitState
 	strings?: StringsProp<SubmitStateButtonStrings>
 }

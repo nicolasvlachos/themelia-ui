@@ -17,6 +17,10 @@ export interface MediaLibraryGridProps<TItem> extends MediaLibraryListProps<TIte
 	className?: string
 }
 
+/**
+ * The composable visual grid. Like the list and the table, it uses the same accessors and
+ * selection callbacks.
+ */
 export function MediaLibraryGrid<TItem>({ items, selectedSet, accessors, strings, onToggle, onDetails, density = "comfortable", selectionMode = "multiple", showMeta = true, renderItem, className }: MediaLibraryGridProps<TItem>) {
 	return <div data-media-density={density} className={cx("media-library-grid--component", styles.grid, className)}>
 		{items.map((item) => {
@@ -42,6 +46,10 @@ export interface MediaLibrarySelectionBarProps {
 	className?: string
 }
 
+/**
+ * Result counts, pending announcements, and selection of the visible results. Selections the
+ * current filters hide are preserved.
+ */
 export function MediaLibrarySelectionBar({ visibleCount, totalCount, selectedVisibleCount, onSelectVisible, onDeselectVisible, status, disabled, strings, className }: MediaLibrarySelectionBarProps) {
 	const copy = resolveStrings(defaultMediaLibraryStrings, strings)
 	const allSelected = visibleCount > 0 && selectedVisibleCount === visibleCount

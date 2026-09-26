@@ -15,6 +15,11 @@ export interface MetricSkeletonProps extends ComponentProps<"div"> {
 	variant?: MetricVariant
 }
 
+/**
+ * The placeholder a Metric shows while its figure is in flight, per variant — a single
+ * generic block would be the wrong height for five of the seven, and the reflow that causes
+ * is the thing a skeleton exists to avoid.
+ */
 export function MetricSkeleton({ variant = "default", className, ...props }: MetricSkeletonProps) {
 	return (
 		<ContentBlock

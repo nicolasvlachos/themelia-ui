@@ -3,11 +3,16 @@ import { createContext } from "react"
 import { DEFAULT_UI_CONFIG } from "./defaults"
 import type { ResolvedUIConfig, UIConfig } from "./types"
 
+/**
+ * The context itself. Exported for a consumer building a provider of their own; the hooks
+ * are the supported way in.
+ */
 export const UIConfigContext = createContext<ResolvedUIConfig>(DEFAULT_UI_CONFIG)
 
 /**
  * Whether a root or scope is above this point. `UIProvider` uses it to decide between
- * owning the document (outermost) and scoping its own subtree (nested).
+ * owning the document (outermost) and scoping its own subtree (nested), which is how nested
+ * providers avoid fighting over the document.
  */
 export const UINestedContext = createContext(false)
 

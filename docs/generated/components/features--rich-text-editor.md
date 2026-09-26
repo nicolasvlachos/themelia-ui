@@ -55,8 +55,9 @@ RichTextEditorStrings
 
 Kind: callable.
 
-Character and word counts. Over the limit the count turns error-toned; input is never
-refused, so the form decides.
+The word and character counts under the editor. Over the limit the count turns error-toned;
+input is never refused, so the form decides. Separate because a limit is often shown beside a
+submit button rather than under the field it applies to.
 
 ```text
 ({ text, maxLength, strings, className }: EditorCountsProps) => import("react").JSX.Element
@@ -150,6 +151,9 @@ Kind: type.
 
 Kind: callable.
 
+An editing surface with a toolbar and an imperative handle. Content is controlled through
+`value` and `onValueChange`; the handle covers what a prop cannot.
+
 ```text
 ({ engine, value, onValueChange, placeholder, compact, minHeight, maxHeight, disabled, showCounts, maxLength, extraToolbarItems, toolbarTrailing, footerSlot, hideSourceToggle, autoFocus, className, onCaretChange, strings, ref, }: RichTextEditorProps & { ref?: Ref<RichTextEditorHandle>; }) => import("react").JSX.Element
 ```
@@ -157,6 +161,10 @@ Kind: callable.
 ### `RichTextEditorHandle`
 
 Kind: interface.
+
+The editor's imperative handle, for what a prop cannot do: caret context, and replacing text
+before the caret. A superset of MentionEditorHandle, so the two plug together with no
+adapter.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -167,7 +175,7 @@ Kind: interface.
 | `isEmpty` | yes | `boolean` |  |
 | `clear` | yes | `void` |  |
 | `getCaretContext` | yes | `RichTextCaretContext \| null` |  |
-| `replaceBeforeCaret` | yes | `void` | Deletes the `length` characters before the caret and inserts `html` in their place,<br>as one operation (one undo entry, no intermediate caret state). |
+| `replaceBeforeCaret` | yes | `void` | Deletes the `length` characters before the caret and inserts `html` in their place, as<br>one operation, not a delete then an insert: the caret never visits an in-between state,<br>and undo gets one entry for what the writer experienced as one act. |
 
 ### `RichTextEditorProps`
 
@@ -175,23 +183,23 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `engine` | no | `RichTextEngine` | What edits the document. Defaults to TipTap with StarterKit and inline mentions; the<br>chrome (toolbar, source view, counts, footer, strings) is engine-independent. Install<br>the family's documented TipTap peers when importing the editor. |
-| `value` | yes | `string` | The document, as HTML. Controlled. |
-| `onValueChange` | yes | `(html: string) => void` |  |
-| `placeholder` | no | `string` | Drawn over the empty document. |
-| `compact` | no | `boolean` | Tightens the toolbar and shortens the body, for a composer rather than a page. |
+| `engine` | no | `RichTextEngine` | What edits the document. Defaults to TipTap with StarterKit and inline, atomic mentions;<br>supply a RichTextEngine for a custom schema or implementation, and the caller owns its<br>destruction. The chrome (toolbar, source view, counts, footer, strings) is<br>engine-independent. Install the family's documented TipTap peers when importing the<br>editor. @default TipTap |
+| `value` | yes | `string` | The document, as HTML. Controlled: parent echoes preserve the selection, and actual<br>external changes update the document, including while it is focused. Output is normalized<br>to the active engine's schema. |
+| `onValueChange` | yes | `(html: string) => void` | Receives the document, as HTML, after every edit. |
+| `placeholder` | no | `string` | Drawn over the first line of the empty document, because a contenteditable has no<br>placeholder attribute. Sitting over it rather than replacing the document means the caret<br>is already in the right place. |
+| `compact` | no | `boolean` | Tightens the toolbar and shortens the body, for a composer rather than a page: a line and a<br>half instead of a page — enough to look like it takes more than a word, without claiming a<br>screen for a one-sentence reply. |
 | `minHeight` | no | `string` |  |
 | `maxHeight` | no | `string` | Where the body starts scrolling instead of growing. |
 | `disabled` | no | `boolean` |  |
-| `showCounts` | no | `boolean` |  |
-| `maxLength` | no | `number` | Shown as "n / max". Does not truncate: the count reports, the form decides. |
-| `extraToolbarItems` | no | `ReadonlyArray<RichTextEditorToolbarItem>` |  |
-| `toolbarTrailing` | no | `ReactNode` | Pinned to the end of the toolbar, usually the submit control. |
-| `footerSlot` | no | `ReactNode` | Below the body: attachment chips, a hint. |
+| `showCounts` | no | `boolean` | Shows the word and character counts under the body. |
+| `maxLength` | no | `number` | Shown as "n / max". Over the limit the count turns error-toned; input is NOT refused — a<br>composer that stops accepting characters mid-word loses what the writer was in the middle<br>of. The count reports, the form decides. |
+| `extraToolbarItems` | no | `ReadonlyArray<RichTextEditorToolbarItem>` | Appended after the built-ins, behind a rule. Each takes an icon, a label used for both the<br>accessible name and the tooltip, and an optional `isActive`. |
+| `toolbarTrailing` | no | `ReactNode` | Pinned to the end of the toolbar, usually the submit control. Inside the frame, like<br>`footerSlot`, so the composer reads as one control. |
+| `footerSlot` | no | `ReactNode` | Below the body: attachment chips, a hint. Inside the frame, like `toolbarTrailing`, so the<br>composer reads as one control. |
 | `hideSourceToggle` | no | `boolean` |  |
 | `autoFocus` | no | `boolean` |  |
 | `className` | no | `string` |  |
-| `onCaretChange` | no | `() => void` | Fires after every input and every selection change (the caret can move without the<br>document changing); read `getCaretContext()` from the handle in response. |
+| `onCaretChange` | no | `() => void` | Fires after every input AND every selection change; read `getCaretContext()` from the<br>handle in response. Two events, because a caret moves without the document changing — and<br>a trigger detector watching only input misses the writer moving back into a half-typed<br>mention. |
 | `strings` | no | `Partial<RichTextEditorStrings>` |  |
 
 ### `RichTextEditorStrings`
@@ -209,6 +217,9 @@ Kind: interface.
 ### `RichTextEditorToolbar`
 
 Kind: callable.
+
+The formatting row, exported so an editor can be mounted with the toolbar somewhere else — a
+sticky bar above a long document, or a shared bar over two editors.
 
 ```text
 ({ buttons, extraToolbarItems, hideSourceToggle, sourceMode, toggleSourceMode, disabled, toolbarTrailing, strings, className, }: RichTextEditorToolbarProps) => import("react").JSX.Element

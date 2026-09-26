@@ -11,15 +11,20 @@ import { ValueRoot, type SpanProps, type ValueProps } from "./value"
 import { defaultInlineListStrings, type InlineListStrings } from "./primitives.strings"
 
 export interface InlineListProps extends SpanProps {
+	/**
+	 * Strings, not nodes: `Intl.ListFormat` formats text, and falling back to a hand join for
+	 * nodes would quietly lose the locale rules. A row of badges is a `Stack` with a gap.
+	 */
 	items?: readonly string[] | null
 	/**
 	 * `and` is "A, B and C"; `or` is "A, B or C"; `none` is "A, B, C", for lists that are
-	 * not prose. (Not `type`, which primitives use for the text tone.)
+	 * not prose, where a trailing "and" reads as a claim the data is not making. Not called
+	 * `type`: every other primitive spends that word on the text tone.
 	 */
 	join?: "and" | "or" | "none"
 	/**
-	 * `long` is "and", `short` is "&" where the locale has one, `narrow` drops it.
-	 * (Not `style`, the DOM attribute.)
+	 * `long` is "and", `short` is "&" where the locale has one, `narrow` drops it. Not called
+	 * `style`, which is the DOM attribute and would have shadowed it.
 	 */
 	joinStyle?: "long" | "short" | "narrow"
 	/**
@@ -28,6 +33,7 @@ export interface InlineListProps extends SpanProps {
 	 */
 	max?: number
 	locale?: string
+	/** Overrides the list's own copy: `more(count)`, which names the truncated remainder. */
 	strings?: Partial<InlineListStrings>
 	emptyLabel?: ReactNode
 	size?: ValueProps["size"]

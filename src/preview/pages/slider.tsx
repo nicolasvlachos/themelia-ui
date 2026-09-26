@@ -30,20 +30,8 @@ export function SliderPage() {
 			/>
 
 			<Example id="slider-api" title="API">
-				<PropTable owner="SliderField"
-					rows={[
-						{ name: "value / onValueChange", type: "number | number[]", description: "A single value, or two for a range." },
-						{ name: "min / max / step", type: "number", description: "Bounds and increment." },
-						{ name: "formatValue / unit", type: "(value: number) => string / string", description: "How the readout beside the track renders. unit is the suffix when formatValue is absent." },
-						{ name: "size", type: '"sm" | "md"', default: '"sm"', description: "Track and thumb size. A slider is dragged, which is why this one keeps a size prop." },
-						{ name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "A vertical slider takes its height from `--slider-vertical-min-h`." },
-						{ name: "onChange / onValueChange / onValueCommitted", type: "function", description: "A native-shaped event for form libraries, the bare value for everything else, and a commit that fires once on release rather than on every step." },
-						{ name: "showValue / formatValue", type: "boolean / (value) => string", description: "The readout beside the track, and how it is written. A range joins both ends with an en dash." },
-						{ name: "strings", type: "Partial<SliderStrings>", description: "Overrides this slider's own copy. `thumb` is a FUNCTION of the handle index, defaulting to \"Minimum\" and \"Maximum\" — two handles called the same thing are two handles a screen reader cannot tell apart, and a range may have more than two." },
-						{ name: "invalid", type: "boolean", description: "The error surface. The message stays on the FormField." },
-						{ name: "Slider", type: "component", description: "The bare control, without SliderField\u2019s label, value read-out and help text. For a slider inside a toolbar or a popover, where the surrounding surface already says what it adjusts." },
-					]}
-				/>
+				<PropTable owner="SliderField" />
+				<PropTable symbols={["Slider"]} />
 			</Example>
 		</ComponentPage>
 	)

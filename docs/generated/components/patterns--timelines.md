@@ -79,7 +79,7 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `entries` | yes | `ChangelogEntry[]` |  |
+| `entries` | yes | `ChangelogEntry[]` | id, kind, title, and optionally description, version, timestamp, author. `kind` is<br>added \| removed \| modified \| fixed. |
 | `strings` | no | `Partial<ChangelogStrings>` |  |
 
 ### `defaultChangelogStrings`
@@ -156,7 +156,7 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `milestones` | yes | `Milestone[]` |  |
+| `milestones` | yes | `Milestone[]` | `status` is completed \| inProgress \| upcoming \| blocked. `progress` is drawn only while<br>the milestone is in flight. |
 | `strings` | no | `Partial<MilestonesStrings>` |  |
 
 ### `Step`
@@ -203,7 +203,7 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `steps` | yes | `Step[]` |  |
+| `steps` | yes | `Step[]` | `status` is completed \| current \| upcoming. The vertical form also takes per-step<br>`content`. |
 | `strings` | no | `Partial<StepsStrings>` |  |
 
 ### `StepsStrings`

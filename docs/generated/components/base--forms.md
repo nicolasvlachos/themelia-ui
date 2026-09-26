@@ -55,6 +55,8 @@ SubmitStateButtonStrings
 
 Kind: callable.
 
+Tells the reader there are unsaved changes, with the actions that resolve them.
+
 ```text
 ({ title, description, actions, tone, strings, className, }: DirtyStateBannerProps) => import("react").JSX.Element
 ```
@@ -68,7 +70,7 @@ Kind: interface.
 | `title` | no | `ReactNode` |  |
 | `description` | no | `ReactNode` |  |
 | `actions` | no | `ReactNode` | Save and discard, usually. |
-| `tone` | no | `Extract<AlertTone, "neutral" \| "info" \| "warning">` |  |
+| `tone` | no | `Extract<AlertTone, "neutral" \| "info" \| "warning">` | Deliberately narrower than `AlertTone`: unsaved work is neither an error nor a<br>success. |
 | `strings` | no | `StringsProp<DirtyStateBannerStrings>` |  |
 | `className` | no | `string` |  |
 
@@ -98,9 +100,9 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `title` | no | `ReactNode` | Overrides the counted heading. |
-| `description` | no | `ReactNode` |  |
-| `errors` | no | `readonly ReactNode[]` |  |
+| `title` | no | `ReactNode` | Replaces the heading, which otherwise counts the list. |
+| `description` | no | `ReactNode` | Copy under the heading. |
+| `errors` | no | `readonly ReactNode[]` | The problems, one per item. An item may link to its field. |
 | `action` | no | `ReactNode` | A control beside the summary — "Review the first problem". |
 | `autoFocus` | no | `boolean` | Moves focus to the summary when it has problems, and again whenever the count changes —<br>what a failed submit wants. Items may be links to their fields<br>(`<a href="#email">Email is not valid.</a>`). |
 | `strings` | no | `StringsProp<ErrorSummaryStrings>` |  |
@@ -120,15 +122,19 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | no | `React.ReactNode` | Caption above the control, associated through `htmlFor`. |
-| `required` | no | `boolean` | Marks the field required and renders the indicator beside the label. |
+| `label` | no | `React.ReactNode` | Caption above the control, wired to it by a generated id unless the control has one of<br>its own, or `htmlFor` names one. |
+| `required` | no | `boolean` | Marks the label and the control: the indicator beside the label, and `aria-required`<br>on the control. |
 | `hint` | no | `React.ReactNode` | Lowest priority: shown only when neither `error` nor `helperText` is set. |
 | `helperText` | no | `React.ReactNode` | Middle priority: replaces `hint`, and is itself replaced by `error`. |
-| `error` | no | `React.ReactNode` | Highest priority. Announced politely and switches the control to its invalid state. |
+| `error` | no | `React.ReactNode` | Highest priority of the three supporting lines. Announced politely and switches the<br>control to its invalid state. |
 
 ### `FieldGroup`
 
 Kind: callable.
+
+Several fields sharing one label and one supporting line — a date range, a name split in
+two. A real `<fieldset>` and `<legend>`, so the legend is announced when focus enters the
+group.
 
 ```text
 ({ legend, description, className, children, ...props }: FieldGroupProps) => React.JSX.Element
@@ -142,12 +148,14 @@ Extends: `React.ComponentProps<"fieldset">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `legend` | no | `React.ReactNode` |  |
-| `description` | no | `React.ReactNode` |  |
+| `legend` | no | `React.ReactNode` | The group's one label, announced when focus enters the group. |
+| `description` | no | `React.ReactNode` | The group's one supporting line. |
 
 ### `FormActionsBar`
 
 Kind: callable.
+
+A form's actions in one row, with room for status before them.
 
 ```text
 ({ children, leading, trailing, sticky, className }: FormActionsBarProps) => import("react").JSX.Element
@@ -161,8 +169,8 @@ Kind: interface.
 | --- | :-: | --- | --- |
 | `children` | no | `ReactNode` | The actions. `trailing` wins when both are given. |
 | `leading` | no | `ReactNode` | Status or context before the actions — "Last saved 2 minutes ago". |
-| `trailing` | no | `ReactNode` |  |
-| `sticky` | no | `boolean` | Pins the bar to the bottom of its nearest scrolling ancestor. |
+| `trailing` | no | `ReactNode` | The actions, in place of `children`. It wins when both are given. |
+| `sticky` | no | `boolean` | Pins the bar to the foot of its nearest scrolling ancestor, for a form longer than the<br>viewport. |
 | `className` | no | `string` |  |
 
 ### `FormField`
@@ -213,13 +221,15 @@ Extends: `FieldChromeProps`, `Omit<React.ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `children` | yes | `FormFieldControl` | A direct control, or an explicit adapter for a wrapped/custom control. |
+| `children` | yes | `FormFieldControl` | A direct control, or an explicit adapter for a wrapped/custom control. Use the function<br>form when a consumer wrapper hides the actual control, and spread the supplied id and<br>aria props onto it. |
 | `orientation` | no | `"vertical" \| "horizontal"` | Label beside the control instead of above it — for settings rows. |
-| `htmlFor` | no | `string \| false` | The id the caption addresses, or `false` when there is no single labelable element.<br>A string is for a control that can't take the generated id. `false` is for a cluster<br>(repeater, checkbox group, segments): the field becomes a named `group` instead. Opt-in,<br>because a group sharing its control's name makes `getByLabelText` ambiguous. |
+| `htmlFor` | no | `string \| false` | The id the caption addresses, or `false` when there is no single labelable element.<br>A string associates the label with a control that already has an id, instead of the<br>generated one, or one that can't take it. `false` is for a cluster<br>(repeater, checkbox group, segments): the field becomes a named `group` instead. Opt-in,<br>because a group sharing its control's name makes `getByLabelText` ambiguous. |
 
 ### `FormSection`
 
 Kind: callable.
+
+A titled group of fields, on a card's surface.
 
 ```text
 ({ title, description, actions, children, footer, surface, className, }: FormSectionProps) => import("react").JSX.Element
@@ -231,12 +241,12 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `title` | no | `ReactNode` |  |
-| `description` | no | `ReactNode` |  |
-| `actions` | no | `ReactNode` | Controls in the section header. |
+| `title` | no | `ReactNode` | The header line. |
+| `description` | no | `ReactNode` | The copy under the title. |
+| `actions` | no | `ReactNode` | Controls on the title's own line. |
 | `children` | no | `ReactNode` |  |
-| `footer` | no | `ReactNode` |  |
-| `surface` | no | `CardSurface` | Outer chrome. Use `flat` when the section already sits inside a card. |
+| `footer` | no | `ReactNode` | A footer below the fields. |
+| `surface` | no | `CardSurface` | Outer chrome. Use `flat` when the section already sits inside a card, which is most of<br>them. |
 | `className` | no | `string` |  |
 
 ### `SubmitState`
@@ -267,7 +277,7 @@ Extends: `Omit<ButtonProps, "loading" | "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `state` | no | `SubmitState` |  |
+| `state` | no | `SubmitState` | Drives the label and the disabled state. The label is the message, so a spinner never<br>replaces the answer. |
 | `strings` | no | `StringsProp<SubmitStateButtonStrings>` |  |
 
 ### `SubmitStateButtonStrings`

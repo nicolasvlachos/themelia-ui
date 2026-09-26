@@ -20,15 +20,20 @@ import styles from "./address.module.css"
 
 export interface AddressProps
 	extends Omit<ComponentPropsWithoutRef<"address">, "children" | "color"> {
-	/** The address, as fields. Anything empty simply drops out. */
+	/**
+	 * The address, as fields — line1, line2, city, region, postalCode, country. Anything
+	 * empty simply drops out.
+	 */
 	value?: AddressParts | null
 	/**
-	 * `block` is the envelope form across several lines; `inline` is one line for a cell.
+	 * `block` is the envelope form: an `<address>` element with a line per row. `inline` is
+	 * one line, in a span, for a cell or a summary.
 	 */
 	format?: "block" | "inline"
 	/**
 	 * An ISO country code deciding the line order (`US`, `GB`, `DE`). Read from
-	 * `value.country` when that is a code; never inferred from the reader's locale.
+	 * `value.country` when that is a code; never inferred from the reader's locale — the
+	 * locale is a language and the address is a place.
 	 */
 	countryCode?: string | null
 	/** Overrides the ordering outright, for a country the kit does not know. */

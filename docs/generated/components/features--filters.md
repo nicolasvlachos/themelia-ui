@@ -44,6 +44,9 @@ One filter, applied.
 
 Kind: callable.
 
+The editor for an `async_select` filter: the select editor's staging, with options fetched
+through `useAsyncOptions`.
+
 ```text
 (props: FilterEditorProps) => import("react").JSX.Element
 ```
@@ -68,15 +71,17 @@ Async options for an `async_select`: one config owning search, caching, abort an
 
 Kind: callable.
 
-A cache with its own lifetime.
+The async option and label cache, with its own lifetime. FilterProvider makes one per
+mount, which is the isolating default: two roots on a page, or two users in a session, never
+see each other's results. Create one and pass it as FilterProvider's `cache` when results
+and pill labels should survive a navigation. A Map at module scope would be one cache for
+the whole realm — an embedded widget would be served the host application's options, and
+signing in as somebody else would keep the first user's labels.
 
-```tsx fragment — declaration JSDoc excerpt
-// One cache for the whole session, so filters survive navigation:
-const cache = useMemo(() => createFilterCache(), [])
-<FilterProvider cache={cache} …>
-```
+One cache for the whole session, so filters survive navigation:
 
-Passing none is the ordinary case — `FilterProvider` makes one per mount.
+  const cache = useMemo(() => createFilterCache(), [])
+  <FilterProvider cache={cache} …>
 
 ```text
 () => FilterCache
@@ -85,6 +90,9 @@ Passing none is the ordinary case — `FilterProvider` makes one per mount.
 ### `DateFilterEditor`
 
 Kind: callable.
+
+The editor for a `date` filter: one date, or a range for `between`. A date commits as it is
+picked.
 
 ```text
 ({ filter, value, onValueChange, onBack, triggerSource, }: FilterEditorProps) => import("react").JSX.Element
@@ -114,8 +122,8 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `display` | no | `FilterDisplay` |  |
-| `priority` | no | `number` | Lower sorts earlier in the bar. |
+| `display` | no | `FilterDisplay` | Where the filter lives in the bar. `always` keeps a pill on screen with no value, for the<br>one or two filters a screen is really about. `collapsed` hides it behind the add button<br>until it has one. `hidden` still applies but never draws — which is how a screen scopes a<br>list to the current account. |
+| `priority` | no | `number` | Sort order in the bar: lower first. Ties keep the authored order, so pills do not<br>reshuffle as values come and go. |
 | `hidden` | no | `boolean` |  |
 | `className` | no | `string` |  |
 
@@ -151,12 +159,12 @@ Kind: interface.
 | `icon` | no | `ReactNode` |  |
 | `displayConfig` | no | `DisplayConfig` |  |
 | `defaultValue` | no | `string[]` |  |
-| `validation` | no | `ValidationConfig` |  |
+| `validation` | no | `ValidationConfig` | `min` / `max` / `pattern` / `required`, plus a `custom` returning true or a message.<br>`zodValidator` and `predicateValidator` bridge the two shapes you probably already have. |
 | `dependencies` | no | `FilterDependency[]` |  |
 | `multiple` | no | `boolean` |  |
 | `closeOnSelect` | no | `boolean` | Closes the editor as soon as one option is picked. Single-select only. |
 | `maxSelected` | no | `number` |  |
-| `asyncConfig` | no | `AsyncSelectConfig` |  |
+| `asyncConfig` | no | `AsyncSelectConfig` | Options for an `async_select`: one channel owning search, caching, abort, and preload —<br>rather than a `loading` prop and an `options` prop the consumer keeps in step by hand. |
 | `dateFormat` | no | `{ display?: string; param?: string; }` |  |
 | `format` | no | `(value: string[]) => string` | Replaces the default rendering of the value in the pill. |
 
@@ -214,7 +222,11 @@ hides it behind the add button until it has one; `hidden` applies without any UI
 
 Kind: callable.
 
-Dispatches on the filter's type. One place that knows which editor a type gets.
+Dispatches on the filter's type to one of the five typed editors — SelectFilterEditor,
+DateFilterEditor, RangeFilterEditor, TagsFilterEditor and AsyncFilterEditor — behind one
+popover: the one place that knows which editor a type gets. Most editors STAGE their value
+and commit it on Apply — a multi-select that committed on each tick would be one request per
+tick; a date commits as it is picked.
 
 ```text
 (props: FilterEditorProps) => import("react").JSX.Element
@@ -236,6 +248,10 @@ Kind: interface.
 ### `FilterErrorBoundary`
 
 Kind: callable.
+
+Keeps one broken filter from taking the page with it. A filter's editor is the most
+consumer-owned surface in the feature — custom renders, fetched options, consumer value
+shapes — so it is the one most likely to throw.
 
 ```text
 (props: FilterErrorBoundaryProps) => import("react").JSX.Element
@@ -274,6 +290,9 @@ Kind: type.
 
 Kind: callable.
 
+The default bar: saved tabs, search boxes, active pills, always-shown pills, the add button,
+then Clear. For a custom bar, place the exported parts using `useFilterGroups()`.
+
 ```text
 ({ className, dynamicFilterOptions, loadingFilters, variant, showClearFilters, tabs, mobilePresentation, }: FilterLayoutProps) => import("react").JSX.Element
 ```
@@ -290,7 +309,7 @@ Kind: interface.
 | `variant` | no | `"default" \| "compact"` |  |
 | `showClearFilters` | no | `boolean` |  |
 | `tabs` | no | `FilterTab[]` |  |
-| `mobilePresentation` | no | `"sheet" \| "inline"` | Narrow viewports use a sheet; opt into inline controls for a custom mobile layout. |
+| `mobilePresentation` | no | `"sheet" \| "inline"` | `sheet` uses an inset filter sheet and a saved-view select below 768px; search stays<br>inline. In the sheet an editor's Apply commits values, Back discards unapplied edits, and<br>Done closes it; `mobileFilters`, `filterSummary` and `done` in `strings` localize it. Opt<br>into `inline` controls for a custom mobile layout. |
 
 ### `FilterOperator`
 
@@ -303,6 +322,10 @@ Kind: type.
 ### `FilterOperatorSelect`
 
 Kind: callable.
+
+The comparison segment of a pill. It renders as plain text when there is only one operator,
+because a menu offering a single choice is a control that cannot be used and still costs a
+chevron and a tab stop.
 
 ```text
 ({ operator, operators, onOperatorChange, }: FilterOperatorSelectProps) => import("react").JSX.Element
@@ -356,6 +379,10 @@ Kind: interface.
 
 Kind: callable.
 
+One applied filter, as three segments in a group rather than one button. “Status · is ·
+Confirmed ✕” is three separate decisions with three separate targets, and a single button
+makes two of them unreachable.
+
 ```text
 ({ filter, value, active, operator, operators, onOperatorChange, onValueChange, onClear, className, }: FilterPillProps) => import("react").JSX.Element
 ```
@@ -380,6 +407,9 @@ Kind: interface.
 
 Kind: callable.
 
+The state every part of a filter bar reads: the filters on offer, the applied ones, and the
+async option cache.
+
 ```text
 ({ children, filters, activeFilters, onFilterChange, navigating, strings, onError, cache, }: FilterProviderProps) => import("react").JSX.Element
 ```
@@ -391,10 +421,10 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `children` | yes | `ReactNode` |  |
-| `filters` | yes | `FilterConfig[]` |  |
-| `activeFilters` | yes | `ActiveFilter[]` |  |
-| `onFilterChange` | yes | `(filters: ActiveFilter[]) => void` |  |
-| `navigating` | no | `boolean` | A change is in flight. The bar dims rather than pretending it has applied. |
+| `filters` | yes | `FilterConfig[]` | Every filter the surface offers. A filter's `type` decides its editor and which<br>comparisons it offers. |
+| `activeFilters` | yes | `ActiveFilter[]` | The applied filters. Controlled: the provider never writes to its own state. |
+| `onFilterChange` | yes | `(filters: ActiveFilter[]) => void` | Receives every change to `activeFilters`, which the provider never makes itself. |
+| `navigating` | no | `boolean` | A change is in flight. Controls are disabled, open editors close, and an updating status<br>appears while the current results remain visible — the bar dims rather than pretending it<br>has applied. |
 | `strings` | no | `Partial<FilterStrings>` |  |
 | `onError` | no | `FilterErrorHandler` | Receives fetch, validation, apply, and render failures. |
 | `cache` | no | `FilterCache` | The async option and label cache. Defaults to one per mounted provider; pass a<br>`createFilterCache()` instance to keep results and pill labels across navigation. |
@@ -456,6 +486,10 @@ string | number | boolean | null | undefined | readonly (string | number | boole
 ### `FiltersButton`
 
 Kind: callable.
+
+The add-filter button and its two-step popup: the filters not yet applied, then that
+filter's editor with a way back. Two steps rather than nested submenus, which cannot be
+operated by touch and close under a date picker.
 
 **Use when:** A compact entry point to filters in an overlay, especially on mobile.
 
@@ -557,6 +591,10 @@ Kind: interface.
 
 Kind: callable.
 
+Saved filter sets as tabs, or as a compact select via `display`. Both compare values and
+operators exactly, preserve range endpoint order, and replace previous narrowing. `label`
+names the control; `strings.customView` describes a changed selection.
+
 ```text
 ({ tabs, display, label, className }: FilterTabsProps) => import("react").JSX.Element
 ```
@@ -567,7 +605,7 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `tabs` | yes | `FilterTab[]` |  |
+| `tabs` | yes | `FilterTab[]` | Saved sets. A tab is active only when every preset is applied AND nothing else is — so it<br>stops looking selected the moment the reader narrows further. |
 | `display` | no | `"tabs" \| "select"` | Compact saved-view control using the same presets and matching as the tab row. |
 | `label` | no | `string` | Accessible name for either presentation. |
 | `className` | no | `string` |  |
@@ -593,6 +631,10 @@ Kind: type.
 ### `FilterValueDisplay`
 
 Kind: callable.
+
+The value segment of a pill: up to two overlapped icons, then a count, before the label.
+Icons come before words — a reader scanning five pills recognises the status colours before
+reading any label.
 
 ```text
 ({ filter, value, className }: FilterValueDisplayProps) => import("react").JSX.Element
@@ -707,6 +749,9 @@ Kind: interface.
 
 Kind: callable.
 
+A plain query record → the active filters, for whichever router you have. Driven by the
+CONFIGS, not the query: an undeclared key is somebody else's parameter.
+
 ```text
 (filterConfigs: readonly FilterConfig[], query: FilterQueryInput, options?: FilterQueryOptions) => ActiveFilter[]
 ```
@@ -722,6 +767,9 @@ Kind: callable.
 ### `RangeFilterEditor`
 
 Kind: callable.
+
+The editor for a `range` filter: a minimum, and a maximum for `between`. It stages the
+bounds and commits them on Apply.
 
 ```text
 ({ filter, value, onValueChange, onBack, onClose, triggerSource, }: FilterEditorProps) => import("react").JSX.Element
@@ -741,6 +789,10 @@ Anything with Zod's `safeParse`. Zod 3, Zod 4, and a thin Valibot wrapper all fi
 
 Kind: callable.
 
+One inline search box. A `search` filter never becomes a pill: typing is the interaction,
+and burying a text field two presses deep is how a search box stops being used. It debounces
+locally, so the URL is not rewritten on every keystroke.
+
 ```text
 ({ filter, className }: SearchFilterProps) => import("react").JSX.Element
 ```
@@ -757,6 +809,8 @@ Kind: interface.
 ### `SearchFilters`
 
 Kind: callable.
+
+The inline search boxes, one per `search` filter. A search filter never becomes a pill.
 
 **Use when:** Search and filter controls for a resource collection.
 
@@ -785,6 +839,10 @@ Kind: interface.
 
 Kind: callable.
 
+The editor for a `select` or `multi_select` filter. A multi-select STAGES its value and
+commits on Apply — one that committed on each tick would be one request per tick; a single
+select with `closeOnSelect` commits at once.
+
 ```text
 (props: FilterEditorProps) => import("react").JSX.Element
 ```
@@ -792,6 +850,11 @@ Kind: callable.
 ### `serializeFiltersToQuery`
 
 Kind: callable.
+
+The active filters → a plain query record, laid over `currentQuery`, for whichever router
+you have. Driven by the CONFIGS, not the query: an undeclared key is somebody else's
+parameter, and is left alone. The operator travels in a companion key
+(`status=confirmed&status__op=not`), written only when it differs from the type's default.
 
 ```text
 (filterConfigs: readonly FilterConfig[], activeFilters: readonly ActiveFilter[], currentQuery?: FilterQueryInput, options?: FilterQueryOptions) => FilterQueryRecord
@@ -801,6 +864,8 @@ Kind: callable.
 
 Kind: callable.
 
+The editor for a `tags` filter. It stages the tags and commits them on Apply.
+
 ```text
 ({ filter, value, onValueChange, onBack, onClose, triggerSource, }: FilterEditorProps) => import("react").JSX.Element
 ```
@@ -808,6 +873,10 @@ Kind: callable.
 ### `useAsyncOptions`
 
 Kind: callable.
+
+The fetch, debounce and cache behind AsyncFilterEditor, for a caller supplying their own
+editor against the same lifecycle. Results are cached by filter and query for `staleTime`,
+each keystroke aborts the previous request, and only the newest response may land.
 
 ```text
 (filter: FilterConfig, search: string, isActive: boolean, options?: { onError?: FilterErrorHandler; }) => UseAsyncOptionsResult
@@ -831,7 +900,9 @@ Kind: interface.
 
 Kind: callable.
 
-The filter cache in scope, or `null` (then `useAsyncOptions` makes its own short-lived one).
+The filter cache in scope, or `null` outside a provider (then `useAsyncOptions` makes its own
+short-lived one). For a caller writing their own editor that wants to read or seed the same
+store `useAsyncOptions` uses.
 
 ```text
 () => FilterCache | null
@@ -840,6 +911,11 @@ The filter cache in scope, or `null` (then `useAsyncOptions` makes its own short
 ### `useFilterGroups`
 
 Kind: callable.
+
+Partitions the filter list into the four groups a bar draws differently — search, always,
+active, and behind the add button — for a consumer laying out their own bar. Exported so
+that consumer does not have to re-derive “which filters belong behind the add button”: a
+rule that is easy to get subtly wrong and impossible to notice when you do.
 
 ```text
 ({ dynamicFilterOptions, }?: UseFilterGroupsOptions) => UseFilterGroupsResult

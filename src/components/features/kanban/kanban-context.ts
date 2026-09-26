@@ -5,6 +5,7 @@ import type { KanbanContextValue } from "./kanban.types"
 const KanbanContext = createContext<KanbanContextValue | null>(null)
 export const KanbanContextProvider = KanbanContext.Provider
 
+/** The board's state, for a custom card or column rendered inside it. */
 export function useKanbanContext<T = unknown>(): KanbanContextValue<T> {
 	const context = useContext(KanbanContext)
 	if (!context) throw new Error("Kanban parts must be used inside a <Kanban> root.")
@@ -28,6 +29,7 @@ export interface KanbanItemContextValue<T = unknown> {
 const KanbanItemContext = createContext<KanbanItemContextValue | null>(null)
 export const KanbanItemContextProvider = KanbanItemContext.Provider
 
+/** One card's drag state, for a custom card that still needs to know it is being dragged. */
 export function useKanbanItemContext<T = unknown>(): KanbanItemContextValue<T> {
 	const context = useContext(KanbanItemContext)
 	if (!context) {

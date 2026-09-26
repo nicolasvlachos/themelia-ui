@@ -18,14 +18,32 @@
   - `themelia-ui/profiles/general.json` and `admin.json`: `modules` replaces `families`.
   - `find-component.mjs` takes `--module=` and `--tier=` instead of `--family=` and
     `--layer=`, and its `--json` records carry `module`, `tier` and `dependsOn`.
-- `Badge`'s `tone` and `variant`, and a metadata value's `badgeTone` and `badgeVariant`, no
-  longer accept `null`: leave the prop out for the default.
+- Props typed from a variant map are declared, so they no longer accept `null`: `Badge`'s
+  `tone` and `variant` (and a metadata value's `badgeTone` and `badgeVariant`), `Alert`'s
+  `tone` and `variant`, `Item`'s `surface`, `ItemMedia`'s `variant`, `InputGroupAddon`'s
+  `align` and `InputGroupButton`'s `size`. Leave the prop out for the default.
+- Every component that renders a link takes one `renderLink` shape, `LinkRenderer`, so one
+  router adapter serves the kit. `ActionMenu`, `ActionButtons`, a card's action strip,
+  `ResourceCell` and `SideNav` took shapes of their own; `ActionLinkRenderer`,
+  `ActionLinkRenderProps` and `ResourceCellLinkProps` are gone. A renderer returns one
+  element. `Pagination` takes `pageHref={(page) => …}`, which makes every control a link by
+  itself, and its `renderLink` receives the same props as every other renderer.
 
 ### Added
 
-- `LayoutLinkRenderer` and `LayoutLinkRenderProps`, the type of `renderLink`, are exported
-  from `themelia-ui/layout/sidebar`, `layout/header`, `layout/page`, `layout/auth`,
-  `layout/workspace` and `base/navigation`.
+- `LinkRenderer` and `LinkRenderProps`, the type of `renderLink`, are exported from every
+  module whose components take one: `base/action-menu`, `base/cards`, `base/navigation`,
+  `features/table`, and `layout/auth`, `header`, `navigation`, `page`, `settings`, `sidebar`
+  and `workspace`.
+
+### Fixed
+
+- `Time`, `DateTime` and comment timestamps follow the provider's `dates.timeFormat`; they
+  showed `HH:mm` whatever it was set to.
+- A `MetadataList` info button is named after its fact ("Amount info"), not after its
+  tooltip text.
+- A disabled `SideNav` entry renders without a destination; the keyboard could still reach
+  and follow it.
 
 ## 2.0.2 — 2026-09-26
 

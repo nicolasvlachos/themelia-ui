@@ -67,22 +67,8 @@ export function AnalyticsPage() {
 					a judgement about it, and inferring the second from the first paints a falling
 					churn rate red.
 				</Callout>
-				<PropTable owner="Metric"
-					rows={[
-						{ name: "data", type: "MetricData", required: true, description: "id, label, value, and optionally valueType, currency, change, sparkline, icon, subtitle, footer, trend. One shape for every surface here." },
-						{ name: "variant", type: '"default" | "card" | "compact" | "minimal" | "bordered" | "accent" | "colored"', default: '"default"', description: "Structural only — each reads the same data." },
-						{ name: "tone", type: "SemanticTone", default: '"neutral"', description: "Tints the bordered and colored variants. The kit's vocabulary, so never `danger` or `default`." },
-						{ name: "showSparkline / showChange / showIcon", type: "boolean", default: "true", description: "Drops a part the surrounding surface already states." },
-						{ name: "loading / error", type: "boolean", default: "false", description: "Loading reserves the resolved tile's height per variant, so a grid does not jump when data lands." },
-						{ name: "progress", type: "number", default: "0", description: "0–100. `colored` only — drives the segmented bar." },
-						{ name: "data.valueType", type: '"number" | "currency" | "percentage" | "duration" | "text"', description: "How formatMetricValue renders the figure. Currency shows the code rather than the symbol, because an admin screen routinely shows several at once and '$' does not say which dollar." },
-						{ name: "MetricGrid columns", type: '"auto" | 1 | 2 | 3 | 4 | 6', default: '"auto"', description: "auto picks the break points from the cell count." },
-						{ name: "MetricMicroGrid", type: "component", description: "Six dense cells, each pairing a figure with a different sketch \u2014 deliberately not six sparklines, because when every cell draws the same shape a reader scanning the block has nothing to tell them apart by except the label. One accent across the whole block: the SHAPE is the differentiator, and a hue per cell adds a second, weaker one." },
-						{ name: "MetricGradient", type: "component", description: "The one metric on a page allowed to shout. Its ramps come from the categorical chart palette, never the state tokens \u2014 a hero reports no success and no warning, and painting it `--success` would repaint it whenever a consumer retunes the colour that means things went right." },
-						{ name: "MetricTrendChip", type: "component", description: "The delta beside a figure. Direction and tone are separate props on purpose: direction is a fact about the number, tone is a judgement about it, and for churn, refunds or latency the two disagree. A chip deriving its colour from the arrow would paint a rising error rate green." },
-						{ name: "MetricSkeleton", type: "component", description: "The placeholder a Metric shows while its figure is in flight, per variant \u2014 a single generic block would be the wrong height for five of the seven, and the reflow that causes is the thing a skeleton exists to avoid." },
-					]}
-				/>
+				<PropTable owners={["Metric", "MetricData", "MetricGrid"]} />
+				<PropTable symbols={["MetricMicroGrid", "MetricGradient", "MetricTrendChip", "MetricSkeleton"]} />
 			</Example>
 		</ComponentPage>
 	)

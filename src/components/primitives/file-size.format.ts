@@ -34,6 +34,7 @@ export interface FileSizeFormatOptions {
 	locale?: string
 }
 
+/** The same formatting outside React. */
 export function formatFileSize(
 	value: number,
 	{ from = "bytes", base = "binary", locale }: FileSizeFormatOptions = {},

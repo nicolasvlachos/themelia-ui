@@ -10,6 +10,7 @@ import { Badge, type BadgeTone } from "@/components/base/badge"
 import { EmptyValue } from "@/components/primitives"
 import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
+import { resolveLinkRenderer, type LinkRenderer } from "@/lib/navigation"
 
 import styles from "./table.module.css"
 
@@ -23,13 +24,6 @@ export type ResourceCellBadge =
 	| ReactNode
 	| { id?: string; label: ReactNode; tone?: BadgeTone; icon?: ReactNode }
 
-export interface ResourceCellLinkProps {
-	href: string
-	children: ReactNode
-	className?: string
-	"aria-label"?: string
-}
-
 export interface ResourceCellProps {
 	title?: ReactNode
 	subtitle?: ReactNode
@@ -40,8 +34,8 @@ export interface ResourceCellProps {
 	imageUrl?: string
 	fallback?: ReactNode
 	href?: string
-	/** Routes the title through the app's router instead of a plain anchor. */
-	renderLink?: (props: ResourceCellLinkProps) => ReactNode
+	/** Routes the title through the app's router, as every component's `renderLink` does; without it, a plain anchor. */
+	renderLink?: LinkRenderer
 	emptyLabel?: ReactNode
 	className?: string
 }
@@ -74,9 +68,7 @@ export function ResourceCell({
 	const titleNode = <Text tag="span" weight="medium" truncate>{title}</Text>
 
 	const linked = href
-		? (renderLink?.({ href, children: titleNode, className: styles.resourceLink }) ?? (
-				<a href={href} className={styles.resourceLink}>{titleNode}</a>
-			))
+		? resolveLinkRenderer(renderLink)({ href, children: titleNode, className: styles.resourceLink })
 		: titleNode
 
 	const facts = Array.isArray(metadata)

@@ -12,14 +12,7 @@ export function BreadcrumbsPage() {
 			/>
 
 			<Example id="breadcrumbs-api" title="API">
-				<PropTable owner="Breadcrumbs"
-					rows={[
-						{ name: "items", type: "Crumb[]", required: true, description: "The trail. The last entry renders as the current page." },
-						{ name: "Crumb.render", type: "ReactElement", description: "A router link element, so the library never imports a router." },
-						{ name: "Crumb.label", type: "ReactNode", description: "What the crumb reads as." },
-						{ name: "separator", type: "ReactNode", description: "Replaces the chevron between crumbs. It is decorative either way — the trail's meaning is in the links." },
-					]}
-				/>
+				<PropTable owners={["Breadcrumbs", "Crumb"]} />
 			</Example>
 		</ComponentPage>
 	)

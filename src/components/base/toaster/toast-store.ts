@@ -11,19 +11,33 @@ export type ToastPosition =
 	| "bottom-center"
 	| "bottom-end"
 
+/** A button on a toast's pill. */
 export interface ToastAction {
+	/** The button's text. */
 	label: string
+	/** Runs on press, before the toast is dismissed. */
 	onClick: () => void
 }
 
+/** What a toast carries beyond its title, passed as `toast(title, options)`. */
 export interface ToastOptions {
+	/** Reusing an on-screen id updates that toast in place rather than stacking a second one. */
 	id?: string
+	/** A second line under the title. */
 	description?: ReactNode
 	/** Replaces the status glyph. */
 	icon?: ReactNode
-	/** Milliseconds before auto-dismissal. `Infinity` pins it open. */
+	/**
+	 * Lifetime in milliseconds before auto-dismissal. `Infinity` pins it open. Falls back to
+	 * the Toaster's `duration`.
+	 */
 	duration?: number
+	/**
+	 * A button on the pill — the undo for something that already happened. It dismisses the
+	 * toast after running.
+	 */
 	action?: ToastAction
+	/** A second, quieter button on the pill. Dismisses the toast after running. */
 	cancel?: ToastAction
 	/** Called after the toast leaves, whichever way it left. */
 	onDismiss?: (id: string) => void
@@ -82,8 +96,11 @@ export interface ToastStore {
 const LEAVE_MS = 150
 
 /**
- * A store with its own queue and timers, for a second, isolated Toaster (a host app and an
- * embedded widget). Most apps use the default `toastStore`.
+ * An independent queue with its own timers and its own bound `toast()`, for a second,
+ * isolated Toaster — a host application and an embedded widget. With only the module-level
+ * queue, one for the whole realm, two Toasters on a page would render the same toasts, and
+ * `pauseAll` would walk a timer map neither owned. The singleton stays the default, because
+ * `toast("Saved")` working with no wiring is the point of it.
  */
 export function createToastStore(): ToastStore {
 	const listeners = new Set<Listener>()
@@ -226,7 +243,10 @@ function resolve<T>(message: ReactNode | ((value: T) => ReactNode), value: T): R
 /** The default store, which `toast("Saved")` writes to from anywhere (no hook or context). */
 export const toastStore = createToastStore()
 
-/** `toast()` bound to the default store. */
+/**
+ * Raises a toast on the default store and returns its id. Also `.success`, `.info`,
+ * `.warning`, `.error`, `.loading`, `.promise` and `.dismiss`.
+ */
 export const toast = toastStore.toast
 export const dismiss: (id?: string) => void = toastStore.dismiss
 export const pauseAll: () => void = toastStore.pauseAll

@@ -15,6 +15,7 @@ export interface StringRepeaterProps {
 	strings?: Partial<RepeaterStrings>
 	emptyState?: React.ReactNode
 	maxItems?: number
+	/** Adds the drag handle and arrow-key reordering. */
 	sortable?: boolean
 	disabled?: boolean
 	invalid?: boolean
@@ -22,6 +23,7 @@ export interface StringRepeaterProps {
 	"aria-label"?: string
 }
 
+/** An ordered list of plain strings — alternate names, allowed domains, recipients. */
 export function StringRepeater({
 	value,
 	onValueChange,

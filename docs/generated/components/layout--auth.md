@@ -67,14 +67,14 @@ Extends: `Omit<ComponentProps<"div">, "title">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `surface` | no | `"card" \| "bare"` |  |
-| `eyebrow` | no | `ReactNode` |  |
-| `title` | no | `ReactNode` |  |
-| `description` | no | `ReactNode` |  |
-| `headerEnd` | no | `ReactNode` | A control at the end of the header row — a language switcher, a step count. |
+| `surface` | no | `"card" \| "bare"` | `bare` removes the framing and padding while keeping the header, content and footer<br>rhythm. |
+| `eyebrow` | no | `ReactNode` | Above the title, in the heading region. |
+| `title` | no | `ReactNode` | The heading region's title. |
+| `description` | no | `ReactNode` | Under the title, in the heading region. |
+| `headerEnd` | no | `ReactNode` | A control or status at the end of the header row — a language switcher, a step count. |
 | `banner` | no | `ReactNode` | A notice above the content: an expired link, a required invitation. |
 | `media` | no | `ReactNode` | A strip above the header — an illustration, a product screenshot. |
-| `footer` | no | `ReactNode` |  |
+| `footer` | no | `ReactNode` | Content in the footer band. |
 | `level` | no | `1 \| 2 \| 3` | Heading level for the title. A sign-in page's title is usually its h1. |
 
 ### `AuthFooterLinks`
@@ -93,7 +93,7 @@ Extends: `LayoutNavigationAdapter`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `links` | yes | `AuthLink[]` |  |
+| `links` | yes | `AuthLink[]` | The entries of a link row that wraps with the available width. |
 | `label` | no | `string` | Names the row for assistive technology — "Legal", "Language". |
 | `leadingIcon` | no | `ReactNode` | A glyph before the row, for a language selector. |
 | `className` | no | `string` |  |
@@ -130,21 +130,21 @@ Extends: `LayoutNavigationAdapter`, `Omit<ComponentProps<"div">, "title">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `contentRender` | no | `useRender.ComponentProps<"main">["render"]` | Replaces the element the shell is drawn as (`<main>` by default). Pass<br>`contentRender={<div />}` when embedded in a page that owns the main landmark. |
-| `brand` | no | `AuthBrand` | A rendered mark, or the parts for the shell to arrange. |
-| `eyebrow` | no | `ReactNode` |  |
-| `title` | no | `ReactNode` |  |
-| `description` | no | `ReactNode` |  |
+| `brand` | no | `AuthBrand` | A rendered mark, or the parts — `{ logo, label, description, href }` — for the shell to<br>arrange. |
+| `eyebrow` | no | `ReactNode` | Above the title, in the card's heading block. |
+| `title` | no | `ReactNode` | The card's heading. |
+| `description` | no | `ReactNode` | Under the title, in the card's heading block. |
 | `headerEnd` | no | `ReactNode` | A control at the end of the card's header row — a locale switcher, a step count. |
 | `banner` | no | `ReactNode` | A notice above the form — an expired link, a required invitation. |
 | `cardMedia` | no | `ReactNode` | A strip above the card's header. |
 | `cardFooter` | no | `ReactNode` | A band under the card's content, inside the frame. |
 | `postCard` | no | `ReactNode` | Content between the card and the link rows — "Don't have an account?" |
 | `footer` | no | `ReactNode` | Free content at the very bottom, after every link row. |
-| `footerLinks` | no | `AuthLink[]` | Help, status, contact. Data, so the separators are decided once. |
-| `policyLinks` | no | `AuthLink[]` | Terms, privacy, cookies. Rendered as its own row so screen readers can skip it. |
-| `languageLinks` | no | `AuthLink[]` |  |
+| `footerLinks` | no | `AuthLink[]` | Help, status, contact: a named row of links that wraps with the available width. Data,<br>so the separators are decided once. |
+| `policyLinks` | no | `AuthLink[]` | Terms, privacy, cookies: a named row of links that wraps with the available width,<br>rendered as its own row so screen readers can skip it. |
+| `languageLinks` | no | `AuthLink[]` | The languages, as a named row of links that wraps with the available width. |
 | `languageSwitcher` | no | `ReactNode` | A rendered control, when a link row is not the right shape for it. |
-| `size` | no | `AuthShellSize` |  |
+| `size` | no | `AuthShellSize` | The surface width. |
 | `variant` | no | `AuthShellVariant` | `card` (default) puts the content on a raised surface; `bare` does not; `split` puts<br>a panel beside it. |
 | `align` | no | `"center" \| "start"` | `center` uses spare height and lets tall content grow; `start` keeps the form at the top. |
 | `splitPanel` | no | `ReactNode` | The panel, for `variant="split"`. |
@@ -209,8 +209,8 @@ Extends: `ComponentProps<"div">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `form` | yes | `ReactNode` | The sign-in surface. Usually an AuthShell with `variant="bare"`. |
-| `panel` | no | `ReactNode` | Marketing copy, a testimonial, an illustration. Hidden below 56rem of available width. |
-| `panelPosition` | no | `AuthSplitSide` | Which side the panel is drawn on. The form stays first in the DOM either way. |
+| `panel` | no | `ReactNode` | Marketing copy, a testimonial, an illustration. Hidden below 56rem of available width<br>unless `panelMobile` stacks it; omitting it gives the form the full available width. |
+| `panelPosition` | no | `AuthSplitSide` | Which side the panel is drawn on. The form stays first in the DOM either way, so<br>reading and keyboard order remain form first. |
 | `panelMobile` | no | `AuthSplitMobile` | What the panel does when this container is narrower than 56rem. |
 
 ### `AuthSplitSide`
@@ -229,25 +229,29 @@ Kind: const.
 AuthShellStrings
 ```
 
-### `LayoutLinkRenderer`
+### `LinkRenderer`
 
 Kind: type.
 
-The navigation seam.
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
 
 ```tsx fragment — declaration JSDoc excerpt
-<AppSidebar renderLink={({ href, children, ...rest }) => (
-  <Link to={href ?? "#"} {...rest}>{children}</Link>
-)} />
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
 ```
 
 ```text
-(props: LayoutLinkRenderProps) => ReactNode
+(props: LinkRenderProps) => ReactElement
 ```
 
-### `LayoutLinkRenderProps`
+### `LinkRenderProps`
 
 Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -258,9 +262,11 @@ Kind: interface.
 | `rel` | no | `string` |  |
 | `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
 | `"aria-label"` | no | `string` |  |
-| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the shell styles the row itself. |
-| `disabled` | no | `boolean` |  |
-| `external` | no | `boolean` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ## Preview recipes
 

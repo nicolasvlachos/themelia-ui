@@ -13,24 +13,32 @@ import { defaultDecimalInputStrings, type DecimalInputStrings } from "./forms-nu
 import styles from "./forms-numeric.module.css"
 import { applyRounding, formatDecimal, normalizePastedNumber, type RoundingMode } from "./decimal.format"
 
-export interface DecimalInputProps extends Omit<InputProps, "type" | "inputMode"> {
-	/** Maximum fractional digits accepted, and used when normalising. */
+export interface DecimalInputProps
+	extends Omit<InputProps, "type" | "inputMode">,
+		Pick<React.ComponentProps<"input">, "value" | "onChange"> {
+	/** How many digits after the separator are accepted, and used when normalising. */
 	decimalPlaces?: number
+	/** The lower bound. */
 	min?: number
+	/** The upper bound. */
 	max?: number
+	/** Accepts a minus sign. */
 	allowNegative?: boolean
-	/** Lets the field be left blank. */
+	/** Lets the field be left blank: a blank is a valid value. */
 	allowEmpty?: boolean
-	/** Renders − / + buttons that snap the value to multiples of this. */
+	/** The increment: renders − / + buttons that snap the value to multiples of this. */
 	step?: number
 	/**
 	 * How halves are resolved when stepping or normalising. `half-even` (bankers' rounding)
 	 * avoids accumulating bias across many money rows.
 	 */
 	roundingMode?: RoundingMode
-	/** Pads to the full decimal places and clamps to the range on blur. */
+	/**
+	 * Rounds, pads to the full decimal places and clamps to the range when focus leaves.
+	 * Doing it per keystroke would fight the reader mid-number.
+	 */
 	normalizeOnBlur?: boolean
-	/** Overrides this field's own copy — the two icon-only steppers. */
+	/** Overrides this field's own copy — the two icon-only steppers, plus everything `Input` contributes. */
 	strings?: Partial<DecimalInputStrings>
 	/**
 	 * A unit rendered after the field, inside the stepper group — wrapping a stepped field in
@@ -84,6 +92,11 @@ function fireChange(target: HTMLInputElement, value: string, onChange?: InputPro
 	} as unknown as React.ChangeEvent<HTMLInputElement>)
 }
 
+/**
+ * The numeric field this family builds on: a text input, not `type="number"`, whose spinner
+ * is unstyleable, whose wheel changes values, and whose invalid input reads back as "". The
+ * `value` is always a plain string, never a number: read `event.target.value` in `onChange`.
+ */
 export const DecimalInput = React.forwardRef<HTMLInputElement, DecimalInputProps>(function DecimalInput(
 	{
 		decimalPlaces = 2,

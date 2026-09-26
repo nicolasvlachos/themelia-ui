@@ -55,6 +55,9 @@ Kind: callable.
 
 Kind: callable.
 
+The asset browser, as a panel. The detail panel is a column beside the grid, not an overlay,
+so several assets can be edited in a row.
+
 ```text
 ({ title, description, confirmLabel, cancelLabel, density, showMeta, allowUpload, typeFilters, confirmOnSelect, onConfirm, onCancel, onClose, bulkActions, strings, slots, className, collections, selectionMode, ...options }: MediaLibraryProps<TItem>) => import("react").JSX.Element
 ```
@@ -101,6 +104,8 @@ What a bulk action is handed; mirrors the product variants' context.
 
 Kind: callable.
 
+One asset in the grid, with its preview, name and selection control.
+
 ```text
 ({ item, selected, density, showMeta, accessors, strings, onToggle, onDetails, className, }: MediaLibraryCardProps<TItem>) => import("react").JSX.Element
 ```
@@ -142,6 +147,9 @@ Kind: type.
 ### `MediaLibraryDetailPanel`
 
 Kind: callable.
+
+The panel for the selected asset. The detail is a COLUMN rather than an overlay: an overlay
+would cover the grid the reader is comparing against.
 
 ```text
 ({ item, collections, accessors, strings, onClose, onUpdate, onRemove, renderDetail }: MediaLibraryDetailPanelProps<TItem>) => import("react").JSX.Element | null
@@ -205,7 +213,7 @@ Extends: `Omit<MediaLibraryProps<TItem>, "title" | "description">`.
 
 Kind: callable.
 
-The browser's empty state: bordered and inset, since it stands in for a grid.
+The state with no assets: bordered and inset, since it stands in for a grid.
 
 ```text
 ({ title, description, icon, action, className, }: MediaLibraryEmptyStateProps) => import("react").JSX.Element
@@ -259,6 +267,9 @@ Kind: interface.
 
 Kind: callable.
 
+The selection bar: what is chosen, and what can be done with it — the summary and the actions
+together.
+
 ```text
 ({ tab, selectedItems, selectedIds, selectionMode, stagedFiles, uploading, strings, visibleCount, totalCount, confirmLabel, cancelLabel, onCancel, onConfirm, onClearSelection, onUpload, onCancelUpload, chrome, className, }: MediaLibraryFooterProps<TItem>) => import("react").JSX.Element
 ```
@@ -266,6 +277,9 @@ Kind: callable.
 ### `MediaLibraryFooterActions`
 
 Kind: callable.
+
+The footer's verbs: what can be done with the selection, or with the staged files. Split from
+the summary, so a consumer can keep the count and supply their own verbs.
 
 ```text
 ({ tab, selectedIds, selectedItems, stagedFiles, uploading, strings, confirmLabel, cancelLabel, onCancel, onConfirm, onUpload, onCancelUpload, className, }: MediaLibraryFooterActionsProps<TItem>) => import("react").JSX.Element
@@ -305,8 +319,9 @@ Extends: `MediaLibraryFooterSummaryProps`, `Omit<MediaLibraryFooterActionsProps<
 
 Kind: callable.
 
-The footer line: a selection count while browsing, a staged-file tally while uploading.
-A live region, so keyboard picks inside the grid are announced.
+The footer line: what is chosen — a selection count while browsing, a staged-file tally while
+uploading. A live region, so keyboard picks inside the grid are announced. Split from the
+actions, so a consumer can keep the count and supply their own verbs.
 
 ```text
 ({ tab, selectedIds, selectionMode, stagedFiles, strings, visibleCount, totalCount, onClearSelection, className, }: MediaLibraryFooterSummaryProps) => import("react").JSX.Element
@@ -331,6 +346,9 @@ Kind: interface.
 ### `MediaLibraryGrid`
 
 Kind: callable.
+
+The composable visual grid. Like the list and the table, it uses the same accessors and
+selection callbacks.
 
 ```text
 ({ items, selectedSet, accessors, strings, onToggle, onDetails, density, selectionMode, showMeta, renderItem, className }: MediaLibraryGridProps<TItem>) => import("react").JSX.Element
@@ -412,6 +430,9 @@ Kind: type.
 
 Kind: callable.
 
+The composable compact rows. Like the grid and the table, it uses the same accessors and
+selection callbacks.
+
 ```text
 ({ items, selectedSet, accessors, strings, onToggle, onDetails, }: MediaLibraryListProps<TItem>) => import("react").JSX.Element
 ```
@@ -445,18 +466,21 @@ Extends: `Omit<ComponentPropsWithoutRef<"section">, "children" | "defaultValue" 
 | `density` | no | `MediaLibraryDensity` |  |
 | `showMeta` | no | `boolean` | Shows each asset's size and dimensions under its name. |
 | `allowUpload` | no | `boolean` |  |
-| `typeFilters` | no | `readonly MediaLibraryTypeFilter[]` |  |
-| `confirmOnSelect` | no | `boolean` | Picking confirms and the footer is removed. For a single-select picker. |
+| `typeFilters` | no | `readonly MediaLibraryTypeFilter[]` | The type filters the toolbar offers. A single type filter draws no control. |
+| `confirmOnSelect` | no | `boolean` | Picking is confirming: fires `onConfirm` immediately and removes the footer. The shape a<br>single-select picker wants. |
 | `onConfirm` | no | `(items: TItem[], ids: string[]) => void` |  |
 | `onCancel` | no | `() => void` |  |
 | `onClose` | no | `() => void` |  |
 | `bulkActions` | no | `(context: MediaLibraryBulkActionContext<TItem>) => ReactNode` | Bulk actions for a selection, rendered in the shared BatchActionBar. Browsing only:<br>a picker's footer already reports the selection, so the bar is suppressed there. |
 | `strings` | no | `Partial<MediaLibraryStrings>` |  |
-| `slots` | no | `MediaLibrarySlots<TItem>` |  |
+| `slots` | no | `MediaLibrarySlots<TItem>` | `headerStart`/`headerEnd`, `toolbarEnd`, `empty`, `loading`, `error`, `footer`,<br>`uploadEmpty`, plus `renderItem` and `renderDetail`. |
 
 ### `MediaLibrarySelectionBar`
 
 Kind: callable.
+
+Result counts, pending announcements, and selection of the visible results. Selections the
+current filters hide are preserved.
 
 ```text
 ({ visibleCount, totalCount, selectedVisibleCount, onSelectVisible, onDeselectVisible, status, disabled, strings, className }: MediaLibrarySelectionBarProps) => import("react").JSX.Element
@@ -636,7 +660,8 @@ Kind: type.
 
 Kind: callable.
 
-A metadata table for inspecting assets; selection and details remain separate controls.
+The composable metadata table for inspecting assets; selection and details remain separate
+controls. Like the grid and the list, it uses the same accessors and selection callbacks.
 
 ```text
 ({ items, selectedSet, accessors, strings, onToggle, onDetails, className, collections }: MediaLibraryTableProps<TItem>) => import("react").JSX.Element
@@ -656,6 +681,8 @@ Extends: `MediaLibraryListProps<TItem>`.
 ### `MediaLibraryToolbar`
 
 Kind: callable.
+
+Search, filter and view controls. A single type filter draws no control.
 
 ```text
 ({ query, onQueryChange, type, onTypeChange, typeFilters, collection, onCollectionChange, collections, sort, onSortChange, view, onViewChange, hasFilters, onClearFilters, strings, end, className, }: MediaLibraryToolbarProps) => import("react").JSX.Element
@@ -728,6 +755,9 @@ Kind: interface.
 
 Kind: callable.
 
+The drop target and queue inside the library, so uploading happens where the assets are
+rather than behind a second dialog.
+
 ```text
 ({ stagedFiles, uploading, uploadOptions, collections, strings, onAddFiles, onRemoveFile, onClear, onOptionsChange, onStart, onCancel, empty, showActions, }: MediaLibraryUploadPanelProps) => import("react").JSX.Element
 ```
@@ -772,8 +802,10 @@ Kind: type.
 
 Kind: callable.
 
-The asset's picture, or a stand-in: a broken `src` falls back to the type glyph, and
-`tint` gives an asset without a preview a recognisable colour.
+The thumbnail that handles an image, a video, a PDF and a file with no preview at all — the
+last being the case a gallery usually forgets. It shows the asset's picture, or a stand-in: a
+broken `src` falls back to the type glyph, and `tint` gives an asset without a preview a
+recognisable colour.
 
 ```text
 ({ item, accessors, className, }: { item: TItem; accessors: ResolvedMediaLibraryAccessors<TItem>; className?: string; }) => import("react").JSX.Element
@@ -782,6 +814,10 @@ The asset's picture, or a stand-in: a broken `src` falls back to the type glyph,
 ### `MediaResourceGallery`
 
 Kind: callable.
+
+The assets attached to a record, in order — with reorder, cover, and detach. Not a browser:
+`onAdd` usually opens the library dialog. Reordering uses move buttons rather than drag, so it
+works with keyboard, screen reader and touch.
 
 ```text
 ({ items, accessors: accessorsProp, title, description, primaryId, onPrimaryChange, onRemove, onReorder, onAdd, maxItems, layout, density, readOnly, empty, action, renderItem, strings, className, ...props }: MediaResourceGalleryProps<TItem>) => import("react").JSX.Element
@@ -859,6 +895,10 @@ Kind: callable.
 
 Kind: callable.
 
+The whole state without the chrome. Its stable `refetch()` retries the current query without
+clearing filters or selection; `fetchError` identifies fetch failures separately from
+mutation errors.
+
 ```text
 ({ items: itemsProp, fetcher, accessors: accessorsProp, selectionMode, value, defaultValue, onValueChange, onItemUpdate, applyItemPatch, onItemDelete, onUpload, onError, tab: tabProp, defaultTab, onTabChange, view: viewProp, defaultView, onViewChange, query: queryProp, defaultQuery, onQueryChange, type: typeProp, defaultType, onTypeChange, collection: collectionProp, defaultCollection, onCollectionChange, sort: sortProp, defaultSort, onSortChange, uploadOptions: uploadOptionsProp, defaultUploadOptions, onUploadOptionsChange, }: UseMediaLibraryOptions<TItem>) => ResolvedMediaLibraryState<TItem>
 ```
@@ -869,18 +909,18 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | no | `readonly TItem[]` | Ignored entirely when `fetcher` is set. |
-| `fetcher` | no | `MediaLibraryFetcher<TItem>` | Supplying it hands searching, filtering, and sorting to the server. |
-| `accessors` | no | `MediaLibraryAccessors<TItem>` |  |
-| `collections` | no | `readonly MediaLibraryCollectionOption[]` |  |
-| `selectionMode` | no | `MediaLibrarySelectionMode` |  |
-| `value` | no | `readonly string[]` |  |
-| `defaultValue` | no | `readonly string[]` |  |
-| `onValueChange` | no | `(ids: string[], items: TItem[]) => void` |  |
-| `onItemUpdate` | no | `(item: TItem, patch: MediaLibraryItemPatch) => void \| Promise<void>` |  |
-| `applyItemPatch` | no | `(item: TItem, patch: MediaLibraryItemPatch) => TItem` | Applies editable fields to a custom record shape without mutating the original. |
-| `onItemDelete` | no | `(item: TItem) => void \| Promise<void>` |  |
-| `onUpload` | no | `MediaLibraryUploadHandler<TItem>` |  |
+| `items` | no | `readonly TItem[]` | The assets, when the library searches, filters and sorts them itself. Supply this or<br>`fetcher`, not both: it is ignored entirely when `fetcher` is set. |
+| `fetcher` | no | `MediaLibraryFetcher<TItem>` | Supplying it hands searching, filtering, and sorting to the server: the fetcher owns all<br>three, and `items` is ignored. |
+| `accessors` | no | `MediaLibraryAccessors<TItem>` | Reads id, name, src, type, size, and the rest off your own shape. Supply only the ones that<br>differ from MediaLibraryItem's names. |
+| `collections` | no | `readonly MediaLibraryCollectionOption[]` | The collections the toolbar offers. |
+| `selectionMode` | no | `MediaLibrarySelectionMode` | `single` replaces the selection rather than toggling off, so a picker never ends up empty<br>by accident. |
+| `value` | no | `readonly string[]` | Controlled: the selected ids. |
+| `defaultValue` | no | `readonly string[]` | Uncontrolled: the ids selected at first. |
+| `onValueChange` | no | `(ids: string[], items: TItem[]) => void` | Receives the selected ids, controlled or not, and the resolved assets too, so a consumer<br>never has to look them up again. |
+| `onItemUpdate` | no | `(item: TItem, patch: MediaLibraryItemPatch) => void \| Promise<void>` | Awaited. A rejection rolls the local overlay back and reaches `onError`; the panel stays<br>open so the reader can see what failed. |
+| `applyItemPatch` | no | `(item: TItem, patch: MediaLibraryItemPatch) => TItem` | Maps a standard metadata patch onto a consumer-owned record shape, without mutating the<br>original. Defaults to merging fields onto MediaLibraryItem. |
+| `onItemDelete` | no | `(item: TItem) => void \| Promise<void>` | Awaited. A rejection keeps the asset and reaches `onError`; the panel stays open so the<br>reader can see what failed. |
+| `onUpload` | no | `MediaLibraryUploadHandler<TItem>` | Receives the files, the upload options, and helpers carrying stable staged files and IDs,<br>an AbortSignal, `setProgress`, and `setFileStatus`. Failed files stay queued for retry.<br>Returning the created items adds AND selects them — the reader uploaded them in order to<br>use them. |
 | `onError` | no | `(error: unknown) => void` | Receives failures from the fetcher, uploads, updates, and deletes. |
 | `tab` | no | `MediaLibraryTab` |  |
 | `defaultTab` | no | `MediaLibraryTab` |  |

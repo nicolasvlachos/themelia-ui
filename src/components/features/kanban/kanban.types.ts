@@ -44,14 +44,32 @@ export interface KanbanContextValue<T = unknown> {
 }
 
 export interface KanbanProps<T = unknown> {
+	/**
+	 * The board, as `Record<columnId, T[]>`: a plain object because that is what a board is,
+	 * and it serialises without a thought. Column titles and limits are the consumer's — only
+	 * the ORDER lives here.
+	 */
 	value: KanbanValue<T>
+	/** Receives the whole next board after every move. */
 	onValueChange: (next: KanbanValue<T>) => void
 	/** A stable id per item. Everything else is keyed off this. */
 	getItemValue: (item: T) => string
-	/** Fires after a move lands, with both ends of it, for persistence or analytics. */
+	/**
+	 * Fires after a move lands, with both ends of it — from column and index, to column and
+	 * index. The seam for persistence or analytics. Idempotent: a move that changes nothing
+	 * fires nothing.
+	 */
 	onItemMove?: (event: KanbanItemMoveEvent<T>) => void
+	/**
+	 * Each card's actions, or a function of the card. The factory form is what a real board
+	 * needs: “Reopen” belongs on a card in Done and nowhere else, and a fixed list would render
+	 * it everywhere and disable it.
+	 */
 	itemActions?: KanbanItemActions<T>
-	/** Fires on a card click that was not the handle or the menu. */
+	/**
+	 * Fires on a card click that was not the handle or the menu — both mark themselves, so a
+	 * click on an icon inside either is caught too.
+	 */
 	onItemClick?: (item: T) => void
 	strings?: Partial<KanbanStrings>
 	className?: string
@@ -100,6 +118,9 @@ export interface KanbanItemActionsProps {
 
 export interface KanbanOverlayProps<T = unknown> {
 	className?: string
-	/** Replaces the default outline with the consumer's own card. */
+	/**
+	 * Replaces the default outline with the consumer's own card. The default is a placeholder
+	 * rather than a copy of the card, because the card's markup lives at the call site.
+	 */
 	render?: (context: { item: T | null; columnId: string | null }) => ReactNode
 }

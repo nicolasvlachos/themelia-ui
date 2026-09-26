@@ -29,6 +29,11 @@ import styles from "./global-search.module.css"
 const MIN_QUERY_LENGTH = 2
 const NO_RESULTS: never[] = []
 
+/**
+ * The command palette's panel. It does not search: `query` is controlled and `results` are
+ * given; debounce, endpoint and ranking belong to the app. It owns the regions, grouping, and
+ * an arrow-key highlight.
+ */
 export function GlobalSearch<TGroup extends string = string>({
 	results = [],
 	query,

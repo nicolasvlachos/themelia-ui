@@ -24,13 +24,7 @@ export function SpinnerPage() {
 			/>
 
 			<Example id="spinner-api" title="API">
-				<PropTable owner="Spinner"
-					rows={[
-						{ name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "The one place a size prop survives — a spinner has no content to scale with." },
-						{ name: "tone", type: "SemanticTone", default: '"primary"', description: "Borrows the button tone contract, so a spinner beside an action matches it." },
-						{ name: "label", type: "ReactNode", description: "Visible label beside the ring, and the announced status. Without one the spinner is decorative and hidden from assistive technology." },
-					]}
-				/>
+				<PropTable owner="Spinner" />
 			</Example>
 		</ComponentPage>
 	)

@@ -12,14 +12,7 @@ export function CheckboxPage() {
 			/>
 
 			<Example id="checkbox-api" title="API">
-				<PropTable owner="Checkbox"
-					rows={[
-						{ name: "label", type: "ReactNode", description: "Rendered beside the box and wired to it, so the text is part of the target." },
-						{ name: "indeterminate", type: "boolean", default: "false", description: "The dash state, for a parent whose children are partly checked. Independent of checked." },
-						{ name: "checked / defaultChecked", type: "boolean", description: "Controlled and uncontrolled state." },
-						{ name: "onChange", type: "ChangeEventHandler<HTMLInputElement>", description: "Receives the native change event. Read event.target.checked for the next state." },
-					]}
-				/>
+				<PropTable owners={["Checkbox"]} />
 			</Example>
 		</ComponentPage>
 	)

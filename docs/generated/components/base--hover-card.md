@@ -39,6 +39,8 @@ Kind: callable.
 
 Kind: callable.
 
+What the card shows: the preview itself, placed against its trigger.
+
 ```text
 ({ container, align, side, sideOffset, className, ...props }: HoverCardContentProps) => import("react").JSX.Element
 ```
@@ -52,9 +54,9 @@ Extends: `PreviewCard.Popup.Props`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `container` | no | `UIPortalContainer` | Where the popup renders. Defaults to the nearest `UIPortalHost`, else the primitive's<br>own target. |
-| `align` | no | `PreviewCard.Positioner.Props["align"]` |  |
-| `side` | no | `PreviewCard.Positioner.Props["side"]` |  |
-| `sideOffset` | no | `PreviewCard.Positioner.Props["sideOffset"]` |  |
+| `align` | no | `PreviewCard.Positioner.Props["align"]` | How the card lines up along the side it opens on: `start`, `center` or `end`. |
+| `side` | no | `PreviewCard.Positioner.Props["side"]` | Where the card opens relative to its trigger: `top`, `right`, `bottom` or `left`, or<br>the logical `inline-start` or `inline-end`. |
+| `sideOffset` | no | `PreviewCard.Positioner.Props["sideOffset"]` | The gap between the trigger and the card, in pixels. |
 
 ### `HoverCardProps`
 
@@ -68,8 +70,12 @@ No own members are present in the normalized public snapshot.
 
 Kind: callable.
 
-Trigger with default delays. `closeDelay` keeps the card open while the pointer crosses
-the gap to it.
+What opens the card. Hover and focus both open it, because a card reachable only by
+pointer is unreachable to a keyboard.
+
+The delays live here, on the trigger. `closeDelay` is the load-bearing one: it keeps the
+card open while the pointer crosses the gap to it, and without it the card closes as the
+pointer leaves the trigger.
 
 ```text
 ({ delay, closeDelay, ...props }: HoverCardTriggerProps) => import("react").JSX.Element

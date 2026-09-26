@@ -26,6 +26,10 @@ export interface DateTimeInputProps {
 	"aria-required"?: boolean | "true" | "false"
 }
 
+/**
+ * A date and a time in one field: a date picker and time segments editing one value, stored
+ * as an ISO string.
+ */
 export const DateTimeInput = forwardRef<HTMLDivElement, DateTimeInputProps>(function DateTimeInput(
 	{
 		id,

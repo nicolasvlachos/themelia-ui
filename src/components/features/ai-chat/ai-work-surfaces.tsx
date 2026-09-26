@@ -70,6 +70,11 @@ function ToolDetail({
 	)
 }
 
+/**
+ * One tool call: its name, status, arguments and result. With neither args nor result (nor an
+ * error) the header is a plain row, not a disclosure — a control that opens an empty panel is
+ * worse than no control.
+ */
 export function AiToolCall({
 	name,
 	status,
@@ -251,6 +256,10 @@ function TaskRow({
 	)
 }
 
+/**
+ * One task of an agent's plan, with its status and its sub-tasks. A task reports what is being
+ * done, not merely that something is.
+ */
 export function AiTask({
 	task,
 	density = "compact",
@@ -276,6 +285,7 @@ const AGENT_STATUS = {
 	offline: "neutral",
 } satisfies Record<AiAgentStatus, BadgeTone>
 
+/** The identity strip that says which agent is answering. */
 export function AiAgent({
 	name,
 	icon,
@@ -333,6 +343,10 @@ export function AiAgent({
 	)
 }
 
+/**
+ * The approval prompt that stops an agent before it acts. A confirmation is a decision surface:
+ * it does not auto-dismiss.
+ */
 export function AiConfirmation({
 	title,
 	description,

@@ -1,6 +1,7 @@
 export interface SlugifyOptions {
 	/** Character joining words. */
 	separator?: string
+	/** Lower-cases the slug. */
 	lowercase?: boolean
 	/** Strips leading and trailing separators. */
 	trim?: boolean

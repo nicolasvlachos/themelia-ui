@@ -13,7 +13,10 @@ export interface EmptyIllustrationProps {
 	className?: string
 }
 
-/** Three stacked cards fading out — the generic "no records". */
+/**
+ * Three stacked cards fading out — the generic "no records". Drawn from the theme's own
+ * tokens rather than shipped as an image, so it follows a rebrand and costs no request.
+ */
 export function StackedCardsIllustration({ className }: EmptyIllustrationProps) {
 	return (
 		<div aria-hidden className={cx("stacked-cards-illustration--component", styles.stack, className)}>
@@ -31,7 +34,11 @@ export function StackedCardsIllustration({ className }: EmptyIllustrationProps) 
 	)
 }
 
-/** Two staggered documents — for invoices, reports, files. */
+/**
+ * Two staggered documents — for invoices, reports, files. Drawn from the theme's own tokens
+ * rather than shipped as an image, so an empty state cannot be the one thing on the page
+ * that ignores a rebrand — and it costs no request.
+ */
 export function DocumentStackIllustration({ className }: EmptyIllustrationProps) {
 	return (
 		<div aria-hidden className={cx("document-stack-illustration--component", styles.docs, className)}>
@@ -53,7 +60,11 @@ export function DocumentStackIllustration({ className }: EmptyIllustrationProps)
 	)
 }
 
-/** An open tray under a check — for "all caught up", not for "nothing exists". */
+/**
+ * An open tray under a check — for "all caught up", not for "nothing exists". Drawn from the
+ * theme's own tokens rather than shipped as an image, so it follows a rebrand and costs no
+ * request.
+ */
 export function InboxCleanIllustration({ className }: EmptyIllustrationProps) {
 	return (
 		<div aria-hidden className={cx("inbox-clean-illustration--component", styles.inbox, className)}>
@@ -76,7 +87,11 @@ export function InboxCleanIllustration({ className }: EmptyIllustrationProps) {
 	)
 }
 
-/** A magnifier on a soft disc — for "nothing matches", not "nothing exists". */
+/**
+ * A magnifier on a soft disc — for "nothing matches", not "nothing exists". Drawn from the
+ * theme's own tokens rather than shipped as an image, so it follows a rebrand and costs no
+ * request.
+ */
 export function SearchGlassIllustration({ className }: EmptyIllustrationProps) {
 	return (
 		<div aria-hidden className={cx("search-glass-illustration--component", styles.glass, className)}>
@@ -85,7 +100,11 @@ export function SearchGlassIllustration({ className }: EmptyIllustrationProps) {
 	)
 }
 
-/** Three overlapping discs — for people: members, customers, contributors. */
+/**
+ * Three overlapping discs — for people: members, customers, contributors. Drawn from the
+ * theme's own tokens rather than shipped as an image, so it follows a rebrand and costs no
+ * request.
+ */
 export function UsersCircleIllustration({ className }: EmptyIllustrationProps) {
 	return (
 		<div aria-hidden className={cx("users-circle-illustration--component", styles.users, className)}>

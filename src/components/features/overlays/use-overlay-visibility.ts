@@ -40,6 +40,11 @@ function resolve(next: SetStateAction<boolean>, current: boolean): boolean {
 	return typeof next === "function" ? (next as (open: boolean) => boolean)(current) : next
 }
 
+/**
+ * One overlay's state, controlled or not, so a component that supports both its own trigger
+ * and external openers keeps one source of truth: `open`, `setOpen`, `show`, `hide`, `toggle`,
+ * and `overlayProps`, which spreads straight onto any overlay in the kit.
+ */
 export function useOverlayVisibility({
 	defaultOpen = false,
 	open: controlledOpen,
@@ -94,7 +99,11 @@ export type UseOverlayVisibilityGroupReturn<TKey extends string = string> = Reco
 	UseOverlayVisibilityReturn
 >
 
-/** Several overlays keyed by name from one hook, coordinated by `closeOthersOnOpen`. */
+/**
+ * Several overlays keyed by name from one hook: one handle per overlay when a component drives
+ * several — create, edit, delete. Three separate useState calls is how two of them end up open
+ * at once; `closeOthersOnOpen` is for a set where two open at once is never right.
+ */
 export function useOverlayVisibilityGroup<TKey extends string>(
 	keys: readonly TKey[],
 	{

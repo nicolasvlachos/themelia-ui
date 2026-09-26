@@ -27,6 +27,7 @@ export interface AuthLink {
 }
 
 export interface AuthFooterLinksProps extends LayoutNavigationAdapter {
+	/** The entries of a link row that wraps with the available width. */
 	links: AuthLink[]
 	/** Names the row for assistive technology — "Legal", "Language". */
 	label?: string

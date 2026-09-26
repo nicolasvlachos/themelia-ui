@@ -12,15 +12,24 @@ import { cx } from "@/lib/cx"
 import styles from "./forms.module.css"
 
 export interface FieldChromeProps {
-	/** Caption above the control, associated through `htmlFor`. */
+	/**
+	 * Caption above the control, wired to it by a generated id unless the control has one of
+	 * its own, or `htmlFor` names one.
+	 */
 	label?: React.ReactNode
-	/** Marks the field required and renders the indicator beside the label. */
+	/**
+	 * Marks the label and the control: the indicator beside the label, and `aria-required`
+	 * on the control.
+	 */
 	required?: boolean
 	/** Lowest priority: shown only when neither `error` nor `helperText` is set. */
 	hint?: React.ReactNode
 	/** Middle priority: replaces `hint`, and is itself replaced by `error`. */
 	helperText?: React.ReactNode
-	/** Highest priority. Announced politely and switches the control to its invalid state. */
+	/**
+	 * Highest priority of the three supporting lines. Announced politely and switches the
+	 * control to its invalid state.
+	 */
 	error?: React.ReactNode
 }
 
@@ -40,13 +49,18 @@ export type FormFieldControl =
 export interface FormFieldProps
 	extends FieldChromeProps,
 		Omit<React.ComponentProps<"div">, "children"> {
-	/** A direct control, or an explicit adapter for a wrapped/custom control. */
+	/**
+	 * A direct control, or an explicit adapter for a wrapped/custom control. Use the function
+	 * form when a consumer wrapper hides the actual control, and spread the supplied id and
+	 * aria props onto it.
+	 */
 	children: FormFieldControl
 	/** Label beside the control instead of above it — for settings rows. */
 	orientation?: "vertical" | "horizontal"
 	/**
 	 * The id the caption addresses, or `false` when there is no single labelable element.
-	 * A string is for a control that can't take the generated id. `false` is for a cluster
+	 * A string associates the label with a control that already has an id, instead of the
+	 * generated one, or one that can't take it. `false` is for a cluster
 	 * (repeater, checkbox group, segments): the field becomes a named `group` instead. Opt-in,
 	 * because a group sharing its control's name makes `getByLabelText` ambiguous.
 	 */

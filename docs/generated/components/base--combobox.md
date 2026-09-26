@@ -31,6 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+An arrow pointing from the popup to its anchor, part of its placement machinery.
+
 ```text
 ({ className, ...props }: ComboboxPrimitive.Arrow.Props) => import("react").JSX.Element
 ```
@@ -38,6 +40,8 @@ Kind: callable.
 ### `ComboboxBackdrop`
 
 Kind: callable.
+
+A layer behind the open popup, part of its placement machinery.
 
 ```text
 ({ className, ...props }: ComboboxPrimitive.Backdrop.Props) => import("react").JSX.Element
@@ -60,6 +64,9 @@ a chip with richer content, `strings.removeChip` supplies the name instead.
 
 Kind: callable.
 
+The multi-select field: the container is the field, and the input sits among the chips so
+typing continues where the last selection ended.
+
 ```text
 ({ className, invalid, ...props }: ComboboxPrimitive.Chips.Props & { invalid?: boolean; }) => import("react").JSX.Element
 ```
@@ -68,6 +75,8 @@ Kind: callable.
 
 Kind: callable.
 
+The query input among the chips, so typing continues where the last selection ended.
+
 ```text
 ({ className, ...props }: ComboboxPrimitive.Input.Props) => import("react").JSX.Element
 ```
@@ -75,6 +84,8 @@ Kind: callable.
 ### `ComboboxClear`
 
 Kind: callable.
+
+The control that empties the field.
 
 ```text
 ({ className, children, ...props }: ComboboxPrimitive.Clear.Props) => import("react").JSX.Element
@@ -92,6 +103,9 @@ typeof ComboboxPrimitive.Collection
 
 Kind: callable.
 
+Renders only when a search returns nothing, so "no matches" never flashes before the first
+keystroke.
+
 ```text
 ({ className, ...props }: ComboboxPrimitive.Empty.Props) => import("react").JSX.Element
 ```
@@ -99,6 +113,8 @@ Kind: callable.
 ### `ComboboxGroup`
 
 Kind: callable.
+
+A division of the results.
 
 ```text
 ({ className, ...props }: ComboboxPrimitive.Group.Props) => import("react").JSX.Element
@@ -108,6 +124,8 @@ Kind: callable.
 
 Kind: callable.
 
+A group's caption.
+
 ```text
 ({ className, ...props }: ComboboxPrimitive.GroupLabel.Props) => import("react").JSX.Element
 ```
@@ -115,6 +133,8 @@ Kind: callable.
 ### `ComboboxInput`
 
 Kind: callable.
+
+The query field.
 
 ```text
 ({ className, ...props }: ComboboxPrimitive.Input.Props) => import("react").JSX.Element
@@ -124,8 +144,8 @@ Kind: callable.
 
 Kind: callable.
 
-The input with its trailing chevron and optional clear button, padded so text never
-runs under them. `strings` names the two trailing controls.
+The input with its trailing chevron and optional clear button. Its trailing padding is
+computed from the same variables that size the controls, so text never runs under them.
 
 ```text
 ({ className, showClear, invalid, strings, ...props }: ComboboxPrimitive.Input.Props & { showClear?: boolean; invalid?: boolean; strings?: Partial<Pick<ComboboxStrings, "clear" | "toggle">>; }) => import("react").JSX.Element
@@ -135,6 +155,9 @@ runs under them. `strings` names the two trailing controls.
 
 Kind: callable.
 
+A result row with a trailing selection check. Children go in the label slot. The same row
+the pickers render.
+
 ```text
 ({ className, children, ...props }: ComboboxPrimitive.Item.Props) => import("react").JSX.Element
 ```
@@ -143,7 +166,7 @@ Kind: callable.
 
 Kind: callable.
 
-The indicator on its own, for a row that lays its parts out differently.
+The tick on a chosen item, on its own, for a row that lays its parts out differently.
 
 ```text
 ({ className, children, ...props }: ComboboxPrimitive.ItemIndicator.Props) => import("react").JSX.Element
@@ -153,6 +176,8 @@ The indicator on its own, for a row that lays its parts out differently.
 
 Kind: callable.
 
+The results.
+
 ```text
 ({ className, ...props }: ComboboxPrimitive.List.Props) => import("react").JSX.Element
 ```
@@ -160,6 +185,9 @@ Kind: callable.
 ### `ComboboxPopup`
 
 Kind: callable.
+
+The list's surface, anchored to the field's width — unlike a dropdown menu, a listbox that
+does not line up with its field reads as a different control.
 
 ```text
 ({ className, ...props }: ComboboxPrimitive.Popup.Props) => import("react").JSX.Element
@@ -169,9 +197,10 @@ Kind: callable.
 
 Kind: callable.
 
-The search band inside the popup, for the `ComboboxTrigger` shape: focus lands here when
-the popup opens, typing filters the list, and the arrow keys and Enter drive it. Give it
-an `aria-label` — its placeholder is not a name.
+The search band inside the popup, for a combobox opened from a button (`ComboboxTrigger`)
+rather than typed into: focus lands here when the popup opens, typing filters the list,
+and the arrow keys and Enter still move through the list below it. Give it an
+`aria-label` — its placeholder is not a name.
 
 ```text
 ({ className, ...props }: ComboboxPrimitive.Input.Props) => import("react").JSX.Element
@@ -181,7 +210,8 @@ an `aria-label` — its placeholder is not a name.
 
 Kind: callable.
 
-The popup's portal, routed through the nearest `UIPortalHost` like every kit popup.
+The popup's portal, which escapes an ancestor that clips or transforms. Routed through the
+nearest `UIPortalHost` like every kit popup.
 
 ```text
 ({ container, ...props }: ComboboxPrimitive.Portal.Props) => import("react").JSX.Element
@@ -190,6 +220,8 @@ The popup's portal, routed through the nearest `UIPortalHost` like every kit pop
 ### `ComboboxPositioner`
 
 Kind: callable.
+
+Anchors the popup to the trigger, and flips it when there is no room below.
 
 ```text
 ({ className, sideOffset, ...props }: ComboboxPrimitive.Positioner.Props) => import("react").JSX.Element
@@ -206,6 +238,8 @@ typeof ComboboxPrimitive.Root
 ### `ComboboxSeparator`
 
 Kind: callable.
+
+A rule between groups of results.
 
 ```text
 ({ className, ...props }: ComboboxPrimitive.Separator.Props) => import("react").JSX.Element
@@ -235,9 +269,9 @@ Kind: interface.
 
 Kind: callable.
 
-The whole field as one trigger — a select-like combobox with no free text. Pair it with
-`ComboboxPopupInput`: Base UI drives the list's keyboard cursor from an input. For a
-short list with no search, use `Select`.
+The whole field as one trigger, for a value that can only come from the list — a
+select-like combobox with no free text. Pair it with `ComboboxPopupInput`: Base UI drives
+the list's keyboard cursor from an input. For a short list with no search, use `Select`.
 
 ```text
 ({ className, children, ...props }: ComboboxPrimitive.Trigger.Props) => import("react").JSX.Element
@@ -246,6 +280,8 @@ short list with no search, use `Select`.
 ### `ComboboxValue`
 
 Kind: callable.
+
+The current selection, shown in a `ComboboxTrigger`.
 
 ```text
 ({ placeholder, ...props }: ComboboxPrimitive.Value.Props & { placeholder?: ReactNode; }) => import("react").JSX.Element

@@ -17,6 +17,10 @@ export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 	ref?: Ref<HTMLAnchorElement>
 }
 
+/**
+ * The plain anchor the three contact primitives are built on: the kit's `TextLink`, or the
+ * empty mark when there is nothing to link.
+ */
 export function Link({ children, emptyLabel = EMPTY, className, ref, ...props }: LinkProps) {
 	if (children === null || children === undefined || children === "") {
 		return <span className={cx("link--component", styles.empty, className)}>{emptyLabel}</span>
@@ -30,10 +34,16 @@ export function Link({ children, emptyLabel = EMPTY, className, ref, ...props }:
 }
 
 export interface EmailProps extends Omit<LinkProps, "href" | "children" | "ref"> {
+	/** The address. Becomes both the text and the `mailto:` href. */
 	value?: string | null
-	/** Shown instead of the address — a person's name, for instance. */
+	/**
+	 * Shown instead of the address — a person's name, for instance. The href is still the
+	 * address.
+	 */
 	display?: ReactNode
+	/** Prefills the message's subject. Encoded into the `mailto:`, not concatenated into it. */
 	subject?: string
+	/** Prefills the message's body. Encoded into the `mailto:`, not concatenated into it. */
 	body?: string
 	ref?: Ref<HTMLAnchorElement>
 }
@@ -51,7 +61,9 @@ export function Email({ value, display, subject, body, ...props }: EmailProps) {
 }
 
 export interface PhoneProps extends Omit<LinkProps, "href" | "children" | "ref"> {
+	/** The number as stored. Displayed with its grouping; dialled without it. */
 	value?: string | null
+	/** Shown instead of the number. */
 	display?: ReactNode
 	ref?: Ref<HTMLAnchorElement>
 }
@@ -67,11 +79,13 @@ export function Phone({ value, display, ...props }: PhoneProps) {
 }
 
 export interface UrlProps extends Omit<LinkProps, "href" | "children" | "ref"> {
+	/** The address. The host is shown; the whole thing stays in the href. */
 	value?: string | null
+	/** Shown instead of the host. */
 	display?: ReactNode
 	/**
-	 * Opens in a new tab, with the rel hardening that requires — and with the announcement
-	 * it requires too. See `strings.opensInNewTab`.
+	 * Opens in a new tab WITH `rel="noopener noreferrer"` — the two are not separable — and
+	 * with the announcement a new tab requires too. See `strings.opensInNewTab`.
 	 */
 	external?: boolean
 	/** Overrides the new-tab announcement. */

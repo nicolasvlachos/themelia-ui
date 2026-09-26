@@ -39,6 +39,10 @@ export interface AiChatAttachmentsStripProps {
 	className?: string
 }
 
+/**
+ * The files attached to the turn being written, as one of the strips above the composer's
+ * field; a sent turn's attachments render as one too.
+ */
 export function AiChatAttachmentsStrip({
 	attachments,
 	onRemove,
@@ -270,6 +274,10 @@ export interface AiChatConversationProps {
 	strings?: Partial<AiChatConversationStrings>
 }
 
+/**
+ * The transcript. Exported, like the composer and the empty state, because a consumer building
+ * a different chat layout against the same data should get the parts without taking the shell.
+ */
 export function AiChatConversation({
 	messages,
 	renderMessage,
@@ -347,6 +355,11 @@ export interface AiChatEmptyStateProps {
 	className?: string
 }
 
+/**
+ * The state before the first turn. Exported, like the transcript and the composer, because a
+ * consumer building a different chat layout against the same data should get the parts
+ * without taking the shell.
+ */
 export function AiChatEmptyState({
 	title,
 	description,
@@ -378,6 +391,7 @@ export interface AiChatQueueProps {
 	strings?: Partial<AiChatQueueStrings>
 }
 
+/** The strip above the composer holding the messages waiting to send. */
 export function AiChatQueue({
 	items,
 	hideHeader = false,
@@ -439,6 +453,7 @@ export interface AiChatSuggestionsRowProps<TData = unknown> {
 	strings?: Partial<AiChatSuggestionsStrings>
 }
 
+/** The strip above the composer offering prompt suggestions. */
 export function AiChatSuggestionsRow<TData = unknown>({
 	suggestions,
 	onPick,
@@ -507,6 +522,10 @@ export interface AiChatPromptInputProps {
 	strings?: Partial<AiChatPromptInputStrings>
 }
 
+/**
+ * The composer. Exported, like the transcript and the empty state, because a consumer building
+ * a different chat layout against the same data should get the parts without taking the shell.
+ */
 export function AiChatPromptInput({
 	value,
 	onValueChange,

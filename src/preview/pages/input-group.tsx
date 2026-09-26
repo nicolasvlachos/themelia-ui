@@ -35,12 +35,13 @@ export function InputGroupPage() {
 
 			<Example id="input-group-api" title="API">
 				<PropTable
-					rows={[
-						{ name: "InputGroup", type: "component", description: 'role="group" and the shell. Owns the border and the focus ring for whatever is inside, so the control strips its own.' },
-						{ name: "InputGroupAddon align", type: '"inline-start" | "inline-end" | "block-start" | "block-end"', default: '"inline-start"', description: "Where the addon attaches. The inline edges sit on the control's line; the block edges take a row of their own, for a toolbar above a textarea or a hint below one." },
-						{ name: "InputGroupButton size", type: '"xs" | "sm" | "icon-xs" | "icon-sm"', default: '"xs"', description: "The sizes that fit inside a field. A full-height Button would set the field's height rather than fit in it — which is the one place this kit keeps a size prop on a control." },
-						{ name: "InputGroupText", type: "component", description: "Secondary text at the group's own size — a unit, a domain suffix, a counter. Inherits the size so it cannot drift from the input beside it." },
-						{ name: "InputGroupInput / InputGroupTextarea", type: "component", description: "The kit's Input and Textarea with their chrome removed, because the group is drawing it. Every other prop passes through." },
+					owners={[
+						"InputGroup",
+						"InputGroupAddon",
+						"InputGroupButton",
+						"InputGroupText",
+						"InputGroupInput",
+						"InputGroupTextarea",
 					]}
 				/>
 			</Example>

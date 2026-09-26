@@ -30,7 +30,10 @@ export interface GlobalSearchResult<TGroup extends string = string> {
 	/** The only line guaranteed to render. */
 	title: string
 	subtitle?: string
-	/** The bucket this lands in. Also a tab, unless `tabs` says otherwise. */
+	/**
+	 * The bucket this lands in. Tabs and group headings are both generated from the groups that
+	 * actually returned something, unless `tabs` says otherwise.
+	 */
 	group: TGroup
 	avatar?: { src?: string; initials: string; tone?: GlobalSearchTone }
 	thumbnail?: { src?: string; icon?: ReactNode; tone?: GlobalSearchTone }
@@ -87,22 +90,49 @@ export interface GlobalSearchSlots<TGroup extends string = string> {
 }
 
 export interface GlobalSearchProps<TGroup extends string = string> {
+	/**
+	 * One shape for every kind, with optional parts: avatar OR thumbnail, a badge, meta, tags, a
+	 * timestamp, a trailing figure. A union per kind would be honest about the data and useless
+	 * for a list that renders them all the same way.
+	 */
 	results?: readonly GlobalSearchResult<TGroup>[]
-	/** Controlled. The palette never searches; it renders what it is given. */
+	/** Controlled, always. The palette never searches; it renders what it is given. */
 	query: string
+	/** Receives every edit to `query`. */
 	onQueryChange: (query: string) => void
+	/** Fires on click and on Enter, with the whole result including its free-form `data`. */
 	onResultSelect?: (result: GlobalSearchResult<TGroup>) => void
-	/** Fires on Escape. The dialog presentation wires this to closing itself. */
+	/**
+	 * Fires on Escape. The dialog presentation wires this to closing itself; a panel embedded in
+	 * a page usually wants it too.
+	 */
 	onClose?: () => void
-	/** Swaps the input's clear button for a spinner and shows the loading region. */
+	/**
+	 * Swaps the input's clear control for a spinner and shows the loading region. Hidden results
+	 * cannot be selected while the loading region is visible.
+	 */
 	loading?: boolean
+	/**
+	 * Recent queries and curated suggestions. The palette has no memory of its own — whose
+	 * recents these are is a question only the app can answer.
+	 */
 	idleSections?: readonly GlobalSearchIdleSection[]
-	/** Names a group in the tab strip and above its results. Otherwise the key shows. */
+	/**
+	 * Names a group in the tab strip and above its results. Without it the raw key shows, which
+	 * is a useful default only while you are wiring it up.
+	 */
 	groupLabels?: Partial<Record<TGroup, ReactNode>>
 	autoFocus?: boolean
 	strings?: Partial<GlobalSearchStrings>
+	/**
+	 * `input`, `tabs`, `idle`, `empty`, `loading`, `footer`, and `renderResult` — every region,
+	 * replaceable one at a time.
+	 */
 	slots?: GlobalSearchSlots<TGroup>
-	/** Replaces the auto-generated "All + one per group" strip. */
+	/**
+	 * Replaces the auto-generated "All + one per group" strip, for a fixed set of tabs that
+	 * should not appear and disappear with the results.
+	 */
 	tabs?: readonly GlobalSearchTab<TGroup>[]
 	className?: string
 }

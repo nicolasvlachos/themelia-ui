@@ -51,13 +51,25 @@ const ALL_SECTIONS: InventorySectionName[] = [
 
 export interface InventorySectionProps
 	extends Omit<ComponentProps<typeof ContentBlock>, "children" | "onChange"> {
+	/**
+	 * The record: sku, barcode, trackQuantity, available, committed, incoming,
+	 * lowStockThreshold, inventoryPolicy, binLocation, requiresShipping, weight,
+	 * countryOfOrigin, hsCode, tags.
+	 */
 	value: InventorySectionValue
-	/** Reports the field, its new value, and what it replaced. Omit for a read-only record. */
+	/**
+	 * Reports the field, its new value, and what it replaced — an undo stack that has to
+	 * remember that itself is one that gets it wrong once. Omit for a read-only record.
+	 */
 	onFieldChange?: (change: {
 		field: InventorySectionField
 		value: InventorySectionValue[InventorySectionField]
 		previousValue: InventorySectionValue[InventorySectionField]
 	}) => void
+	/**
+	 * Narrows what is drawn, so one surface serves a simple product, a variant and a location
+	 * record without forking. Every section by default.
+	 */
 	sections?: InventorySectionName[]
 	strings?: Partial<InventorySectionStrings>
 }

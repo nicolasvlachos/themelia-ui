@@ -28,15 +28,8 @@ export function AlertPage() {
 			</Example>
 
 			<Example id="alert-api" title="API">
-				<PropTable owner="Alert"
-					rows={[
-						{ name: "tone", type: '"neutral" | "primary" | "secondary" | "info" | "success" | "warning" | "destructive"', default: '"neutral"', description: "Semantic colour intent. Never 'default' — the vocabulary is fixed across the kit." },
-						{ name: "variant", type: '"default" | "inverse"', default: '"default"', description: "Structural presentation. inverse is a solid slab for a single emphatic notice; the tone still describes the intent." },
-						{ name: "icon", type: "ReactNode | false", description: "Defaults to the tone's conventional glyph. Pass a node to replace it, or false for none." },
-						{ name: "AlertAction", type: "component", description: "A single control, positioned in reserved inline space so it never overlaps the text." },
-						{ name: "AlertMetadata items", type: "{ label, value }[]", description: "Key/value detail under the message — a request id, a timestamp." },
-					]}
-				/>
+				<PropTable owners={["Alert", "AlertMetadata"]} />
+				<PropTable symbols={["AlertTitle", "AlertDescription", "AlertAction"]} />
 			</Example>
 		</ComponentPage>
 	)

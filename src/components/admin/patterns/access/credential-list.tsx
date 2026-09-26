@@ -38,6 +38,7 @@ export interface Credential {
 /* `onCopy` is omitted: a div's is a clipboard EVENT handler, and ours reports an item. */
 export interface CredentialListProps
 	extends Omit<ComponentProps<"div">, "children" | "title" | "onCopy"> {
+	/** id, name, value, and `displayValue` for the masked form shown in the row. */
 	items: Credential[]
 	title?: ReactNode
 	/** Uncontrolled. */
@@ -47,7 +48,7 @@ export interface CredentialListProps
 	onOpenChange?: (open: boolean) => void
 	/** Omit to hide the add action. */
 	onAdd?: () => void
-	/** Omit to hide the delete entry. The confirmation belongs to the caller. */
+	/** Omit to hide the delete action. The delete confirmation belongs to the caller. */
 	onDelete?: (id: string, item: Credential) => void
 	/** Fires after the value reaches the clipboard — for analytics. */
 	onCopy?: (id: string, item: Credential) => void

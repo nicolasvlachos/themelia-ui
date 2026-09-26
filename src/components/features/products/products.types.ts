@@ -17,7 +17,10 @@ import type * as Strings from "./products.strings"
 /** No `secondary`: it means "not this one" rather than a state a product can be in. */
 export type ProductTone = Exclude<SemanticTone, "secondary">
 
-/** `card` frames the surface; `embedded` renders it bare inside one that already exists. */
+/**
+ * How ProductOptionsMatrix and ProductVariantsBulkTable draw their frame: `card` frames the
+ * surface; `embedded` renders it bare inside one that already exists.
+ */
 export type ProductSurface = "card" | "embedded"
 
 /* ── Readiness ────────────────────────────────────────────────────────────────────── */
@@ -27,6 +30,12 @@ export interface ProductReadinessItem {
 	label: ReactNode
 	description?: ReactNode
 	value?: ReactNode
+	/**
+	 * The row's state colour: `neutral`, `primary`, `success`, `warning`, `destructive` or
+	 * `info`. No `secondary`: it means “not this one”, which is not a state a product can be in.
+	 * An item that is `completed` with no tone derives success, so ticking a box does not also
+	 * mean remembering the colour.
+	 */
 	tone?: ProductTone
 	completed?: boolean
 	actionLabel?: ReactNode
@@ -42,7 +51,10 @@ export interface ProductRowActionContext {
 
 export interface ProductReadinessCardProps {
 	items?: ProductReadinessItem[]
-	/** 0–100, clamped. */
+	/**
+	 * 0–100, clamped — a percentage bar cannot show 140, and a NaN would render as an empty
+	 * track.
+	 */
 	score?: number
 	scoreLabel?: ReactNode
 	summary?: ReactNode
@@ -56,6 +68,10 @@ export interface ProductReadinessCardProps {
 	) => ReactNode
 	actions?: ActionDefinition[]
 	footerSlot?: ReactNode
+	/**
+	 * Replaces a whole row. The rows are one component with three wrappers, so a consumer
+	 * replacing one is replacing the same shape everywhere it appears.
+	 */
 	renderItem?: (item: ProductReadinessItem, index: number) => ReactNode
 	empty?: ReactNode
 	className?: string
@@ -124,7 +140,10 @@ export interface ProductOperationsCardProps {
 
 export interface ProductDetailsCardProps {
 	title?: ReactNode
-	/** `false` suppresses the default description rather than showing it empty. */
+	/**
+	 * `false` suppresses the default description rather than rendering it empty — which is the
+	 * difference between a card with no subtitle and a card with a blank line where one was.
+	 */
 	description?: ReactNode | false
 	metadata?: MetadataListItem[]
 	media?: ReactNode
@@ -158,6 +177,10 @@ export interface ProductPolicySummary {
 
 export interface ProductContractOverviewProps {
 	metrics?: ProductMetricSummary[]
+	/**
+	 * The contract's facts. They go through MetadataList, so an email or an SKU is rendered by
+	 * the kind that knows how; this module does not restate it.
+	 */
 	terms?: MetadataListItem[]
 	rules?: ProductPolicySummary[]
 	onOpenContract?: () => void
@@ -256,7 +279,12 @@ export interface ProductOptionsMatrixProps {
 	onCreateOption?: () => void
 	onEditOption?: (option: ProductOptionGroup) => void
 	onDeleteOption?: (option: ProductOptionGroup) => void
-	/** Off when the app already confirms, so nobody is asked twice. */
+	/**
+	 * Asks before removing an option. Removing an option removes every variant generated from it
+	 * — which is not visible from the option's own row. Off when the app already confirms, so
+	 * nobody is asked twice.
+	 * @default true
+	 */
 	confirmDelete?: boolean
 	onAddValue?: (option: ProductOptionGroup) => void
 	onDeleteValue?: (option: ProductOptionGroup, value: ProductOptionValue) => void
@@ -266,6 +294,11 @@ export interface ProductOptionsMatrixProps {
 		value: ProductOptionValue,
 		label: string,
 	) => void
+	/**
+	 * The staged name and values, committed together. Cancel discards them; the draft is
+	 * re-seeded from the option each time editing opens, so a cancelled edit cannot leak into the
+	 * next one.
+	 */
 	onSaveEditingOption?: (option: ProductOptionGroup, draft: ProductOptionEditDraft) => void
 	onCancelEditingOption?: (option: ProductOptionGroup, draft: ProductOptionEditDraft) => void
 	onToggleUsedForVariants?: (option: ProductOptionGroup, used: boolean) => void
@@ -381,22 +414,39 @@ export interface ProductVariantFieldChangeContext {
 export interface ProductVariantsBulkTableProps {
 	variants?: ProductVariantRow[]
 	optionGroups?: ProductOptionGroup[]
-	/** Groups rows under the values of this option. `null` leaves the list flat. */
+	/**
+	 * Groups rows under that option's values, in the order the option declares them — not
+	 * alphabetically, and not by whichever variant was created first. `null` leaves the list
+	 * flat.
+	 */
 	groupByOptionId?: string | null
 	visibleColumns?: readonly ProductVariantsBulkTableColumn[]
 	optionCombinationDisplay?: ProductVariantOptionCombinationDisplay
+	/**
+	 * `text` or `field`, for every editable field or per field, so a table can make price
+	 * editable and leave stock read-only — which is what a price update run actually needs.
+	 */
 	cellDisplay?: ProductVariantCellDisplayConfig
 	selectionMode?: ProductVariantSelectionMode
 	renderOptionCombination?: (variant: ProductVariantRow, values: ReactNode[]) => ReactNode
 	selectedVariantIds?: string[]
 	defaultSelectedVariantIds?: string[]
 	onSelectedVariantIdsChange?: (variantIds: string[], variants: ProductVariantRow[]) => void
+	/**
+	 * Fires on every edit of an in-place field. Both this and `onVariantFieldBlur` exist, and the
+	 * consumer picks: change alone makes every keystroke a state update; blur alone loses the
+	 * value if the row is removed mid-edit.
+	 */
 	onVariantFieldChange?: (
 		variant: ProductVariantRow,
 		field: ProductVariantEditableField,
 		value: string,
 		context: ProductVariantFieldChangeContext,
 	) => void
+	/**
+	 * Fires when an in-place field loses focus. Blur alone loses the value if the row is removed
+	 * mid-edit; pair it with `onVariantFieldChange` where that matters.
+	 */
 	onVariantFieldBlur?: (
 		variant: ProductVariantRow,
 		field: ProductVariantEditableField,
@@ -415,6 +465,11 @@ export interface ProductVariantsBulkTableProps {
 		variant: ProductVariantRow,
 		context: ProductVariantActionContext,
 	) => ReactNode
+	/**
+	 * Replaces the default pair of bulk actions. The context carries the selected rows, the
+	 * counts, and both `clearSelection` and `setSelectedIds`, so a custom bar can act and then
+	 * deselect.
+	 */
 	renderBulkActions?: (context: ProductVariantBulkActionContext) => ReactNode
 	/** Makes the picture slot pressable. Without it the slot is inert. */
 	onSetVariantImage?: (variant: ProductVariantRow) => void
@@ -445,7 +500,11 @@ export interface ProductVariantsManagerProps
 			| "onDuplicateVariant" | "onDeleteVariant" | "onBulkEdit" | "onBulkDelete"
 			| "renderVariantActions" | "renderBulkActions"
 		> {
-	/** Controlled grouping. Uncontrolled, the manager's own Select drives it. */
+	/**
+	 * Controlled grouping: groups rows under that option's values, in the order the option
+	 * declares them — not alphabetically, and not by whichever variant was created first. `null`
+	 * leaves the list flat. Uncontrolled, the manager's own Select drives it.
+	 */
 	groupByOptionId?: string | null
 	defaultGroupByOptionId?: string | null
 	onGroupByOptionIdChange?: (optionId: string | null) => void
@@ -453,7 +512,15 @@ export interface ProductVariantsManagerProps
 	showGroupBy?: boolean
 	className?: string
 	strings?: Partial<Strings.ProductVariantsManagerStrings>
+	/**
+	 * The option matrix's own copy. The two children keep their own copy objects: one merged bag
+	 * would collide on title, description and the create labels, which both of them have.
+	 */
 	optionsStrings?: Partial<Strings.ProductOptionsMatrixStrings>
+	/**
+	 * The variant table's own copy, kept apart from `optionsStrings` because both children have a
+	 * title, a description and create labels.
+	 */
 	variantsStrings?: Partial<Strings.ProductVariantBulkTableStrings>
 }
 
@@ -478,7 +545,10 @@ export interface ProductOptionActionMenuProps {
 }
 
 export interface ProductVariantDetailsProps {
-	/** Absent renders the empty state (this surface is often bound to a selection). */
+	/**
+	 * Optional. Absent renders the empty state — this panel is usually bound to a selection, and
+	 * “nothing chosen yet” is a thing to say, not a reason to unmount.
+	 */
 	variant?: ProductVariantSummary
 	/** Replaces the derived facts. The default is built from the variant's own fields. */
 	metadata?: MetadataListItem[]
@@ -535,6 +605,10 @@ export interface ProductVariantOptionField {
 export interface ProductVariantEditorProps {
 	value?: ProductVariantEditorValues
 	defaultValue?: ProductVariantEditorValues
+	/**
+	 * A select when the field carries choices, a text input when it does not — an app with a
+	 * free-text status should not have to invent a list to use this.
+	 */
 	optionFields?: ProductVariantOptionField[]
 	statusOptions?: ProductChoice[]
 	onValueChange?: (value: ProductVariantEditorValues) => void
@@ -547,7 +621,12 @@ export interface ProductVariantEditorProps {
 	headerEnd?: ReactNode
 	footerSlot?: ReactNode
 	disabled?: boolean
-	/** Shows the pending state and blocks a repeat submit. */
+	/**
+	 * Shows the pending state and blocks a repeat submit. OR-ed with an internal flag: a
+	 * consumer holding the request already knows it is in flight; one that just handed over an
+	 * async `onSubmit` does not, and a form that stays live during a save takes the same submit
+	 * twice.
+	 */
 	submitting?: boolean
 	className?: string
 	strings?: Partial<Strings.ProductVariantEditorStrings>
@@ -575,7 +654,10 @@ export interface ProductQuotePreviewLine {
 	value: ReactNode
 	description?: ReactNode
 	tone?: ProductTone
-	/** Ruled off and emphasised: the line the rest add up to. */
+	/**
+	 * Rules the line off and weights it: the line the rest add up to. Not a tint — a filled band
+	 * on the last line makes a total look like an alert, which is the one thing a total is not.
+	 */
 	emphasis?: boolean
 }
 

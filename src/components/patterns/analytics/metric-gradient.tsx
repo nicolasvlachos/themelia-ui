@@ -26,6 +26,12 @@ export interface MetricGradientProps extends Omit<ComponentProps<"div">, "childr
 	subtitle?: string
 }
 
+/**
+ * The one metric on a page allowed to shout. Its ramps come from the categorical chart
+ * palette, never the state tokens — a hero reports no success and no warning, and painting it
+ * `--success` would repaint it whenever a consumer retunes the colour that means things went
+ * right.
+ */
 export function MetricGradient({
 	title,
 	value,

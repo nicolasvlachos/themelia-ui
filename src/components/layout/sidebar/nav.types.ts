@@ -1,6 +1,8 @@
 import type { ReactNode } from "react"
 
-import type { LayoutIconSource, LayoutLinkRenderer } from "../layout.types"
+import type { LinkRenderer } from "@/lib/navigation"
+
+import type { LayoutIconSource } from "../layout.types"
 
 export interface SidebarNavItem {
 	label: ReactNode
@@ -23,7 +25,7 @@ export interface SidebarItemContext {
 	/** Whether the row's children are shown: the reader's toggle if they used it, else derived from the current URL. */
 	expanded: boolean
 	badge?: string | number
-	renderLink: LayoutLinkRenderer
+	renderLink: LinkRenderer
 	/**
 	 * Flips `expanded` for a row with children; wire it to a custom parent row's click.
 	 * AppSidebar always supplies it; optional for hand-built contexts.

@@ -26,7 +26,11 @@ import type {
 } from "./resource-assignment.types"
 import styles from "./resource-assignment.module.css"
 
-/** The dialog body when not replaced: just the picker. */
+/**
+ * The picker the assignment dialog shows when a consumer supplies none — the dialog body when
+ * not replaced. Exported so a custom dialog can keep it and add to it, rather than starting
+ * from nothing.
+ */
 export function DefaultDialogContent<
 	TResource,
 	TSuggestion,
@@ -49,8 +53,9 @@ export function DefaultDialogContent<
 }
 
 /**
- * Restates the pending choice above the confirm, since the chosen row may have scrolled
- * out of sight. Falls back to a `label` field; pass `getSelectionLabel` to be exact.
+ * What is about to be committed, restated above the confirm. A picker can scroll, and the
+ * chosen row is often out of sight by the time the reader reaches the button. Falls back to a
+ * `label` field; pass `getSelectionLabel` to be exact.
  */
 export function DefaultDialogSummary<TResource, TSuggestion>({
 	context,
@@ -83,6 +88,11 @@ export function DefaultDialogSummary<TResource, TSuggestion>({
 	)
 }
 
+/**
+ * Shows the resource assigned to a record and how to change it. The card owns the shape —
+ * panel, dialog, pending choice, awaited confirm; the picker is the consumer's, since every
+ * assignment searches differently.
+ */
 export function SharedResourceCard<
 	TResource,
 	TSuggestion,

@@ -1,6 +1,6 @@
-import type { LayoutLinkRenderer } from "themelia-ui/layout/sidebar"
+import type { LinkRenderer } from "themelia-ui/layout/sidebar"
 
-export function demoLink(onNavigate: (url: string) => void): LayoutLinkRenderer {
+export function demoLink(onNavigate: (url: string) => void): LinkRenderer {
 	return ({ href, children, active, disabled, external, ...rest }) => {
 		void active
 		void external

@@ -31,6 +31,9 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The grip between two panels: a real `role="separator"`. It is focusable and takes arrow
+keys, so the split is adjustable without a pointer.
+
 ```text
 ({ withHandle, className, ...props }: ResizableHandleProps) => import("react").JSX.Element
 ```
@@ -43,11 +46,13 @@ Extends: `ResizablePrimitive.SeparatorProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `withHandle` | no | `boolean` | Draws a grip on the line, for a split with no other cue that it moves. Defaults to false. |
+| `withHandle` | no | `boolean` | Draws a grip on the line, for a split with no other cue that it moves. The hit area is<br>wider than the 1px rule either way. |
 
 ### `ResizablePanel`
 
 Kind: callable.
+
+A panel inside a `ResizablePanelGroup`.
 
 ```text
 ({ className, ...props }: ResizablePanelProps) => import("react").JSX.Element
@@ -57,6 +62,10 @@ Kind: callable.
 
 Kind: callable.
 
+The split. `orientation` is its axis. Own the persistence: keep the layout in your state
+with `onLayoutChanged` and hand it back through `defaultLayout`, so a reader who widened a
+panel finds it wide next time.
+
 ```text
 ({ className, ...props }: ResizablePanelGroupProps) => import("react").JSX.Element
 ```
@@ -65,7 +74,7 @@ Kind: callable.
 
 Kind: interface.
 
-Extends: `ResizablePrimitive.GroupProps`.
+Extends: `ResizablePrimitive.GroupProps`, `Pick<ResizablePrimitive.GroupProps, "orientation">`.
 
 No own members are present in the normalized public snapshot.
 

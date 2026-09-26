@@ -30,6 +30,10 @@ export interface MediaLibraryDetailPanelProps<TItem> {
 	renderDetail?: MediaLibrarySlots<TItem>["renderDetail"]
 }
 
+/**
+ * The panel for the selected asset. The detail is a COLUMN rather than an overlay: an overlay
+ * would cover the grid the reader is comparing against.
+ */
 export function MediaLibraryDetailPanel<TItem>({ item, collections = [], accessors, strings, onClose, onUpdate, onRemove, renderDetail }: MediaLibraryDetailPanelProps<TItem>) {
 	const copy = resolveStrings(defaultMediaLibraryStrings, strings)
 	const readDraft = () => ({ alt: item ? accessors.getAlt(item) ?? "" : "", collection: item ? accessors.getCollection(item) ?? "" : "", tags: item ? accessors.getTags(item) : [], public: item ? accessors.getPublic(item) ?? false : false })

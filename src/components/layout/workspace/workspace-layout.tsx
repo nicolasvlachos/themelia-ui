@@ -37,6 +37,11 @@ export interface WorkspaceLayoutProps extends Omit<ComponentProps<"div">, "child
 	railClassName?: string
 }
 
+/**
+ * The frame a single RECORD is edited in. Not an app shell — it sits inside one: a record
+ * with many sections needs its own navigation, and nesting a second shell is how a page ends
+ * up with two sidebars.
+ */
 export function WorkspaceLayout({
 	header,
 	sidebar,

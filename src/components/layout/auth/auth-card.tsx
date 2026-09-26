@@ -11,16 +11,24 @@ import { cx } from "@/lib/cx"
 import styles from "./auth.module.css"
 
 export interface AuthCardProps extends Omit<ComponentProps<"div">, "title"> {
+	/**
+	 * `bare` removes the framing and padding while keeping the header, content and footer
+	 * rhythm.
+	 */
 	surface?: "card" | "bare"
+	/** Above the title, in the heading region. */
 	eyebrow?: ReactNode
+	/** The heading region's title. */
 	title?: ReactNode
+	/** Under the title, in the heading region. */
 	description?: ReactNode
-	/** A control at the end of the header row — a language switcher, a step count. */
+	/** A control or status at the end of the header row — a language switcher, a step count. */
 	headerEnd?: ReactNode
 	/** A notice above the content: an expired link, a required invitation. */
 	banner?: ReactNode
 	/** A strip above the header — an illustration, a product screenshot. */
 	media?: ReactNode
+	/** Content in the footer band. */
 	footer?: ReactNode
 	/** Heading level for the title. A sign-in page's title is usually its h1. */
 	level?: 1 | 2 | 3

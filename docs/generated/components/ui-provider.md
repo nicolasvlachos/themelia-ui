@@ -87,6 +87,10 @@ stays in context. Nothing appears in both.
 
 Kind: callable.
 
+Passes the request nonce and inline-style policy to every Base UI-backed primitive below
+it. Place it once around the React root during SSR; `disableStyleElements` is for
+consumers that provide the equivalent positioning CSS themselves.
+
 ```text
 (props: CSPProviderProps) => import("react").JSX.Element
 ```
@@ -108,12 +112,15 @@ No own members are present in the normalized public snapshot.
 
 Kind: interface.
 
+`UIConfig`'s `dates` slice: the week start, the fallback patterns, the date-fns locale and
+the relative-time wording.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `weekStartsOn` | no | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | First day of the week in calendars and pickers. 0 = Sunday. |
-| `format` | no | `string` | date-fns pattern the date primitives fall back to. |
-| `timeFormat` | no | `string` | date-fns pattern for a time of day. `"p"` uses the locale's own convention. |
-| `locale` | no | `Locale` | The date-fns locale object that translates month and weekday names. Not derived from<br>`formatting.locale`, so the bundle carries only the locale the consumer imports. |
+| `weekStartsOn` | no | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | First day of the week in calendars and pickers. 0 = Sunday. @default 1 |
+| `format` | no | `string` | date-fns pattern the date primitives fall back to. @default "dd MMM yyyy" |
+| `timeFormat` | no | `string` | date-fns pattern for a time of day. `"p"` uses the locale's own convention. @default "HH:mm" |
+| `locale` | no | `Locale` | The date-fns Locale OBJECT — what actually translates month and weekday names, and the<br>built-in relative-time wording. It cannot be derived from a BCP-47 tag such as<br>`formatting.locale`: the locales are modules, and importing all of them to look one up<br>would put every language in every bundle, so the consumer imports the one it needs. |
 | `formatRelativeTime` | no | `(date: Date, now: Date) => string` | Replaces the relative-time wording ("7 days ago", "in 2 hours"). |
 
 ### `DEFAULT_UI_CONFIG`
@@ -142,7 +149,7 @@ The locale shared by every formatter. Money and dates have their own slices.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `locale` | no | `string` | BCP-47 tag used by every Intl formatter in the kit. |
+| `locale` | no | `string` | BCP-47 tag used by every Intl formatter in the kit. @default "en-US" |
 
 ### `FormsConfig`
 
@@ -150,7 +157,7 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `preventIPhoneZoom` | no | `boolean` | Opt in to a 16px minimum for native text fields on detected iPhones only. Default false. |
+| `preventIPhoneZoom` | no | `boolean` | Opt in to a 16px minimum for native text fields on detected iPhones only. @default false |
 
 ### `mergeUIConfig`
 
@@ -167,14 +174,17 @@ the record fields: setting `theme.colors.primary` keeps the parent's other colou
 
 Kind: interface.
 
+`UIConfig`'s `money` slice: the store's currency policy, decided once, so a call site
+passes an amount and a conversion, never a policy.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `defaultCurrency` | no | `string` | Used when a `<Money>` is given no currency. |
+| `defaultCurrency` | no | `string` | Used when a `<Money>` is given no currency. @default "USD" |
 | `displayCurrency` | no | `string` | A converted currency shown beside the primary one. |
-| `dualPricingEnabled` | no | `boolean` | The master switch. Off, a `secondary` passed at a call site still renders. |
-| `displayMode` | no | `MoneyDisplayMode` |  |
-| `layout` | no | `MoneyLayout` |  |
-| `formatMode` | no | `MoneyFormatMode` |  |
+| `dualPricingEnabled` | no | `boolean` | The master switch. Off, a `secondary` passed at a call site still renders. @default false |
+| `displayMode` | no | `MoneyDisplayMode` | Whether a second currency shows. `dynamic` shows it only when the two codes differ;<br>`dual` would print a price twice when they match. @default "dynamic" |
+| `layout` | no | `MoneyLayout` | Where the second value sits: beside the first, or under it. @default "inline" |
+| `formatMode` | no | `MoneyFormatMode` | How an amount is written. `with-symbol` is Intl's own placement, which varies by locale<br>and currency. @default "with-symbol" |
 
 ### `MoneyDisplayMode`
 
@@ -232,7 +242,7 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `backdropBlur` | no | `number \| string` | Blur behind a modal's scrim, in px (a number) or any CSS length. Off by default: a<br>backdrop filter repaints everything behind the surface each frame. |
-| `darkMenus` | no | `boolean` | Dropdown and context menus render in the dark scheme whatever the page is. Default<br>`true`; `false` lets them follow the scheme they are portalled into, like other popups.<br>A config value, not a CSS switch: Firefox lacks CSS `if()`. |
+| `darkMenus` | no | `boolean` | Dropdown and context menus render in the dark scheme whatever the page is. Default<br>`true`; `false` lets them follow the scheme they are portalled into, like other popups.<br>A config value, not a CSS switch: Firefox lacks CSS `if()`. @default true |
 
 ### `PaletteToken`
 
@@ -267,10 +277,13 @@ Extends: `UIConfig`.
 
 Kind: callable.
 
-`<Scope>` — a token boundary without the config machinery. Derived tokens re-compute
-only at a scope boundary (styles/SCOPES.md), so a factor set on a plain `div` changes
-nothing; this renders `data-ui-scope`. Use `<UIProvider>` when JavaScript config changes too.
-`render` picks the element, e.g. `render={<section />}`.
+`<Scope>` — a token boundary without the config machinery. Overriding a factor needs a
+scope boundary, not just any element: derived tokens are declared at `:root`,
+`[data-ui-scope]`, `[data-density]`, `[data-theme]`, `.light` and `.dark`, so a plain
+`div` that sets `--density-scale` sets a variable nothing reads. Scope renders
+`data-ui-scope`, which puts the element on that list. Use it when the change is purely
+tokens, and `<UIProvider>` when JavaScript config changes too. `render` picks the element,
+e.g. `render={<section />}`.
 
   <Scope vars={{ "--density-scale": 0.8 }}>
     <Toolbar />
@@ -330,10 +343,12 @@ Theme overrides. Token names are generated from the stylesheet, so a typo is a t
 
 Kind: interface.
 
+`UIConfig`'s `typography` slice: the type factor, the default size, fonts and sizes.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `scale` | no | `number` | Type factor (`--text-scale`): multiplies every type role, control labels included, and<br>leaves geometry alone. Unset, type follows `scale`. |
-| `defaultTextSize` | no | `TextSize` | Size components fall back to when they set none. Defaults to `sm` (14px). |
+| `scale` | no | `number` | Type-only override (`--text-scale`): multiplies every `--text-*` role, control labels<br>included, without changing geometry. Unset, type follows `scale`. @default 1 |
+| `defaultTextSize` | no | `TextSize` | Size components fall back to when they set none. 14px, not 16px: `base` is a deliberate<br>step up for a dense surface. @default "sm" |
 | `fonts` | no | `Partial<Record<"sans" \| "serif" \| "mono" \| "heading", string>>` | Font stack overrides. |
 | `sizes` | no | `Partial<Record<Exclude<TextSize, "inherit">, string>>` | Per-step size overrides, keyed without the `--text-` prefix. |
 
@@ -341,20 +356,23 @@ Kind: interface.
 
 Kind: interface.
 
+The configuration `UIProvider`, `UIRoot` and `UIScope` take. A scope names only what it
+changes; everything else inherits from the scope around it.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `colorScheme` | no | `ColorScheme` | Colour scheme. `system` follows `prefers-color-scheme`. |
-| `theme` | no | `ThemeConfig` |  |
-| `density` | no | `Density` | Named spacing/control-density preset. Readable typography is unchanged. |
-| `scale` | no | `number` | Whole-UI factor (`--scale`). Default 1. Multiplies geometry, spacing, icons and type; use<br>`density` or `typography.scale` to move only one of them. |
-| `typography` | no | `TypographyConfig` |  |
-| `motion` | no | `MotionConfig` |  |
-| `overlay` | no | `OverlayConfig` |  |
-| `forms` | no | `FormsConfig` |  |
-| `formatting` | no | `FormattingConfig` |  |
-| `money` | no | `MoneyConfig` |  |
-| `dates` | no | `DatesConfig` |  |
-| `defaults` | no | `{ [K in keyof ComponentDefaults]?: Partial<ComponentDefaults[K]>; }` |  |
+| `colorScheme` | no | `ColorScheme` | Colour scheme. `system` follows `prefers-color-scheme`. @default "system" |
+| `theme` | no | `ThemeConfig` | Radius, colour, palette and custom-property overrides. |
+| `density` | no | `Density` | Named spacing and control-geometry preset: `compact`, `default` and `comfortable` scale<br>by 0.941176 (32px actions), 1 and 1.075. Readable typography is unchanged. @default "default" |
+| `scale` | no | `number` | Master factor (`--scale`). Geometry, spacing, icons and the type ramp follow it by<br>default; use `density` or `typography.scale` to move only one of them. @default 1 |
+| `typography` | no | `TypographyConfig` | The type factor, the default text size, font stacks and per-step sizes. |
+| `motion` | no | `MotionConfig` | Duration overrides, and motion forced off. |
+| `overlay` | no | `OverlayConfig` | The modal scrim's blur, and whether menus render dark. |
+| `forms` | no | `FormsConfig` | Form-control behaviour: the iPhone zoom guard. |
+| `formatting` | no | `FormattingConfig` | The locale every formatter uses. |
+| `money` | no | `MoneyConfig` | The store's currency policy: the default and display currencies, and how a pair shows. |
+| `dates` | no | `DatesConfig` | The week start, date patterns, the date-fns locale and relative-time wording. |
+| `defaults` | no | `{ [K in keyof ComponentDefaults]?: Partial<ComponentDefaults[K]>; }` | Per-component prop defaults, keyed by family and merged over each component's own. |
 
 ### `UIConfigContext`
 
@@ -398,17 +416,21 @@ HTMLElement | ShadowRoot | null
 Kind: callable.
 
 Keeps popups inside this subtree, so they inherit the scope's custom properties and
-`[data-density]` / `[data-theme]` attributes instead of the root's.
+`[data-density]` / `[data-theme]` attributes instead of the root's. It renders one
+`display: contents` element as the portal target — a box would become a flex or grid item
+in whatever laid the scope out. Pass `container` to use an element the application
+already manages, such as a shadow root or its own overlay layer.
 
-```tsx fragment — declaration JSDoc excerpt
-<UIScope config={{ density: "compact", colorScheme: "dark" }}>
-  <UIPortalHost>
-    <DropdownMenu>…</DropdownMenu>
-  </UIPortalHost>
-</UIScope>
-```
+  <UIScope config={{ density: "compact", colorScheme: "dark" }}>
+    <UIPortalHost>
+      <DropdownMenu>…</DropdownMenu>
+    </UIPortalHost>
+  </UIScope>
 
-Opt-in per region; without a host, popups portal to the document as usual.
+Opt-in per region; without a host, popups portal to the document as usual. A popup's own
+`container` prop — DropdownMenu, ContextMenu, Select, Tooltip, HoverCard, Popover,
+NavigationMenu and Toaster each accept one — wins over the scoped host. With no host and
+no prop, each primitive keeps its own default.
 
 ```text
 ({ container, children }: UIPortalHostProps) => import("react").JSX.Element
@@ -454,6 +476,17 @@ Kind: callable.
 `<UIRoot>` — the application's configuration, once. Renders no element; region scoping
 is `UIScope`, which does.
 
+It restores, never removes: it captures what each attribute was before it mounted and
+puts it back on unmount. Deleting them instead would take an app's own theme with it
+whenever a provider unmounted inside that app.
+
+One owner, handed on: two independent React roots — a host app and an embedded widget —
+both think they are the top. Each asks for the document and the OLDEST root still mounted
+owns it; the rest leave it alone. When the owner unmounts the document goes to the next
+root in line rather than reverting, so a widget still on the page is still honoured.
+`body` and `documentElement` are tracked separately, and a final unmount restores what
+was there before the first root arrived — not what the previous owner wrote.
+
 ```text
 ({ config, documentTarget, children }: UIRootProps) => import("react").JSX.Element
 ```
@@ -464,8 +497,8 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `config` | no | `UIConfig` | The application's defaults. Merged over the library's own. |
-| `documentTarget` | no | `UIDocumentTarget` | Which element gets the theme and density attributes, or `false` (default) for none.<br>Opt-in because it writes outside the tree, which could fight another root or an app's<br>own `data-theme`; it is the only way a root can theme the page canvas. |
+| `config` | no | `UIConfig` | The application's defaults, merged over the library's own. Resolution is component<br>prop → nearest scope → root config → component fallback. |
+| `documentTarget` | no | `UIDocumentTarget` | Which element gets the theme and density attributes, or `false` (default) for none.<br>Explicit on purpose: mirroring onto the document is the only way a root can own the<br>page canvas, and it is also the only thing here that touches state outside the tree. A<br>component that reaches for the document unasked fights the next React root, the next<br>test, and any app already managing its own `data-theme`. |
 | `children` | yes | `ReactNode` |  |
 
 ### `UIScope`
@@ -473,8 +506,10 @@ Kind: interface.
 Kind: callable.
 
 `<UIScope>` — a region with its own tokens. Nests freely; writes the custom properties
-its merged config names and never touches the document. `render` picks the element, e.g.
-`<UIScope render={<aside />}>`, for places a `div` is invalid.
+its merged config names and never touches the document: a region governs its subtree,
+and reaching past it is the root's job, and only when asked. `render` picks the element
+— Base UI's contract, the same one Item and Stack use — e.g. `<UIScope render={<aside />}>`,
+for places a `div` is invalid.
 
 ```text
 ({ config, transparent, render, className, style, ...props }: UIScopeProps) => import("react").JSX.Element
@@ -488,14 +523,15 @@ Extends: `useRender.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `config` | no | `UIConfig` | Merged over the nearest enclosing scope or root. |
-| `transparent` | no | `boolean` | Removes the element from layout with `display: contents`; custom properties still<br>inherit. Set `false` when the scope should be a real box, such as a themed panel. |
+| `config` | no | `UIConfig` | Its own overrides only, merged over the nearest enclosing scope or root; inherited<br>values already cascade in. |
+| `transparent` | no | `boolean` | Removes the element from layout with `display: contents`; custom properties still<br>inherit through it, because inheritance does not depend on the box. Set `false` when<br>the scope should be a real box, such as a themed panel. |
 
 ### `useDatesConfig`
 
 Kind: callable.
 
-Week start, the fallback pattern, the date-fns locale, and the relative-time hook.
+Date and time presentation defaults, read by the date primitives and pickers: week start,
+the fallback pattern, the date-fns locale, and the relative-time hook.
 
 ```text
 () => Required<Omit<DatesConfig, "locale" | "formatRelativeTime">> & Pick<DatesConfig, "locale" | "formatRelativeTime">
@@ -505,8 +541,9 @@ Week start, the fallback pattern, the date-fns locale, and the relative-time hoo
 
 Kind: callable.
 
-Per-component prop defaults for one family: the component passes its own defaults and
-the scope's overrides merge on top, so defaults stay beside their component.
+Per-component prop defaults for one family. The component passes its OWN defaults and
+the scope's overrides merge over them, which keeps the values beside the component, makes
+the call order-independent, and lets an unused module tree-shake away.
 
 ```text
 (family: K, fallback: ComponentDefaults[K]) => ComponentDefaults[K]
@@ -516,6 +553,9 @@ the scope's overrides merge on top, so defaults stay beside their component.
 
 Kind: callable.
 
+The resolved density, with the scale factor beside it. The visual effect comes from the
+`data-density` attribute; this is for logic that must branch on it.
+
 ```text
 () => { density: Density; scale: number; }
 ```
@@ -524,7 +564,8 @@ Kind: callable.
 
 Kind: callable.
 
-The scope's locale. Money and dates read it through their own hooks as well.
+The scope's locale, shared by the primitives' number formatting. Money and dates read it
+through their own hooks as well.
 
 ```text
 () => Required<FormattingConfig>
@@ -534,7 +575,8 @@ The scope's locale. Money and dates read it through their own hooks as well.
 
 Kind: callable.
 
-Currency policy — the default code, the display code, and how a pair is rendered.
+Currency policy — the default code, the display code, how an amount is written and how a
+pair is rendered: what Money reads when a prop is absent.
 
 ```text
 () => Required<Omit<MoneyConfig, "displayCurrency">> & Pick<MoneyConfig, "displayCurrency">
@@ -544,7 +586,8 @@ Currency policy — the default code, the display code, and how a pair is render
 
 Kind: callable.
 
-Overlay policy — whether menus render dark, and the modal scrim's blur.
+Overlay policy — whether dropdown and context menus render dark (by default they do),
+and the modal scrim's blur.
 
 ```text
 () => OverlayConfig & { darkMenus: boolean; }
@@ -554,7 +597,8 @@ Overlay policy — whether menus render dark, and the modal scrim's blur.
 
 Kind: callable.
 
-The scope's geometry factor. Components read tokens, not this — it is for callers.
+The resolved `--scale` factor as a number, for a measurement JavaScript has to compute
+rather than let CSS derive. Components read tokens, not this — it is for callers.
 
 ```text
 () => number
@@ -564,6 +608,8 @@ The scope's geometry factor. Components read tokens, not this — it is for call
 
 Kind: callable.
 
+Typographic defaults, such as the size components fall back to when they set none.
+
 ```text
 () => TypographyConfig & { defaultTextSize: TextSize; }
 ```
@@ -572,7 +618,8 @@ Kind: callable.
 
 Kind: callable.
 
-The whole resolved config for this scope. Prefer a narrower hook below.
+The whole resolved configuration at this point in the tree. Prefer a narrower hook, which
+says what a component depends on.
 
 ```text
 () => ResolvedUIConfig
@@ -584,6 +631,8 @@ Kind: callable.
 
 The container a portal in this subtree should use: the caller's `explicit` value, else
 the nearest `UIPortalHost`, else `undefined` so the primitive keeps its own default.
+`undefined` rather than `document.body` on purpose: the primitive's default is the thing
+that knows about shadow roots, SSR and nested portals.
 
 ```text
 (explicit?: UIPortalContainer) => UIPortalContainer | undefined

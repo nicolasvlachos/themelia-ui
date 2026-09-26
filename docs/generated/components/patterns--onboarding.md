@@ -43,11 +43,11 @@ Extends: `Omit<ComponentProps<"div">, "children" | "onChange" | "defaultValue">`
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `steps` | yes | `ChecklistStep[]` |  |
+| `steps` | yes | `ChecklistStep[]` | id, status, title, and optionally badge, content, disabled. |
 | `defaultExpanded` | no | `string[]` | Uncontrolled starting state. Defaults to the first unfinished step. |
-| `expanded` | no | `string[]` | Controlled. |
-| `onExpandedChange` | no | `(expanded: string[]) => void` |  |
-| `onStepOpen` | no | `(id: string) => void` | Fires when a step opens — for analytics, not for state. |
+| `expanded` | no | `string[]` | The open steps, controlled. Uncontrolled, the checklist opens the first unfinished<br>step. |
+| `onExpandedChange` | no | `(expanded: string[]) => void` | Reports the open steps when a reader opens or closes one. |
+| `onStepOpen` | no | `(id: string) => void` | Fires on the transition into open — for analytics, not for state. |
 | `multiple` | no | `boolean` |  |
 | `surface` | no | `AccordionSurface` |  |
 | `strings` | no | `Partial<ChecklistStrings>` |  |

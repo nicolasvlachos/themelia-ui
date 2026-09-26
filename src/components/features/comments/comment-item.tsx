@@ -57,9 +57,9 @@ function defaultStatusLabel(status: string) {
 
 /** The absolute moment behind a relative one, for the title a pointer can reveal. */
 function useAbsoluteTime(value: string | undefined) {
-	const { format, locale } = useDatesConfig()
+	const { format, locale, timeFormat } = useDatesConfig()
 	const date = parseDateInput(value)
-	return date ? { iso: date.toISOString(), label: formatDate(date, `${format} HH:mm`, { locale }) } : null
+	return date ? { iso: date.toISOString(), label: formatDate(date, `${format} ${timeFormat ?? "HH:mm"}`, { locale }) } : null
 }
 
 /** A text-weight button (TextLink rendered as a button) for reply, "See more" and thread toggles. */
@@ -160,6 +160,12 @@ function ReactionAdd({
 	)
 }
 
+/**
+ * One comment and the controls that act on it: the author, time and message in a bubble,
+ * reactions and Reply under it, everything else in the overflow menu beside it. Its replies
+ * hang off a rail from its avatar, so who answered whom is a line to follow rather than an
+ * indent to infer.
+ */
 export function CommentItem<
 	TUser extends CommentUser = CommentUser,
 	TMeta = unknown,

@@ -8,8 +8,15 @@ import { cx } from "@/lib/cx"
 
 import styles from "./resizable.module.css"
 
-export interface ResizablePanelGroupProps extends ResizablePrimitive.GroupProps {}
+export interface ResizablePanelGroupProps
+	extends ResizablePrimitive.GroupProps,
+		Pick<ResizablePrimitive.GroupProps, "orientation"> {}
 
+/**
+ * The split. `orientation` is its axis. Own the persistence: keep the layout in your state
+ * with `onLayoutChanged` and hand it back through `defaultLayout`, so a reader who widened a
+ * panel finds it wide next time.
+ */
 export function ResizablePanelGroup({ className, ...props }: ResizablePanelGroupProps) {
 	return (
 		<ResizablePrimitive.Group
@@ -22,6 +29,7 @@ export function ResizablePanelGroup({ className, ...props }: ResizablePanelGroup
 
 export interface ResizablePanelProps extends ResizablePrimitive.PanelProps {}
 
+/** A panel inside a `ResizablePanelGroup`. */
 export function ResizablePanel({ className, ...props }: ResizablePanelProps) {
 	return (
 		<ResizablePrimitive.Panel
@@ -33,10 +41,17 @@ export function ResizablePanel({ className, ...props }: ResizablePanelProps) {
 }
 
 export interface ResizableHandleProps extends ResizablePrimitive.SeparatorProps {
-	/** Draws a grip on the line, for a split with no other cue that it moves. Defaults to false. */
+	/**
+	 * Draws a grip on the line, for a split with no other cue that it moves. The hit area is
+	 * wider than the 1px rule either way.
+	 */
 	withHandle?: boolean
 }
 
+/**
+ * The grip between two panels: a real `role="separator"`. It is focusable and takes arrow
+ * keys, so the split is adjustable without a pointer.
+ */
 export function ResizableHandle({ withHandle = false, className, ...props }: ResizableHandleProps) {
 	return (
 		<ResizablePrimitive.Separator

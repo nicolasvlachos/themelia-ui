@@ -21,7 +21,9 @@ export interface SuggestionsErrorContext {
 export interface SuggestionsComboboxProps<T> extends UseSuggestionsConfig<T> {
 	/** Applied to the search input, so a `FormField` label can address it. */
 	id?: string
+	/** Stable identity for an item. */
 	itemKey: (item: T) => string | number
+	/** The item's label: what its row and the chosen value show. */
 	itemText: (item: T) => string
 	renderItem?: (item: T) => ReactNode
 	renderError?: (context: SuggestionsErrorContext) => ReactNode
@@ -42,6 +44,12 @@ export interface SuggestionsComboboxProps<T> extends UseSuggestionsConfig<T> {
 	highlightMatch?: boolean
 }
 
+/**
+ * `useSuggestions` behind the kit's combobox: the same engine as `ResourceCombobox` in the
+ * hook's words — `fetchData(query, { signal })`, `itemKey`, `itemText`,
+ * `query`/`onQueryChange` — and with its defaults: one character before a request, and no
+ * preload.
+ */
 export function SuggestionsCombobox<T>({
 	fetchData,
 	itemKey,

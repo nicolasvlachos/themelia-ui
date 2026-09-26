@@ -37,13 +37,19 @@ function plainLabel(action: ReactNode, subject: ReactNode): string | undefined {
 	return verb && thing ? `${verb}: ${thing}` : verb || thing
 }
 
+/**
+ * A row's state as a dot. One of the pieces every product surface shares: tone is a data
+ * attribute rather than six class names, so a row's state is one string in the DOM and the CSS
+ * reads it once.
+ */
 export function ProductToneDot({ tone = "neutral" }: { tone?: ProductTone }) {
 	return <span aria-hidden data-tone={tone} className={cx("product-tone-dot--component", styles.dot)} />
 }
 
 /**
  * A variant's picture, or a dashed slot where one would go (a grey square reads as a
- * failed image). Only a button with `onSelect`; otherwise the slot is inert and muted.
+ * failed image). Only a button with `onSelect`; otherwise the slot is inert and muted. One of
+ * the pieces every product surface shares.
  */
 export function ProductThumbnail({
 	src,
@@ -100,6 +106,10 @@ export function ProductThumbnail({
 	)
 }
 
+/**
+ * What a product card shows with nothing in it, sized to the card rather than to the page — a
+ * full-page empty state inside a half-width card reads as a broken layout.
+ */
 export function ProductEmptyState({
 	title,
 	description,
@@ -123,6 +133,11 @@ export function ProductEmptyState({
 	)
 }
 
+/**
+ * A row's verbs, built from one array so the overflow cannot offer what the button already
+ * does. Three menus rather than one — this, ProductVariantActionMenu and
+ * ProductOptionActionMenu — because a variant, an option and a row answer to different sets.
+ */
 export function ProductRowActions<TItem extends object>({
 	item,
 	actions,
@@ -198,6 +213,11 @@ function ProductRow({
 	)
 }
 
+/**
+ * A structure metric's row, with the number in the trailing lane. Three cards, one row shape: the
+ * rows differ only in what sits in the trailing lane — a badge, a number, a value — so there is one
+ * row component and three wrappers rather than four near-identical ones.
+ */
 export function ProductStructureMetricRow({
 	metric,
 	actions,
@@ -221,6 +241,11 @@ export function ProductStructureMetricRow({
 	)
 }
 
+/**
+ * A readiness check's row, with a badge in the trailing lane. Three cards, one row shape: the
+ * rows differ only in what sits in the trailing lane — a badge, a number, a value — so there is
+ * one row component and three wrappers rather than four near-identical ones.
+ */
 export function ProductReadinessRow({
 	item,
 	actionFallback,
@@ -258,6 +283,11 @@ export function ProductReadinessRow({
 	)
 }
 
+/**
+ * An operation's row, with a value in the trailing lane. Three cards, one row shape: the rows
+ * differ only in what sits in the trailing lane — a badge, a number, a value — so there is one
+ * row component and three wrappers rather than four near-identical ones.
+ */
 export function ProductOperationRow({
 	item,
 	actionFallback,
@@ -293,6 +323,10 @@ export function ProductOperationRow({
 	)
 }
 
+/**
+ * An option's or a policy's row, on the same row shape as the readiness, structure and
+ * operations rows, which differ only in what sits in the trailing lane.
+ */
 export function ProductSummaryRow({
 	item,
 	actionLabel,
@@ -339,7 +373,8 @@ export function ProductSummaryRow({
 
 /**
  * The per-option overflow menu, exported for screens that lay out options themselves and
- * want the same verbs and labels as the summary card.
+ * want the same verbs and labels as the summary card. Built from one array, so the overflow
+ * cannot offer what the button already does.
  */
 export function ProductOptionActionMenu({
 	option,
@@ -383,8 +418,9 @@ export function ProductOptionActionMenu({
 }
 
 /**
- * A label/value pair whose label is visually hidden while a column heading names the value,
- * and shown once the table collapses at narrow widths.
+ * A label/value pair that survives losing its table: the label is screen-reader-only while a
+ * column heading names the value, and becomes visible below the md breakpoint, where the table
+ * collapses and the headings are gone. One of the pieces every product surface shares.
  */
 export function ProductVariantCell({
 	label,

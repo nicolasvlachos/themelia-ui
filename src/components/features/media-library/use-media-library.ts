@@ -182,6 +182,11 @@ function sortItems<TItem>(
 	}
 }
 
+/**
+ * The whole state without the chrome. Its stable `refetch()` retries the current query without
+ * clearing filters or selection; `fetchError` identifies fetch failures separately from
+ * mutation errors.
+ */
 export function useMediaLibrary<TItem = MediaLibraryItem>({
 	items: itemsProp = EMPTY as readonly TItem[],
 	fetcher,

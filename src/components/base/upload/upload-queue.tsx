@@ -25,6 +25,7 @@ import styles from "./upload.module.css"
 
 export type UploadStatus = "queued" | "uploading" | "done" | "error" | "cancelled"
 
+/** One file on its way. The caller creates it, sends the file, and feeds status and progress back. */
 export interface UploadItem {
 	/** Stable identity. The caller's, not a file name — two files may share one. */
 	id: string
@@ -33,6 +34,7 @@ export interface UploadItem {
 	size?: number
 	/** 0–100. Ignored unless the status is `uploading`. */
 	progress?: number
+	/** Drives the row's icon, bar and trailing control. */
 	status: UploadStatus
 	/** Shown under the row when the status is `error`. */
 	error?: string
@@ -57,16 +59,18 @@ const STATUS_CLASS: Record<UploadStatus, string> = {
 }
 
 export interface UploadProgressListProps {
+	/** The rows: id, name, size, status, and progress or error. Entirely caller-owned. */
 	items: UploadItem[]
 	/** Overrides this list's own copy — the five status words and the row controls. */
 	strings?: Partial<UploadProgressListStrings>
 	/** Offered while a row is queued or uploading. */
 	onCancel?: (id: string) => void
-	/** Offered when a row has failed. */
+	/** Offered when a row has failed. Supplying it renders the retry control. */
 	onRetry?: (id: string) => void
 	/**
 	 * Offered once a row is done, cancelled or failed, and on a queued row without
-	 * `onCancel`. Never on a transfer in flight (that is cancel).
+	 * `onCancel`. Never on a transfer in flight (that is cancel). Supplying it renders the
+	 * dismiss control.
 	 */
 	onRemove?: (id: string) => void
 	className?: string
@@ -200,20 +204,33 @@ export function UploadProgressList({
 }
 
 export interface UploadTrayProps extends Omit<FileUploadProps, "value" | "onValueChange" | "showList"> {
-	/** Everything in the tray, at whatever stage. */
+	/**
+	 * Everything in the tray, at whatever stage: id, name, size, status, and progress or
+	 * error. Entirely caller-owned.
+	 */
 	items: UploadItem[]
 	/** Fires when files are dropped or browsed; the caller adds them to `items` and starts the transfer. */
 	onAddFiles: (files: File[]) => void
+	/** Stops one transfer. Supplying it renders the cancel control on a row in flight. */
 	onCancel?: (id: string) => void
+	/** Supplying it renders the retry control on a failed row. */
 	onRetry?: (id: string) => void
+	/** Supplying it renders the dismiss control on a finished row. */
 	onRemove?: (id: string) => void
+	/** Empties the tray. Supplying it renders the clear-all control. */
 	onClearAll?: () => void
-	/** Overrides this tray's own copy — the clear-all control. */
+	/** Overrides this tray's own copy, which names its controls — clear-all among them. */
 	strings?: Partial<UploadTrayStrings>
-	/** Hides the counts row. */
+	/** Shows the counts row above the list — "Uploading 1, Uploaded 1, Failed 1". */
 	showSummary?: boolean
 }
 
+/**
+ * The same list docked as a tray, with a drop target above it and a summary beneath — for
+ * uploads that outlive the page they started on. Adding files does not write to `items`:
+ * the tray reports the drop through `onAddFiles`, and the caller starts the transfer and
+ * reports back.
+ */
 export function UploadTray({
 	items,
 	onAddFiles,

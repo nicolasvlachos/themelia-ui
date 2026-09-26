@@ -31,17 +31,7 @@ export function TogglePage() {
 			</Example>
 
 			<Example id="toggle-api" title="API">
-				<PropTable owner="Toggle"
-					rows={[
-						{ name: "pressed / defaultPressed", type: "boolean", description: "Controlled and uncontrolled state." },
-						{ name: "onPressedChange", type: "(pressed: boolean) => void", description: "Fires with the next state." },
-						{ name: "variant", type: '"ghost" | "outline"', default: '"ghost"', description: "Match whatever sits beside it in the row — outline for a lone control, ghost inside a group." },
-						{ name: "ToggleGroup multiple", type: "boolean", default: "false", description: "Several at once, or one. A view switch is one; text styles are several." },
-						{ name: "ToggleGroup value / onValueChange", type: "string[]", description: "Always an array, even when only one may be pressed — so switching multiple does not change the value's shape." },
-						{ name: "Toggle value", type: "string", description: "Names the toggle inside a ToggleGroup, which reads it into the group's value. Outside a group it is unused." },
-						{ name: "ToggleGroup attached", type: "boolean", default: "true", description: "Joins the buttons into one control with internal rules. Off leaves them as separate buttons in a row." },
-					]}
-				/>
+				<PropTable owners={["Toggle", "ToggleGroup"]} />
 			</Example>
 		</ComponentPage>
 	)

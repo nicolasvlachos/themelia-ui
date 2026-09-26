@@ -105,6 +105,11 @@ function headerEnd(
 	)
 }
 
+/**
+ * What a product still needs before it is ready: a score and the checks behind it. One of the
+ * cards a product page is assembled from, each a ContentBlock holding a list with the same row
+ * verbs.
+ */
 export function ProductReadinessCard({
 	items = [], score, scoreLabel, summary,
 	onCreateReadinessItem, onSelectReadinessItem, onEditReadinessItem, onDeleteReadinessItem,
@@ -281,6 +286,11 @@ export function ProductOperationsCard({
 	)
 }
 
+/**
+ * The facts that identify a product. With ProductPoliciesCard, one of the two remaining cards
+ * a product page is assembled from: each a ContentBlock with a list inside and the same four
+ * verbs on every row.
+ */
 export function ProductDetailsCard({
 	title, description, metadata = [], media, onEditDetails, actions, headerEnd: end,
 	footerSlot, empty, className, strings,
@@ -319,6 +329,7 @@ export function ProductDetailsCard({
 	)
 }
 
+/** The contract a product sells under: its metrics, its terms, and its rules. */
 export function ProductContractOverview({
 	metricColumns = 3,
 	metrics = [], terms = [], rules = [], onOpenContract, onEditContract, onCreateRule,
@@ -405,6 +416,11 @@ export function ProductContractOverview({
 	)
 }
 
+/**
+ * What the customer agrees to. With ProductDetailsCard, one of the two remaining cards a
+ * product page is assembled from: each a ContentBlock with a list inside and the same four
+ * verbs on every row.
+ */
 export function ProductPoliciesCard({
 	policies = [], onCreatePolicy, onSelectPolicy, onEditPolicy, onDeletePolicy,
 	renderPolicyActions, actions, footerSlot, empty, className, strings,

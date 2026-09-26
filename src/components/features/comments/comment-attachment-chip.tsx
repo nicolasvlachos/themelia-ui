@@ -49,6 +49,11 @@ function AttachmentIcon({ mimeType, className }: { mimeType?: string; className?
 	return <Icon className={className} />
 }
 
+/**
+ * One file, in four states: staged, uploading, failed and posted. One row for all four,
+ * because a failed upload that looks different from a staged one is a row the reader has to
+ * learn twice — and finishing an upload never reflows.
+ */
 export function CommentAttachmentChip({
 	attachment,
 	editable = false,

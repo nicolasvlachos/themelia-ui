@@ -45,6 +45,10 @@ export interface UseAsyncPreviewOptions<TData, TContext = unknown, TType extends
 export type UseAsyncPreviewReturn<TData, TContext = unknown, TType extends string = string> =
 	AsyncPreviewState<TData, TContext, TType> & { setOpen: (open: boolean) => void }
 
+/**
+ * Fetching tied to a popover's open state. Closing aborts the request, only the newest request
+ * may write state, and a module cache keyed by `cacheKey` spares a repeat within `staleTime`.
+ */
 export function useAsyncPreview<TData, TContext = unknown, TType extends string = string>(
 	options: UseAsyncPreviewOptions<TData, TContext, TType>,
 ): UseAsyncPreviewReturn<TData, TContext, TType> {

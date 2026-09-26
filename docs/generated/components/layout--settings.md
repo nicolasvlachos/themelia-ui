@@ -67,15 +67,54 @@ Extends: `Omit<React.ComponentProps<"div">, "title">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `title` | no | `React.ReactNode` |  |
-| `description` | no | `React.ReactNode` |  |
-| `items` | no | `SideNavItem[]` | Flat entries, or captioned groups. Passed straight to SideNav. |
-| `groups` | no | `SideNavGroup[]` |  |
-| `currentPath` | no | `string` | The path considered current. Matched by longest prefix. |
+| `title` | no | `React.ReactNode` | The section heading, above both columns. |
+| `description` | no | `React.ReactNode` | A line under the title, in the section heading above both columns. |
+| `items` | no | `SideNavItem[]` | Flat entries, passed straight to the SideNav the shell draws — the same entries,<br>current-path matching and router hook as SideNav's own. |
+| `groups` | no | `SideNavGroup[]` | Captioned groups of entries, passed straight to the SideNav. |
+| `currentPath` | no | `string` | The current path, passed straight to the SideNav. Matched by longest prefix. |
 | `aside` | no | `React.ReactNode` | Replaces the built-in SideNav entirely. |
-| `renderLink` | no | `React.ComponentProps<typeof SideNav>["renderLink"]` |  |
+| `renderLink` | no | `LinkRenderer` | The router hook, passed straight to the SideNav. |
 | `actions` | no | `React.ReactNode` | Actions for the heading row. |
-| `stickyAside` | no | `boolean` |  |
+| `stickyAside` | no | `boolean` | Keeps the rail in view while the content scrolls. A settings rail is short and the<br>content beside it usually is not. |
+
+### `LinkRenderer`
+
+Kind: type.
+
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
+
+```tsx fragment — declaration JSDoc excerpt
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
+```
+
+```text
+(props: LinkRenderProps) => ReactElement
+```
+
+### `LinkRenderProps`
+
+Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `href` | no | `string` | Destination. When absent, render non-interactive content. |
+| `children` | yes | `ReactNode` |  |
+| `className` | no | `string` |  |
+| `target` | no | `string` |  |
+| `rel` | no | `string` |  |
+| `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
+| `"aria-label"` | no | `string` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ## Preview recipes
 

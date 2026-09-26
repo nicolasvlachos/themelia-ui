@@ -49,6 +49,10 @@ Prepends the selection column, built here so it always agrees with `enableRowSel
 
 Kind: callable.
 
+A name with its avatar, falling back to initials, and an optional subtitle. One of the cells
+every admin table has, so a page does not rewrite it per column: a thin arrangement over the
+kit's primitives that adds the cell's part — the alignment, the truncation, the empty case.
+
 ```text
 ({ name, imageUrl, icon, subtitle, emptyLabel, className, }: AvatarCellProps) => import("react").JSX.Element
 ```
@@ -96,6 +100,10 @@ PrimitiveCellValue | false | ReactElement | CellValueDescriptor | CellValueTuple
 ### `CellValue`
 
 Kind: callable.
+
+One column's value, formatted. Beside MetadataValue on purpose: that renders a labelled fact on
+a detail panel, this renders a value in a grid, where alignment and truncation are the column's
+decisions rather than the value's.
 
 ```text
 ({ value, kind, display, href, currency, minimumFractionDigits, maximumFractionDigits, locale, dateLocale, pattern, from, moneyUnit, fallback, missing, wrap, className, children, }: CellValueProps) => import("react").JSX.Element
@@ -173,6 +181,8 @@ A band above the header row, spanning several columns.
 
 Kind: callable.
 
+The columns menu, one of the table's own controls: one checkbox per hideable column.
+
 ```text
 ({ table, className, align, labelVisibility, strings, buttonProps, }: ColumnVisibilityToggleProps<TData>) => import("react").JSX.Element | null
 ```
@@ -193,6 +203,10 @@ Kind: interface.
 ### `CurrencyCell`
 
 Kind: callable.
+
+An amount through Money. One of the cells every admin table has, so a page does not rewrite it
+per column: a thin arrangement over the kit's primitives that adds the cell's part — the
+alignment, the truncation, the empty case.
 
 ```text
 ({ value, currency, locale, emptyLabel, weight, className, }: CurrencyCellProps) => import("react").JSX.Element
@@ -233,6 +247,9 @@ Kind: callable.
 
 Kind: callable.
 
+Row actions as a menu, as buttons, or whichever fits. `auto` measures the CONTAINER, not the
+window: whether three buttons fit in an actions column is a question about that column.
+
 ```text
 ({ row, actions, menuLabel, displayMode, responsiveBreakpoint, strings, }: DataTableActionsProps<TData>) => import("react").JSX.Element | null
 ```
@@ -253,6 +270,8 @@ Kind: interface.
 ### `DataTableBody`
 
 Kind: callable.
+
+The body rows, and the row that stands in for all of them when there are none.
 
 ```text
 ({ table, onRowClick, emptyStateMessage, emptyStateAction, cellClassName, rowClassName, stickyFirstColumn, hasSelectionColumn, striped, strings, }: DataTableBodyProps<TData>) => import("react").JSX.Element
@@ -278,6 +297,9 @@ Kind: interface.
 ### `DataTableHeader`
 
 Kind: callable.
+
+The header rows — an optional band of column groups, then the columns. Sorting is base TableHead
+doing the work; this only translates the column's state into it.
 
 ```text
 ({ table, stickyHeader, headerClassName, cellClassName, stickyFirstColumn, hasSelectionColumn, columnGroups, headerTransparent, }: DataTableHeaderProps<TData>) => import("react").JSX.Element
@@ -305,26 +327,26 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `size` | no | `DataTableSize` |  |
-| `surface` | no | `DataTableSurface` |  |
+| `surface` | no | `DataTableSurface` | The wrapper's chrome. `card` is the ordinary treatment; `glass` is a hairline outline for a<br>table inside another card, where two card surfaces are a box in a box; `flat` draws nothing. |
 | `headerTransparent` | no | `boolean` | Drops the header row's muted fill. |
-| `columns` | yes | `ColumnDef<TData, TValue>[] \| [ColumnDef<TData, TValue>[], DependencyList]` | Column definitions, or a `[columns, deps]` tuple memoised here. A column array rebuilt<br>every render resets TanStack's column state. |
-| `data` | yes | `TData[]` |  |
+| `columns` | yes | `ColumnDef<TData, TValue>[] \| [ColumnDef<TData, TValue>[], DependencyList]` | Ordinary TanStack column definitions, or a `[columns, deps]` tuple memoised here, because<br>an array rebuilt every render resets column state on every keystroke elsewhere on the page. |
+| `data` | yes | `TData[]` | The page to render. The table never slices it. |
 | `columnGroups` | no | `ColumnGroup[]` |  |
-| `enableSorting` | no | `boolean` |  |
-| `enableFiltering` | no | `boolean` |  |
-| `enableRowSelection` | no | `boolean` |  |
+| `enableSorting` | no | `boolean` | Turns on sorting: the header control AND the state behind it. |
+| `enableFiltering` | no | `boolean` | Turns on the toolbar's filter AND the state behind it. Requires `filterColumn`. |
+| `enableRowSelection` | no | `boolean` | Turns on selection: the checkbox column AND the state behind it, so a checkbox column<br>cannot exist with selection switched off. |
 | `enableMultiRowSelection` | no | `boolean` |  |
 | `enableSubRowSelection` | no | `boolean` |  |
-| `enableColumnVisibility` | no | `boolean` |  |
+| `enableColumnVisibility` | no | `boolean` | Turns on column hiding: the toolbar's columns menu AND the state behind it. |
 | `fullscreen` | no | `boolean` |  |
 | `defaultFullscreen` | no | `boolean` |  |
 | `onFullscreenChange` | no | `(fullscreen: boolean) => void` |  |
 | `showFullscreenToggle` | no | `boolean` |  |
 | `manualSorting` | no | `boolean` | The consumer owns sorting: the table reports intent and does not reorder `data`. |
-| `stickyHeader` | no | `boolean` |  |
+| `stickyHeader` | no | `boolean` | Pins the header row. A pinned pane needs a bounded container to be pinned inside — sticky<br>with no height cap (`maxBodyHeight`, `fillAvailableHeight`) sticks to the page, which is<br>nothing. |
 | `stickyToolbar` | no | `boolean` |  |
-| `stickyFirstColumn` | no | `boolean` |  |
-| `maxBodyHeight` | no | `number \| string` | Caps the scrolling body. A number is pixels. |
+| `stickyFirstColumn` | no | `boolean` | Pins the first column — and the selection checkbox before it, when there is one — while<br>the body scrolls sideways. |
+| `maxBodyHeight` | no | `number \| string` | Caps the scrolling body. A number is pixels. This is the bound a sticky header needs to be<br>pinned inside. |
 | `fillAvailableHeight` | no | `boolean` | Fills the parent's height, scrolling the body instead of the page. |
 | `striped` | no | `boolean` |  |
 | `emptyStateMessage` | no | `string` |  |
@@ -343,16 +365,16 @@ Kind: interface.
 | `topbarClassName` | no | `string` |  |
 | `toolbarLabelVisibility` | no | `"responsive" \| "hidden"` | Whether built-in toolbar controls draw their labels. Icon-only by default. |
 | `footerContent` | no | `ReactNode` |  |
-| `selectionToolbar` | no | `ReactNode \| ((context: DataTableSelectionToolbarContext<TData>) => ReactNode)` | `undefined` renders the default, `null`/`false` suppresses it, a function replaces it. |
-| `bulkActions` | no | `ReactNode \| ((context: DataTableSelectionToolbarContext<TData>) => ReactNode)` |  |
+| `selectionToolbar` | no | `ReactNode \| ((context: DataTableSelectionToolbarContext<TData>) => ReactNode)` | The bar shown while rows are selected. `undefined` renders the default bar, `null` or<br>`false` suppresses it, a node or a function replaces it. The function's context carries the<br>selected rows and a `clearSelection`. |
+| `bulkActions` | no | `ReactNode \| ((context: DataTableSelectionToolbarContext<TData>) => ReactNode)` | The actions inside the default selection bar, or a function of the same context — the<br>selected rows and a `clearSelection` — that returns them. |
 | `selectionToolbarClassName` | no | `string` |  |
-| `rowActions` | no | `TableAction<TData>[] \| ((row: TData) => TableAction<TData>[])` |  |
+| `rowActions` | no | `TableAction<TData>[] \| ((row: TData) => TableAction<TData>[])` | Each row's actions, or a factory of them. The factory form is what a real table needs:<br>“Delete” belongs on a cancelled booking and nowhere else. `href` is carried as data — the<br>table never navigates. |
 | `rowActionsMenuLabel` | no | `string \| ((row: TData) => string)` |  |
-| `rowActionsDisplayMode` | no | `RowActionsDisplayMode` |  |
+| `rowActionsDisplayMode` | no | `RowActionsDisplayMode` | How row actions render: a menu, inline buttons, or `auto`. `auto` measures the TABLE, not<br>the window: whether three buttons fit is a question about the table, and the same one is<br>as often in a drawer as at page width. |
 | `rowActionsBreakpoint` | no | `number` | Container width, in pixels, at which `auto` switches from a menu to inline. |
-| `pageCount` | no | `number` | Total page count. Supplying it renders the pager. |
-| `page` | no | `number` |  |
-| `onPageChange` | no | `(page: number) => void` |  |
+| `pageCount` | no | `number` | Total page count. Supplying it renders the pager once there is more than one page. Add<br>`totalRowCount` and `pageSize` for the “1–5 of 13” line beside it. |
+| `page` | no | `number` | The current page, from 1. |
+| `onPageChange` | no | `(page: number) => void` | Receives the page the pager moves to. |
 | `totalRowCount` | no | `number` | The result-count line beside the pager. |
 | `pageSize` | no | `number` |  |
 | `onRowClick` | no | `RowClickHandler<TData>` |  |
@@ -367,7 +389,7 @@ Kind: interface.
 | `columnVisibility` | no | `VisibilityState` |  |
 | `defaultColumnVisibility` | no | `VisibilityState` |  |
 | `initialState` | no | `{ sorting?: SortingState; rowSelection?: RowSelectionState; columnVisibility?: VisibilityState; columnFilters?: ColumnFiltersState; }` |  |
-| `storageKey` | no | `string` | Persists column visibility to localStorage under `dt.{storageKey}.columns`. An explicit<br>`defaultColumnVisibility` still wins over the persisted value. |
+| `storageKey` | no | `string` | Persists column visibility to localStorage under `dt.{storageKey}.columns`. An explicit<br>`defaultColumnVisibility` still wins over the persisted value: a developer who hides a<br>column in code means it. |
 | `style` | no | `CSSProperties` |  |
 
 ### `DataTableSelectionToolbarContext`
@@ -436,6 +458,10 @@ with no fill, for a table inside another card; `flat` draws nothing.
 
 Kind: callable.
 
+The table's own controls — scroll arrows, the columns menu, full screen — in one bordered group.
+It renders NOTHING when it has nothing to offer: a table that fits, cannot hide a column and has
+no full-screen toggle would otherwise show an empty frame.
+
 ```text
 ({ table, tableAreaRef, fullscreen, onFullscreenChange, showFullscreenToggle, enableColumnVisibility, labelVisibility, strings, }: DataTableToolbarProps<TData>) => import("react").JSX.Element | null
 ```
@@ -459,6 +485,10 @@ Kind: interface.
 
 Kind: callable.
 
+A date, in the scope's pattern unless `pattern` says otherwise. One of the cells every admin
+table has, so a page does not rewrite it per column: a thin arrangement over the kit's
+primitives that adds the cell's part — the alignment, the truncation, the empty case.
+
 ```text
 ({ value, pattern, showIcon, icon, emptyLabel, className, }: DateCellProps) => import("react").JSX.Element
 ```
@@ -479,6 +509,10 @@ Kind: interface.
 ### `DateMetaCell`
 
 Kind: callable.
+
+A date with a second line under it, given or derived from the parsed date. One of the cells
+every admin table has, so a page does not rewrite it per column: a thin arrangement over the
+kit's primitives that adds the cell's part — the alignment, the truncation, the empty case.
 
 ```text
 ({ value, pattern, showIcon, icon, emptyLabel, secondary, className, }: DateMetaCellProps) => import("react").JSX.Element
@@ -505,6 +539,9 @@ DataTableStrings
 ### `FullscreenToggle`
 
 Kind: callable.
+
+The full-screen toggle, one of the table's own controls, on its own for a consumer building
+their own toolbar.
 
 ```text
 ({ fullscreen, onFullscreenChange, enterLabel, exitLabel, strings, className, render, }: FullscreenToggleProps) => import("react").JSX.Element
@@ -542,6 +579,45 @@ Kind: callable.
 ```text
 (table: LegacyTable<TData>) => TData[]
 ```
+
+### `LinkRenderer`
+
+Kind: type.
+
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
+
+```tsx fragment — declaration JSDoc excerpt
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
+```
+
+```text
+(props: LinkRenderProps) => ReactElement
+```
+
+### `LinkRenderProps`
+
+Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `href` | no | `string` | Destination. When absent, render non-interactive content. |
+| `children` | yes | `ReactNode` |  |
+| `className` | no | `string` |  |
+| `target` | no | `string` |  |
+| `rel` | no | `string` |  |
+| `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
+| `"aria-label"` | no | `string` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ### `mergeDataTableStrings`
 
@@ -588,17 +664,6 @@ Kind: type.
 ReactNode | { id?: string; label: ReactNode; tone?: BadgeTone; icon?: ReactNode; }
 ```
 
-### `ResourceCellLinkProps`
-
-Kind: interface.
-
-| member | required | type | description / documented default |
-| --- | :-: | --- | --- |
-| `href` | yes | `string` |  |
-| `children` | yes | `ReactNode` |  |
-| `className` | no | `string` |  |
-| `"aria-label"` | no | `string` |  |
-
 ### `ResourceCellMetadataItem`
 
 Kind: interface.
@@ -622,7 +687,7 @@ Kind: interface.
 | `imageUrl` | no | `string` | Falls back to `fallback`, then to nothing, when absent or broken. |
 | `fallback` | no | `ReactNode` |  |
 | `href` | no | `string` |  |
-| `renderLink` | no | `(props: ResourceCellLinkProps) => ReactNode` | Routes the title through the app's router instead of a plain anchor. |
+| `renderLink` | no | `LinkRenderer` | Routes the title through the app's router, as every component's `renderLink` does; without it, a plain anchor. |
 | `emptyLabel` | no | `ReactNode` |  |
 | `className` | no | `string` |  |
 
@@ -693,7 +758,10 @@ Kind: interface.
 
 Kind: callable.
 
-Several chips in one cell, e.g. overdue and partially paid.
+Several status chips in one cell, e.g. overdue and partially paid; a status is a Badge. One of
+the cells every admin table has, so a page does not rewrite it per column: a thin arrangement
+over the kit's primitives that adds the cell's part — the alignment, the truncation, the empty
+case.
 
 ```text
 ({ items, emptyLabel, className, }: StatusClusterCellProps) => import("react").JSX.Element
@@ -738,6 +806,10 @@ Extends: `ContextAction<TData>`.
 
 Kind: callable.
 
+Whether the table is scrolled away from either edge, and the nudges that move it — what the
+toolbar's scroll arrows react to. For a consumer building their own toolbar: reimplementing the
+overflow booleans and the nudges means two answers to “can this scroll right”.
+
 ```text
 (tableAreaRef: RefObject<HTMLDivElement | null>, options?: { stepPx?: number; deps?: readonly unknown[]; }) => UseDataTableScrollStateResult
 ```
@@ -758,6 +830,8 @@ Kind: interface.
 
 Kind: callable.
 
+The table's `size` — its row density — for a part rendered inside a row.
+
 ```text
 () => DataTableSize
 ```
@@ -765,6 +839,10 @@ Kind: callable.
 ### `useFullscreenTableModality`
 
 Kind: callable.
+
+The modality full screen has to take so the page behind it stops being reachable: while
+`active`, Escape calls `onExit`, Tab cycles inside `regionRef`, the page stops scrolling, and
+focus returns to the opener afterwards.
 
 ```text
 (active: boolean, regionRef: RefObject<HTMLElement | null>, onExit: () => void) => void

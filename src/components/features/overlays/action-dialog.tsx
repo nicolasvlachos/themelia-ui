@@ -25,6 +25,11 @@ const PARTS = {
 	Content: DialogContent as ActionOverlayParts["Content"],
 } satisfies ActionOverlayParts
 
+/**
+ * A dialog with a generated footer: cancel and confirm in a fixed order, an async- and
+ * form-aware confirm, and a tone for the glyph and the confirm colour. Use the base Dialog when
+ * the body owns its actions.
+ */
 export function ActionDialog({ width = "md", surfaceStyle, ...props }: ActionDialogProps) {
 	return (
 		<ActionOverlayFrame

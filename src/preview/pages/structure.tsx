@@ -57,39 +57,18 @@ export function StructurePage() {
 			<Example
 				id="stack-api"
 				title="Stack API">
-				<PropTable owner="Stack"
-					rows={[
-						{ name: "direction", type: 'ResponsiveValue<"vertical" | "horizontal">', default: '"vertical"', description: "Main axis." },
-						{ name: "gap", type: "ResponsiveValue<StructureGap>", default: '"md"', description: "Space between children, on the semantic spacing scale." },
-						{ name: "align", type: "ResponsiveValue<StructureAlign>", default: '"stretch"', description: "Cross-axis alignment." },
-						{ name: "justify", type: "ResponsiveValue<StructureJustify>", default: '"start"', description: "Main-axis distribution." },
-						{ name: "wrap", type: "ResponsiveValue<boolean>", default: "false", description: "Allows children onto more than one line." },
-						{ name: "maxWidth", type: "ResponsiveValue<StructureWidth | string>", default: "—", description: "Caps the width — a content step (sm…2xl, full, none) or any CSS length. A field measure is a control decision rather than a content one, which is why a raw length is allowed beside the scale." },
-					]}
-				/>
+				<PropTable owner="Stack" />
 			</Example>
 				<Example
 				id="split-api"
 				title="Split API">
-				<PropTable owner="Split"
-					rows={[
-						{ name: "side", type: '"start" | "end"', default: '"end"', description: "Which visual column is the fixed one. The DOM order never changes with it — the first child is the main content on both settings, so a reader tabbing through reaches it first either way." },
-						{ name: "sideWidth", type: "ResponsiveValue<StructureWidth | string>", default: '"18rem"', description: "The fixed column's width. A maximum rather than an exact size, so a narrow viewport shrinks the rail instead of squeezing the content beside it to nothing." },
-						{ name: "gap", type: "ResponsiveValue<StructureGap>", default: '"md"', description: "Space between the two columns." },
-						{ name: "collapseBelow", type: '"sm" | "md" | "lg" | "xl" | "never"', default: '"md"', description: "Below this breakpoint the two columns become one. `never` keeps them side by side at every width." },
-					]}
-				/>
+				<PropTable owner="Split" />
 			</Example>
 
 			<Example
 				id="bleed-api"
 				title="Bleed API">
-				<PropTable owner="Bleed"
-					rows={[
-						{ name: "amount", type: "ResponsiveValue<StructureGap>", default: '"none"', description: "How far to escape, on the spacing scale. Match it to the padding being cancelled — a surface at `--space-md` bleeds md — so the two move together under a density change." },
-						{ name: "axis", type: '"inline" | "block" | "both"', default: '"inline"', description: "Which way. Sideways is the common case: an image bleeds across and keeps its vertical rhythm." },
-					]}
-				/>
+				<PropTable owner="Bleed" />
 			</Example>
 
 	</ComponentPage>

@@ -46,20 +46,7 @@ export function PrimitiveMoneyPage() {
 			</Example>
 
 			<Example id="money-api" title="API">
-				<PropTable owner="Money"
-					rows={[
-						{ name: "amount / currency", type: "number | string | null / string", description: "The amount and its ISO code, in separate channels. A string amount is parsed by POSITION — whichever of , or . appears last is the decimal point — so a value that came back through a European locale does not parse a thousand times too large." },
-						{ name: "unit / minorUnitScale", type: '"major" | "minor" / number', default: '"major" / 100', description: "The unit the amount ARRIVES in. Set minorUnitScale for a currency whose exponent is not two." },
-						{ name: "formatMode", type: '"with-symbol" | "with-code" | "decimal"', default: '"with-symbol"', description: "How the amount is written. Falls back to the scope's money.formatMode." },
-						{ name: "locale", type: "string", description: "Overrides the scope's locale for this value." },
-						{ name: "secondary", type: "MoneyValue | null", description: "A converted amount shown beside the first. Passing it is the request for the pair; the scope's policy can narrow that but never widen it." },
-						{ name: "displayMode", type: '"dual" | "dynamic" | "primary-only"', description: "Whether the pair shows. dynamic shows it only when the two codes actually differ." },
-						{ name: "layout", type: '"inline" | "stacked"', description: "Beside, or under. Falls back to the scope's money.layout." },
-						{ name: "secondaryEmphasis", type: '"discrete" | "muted" | "match" | "hidden"', default: '"discrete"', description: "How loud the second value is against the first." },
-						{ name: "separator", type: "ReactNode", default: '"·"', description: "Between the two, inline. It is aria-hidden — read aloud, the mark between two amounts is punctuation for the eye." },
-						{ name: "UIProvider money", api: "UIProvider.config.money", type: "MoneyConfig", description: "defaultCurrency, displayCurrency, dualPricingEnabled, displayMode, layout, formatMode — the store's policy, decided once." },
-					]}
-				/>
+				<PropTable owners={["Money", "MoneyConfig"]} />
 			</Example>
 		</ComponentPage>
 	)

@@ -111,8 +111,8 @@ Extends: `Omit<React.ComponentProps<"div">, "children">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `header` | no | `React.ReactNode` | Spans both columns, before the work regions. |
-| `main` | yes | `React.ReactNode` | Primary detail, form, or index content. |
-| `aside` | yes | `React.ReactNode` | Secondary summary, support, or action rail. |
+| `main` | yes | `React.ReactNode` | The primary work region: detail, form, or index content. |
+| `aside` | yes | `React.ReactNode` | The secondary work region: summary, support, or action rail. Always second in the DOM. |
 | `footer` | no | `React.ReactNode` | Spans both columns, after the work regions. |
 | `stickyAside` | no | `boolean` | Keeps the aside in view while the page scrolls. Opt-in: an aside taller than the<br>viewport must be able to scroll away. |
 | `asidePosition` | no | `"start" \| "end"` | Which side the aside is drawn on. Default `end`. Only the grid columns move; the<br>aside stays second in the DOM. |

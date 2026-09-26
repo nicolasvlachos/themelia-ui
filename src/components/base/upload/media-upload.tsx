@@ -24,11 +24,19 @@ interface MediaUploadProps extends FileConstraints {
 	id?: string
 	/** Overrides this control's own copy — the empty frame, the overlay, and remove. */
 	strings?: Partial<MediaUploadStrings>
-	/** Controlled file. */
+	/** The chosen file, controlled. */
 	value?: File | null
+	/** Called with the chosen file, or `undefined` when it is removed. */
 	onValueChange?: (file: File | undefined) => void
+	/**
+	 * Receives the refused files. Report them through FormField's `error` prop: the error and
+	 * helper text are associated with the native input.
+	 */
 	onRejectedFiles?: (rejections: FileRejection[]) => void
-	/** An already-stored image. In controlled mode, clear this alongside value to remove it. */
+	/**
+	 * An already-stored image. Uncontrolled, removing it clears its preview; when `value` is
+	 * controlled, clear both `value` and `previewUrl` in `onValueChange` to remove it.
+	 */
 	previewUrl?: string
 	disabled?: boolean
 	invalid?: boolean
@@ -194,6 +202,7 @@ function MediaPicker({
 export type AvatarUploadProps = MediaUploadProps
 export type ImageUploadProps = MediaUploadProps
 
+/** The round variant, sized for a profile image. */
 export function AvatarUpload({ strings, ...props }: AvatarUploadProps) {
 	const copy = { ...defaultAvatarUploadStrings, ...strings }
 	return (
@@ -208,6 +217,10 @@ export function AvatarUpload({ strings, ...props }: AvatarUploadProps) {
 	)
 }
 
+/**
+ * A single image, where the picker is the preview in the shape it will have in the
+ * product — a cover, a banner. Add an image, replace it, or remove it.
+ */
 export function ImageUpload({ strings, ...props }: ImageUploadProps) {
 	const copy = { ...defaultImageUploadStrings, ...strings }
 	return (

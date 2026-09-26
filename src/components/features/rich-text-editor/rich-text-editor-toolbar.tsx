@@ -71,6 +71,10 @@ function EditorToolbarButton({
 	) : button
 }
 
+/**
+ * The formatting row, exported so an editor can be mounted with the toolbar somewhere else — a
+ * sticky bar above a long document, or a shared bar over two editors.
+ */
 export function RichTextEditorToolbar({
 	buttons,
 	extraToolbarItems,
@@ -139,8 +143,9 @@ export interface EditorCountsProps {
 }
 
 /**
- * Character and word counts. Over the limit the count turns error-toned; input is never
- * refused, so the form decides.
+ * The word and character counts under the editor. Over the limit the count turns error-toned;
+ * input is never refused, so the form decides. Separate because a limit is often shown beside a
+ * submit button rather than under the field it applies to.
  */
 export function EditorCounts({ text, maxLength, strings, className }: EditorCountsProps) {
 	const characters = text.length

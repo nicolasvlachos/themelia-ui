@@ -10,6 +10,10 @@ export interface PreviewImageProps {
 	className?: string
 }
 
+/**
+ * A thumbnail for a file that has not been uploaded yet, or any image, that falls back to a
+ * glyph rather than the browser's broken-image mark when it fails to load.
+ */
 export function PreviewImage({ src, alt = "", fallback, className }: PreviewImageProps) {
 	const [failed, setFailed] = useState(false)
 	const [attempted, setAttempted] = useState(src)

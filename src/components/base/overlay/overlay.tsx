@@ -57,6 +57,7 @@ function edgeVars(size?: OverlaySize, length?: OverlayLength, inset?: OverlayIns
 	return vars
 }
 
+/** The root: holds the open state that the trigger, the content and the close controls share. */
 function Overlay({ open, defaultOpen = false, onOpenChange, children }: OverlayRootProps) {
 	const [uncontrolled, setUncontrolled] = React.useState(defaultOpen)
 	const isControlled = open !== undefined
@@ -88,6 +89,11 @@ function Overlay({ open, defaultOpen = false, onOpenChange, children }: OverlayR
 	)
 }
 
+/**
+ * Opens the overlay. Renders a bare button by default; `render` hands the behaviour to your
+ * own control instead, so the trigger is a kit Button rather than something this module
+ * styles.
+ */
 function OverlayTrigger({
 	render,
 	onClick,
@@ -95,7 +101,7 @@ function OverlayTrigger({
 	children,
 	...props
 }: React.ComponentProps<"button"> & {
-	/** The element this trigger becomes. The canonical polymorphic contract. */
+	/** The element this trigger becomes — a kit Button, say; `children` stays its content. */
 	render?: React.ReactElement
 }): React.JSX.Element {
 	const { open, setOpen } = useOverlayContext("OverlayTrigger")
@@ -123,6 +129,11 @@ function OverlayTrigger({
 	})
 }
 
+/**
+ * Closes the overlay. Renders a bare button by default; `render` hands the behaviour to your
+ * own control instead, so the close is a kit Button rather than something this module
+ * styles.
+ */
 function OverlayClose({
 	render,
 	onClick,
@@ -130,7 +141,7 @@ function OverlayClose({
 	children,
 	...props
 }: React.ComponentProps<"button"> & {
-	/** The element this close control becomes. The canonical polymorphic contract. */
+	/** The element this close control becomes — a kit Button, say; `children` stays its content. */
 	render?: React.ReactElement
 }) {
 	const { setOpen } = useOverlayContext("OverlayClose")
@@ -169,6 +180,11 @@ const overlayVariants = cvm(styles.root, {
 	defaultVariants: { placement: "center", surface: "framed" },
 })
 
+/**
+ * The surface, on a native `<dialog>`. `placement`, `modality` and `dismissal` make it a
+ * dialog, a sheet or a drawer — there is no second component for the edge case. Popups
+ * opened inside it render inside it, above it and reachable by keyboard.
+ */
 function OverlayContent({
 	placement = "center",
 	size,
@@ -236,8 +252,10 @@ function OverlayContent({
 }
 
 /**
- * Wraps children so any button inside dismisses the overlay. When only some actions
- * should close, use `<OverlayClose render={<Button />} />` per action.
+ * Wraps children so any button inside dismisses the overlay — for a footer whose every
+ * control should close. Wrapping each button individually is where the wiring gets
+ * forgotten. When only some actions should close, keep `<OverlayClose render={<Button />} />`
+ * per action.
  */
 function OverlayDismissArea({
 	children,

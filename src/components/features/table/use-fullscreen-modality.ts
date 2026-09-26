@@ -14,6 +14,11 @@ const FOCUSABLE = [
 	'[tabindex]:not([tabindex="-1"])',
 ].join(",")
 
+/**
+ * The modality full screen has to take so the page behind it stops being reachable: while
+ * `active`, Escape calls `onExit`, Tab cycles inside `regionRef`, the page stops scrolling, and
+ * focus returns to the opener afterwards.
+ */
 export function useFullscreenTableModality(
 	active: boolean,
 	regionRef: RefObject<HTMLElement | null>,

@@ -12,15 +12,24 @@ import {
 	type UseActionOptions,
 } from './actions.types';
 
+/** The nearest `ActionScope`'s id, or the global scope. For a surface resolving its own actions. */
 export function useActionScope(): string {
 	return useContext(ActionScopeContext) ?? ACTION_GLOBAL_SCOPE;
 }
 
+/**
+ * Subscribes to the whole store. Prefer a narrower hook — this re-renders on any registry or
+ * run change.
+ */
 export function useActionSnapshot(): ActionStoreSnapshot {
 	const store = useActionStore();
 	return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
 }
 
+/**
+ * Registers `actions` for as long as the calling component is mounted, under `options.scope` or
+ * else the nearest `ActionScope`'s.
+ */
 export function useRegisterActions<
 	TPayload = unknown,
 	TValues = unknown,
@@ -56,6 +65,7 @@ export function useRegisterActions<
 	}, [signature, scope, store]);
 }
 
+/** The actions for one surface, already filtered by visibility, permission, and guards. */
 export function useActionSurface<
 	TPayload = unknown,
 	TValues = unknown,
@@ -79,6 +89,10 @@ export function useActionSurface<
 	});
 }
 
+/**
+ * One action by id, when a surface is not the right shape. `null` when none is registered in
+ * scope or it is not visible.
+ */
 export function useAction<TPayload = unknown, TValues = unknown, TResult = unknown>(
 	actionId: string,
 	options: UseActionOptions<TPayload> = {},
@@ -98,6 +112,10 @@ export function useAction<TPayload = unknown, TValues = unknown, TResult = unkno
 	});
 }
 
+/**
+ * One action registered for the lifetime of the component that declares it, for a definition no
+ * other surface needs.
+ */
 export function useLocalAction<
 	TPayload = unknown,
 	TValues = unknown,
@@ -120,6 +138,10 @@ export function useLocalAction<
 	});
 }
 
+/**
+ * Whichever action is currently open, or `null`. The outlet reads this; a bespoke outlet would
+ * too.
+ */
 export function useActiveAction<
 	TPayload = unknown,
 	TValues = unknown,

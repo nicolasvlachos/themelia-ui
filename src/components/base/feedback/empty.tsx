@@ -33,24 +33,47 @@ export interface EmptyMediaContext {
 }
 
 export interface EmptyProps extends Omit<React.ComponentProps<"div">, "title"> {
-	/** Icon or illustration. */
+	/** Icon or illustration: the visual. */
 	media?: React.ReactNode
+	/**
+	 * The media's chrome. `none` renders the media raw; `icon` and `icon-soft` set a glyph in
+	 * a tile; `illustration` centres it with room below.
+	 */
 	mediaVariant?: EmptyMediaVariant
 	/** Media as a function of the variant, for a visual that changes with its chrome. */
 	renderMedia?: (context: EmptyMediaContext) => React.ReactNode
+	/**
+	 * Names the absence: "No invoices yet", not "Nothing here". Falls back to `strings.title`,
+	 * so a bare `<Empty />` still renders during scaffolding.
+	 */
 	title?: React.ReactNode
-	/** `false` hides it, for a title that already tells the whole story. */
+	/**
+	 * Why it is empty, or what will fill it. `false` hides it, for a title that already tells
+	 * the whole story.
+	 */
 	description?: React.ReactNode | false
-	/** Buttons or links offering the next step. */
+	/**
+	 * Buttons or links offering the next step. An empty state that only explains is a dead
+	 * end.
+	 */
 	action?: React.ReactNode
 	/** Quiet copy under the action — a hint, a learn-more, a shortcut. */
 	footer?: React.ReactNode
+	/**
+	 * Breathing room, on both axes: `sm` for panels and cells, `lg` for a whole page. The
+	 * inline padding is what keeps copy off a dashed edge.
+	 */
 	padding?: EmptyPadding
 	/**
 	 * The dashed outline. Off by default; use it when the empty state stands in for a card's
 	 * body and the edge says "something goes here".
 	 */
 	border?: boolean
+	/**
+	 * Overrides this state's own copy: `title`, `description`, and `ariaLabel`. The region
+	 * announces through `role="status"`, so a list that empties out while the reader is on the
+	 * page says so.
+	 */
 	strings?: Partial<EmptyStrings>
 }
 
@@ -67,6 +90,10 @@ const MEDIA_CLASS: Record<EmptyMediaVariant, string | undefined> = {
 	illustration: styles.mediaIllustration,
 }
 
+/**
+ * What a surface shows when it has nothing to show, with an `action` slot for the next step.
+ * `mediaVariant` dresses the media, and `padding` sizes it from a panel cell to a whole page.
+ */
 export function Empty({
 	media,
 	mediaVariant = "none",

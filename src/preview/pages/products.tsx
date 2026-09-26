@@ -41,21 +41,31 @@ export function ProductsPage() {
 			</Example>
 
 			<Example id="products-api" title="API">
-				<PropTable owner="ProductReadinessCard"
-					rows={[
-						{ name: "ProductReadinessCard score", type: "number", description: "0–100, clamped — a percentage bar cannot show 140, and a NaN would render as an empty track." },
-						{ name: "tone", api: "ProductReadinessItem.tone", type: "\"neutral\" | \"primary\" | \"success\" | \"warning\" | \"destructive\" | \"info\"", description: "No secondary: it means “not this one”, which is not a state a product can be in. A readiness item with completed and no tone derives success, so ticking a box does not also mean remembering the colour." },
-						{ name: "surface", api: "ProductOptionsMatrix.surface", type: "\"card\" | \"embedded\"", description: "card frames the surface; embedded renders it bare inside one that already exists." },
-						{ name: "ProductDetailsCard description", type: "ReactNode | false", description: "false suppresses the default rather than rendering it empty — which is the difference between a card with no subtitle and a card with a blank line where one was." },
-						{ name: "ProductContractOverview terms", type: "MetadataListItem[]", description: "Facts go through MetadataList, so an email or an SKU is rendered by the kind that knows how; this module does not restate it." },
-						{ name: "ProductQuotePreviewLine.emphasis", type: "boolean", description: "Rules the line off and weights it. Not a tint: a filled band on the last line makes a total look like an alert, which is the one thing a total is not." },
-						{ name: "renderItem", type: "(item, index) => ReactNode", description: "Replaces a whole row. The rows are one component with three wrappers, so a consumer replacing one is replacing the same shape everywhere it appears." },
-						{ name: "ProductDetailsCard / ProductPoliciesCard", type: "component", description: "The two remaining cards a product page is assembled from \u2014 the facts that identify it, and what the customer agrees to. Each is a ContentBlock with a list inside and the same four verbs on every row." },
-						{ name: "ProductVariantDetails", type: "component", description: "One variant, read-only: what it is, what it costs, and which options it stands for. `variant` is optional because the panel is also what a page shows before one is chosen." },
-						{ name: "ProductSummaryRow / ProductReadinessRow / ProductOperationRow / ProductStructureMetricRow", type: "component", description: "Three cards, one row shape. They differ only in what sits in the trailing lane \u2014 a badge, a number, a value \u2014 so there is one row component and three wrappers rather than four near-identical ones." },
-						{ name: "ProductRowActions / ProductVariantActionMenu / ProductOptionActionMenu", type: "component", description: "The verbs, built from one array so the overflow cannot offer what the button already does. Three menus rather than one because a variant, an option and a row answer to different sets." },
-						{ name: "ProductVariantCell / ProductThumbnail / ProductToneDot", type: "component", description: "The pieces every product surface shares. Tone is a data attribute rather than six class names, so a row\u2019s state is one string in the DOM and the CSS reads it once." },
-						{ name: "ProductEmptyState", type: "component", description: "What a product card shows with nothing in it, sized to the card rather than to the page \u2014 a full-page empty state inside a half-width card reads as a broken layout." },
+				<PropTable
+					owners={[
+						"ProductReadinessCard",
+						"ProductReadinessItem",
+						"ProductDetailsCard",
+						"ProductContractOverview",
+						"ProductQuotePreviewLine",
+					]}
+				/>
+				<PropTable
+					symbols={[
+						"ProductSurface",
+						"ProductPoliciesCard",
+						"ProductVariantDetails",
+						"ProductSummaryRow",
+						"ProductReadinessRow",
+						"ProductOperationRow",
+						"ProductStructureMetricRow",
+						"ProductRowActions",
+						"ProductVariantActionMenu",
+						"ProductOptionActionMenu",
+						"ProductVariantCell",
+						"ProductThumbnail",
+						"ProductToneDot",
+						"ProductEmptyState",
 					]}
 				/>
 			</Example>

@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 
-import { Address, Coordinates, InlineList, Measure, Quantity, Range, Rating, Ratio } from "./index"
+import { UIProvider } from "@/lib/ui-provider"
+
+import { Address, Coordinates, DateTime, InlineList, Measure, Quantity, Range, Rating, Ratio, Time } from "./index"
 
 /** Value primitives: asserts each really delegates its locale rules to `Intl`. */
 describe("Ratio and Rating", () => {
@@ -175,5 +177,25 @@ describe("Address", () => {
 	it("collapses to one line for a cell", () => {
 		render(<Address value={PARTS} format="inline" />)
 		expect(screen.getByText("1 High Street, Oxford, OX1 1AA, United Kingdom")).toBeInTheDocument()
+	})
+})
+
+describe("Time and DateTime", () => {
+	const WHEN = new Date(2026, 2, 12, 21, 5)
+
+	it("follow the provider's time format", () => {
+		render(
+			<UIProvider config={{ dates: { timeFormat: "h:mm a" } }}>
+				<Time value={WHEN} data-testid="time" />
+				<DateTime value={WHEN} data-testid="date-time" />
+			</UIProvider>,
+		)
+		expect(screen.getByTestId("time").textContent).toBe("9:05 PM")
+		expect(screen.getByTestId("date-time").textContent).toContain("9:05 PM")
+	})
+
+	it("use a 24-hour clock by default", () => {
+		render(<Time value={WHEN} data-testid="time" />)
+		expect(screen.getByTestId("time").textContent).toBe("21:05")
 	})
 })

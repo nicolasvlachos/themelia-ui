@@ -22,6 +22,11 @@ import { resolveMediaLibraryAccessors } from "./use-media-library"
 import type { MediaLibraryItem, MediaResourceGalleryProps } from "./media-library.types"
 import styles from "./media-library.module.css"
 
+/**
+ * The assets attached to a record, in order — with reorder, cover, and detach. Not a browser:
+ * `onAdd` usually opens the library dialog. Reordering uses move buttons rather than drag, so it
+ * works with keyboard, screen reader and touch.
+ */
 export function MediaResourceGallery<TItem = MediaLibraryItem>({
 	items,
 	accessors: accessorsProp,

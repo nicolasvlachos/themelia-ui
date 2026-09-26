@@ -235,6 +235,10 @@ export type ActionPredicate<TPayload = unknown> =
 export type ActionPermission = string | readonly string[];
 export type ActionRoles = string | readonly string[];
 
+/**
+ * One action, defined once and read from every surface: what it is called, where it appears, how
+ * it asks, and what it runs.
+ */
 export interface ActionDefinition<
 	TPayload = unknown,
 	TValues = unknown,
@@ -252,13 +256,19 @@ export interface ActionDefinition<
 	disabled?: ActionPredicate<TPayload>;
 	permission?: ActionPermission;
 	roles?: ActionRoles;
+	/**
+	 * How the action asks. The outlet renders it; no surface needs its own dialog. `"none"`, or no
+	 * modality, runs the action at once.
+	 */
 	modality?: 'none' | ActionModalityConfig<TPayload, TValues, TResult>;
+	/** A declarative request, run by `requestRunner` — for apps whose actions are mostly HTTP. */
 	request?: ActionRequestConfig<TPayload, TValues>;
 	requestRunner?: ActionRequestRunner<TResult>;
 	run?: BivariantCallback<
 		[context: ActionRunContext<TPayload, TValues>],
 		TResult | Promise<TResult>
 	>;
+	/** Turns a failure into field errors, so a form modality can show them inline. */
 	parseErrors?: ActionErrorParser;
 	successMessage?: ActionMessage<TPayload, TValues, TResult>;
 	errorMessage?: ActionMessage<TPayload, TValues, TResult>;

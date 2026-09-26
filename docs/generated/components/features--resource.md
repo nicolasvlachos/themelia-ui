@@ -39,6 +39,9 @@ ResourceStrings
 
 Kind: callable.
 
+The verb row of an index or show screen, for a page that wants the shell's rhythm without its
+whole frame.
+
 ```text
 ({ children, leading, trailing, sticky, className, }: ResourceActionBarProps) => import("react").JSX.Element
 ```
@@ -52,7 +55,7 @@ Kind: interface.
 | `children` | no | `ReactNode` | Leading content, when `leading` is not given. |
 | `leading` | no | `ReactNode` | Filters, a selection summary, the controls that act on the body. |
 | `trailing` | no | `ReactNode` |  |
-| `sticky` | no | `boolean` | Pins the bar below the shell header as the body scrolls, for selection counts and bulk actions. |
+| `sticky` | no | `boolean` | Pins the bar below the shell header, not the viewport top, as the body scrolls — for a bar<br>carrying a selection count or bulk actions, which is needed exactly when a static bar has<br>scrolled away. |
 | `className` | no | `string` |  |
 
 ### `ResourceBlockPadding`
@@ -87,7 +90,7 @@ Extends: `ResourceSectionFrameProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `metadata` | no | `MetadataListItem[]` | Structured facts, before any free-form body content. |
+| `metadata` | no | `MetadataListItem[]` | Structured facts, before any free-form body content. `metadataColumns` is a ceiling; the<br>list steps down at narrow widths on its own. |
 | `metadataColumns` | no | `1 \| 2 \| 3 \| 4` | A ceiling. The list steps down at narrow widths on its own. |
 | `metadataDense` | no | `boolean` |  |
 | `body` | no | `ReactNode` | Structured content after the facts. |
@@ -96,6 +99,10 @@ Extends: `ResourceSectionFrameProps`.
 ### `ResourceEmptyState`
 
 Kind: callable.
+
+One of the three states the shells swap in for content. Loading, error and empty are
+replacements rather than overlays — they take the space the content will take, so nothing
+reflows when it arrives.
 
 ```text
 ({ className, ...props }: ResourceEmptyStateProps) => import("react").JSX.Element
@@ -113,6 +120,9 @@ No own members are present in the normalized public snapshot.
 
 Kind: callable.
 
+The title block of an index or show screen, for a page that wants the shell's rhythm without
+its whole frame.
+
 ```text
 ({ title, description, eyebrow, media, avatarUrl, avatarAlt, avatarFallback, icon: Icon, iconTone, badges, metadata, actions, className, contentClassName, mediaClassName, }: ResourceHeaderProps) => import("react").JSX.Element
 ```
@@ -126,8 +136,8 @@ Kind: interface.
 | `title` | yes | `ReactNode` |  |
 | `description` | no | `ReactNode` |  |
 | `eyebrow` | no | `ReactNode` | Quiet context above the title: the parent record, the section. |
-| `media` | no | `ReactNode` | The media, in full. Takes precedence over `avatarUrl`, which takes precedence over `icon`. |
-| `avatarUrl` | no | `string` |  |
+| `media` | no | `ReactNode` | The media, in full. Ordered, not exclusive: it takes precedence over `avatarUrl`, which<br>takes precedence over `icon`. A screen knows one of the three, and which one depends on<br>what the record is — a person has an avatar, a settings section has an icon. |
+| `avatarUrl` | no | `string` | An avatar image, used when there is no `media`. |
 | `avatarAlt` | no | `string` |  |
 | `avatarFallback` | no | `ReactNode` | Defaults to initials derived from a string title. |
 | `icon` | no | `ComponentType<{ className?: string; }>` | Rendered in an IconBadge when there is no media and no avatar. |
@@ -154,15 +164,15 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `children` | no | `ReactNode` | The screen's own content. Replaced while loading, failed, or empty. |
-| `title` | no | `ReactNode` | Generated header title. Omit when supplying `slots.header`. |
-| `description` | no | `ReactNode` |  |
+| `title` | no | `ReactNode` | Generated header title. With `description` and `actions` it feeds the generated header;<br>omit them and pass `slots.header` when the header is not a title and a description. |
+| `description` | no | `ReactNode` | Generated header description. |
 | `actions` | no | `ReactNode` | Generated header actions. |
 | `toolbar` | no | `ReactNode` | Between the header and the body. |
-| `empty` | no | `boolean` | Replaces the body with the empty state. Explicit rather than inferred from `children`:<br>only the screen knows "no records" from "no records matching". |
-| `loading` | no | `boolean` |  |
+| `empty` | no | `boolean` | Replaces the body with the empty state. A boolean rather than an inference from<br>`children`: a screen with a header row and no data still has children, and only the screen<br>knows "no records" from "no records MATCHING". |
+| `loading` | no | `boolean` | Replaces the body with the loading state. |
 | `error` | no | `ReactNode \| Error` | Anything truthy replaces the body. An `Error`, string or number becomes the generated error<br>state's description; any other node is rendered as the error state itself. |
-| `onRetry` | no | `() => void` | Wiring this puts a retry control on the generated error state. |
-| `slots` | no | `ResourceShellSlots` |  |
+| `onRetry` | no | `() => void` | Wiring this puts a retry control on the generated error state. Without it there is nothing<br>to offer. |
+| `slots` | no | `ResourceShellSlots` | `header`, `toolbar`, `aside`, `footer`, `loading`, `empty`, `error`. Every one has a<br>generated default; the slot is for the screen where configuring that default prop by prop<br>is worse than replacing it. |
 | `className` | no | `string` |  |
 | `headerClassName` | no | `string` |  |
 | `contentClassName` | no | `string` |  |
@@ -223,6 +233,8 @@ Generic fallback copy for the shells; screens usually override it ("No invoices 
 
 Kind: callable.
 
+A show screen with a tab row in its toolbar.
+
 ```text
 ({ tabs, activeTab, onTabChange, tabsClassName, toolbar, slots, className, strings, ...props }: TabbedResourceShellProps) => import("react").JSX.Element
 ```
@@ -235,7 +247,7 @@ Extends: `ResourceShowShellProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `tabs` | yes | `OverflowTabItem[]` |  |
+| `tabs` | yes | `OverflowTabItem[]` | The tab row. It goes into the toolbar slot, so `slots.toolbar` still wins outright. |
 | `activeTab` | no | `string` | Controlled active tab. |
 | `onTabChange` | no | `(id: string) => void` |  |
 | `tabsClassName` | no | `string` |  |

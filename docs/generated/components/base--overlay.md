@@ -39,6 +39,8 @@ OverlayStrings
 
 Kind: callable.
 
+The root: holds the open state that the trigger, the content and the close controls share.
+
 **Use when:** Temporary focused interaction over the current page.
 
 **Avoid when:** Persistent page content or application navigation.
@@ -65,6 +67,10 @@ React.ForwardRefExoticComponent<Omit<React.DetailedHTMLProps<React.HTMLAttribute
 
 Kind: callable.
 
+Closes the overlay. Renders a bare button by default; `render` hands the behaviour to your
+own control instead, so the close is a kit Button rather than something this module
+styles.
+
 ```text
 ({ render, onClick, className, children, ...props }: React.ComponentProps<"button"> & { render?: React.ReactElement; }) => React.JSX.Element
 ```
@@ -72,6 +78,10 @@ Kind: callable.
 ### `OverlayContent`
 
 Kind: callable.
+
+The surface, on a native `<dialog>`. `placement`, `modality` and `dismissal` make it a
+dialog, a sheet or a drawer — there is no second component for the edge case. Popups
+opened inside it render inside it, above it and reachable by keyboard.
 
 ```text
 ({ placement, size, length, inset, modality, surface, dismissal, initialFocusRef, showCloseButton, strings, className, style, children, ...props }: OverlayContentProps & Omit<React.ComponentProps<"dialog">, "children" | "className">) => React.JSX.Element
@@ -83,15 +93,15 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `placement` | no | `OverlayPlacement` |  |
-| `size` | no | `OverlaySize` | Cross-axis extent, for an edge placement. Ignored when centred. |
-| `length` | no | `OverlayLength` | Along-axis extent, for an edge placement. Less than full centres the panel. |
-| `inset` | no | `OverlayInset` | Detaches the surface from the viewport edges. |
-| `modality` | no | `OverlayModality` |  |
-| `surface` | no | `OverlaySurface` |  |
-| `dismissal` | no | `OverlayDismissal` |  |
+| `placement` | no | `OverlayPlacement` | Where the surface sits. Centre reads as a dialog, an edge as a sheet. DialogContent and<br>AlertDialogContent fix it to centre; SheetContent exposes it as `side`. |
+| `size` | no | `OverlaySize` | Cross-axis extent for an edge placement — the width of a side panel; a top or bottom<br>one sizes to its content and takes this as the ceiling. Named steps resolve to tokens;<br>any other CSS length is used as given. Ignored when centred. @default "md" |
+| `length` | no | `OverlayLength` | Along-axis extent, for an edge placement. Less than full detaches the panel and centres<br>it on that axis. It is measured against the space the inset leaves rather than the<br>viewport: 70% of an inset panel is 70% of what is between the offsets, and the rest is<br>split between the two ends. Full needs no inset to look right, which is why a<br>corner-anchored sheet sets only `inset`. @default "full" |
+| `inset` | no | `OverlayInset` | The gap to the viewport edges. `false` is flush — a sheet welded to the side; `true`<br>uses the kit's gap; any CSS length sets your own. One offset, spent on every side the<br>panel does not run to, so an inset side panel sits the same distance from the top, the<br>side and the bottom. Any gap detaches it, rounds all four corners and gives it a full<br>border. @default false |
+| `modality` | no | `OverlayModality` | How much of the page the surface takes hostage: scrim, inert background and scroll<br>lock (`modal`), focus alone (`trap-focus`), or neither (`non-modal`). @default "modal" |
+| `surface` | no | `OverlaySurface` | `bare` drops the region dividers, for content that draws its own chrome. @default "framed" |
+| `dismissal` | no | `OverlayDismissal` | Each route out, separately. Off for a decision that must be answered, or for work in<br>progress. AlertDialogContent fixes both off. @default { backdrop: true, escape: true } |
 | `initialFocusRef` | no | `RefObject<HTMLElement \| null>` | Element to focus on open, instead of the first tabbable node. |
-| `showCloseButton` | no | `boolean` | Renders the corner dismiss control. |
+| `showCloseButton` | no | `boolean` | Renders the corner dismiss control. AlertDialogContent turns it off. |
 | `strings` | no | `Partial<OverlayStrings>` | Overrides this surface's own copy — the corner dismiss control's name. |
 | `className` | no | `string` |  |
 | `children` | no | `ReactNode` |  |
@@ -108,17 +118,21 @@ React.ForwardRefExoticComponent<Omit<React.DetailedHTMLProps<React.HTMLAttribute
 
 Kind: interface.
 
+The two routes out of an overlay, each switchable on its own.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `backdrop` | no | `boolean` | Backdrop click dismisses. Off for a decision the user must answer. |
-| `escape` | no | `boolean` | Escape dismisses. Off for destructive or in-progress work. |
+| `backdrop` | no | `boolean` | Backdrop click dismisses. Off for a decision the user must answer. @default true |
+| `escape` | no | `boolean` | Escape dismisses. Off for destructive or in-progress work. @default true |
 
 ### `OverlayDismissArea`
 
 Kind: callable.
 
-Wraps children so any button inside dismisses the overlay. When only some actions
-should close, use `<OverlayClose render={<Button />} />` per action.
+Wraps children so any button inside dismisses the overlay — for a footer whose every
+control should close. Wrapping each button individually is where the wiring gets
+forgotten. When only some actions should close, keep `<OverlayClose render={<Button />} />`
+per action.
 
 ```text
 ({ children, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -189,10 +203,10 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `open` | no | `boolean` |  |
-| `defaultOpen` | no | `boolean` |  |
-| `onOpenChange` | no | `(open: boolean) => void` |  |
-| `children` | yes | `ReactNode` |  |
+| `open` | no | `boolean` | Controlled open state. Pair with `onOpenChange`. |
+| `defaultOpen` | no | `boolean` | The open state to start with, when uncontrolled. |
+| `onOpenChange` | no | `(open: boolean) => void` | Called with the next open state, whichever control or route changed it. |
+| `children` | yes | `ReactNode` | The trigger and the content, with anything else the surface needs around them. |
 
 ### `OverlaySize`
 
@@ -233,6 +247,10 @@ React.ForwardRefExoticComponent<Omit<React.DetailedHTMLProps<React.HTMLAttribute
 ### `OverlayTrigger`
 
 Kind: callable.
+
+Opens the overlay. Renders a bare button by default; `render` hands the behaviour to your
+own control instead, so the trigger is a kit Button rather than something this module
+styles.
 
 ```text
 ({ render, onClick, className, children, ...props }: React.ComponentProps<"button"> & { render?: React.ReactElement; }) => React.JSX.Element

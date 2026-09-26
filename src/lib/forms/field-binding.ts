@@ -8,7 +8,10 @@
  */
 import { useCallback, useMemo, useState } from "react"
 
-/** What a bound field hands to a control. */
+/**
+ * What a bound field hands to a control: what `useFormFieldBinding` returns, spreadable onto
+ * the control.
+ */
 export interface FieldBinding<TValue> {
 	name: string
 	value: TValue
@@ -20,7 +23,10 @@ export interface FieldBinding<TValue> {
 	disabled?: boolean
 }
 
-/** One field's state, as an adapter reports it. */
+/**
+ * One field's state, as an adapter reports it. Everything past `value` and `setValue` is
+ * optional.
+ */
 export interface FieldState<TValue> {
 	value: TValue
 	setValue: (value: TValue) => void
@@ -30,14 +36,19 @@ export interface FieldState<TValue> {
 }
 
 /**
- * The adapter contract. `useField` is a hook, called once per bound field during render,
- * so an RHF adapter can delegate to `useController`.
+ * The adapter contract: the one-method interface a form library satisfies to work with the
+ * kit's fields. `useField` is a hook, called once per bound field during render, so an RHF
+ * adapter can delegate to `useController`.
  */
 export interface FormControl<TValues = Record<string, unknown>> {
 	useField: <TValue>(name: Extract<keyof TValues, string> | string) => FieldState<TValue>
 }
 
-/** Binds one field. The only API a component needs to be form-library agnostic. */
+/**
+ * Binds one field: turns a control and a field name into the exact props a kit control
+ * takes — value, onValueChange, onBlur, invalid, error, disabled. The only API a component
+ * needs to be form-library agnostic.
+ */
 export function useFormFieldBinding<TValue, TValues = Record<string, unknown>>({
 	name,
 	control,
@@ -61,7 +72,10 @@ export function useFormFieldBinding<TValue, TValues = Record<string, unknown>>({
 
 function noop() {}
 
-/** A `FormControl` over plain React state — the zero-dependency default. */
+/**
+ * A `FormControl` over plain React state — the zero-dependency default. Also exposes the
+ * current values and a reset, which a library-backed control owns itself.
+ */
 export function useStateFormControl<TValues extends Record<string, unknown>>(
 	initialValues: TValues,
 	options: { errors?: Partial<Record<keyof TValues, string>> } = {},

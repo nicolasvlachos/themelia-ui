@@ -35,6 +35,10 @@ function matchesRule(rule: DateRule | undefined, date: Date): boolean {
 	)
 }
 
+/**
+ * A month grid, a week strip, or an agenda over one list of events. Views change only the day
+ * range and layout; placing events onto days is shared.
+ */
 export function EventCalendar({
 	events,
 	categories,

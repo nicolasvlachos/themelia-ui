@@ -83,23 +83,35 @@ export type ClassNameFor<TData extends RowData> = string | ((column: string, row
 
 export interface DataTableProps<TData extends RowData, TValue = unknown> {
 	size?: DataTableSize
+	/**
+	 * The wrapper's chrome. `card` is the ordinary treatment; `glass` is a hairline outline for a
+	 * table inside another card, where two card surfaces are a box in a box; `flat` draws nothing.
+	 */
 	surface?: DataTableSurface
 	/** Drops the header row's muted fill. */
 	headerTransparent?: boolean
 
 	/**
-	 * Column definitions, or a `[columns, deps]` tuple memoised here. A column array rebuilt
-	 * every render resets TanStack's column state.
+	 * Ordinary TanStack column definitions, or a `[columns, deps]` tuple memoised here, because
+	 * an array rebuilt every render resets column state on every keystroke elsewhere on the page.
 	 */
 	columns: ColumnDef<TData, TValue>[] | [ColumnDef<TData, TValue>[], DependencyList]
+	/** The page to render. The table never slices it. */
 	data: TData[]
 	columnGroups?: ColumnGroup[]
 
+	/** Turns on sorting: the header control AND the state behind it. */
 	enableSorting?: boolean
+	/** Turns on the toolbar's filter AND the state behind it. Requires `filterColumn`. */
 	enableFiltering?: boolean
+	/**
+	 * Turns on selection: the checkbox column AND the state behind it, so a checkbox column
+	 * cannot exist with selection switched off.
+	 */
 	enableRowSelection?: boolean
 	enableMultiRowSelection?: boolean
 	enableSubRowSelection?: boolean
+	/** Turns on column hiding: the toolbar's columns menu AND the state behind it. */
 	enableColumnVisibility?: boolean
 
 	fullscreen?: boolean
@@ -110,10 +122,22 @@ export interface DataTableProps<TData extends RowData, TValue = unknown> {
 	/** The consumer owns sorting: the table reports intent and does not reorder `data`. */
 	manualSorting?: boolean
 
+	/**
+	 * Pins the header row. A pinned pane needs a bounded container to be pinned inside — sticky
+	 * with no height cap (`maxBodyHeight`, `fillAvailableHeight`) sticks to the page, which is
+	 * nothing.
+	 */
 	stickyHeader?: boolean
 	stickyToolbar?: boolean
+	/**
+	 * Pins the first column — and the selection checkbox before it, when there is one — while
+	 * the body scrolls sideways.
+	 */
 	stickyFirstColumn?: boolean
-	/** Caps the scrolling body. A number is pixels. */
+	/**
+	 * Caps the scrolling body. A number is pixels. This is the bound a sticky header needs to be
+	 * pinned inside.
+	 */
 	maxBodyHeight?: number | string
 	/** Fills the parent's height, scrolling the body instead of the page. */
 	fillAvailableHeight?: boolean
@@ -141,22 +165,45 @@ export interface DataTableProps<TData extends RowData, TValue = unknown> {
 	toolbarLabelVisibility?: "responsive" | "hidden"
 	footerContent?: ReactNode
 
-	/** `undefined` renders the default, `null`/`false` suppresses it, a function replaces it. */
+	/**
+	 * The bar shown while rows are selected. `undefined` renders the default bar, `null` or
+	 * `false` suppresses it, a node or a function replaces it. The function's context carries the
+	 * selected rows and a `clearSelection`.
+	 */
 	selectionToolbar?:
 		| ReactNode
 		| ((context: DataTableSelectionToolbarContext<TData>) => ReactNode)
+	/**
+	 * The actions inside the default selection bar, or a function of the same context — the
+	 * selected rows and a `clearSelection` — that returns them.
+	 */
 	bulkActions?: ReactNode | ((context: DataTableSelectionToolbarContext<TData>) => ReactNode)
 	selectionToolbarClassName?: string
 
+	/**
+	 * Each row's actions, or a factory of them. The factory form is what a real table needs:
+	 * “Delete” belongs on a cancelled booking and nowhere else. `href` is carried as data — the
+	 * table never navigates.
+	 */
 	rowActions?: TableAction<TData>[] | ((row: TData) => TableAction<TData>[])
 	rowActionsMenuLabel?: string | ((row: TData) => string)
+	/**
+	 * How row actions render: a menu, inline buttons, or `auto`. `auto` measures the TABLE, not
+	 * the window: whether three buttons fit is a question about the table, and the same one is
+	 * as often in a drawer as at page width.
+	 */
 	rowActionsDisplayMode?: RowActionsDisplayMode
 	/** Container width, in pixels, at which `auto` switches from a menu to inline. */
 	rowActionsBreakpoint?: number
 
-	/** Total page count. Supplying it renders the pager. */
+	/**
+	 * Total page count. Supplying it renders the pager once there is more than one page. Add
+	 * `totalRowCount` and `pageSize` for the “1–5 of 13” line beside it.
+	 */
 	pageCount?: number
+	/** The current page, from 1. */
 	page?: number
+	/** Receives the page the pager moves to. */
 	onPageChange?: (page: number) => void
 	/** The result-count line beside the pager. */
 	totalRowCount?: number
@@ -188,7 +235,8 @@ export interface DataTableProps<TData extends RowData, TValue = unknown> {
 
 	/**
 	 * Persists column visibility to localStorage under `dt.{storageKey}.columns`. An explicit
-	 * `defaultColumnVisibility` still wins over the persisted value.
+	 * `defaultColumnVisibility` still wins over the persisted value: a developer who hides a
+	 * column in code means it.
 	 */
 	storageKey?: string
 	style?: CSSProperties

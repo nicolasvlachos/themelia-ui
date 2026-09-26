@@ -51,8 +51,10 @@ export type SchemaFormValidator = (
 	field: SchemaFormField,
 ) => true | string | null | undefined
 
+/** The keys every field shares, whatever its `type`. */
 export interface SchemaFormFieldBase {
 	key: string
+	/** Picks the control. Omitted means `text`. */
 	type?: SchemaFormFieldType
 	label: string
 	description?: string
@@ -60,21 +62,42 @@ export interface SchemaFormFieldBase {
 	helperText?: string
 	placeholder?: string
 	required?: boolean
-	/** A function form, for a field only editable once a sibling says so. */
+	/**
+	 * The predicate form reads the whole value set, for a field only editable once a sibling
+	 * says so.
+	 */
 	disabled?: boolean | ((values: SchemaFormValues) => boolean)
-	/** A hidden field is not rendered AND not validated. */
+	/**
+	 * A hidden field is not rendered AND not validated — blocking a submit on a required field
+	 * the reader cannot see is a dead end. The predicate form reads the whole value set, for a
+	 * field that only matters once a sibling says so.
+	 */
 	hidden?: boolean | ((values: SchemaFormValues) => boolean)
 	defaultValue?: SchemaFormValue
 	/** Puts the field in a section without listing it there. */
 	sectionId?: string
+	/**
+	 * Column span inside the section grid, which is keyed to a container. A form in a 320px
+	 * drawer collapses to one column whatever the section asked for.
+	 */
 	width?: SchemaFormFieldWidth
 	className?: string
 	/** Merged onto the control rather than the field wrapper. */
 	controlClassName?: string
+	/**
+	 * Return a string to fail. The first message wins: the rest are about a value already known
+	 * to be wrong.
+	 */
 	validate?: SchemaFormValidator | SchemaFormValidator[]
-	/** Turns the stored value into what the control displays. */
+	/**
+	 * Turns the stored value into what the control displays: with `parseValue`, the two halves
+	 * of a custom representation.
+	 */
 	formatValue?: (value: SchemaFormValue, values: SchemaFormValues) => string
-	/** Turns what the control produced back into the stored value. */
+	/**
+	 * Turns what the control produced back into the stored value: with `formatValue`, the two
+	 * halves of a custom representation.
+	 */
 	parseValue?: (value: string, values: SchemaFormValues) => SchemaFormValue
 	/** Free-form payload, carried through to `renderField`. */
 	meta?: Record<string, unknown>
@@ -237,12 +260,28 @@ export interface SchemaFormSubmitHelpers {
 }
 
 export interface SchemaFormProps {
+	/**
+	 * Sections and fields. A section names its fields explicitly or claims the ones carrying its
+	 * `sectionId`; whatever no section claimed lands in a leading default bucket.
+	 */
 	schema: SchemaFormSchema
+	/**
+	 * Controlled values. Under a controlled value the schema's own defaults still apply, so a
+	 * consumer holding two fields does not blank the rest.
+	 */
 	value?: SchemaFormValues
+	/** Uncontrolled starting values. An explicit default outranks the schema's own. */
 	defaultValue?: SchemaFormValues
-	/** Server-side messages, keyed by field. Merged over the form's own. */
+	/**
+	 * Server-side messages, keyed by field. Merged over the form's own and not cleared by
+	 * typing.
+	 */
 	errors?: SchemaFormErrors
 	disabled?: boolean
+	/**
+	 * One bordered surface with sections inside it, or one surface per section. The schema does
+	 * not change between them.
+	 */
 	layout?: SchemaFormLayout
 	columns?: SchemaFormColumns
 	id?: string
@@ -264,6 +303,10 @@ export interface SchemaFormProps {
 	submitting?: boolean
 	onValueChange?: (values: SchemaFormValues) => void
 	onFieldChange?: (key: string, value: SchemaFormValue, values: SchemaFormValues) => void
+	/**
+	 * Runs only if validation passed. `helpers` carries `setFieldValue`, `setValues`, `reset`,
+	 * and `validate` — for a server response that has to write back into the form.
+	 */
 	onSubmit?: (
 		values: SchemaFormValues,
 		helpers: SchemaFormSubmitHelpers,
@@ -272,7 +315,12 @@ export interface SchemaFormProps {
 	onReset?: (values: SchemaFormValues, helpers: SchemaFormSubmitHelpers) => void
 	/** Receives errors from submission and consumer predicates, validators, or parsers. */
 	onError?: (error: unknown) => void
+	/**
+	 * Replaces how a field renders. It receives `defaultField`, so decorating is as easy as
+	 * replacing.
+	 */
 	renderField?: (context: SchemaFormRenderFieldContext) => ReactNode
+	/** Replaces how a section renders, with its fields already laid out. */
 	renderSection?: (context: SchemaFormRenderSectionContext) => ReactNode
 	strings?: Partial<SchemaFormStrings>
 	className?: string

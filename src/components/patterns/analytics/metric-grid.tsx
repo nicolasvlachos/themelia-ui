@@ -18,6 +18,7 @@ export interface MetricGridProps extends Omit<ComponentProps<"div">, "children">
 	/** Forwarded to every cell. */
 	variant?: Extract<MetricVariant, "card" | "compact" | "bordered" | "accent" | "colored">
 	tone?: MetricTone
+	/** `auto` picks the break points from the cell count. */
 	columns?: MetricGridColumns
 	showSparklines?: boolean
 	showChanges?: boolean

@@ -18,15 +18,7 @@ export function AccordionPage() {
 			/>
 
 			<Example id="accordion-api" title="API">
-				<PropTable owner="Accordion"
-					rows={[
-						{ name: "items", type: "AccordionItemData[]", description: "Bounded sections. Ignored when children are supplied." },
-						{ name: "surface", type: '"bordered" | "card" | "flat"', default: '"bordered"', description: "Group chrome. Resolves through the provider when omitted." },
-						{ name: "media", type: '"inline" | "medallion" | "none"', default: '"inline"', description: "How leading icons are framed. The column is dropped entirely when no item has one." },
-						{ name: "multiple", type: "boolean", default: "false", description: "Allows more than one section open at a time." },
-						{ name: "defaultValue / value", type: "string | string[]", description: "Which sections start open, or the controlled set." },
-					]}
-				/>
+				<PropTable owner="Accordion" />
 			</Example>
 		</ComponentPage>
 	)

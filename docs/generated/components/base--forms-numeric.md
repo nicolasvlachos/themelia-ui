@@ -31,6 +31,9 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The rounding `DecimalInput` applies, exported so a caller can match it: `value` to
+`decimals` places under a `RoundingMode`.
+
 ```text
 (value: number, decimals: number, mode: RoundingMode) => number
 ```
@@ -52,12 +55,12 @@ Extends: `ClusterFieldWiring`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | no | `string` | Applied to the first numeric input, which a `FormField` label addresses; each input<br>keeps its own `aria-label` for its part. |
-| `value` | no | `CoordinatesValue` |  |
-| `onValueChange` | no | `(value: CoordinatesValue) => void` |  |
+| `value` | no | `CoordinatesValue` | `{ latitude, longitude }`: two strings, kept apart so a half-typed latitude cannot<br>corrupt the longitude. |
+| `onValueChange` | no | `(value: CoordinatesValue) => void` | Called with the whole value when either part changes. |
 | `decimalPlaces` | no | `number` | Six places is roughly 0.1 m — past the precision of consumer GPS. |
-| `strings` | no | `Partial<CoordinatesInputStrings>` | Overrides this field's own copy — the two axis names. |
+| `strings` | no | `Partial<CoordinatesInputStrings>` | Overrides this field's own copy — the two axis names. Like every other piece of copy,<br>each string can be overridden on its own. |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
+| `invalid` | no | `boolean` | The error surface. The message stays on the `FormField`. |
 | `className` | no | `string` |  |
 
 ### `CoordinatesInputStrings`
@@ -103,13 +106,13 @@ Extends: `Omit<DecimalInputProps, "prefix">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `currency` | no | `string` | Controlled currency code, e.g. "EUR". |
-| `defaultCurrency` | no | `string` |  |
-| `onCurrencyChange` | no | `(currency: string) => void` |  |
-| `currencies` | no | `(string \| CurrencyOption)[]` | Codes are looked up in CURRENCY_SYMBOLS; anything else takes a full option. |
+| `defaultCurrency` | no | `string` | The starting currency code, for an uncontrolled field. |
+| `onCurrencyChange` | no | `(currency: string) => void` | Called with the new currency code: a separate channel from the amount. |
+| `currencies` | no | `(string \| CurrencyOption)[]` | Which codes the picker offers. Codes are looked up in `CURRENCY_SYMBOLS`; anything else<br>takes a full option. |
 | `currencyPosition` | no | `"start" \| "end"` | Which side the selector sits on. |
-| `disableCurrencySelector` | no | `boolean` |  |
-| `strings` | no | `Partial<CurrencyInputStrings>` | Overrides this field's own copy — the currency selector's name. |
-| `invalid` | no | `boolean` |  |
+| `disableCurrencySelector` | no | `boolean` | Drops the currency selector, for an amount whose currency is decided elsewhere in the form. |
+| `strings` | no | `Partial<CurrencyInputStrings>` | Overrides this field's own copy. It extends the decimal strings, which extend the input<br>strings — a currency field is one of each, so it owns the selector's name, the two<br>steppers, and the clear action alike. |
+| `invalid` | no | `boolean` | The error surface. The message stays on the `FormField`. |
 
 ### `CurrencyInputStrings`
 
@@ -144,19 +147,19 @@ React.ForwardRefExoticComponent<Omit<DecimalInputProps, "ref"> & React.RefAttrib
 
 Kind: interface.
 
-Extends: `Omit<InputProps, "type" | "inputMode">`.
+Extends: `Omit<InputProps, "type" | "inputMode">`, `Pick<React.ComponentProps<"input">, "value" | "onChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `decimalPlaces` | no | `number` | Maximum fractional digits accepted, and used when normalising. |
-| `min` | no | `number` |  |
-| `max` | no | `number` |  |
-| `allowNegative` | no | `boolean` |  |
-| `allowEmpty` | no | `boolean` | Lets the field be left blank. |
-| `step` | no | `number` | Renders − / + buttons that snap the value to multiples of this. |
+| `decimalPlaces` | no | `number` | How many digits after the separator are accepted, and used when normalising. |
+| `min` | no | `number` | The lower bound. |
+| `max` | no | `number` | The upper bound. |
+| `allowNegative` | no | `boolean` | Accepts a minus sign. |
+| `allowEmpty` | no | `boolean` | Lets the field be left blank: a blank is a valid value. |
+| `step` | no | `number` | The increment: renders − / + buttons that snap the value to multiples of this. |
 | `roundingMode` | no | `RoundingMode` | How halves are resolved when stepping or normalising. `half-even` (bankers' rounding)<br>avoids accumulating bias across many money rows. |
-| `normalizeOnBlur` | no | `boolean` | Pads to the full decimal places and clamps to the range on blur. |
-| `strings` | no | `Partial<DecimalInputStrings>` | Overrides this field's own copy — the two icon-only steppers. |
+| `normalizeOnBlur` | no | `boolean` | Rounds, pads to the full decimal places and clamps to the range when focus leaves.<br>Doing it per keystroke would fight the reader mid-number. |
+| `strings` | no | `Partial<DecimalInputStrings>` | Overrides this field's own copy — the two icon-only steppers, plus everything `Input` contributes. |
 | `endAdornment` | no | `React.ReactNode` | A unit rendered after the field, inside the stepper group — wrapping a stepped field in<br>a second shell would double the border. |
 
 ### `DecimalInputStrings`
@@ -235,18 +238,18 @@ Extends: `ClusterFieldWiring`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | no | `string` | Applied to the first numeric input, which a `FormField` label addresses; each input<br>keeps its own `aria-label` for its part. |
-| `value` | no | `DimensionsValue` |  |
-| `onValueChange` | no | `(value: DimensionsValue) => void` |  |
-| `unit` | no | `DimensionUnit` |  |
-| `defaultUnit` | no | `DimensionUnit` |  |
-| `onUnitChange` | no | `(unit: DimensionUnit) => void` |  |
-| `units` | no | `DimensionUnit[]` |  |
-| `decimalPlaces` | no | `number` |  |
-| `showHeight` | no | `boolean` | Drops the height field, for a two-dimensional measurement. |
-| `showUnitSelector` | no | `boolean` |  |
-| `strings` | no | `Partial<DimensionsInputStrings>` | Overrides this field's own copy — the three axis names and the unit selector. |
+| `value` | no | `DimensionsValue` | `{ length, width, height }`: three strings, one field. Each part is independently<br>editable. |
+| `onValueChange` | no | `(value: DimensionsValue) => void` | Called with the whole value when any part changes. |
+| `unit` | no | `DimensionUnit` | Controlled unit. Switching unit does not convert — it relabels. |
+| `defaultUnit` | no | `DimensionUnit` | The unit the field starts in. |
+| `onUnitChange` | no | `(unit: DimensionUnit) => void` | Called with the new unit. Switching relabels rather than converting — the number is the caller's. |
+| `units` | no | `DimensionUnit[]` | Which units the selector offers. |
+| `decimalPlaces` | no | `number` | Digits after the separator, applied to every part of the field. |
+| `showHeight` | no | `boolean` | Shows the third dimension box. Turn it off for a value that is a plane rather than a<br>solid: a two-dimensional measurement. |
+| `showUnitSelector` | no | `boolean` | Shows the unit selector. Turn it off for a field with one fixed unit. |
+| `strings` | no | `Partial<DimensionsInputStrings>` | Overrides this field's own copy — the three axis names and the unit selector. Like every<br>other piece of copy, each string can be overridden on its own. |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
+| `invalid` | no | `boolean` | The error surface. The message stays on the `FormField`. |
 | `className` | no | `string` |  |
 
 ### `DimensionsInputStrings`
@@ -283,7 +286,8 @@ Kind: type.
 
 Kind: callable.
 
-Accepts a comma as the decimal separator — most of the world types one.
+The formatting `DecimalInput` applies as the reader types, exported so a caller can match
+it. Accepts a comma as the decimal separator — most of the world types one.
 
 ```text
 (value: string, decimalPlaces: number, allowNegative: boolean) => string
@@ -405,23 +409,23 @@ Extends: `ClusterFieldWiring`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | no | `string` | Applied to the first numeric input, which a `FormField` label addresses; each input<br>keeps its own `aria-label` for its part. |
-| `strings` | no | `Partial<UnitInputStrings>` | Overrides this field's own copy — the unit selector's name. |
-| `value` | no | `string` | Controlled amount, as a plain string. |
-| `defaultValue` | no | `string` |  |
-| `onChange` | no | `(event: ValueChangeEvent) => void` |  |
-| `unit` | no | `WeightUnit` | Controlled unit. |
-| `defaultUnit` | no | `WeightUnit` |  |
-| `onUnitChange` | no | `(unit: WeightUnit) => void` |  |
-| `units` | no | `WeightUnit[]` |  |
-| `decimalPlaces` | no | `number` |  |
-| `min` | no | `number` |  |
-| `max` | no | `number` |  |
-| `step` | no | `number` |  |
-| `showUnitSelector` | no | `boolean` |  |
-| `disableUnitSelector` | no | `boolean` |  |
+| `strings` | no | `Partial<UnitInputStrings>` | Overrides this field's own copy — the unit selector's name. Like every other piece of<br>copy, each string can be overridden on its own. |
+| `value` | no | `string` | Controlled amount: the number, as a plain string. |
+| `defaultValue` | no | `string` | The starting amount, for an uncontrolled field. |
+| `onChange` | no | `(event: ValueChangeEvent) => void` | Called with a change event shaped like a native one, carrying the amount. |
+| `unit` | no | `WeightUnit` | Controlled unit, apart from the number. Switching unit does not convert — it relabels. |
+| `defaultUnit` | no | `WeightUnit` | The unit the field starts in. |
+| `onUnitChange` | no | `(unit: WeightUnit) => void` | Called with the new unit. Switching relabels rather than converting — the number is the caller's. |
+| `units` | no | `WeightUnit[]` | Which units the selector offers. |
+| `decimalPlaces` | no | `number` | Digits after the separator. |
+| `min` | no | `number` | The lower bound. |
+| `max` | no | `number` | The upper bound. |
+| `step` | no | `number` | The increment for the − / + controls. |
+| `showUnitSelector` | no | `boolean` | Shows the unit selector. Turn it off for a field with one fixed unit. |
+| `disableUnitSelector` | no | `boolean` | Shows the unit selector read-only, for a value whose unit is decided elsewhere. |
 | `placeholder` | no | `string` |  |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
+| `invalid` | no | `boolean` | The error surface. The message stays on the `FormField`. |
 | `className` | no | `string` |  |
 | `"aria-label"` | no | `string` |  |
 

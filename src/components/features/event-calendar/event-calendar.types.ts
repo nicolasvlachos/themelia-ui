@@ -75,29 +75,50 @@ export type EventCalendarRangeMode = "date" | "month-year"
 export type EventCalendarDayHeadingVariant = "default" | "accent" | "tinted" | "bordered"
 
 export interface EventCalendarProps {
-	/** The calendar does no fetching of its own. */
+	/**
+	 * The calendar does no fetching of its own. An event with an `endDate` appears on every day
+	 * it spans, not only its first.
+	 */
 	events: CalendarEvent[]
+	/** The categories events name. Each owns its colour, so colour is defined once. */
 	categories: EventCategory[]
+	/**
+	 * Controlled. The switcher works either way. Week steps by weeks; month and agenda step by
+	 * months.
+	 */
 	viewMode?: CalendarViewMode
+	/** Uncontrolled: the view to start in. */
 	defaultViewMode?: CalendarViewMode
 	onViewModeChange?: (mode: CalendarViewMode) => void
+	/** Where the calendar is looking. Controlled, like the view. */
 	date?: Date
+	/** Uncontrolled: where the calendar starts looking. */
 	defaultDate?: Date
 	onDateChange?: (date: Date) => void
+	/** A chip press calls this and stops there. */
 	onEventClick?: (event: CalendarEvent) => void
-	/** Fires with the day and everything on it. */
+	/** A press anywhere else in a day's cell calls this, with the day and everything on it. */
 	onDayClick?: (date: Date, events: CalendarEvent[]) => void
-	/** Chips drawn per day before the rest collapse into an overflow line. */
+	/**
+	 * Chips drawn per day before the rest collapse into an overflow line. The overflow dots are
+	 * the categories of the HIDDEN events, not the first three in the list.
+	 */
 	maxEventsPerDay?: number
 	showLegend?: boolean
 	showHeader?: boolean
 	showWeekends?: boolean
-	/** 0 is Sunday. Falls back to the provider's dates config, then Monday. */
+	/**
+	 * 0 is Sunday. Falls back to the provider's dates config, then Monday — the same source the
+	 * kit's own pickers read.
+	 */
 	weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 	locale?: Locale
 	/** Makes the legend chips toggle their category. */
 	enableCategoryFilter?: boolean
-	/** Ids currently shown. Empty means all. */
+	/**
+	 * Ids currently shown. An EMPTY list means all are shown — a filter nobody has touched hides
+	 * nothing.
+	 */
 	visibleCategories?: string[]
 	onVisibleCategoriesChange?: (categories: string[]) => void
 	loading?: boolean
@@ -113,11 +134,23 @@ export interface EventCalendarProps {
 	rangeMode?: EventCalendarRangeMode
 	/** Navigation stops here, and days beyond it are drawn but not clickable. */
 	minDate?: Date
+	/** Navigation stops here, and days beyond it are drawn but not clickable. */
 	maxDate?: Date
+	/**
+	 * Days drawn but not clickable. A `DateRule` takes dates, a predicate, or both, combined
+	 * with OR.
+	 */
 	disabledDates?: DateRule
-	/** Hides events at render time without touching `events`. */
+	/**
+	 * Hides events at render time without touching `events`. Counts and the overflow line
+	 * follow it, so what is drawn and what is counted agree.
+	 */
 	filterEvent?: EventFilter
+	/** Replaces how an event draws: its chip in a day cell, its card in the agenda. */
 	renderEvent?: RenderEventFn
+	/**
+	 * Replaces a day's cell. It receives `defaultRender`, so decorating is as easy as replacing.
+	 */
 	renderDayCell?: RenderDayCellFn
 }
 

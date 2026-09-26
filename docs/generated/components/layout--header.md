@@ -71,6 +71,11 @@ Kind: callable.
 
 Kind: callable.
 
+The sidebar trigger, a rule, and the trail. The three travel together because their
+arrangement is the part that goes wrong — a trail without the rule reads as the first
+crumb, and a trigger placed after it reads as part of the path. The trigger stays fixed
+while the trail truncates.
+
 ```text
 ({ breadcrumbs, homeCrumb, strings, showSidebarTrigger, triggerSlot, className, }: HeaderBreadcrumbsProps) => import("react").JSX.Element
 ```
@@ -102,8 +107,9 @@ Kind: interface.
 
 Kind: callable.
 
-The same trigger, reporting into a controlled `open`. A separate component so a trigger
-never half-owns the palette's state.
+The same trigger — a button shaped like a field, for a palette where the typing happens —
+reporting into a controlled `open`. A separate component so a trigger never half-owns the
+palette's state.
 
 ```text
 ({ onOpen, onOpenChange, ...props }: HeaderGlobalSearchTriggerProps) => import("react").JSX.Element
@@ -137,6 +143,10 @@ Kind: interface.
 ### `HeaderNotifications`
 
 Kind: callable.
+
+The bell and its list. It renders what it is handed and reports what was clicked;
+fetching, marking read and paging belong to the app, because only the app knows what
+“read” costs.
 
 ```text
 ({ notifications, unreadCount, onNotificationClick, onMarkAllRead, onViewAll, viewAllHref, renderLink, align, side, strings, className, contentClassName, renderNotification, }: HeaderNotificationsProps) => import("react").JSX.Element
@@ -185,17 +195,21 @@ Extends: `React.ComponentProps<"header">`, `LayoutNavigationAdapter`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `showBreadcrumbs` | no | `boolean` |  |
+| `showBreadcrumbs` | no | `boolean` | Off for a shell whose pages carry their own trail. |
 | `showSidebarTrigger` | no | `boolean` | Renders the sidebar collapse control before the trail. |
-| `breadcrumbs` | no | `Crumb[]` |  |
-| `homeCrumb` | no | `Crumb \| null` | Prepended to the trail, for a root that is not part of the route. `null` omits it;<br>leaving it undefined keeps the default. |
+| `breadcrumbs` | no | `Crumb[]` | The trail, rendered by the built-in Breadcrumbs. |
+| `homeCrumb` | no | `Crumb \| null` | Prepended to the trail, for a root that is not part of the route. `null` omits it<br>deliberately. |
 | `breadcrumbsStrings` | no | `Partial<HeaderBreadcrumbsStrings>` | Overrides the trail's copy — its landmark name, for a page carrying two headers. |
-| `slots` | no | `HeaderSlots` |  |
-| `contentClassName` | no | `string` |  |
+| `slots` | no | `HeaderSlots` | The regions. `brand` is hidden below `md`, where the sidebar trigger stands in for it. |
+| `contentClassName` | no | `string` | For the inner content row, when the bar itself must stay untouched. |
 
 ### `HeaderSearch`
 
 Kind: callable.
+
+The trigger for a command palette, not a search field. It LOOKS like an input and IS a
+button, which is the honest shape: typing happens in the palette, so a real field here
+would take a keystroke and then throw it away.
 
 ```text
 ({ onOpen, shortcutModifier, enableShortcut, strings, className, shortcutSlot, }: HeaderSearchProps) => import("react").JSX.Element
@@ -227,6 +241,8 @@ Kind: interface.
 ### `HeaderSlots`
 
 Kind: interface.
+
+The regions `Header` arranges, passed as its `slots`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -262,7 +278,8 @@ Kind: interface.
 
 Kind: callable.
 
-The same control with a surface hanging off it.
+The same control with a surface hanging off it, in the same one shape as every icon
+control in the right cluster.
 
 ```text
 ({ label, icon, open, defaultOpen, onOpenChange, active, disabled, badge, align, side, sideOffset, className, triggerClassName, contentClassName, children, }: HeaderToolPopoverProps) => import("react").JSX.Element
@@ -290,6 +307,10 @@ Extends: `Omit<HeaderToolButtonProps, "onClick" | "className">`.
 ### `HeaderUserMenu`
 
 Kind: callable.
+
+The account control. The three callbacks build a command menu; supplying none and
+passing `customContent` instead gives a panel, which is the escape hatch for an account
+area that is not a list of verbs.
 
 ```text
 ({ user, showIdentity, showEmail, customContent, onProfile, onSettings, onLogout, align, side, strings, className, contentClassName, renderTrigger, }: HeaderUserMenuProps) => import("react").JSX.Element
@@ -326,25 +347,29 @@ Kind: interface.
 | `logout` | yes | `string` |  |
 | `trigger` | yes | `string` | Names the trigger when the caller hides the name — an avatar alone has none. |
 
-### `LayoutLinkRenderer`
+### `LinkRenderer`
 
 Kind: type.
 
-The navigation seam.
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
 
 ```tsx fragment — declaration JSDoc excerpt
-<AppSidebar renderLink={({ href, children, ...rest }) => (
-  <Link to={href ?? "#"} {...rest}>{children}</Link>
-)} />
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
 ```
 
 ```text
-(props: LayoutLinkRenderProps) => ReactNode
+(props: LinkRenderProps) => ReactElement
 ```
 
-### `LayoutLinkRenderProps`
+### `LinkRenderProps`
 
 Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -355,9 +380,11 @@ Kind: interface.
 | `rel` | no | `string` |  |
 | `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
 | `"aria-label"` | no | `string` |  |
-| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the shell styles the row itself. |
-| `disabled` | no | `boolean` |  |
-| `external` | no | `boolean` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ### `NotificationTone`
 

@@ -29,6 +29,10 @@ export interface ChangelogEntry {
 }
 
 export interface ChangelogTimelineProps extends Omit<ComponentProps<"div">, "children"> {
+	/**
+	 * id, kind, title, and optionally description, version, timestamp, author. `kind` is
+	 * added | removed | modified | fixed.
+	 */
 	entries: ChangelogEntry[]
 	strings?: Partial<ChangelogStrings>
 }

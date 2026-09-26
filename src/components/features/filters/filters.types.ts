@@ -9,6 +9,10 @@ import type { ReactNode } from "react"
 
 import type { FilterStrings } from "./filters.strings"
 
+/**
+ * The filter types, exported as values rather than a type alone so a consumer can build a
+ * filter definition without spelling the strings and can switch on them exhaustively.
+ */
 export const FilterType = {
 	SELECT: "select",
 	MULTI_SELECT: "multi_select",
@@ -21,7 +25,10 @@ export const FilterType = {
 
 export type FilterType = (typeof FilterType)[keyof typeof FilterType]
 
-/** Named rather than a bare union, so a consumer writes `FilterOperator.IN` not `"in"`. */
+/**
+ * The comparisons, named rather than a bare union so a consumer writes `FilterOperator.IN` not
+ * `"in"`, and exported as values so a filter definition can switch on them exhaustively.
+ */
 export const FilterOperator = {
 	EQUALS: "equals",
 	CONTAINS: "contains",
@@ -65,8 +72,17 @@ export interface FilterOption {
 }
 
 export interface DisplayConfig {
+	/**
+	 * Where the filter lives in the bar. `always` keeps a pill on screen with no value, for the
+	 * one or two filters a screen is really about. `collapsed` hides it behind the add button
+	 * until it has one. `hidden` still applies but never draws — which is how a screen scopes a
+	 * list to the current account.
+	 */
 	display?: FilterDisplay
-	/** Lower sorts earlier in the bar. */
+	/**
+	 * Sort order in the bar: lower first. Ties keep the authored order, so pills do not
+	 * reshuffle as values come and go.
+	 */
 	priority?: number
 	hidden?: boolean
 	className?: string
@@ -135,12 +151,20 @@ export interface FilterConfig {
 	icon?: ReactNode
 	displayConfig?: DisplayConfig
 	defaultValue?: string[]
+	/**
+	 * `min` / `max` / `pattern` / `required`, plus a `custom` returning true or a message.
+	 * `zodValidator` and `predicateValidator` bridge the two shapes you probably already have.
+	 */
 	validation?: ValidationConfig
 	dependencies?: FilterDependency[]
 	multiple?: boolean
 	/** Closes the editor as soon as one option is picked. Single-select only. */
 	closeOnSelect?: boolean
 	maxSelected?: number
+	/**
+	 * Options for an `async_select`: one channel owning search, caching, abort, and preload —
+	 * rather than a `loading` prop and an `options` prop the consumer keeps in step by hand.
+	 */
 	asyncConfig?: AsyncSelectConfig
 	dateFormat?: {
 		/** date-fns pattern for the pill. */

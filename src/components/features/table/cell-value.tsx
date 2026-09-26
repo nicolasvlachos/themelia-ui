@@ -77,6 +77,11 @@ function isAbsent(value: PrimitiveCellValue): boolean {
 	return false
 }
 
+/**
+ * One column's value, formatted. Beside MetadataValue on purpose: that renders a labelled fact on
+ * a detail panel, this renders a value in a grid, where alignment and truncation are the column's
+ * decisions rather than the value's.
+ */
 export function CellValue({
 	value,
 	kind = "value",

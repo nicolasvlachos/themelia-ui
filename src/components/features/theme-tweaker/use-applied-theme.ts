@@ -9,9 +9,16 @@ import type { ThemeDefinition, ThemeTweakerTarget } from "./theme-tweaker.types"
 import { themeToStyle } from "./theme-tweaker.utils"
 
 interface UseAppliedThemeOptions {
+	/** Writes the theme while `true`; `false` removes what it wrote. */
 	apply: boolean
+	/** Manages `.light` / `.dark` on the target. `false` when UIProvider owns the colour scheme. */
 	manageModeClass: boolean
+	/** The editor's own element, which a `self` target means. */
 	selfRef: RefObject<HTMLDivElement | null>
+	/**
+	 * Where the theme goes: `document` for document-wide values, an element, or a function
+	 * returning one; `null` applies nothing. A `self` target is left to ThemeScope's inline style.
+	 */
 	target: ThemeTweakerTarget
 	theme: ThemeDefinition
 }
@@ -29,6 +36,11 @@ function resolveTarget(
 	return target
 }
 
+/**
+ * Writes an edited theme onto a live element and removes it on cleanup. Keep it mounted with
+ * `target: "document"` and `apply: true` to apply document-wide values; set
+ * `manageModeClass: false` when UIProvider owns the colour scheme.
+ */
 export function useAppliedTheme({
 	apply,
 	manageModeClass,

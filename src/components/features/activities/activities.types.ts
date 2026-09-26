@@ -93,9 +93,16 @@ export interface ActivityItem<TData = unknown> {
 	/** Which system it came from. Drives the source badge. */
 	source?: string
 	actor?: ActivityActor
-	/** Preferred over `headline`. */
+	/**
+	 * The headline as typed parts: actor, field, value, status, resource, text. Preferred over
+	 * `headline`: “Maria changed Status from Draft to Published” is a person, a field, and two
+	 * values, and a template string cannot express that.
+	 */
 	segments?: readonly ActivityHeadlineSegment[]
-	/** The fallback when there are no segments. */
+	/**
+	 * The fallback when there are no segments. The actor's name is split out of it, so a feed
+	 * migrated from a system that only stored sentences still gets a clickable actor.
+	 */
 	headline?: string
 	description?: ReactNode
 	createdAt?: string
@@ -195,7 +202,11 @@ export interface ActivityFeedCallbacks<TData = unknown> {
 }
 
 export interface ActivityResourcesProps {
-	/** The registry's seed. Re-seeded whenever this reference changes. */
+	/**
+	 * The registry rows look their resources up in, by key. A hundred rows referencing
+	 * `order:1234` follow when it is renamed, and none of them stores the name. This is the
+	 * registry's seed, re-seeded whenever this reference changes.
+	 */
 	resources?: Readonly<Record<string, ActivityResourceConfig>>
 	/** Fires on every mutation, so the registry can be persisted. */
 	onResourcesChange?: (registry: Readonly<Record<string, ActivityResourceConfig>>) => void
@@ -205,25 +216,58 @@ export interface ActivityFeedProps<TData = unknown>
 	extends ActivityFeedAccessors<TData>,
 		ActivityFeedCallbacks<TData>,
 		ActivityResourcesProps {
+	/**
+	 * In display order. Grouped by date as they come, not bucketed — bucketing would silently
+	 * reorder a feed sorted by something other than date.
+	 */
 	activities?: ReadonlyArray<ActivityItem<TData>>
+	/** How much of a row is drawn. `rich` adds metadata, changes, resources, and actions. */
 	density?: ActivityDensity
+	/** The rhythm between rows, independent of how much each row draws. */
 	itemSpacing?: ActivityItemSpacing
 	groupByDate?: boolean
 	expandedByDefault?: boolean
 	detailsCollapsible?: boolean
+	/** Uncontrolled: the rows expanded at first. */
 	defaultExpandedIds?: ReadonlyArray<string>
 	/** Controlled. Supplying it hands expansion to the caller. */
 	expandedIds?: ReadonlyArray<string>
+	/**
+	 * Always gets the full id list, controlled or not, because a consumer persisting the set
+	 * needs the set.
+	 */
 	onExpandedIdsChange?: (ids: string[]) => void
-	/** Turns this person's own name into "You". */
+	/**
+	 * Turns this person's own name into “You”. Both ids must be defined for the match, or a
+	 * feed with no ids anywhere would call every actor “You”.
+	 */
 	currentUserId?: string
+	/**
+	 * Shows initial loading for an empty feed, or an update status above existing rows. Keeps
+	 * loaded details and composer drafts mounted.
+	 */
 	loading?: boolean
-	/** A failed load or refresh. Existing activity stays visible. */
+	/**
+	 * Failure feedback for a load or refresh, with an optional retry action through `onRetry`.
+	 * A failed refresh keeps existing history visible; the consumer owns the request and its
+	 * loading state.
+	 */
 	error?: ReactNode
+	/** The retry action offered with `error`. */
 	onRetry?: () => void
-	/** Merged over the kit's defaults, so one event can be redefined without the rest. */
+	/**
+	 * Merged over the kit's defaults, so one event can be redefined without restating the rest.
+	 * Every `status_changed` in an application should look the same; deciding per call site
+	 * guarantees it eventually does not.
+	 */
 	eventConfig?: ActivityEventConfigMap
 	strings?: Partial<ActivitiesStrings>
+	/**
+	 * `renderRow`, `renderHeadline`, `renderMarker` and `renderDetails` replace a row's parts;
+	 * `renderDateLabel`, `empty`, `loading`, `header` and `footer` the feed's own regions.
+	 * `renderRow` returning `undefined` hands the row back to the feed — which is how
+	 * ActivityLog replaces only its comment rows.
+	 */
 	slots?: ActivityFeedSlots<TData>
 	rowClassNames?: ActivityRowClassNames<TData>
 	className?: string
@@ -342,11 +386,23 @@ export interface ActivityLogProps<
 	TMeta = unknown,
 	TResource extends string = string,
 > extends CommentsAccessors {
+	/**
+	 * A union of comment entries and activity entries, sorted here by `order`. An entry with no
+	 * timestamp sorts to the far end rather than shuffling.
+	 */
 	entries: ReadonlyArray<ActivityLogEntry<TUser, TMeta, TResource>>
-	/** Keep loaded entries and the composer mounted during a refresh. */
+	/**
+	 * Shows initial loading for an empty log, or an update status above existing entries. Keeps
+	 * loaded entries and the composer mounted during a refresh.
+	 */
 	loading?: boolean
-	/** Fetch failure feedback, independent of comment submission errors. */
+	/**
+	 * Fetch failure feedback, independent of comment submission errors, with an optional retry
+	 * action through `onRetry`. A failed refresh keeps existing history visible; the consumer
+	 * owns the request and its loading state.
+	 */
 	error?: ReactNode
+	/** The retry action offered with `error`. */
 	onRetry?: () => void
 	/** `desc` puts the newest first, which is what a log usually wants. */
 	order?: "asc" | "desc"
@@ -374,7 +430,12 @@ export interface ActivityLogProps<
 	onEventExpandedChange?: (entry: ActivityLogActivityEntry<TResource>, expanded: boolean) => void
 	onEventAction?: (actionId: string, entry: ActivityLogActivityEntry<TResource>) => void
 	classNames?: ActivityLogClassNames<TResource>
-	/** Omit to render the log read-only. */
+	/**
+	 * The comment composer: `enabled`, the `context` it posts against, `onSubmit`, and its
+	 * `position`. Omit to render the log read-only. Its `inlineSubmit` defaults to `false` here,
+	 * unlike a standalone composer: a log's submit sits above a wall of history, and one hidden
+	 * on the toolbar reads as formatting.
+	 */
 	composer?: ActivityLogComposerConfig<TResource>
 	bare?: boolean
 	title?: ReactNode

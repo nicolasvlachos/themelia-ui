@@ -51,9 +51,9 @@ Kind: interface.
 | --- | :-: | --- | --- |
 | `selectedCount` | yes | `number` | The bar renders nothing at zero, so a caller can mount it unconditionally. |
 | `totalCount` | no | `number` | Optional denominator for the summary. Omit when the total is unknown or unbounded. |
-| `onClear` | no | `() => void` | Omit to render no clear control — a selection the user cannot drop needs a reason. |
+| `onClear` | no | `() => void` | Drops the selection. Omit to render no clear control — a selection the user cannot drop needs a reason. |
 | `placement` | no | `BatchActionBarPlacement` | `floating` docks to the bottom centre of the viewport; `inline` sits in flow. |
-| `strings` | no | `StringsProp<BatchActionBarStrings>` |  |
+| `strings` | no | `StringsProp<BatchActionBarStrings>` | Overrides this bar's own copy: `summary(selected, total)`, `clear`, and the region's accessible `label`. |
 | `children` | no | `ReactNode` | The bulk actions. Buttons, a menu, whatever the surface needs. |
 | `className` | no | `string` |  |
 

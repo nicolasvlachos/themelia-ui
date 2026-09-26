@@ -36,27 +36,12 @@ export function RadioGroupPage() {
 			/>
 
 			<Example id="radio-group-api" title="RadioGroup API">
-				<PropTable owner="RadioGroup"
-					rows={[
-						{ name: "name", type: "string", description: "Groups the options. Required for a native radio group to behave as one." },
-						{ name: "Radio checked / defaultChecked", type: "boolean", description: "Controlled and uncontrolled selection on each radio. The group supplies their shared name." },
-						{ name: "Radio onChange", api: "Radio.onChange", type: "ChangeEventHandler<HTMLInputElement>", description: "Receives the native input event. Read event.target.value for the selected value." },
-						{ name: "Radio label / value", type: "ReactNode / string", description: "One option. The label is part of the target." },
-					]}
-				/>
+				<PropTable owners={["RadioGroup", "Radio"]} />
 			</Example>
 
 			<Example id="option-groups-api" title="Card, list and pill API">
-				<PropTable owner="CardRadioGroup"
-					rows={[
-						{ name: "options", type: "ChoiceOption[]", description: "One shape for all three: value, label, description, icon, and an optional tooltip. A pill shows no description — it has no room for one." },
-						{ name: "value / defaultValue / onValueChange", type: "string / (value) => void", description: "Controlled or uncontrolled selection." },
-						{ name: "columns", type: "1 | 2 | 3 | 4", default: "3", description: "Cards only. The track floor, not a fixed count — the grid still steps down on its own container's width. Pick it from how much each card has to say." },
-						{ name: "allowClear", api: "PillRadioGroup.allowClear", type: "boolean", default: "false", description: "Pills only. Lets the active pill be clicked again to clear the selection, for a filter whose empty state is \"all\"." },
-						{ name: "fullWidth", api: "PillRadioGroup.fullWidth", type: "boolean", default: "false", description: "Pills only. Stretches the pills to fill the container, for a segmented control that owns its row." },
-						{ name: "CardCheckboxGroup", type: "component", description: "The same cards for a multiple choice. Takes and returns an array of values." },
-					]}
-				/>
+				<PropTable owners={["CardRadioGroup", "ListRadioGroup", "PillRadioGroup"]} />
+				<PropTable symbols={["CardCheckboxGroup"]} />
 			</Example>
 		</ComponentPage>
 	)

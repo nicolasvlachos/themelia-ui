@@ -27,36 +27,56 @@ export type StepperStatus = "completed" | "complete" | "current" | "upcoming"
  */
 export type StepperVariant = "bar" | "trail"
 
+/** One step of a `Stepper`. */
 export interface StepperStep {
 	/** Stable identity for the step, handed back to `onStepClick`. */
 	id: string
+	/** What the step is called. */
 	label: ReactNode
 	/** A second, quieter line under the label. */
 	hint?: ReactNode
-	/** Where the step stands. Defaults to `upcoming`. */
+	/**
+	 * Where the step stands. `completed` is the canonical spelling; `complete` is accepted as
+	 * the same state and normalised, so the DOM only ever says `completed`.
+	 * @default "upcoming"
+	 */
 	status?: StepperStatus
 	/**
-	 * The step's whole accessible name, replacing its announced position, label, hint and
-	 * state. `aria-current` still marks the current step.
+	 * The step's whole accessible name, worded by the caller. It replaces the announced
+	 * position, label, hint and state rather than joining them; `aria-current` still marks
+	 * the current step.
 	 */
 	accessibleName?: string
 }
 
 export interface StepperProps extends Omit<ComponentProps<"ol">, "children"> {
+	/** The steps, in order. Rendered as an `<ol>`, because the order is the meaning. */
 	steps: StepperStep[]
-	/** Which drawing. Defaults to `bar`. */
+	/**
+	 * Which drawing. `bar`: labels under ringed markers in equal columns, with the connector
+	 * through the marker row. `trail`: labels beside filled markers and a rule taking the
+	 * rest of the row; below `lg` the labels are visually hidden and only the markers show.
+	 */
 	variant?: StepperVariant
 	/**
 	 * Makes each step a button: completed steps and the current one are reachable, upcoming
 	 * ones disabled. Without it the steps are plain list items.
 	 */
 	onStepClick?: (id: string, index: number) => void
+	/**
+	 * Overrides this stepper's own copy: `position(index, total)` names what the numeral
+	 * counts, and `completed` and `current` are said with those steps.
+	 */
 	strings?: Partial<StepperStrings>
 }
 
 const canonical = (status: StepperStatus | undefined) =>
 	status === "complete" ? "completed" : (status ?? "upcoming")
 
+/**
+ * A numbered sequence the reader is partway through: a marker per step — a numeral that
+ * becomes a tick — connectors, and a label with an optional hint.
+ */
 export function Stepper({
 	steps,
 	variant = "bar",

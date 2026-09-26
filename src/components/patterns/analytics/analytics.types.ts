@@ -51,12 +51,21 @@ export interface MetricChange {
 	label?: string
 }
 
+/**
+ * One figure, for every metric surface: formatted once, and moved between surfaces by
+ * changing the component alone.
+ */
 export interface MetricData {
 	/** Stable identity, for list keys. */
 	id: string
 	label: string
 	/** `null` renders the empty marker rather than collapsing the tile. */
 	value: number | string | null
+	/**
+	 * How `formatMetricValue` renders the figure. Currency shows the code rather than the
+	 * symbol, because an admin screen routinely shows several at once and "$" does not say
+	 * which dollar.
+	 */
 	valueType?: MetricValueType
 	/** ISO 4217, for `valueType: "currency"`. */
 	currency?: string

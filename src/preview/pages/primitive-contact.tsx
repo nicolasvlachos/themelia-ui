@@ -24,33 +24,16 @@ export function PrimitiveContactPage() {
 			/>
 
 			<Example id="email-api" title="Email API">
-				<PropTable owner="Email"
-					rows={[
-						{ name: "value", type: "string | null", description: "The address. Becomes both the text and the mailto href." },
-						{ name: "display", type: "ReactNode", description: "Shown instead of the address. The href is still the address." },
-						{ name: "subject / body", type: "string", description: "Prefills the message. Encoded into the mailto, not concatenated into it." },
-					]}
-				/>
+				<PropTable owner="Email" />
 			</Example>
 
 			<Example id="phone-api" title="Phone API">
-				<PropTable owner="Phone"
-					rows={[
-						{ name: "value", type: "string | null", description: "The number as stored. Displayed with its grouping; dialled without it." },
-						{ name: "display", type: "ReactNode", description: "Shown instead of the number." },
-					]}
-				/>
+				<PropTable owner="Phone" />
 			</Example>
 
 			<Example id="url-api" title="Url and Link API">
-				<PropTable owner="Url"
-					rows={[
-						{ name: "value", type: "string | null", description: "The address. The host is shown; the whole thing stays in the href." },
-						{ name: "display", type: "ReactNode", description: "Shown instead of the host." },
-						{ name: "external", type: "boolean", default: "false", description: "Opens in a new tab WITH rel=noopener noreferrer. The two are not separable." },
-						{ name: "Link", type: "component", description: "The plain anchor the three contact primitives are built on." },
-					]}
-				/>
+				<PropTable owner="Url" />
+				<PropTable symbols={["Link"]} />
 			</Example>
 		</ComponentPage>
 	)

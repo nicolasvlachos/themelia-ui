@@ -31,6 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A menu that opens from a trigger. It holds the open state the parts share.
+
 ```text
 ({ ...props }: MenuPrimitive.Root.Props) => React.JSX.Element
 ```
@@ -39,13 +41,18 @@ Kind: callable.
 
 Kind: callable.
 
+A row that toggles rather than closing.
+
 ```text
-({ className, children, checked, inset, icon, description, ...props }: MenuPrimitive.CheckboxItem.Props & Pick<MenuRowSlots, "icon" | "description" | "inset">) => React.JSX.Element
+({ className, children, checked, inset, icon, description, ...props }: MenuPrimitive.CheckboxItem.Props & Pick<MenuPrimitive.CheckboxItem.Props, "checked" | "onCheckedChange"> & Pick<MenuRowSlots, "icon" | "description" | "inset">) => React.JSX.Element
 ```
 
 ### `DropdownMenuContent`
 
 Kind: callable.
+
+The menu's surface. It sizes to its widest row by default, capped at a reading measure;
+`width`, `minWidth` and `maxWidth` change that.
 
 ```text
 ({ container, align, alignOffset, side, sideOffset, width, minWidth, maxWidth, className, style, ...props }: MenuPrimitive.Popup.Props & Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { width?: string | number | "trigger"; minWidth?: string | number; maxWidth?: string | number; container?: UIPortalContainer; }) => React.JSX.Element
@@ -55,6 +62,8 @@ Kind: callable.
 
 Kind: callable.
 
+A titled run of items.
+
 ```text
 ({ ...props }: MenuPrimitive.Group.Props) => React.JSX.Element
 ```
@@ -62,6 +71,9 @@ Kind: callable.
 ### `DropdownMenuItem`
 
 Kind: callable.
+
+A menu row. Its icon, description, shortcut and trailing content are props rather than
+children, so every row lays out the same and only the label gives way.
 
 ```text
 ({ className, inset, variant, icon, description, shortcut, trailing, children, ...props }: MenuPrimitive.Item.Props & MenuRowSlots & { variant?: "default" | "destructive"; }) => React.JSX.Element
@@ -71,6 +83,10 @@ Kind: callable.
 
 Kind: callable.
 
+A group caption. It must sit inside a `DropdownMenuGroup` — it throws otherwise. The label
+is not an item: it is not focusable and arrow keys skip it, which is why a styled item
+would be wrong here.
+
 ```text
 ({ className, inset, ...props }: MenuPrimitive.GroupLabel.Props & { inset?: boolean; }) => React.JSX.Element
 ```
@@ -78,6 +94,9 @@ Kind: callable.
 ### `DropdownMenuLinkItem`
 
 Kind: callable.
+
+An item that navigates. A real anchor, so middle-click and copy-link work and a screen
+reader announces a link rather than a button.
 
 ```text
 ({ className, inset, variant, icon, description, shortcut, trailing, children, ...props }: MenuPrimitive.LinkItem.Props & MenuRowSlots & { variant?: "default" | "destructive"; }) => React.JSX.Element
@@ -87,6 +106,10 @@ Kind: callable.
 
 Kind: callable.
 
+Escapes the menu from an ancestor that clips or transforms — a card with overflow hidden,
+a scrolling pane. `DropdownMenuContent` portals already; this is for a caller placing the
+surface itself.
+
 ```text
 ({ ...props }: MenuPrimitive.Portal.Props) => React.JSX.Element
 ```
@@ -95,13 +118,17 @@ Kind: callable.
 
 Kind: callable.
 
+One choice from the menu: a set of `DropdownMenuRadioItem`s.
+
 ```text
-({ ...props }: MenuPrimitive.RadioGroup.Props) => React.JSX.Element
+({ ...props }: MenuPrimitive.RadioGroup.Props & Pick<MenuPrimitive.RadioGroup.Props, "value" | "onValueChange">) => React.JSX.Element
 ```
 
 ### `DropdownMenuRadioItem`
 
 Kind: callable.
+
+A single-choice item inside a `DropdownMenuRadioGroup`, carrying its own indicator.
 
 ```text
 ({ className, children, inset, icon, description, ...props }: MenuPrimitive.RadioItem.Props & Pick<MenuRowSlots, "icon" | "description" | "inset">) => React.JSX.Element
@@ -111,6 +138,8 @@ Kind: callable.
 
 Kind: callable.
 
+The rule between runs of items.
+
 ```text
 ({ className, ...props }: MenuPrimitive.Separator.Props) => React.JSX.Element
 ```
@@ -118,6 +147,9 @@ Kind: callable.
 ### `DropdownMenuShortcut`
 
 Kind: callable.
+
+The key hint on the trailing edge of an item. Presentational: it announces nothing,
+because the shortcut is already on the item that owns it.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"span">) => React.JSX.Element
@@ -127,6 +159,9 @@ Kind: callable.
 
 Kind: callable.
 
+A nested menu: `DropdownMenuSubTrigger`, then `DropdownMenuSubContent`. It holds the open
+state both belong to.
+
 ```text
 ({ ...props }: MenuPrimitive.SubmenuRoot.Props) => React.JSX.Element
 ```
@@ -134,6 +169,8 @@ Kind: callable.
 ### `DropdownMenuSubContent`
 
 Kind: callable.
+
+The panel a nested menu opens. It belongs to a `DropdownMenuSub`, which holds the open state.
 
 ```text
 ({ align, alignOffset, side, sideOffset, className, ...props }: React.ComponentProps<typeof DropdownMenuContent>) => React.JSX.Element
@@ -143,6 +180,8 @@ Kind: callable.
 
 Kind: callable.
 
+The row that opens a nested menu. It belongs to a `DropdownMenuSub`, which holds the open state.
+
 ```text
 ({ className, inset, children, ...props }: MenuPrimitive.SubmenuTrigger.Props & { inset?: boolean; }) => React.JSX.Element
 ```
@@ -151,8 +190,10 @@ Kind: callable.
 
 Kind: callable.
 
+The control the menu hangs off.
+
 ```text
-({ ...props }: MenuPrimitive.Trigger.Props) => React.JSX.Element
+({ ...props }: MenuPrimitive.Trigger.Props & Pick<MenuPrimitive.Trigger.Props, "render">) => React.JSX.Element
 ```
 
 ## Preview recipes

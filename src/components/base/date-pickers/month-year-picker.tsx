@@ -29,6 +29,10 @@ export interface MonthYearPickerProps extends Omit<ComponentProps<"div">, "onCha
 	strings?: Partial<CalendarStrings>
 }
 
+/**
+ * Month and year without a day grid, for a period rather than a date — a billing month, a
+ * report window, an expiry. A day grid would imply a precision the value lacks.
+ */
 export function MonthYearPicker({
 	value,
 	onValueChange,

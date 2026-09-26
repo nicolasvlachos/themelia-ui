@@ -30,6 +30,10 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+Tells script-positioned UI — menus, popovers — the writing direction of a subtree. Set
+`dir` on `<html>` or the region as well, so the browser handles selection, caret and
+scroll, and the kit's logical CSS mirrors.
+
 ```text
 ({ direction, children }: DirectionProviderProps) => React.JSX.Element
 ```
@@ -40,7 +44,7 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `direction` | no | `"ltr" \| "rtl"` |  |
+| `direction` | no | `"ltr" \| "rtl"` | The reading direction for a subtree, as the menus, popovers and other script-positioned<br>parts inside it read it. The kit's CSS is logical and follows the `dir` attribute, so<br>set `dir` on the region as well for its layout to mirror. |
 | `children` | no | `React.ReactNode` |  |
 
 ## Preview recipes
@@ -60,13 +64,17 @@ export default function DirectionSlot() {
 	return (
 		<Stack gap="lg">
 			<DirectionProvider direction="rtl">
-				<ContentBlock surface="card" title="اتجاه من اليمين إلى اليسار">
-					<Text size="xs" type="secondary">
-						Every inset, gap and border in this block is a logical property, so the whole
-						region mirrors from one prop rather than from a stylesheet per direction.
-					</Text>
-				</ContentBlock>
+				<div dir="rtl">
+					<ContentBlock surface="card" title="اتجاه من اليمين إلى اليسار">
+						<Text size="xs" type="secondary">كل هامش وفجوة وحد هنا خاصية منطقية.</Text>
+					</ContentBlock>
+				</div>
 			</DirectionProvider>
+			<Text size="xs" type="secondary">
+				Every inset, gap and border in the block above is a logical property, so <code>dir</code> on
+				the region mirrors it without a stylesheet per direction. The provider tells the menus and
+				popovers inside it the same thing.
+			</Text>
 			<Slot className={undefined}>
 				<Text size="xs" type="secondary">
 					Slot renders its child, merged. There is nothing of its own on the page.

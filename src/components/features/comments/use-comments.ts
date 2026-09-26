@@ -57,6 +57,11 @@ export interface UseCommentsReturn<
 	helpers: CommentSubmitHelpers
 }
 
+/**
+ * The state machine on its own — `composerMode`, `submit`, `deleteComment`, `resetKey` — for a
+ * fully custom thread. The mode is one union rather than three booleans, so “editing a reply
+ * while replying” cannot be represented.
+ */
 export function useComments<
 	TUser extends CommentUser = CommentUser,
 	TMeta = unknown,

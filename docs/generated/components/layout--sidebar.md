@@ -43,11 +43,11 @@ Extends: `LayoutNavigationAdapter`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `navigationGroups` | no | `Record<string, SidebarNavItem[]>` | Navigation grouped by section heading. An empty key renders an untitled group. |
+| `navigationGroups` | no | `Record<string, SidebarNavItem[]>` | Navigation as data, grouped by section heading. An empty key renders an untitled group,<br>and an item with children renders as a disclosure. |
 | `footerNavItems` | no | `SidebarFlatNavItem[]` | Entries pinned to the footer — support, settings, sign out. |
-| `currentUrl` | no | `string` | The current route. Everything active follows from this. |
+| `currentUrl` | no | `string` | The current route. Active rows, and which parent is expanded, follow from this alone. |
 | `iconMap` | no | `Record<string, ComponentType<{ className?: string; }>>` | Resolves an icon name to a component, so navigation data can stay serialisable. |
-| `liveBadges` | no | `Record<string, string \| number>` | Counts keyed by `handle`, for values that change after the nav was defined. |
+| `liveBadges` | no | `Record<string, string \| number>` | Counts keyed by `handle`, overriding an item's declared badge — for a number that<br>changes after the nav was defined. |
 | `loading` | no | `boolean` |  |
 | `loadingRows` | no | `number` | Rows shown while loading. |
 | `logo` | no | `ReactNode` | The product mark, and the compact one for the collapsed rail. With `workspaceLinks`<br>the header becomes a switcher, in the same row height. |
@@ -96,25 +96,29 @@ Matches every ancestor, so use `resolveActiveHref` to pick the current row.
 (currentUrl: string, path: string) => boolean
 ```
 
-### `LayoutLinkRenderer`
+### `LinkRenderer`
 
 Kind: type.
 
-The navigation seam.
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
 
 ```tsx fragment — declaration JSDoc excerpt
-<AppSidebar renderLink={({ href, children, ...rest }) => (
-  <Link to={href ?? "#"} {...rest}>{children}</Link>
-)} />
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
 ```
 
 ```text
-(props: LayoutLinkRenderProps) => ReactNode
+(props: LinkRenderProps) => ReactElement
 ```
 
-### `LayoutLinkRenderProps`
+### `LinkRenderProps`
 
 Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -125,9 +129,11 @@ Kind: interface.
 | `rel` | no | `string` |  |
 | `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
 | `"aria-label"` | no | `string` |  |
-| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the shell styles the row itself. |
-| `disabled` | no | `boolean` |  |
-| `external` | no | `boolean` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ### `resolveActiveHref`
 
@@ -153,7 +159,9 @@ Omit<SidebarNavItem, "children">
 Kind: callable.
 
 Resolves an icon that may be a name (looked up in `iconMap`), a component or a node.
-Exported for `renderItem` callers.
+Exported because a caller supplying `renderItem` still wants the same resolution — a row
+rendered by hand should not need its own copy of “string means look it up, component
+means render it, node means use it”.
 
 ```text
 ({ icon, iconMap, }: { icon?: LayoutIconSource; iconMap?: Record<string, ComponentType<{ className?: string; }>>; }) => import("react").JSX.Element | null
@@ -169,12 +177,16 @@ Kind: interface.
 | `active` | yes | `boolean` |  |
 | `expanded` | yes | `boolean` | Whether the row's children are shown: the reader's toggle if they used it, else derived from the current URL. |
 | `badge` | no | `string \| number` |  |
-| `renderLink` | yes | `LayoutLinkRenderer` |  |
+| `renderLink` | yes | `LinkRenderer` |  |
 | `toggle` | no | `() => void` | Flips `expanded` for a row with children; wire it to a custom parent row's click.<br>AppSidebar always supplies it; optional for hand-built contexts. |
 
 ### `SidebarLogo`
 
 Kind: callable.
+
+The product mark in the rail’s header. It swaps to the compact mark when the rail
+collapses to icons rather than scaling the full one down, because a squeezed wordmark is
+unreadable at rail width.
 
 ```text
 ({ logo, collapsedLogo, className }: SidebarLogoProps) => import("react").JSX.Element | null
@@ -209,6 +221,10 @@ Kind: interface.
 
 Kind: callable.
 
+The account row at the foot of the rail. Its menu opens to the RIGHT when the rail is
+collapsed and ABOVE when it is not, because a menu that always drops down is off-screen at
+the bottom of a full-height panel.
+
 ```text
 ({ user, customContent, onProfile, onSettings, onLogout, strings, renderTrigger, }: SidebarUserProps) => import("react").JSX.Element
 ```
@@ -241,6 +257,9 @@ Kind: interface.
 ### `SidebarWorkspace`
 
 Kind: callable.
+
+The rail’s header as a workspace switcher. The whole header row is the trigger, not a
+chevron beside a decorative name — the name is what a reader aims at.
 
 ```text
 ({ logo, collapsedLogo, workspaceLinks, renderLink, strings, contentClassName, }: SidebarWorkspaceProps) => import("react").JSX.Element

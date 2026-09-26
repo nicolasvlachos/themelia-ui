@@ -38,8 +38,9 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
-Wraps an RHF `control` in the kit's headless contract. `useField` delegates to
-`useController`, so registration, validation and dirty tracking keep working.
+Wraps a react-hook-form `control` in the kit's headless contract. `useField` delegates to
+`useController`, so registration, validation and dirty tracking keep working. Imported
+from `themelia-ui/forms-rhf`, never from `themelia-ui/forms`, which stays dependency-free.
 
 ```text
 (control: Control<TValues>) => FormControl<TValues>

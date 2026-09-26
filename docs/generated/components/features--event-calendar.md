@@ -105,6 +105,9 @@ EventCalendarStrings
 
 Kind: callable.
 
+A month grid, a week strip, or an agenda over one list of events. Views change only the day
+range and layout; placing events onto days is shared.
+
 ```text
 ({ events, categories, viewMode, defaultViewMode, onViewModeChange, date, defaultDate, onDateChange, onEventClick, onDayClick, maxEventsPerDay, showLegend, showHeader, showWeekends, weekStartsOn: weekStartsOnProp, locale, enableCategoryFilter, visibleCategories: controlledVisibleCategories, onVisibleCategoriesChange, loading, emptyStateMessage, className, compact, actions, strings, dayHeadingVariant, dayHeadingClassName, renderDayHeading, rangeMode, minDate, maxDate, disabledDates, filterEvent, renderEvent, renderDayCell, }: EventCalendarProps) => import("react").JSX.Element
 ```
@@ -112,6 +115,10 @@ Kind: callable.
 ### `EventCalendarDayCell`
 
 Kind: callable.
+
+One day in the grid. Deliberately not a button: a cell holds events that are themselves
+pressable, and nesting controls makes both unreachable by keyboard. The day number is the
+keyboard affordance; the cell's click only widens the pointer target.
 
 ```text
 ({ data, categories, maxEvents, onClick, onEventClick, compact, strings, renderEvent, }: EventCalendarDayCellProps) => import("react").JSX.Element
@@ -144,6 +151,9 @@ Kind: type.
 
 Kind: callable.
 
+One event as a chip in a day cell: a category dot, the title and the start time. At the
+narrowest widths only the dot remains.
+
 ```text
 ({ event, category, compact, onClick, strings, }: EventCalendarEventBadgeProps) => import("react").JSX.Element
 ```
@@ -163,6 +173,10 @@ Kind: interface.
 ### `EventCalendarEventCard`
 
 Kind: callable.
+
+One event in full, for an agenda row or a popover. The card reads its metadata by name —
+`customerName`, `guestCount`, `serviceName` — so a consumer's own fields appear without a
+mapping step.
 
 ```text
 ({ event, category, onClick, strings, className, }: EventCalendarEventCardPropsWithStrings) => import("react").JSX.Element
@@ -203,6 +217,9 @@ Kind: interface.
 
 Kind: callable.
 
+The period and the controls that move it. The month jump is icon-only because the label
+beside it already names the month — spelling it on the button too is the same word twice.
+
 ```text
 ({ currentDate, viewMode, displayLabel, onPrevious, onNext, onToday, onViewModeChange, onDateChange, actions, strings, rangeMode, minDate, maxDate, prevDisabled, nextDisabled, className, }: EventCalendarHeaderProps) => import("react").JSX.Element
 ```
@@ -235,6 +252,9 @@ Kind: interface.
 
 Kind: callable.
 
+The category key, and the filter when one is wired. The WHOLE chip toggles rather than a
+checkbox beside a swatch — the swatch is the target a reader aims at anyway.
+
 ```text
 ({ categories, visibleCategories, onToggleCategory, enableFiltering, strings, className, }: EventCalendarLegendProps) => import("react").JSX.Element | null
 ```
@@ -258,24 +278,24 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `events` | yes | `CalendarEvent[]` | The calendar does no fetching of its own. |
-| `categories` | yes | `EventCategory[]` |  |
-| `viewMode` | no | `CalendarViewMode` |  |
-| `defaultViewMode` | no | `CalendarViewMode` |  |
+| `events` | yes | `CalendarEvent[]` | The calendar does no fetching of its own. An event with an `endDate` appears on every day<br>it spans, not only its first. |
+| `categories` | yes | `EventCategory[]` | The categories events name. Each owns its colour, so colour is defined once. |
+| `viewMode` | no | `CalendarViewMode` | Controlled. The switcher works either way. Week steps by weeks; month and agenda step by<br>months. |
+| `defaultViewMode` | no | `CalendarViewMode` | Uncontrolled: the view to start in. |
 | `onViewModeChange` | no | `(mode: CalendarViewMode) => void` |  |
-| `date` | no | `Date` |  |
-| `defaultDate` | no | `Date` |  |
+| `date` | no | `Date` | Where the calendar is looking. Controlled, like the view. |
+| `defaultDate` | no | `Date` | Uncontrolled: where the calendar starts looking. |
 | `onDateChange` | no | `(date: Date) => void` |  |
-| `onEventClick` | no | `(event: CalendarEvent) => void` |  |
-| `onDayClick` | no | `(date: Date, events: CalendarEvent[]) => void` | Fires with the day and everything on it. |
-| `maxEventsPerDay` | no | `number` | Chips drawn per day before the rest collapse into an overflow line. |
+| `onEventClick` | no | `(event: CalendarEvent) => void` | A chip press calls this and stops there. |
+| `onDayClick` | no | `(date: Date, events: CalendarEvent[]) => void` | A press anywhere else in a day's cell calls this, with the day and everything on it. |
+| `maxEventsPerDay` | no | `number` | Chips drawn per day before the rest collapse into an overflow line. The overflow dots are<br>the categories of the HIDDEN events, not the first three in the list. |
 | `showLegend` | no | `boolean` |  |
 | `showHeader` | no | `boolean` |  |
 | `showWeekends` | no | `boolean` |  |
-| `weekStartsOn` | no | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | 0 is Sunday. Falls back to the provider's dates config, then Monday. |
+| `weekStartsOn` | no | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | 0 is Sunday. Falls back to the provider's dates config, then Monday — the same source the<br>kit's own pickers read. |
 | `locale` | no | `Locale` |  |
 | `enableCategoryFilter` | no | `boolean` | Makes the legend chips toggle their category. |
-| `visibleCategories` | no | `string[]` | Ids currently shown. Empty means all. |
+| `visibleCategories` | no | `string[]` | Ids currently shown. An EMPTY list means all are shown — a filter nobody has touched hides<br>nothing. |
 | `onVisibleCategoriesChange` | no | `(categories: string[]) => void` |  |
 | `loading` | no | `boolean` |  |
 | `emptyStateMessage` | no | `string` |  |
@@ -288,11 +308,11 @@ Kind: interface.
 | `renderDayHeading` | no | `(day: string, index: number) => ReactNode` |  |
 | `rangeMode` | no | `EventCalendarRangeMode` |  |
 | `minDate` | no | `Date` | Navigation stops here, and days beyond it are drawn but not clickable. |
-| `maxDate` | no | `Date` |  |
-| `disabledDates` | no | `DateRule` |  |
-| `filterEvent` | no | `EventFilter` | Hides events at render time without touching `events`. |
-| `renderEvent` | no | `RenderEventFn` |  |
-| `renderDayCell` | no | `RenderDayCellFn` |  |
+| `maxDate` | no | `Date` | Navigation stops here, and days beyond it are drawn but not clickable. |
+| `disabledDates` | no | `DateRule` | Days drawn but not clickable. A `DateRule` takes dates, a predicate, or both, combined<br>with OR. |
+| `filterEvent` | no | `EventFilter` | Hides events at render time without touching `events`. Counts and the overflow line<br>follow it, so what is drawn and what is counted agree. |
+| `renderEvent` | no | `RenderEventFn` | Replaces how an event draws: its chip in a day cell, its card in the agenda. |
+| `renderDayCell` | no | `RenderDayCellFn` | Replaces a day's cell. It receives `defaultRender`, so decorating is as easy as replacing. |
 
 ### `EventCalendarRangeMode`
 
@@ -392,6 +412,10 @@ The only fallback: a category that is missing entirely.
 ### `useEventCalendar`
 
 Kind: callable.
+
+The date, the view, and the days — for a calendar whose surface is entirely yours. Each is
+independently controllable: the prop wins when given, and setters always call the consumer's
+handler.
 
 ```text
 ({ events, date, defaultDate, viewMode, defaultViewMode, onDateChange, onViewModeChange, dataOptions, }: UseEventCalendarOptions) => UseEventCalendarResult

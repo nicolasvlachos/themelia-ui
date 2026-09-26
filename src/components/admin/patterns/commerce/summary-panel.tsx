@@ -11,17 +11,26 @@ import { formatDeduction } from "./format-amount"
 import styles from "./commerce.module.css"
 
 export interface AmountRowProps extends Omit<ComponentProps<"div">, "children"> {
+	/** What the amount is — "Subtotal", "Shipping". */
 	label: ReactNode
 	/** Already formatted, including its currency. */
 	amount: string
 	/** Marks the row the eye should land on — a total, an amount due. */
 	total?: boolean
-	/** Money coming off the total. Rewrites the sign rather than trusting the caller's, and tints the figure. */
+	/**
+	 * Money coming off the total. Rewrites the sign to U+2212 whatever the caller passed,
+	 * and tints the figure.
+	 */
 	deduction?: boolean
 	/** A rate, a qualifier — sits quietly beside the label. */
 	note?: ReactNode
 }
 
+/**
+ * The ledger row every money surface is built from, inside a `SummaryPanel`. Not
+ * InlineStat: this one knows about money — deductions and totals — and InlineStat displays
+ * any value.
+ */
 export function AmountRow({
 	label,
 	amount,
@@ -69,6 +78,12 @@ export interface SummaryPanelProps extends ComponentProps<"div"> {
 	children: ReactNode
 }
 
+/**
+ * The money ledger — the shape almost every commerce surface is made of: a tinted block of
+ * label/amount rows, a rule, and one row that matters more than the rest. A cart, a tax
+ * breakdown, an invoice and a subscription all draw it, and each rebuilding it inline is how
+ * one of them ends up emphasising its total differently from the others.
+ */
 export function SummaryPanel({ children, className, ...props }: SummaryPanelProps) {
 	return (
 		<div className={cx("summary-panel--component", styles.summaryPanel, className)} {...props}>

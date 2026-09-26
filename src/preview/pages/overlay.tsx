@@ -138,57 +138,46 @@ export function OverlayPage() {
 
 			<Example id="overlay-api" title="Overlay API">
 				<PropTable
-					rows={[
-						{ name: "Overlay open / defaultOpen / onOpenChange", type: "boolean / boolean / (open) => void", description: "Controlled and uncontrolled open state on the root." },
-						{ name: "overlay.backdropBlur", api: "@/lib/ui-provider#UIConfig.overlay.backdropBlur", type: "number | string", default: "none", description: "On UIProvider: a blur behind every modal scrim in its scope, in px or any CSS length. Off unless asked — a blur costs every frame the surface is open." },
-						{ name: "OverlayContent placement", type: '"center" | "inline-start" | "inline-end" | "block-start" | "block-end"', default: '"center"', description: "Where the surface sits. Centre reads as a dialog, an edge as a sheet. DialogContent and AlertDialogContent fix it to centre; SheetContent exposes it as side." },
-						{ name: "OverlayContent size", type: '"sm" | "md" | "lg" | "full" | string', description: "Cross-axis extent for an edge placement — the width of a side panel. Named steps resolve to tokens; any other CSS length is used as given. Ignored when centred." },
-						{ name: "OverlayContent length", type: '"full" | string', default: '"full"', description: "Along-axis extent. Less than full detaches the panel and centres it on that axis." },
-						{ name: "OverlayContent inset", type: "boolean | string", default: "false", description: "The gap to the viewport edges. false is flush — a sheet welded to the side. true uses the kit's gap; any CSS length sets your own." },
-						{ name: "OverlayContent modality", type: '"modal" | "trap-focus" | "non-modal"', default: '"modal"', description: "How much of the page the surface takes hostage: scrim, inert background and scroll lock, or focus alone, or neither." },
-						{ name: "OverlayContent dismissal", type: "{ backdrop?: boolean; escape?: boolean }", default: "both true", description: "Each route out, separately. Off for a decision that must be answered, or for work in progress. AlertDialogContent fixes both off." },
-						{ name: "OverlayContent surface", type: '"framed" | "bare"', default: '"framed"', description: "bare drops the region dividers, for content that draws its own chrome." },
-						{ name: "OverlayContent initialFocusRef", type: "RefObject<HTMLElement>", description: "What to focus on open, instead of the first tabbable node." },
-						{ name: "OverlayContent showCloseButton", type: "boolean", default: "true", description: "The corner dismiss control. AlertDialogContent turns it off." },
-						{ name: "OverlayContent strings", type: "Partial<OverlayStrings>", description: "The accessible name the corner dismiss control carries." },
-						{ name: "OverlayHeader / OverlayBody / OverlayFooter", type: "component", description: "The three regions. Header and footer hold their edge while the body scrolls, so a long surface never scrolls its own title away." },
-						{ name: "OverlayTitle / OverlayDescription", type: "component", description: "Wired to the dialog's accessible name and description — a surface without a title has neither." },
-						{ name: "OverlayTrigger / OverlayClose", type: "component", description: "Render a bare button by default; `render` hands the behaviour to your own control instead, so the trigger is a kit Button rather than something this module styles." },
-						{ name: "OverlayDismissArea", type: "component", description: "Any button inside dismisses — for a footer whose every control should close. Wrapping each button individually is where the wiring gets forgotten; keep OverlayClose per action when only some of them close." },
+					owners={[
+						"Overlay",
+						"OverlayTrigger",
+						"OverlayContent",
+						"OverlayDismissal",
+						"OverlayHeader",
+						"OverlayBody",
+						"OverlayFooter",
+						"OverlayTitle",
+						"OverlayDescription",
+						"OverlayClose",
+						"OverlayDismissArea",
+						"UIConfig.overlay",
 					]}
 				/>
 			</Example>
 
 			<Example id="dialog-api" title="Dialog API">
-				<PropTable owner="DialogContent"
-					rows={[
-						{ name: "DialogContent", type: "OverlayContent props, without placement", description: "OverlayContent with placement fixed to centre. modality, surface, dismissal, initialFocusRef and showCloseButton are the Overlay props above, with the same defaults." },
-						{ name: "Overlay / OverlayTrigger / OverlayClose / OverlayHeader / OverlayBody / OverlayFooter / OverlayTitle / OverlayDescription / OverlayDismissArea", type: "component", description: "The rest of a dialog is Overlay's own parts, imported from base/overlay under their own names. There is no second name for them, so nothing about them can drift." },
+				<PropTable owners={["DialogContent"]} />
+				<PropTable
+					symbols={[
+						"Overlay",
+						"OverlayTrigger",
+						"OverlayClose",
+						"OverlayHeader",
+						"OverlayBody",
+						"OverlayFooter",
+						"OverlayTitle",
+						"OverlayDescription",
+						"OverlayDismissArea",
 					]}
 				/>
 			</Example>
 
 			<Example id="alert-dialog-api" title="Alert dialog API">
-				<PropTable owner="@/components/base/alert-dialog#AlertDialogContent"
-					rows={[
-						{ name: "AlertDialogContent", type: "OverlayContent props, without placement or dismissal", description: "Fixes placement to centre, role to alertdialog, and both dismissal routes and the corner close off. modality, surface and initialFocusRef are the Overlay props above." },
-						{ name: "AlertDialogAction / AlertDialogCancel", api: ["@/components/base/alert-dialog#AlertDialogAction", "@/components/base/alert-dialog#AlertDialogCancel"], type: "component", description: "The two answers. Both close the dialog; Action is the one that commits. There is no dismissal and no corner close — dismissal and showCloseButton are fixed off." },
-						{ name: "AlertDialogMedia", api: "@/components/base/alert-dialog#AlertDialogMedia", type: "component", description: "A leading glyph or illustration above the title, for a confirmation whose severity is worth showing before it is read." },
-					]}
-				/>
+				<PropTable owners={["AlertDialogContent", "AlertDialogAction", "AlertDialogCancel", "AlertDialogMedia"]} />
 			</Example>
 
 			<Example id="sheet-api" title="Sheet API">
-				<PropTable owner="SheetContent"
-					rows={[
-						{ name: "side", type: '"inline-start" | "inline-end" | "block-start" | "block-end"', default: '"inline-end"', description: "The edge it enters from — OverlayContent placement, minus centre. Logical, so it follows the writing mode." },
-						{ name: "size", type: '"sm" | "md" | "lg" | "full" | CSS length', default: '"md"', description: "The CROSS axis. A side panel takes it as a width; a top or bottom one sizes to its content and takes this as the ceiling." },
-						{ name: "length", type: '"full" | CSS length', default: '"full"', description: "How far it runs ALONG the edge, measured against the space the inset leaves rather than the viewport — 70% of an inset panel is 70% of what is between the offsets, and the rest is split between the two ends. Full needs no inset to look right, which is why a corner-anchored sheet sets only inset." },
-						{ name: "inset", type: "boolean | CSS length", default: "false", description: "ONE offset, spent on every side the panel does not run to — so an inset side panel sits the same distance from the top, the side, and the bottom. Any gap detaches it, rounds all four corners, and gives it a full border." },
-						{ name: "modality / surface / dismissal / initialFocusRef / showCloseButton", type: "as OverlayContent", description: "Passed through unchanged, with the Overlay defaults. A sheet is where non-modal earns its place: an inspector you keep working beside." },
-						{ name: "defaults.sheet", api: "@/lib/ui-provider#UIConfig.defaults.sheet", type: "{ side, size, length, inset }", description: "The same four on UIProvider, for a product that decides the shape once." },
-					]}
-				/>
+				<PropTable owners={["SheetContent"]} />
 			</Example>
 		</ComponentPage>
 	)

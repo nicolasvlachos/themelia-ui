@@ -12,6 +12,7 @@ export interface GlobalSearchEmptyStateProps {
 	className?: string
 }
 
+/** What the palette shows after a search that found nothing. */
 export function GlobalSearchEmptyState({ title, hint, className }: GlobalSearchEmptyStateProps) {
 	return (
 		<Empty

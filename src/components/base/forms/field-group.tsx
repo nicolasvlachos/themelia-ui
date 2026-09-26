@@ -10,10 +10,17 @@ import { cx } from "@/lib/cx"
 import styles from "./forms.module.css"
 
 export interface FieldGroupProps extends React.ComponentProps<"fieldset"> {
+	/** The group's one label, announced when focus enters the group. */
 	legend?: React.ReactNode
+	/** The group's one supporting line. */
 	description?: React.ReactNode
 }
 
+/**
+ * Several fields sharing one label and one supporting line — a date range, a name split in
+ * two. A real `<fieldset>` and `<legend>`, so the legend is announced when focus enters the
+ * group.
+ */
 export function FieldGroup({ legend, description, className, children, ...props }: FieldGroupProps) {
 	const descriptionId = React.useId()
 	return (

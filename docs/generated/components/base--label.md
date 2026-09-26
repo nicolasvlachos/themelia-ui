@@ -31,8 +31,11 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A form label: a real `<label>`, so clicking it focuses the control it names. Takes
+everything a native label takes.
+
 ```text
-({ className, ...props }: React.ComponentProps<"label">) => React.JSX.Element
+({ className, ...props }: LabelProps) => React.JSX.Element
 ```
 
 ## Preview recipes

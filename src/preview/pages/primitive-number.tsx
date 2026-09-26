@@ -30,38 +30,15 @@ export function PrimitiveNumberPage() {
 			/>
 
 			<Example id="number-api" title="Number and Percent API">
-				<PropTable owner="Percent"
-					rows={[
-						{ name: "Number value", type: "number | null", description: "Locale grouping and tabular figures." },
-						{ name: "Percent value", type: "number | null", description: "A fraction, not a percentage — 0.214 renders as 21.4%." },
-						{ name: "Percent scaled", type: "boolean", default: "false", description: "For a value already on 0–100. Needed because both conventions are in the wild and neither is guessable from the number." },
-						{ name: "locale", type: "string", description: "Overrides the document locale for this value." },
-					]}
-				/>
+				<PropTable owners={["Number", "Percent"]} />
 			</Example>
 
 			<Example id="range-api" title="Range API">
-				<PropTable owner="Range"
-					rows={[
-						{ name: "from / to", type: "number | null", description: "The ends. One alone still renders — \"from £10\", with the caller's copy around it." },
-						{ name: "currency", type: "string", description: "An ISO code. Intl repeats the symbol on both ends, which is its considered answer to the ambiguity a single symbol creates." },
-						{ name: "unit", type: "string", description: "A CSS-style unit identifier. Ignored when currency is set." },
-						{ name: "maximumFractionDigits", type: "number", description: "Caps the decimals on both ends." },
-					]}
-				/>
+				<PropTable owner="Range" />
 			</Example>
 
 			<Example id="ratio-api" title="Ratio and Rating API">
-				<PropTable owner="Ratio"
-					rows={[
-						{ name: "Ratio value / total", type: "number | null", description: "The count and what it is counted against. Without a total the value renders alone." },
-						{ name: "Ratio format", type: '"words" | "fraction"', default: '"words"', description: "\"3 of 10\" in prose, \"3/10\" in a table." },
-						{ name: "Rating value", type: "number | null", description: "The score. Shown to at most one decimal, so 4 stays 4." },
-						{ name: "Rating max", type: "number", default: "5", description: "The top of the scale." },
-						{ name: "Rating hideMax", type: "boolean", default: "false", description: "Drops the scale, for a surface that states it elsewhere. Not the default: a bare score is a number the reader has to guess the meaning of." },
-						{ name: "strings", type: "Partial<RatioStrings> | Partial<RatingStrings>", description: "The connectors — \"of\", \"out of\", and the fraction separator." },
-					]}
-				/>
+				<PropTable owners={["Ratio", "Rating"]} />
 			</Example>
 		</ComponentPage>
 	)

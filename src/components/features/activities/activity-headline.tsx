@@ -196,6 +196,11 @@ function Fallback<TData>(props: ActivityHeadlineProps<TData>): ReactNode {
 	)
 }
 
+/**
+ * The sentence, assembled from typed segments rather than interpolated. The fallback is the
+ * point: an event whose actor or subject is missing still reads as a sentence instead of
+ * rendering “undefined updated”.
+ */
 export function ActivityHeadline<TData = unknown>(props: ActivityHeadlineProps<TData>) {
 	const segments = props.activity.segments
 	return (

@@ -28,6 +28,11 @@ export interface FieldShellProps extends Omit<React.ComponentProps<"div">, "chil
 		| ((controlProps: FieldShellControlProps) => React.ReactNode)
 }
 
+/**
+ * The field surface on its own, for composing a control the kit does not ship. The shell
+ * wears the surface and the control inside gives up its own, so an icon or a trailing
+ * action reads as part of one field rather than a box inside a box.
+ */
 export function FieldShell({
 	start,
 	end,

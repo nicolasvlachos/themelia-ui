@@ -21,19 +21,33 @@ export interface SidebarProviderProps extends Omit<React.ComponentProps<"div">, 
 	strings?: Partial<SidebarStrings>
 	/** Initial expanded state when uncontrolled. */
 	defaultOpen?: boolean
+	/**
+	 * Controlled expanded state. It is held here, above both the trigger and the rail, so the
+	 * two cannot disagree.
+	 */
 	open?: boolean
+	/** Called with the next expanded state. */
 	onOpenChange?: (open: boolean) => void
-	/** Remembers the expanded state across reloads, in `localStorage`. Defaults to true. */
+	/**
+	 * Remembers the expanded state across reloads, in `localStorage`. It is read during the
+	 * first render, so the shell does not flash open and then snap shut.
+	 */
 	persist?: boolean
-	/** Enables the ⌘B / Ctrl-B toggle shortcut. Defaults to true. */
+	/** Enables the ⌘B / Ctrl-B toggle shortcut. */
 	keyboardShortcut?: boolean
 	/**
 	 * Bounds the shell to this element instead of the viewport — for a shell that does not
-	 * own the screen (inside a tab, a preview, a nested editor).
+	 * own the screen (inside a tab, a preview, a nested editor). The panel is
+	 * `position: fixed` by default, which is correct for a real shell and the reason a demo
+	 * of one has to opt out.
 	 */
 	contained?: boolean
 }
 
+/**
+ * Holds the panel's state above both the trigger and the rail, so the two cannot disagree,
+ * and shares it with every part inside.
+ */
 export function SidebarProvider({
 	defaultOpen = true,
 	open: openProp,

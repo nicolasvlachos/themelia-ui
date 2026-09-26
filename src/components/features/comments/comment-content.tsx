@@ -148,6 +148,11 @@ function RichContent({ raw, copy }: { raw: string | null | undefined; copy: Comm
 	)
 }
 
+/**
+ * A comment's body in whichever format it was stored — plain `text`, sanitised `html`, or a
+ * read-only `rich` block document. Three of them, because a comments table outlives any one
+ * editor and the rows written last year still have to render.
+ */
 export function CommentContent<
 	TUser extends CommentUser = CommentUser,
 	TMeta = unknown,

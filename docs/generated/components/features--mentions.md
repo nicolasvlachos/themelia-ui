@@ -107,8 +107,8 @@ Extends: `Omit<RichTextProps, "html" | "children">`.
 | `html` | yes | `string` |  |
 | `mentions` | no | `ReadonlyArray<Mention<TResource>>` | The mentions the record carries, resolved against the body by `data-ref-id`. |
 | `resources` | no | `MentionsConfig<TResource>["resources"]` |  |
-| `renderMention` | no | `(mention: Mention<TResource>) => ReactNode` | Takes over every chip. More specific than `resources.<kind>.renderChip`. |
-| `sanitizer` | no | `(html: string) => string` | Replaces the kit's allow-list. Sanitising cannot be turned off, only swapped. |
+| `renderMention` | no | `(mention: Mention<TResource>) => ReactNode` | Takes over every chip. More specific than `resources.<kind>.renderChip`, which is more<br>specific than `resources.<kind>.tone`. |
+| `sanitizer` | no | `(html: string) => string` | Replaces the kit's allow-list. There is no way to turn sanitising off — the escape hatch is<br>a different sanitiser, not the absence of one. |
 
 ### `MentionEditorHandle`
 
@@ -135,6 +135,9 @@ Kind: type.
 
 Kind: callable.
 
+The panel for the inline-trigger flow. Not a popover: the editor keeps focus and the caret.
+The consumer wraps the editor in a relatively positioned element; this pins itself below it.
+
 ```text
 ({ open, activeKind, setActiveKind, kinds, resources, suggestionsByKind, suggestions, loading, query, onManualKindChange, onSelect, onDismiss, strings, className, }: MentionInlineSuggestionsProps<TResource>) => import("react").JSX.Element | null
 ```
@@ -156,7 +159,7 @@ Kind: interface.
 | `query` | no | `string` | Echoed in the header; the consumer owns the input. |
 | `onManualKindChange` | no | `() => void` | Fires when the writer picks a tab, so the hook can stop auto-switching. |
 | `onSelect` | yes | `(suggestion: MentionSuggestion<TResource>) => void` |  |
-| `onDismiss` | no | `() => void` | Escape or leaving the editor dismisses the current completion session. |
+| `onDismiss` | no | `() => void` | Closes the completion session on Escape or editor blur. Wire to `setPickerOpen(false)`.<br>Unchanged caret callbacks do not reopen a dismissed query. |
 | `strings` | no | `Partial<MentionInlineSuggestionsStrings>` |  |
 | `className` | no | `string` |  |
 
@@ -175,6 +178,9 @@ Kind: interface.
 ### `MentionKindTabs`
 
 Kind: callable.
+
+The kind tabs, one of the parts both mention surfaces are built from, so the inline panel and
+the popover cannot drift into showing the same data two ways.
 
 ```text
 ({ kinds, activeKind, onSelect, resources, suggestionsByKind, focusable, }: MentionKindTabsProps<TResource>) => import("react").JSX.Element | null
@@ -196,6 +202,10 @@ Kind: interface.
 ### `MentionPicker`
 
 Kind: callable.
+
+The popover for the button flow — the same tabs and rows as the inline panel, plus a search
+field of its own, because a reader who pressed a button has typed nothing to search with. The
+consumer supplies the Popover and its trigger.
 
 ```text
 ({ open, activeKind, setActiveKind, kinds, resources, suggestionsByKind, query, setQuery, suggestions, loading, onSelect, strings, className, }: MentionPickerProps<TResource>) => import("react").JSX.Element | null
@@ -243,7 +253,7 @@ One resource kind the picker offers.
 | --- | :-: | --- | --- |
 | `icon` | no | `ComponentType<{ className?: string; }>` |  |
 | `label` | no | `string` | Names the tab: "Person", "Booking". |
-| `trigger` | no | `string` | The character that opens the picker inline. Optional: a kind without one is reached from the picker button. |
+| `trigger` | no | `string` | The character that opens the picker inline. Optional — a kind with no trigger is still<br>reachable from the picker button, which is right for one that is browsed rather than typed. |
 | `search` | no | `(query: string, context?: MentionSearchRequestContext<TKind>) => Promise<MentionSuggestion<TKind, TData>[]> \| MentionSuggestion<TKind, TData>[]` | Per-kind search. Wins over the global fallback. |
 | `suggestions` | no | `ReadonlyArray<MentionSuggestion<TKind, TData>>` | A fixed catalogue, filtered by label. Used when `search` is absent. |
 | `buildHref` | no | `(suggestion: MentionSuggestion<TKind, TData>) => string \| undefined` | Derives a permalink from a suggestion that did not carry one. |
@@ -253,6 +263,9 @@ One resource kind the picker offers.
 ### `MentionRows`
 
 Kind: callable.
+
+The suggestion rows, one of the parts both mention surfaces are built from, so the inline
+panel and the popover cannot drift into showing the same data two ways.
 
 ```text
 ({ suggestions, activeKind, loading, loadingLabel, emptyLabel, listLabel, onSelect, className, resources, command, activeIndex, onActiveIndexChange, focusable, id, }: MentionRowsProps<TResource>) => import("react").JSX.Element
@@ -356,9 +369,10 @@ Exclude<SemanticTone, "neutral">
 
 Kind: callable.
 
-Reads the mentions back out of a body, e.g. so a composer's list shrinks when a chip is
-deleted. First occurrence wins. Returns id, kind and label only; merge with known
-mentions to keep `href` and `data`.
+Reads the mentions back out of a body — the other direction from `buildMentionHtml` — e.g. so
+a composer's list shrinks when a chip is deleted. First occurrence wins. Returns id, kind and
+label only; merge against the mentions you already know to keep `href` and `data`, which
+HTML cannot express.
 
 ```text
 (html: string) => Array<Mention<TKind>>
@@ -380,6 +394,9 @@ does not know the mention.
 
 Kind: callable.
 
+The search state plus trigger detection from the text before the caret. Any editor
+implementing `MentionEditorHandle` plugs in; the kit's rich-text editor does.
+
 ```text
 (options?: UseMentionsOptions<TResource>) => UseMentionsReturn<TResource>
 ```
@@ -398,6 +415,8 @@ Extends: `UseMentionsSearchOptions<TResource>`.
 
 Kind: interface.
 
+What `useMentions` returns: the picker's state, the search state, and the editor's wiring.
+
 Extends: `UseMentionsSearchReturn<TResource>`.
 
 | member | required | type | description / documented default |
@@ -405,12 +424,17 @@ Extends: `UseMentionsSearchReturn<TResource>`.
 | `pickerOpen` | yes | `boolean` |  |
 | `setPickerOpen` | yes | `(open: boolean) => void` |  |
 | `triggerActive` | yes | `boolean` | True while the picker is open because of an inline trigger, not the button. |
-| `handleCaretChange` | yes | `() => void` | Wire to the editor's caret-change callback. |
-| `pickSuggestion` | yes | `(suggestion: MentionSuggestion<TResource>) => Mention<TResource>` | Registers the mention, writes the chip into the editor, closes the picker. |
+| `handleCaretChange` | yes | `() => void` | Wire to the editor's caret-change callback. The trigger must follow start-of-line or<br>whitespace, so an email address does not open the picker at its @ . |
+| `pickSuggestion` | yes | `(suggestion: MentionSuggestion<TResource>) => Mention<TResource>` | Registers the mention, writes the chip into the editor, closes the picker. The chip is<br>written in ONE editor operation — deleting the needle and inserting separately leaves a<br>frame where the caret is elsewhere. |
 
 ### `useMentionsSearch`
 
 Kind: callable.
+
+The picker's suggestion state. Every kind is searched rather than only the active tab, so the
+tab counts are true the moment the panel opens, and the panel can jump to the kind that
+matched. Lookup per kind: its `search`, then its static `suggestions`, then the global
+`onResourceSearch`.
 
 ```text
 (options?: UseMentionsSearchOptions<TResource>) => UseMentionsSearchReturn<TResource>
@@ -422,8 +446,8 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `resources` | no | `Partial<Record<TResource, MentionResource<TResource>>>` |  |
-| `onResourceSearch` | no | `MentionsResourceSearch<TResource>` |  |
+| `resources` | no | `Partial<Record<TResource, MentionResource<TResource>>>` | The registry. Each kind supplies a label, an icon, a tone, an optional trigger character,<br>and either its own search or a static catalogue. |
+| `onResourceSearch` | no | `MentionsResourceSearch<TResource>` | The fallback, for a kind that registers neither `search` nor `suggestions`. One endpoint<br>taking a kind is the common shape. |
 | `initialMentions` | no | `ReadonlyArray<Mention<TResource>>` |  |
 | `debounceMs` | no | `number` |  |
 | `onError` | no | `MentionsSearchErrorHandler<TResource>` | Receives every non-abort failure, with the kind that produced it. |
@@ -445,7 +469,7 @@ Kind: interface.
 | `isLoading` | yes | `boolean` |  |
 | `error` | yes | `unknown \| null` |  |
 | `isError` | yes | `boolean` |  |
-| `errorsByKind` | yes | `Readonly<Partial<Record<TResource, unknown>>>` | Failures per kind; one kind failing still leaves the others' results usable. |
+| `errorsByKind` | yes | `Readonly<Partial<Record<TResource, unknown>>>` | Failures per kind. One kind failing is not the search failing: three registries answering<br>and a fourth timing out is still a usable panel. |
 | `retry` | yes | `() => void` |  |
 | `mentions` | yes | `ReadonlyArray<Mention<TResource>>` |  |
 | `addMention` | yes | `(mention: Mention<TResource>) => void` |  |
@@ -453,7 +477,7 @@ Kind: interface.
 | `setMentions` | yes | `(next: ReadonlyArray<Mention<TResource>> \| ((prev: ReadonlyArray<Mention<TResource>>) => ReadonlyArray<Mention<TResource>>)) => void` | Accepts a list or an updater. Prefer the updater when syncing against the body: the<br>editor's input event fires in the same tick as an insertion, so a list computed from<br>the render's `mentions` would drop the mention just added. |
 | `reset` | yes | `() => void` |  |
 | `selectSuggestion` | yes | `(suggestion: MentionSuggestion<TResource>) => Mention<TResource>` |  |
-| `manualKindOverride` | yes | `boolean` | True once the writer has picked a tab. Suspends the auto-jump. |
+| `manualKindOverride` | yes | `boolean` | True once the writer has picked a tab, set by the panel. Suspends the auto-jump, because a<br>list that keeps moving under someone who just said where to look is worse than one showing<br>nothing. |
 | `setManualKindOverride` | yes | `(override: boolean) => void` |  |
 
 ## Preview recipes

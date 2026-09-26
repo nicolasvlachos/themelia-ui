@@ -26,17 +26,32 @@ const circleVariants = cvm(styles.root, {
 })
 
 export interface ProgressCircleProps extends React.ComponentProps<"div"> {
-	/** 0–`max`. Non-finite values resolve to 0; overflow fills rather than wrapping. */
+	/**
+	 * 0–`max`. Non-finite values resolve to 0; overflow fills rather than wrapping. There is
+	 * no indeterminate ring: a travelling band reads as unknown, a spinning circle reads as a
+	 * spinner.
+	 */
 	value: number
 	/** A finite positive upper bound; invalid values resolve to 100. */
 	max?: number
+	/**
+	 * Semantic colour intent, as on `Progress`.
+	 * @default "primary"
+	 */
 	tone?: ProgressTone
 	/** Accessible name. Required when no visible label describes the ring. */
 	label?: string
-	/** What sits in the hole — a percentage, a count, a verdict glyph. */
+	/**
+	 * What sits in the hole — a percentage, a count, a verdict glyph. The reason to draw a
+	 * ring at all.
+	 */
 	children?: React.ReactNode
 }
 
+/**
+ * A determinate ring with the reading inside it, for tiles, scores and grids of small
+ * measures. Its size comes from `--progress-circle`; there is no size prop.
+ */
 export function ProgressCircle({
 	value,
 	max = 100,

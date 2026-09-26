@@ -36,39 +36,17 @@ export function PrimitiveQuantityPage() {
 			/>
 
 			<Example id="quantity-api" title="Quantity and Measure API">
-				<PropTable
-					rows={[
-						{ name: "Quantity value", type: "number | null", description: "The count." },
-						{ name: "Quantity unit", type: "PluralForms | string", description: "The noun in the forms the locale may need — one, other, and the zero/two/few/many some languages select. A bare string is used for every form." },
-						{ name: "Quantity zeroLabel", type: "ReactNode", description: "Replaces the whole thing at zero — \"no items\" rather than \"0 items\". Off by default: in a column the zero is the value being reported." },
-						{ name: "Measure value", type: "number | null", description: "The amount." },
-						{ name: "Measure unit", type: "string", description: "A CSS-style unit identifier — kilogram, meter, liter, celsius, byte." },
-						{ name: "Measure unitDisplay", type: '"short" | "narrow" | "long"', default: '"short"', description: "2.5 kg, 2.5kg, or 2.5 kilograms." },
-					]}
-				/>
+				<PropTable owners={["Quantity", "Measure"]} />
 			</Example>
 
 			<Example id="dimensions-api" title="Dimensions API">
-				<PropTable owner="Dimensions"
-					rows={[
-						{ name: "width / height / depth", type: "number | null", description: "The parts. depth is optional — two values render as a plane." },
-						{ name: "unit", type: "ReactNode", description: "Appended once, not per part." },
-						{ name: "separator", type: "ReactNode", description: "Between the parts. A multiplication sign, not the letter x." },
-						{ name: "formatDimensions()", type: "(parts, options) => string", description: "The same joining outside React." },
-					]}
-				/>
+				<PropTable owner="Dimensions" />
+				<PropTable symbols={["formatDimensions"]} />
 			</Example>
 
 			<Example id="file-size-api" title="FileSize API">
-				<PropTable owner="FileSize"
-					rows={[
-						{ name: "value", type: "number | null", description: "The size. Bytes unless from says otherwise." },
-						{ name: "from", type: "FileSizeUnit", description: "The unit value is given in. Converted with the same base, so from=\"megabytes\" means 2^20 under binary and 10^6 under decimal." },
-						{ name: "base", type: '"binary" | "decimal" | "iec"', default: '"binary"', description: "Which base and which labels. binary divides by 1024 and labels it MB — the pairing Windows and most file managers show, chosen so a size agrees with the machine it describes rather than with SI. decimal is SI-correct and what Apple platforms and storage vendors use. iec is strictly correct. The default does not move, so nothing already shipped changes." },
-						{ name: "align", type: '"left" | "center" | "right"', description: "For a size given a box of its own. A COLUMN of sizes is aligned by the column — <TableCell align=\"end\"> — because the primitive is a span, and blockifying it to align would break the text runs it also sits in." },
-						{ name: "formatFileSize()", type: "(value, options) => string", description: "The same formatting outside React." },
-					]}
-				/>
+				<PropTable owner="FileSize" />
+				<PropTable symbols={["formatFileSize"]} />
 			</Example>
 		</ComponentPage>
 	)

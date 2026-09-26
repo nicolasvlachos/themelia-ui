@@ -18,6 +18,10 @@ import { defaultEventCalendarStrings } from "./event-calendar.strings"
 import type { CalendarViewMode, EventCalendarHeaderProps } from "./event-calendar.types"
 import styles from "./event-calendar.module.css"
 
+/**
+ * The period and the controls that move it. The month jump is icon-only because the label
+ * beside it already names the month — spelling it on the button too is the same word twice.
+ */
 export function EventCalendarHeader({
 	currentDate,
 	viewMode,

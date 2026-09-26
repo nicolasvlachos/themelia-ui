@@ -13,26 +13,42 @@ import styles from "./display.module.css"
 export type DateBlockLayout = "stacked" | "inline"
 
 export interface DateBlockProps extends Omit<ComponentProps<"time">, "children" | "dateTime"> {
-	/** A Date, an ISO string, or a timestamp. */
+	/**
+	 * A Date, an ISO string, or a timestamp. Nothing parseable renders nothing — an empty leaf
+	 * would be a claim.
+	 */
 	date?: Date | string | number | null
-	/** Already-formatted time or range — "09:00 – 10:30". */
+	/**
+	 * An already-formatted time or range — "09:00 – 10:30" — under the weekday in the stacked
+	 * layout.
+	 */
 	time?: ReactNode
-	/** Overrides the machine-readable value. */
+	/** Overrides the machine-readable value, which is otherwise the date's ISO string. */
 	dateTime?: string
+	/** A calendar leaf, or a phrase at the size of the line it sits in. */
 	layout?: DateBlockLayout
-	/** A bounded surface. Defaults on for stacked, off for inline. */
+	/**
+	 * The leaf's box and month band: a bounded surface. Defaults on for stacked and off for
+	 * inline; turn it off for a surface that already frames the leaf.
+	 * @default true
+	 */
 	boxed?: boolean
+	/** Shows the weekday. */
 	showWeekday?: boolean
+	/** Shows the month. Without it there is no band. */
 	showMonth?: boolean
 	/** Adds the year under the month, for a date outside the current one. */
 	showYear?: boolean
 	/**
-	 * date-fns patterns for the fragments. Names come from the scope's date-fns locale, so
-	 * these are patterns, not strings.
+	 * date-fns pattern for the weekday. Names come from the `UIProvider`'s date-fns locale, so
+	 * these are patterns, not strings: a Greek scope reads "Κυρ" without a strings object.
 	 */
 	weekdayFormat?: string
+	/** date-fns pattern for the day. */
 	dayFormat?: string
+	/** date-fns pattern for the month, named in the scope's locale. */
 	monthFormat?: string
+	/** date-fns pattern for the year. */
 	yearFormat?: string
 }
 
@@ -42,6 +58,10 @@ function toDate(value: DateBlockProps["date"]): Date | null {
 	return isValid(parsed) ? parsed : null
 }
 
+/**
+ * A date as a calendar leaf, rendered as `<time>` with a machine-readable `dateTime`, so the
+ * stacked fragments stay one parseable value.
+ */
 export function DateBlock({
 	date,
 	time,

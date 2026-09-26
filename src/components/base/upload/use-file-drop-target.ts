@@ -8,8 +8,9 @@ export interface FileDropTargetProps {
 }
 
 /**
- * Drag state that survives descendants: `dragleave` fires on entering a child, so enters
- * and leaves are counted and dragging clears only at zero.
+ * The drop behaviour on its own, for a custom target. Its drag state survives descendants:
+ * `dragleave` fires on entering a child, so enters and leaves are counted and dragging
+ * clears only at zero.
  */
 export function useFileDropTarget({
 	disabled = false,

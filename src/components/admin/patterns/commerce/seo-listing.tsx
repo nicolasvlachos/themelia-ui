@@ -19,9 +19,15 @@ import { calculateSeoScore, seoPermalinkPath, type SeoCheck, type SeoScore, type
 import styles from "./commerce.module.css"
 
 export interface SeoListingProps extends Omit<ComponentProps<typeof ContentBlock>, "children" | "title"> {
-	/** What the result will read as. */
+	/**
+	 * What the result will read as: title, description, permalink, baseUrl, keyword, and
+	 * optional limits. Scored on render unless a `score` is supplied.
+	 */
 	listing: SeoScoreInput
-	/** A score computed elsewhere (e.g. per keystroke by an editor). Without it, the listing is scored here. */
+	/**
+	 * A score computed elsewhere — by an editor scoring as the user types. Without it the
+	 * card scores the listing itself.
+	 */
 	score?: SeoScore
 	onEdit?: () => void
 	strings?: Partial<SeoStrings>

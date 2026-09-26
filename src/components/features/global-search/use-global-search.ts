@@ -34,6 +34,11 @@ export interface UseGlobalSearchResult<TGroup extends string = string> {
 	selectActive: () => void
 }
 
+/**
+ * The palette's active row, active tab and key handling — `grouped`, `tabCounts`, `activeTab`,
+ * `flat`, `activeIndex` and `onKeyDown` — for a palette whose markup is entirely yours. `flat`
+ * is both what the rows render and what the keys walk, so the highlight and Enter always agree.
+ */
 export function useGlobalSearch<TGroup extends string = string>({
 	results,
 	query,

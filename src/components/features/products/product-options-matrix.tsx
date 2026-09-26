@@ -42,6 +42,11 @@ function moved<T>(items: readonly T[], from: number, to: number): T[] {
 	return next
 }
 
+/**
+ * The option groups a product's variants are generated from: one card with ruled rows, because
+ * the options are one ordered list. The whole row is the edit target, and the editor replaces
+ * it in place.
+ */
 export function ProductOptionsMatrix({
 	optionGroups = [],
 	surface = "card",

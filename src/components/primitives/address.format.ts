@@ -99,8 +99,9 @@ export interface FormatAddressOptions {
 }
 
 /**
- * Returns the address as lines, each already joined. Empty fields drop out, and a line
- * left with nothing drops with them, so a missing `line2` never leaves a blank row.
+ * The same ordering outside React: the address as lines, each already joined. Empty fields
+ * drop out, and a line left with nothing drops with them, so a missing `line2` never leaves
+ * a blank row.
  */
 export function formatAddressLines(
 	parts: AddressParts,

@@ -7,23 +7,35 @@ import * as React from "react"
 
 import { PageHeading } from "@/components/base/navigation"
 import { cx } from "@/lib/cx"
+import type { LinkRenderer } from "@/lib/navigation"
 
 import { TwoColumnLayout } from "../containers"
 import { SideNav, type SideNavGroup, type SideNavItem } from "../navigation"
 
 export interface AsideNavShellProps extends Omit<React.ComponentProps<"div">, "title"> {
+	/** The section heading, above both columns. */
 	title?: React.ReactNode
+	/** A line under the title, in the section heading above both columns. */
 	description?: React.ReactNode
-	/** Flat entries, or captioned groups. Passed straight to SideNav. */
+	/**
+	 * Flat entries, passed straight to the SideNav the shell draws — the same entries,
+	 * current-path matching and router hook as SideNav's own.
+	 */
 	items?: SideNavItem[]
+	/** Captioned groups of entries, passed straight to the SideNav. */
 	groups?: SideNavGroup[]
-	/** The path considered current. Matched by longest prefix. */
+	/** The current path, passed straight to the SideNav. Matched by longest prefix. */
 	currentPath?: string
 	/** Replaces the built-in SideNav entirely. */
 	aside?: React.ReactNode
-	renderLink?: React.ComponentProps<typeof SideNav>["renderLink"]
+	/** The router hook, passed straight to the SideNav. */
+	renderLink?: LinkRenderer
 	/** Actions for the heading row. */
 	actions?: React.ReactNode
+	/**
+	 * Keeps the rail in view while the content scrolls. A settings rail is short and the
+	 * content beside it usually is not.
+	 */
 	stickyAside?: boolean
 }
 

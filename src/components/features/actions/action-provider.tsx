@@ -14,6 +14,7 @@ import {
 } from './actions.types';
 import { ActionScopeContext, ActionStoreContext } from './action-store';
 
+/** Owns the action registry and the run state. Mount one near the app shell. */
 export function ActionProvider<
 	TPayload = unknown,
 	TValues = unknown,

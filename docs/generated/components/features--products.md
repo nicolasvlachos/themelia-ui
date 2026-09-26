@@ -212,6 +212,8 @@ Kind: interface.
 
 Kind: callable.
 
+The contract a product sells under: its metrics, its terms, and its rules.
+
 ```text
 ({ metricColumns, metrics, terms, rules, onOpenContract, onEditContract, onCreateRule, onSelectRule, onEditRule, onDeleteRule, renderRuleActions, actions, footerSlot, empty, className, strings, }: ProductContractOverviewProps) => import("react").JSX.Element
 ```
@@ -223,7 +225,7 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `metrics` | no | `ProductMetricSummary[]` |  |
-| `terms` | no | `MetadataListItem[]` |  |
+| `terms` | no | `MetadataListItem[]` | The contract's facts. They go through MetadataList, so an email or an SKU is rendered by<br>the kind that knows how; this module does not restate it. |
 | `rules` | no | `ProductPolicySummary[]` |  |
 | `onOpenContract` | no | `() => void` |  |
 | `onEditContract` | no | `() => void` |  |
@@ -262,6 +264,10 @@ Kind: interface.
 
 Kind: callable.
 
+The facts that identify a product. With ProductPoliciesCard, one of the two remaining cards
+a product page is assembled from: each a ContentBlock with a list inside and the same four
+verbs on every row.
+
 ```text
 ({ title, description, metadata, media, onEditDetails, actions, headerEnd: end, footerSlot, empty, className, strings, }: ProductDetailsCardProps) => import("react").JSX.Element
 ```
@@ -273,7 +279,7 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `title` | no | `ReactNode` |  |
-| `description` | no | `ReactNode \| false` | `false` suppresses the default description rather than showing it empty. |
+| `description` | no | `ReactNode \| false` | `false` suppresses the default description rather than rendering it empty — which is the<br>difference between a card with no subtitle and a card with a blank line where one was. |
 | `metadata` | no | `MetadataListItem[]` |  |
 | `media` | no | `ReactNode` |  |
 | `onEditDetails` | no | `() => void` |  |
@@ -300,6 +306,9 @@ Kind: interface.
 
 Kind: callable.
 
+What a product card shows with nothing in it, sized to the card rather than to the page — a
+full-page empty state inside a half-width card reads as a broken layout.
+
 ```text
 ({ title, description, action, className, }: { title: ReactNode; description: ReactNode; action?: ReactNode; className?: string; }) => import("react").JSX.Element
 ```
@@ -319,6 +328,10 @@ Kind: interface.
 ### `ProductOperationRow`
 
 Kind: callable.
+
+An operation's row, with a value in the trailing lane. Three cards, one row shape: the rows
+differ only in what sits in the trailing lane — a badge, a number, a value — so there is one
+row component and three wrappers rather than four near-identical ones.
 
 ```text
 ({ item, actionFallback, onSelect, actions, }: { item: ProductOperationsItem; actionFallback: ReactNode; onSelect?: () => void; actions?: ReactNode; }) => import("react").JSX.Element
@@ -396,7 +409,8 @@ Extends: `ProductRowActionContext`.
 Kind: callable.
 
 The per-option overflow menu, exported for screens that lay out options themselves and
-want the same verbs and labels as the summary card.
+want the same verbs and labels as the summary card. Built from one array, so the overflow
+cannot offer what the button already does.
 
 ```text
 ({ option, index, onSelectOption, onEditOption, onDeleteOption, renderOptionActions, menuLabel, className, strings, }: ProductOptionActionMenuProps) => import("react").JSX.Element
@@ -456,6 +470,10 @@ Kind: interface.
 
 Kind: callable.
 
+The option groups a product's variants are generated from: one card with ruled rows, because
+the options are one ordered list. The whole row is the edit target, and the editor replaces
+it in place.
+
 ```text
 ({ optionGroups, surface, editingOptionId, defaultEditingOptionId, onEditingOptionIdChange, onCreateOption, onEditOption, onDeleteOption, confirmDelete, onAddValue, onDeleteValue, onOptionNameChange, onValueLabelChange, onSaveEditingOption, onCancelEditingOption, onToggleUsedForVariants, onReorderOptions, actions, footerSlot, empty, className, strings, }: ProductOptionsMatrixProps) => import("react").JSX.Element
 ```
@@ -474,12 +492,12 @@ Kind: interface.
 | `onCreateOption` | no | `() => void` |  |
 | `onEditOption` | no | `(option: ProductOptionGroup) => void` |  |
 | `onDeleteOption` | no | `(option: ProductOptionGroup) => void` |  |
-| `confirmDelete` | no | `boolean` | Off when the app already confirms, so nobody is asked twice. |
+| `confirmDelete` | no | `boolean` | Asks before removing an option. Removing an option removes every variant generated from it<br>— which is not visible from the option's own row. Off when the app already confirms, so<br>nobody is asked twice. @default true |
 | `onAddValue` | no | `(option: ProductOptionGroup) => void` |  |
 | `onDeleteValue` | no | `(option: ProductOptionGroup, value: ProductOptionValue) => void` |  |
 | `onOptionNameChange` | no | `(option: ProductOptionGroup, value: string) => void` |  |
 | `onValueLabelChange` | no | `(option: ProductOptionGroup, value: ProductOptionValue, label: string) => void` |  |
-| `onSaveEditingOption` | no | `(option: ProductOptionGroup, draft: ProductOptionEditDraft) => void` |  |
+| `onSaveEditingOption` | no | `(option: ProductOptionGroup, draft: ProductOptionEditDraft) => void` | The staged name and values, committed together. Cancel discards them; the draft is<br>re-seeded from the option each time editing opens, so a cancelled edit cannot leak into the<br>next one. |
 | `onCancelEditingOption` | no | `(option: ProductOptionGroup, draft: ProductOptionEditDraft) => void` |  |
 | `onToggleUsedForVariants` | no | `(option: ProductOptionGroup, used: boolean) => void` |  |
 | `onReorderOptions` | no | `(options: ProductOptionGroup[]) => void` | Enables the grip. Without it the list keeps its order and shows no handle. |
@@ -630,6 +648,10 @@ Kind: interface.
 
 Kind: callable.
 
+What the customer agrees to. With ProductDetailsCard, one of the two remaining cards a
+product page is assembled from: each a ContentBlock with a list inside and the same four
+verbs on every row.
+
 ```text
 ({ policies, onCreatePolicy, onSelectPolicy, onEditPolicy, onDeletePolicy, renderPolicyActions, actions, footerSlot, empty, className, strings, }: ProductPoliciesCardProps) => import("react").JSX.Element
 ```
@@ -727,11 +749,15 @@ Kind: interface.
 | `value` | yes | `ReactNode` |  |
 | `description` | no | `ReactNode` |  |
 | `tone` | no | `ProductTone` |  |
-| `emphasis` | no | `boolean` | Ruled off and emphasised: the line the rest add up to. |
+| `emphasis` | no | `boolean` | Rules the line off and weights it: the line the rest add up to. Not a tint — a filled band<br>on the last line makes a total look like an alert, which is the one thing a total is not. |
 
 ### `ProductReadinessCard`
 
 Kind: callable.
+
+What a product still needs before it is ready: a score and the checks behind it. One of the
+cards a product page is assembled from, each a ContentBlock holding a list with the same row
+verbs.
 
 ```text
 ({ items, score, scoreLabel, summary, onCreateReadinessItem, onSelectReadinessItem, onEditReadinessItem, onDeleteReadinessItem, renderReadinessItemActions, actions, footerSlot, renderItem, empty, className, strings, }: ProductReadinessCardProps) => import("react").JSX.Element
@@ -744,7 +770,7 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `items` | no | `ProductReadinessItem[]` |  |
-| `score` | no | `number` | 0–100, clamped. |
+| `score` | no | `number` | 0–100, clamped — a percentage bar cannot show 140, and a NaN would render as an empty<br>track. |
 | `scoreLabel` | no | `ReactNode` |  |
 | `summary` | no | `ReactNode` |  |
 | `onCreateReadinessItem` | no | `() => void` |  |
@@ -754,7 +780,7 @@ Kind: interface.
 | `renderReadinessItemActions` | no | `(item: ProductReadinessItem, context: ProductRowActionContext) => ReactNode` |  |
 | `actions` | no | `ActionDefinition[]` |  |
 | `footerSlot` | no | `ReactNode` |  |
-| `renderItem` | no | `(item: ProductReadinessItem, index: number) => ReactNode` |  |
+| `renderItem` | no | `(item: ProductReadinessItem, index: number) => ReactNode` | Replaces a whole row. The rows are one component with three wrappers, so a consumer<br>replacing one is replacing the same shape everywhere it appears. |
 | `empty` | no | `ReactNode` |  |
 | `className` | no | `string` |  |
 | `strings` | no | `Partial<Strings.ProductReadinessCardStrings>` |  |
@@ -789,7 +815,7 @@ Kind: interface.
 | `label` | yes | `ReactNode` |  |
 | `description` | no | `ReactNode` |  |
 | `value` | no | `ReactNode` |  |
-| `tone` | no | `ProductTone` |  |
+| `tone` | no | `ProductTone` | The row's state colour: `neutral`, `primary`, `success`, `warning`, `destructive` or<br>`info`. No `secondary`: it means “not this one”, which is not a state a product can be in.<br>An item that is `completed` with no tone derives success, so ticking a box does not also<br>mean remembering the colour. |
 | `completed` | no | `boolean` |  |
 | `actionLabel` | no | `ReactNode` |  |
 | `onSelect` | no | `() => void` |  |
@@ -797,6 +823,10 @@ Kind: interface.
 ### `ProductReadinessRow`
 
 Kind: callable.
+
+A readiness check's row, with a badge in the trailing lane. Three cards, one row shape: the
+rows differ only in what sits in the trailing lane — a badge, a number, a value — so there is
+one row component and three wrappers rather than four near-identical ones.
 
 ```text
 ({ item, actionFallback, onSelect, actions, }: { item: ProductReadinessItem; actionFallback: ReactNode; onSelect?: () => void; actions?: ReactNode; }) => import("react").JSX.Element
@@ -816,6 +846,10 @@ Kind: interface.
 ### `ProductRowActions`
 
 Kind: callable.
+
+A row's verbs, built from one array so the overflow cannot offer what the button already
+does. Three menus rather than one — this, ProductVariantActionMenu and
+ProductOptionActionMenu — because a variant, an option and a row answer to different sets.
 
 ```text
 ({ item, actions, menuLabel, className, }: { item: TItem; actions: TableAction<TItem>[]; menuLabel: string; className?: string; }) => import("react").JSX.Element | null
@@ -879,6 +913,10 @@ Kind: interface.
 
 Kind: callable.
 
+A structure metric's row, with the number in the trailing lane. Three cards, one row shape: the
+rows differ only in what sits in the trailing lane — a badge, a number, a value — so there is one
+row component and three wrappers rather than four near-identical ones.
+
 ```text
 ({ metric, actions, }: { metric: ProductStructureMetric; actions?: ReactNode; }) => import("react").JSX.Element
 ```
@@ -886,6 +924,9 @@ Kind: callable.
 ### `ProductSummaryRow`
 
 Kind: callable.
+
+An option's or a policy's row, on the same row shape as the readiness, structure and
+operations rows, which differ only in what sits in the trailing lane.
 
 ```text
 ({ item, actionLabel, onSelect, actions, }: { item: ProductOptionSummary | ProductPolicySummary; actionLabel?: ReactNode; onSelect?: () => void; actions?: ReactNode; }) => import("react").JSX.Element
@@ -895,7 +936,8 @@ Kind: callable.
 
 Kind: type.
 
-`card` frames the surface; `embedded` renders it bare inside one that already exists.
+How ProductOptionsMatrix and ProductVariantsBulkTable draw their frame: `card` frames the
+surface; `embedded` renders it bare inside one that already exists.
 
 ```text
 "card" | "embedded"
@@ -906,7 +948,8 @@ Kind: type.
 Kind: callable.
 
 A variant's picture, or a dashed slot where one would go (a grey square reads as a
-failed image). Only a button with `onSelect`; otherwise the slot is inert and muted.
+failed image). Only a button with `onSelect`; otherwise the slot is inert and muted. One of
+the pieces every product surface shares.
 
 ```text
 ({ src, alt, media, onSelect, label, className, }: { src?: string; alt?: string; media?: ReactNode; onSelect?: () => void; label?: string; className?: string; }) => import("react").JSX.Element
@@ -925,6 +968,10 @@ Exclude<SemanticTone, "secondary">
 ### `ProductToneDot`
 
 Kind: callable.
+
+A row's state as a dot. One of the pieces every product surface shares: tone is a data
+attribute rather than six class names, so a row's state is one string in the DOM and the CSS
+reads it once.
 
 ```text
 ({ tone }: { tone?: ProductTone; }) => import("react").JSX.Element
@@ -945,6 +992,9 @@ Extends: `ProductRowActionContext`.
 ### `ProductVariantActionMenu`
 
 Kind: callable.
+
+A variant's verbs, built from one array so the overflow cannot offer what the button already
+does. A separate menu from an option's or a row's, because each answers to a different set.
 
 ```text
 ({ variant, index, onSelectVariant, onEditVariant, onDuplicateVariant, onDeleteVariant, renderVariantActions, menuLabel, className, strings, }: ProductVariantActionMenuProps) => import("react").JSX.Element | null
@@ -1021,8 +1071,9 @@ Extends: `ProductVariantsTableStrings`.
 
 Kind: callable.
 
-A label/value pair whose label is visually hidden while a column heading names the value,
-and shown once the table collapses at narrow widths.
+A label/value pair that survives losing its table: the label is screen-reader-only while a
+column heading names the value, and becomes visible below the md breakpoint, where the table
+collapses and the headings are gone. One of the pieces every product surface shares.
 
 ```text
 ({ label, weight, className, children, }: { label: ReactNode; weight?: "normal" | "medium" | "semibold" | "bold"; className?: string; children: ReactNode; }) => import("react").JSX.Element
@@ -1050,6 +1101,10 @@ ProductVariantCellDisplay | Partial<Record<ProductVariantEditableField, ProductV
 
 Kind: callable.
 
+One variant, read-only: what it is, what it costs, and which options it stands for. `variant`
+is optional because the panel is also what a page shows before one is chosen. Facts derive
+from the variant's own fields; `metadata` replaces them.
+
 ```text
 ({ variant, metadata, optionItems, media, onBack, onSelectVariant, onEditVariant, onDuplicateVariant, onDeleteVariant, onSelectOption, actions, headerEnd, footerSlot, empty, renderActions, renderMetadata, renderOption, className, strings, }: ProductVariantDetailsProps) => import("react").JSX.Element
 ```
@@ -1060,7 +1115,7 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `variant` | no | `ProductVariantSummary` | Absent renders the empty state (this surface is often bound to a selection). |
+| `variant` | no | `ProductVariantSummary` | Optional. Absent renders the empty state — this panel is usually bound to a selection, and<br>“nothing chosen yet” is a thing to say, not a reason to unmount. |
 | `metadata` | no | `MetadataListItem[]` | Replaces the derived facts. The default is built from the variant's own fields. |
 | `optionItems` | no | `ProductOptionSummary[]` |  |
 | `media` | no | `ReactNode` |  |
@@ -1109,6 +1164,9 @@ Kind: type.
 
 Kind: callable.
 
+The variant form. Values stay strings — the consumer parses on submit — so "24.00" is never
+rewritten under the cursor.
+
 ```text
 ({ value: valueProp, defaultValue, optionFields, statusOptions, onValueChange, onSubmit, onError, onCancel, onDelete, actions, headerEnd, footerSlot, disabled, submitting, className, strings, }: ProductVariantEditorProps) => import("react").JSX.Element
 ```
@@ -1121,7 +1179,7 @@ Kind: interface.
 | --- | :-: | --- | --- |
 | `value` | no | `ProductVariantEditorValues` |  |
 | `defaultValue` | no | `ProductVariantEditorValues` |  |
-| `optionFields` | no | `ProductVariantOptionField[]` |  |
+| `optionFields` | no | `ProductVariantOptionField[]` | A select when the field carries choices, a text input when it does not — an app with a<br>free-text status should not have to invent a list to use this. |
 | `statusOptions` | no | `ProductChoice[]` |  |
 | `onValueChange` | no | `(value: ProductVariantEditorValues) => void` |  |
 | `onSubmit` | no | `(value: ProductVariantEditorValues) => void \| Promise<void>` |  |
@@ -1132,7 +1190,7 @@ Kind: interface.
 | `headerEnd` | no | `ReactNode` |  |
 | `footerSlot` | no | `ReactNode` |  |
 | `disabled` | no | `boolean` |  |
-| `submitting` | no | `boolean` | Shows the pending state and blocks a repeat submit. |
+| `submitting` | no | `boolean` | Shows the pending state and blocks a repeat submit. OR-ed with an internal flag: a<br>consumer holding the request already knows it is in flight; one that just handed over an<br>async `onSubmit` does not, and a form that stays live during a save takes the same submit<br>twice. |
 | `className` | no | `string` |  |
 | `strings` | no | `Partial<Strings.ProductVariantEditorStrings>` |  |
 
@@ -1240,17 +1298,17 @@ Kind: interface.
 | --- | :-: | --- | --- |
 | `variants` | no | `ProductVariantRow[]` |  |
 | `optionGroups` | no | `ProductOptionGroup[]` |  |
-| `groupByOptionId` | no | `string \| null` | Groups rows under the values of this option. `null` leaves the list flat. |
+| `groupByOptionId` | no | `string \| null` | Groups rows under that option's values, in the order the option declares them — not<br>alphabetically, and not by whichever variant was created first. `null` leaves the list<br>flat. |
 | `visibleColumns` | no | `readonly ProductVariantsBulkTableColumn[]` |  |
 | `optionCombinationDisplay` | no | `ProductVariantOptionCombinationDisplay` |  |
-| `cellDisplay` | no | `ProductVariantCellDisplayConfig` |  |
+| `cellDisplay` | no | `ProductVariantCellDisplayConfig` | `text` or `field`, for every editable field or per field, so a table can make price<br>editable and leave stock read-only — which is what a price update run actually needs. |
 | `selectionMode` | no | `ProductVariantSelectionMode` |  |
 | `renderOptionCombination` | no | `(variant: ProductVariantRow, values: ReactNode[]) => ReactNode` |  |
 | `selectedVariantIds` | no | `string[]` |  |
 | `defaultSelectedVariantIds` | no | `string[]` |  |
 | `onSelectedVariantIdsChange` | no | `(variantIds: string[], variants: ProductVariantRow[]) => void` |  |
-| `onVariantFieldChange` | no | `(variant: ProductVariantRow, field: ProductVariantEditableField, value: string, context: ProductVariantFieldChangeContext) => void` |  |
-| `onVariantFieldBlur` | no | `(variant: ProductVariantRow, field: ProductVariantEditableField, value: string, context: ProductVariantFieldChangeContext) => void` |  |
+| `onVariantFieldChange` | no | `(variant: ProductVariantRow, field: ProductVariantEditableField, value: string, context: ProductVariantFieldChangeContext) => void` | Fires on every edit of an in-place field. Both this and `onVariantFieldBlur` exist, and the<br>consumer picks: change alone makes every keystroke a state update; blur alone loses the<br>value if the row is removed mid-edit. |
+| `onVariantFieldBlur` | no | `(variant: ProductVariantRow, field: ProductVariantEditableField, value: string, context: ProductVariantFieldChangeContext) => void` | Fires when an in-place field loses focus. Blur alone loses the value if the row is removed<br>mid-edit; pair it with `onVariantFieldChange` where that matters. |
 | `onCreateVariant` | no | `() => void` |  |
 | `onGenerateVariants` | no | `() => void` |  |
 | `onSelectVariant` | no | `(variant: ProductVariantRow) => void` |  |
@@ -1260,7 +1318,7 @@ Kind: interface.
 | `onBulkEdit` | no | `(variants: ProductVariantRow[]) => void` |  |
 | `onBulkDelete` | no | `(variants: ProductVariantRow[]) => void` |  |
 | `renderVariantActions` | no | `(variant: ProductVariantRow, context: ProductVariantActionContext) => ReactNode` |  |
-| `renderBulkActions` | no | `(context: ProductVariantBulkActionContext) => ReactNode` |  |
+| `renderBulkActions` | no | `(context: ProductVariantBulkActionContext) => ReactNode` | Replaces the default pair of bulk actions. The context carries the selected rows, the<br>counts, and both `clearSelection` and `setSelectedIds`, so a custom bar can act and then<br>deselect. |
 | `onSetVariantImage` | no | `(variant: ProductVariantRow) => void` | Makes the picture slot pressable. Without it the slot is inert. |
 | `actions` | no | `ActionDefinition[]` |  |
 | `headerEnd` | no | `ReactNode` |  |
@@ -1298,14 +1356,14 @@ Extends: `Pick<ProductOptionsMatrixProps, "optionGroups" | "editingOptionId" | "
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `groupByOptionId` | no | `string \| null` | Controlled grouping. Uncontrolled, the manager's own Select drives it. |
+| `groupByOptionId` | no | `string \| null` | Controlled grouping: groups rows under that option's values, in the order the option<br>declares them — not alphabetically, and not by whichever variant was created first. `null`<br>leaves the list flat. Uncontrolled, the manager's own Select drives it. |
 | `defaultGroupByOptionId` | no | `string \| null` |  |
 | `onGroupByOptionIdChange` | no | `(optionId: string \| null) => void` |  |
 | `showGroupBy` | no | `boolean` | Hides the grouping control, for a surface that drives it from elsewhere. |
 | `className` | no | `string` |  |
 | `strings` | no | `Partial<Strings.ProductVariantsManagerStrings>` |  |
-| `optionsStrings` | no | `Partial<Strings.ProductOptionsMatrixStrings>` |  |
-| `variantsStrings` | no | `Partial<Strings.ProductVariantBulkTableStrings>` |  |
+| `optionsStrings` | no | `Partial<Strings.ProductOptionsMatrixStrings>` | The option matrix's own copy. The two children keep their own copy objects: one merged bag<br>would collide on title, description and the create labels, which both of them have. |
+| `variantsStrings` | no | `Partial<Strings.ProductVariantBulkTableStrings>` | The variant table's own copy, kept apart from `optionsStrings` because both children have a<br>title, a description and create labels. |
 
 ### `ProductVariantsManagerStrings`
 

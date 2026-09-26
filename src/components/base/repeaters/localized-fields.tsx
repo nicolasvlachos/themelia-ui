@@ -23,6 +23,7 @@ export interface LocaleDescriptor {
 export type LocalizedValue = Record<string, string>
 
 export interface LocalizedStringFieldProps {
+	/** Which locales the switcher offers, in order. The first is the default. */
 	locales: (string | LocaleDescriptor)[]
 	value?: LocalizedValue
 	onValueChange?: (value: LocalizedValue) => void
@@ -45,6 +46,11 @@ function normalizeLocales(locales: (string | LocaleDescriptor)[]): LocaleDescrip
 	return locales.map((locale) => (typeof locale === "string" ? { value: locale } : locale))
 }
 
+/**
+ * One value per locale behind a single field with a locale switcher, so a translated field
+ * costs one row instead of one row per language. The active locale is view state, not part
+ * of the value.
+ */
 export function LocalizedStringField({
 	locales,
 	value = {},
@@ -132,7 +138,11 @@ export interface LocalizedObjectFieldProps {
 	className?: string
 }
 
-/** Several fields per locale — a title and a body, say — behind one switcher. */
+/**
+ * Several fields per locale — a title and a body, say — behind one switcher, with the
+ * active locale switchable in place. A translation UI built out of plain repeaters loses
+ * which language a row belongs to the moment rows reorder.
+ */
 export function LocalizedObjectField({
 	locales,
 	fields,

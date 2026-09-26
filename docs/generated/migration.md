@@ -287,6 +287,38 @@ Every component that can become a different element takes `render`; `Scope` took
 
 `<Scope vars={vars} as="section">` becomes `<Scope vars={vars} render={<section />}>`. `Scope` also passes the element's own props through (`id`, `aria-*`, `ref`), as `UIScope` does, and its props are exported as `ScopeProps`.
 
+### `LayoutLinkRenderer, LayoutLinkRenderProps`
+
+**Becomes** `LinkRenderer, LinkRenderProps` — by hand.
+
+Every component that renders a link takes one renderer shape, so one router adapter serves the whole kit; menus, pagination and table cells take it too, so it is not a layout type.
+
+Type the adapter as `LinkRenderer`, exported beside every component that takes `renderLink`. It returns one element rather than any node, and receives `aria-current` and `aria-disabled` to spread onto it along with the rest; `active`, `disabled` and `external` are hints to read, not to spread. `NavigationTabsProps`, `AppSidebarProps` and the other layout props take it unchanged, and `SidebarItemContext.renderLink`, which a custom `renderItem` receives, is one too.
+
+### `ActionLinkRenderer, ActionLinkRenderProps`
+
+**Becomes** `LinkRenderer, LinkRenderProps` — by hand.
+
+The action menu, the action buttons and a card's actions took a renderer shape of their own, so an application needed a second adapter for them.
+
+Pass the same `LinkRenderer` the layout takes to `ActionMenuProps.renderLink`, `ActionButtonsProps.renderLink` and `CardActionStripProps.renderLink`.
+
+### `Pagination renderLink(page, props)`
+
+**Becomes** `Pagination pageHref and renderLink(props)` — by hand.
+
+A pager's links take the same renderer as every other component; the page number becomes an address through `pageHref` instead.
+
+`renderLink={(page, props) => <Link href={`?page=${page}`} {...props} />}` becomes `pageHref={(page) => `?page=${page}`}`, which makes every control a link by itself, plus `renderLink` when the link goes through a router: `PaginationProps.renderLink` receives the href already built. `PaginationLinkProps` is gone.
+
+### `ResourceCellLinkProps and SideNav's renderLink props`
+
+**Becomes** `LinkRenderProps` — by hand.
+
+A table's resource cell and the side navigation took renderer shapes of their own.
+
+Type the renderer passed to `ResourceCellProps.renderLink` or `SideNavProps.renderLink` as `LinkRenderer`. A disabled `SideNav` entry arrives with `disabled` and renders without a destination.
+
 ## CSS imports and tokens
 
 One stylesheet became one per module, and the token surface lost every name that restated another. Each token table below is applied by the codemod; a name marked removed is reported, never guessed at.

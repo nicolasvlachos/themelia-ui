@@ -17,6 +17,11 @@ export interface SchemaFormActionsProps {
 	className?: string
 }
 
+/**
+ * The form's submit row, generated from the same schema; reset renders only when there is an
+ * `onReset` for it to reach. Exported so a screen can place it somewhere the generated layout
+ * does not — a drawer footer, a sticky bar.
+ */
 export function SchemaFormActions({
 	submitLabel,
 	resetLabel,

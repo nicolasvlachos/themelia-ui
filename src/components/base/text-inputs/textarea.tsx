@@ -20,16 +20,28 @@ export interface TextareaProps extends Omit<React.ComponentProps<"textarea">, "o
 	maxLength?: number
 	/** Shows the current and maximum character count. */
 	showCharacterCount?: boolean
-	/** Shows an inline clear action once the field has a value. */
+	/**
+	 * Shows a clear control in the trailing lane once the field has a value. `strings.clear`
+	 * is its accessible name.
+	 */
 	clearable?: boolean
+	/** Called after the clear control empties the field. */
 	onClear?: () => void
 	/** Replaces the trailing affordance with a loading indicator. */
 	loading?: boolean
-	/** Applies the invalid styling. Validation copy stays with FormField. */
+	/** Applies the invalid styling, the same as Input. Validation copy stays with FormField. */
 	invalid?: boolean
-	/** Smallest height, in rows. */
+	/**
+	 * Visible lines. Without `minRows` it is the floor the field grows from; `maxRows` sets
+	 * where it stops growing and scrolls.
+	 */
+	rows?: number
+	/** The floor when the field grows with its content: its smallest height, in rows. */
 	minRows?: number
-	/** Height at which the field stops growing and starts scrolling. */
+	/**
+	 * Height at which the field stops growing and starts scrolling. Without a ceiling a long
+	 * note pushes the submit button off the screen.
+	 */
 	maxRows?: number
 	onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
 	value?: string
@@ -38,7 +50,7 @@ export interface TextareaProps extends Omit<React.ComponentProps<"textarea">, "o
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
 	{
-		className, strings, maxLength, showCharacterCount, clearable, onClear, loading,
+		className, strings, maxLength, showCharacterCount, clearable, onClear, loading = false,
 		invalid, minRows, maxRows, value, defaultValue, onChange, id, rows, style, ...props
 	},
 	ref,

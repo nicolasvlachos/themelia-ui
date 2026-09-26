@@ -39,6 +39,9 @@ TableStrings
 
 Kind: callable.
 
+The table, inside its own scroll container. The container becomes a tab stop only while it
+scrolls, so a wide table can be scrolled from the keyboard.
+
 ```text
 ({ className, containerClassName, strings, stickyHeader, ...props }: TableProps) => import("react").JSX.Element
 ```
@@ -65,6 +68,9 @@ Kind: callable.
 
 Kind: callable.
 
+Names the table for assistive technology, and the scroll container with it. Rendered
+below the table.
+
 ```text
 ({ className, children, id, ...props }: ComponentProps<"caption">) => import("react").JSX.Element
 ```
@@ -72,6 +78,8 @@ Kind: callable.
 ### `TableCell`
 
 Kind: callable.
+
+A cell. A plain string is wrapped in `Text`; a node is left exactly as passed.
 
 ```text
 ({ className, children, align, wrap, ...props }: TableCellProps) => import("react").JSX.Element
@@ -85,14 +93,15 @@ Extends: `Omit<ComponentProps<"td">, "align">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `align` | no | `TableAlign` |  |
-| `wrap` | no | `boolean` | Allows the cell to wrap. Cells are nowrap by default so columns stay readable. |
+| `align` | no | `TableAlign` | Column alignment. Numeric columns belong at the end. |
+| `wrap` | no | `boolean` | Lets the cell wrap. Cells are nowrap by default so columns stay aligned — a column that<br>holds prose opts out here rather than the whole table losing its alignment. |
 
 ### `TableEmpty`
 
 Kind: callable.
 
-The "no rows" row, spanning every column.
+The "no rows" row: it spans every column and states that there are none. A table with a
+header and no body reads as broken; this is what says it is empty on purpose.
 
 ```text
 ({ className, colSpan, children, ...props }: TableEmptyProps) => import("react").JSX.Element
@@ -121,6 +130,8 @@ Kind: callable.
 
 Kind: callable.
 
+A column's head cell, and with `sortable` its sort control.
+
 ```text
 ({ className, children, align, wrap, sortable, sortDirection, onSort, ...props }: TableHeadProps) => import("react").JSX.Element
 ```
@@ -141,11 +152,11 @@ Extends: `Omit<ComponentProps<"th">, "align">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `align` | no | `TableAlign` |  |
-| `wrap` | no | `boolean` |  |
-| `sortable` | no | `boolean` | Renders the label as a sort control. Pair with `sortDirection` and `onSort`. |
+| `align` | no | `TableAlign` | Column alignment. Numeric columns belong at the end. |
+| `wrap` | no | `boolean` | Lets the head cell wrap. Cells are nowrap by default so columns stay aligned. |
+| `sortable` | no | `boolean` | Renders the label as a sort control and puts `aria-sort` on the `<th>`. Pair with<br>`sortDirection` and `onSort`. |
 | `sortDirection` | no | `TableSortDirection` | This column's current direction, or `null` when another column is the sort. |
-| `onSort` | no | `() => void` |  |
+| `onSort` | no | `() => void` | Fires on activation. The table does not sort — the caller owns the data. |
 
 ### `TableProps`
 
@@ -162,6 +173,9 @@ Extends: `ComponentProps<"table">`.
 ### `TableRow`
 
 Kind: callable.
+
+A row: a plain `<tr>`. Mark a selected row with `data-state="selected"` — a data
+attribute, not a prop, because rows are plain elements.
 
 ```text
 ({ className, ...props }: ComponentProps<"tr">) => import("react").JSX.Element

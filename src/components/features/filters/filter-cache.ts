@@ -26,15 +26,17 @@ export interface FilterCache {
 }
 
 /**
- * A cache with its own lifetime.
+ * The async option and label cache, with its own lifetime. FilterProvider makes one per
+ * mount, which is the isolating default: two roots on a page, or two users in a session, never
+ * see each other's results. Create one and pass it as FilterProvider's `cache` when results
+ * and pill labels should survive a navigation. A Map at module scope would be one cache for
+ * the whole realm — an embedded widget would be served the host application's options, and
+ * signing in as somebody else would keep the first user's labels.
  *
- * ```tsx
- * // One cache for the whole session, so filters survive navigation:
- * const cache = useMemo(() => createFilterCache(), [])
- * <FilterProvider cache={cache} …>
- * ```
+ * One cache for the whole session, so filters survive navigation:
  *
- * Passing none is the ordinary case — `FilterProvider` makes one per mount.
+ *   const cache = useMemo(() => createFilterCache(), [])
+ *   <FilterProvider cache={cache} …>
  */
 export function createFilterCache(): FilterCache {
 	const options = new Map<string, FilterOption[]>()
@@ -101,7 +103,11 @@ export function createFilterCache(): FilterCache {
 /** The cache the nearest provider owns. `null` outside one, which is a valid place to be. */
 export const FilterCacheContext = createContext<FilterCache | null>(null)
 
-/** The filter cache in scope, or `null` (then `useAsyncOptions` makes its own short-lived one). */
+/**
+ * The filter cache in scope, or `null` outside a provider (then `useAsyncOptions` makes its own
+ * short-lived one). For a caller writing their own editor that wants to read or seed the same
+ * store `useAsyncOptions` uses.
+ */
 export function useFilterCache(): FilterCache | null {
 	return useContext(FilterCacheContext)
 }

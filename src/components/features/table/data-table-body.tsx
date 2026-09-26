@@ -12,6 +12,7 @@ import { defaultDataTableStrings } from "./table.strings"
 import type { DataTableBodyProps } from "./table.types"
 import styles from "./table.module.css"
 
+/** The body rows, and the row that stands in for all of them when there are none. */
 export function DataTableBody<TData extends RowData>({
 	table,
 	onRowClick,

@@ -23,16 +23,27 @@ export interface LocaleOption {
 export type LanguageSwitcherVariant = "menu" | "pills"
 
 export interface LanguageSwitcherProps extends Omit<ComponentProps<"div">, "onSelect"> {
+	/** The languages offered, each named in its own language. */
 	locales: LocaleOption[]
+	/** The current locale's `value`. */
 	value?: string
+	/** Called with the chosen locale's `value`. */
 	onSelect?: (value: string) => void
-	/** `pills` for two or three languages; `menu` once there are more. */
+	/**
+	 * `pills` for two or three languages, where every option is worth showing; `menu` once
+	 * there are more, where a row of pills becomes a second navigation.
+	 */
 	variant?: LanguageSwitcherVariant
+	/** Names this one switcher. Overrides the strings default. */
 	label?: string
 	/** Overrides the default name for every switcher. */
 	strings?: Partial<LanguageSwitcherStrings>
 }
 
+/**
+ * The locale control. Each option is named in its own language and carries `lang`, so a
+ * screen reader pronounces it correctly.
+ */
 export function LanguageSwitcher({
 	locales,
 	value,

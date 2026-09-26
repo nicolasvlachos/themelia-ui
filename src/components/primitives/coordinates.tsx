@@ -10,18 +10,32 @@ import { ValueRoot, type SpanProps, type ValueProps } from "./value"
 import { defaultCoordinatesStrings, type CoordinatesStrings } from "./primitives.strings"
 
 export interface CoordinatesProps extends SpanProps {
+	/**
+	 * Signed decimal degrees. Either one missing renders the empty label — half a coordinate
+	 * locates nothing.
+	 */
 	latitude?: number | null
+	/**
+	 * Signed decimal degrees. Either one missing renders the empty label — half a coordinate
+	 * locates nothing.
+	 */
 	longitude?: number | null
-	/** `decimal` is "48.85837, 2.29448"; `dms` is "48°51'30.1\"N 2°17'40.1\"E". */
+	/**
+	 * `decimal` is `48.85837, 2.29448`: what an API round-trips and what a reader pastes into
+	 * a map. `dms` is `48°51'30.1"N 2°17'40.1"E`, still what marine, aviation and survey
+	 * users read.
+	 */
 	format?: "decimal" | "dms"
-	/** Decimal places in `decimal` form. Five is about a metre. */
+	/** Decimal places in `decimal` form. Five is about a metre, three about a building. */
 	precision?: number
 	/**
-	 * Adds hemisphere letters to the decimal form: "48.85837°N, 2.29448°E". Off by default
-	 * (a signed pair pastes into a map); `dms` always shows them.
+	 * Adds hemisphere letters (N/S/E/W) to the decimal form: "48.85837°N, 2.29448°E". Off by
+	 * default because a signed pair is the portable form, the one that pastes into a map.
+	 * `dms` always shows them — an unsigned DMS value is ambiguous.
 	 */
 	showHemisphere?: boolean
 	locale?: string
+	/** The four hemisphere letters. */
 	strings?: Partial<CoordinatesStrings>
 	emptyLabel?: ReactNode
 	size?: ValueProps["size"]

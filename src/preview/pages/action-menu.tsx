@@ -51,36 +51,8 @@ export function ActionMenuPage() {
 			/>
 
 			<Example id="action-menu-api" title="API">
-				<PropTable owner="ActionMenu"
-					rows={[
-						{ name: "actions", type: "ActionDefinition[]", description: "The commands. visible: false omits one entirely." },
-						{ name: "ActionDefinition.group", type: "string | true", description: "Starts a group, ruling off above. A string also captions it; true rules off with no heading." },
-						{ name: "ActionDefinition.tone", type: "ButtonTone", description: "destructive also moves the entry last and separates it." },
-						{ name: "ActionDefinition.type", type: '"item" | "checkbox"', default: '"item"', description: "A checkbox row is driven by checked / onCheckedChange." },
-						{ name: "ActionDefinition.href", type: "string", description: "Renders as a link. A native anchor unless renderLink is given." },
-						{ name: "ActionDefinition.shortcut / description / trailing", api: ["ActionDefinition.shortcut", "ActionDefinition.description", "ActionDefinition.trailing"], type: "ReactNode", description: "Row slots. The label is the only part that gives way, so a long name truncates instead of pushing the shortcut off." },
-						{ name: "renderLink", type: "(props) => ReactElement", description: "Routes href actions through the app's router. Return an element, not a spread function." },
-						{ name: "renderTrigger", type: "Base UI render prop", description: "Replaces the trigger entirely, for a menu hanging off something that is not a button." },
-						{ name: "width", type: 'string | number | "trigger"', description: 'Pins the surface width. "trigger" matches the trigger, for a menu that reads as the field\'s own list.' },
-						{ name: "maxWidth", type: "string | number", default: "20rem", description: "Ceiling for the content-sized default — a reading measure, not the viewport." },
-						{ name: "preserveOrder", type: "boolean", default: "false", description: "Keeps the declared order instead of moving destructive entries last." },
-						{ name: "strings", type: "Partial<ActionMenuStrings>", description: "Overrides this menu's own copy — `trigger` names an icon-only trigger, which without a visible label has no other name." },
-						{ name: "labelVisibility", type: '"always" | "sm-up"', description: "Hides the trigger's text below sm, leaving the glyph — for a toolbar that has to survive a phone." },
-						{ name: "closeOnSelect", type: "boolean", default: "true", description: "Off for a menu of checkbox rows, where the reader is setting several things at once." },
-						{ name: "side / align", type: '"top" | "right" | "bottom" | "left" / "start" | "center" | "end"', description: "Where the surface opens relative to the trigger." },
-						{ name: "minWidth / contentClassName", type: "string | number / string", description: "A floor under the content-sized width, and the escape hatch for the surface itself." },
-						{ name: "ActionButtons actions", api: "ActionButtons.actions", type: "ActionDefinition[]", description: "The same definitions ActionMenu takes — that is the point of the shape. tone and buttonStyle carry through to each button." },
-						{ name: "ActionButtons max / strings", type: "number / Partial<ActionMenuStrings>", description: "How many render as buttons before the rest collapse into a menu built from the same array. `strings.overflow` names that menu." },
-					]}
-				/>
-				<PropTable owner="ContextAction"
-					rows={[
-						{ name: "onClick", type: "(context: T) => void", description: "Receives the record the set was resolved against." },
-						{ name: "visible", type: "boolean | (context: T) => boolean", default: "true", description: "False, or a predicate returning false, drops the entry for that record." },
-						{ name: "disabled", type: "boolean | (context: T) => boolean", default: "false", description: "Worked out per record, so a locked row shows the action greyed rather than missing." },
-						{ name: "placement", type: '"auto" | "inline" | "menu"', default: '"auto"', description: "inline stays a button whatever max is; menu always overflows; auto fills the buttons in order up to max." },
-					]}
-				/>
+				<PropTable owners={["ActionMenu", "ActionButtons", "base/action-menu#ActionDefinition"]} />
+				<PropTable owners={["ContextAction"]} />
 			</Example>
 		</ComponentPage>
 	)

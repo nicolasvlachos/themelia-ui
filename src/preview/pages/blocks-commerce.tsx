@@ -117,17 +117,7 @@ export function BlocksCommercePage() {
 					it totals its lines, so it takes numbers and hands them to <code>Money</code>.
 				</Callout>
 				<PropTable
-					rows={[
-						{ name: "AmountRow label / amount", type: "ReactNode / string", required: true, description: "The ledger row every money surface is built from. Not InlineStat: this one knows about money, and InlineStat displays any value." },
-						{ name: "AmountRow total / deduction", type: "boolean", default: "false", description: "total marks the row the eye should land on. deduction rewrites the sign to U+2212 whatever the caller passed, and tints the figure." },
-						{ name: "CodeEntry kind", type: '"discount" | "gift"', default: '"discount"', description: "Picks the icon, the copy, and whether the code is upper-cased on submit." },
-						{ name: "CodeEntry balance", type: "string", description: "What is left on a gift card — money that may outlast this order. The one real difference between the two kinds." },
-						{ name: "OrderStatusCard status", type: '"pending" | "paid" | "fulfilled" | "shipped" | "delivered" | "cancelled"', required: true, description: "Drives the chip's tone. There is no tone override." },
-						{ name: "OrderStatusCard defaultHistoryOpen", type: "boolean", description: "Opens the event list on first render. Closed otherwise: the panel above already says what just happened, what is next and when it lands, and the list repeats two of the three." },
-						{ name: "InvoiceLineItems taxRate", type: "number", description: "A ratio — 0.2 is 20%. Omit it to show no tax row." },
-						{ name: "InventoryLevel stock / reorderLevel / maxStock", type: "number", required: true, description: "Below reorderLevel reads as low; zero reads as out, which is checked first." },
-						{ name: "LoyaltyPoints tier / tierTone", type: "ReactNode / BadgeTone", description: "No default tier name: it is a caller's word, and an English literal here is one no strings override could reach." },
-					]}
+					owners={["AmountRow", "CodeEntry", "OrderStatusCard", "InvoiceLineItems", "InventoryLevel", "LoyaltyPoints"]}
 				/>
 			</Example>
 		</ComponentPage>

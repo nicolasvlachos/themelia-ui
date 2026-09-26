@@ -49,23 +49,8 @@ export function ActionOverlaysPage() {
 			</Example>
 
 			<Example id="action-overlays-api" title="API">
-				<PropTable owner="ActionDialog"
-					rows={[
-						{ name: "trigger / open", type: "ReactNode / boolean", description: "Supply one or the other. A trigger makes it uncontrolled; `open` hands the state to the caller." },
-						{ name: "onConfirm / onAsyncConfirm / formId", type: "() => void / () => Promise<void> / string", description: "The three confirm paths, in precedence order. formId calls requestSubmit(), so native validation runs and the form's own onSubmit owns the outcome." },
-						{ name: "onError", type: "(error: unknown) => void", description: "Receives a rejected async confirm. The overlay stays open." },
-						{ name: "closeOnAsyncComplete", type: "boolean", default: "true", description: "Off keeps it open after a resolved async confirm — a multi-step flow." },
-						{ name: "tone / emphasis / showIcon", type: "OverlayTone / boolean / boolean", description: "emphasis lets the tone drive the confirm button's colour as well as the glyph. Without it the tone is presentational — a warning-toned dialog whose action is just the action is a real combination." },
-						{ name: "alertMessage", type: "ReactNode", description: "A notice between the header and the body, inside the scroll region — a warning pinned above it would stay while the thing it warns about scrolls away." },
-						{ name: "footer", type: "ReactNode", description: "Replaces the generated footer. Every action prop stops applying." },
-						{ name: "ActionSheet modality", type: '"modal" | "trap-focus" | "non-modal"', default: '"modal"', description: "How much of the page it takes hostage. A non-modal panel leaves the surrounding page interactive." },
-						{ name: "ActionDialog width", type: '"sm" | "md" | "lg" | "xl" | "full" | CSS length', default: '"md"', description: "A dialog's max width is a real per-dialog decision — a confirmation is narrow and a form is wide." },
-						{ name: "useOverlayVisibility", type: "(options) => { open, show, hide, toggle, overlayProps }", description: "One overlay's state, controlled or not. `overlayProps` spreads straight onto any overlay in the kit." },
-						{ name: "useOverlayVisibilityGroup", type: "(keys, options) => Record<key, …>", description: "Several by name, with closeOthersOnOpen for a set where two open at once is never right." },
-						{ name: "useOverlayVisibilityGroup", type: "hook", description: "One handle per overlay when a component drives several \u2014 create, edit, delete. Three separate useState calls is how two of them end up open at once." },
-						{ name: "useOverlayActions", type: "hook", description: "The confirm button\u2019s behaviour \u2014 the pending state, the error routing, and the close on success \u2014 shared by the three overlays. For a bespoke surface that still needs that lifecycle." },
-					]}
-				/>
+				<PropTable owners={["ActionDialog", "ActionSheet"]} />
+				<PropTable symbols={["useOverlayVisibility", "useOverlayVisibilityGroup", "useOverlayActions"]} />
 			</Example>
 		</ComponentPage>
 	)

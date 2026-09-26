@@ -18,6 +18,10 @@ export interface GlobalSearchFooterProps {
 	className?: string
 }
 
+/**
+ * The keyboard-hint strip under the list. It is the only place a reader is told which three
+ * keys the palette answers to.
+ */
 export function GlobalSearchFooter({
 	navigateLabel,
 	openLabel,

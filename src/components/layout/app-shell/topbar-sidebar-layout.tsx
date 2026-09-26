@@ -38,7 +38,13 @@ export interface TopbarSidebarLayoutSlots {
 export interface TopbarSidebarLayoutProps
 	extends Omit<ComponentProps<"div">, "children" | "title"> {
 	children?: ReactNode
+	/** Which side the rail sits on. Match the Sidebar's own `side` to it. */
 	sidebarSide?: TopbarSidebarSide
+	/**
+	 * `drawer` hides the sidebar column below md and uses the Sidebar's mobile sheet, which
+	 * the trigger opens. `inline` stacks static navigation above the content; pair it with
+	 * `collapsible="none"` and `sidebarTrigger={false}`.
+	 */
 	mobileSidebarMode?: TopbarSidebarMobileMode
 	/** Any CSS length. Falls back to the shell's own token. */
 	headerHeight?: string
@@ -47,6 +53,10 @@ export interface TopbarSidebarLayoutProps
 	sidebarTrigger?: ReactNode
 	logo?: ReactNode
 	headerActions?: ReactNode
+	/**
+	 * The rail: a Sidebar or AppSidebar with `icon` or `offcanvas` collapse, which becomes
+	 * the mobile drawer. Omit it for a full-width body.
+	 */
 	sidebar?: ReactNode
 	slots?: TopbarSidebarLayoutSlots
 	/**
@@ -56,9 +66,16 @@ export interface TopbarSidebarLayoutProps
 	contentRender?: useRender.ComponentProps<"main">["render"]
 	/** The sidebar's initial uncontrolled open state. */
 	defaultOpen?: boolean
-	/** Fit the height of a parent instead of owning the viewport. */
+	/**
+	 * Fits a parent with a definite height instead of owning the viewport. Either way the
+	 * sidebar and content scroll below the header.
+	 */
 	contained?: boolean
-	/** Configure controlled state, persistence, shortcuts and translated sidebar controls. */
+	/**
+	 * Passes `open`/`onOpenChange`, `persist`, `keyboardShortcut` and `strings` to the
+	 * shell's provider: controlled state, persistence, shortcuts and translated sidebar
+	 * controls. Disable persistence and shortcuts in independent embedded examples.
+	 */
 	sidebarProviderProps?: Pick<SidebarProviderProps, "open" | "onOpenChange" | "persist" | "keyboardShortcut" | "strings">
 	headerClassName?: string
 	bodyClassName?: string
@@ -66,6 +83,12 @@ export interface TopbarSidebarLayoutProps
 	contentClassName?: string
 }
 
+/**
+ * The header-first admin shell. The header spans the full width and owns the brand, the
+ * search and the account; the sidebar and the content share the height below it. The only
+ * difference from SidebarInsetLayout is where the LOGO lives — and that decides the whole
+ * frame, which is why it is two components rather than a boolean.
+ */
 export function TopbarSidebarLayout({
 	children,
 	sidebarSide = "left",

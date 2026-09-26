@@ -19,14 +19,9 @@ export function ThemeTweakerPage() {
 				<Accordion items={[{
 					value: "integration", title: "Integrate in your app",
 					content: <Stack gap="md">
-						<Text>Keep theme and provider state above your router. Apply it there with useAppliedTheme and give your UIProvider the same config and themeToStyle(theme). The editor can then open and close without removing the theme.</Text>
+						<Text>Keep theme and provider state above your router. Apply it there with useAppliedTheme and give your UIProvider the same config and themeToStyle(theme). The editor can then open and close without removing the theme. This app does exactly that: its editor is a controlled ThemeTweaker with <code>{"apply={false}"}</code>, whose Provider section is UIConfigSettings, and its theme lives on the shared root rather than in a ThemeScope.</Text>
 						<CodeBlock code={'import { ThemeTweaker, ThemeScope, UIConfigSettings, useAppliedTheme, themeToStyle } from "themelia-ui/features/theme-tweaker"'} />
-						<PropTable rows={[
-							{ name: "ThemeTweaker", api: "@/components/features/theme-tweaker#ThemeTweaker", type: "value / onValueChange; config / onConfigChange", description: "Controlled editor used by this app. Set apply={false} when the application owns theme application; preview={false} edits the actual app without a sample preview." },
-							{ name: "useAppliedTheme", api: "@/components/features/theme-tweaker#useAppliedTheme", type: "theme, target, selfRef, apply, manageModeClass", description: "Keep mounted with target=document and apply=true to apply document-wide values. Set manageModeClass=false when UIProvider owns color scheme." },
-							{ name: "ThemeScope", api: "@/components/features/theme-tweaker#ThemeScope", type: "theme / mode / children", description: "Apply a theme to an intentionally isolated subtree. The app editor uses the shared root instead." },
-							{ name: "UIConfigSettings", api: "@/components/features/theme-tweaker#UIConfigSettings", type: "config / onChange", description: "Provider settings editor, included under Provider above. Connect its controlled config to your root UIProvider to update mounted consumers." },
-						]} />
+						<PropTable owners={["ThemeTweaker", "useAppliedTheme", "ThemeScope", "UIConfigSettings"]} />
 						<Example
 							example="theme-tweaker/isolated-theme-scope"
 							title="Isolated theme scopes"

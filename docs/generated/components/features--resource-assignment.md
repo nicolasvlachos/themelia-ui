@@ -31,7 +31,9 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
-The dialog body when not replaced: just the picker.
+The picker the assignment dialog shows when a consumer supplies none — the dialog body when
+not replaced. Exported so a custom dialog can keep it and add to it, rather than starting
+from nothing.
 
 ```text
 ({ SelectorComponent, selectorProps, context, }: SharedResourceCardDialogContentProps<TResource, TSuggestion, TSelectorProps>) => import("react").JSX.Element
@@ -41,8 +43,9 @@ The dialog body when not replaced: just the picker.
 
 Kind: callable.
 
-Restates the pending choice above the confirm, since the chosen row may have scrolled
-out of sight. Falls back to a `label` field; pass `getSelectionLabel` to be exact.
+What is about to be committed, restated above the confirm. A picker can scroll, and the
+chosen row is often out of sight by the time the reader reaches the button. Falls back to a
+`label` field; pass `getSelectionLabel` to be exact.
 
 ```text
 ({ context, strings, getSelectionLabel, }: SharedResourceCardContentProps<TResource, TSuggestion> & { strings?: Partial<typeof defaultSharedResourceCardStrings>; getSelectionLabel?: (selection: TSuggestion) => ReactNode; }) => import("react").JSX.Element | null
@@ -59,6 +62,10 @@ SharedResourceCardStrings
 ### `SharedResourceCard`
 
 Kind: callable.
+
+Shows the resource assigned to a record and how to change it. The card owns the shape —
+panel, dialog, pending choice, awaited confirm; the picker is the consumer's, since every
+assignment searches differently.
 
 ```text
 ({ icon, title, description, className, contentClassName, alert, alertTone, actions, headerAction, footerText, resource, selector, sections, sectionsClassName, viewAction, viewLink, ResourceContentComponent, EmptyContentComponent, renderResourceContent, renderEmptyContent, strings, }: SharedResourceCardProps<TResource, TSuggestion, TSelectorProps>) => import("react").JSX.Element
@@ -114,18 +121,18 @@ Kind: interface.
 | `contentClassName` | no | `string` |  |
 | `alert` | no | `ReactNode` |  |
 | `alertTone` | no | `Extract<AlertTone, "neutral" \| "destructive" \| "warning">` |  |
-| `actions` | no | `ActionDefinition[]` | Extra overflow actions. The change action joins them when they exist. |
+| `actions` | no | `ActionDefinition[]` | Extra overflow actions. Alone, the change action is a header button; alongside these it<br>joins them — two triggers side by side is worse than one menu holding both. |
 | `headerAction` | no | `ReactNode` |  |
 | `footerText` | no | `ReactNode` |  |
-| `resource` | yes | `TResource \| null` | The persisted assignment. `null` is the only empty state. |
-| `selector` | no | `SharedResourceCardSelectorConfig<TResource, TSuggestion, TSelectorProps>` |  |
-| `sections` | no | `SharedResourceCardSection<TResource, TSuggestion>[]` | Declarative body blocks, used when no content override is given. |
+| `resource` | yes | `TResource \| null` | The persisted assignment. `null` is the only empty state; `hasResource` is derived from it<br>and never independently controlled. |
+| `selector` | no | `SharedResourceCardSelectorConfig<TResource, TSuggestion, TSelectorProps>` | The picker, its copy, and the write. Omit it and the card is read-only — no change action,<br>and an empty state that offers nothing. |
+| `sections` | no | `SharedResourceCardSection<TResource, TSuggestion>[]` | Declarative body blocks, used when no content override is given: the last rung of the<br>assigned body's ladder, after `renderResourceContent` and `ResourceContentComponent`. |
 | `sectionsClassName` | no | `string` |  |
 | `viewAction` | no | `ReactNode` | Router-neutral "open the resource" slot, shown only when one is assigned.<br>Takes precedence over `viewLink`. |
-| `viewLink` | no | `{ href: string; label: ReactNode; className?: string; }` | The native-anchor convenience, for an app with no router in the way. |
-| `ResourceContentComponent` | no | `ComponentType<SharedResourceCardContentProps<TResource, TSuggestion>>` |  |
+| `viewLink` | no | `{ href: string; label: ReactNode; className?: string; }` | The native-anchor convenience, for an app with no router in the way. Like `viewAction`, it<br>renders only when a resource is assigned. |
+| `ResourceContentComponent` | no | `ComponentType<SharedResourceCardContentProps<TResource, TSuggestion>>` | The assigned body as a component: the second rung of the ladder, after<br>`renderResourceContent` and before `sections`. A component is reusable. |
 | `EmptyContentComponent` | no | `ComponentType<SharedResourceCardContentProps<TResource, TSuggestion>>` |  |
-| `renderResourceContent` | no | `(context: SharedResourceCardContext<TResource, TSuggestion>) => ReactNode` |  |
+| `renderResourceContent` | no | `(context: SharedResourceCardContext<TResource, TSuggestion>) => ReactNode` | The assigned body, most specific first: this, then `ResourceContentComponent`, then<br>`sections`. A render prop closes over local state, a component is reusable, and sections<br>are data — each rung exists because the one below it is wrong for someone. |
 | `renderEmptyContent` | no | `(context: SharedResourceCardContext<TResource, TSuggestion>) => ReactNode` |  |
 | `strings` | no | `Partial<SharedResourceCardStrings>` |  |
 
@@ -153,15 +160,15 @@ Kind: interface.
 | `confirmText` | yes | `string` |  |
 | `cancelText` | yes | `string` |  |
 | `actionLabel` | no | `string` | Names the change action. Alone it is a header button; with other actions it joins the overflow menu. |
-| `mapInitialSelected` | yes | `(resource: TResource \| null) => TSuggestion \| null` | Turns the persisted resource into a starting choice for the picker. |
-| `getSelectionLabel` | no | `(selection: TSuggestion) => ReactNode` | How the pending choice reads in the summary. |
-| `onConfirmSelection` | yes | `(selection: TSuggestion) => void \| Promise<void>` | Persists it. The card awaits a returned promise and shows the confirming state. |
-| `SelectorComponent` | yes | `ComponentType<SharedResourceSelectorProps<TSuggestion, TSelectorProps>>` |  |
+| `mapInitialSelected` | yes | `(resource: TResource \| null) => TSuggestion \| null` | Turns the persisted resource into a starting choice for the picker, so “Change” opens on<br>what the record holds. |
+| `getSelectionLabel` | no | `(selection: TSuggestion) => ReactNode` | How the pending choice reads in the summary above the buttons. Without it the card looks<br>for a string `label` field, which is a guess — a cheap and usually right one. |
+| `onConfirmSelection` | yes | `(selection: TSuggestion) => void \| Promise<void>` | Persists it. A returned promise is awaited and drives the confirming state; a rejection<br>keeps the dialog open and reaches `onError`. |
+| `SelectorComponent` | yes | `ComponentType<SharedResourceSelectorProps<TSuggestion, TSelectorProps>>` | The picker. Yours: it receives `selected`, `onSelect`, and `inModal` — a picker that adapts<br>inside a dialog can read the last one. |
 | `selectorProps` | no | `TSelectorProps` |  |
 | `DialogContentComponent` | no | `ComponentType<SharedResourceCardDialogContentProps<TResource, TSuggestion, TSelectorProps> & Record<string, unknown>>` |  |
 | `dialogContentProps` | no | `Record<string, unknown>` |  |
 | `DialogSummaryComponent` | no | `ComponentType<SharedResourceCardContentProps<TResource, TSuggestion>>` |  |
-| `isConfirmDisabled` | no | `(selection: TSuggestion \| null) => boolean` | Refuses a pending choice: an inactive venue, a full room. |
+| `isConfirmDisabled` | no | `(selection: TSuggestion \| null) => boolean` | Refuses a pending choice — an inactive venue, a room that is full or too small. The confirm<br>stays disabled rather than failing after the press. |
 | `onDialogOpen` | no | `(selection: TSuggestion \| null) => void` | Fires once per closed-to-open cycle, with the choice the dialog opened on. |
 | `onDialogClose` | no | `() => void` |  |
 | `open` | no | `boolean` |  |
@@ -198,6 +205,9 @@ What the consumer's picker receives.
 ### `useSharedResourceCard`
 
 Kind: callable.
+
+The state machine without the card: open state, pending choice, `canConfirmSelection`, and a
+confirm that awaits.
 
 ```text
 ({ resource, mapInitialSelected, onConfirmSelection, isConfirmDisabled, onDialogOpen, onDialogClose, onError, open, defaultOpen, onOpenChange, value, defaultValue, onValueChange, }: UseSharedResourceCardOptions<TResource, TSuggestion>) => UseSharedResourceCardResult<TResource, TSuggestion>

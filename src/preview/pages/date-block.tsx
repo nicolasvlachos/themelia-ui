@@ -30,17 +30,7 @@ export function DateBlockPage() {
 			/>
 
 			<Example id="date-block-api" title="API">
-				<PropTable owner="DateBlock"
-					rows={[
-						{ name: "date", type: "Date | string | number | null", description: "A Date, an ISO string or a timestamp. Nothing parseable renders nothing — an empty leaf would be a claim." },
-						{ name: "layout", type: '"stacked" | "inline"', default: '"stacked"', description: "A leaf, or a phrase at the size of the line it sits in." },
-						{ name: "boxed", type: "boolean", default: "true when stacked", description: "The leaf's box and month band. Off for a surface that already frames it." },
-						{ name: "showWeekday / showMonth / showYear", type: "boolean", default: "true / true / false", description: "Which fragments to show. Without the month there is no band." },
-						{ name: "time", type: "ReactNode", description: "An already-formatted time or range, under the weekday — “09:00 – 10:30”." },
-						{ name: "weekdayFormat / dayFormat / monthFormat / yearFormat", type: "string", default: '"EEE" / "d" / "MMM" / "yyyy"', description: "date-fns patterns. The names come from the UIProvider's date-fns locale, so a Greek scope reads “Κυρ” without a strings object." },
-						{ name: "dateTime", type: "string", description: "Overrides the machine-readable value, which is otherwise the date's ISO string." },
-					]}
-				/>
+				<PropTable owner="DateBlock" />
 			</Example>
 		</ComponentPage>
 	)

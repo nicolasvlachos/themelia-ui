@@ -10,18 +10,25 @@ import { defaultComboboxStrings, type ComboboxStrings } from "./combobox.strings
 import styles from "./combobox.module.css"
 
 /**
- * The Base UI combobox anatomy with the kit's surface applied — parts, not a recipe; the
- * searchable, single- and multi-select recipes compose them. Field parts carry
- * `data-field-control` / `data-field-shell`, matching Input, Textarea and Select.
+ * The state: Base UI's combobox root, holding `value` and `onValueChange`, `inputValue` and
+ * `onInputValueChange`, `items` and `multiple`. The parts around it are the Base UI anatomy
+ * with the kit's surface applied — parts, not a recipe; the searchable, single- and
+ * multi-select recipes compose them. Field parts carry `data-field-control` /
+ * `data-field-shell`, matching Input, Textarea and Select.
  */
 export const ComboboxRoot = ComboboxPrimitive.Root
-/** The popup's portal, routed through the nearest `UIPortalHost` like every kit popup. */
+/**
+ * The popup's portal, which escapes an ancestor that clips or transforms. Routed through the
+ * nearest `UIPortalHost` like every kit popup.
+ */
 export function ComboboxPortal({ container, ...props }: ComboboxPrimitive.Portal.Props) {
 	const portalContainer = useUIPortalContainer(container as UIPortalContainer | undefined)
 	return <ComboboxPrimitive.Portal container={portalContainer} {...props} />
 }
+/** The renderer that maps a list to items. */
 export const ComboboxCollection = ComboboxPrimitive.Collection
 
+/** The query field. */
 export function ComboboxInput({ className, ...props }: ComboboxPrimitive.Input.Props) {
 	return (
 		<ComboboxPrimitive.Input
@@ -34,8 +41,8 @@ export function ComboboxInput({ className, ...props }: ComboboxPrimitive.Input.P
 }
 
 /**
- * The input with its trailing chevron and optional clear button, padded so text never
- * runs under them. `strings` names the two trailing controls.
+ * The input with its trailing chevron and optional clear button. Its trailing padding is
+ * computed from the same variables that size the controls, so text never runs under them.
  */
 export function ComboboxInputTrigger({
 	className,
@@ -44,8 +51,11 @@ export function ComboboxInputTrigger({
 	strings,
 	...props
 }: ComboboxPrimitive.Input.Props & {
+	/** Shows the clear button beside the chevron. */
 	showClear?: boolean
+	/** Applies the invalid treatment. */
 	invalid?: boolean
+	/** Names the two trailing controls: the clear button and the chevron. */
 	strings?: Partial<Pick<ComboboxStrings, "clear" | "toggle">>
 }) {
 	const copy = { ...defaultComboboxStrings, ...strings }
@@ -82,9 +92,9 @@ export function ComboboxInputTrigger({
 }
 
 /**
- * The whole field as one trigger — a select-like combobox with no free text. Pair it with
- * `ComboboxPopupInput`: Base UI drives the list's keyboard cursor from an input. For a
- * short list with no search, use `Select`.
+ * The whole field as one trigger, for a value that can only come from the list — a
+ * select-like combobox with no free text. Pair it with `ComboboxPopupInput`: Base UI drives
+ * the list's keyboard cursor from an input. For a short list with no search, use `Select`.
  */
 export function ComboboxTrigger({ className, children, ...props }: ComboboxPrimitive.Trigger.Props) {
 	return (
@@ -103,9 +113,10 @@ export function ComboboxTrigger({ className, children, ...props }: ComboboxPrimi
 }
 
 /**
- * The search band inside the popup, for the `ComboboxTrigger` shape: focus lands here when
- * the popup opens, typing filters the list, and the arrow keys and Enter drive it. Give it
- * an `aria-label` — its placeholder is not a name.
+ * The search band inside the popup, for a combobox opened from a button (`ComboboxTrigger`)
+ * rather than typed into: focus lands here when the popup opens, typing filters the list,
+ * and the arrow keys and Enter still move through the list below it. Give it an
+ * `aria-label` — its placeholder is not a name.
  */
 export function ComboboxPopupInput({ className, ...props }: ComboboxPrimitive.Input.Props) {
 	return (
@@ -120,6 +131,7 @@ export function ComboboxPopupInput({ className, ...props }: ComboboxPrimitive.In
 	)
 }
 
+/** The current selection, shown in a `ComboboxTrigger`. */
 export function ComboboxValue({
 	placeholder,
 	...props
@@ -139,6 +151,7 @@ export function ComboboxValue({
 	)
 }
 
+/** The control that empties the field. */
 export function ComboboxClear({ className, children, ...props }: ComboboxPrimitive.Clear.Props) {
 	return (
 		<ComboboxPrimitive.Clear
@@ -153,6 +166,7 @@ export function ComboboxClear({ className, children, ...props }: ComboboxPrimiti
 	)
 }
 
+/** Anchors the popup to the trigger, and flips it when there is no room below. */
 export function ComboboxPositioner({
 	className,
 	sideOffset = 4,
@@ -168,6 +182,10 @@ export function ComboboxPositioner({
 	)
 }
 
+/**
+ * The list's surface, anchored to the field's width — unlike a dropdown menu, a listbox that
+ * does not line up with its field reads as a different control.
+ */
 export function ComboboxPopup({ className, ...props }: ComboboxPrimitive.Popup.Props) {
 	return (
 		<ComboboxPrimitive.Popup
@@ -178,12 +196,17 @@ export function ComboboxPopup({ className, ...props }: ComboboxPrimitive.Popup.P
 	)
 }
 
+/** The results. */
 export function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
 	return (
 		<ComboboxPrimitive.List data-slot="combobox-list" className={cx("combobox-list--component", styles.list, className)} {...props} />
 	)
 }
 
+/**
+ * A result row with a trailing selection check. Children go in the label slot. The same row
+ * the pickers render.
+ */
 export function ComboboxItem({ className, children, ...props }: ComboboxPrimitive.Item.Props) {
 	return (
 		<ComboboxPrimitive.Item
@@ -199,7 +222,7 @@ export function ComboboxItem({ className, children, ...props }: ComboboxPrimitiv
 	)
 }
 
-/** The indicator on its own, for a row that lays its parts out differently. */
+/** The tick on a chosen item, on its own, for a row that lays its parts out differently. */
 export function ComboboxItemIndicator({
 	className,
 	children,
@@ -216,6 +239,10 @@ export function ComboboxItemIndicator({
 	)
 }
 
+/**
+ * Renders only when a search returns nothing, so "no matches" never flashes before the first
+ * keystroke.
+ */
 export function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
 	return (
 		<ComboboxPrimitive.Empty data-slot="combobox-empty" className={cx("combobox-empty--component", styles.empty, className)} {...props} />
@@ -229,12 +256,14 @@ export function ComboboxStatus({ className, ...props }: ComboboxPrimitive.Status
 	)
 }
 
+/** A division of the results. */
 export function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
 	return (
 		<ComboboxPrimitive.Group data-slot="combobox-group" className={cx("combobox-group--component", styles.group, className)} {...props} />
 	)
 }
 
+/** A group's caption. */
 export function ComboboxGroupLabel({ className, ...props }: ComboboxPrimitive.GroupLabel.Props) {
 	return (
 		<ComboboxPrimitive.GroupLabel
@@ -245,6 +274,7 @@ export function ComboboxGroupLabel({ className, ...props }: ComboboxPrimitive.Gr
 	)
 }
 
+/** A rule between groups of results. */
 export function ComboboxSeparator({ className, ...props }: ComboboxPrimitive.Separator.Props) {
 	return (
 		<ComboboxPrimitive.Separator
@@ -255,6 +285,10 @@ export function ComboboxSeparator({ className, ...props }: ComboboxPrimitive.Sep
 	)
 }
 
+/**
+ * The multi-select field: the container is the field, and the input sits among the chips so
+ * typing continues where the last selection ended.
+ */
 export function ComboboxChips({
 	className,
 	invalid,
@@ -301,6 +335,7 @@ export function ComboboxChip({
 	)
 }
 
+/** The query input among the chips, so typing continues where the last selection ended. */
 export function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.Input.Props) {
 	return (
 		<ComboboxPrimitive.Input
@@ -313,6 +348,7 @@ export function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.In
 	)
 }
 
+/** A layer behind the open popup, part of its placement machinery. */
 export function ComboboxBackdrop({ className, ...props }: ComboboxPrimitive.Backdrop.Props) {
 	return (
 		<ComboboxPrimitive.Backdrop
@@ -323,6 +359,7 @@ export function ComboboxBackdrop({ className, ...props }: ComboboxPrimitive.Back
 	)
 }
 
+/** An arrow pointing from the popup to its anchor, part of its placement machinery. */
 export function ComboboxArrow({ className, ...props }: ComboboxPrimitive.Arrow.Props) {
 	return <ComboboxPrimitive.Arrow className={cx("combobox-arrow--component", styles.arrow, className)} {...props} />
 }

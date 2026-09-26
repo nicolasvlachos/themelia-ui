@@ -14,6 +14,11 @@ export interface SingleDatePickerProps extends Base {
 	onValueChange?: (value: Date | undefined) => void
 }
 
+/**
+ * `DatePicker` with `mode="single"` fixed, so the value type is fixed with it: a `Date`. The
+ * generic picker has to widen its callback to cover every mode, which pushes a cast into
+ * every call site.
+ */
 export const SingleDatePicker = forwardRef<HTMLButtonElement, SingleDatePickerProps>(
 	function SingleDatePicker({ value, onValueChange, ...props }, ref) {
 		return (
@@ -33,6 +38,7 @@ export interface MultipleDatePickerProps extends Base {
 	onValueChange?: (value: Date[]) => void
 }
 
+/** `DatePicker` with `mode="multiple"` fixed, so the value is always an array of dates. */
 export const MultipleDatePicker = forwardRef<HTMLButtonElement, MultipleDatePickerProps>(
 	function MultipleDatePicker({ value, onValueChange, ...props }, ref) {
 		return (
@@ -52,6 +58,7 @@ export interface RangeDatePickerProps extends Base {
 	onValueChange?: (value: DateRangeValue) => void
 }
 
+/** `DatePicker` with `mode="range"` fixed, so the value is always a `{ from, to }`. */
 export const RangeDatePicker = forwardRef<HTMLButtonElement, RangeDatePickerProps>(
 	function RangeDatePicker({ value, onValueChange, ...props }, ref) {
 		return (

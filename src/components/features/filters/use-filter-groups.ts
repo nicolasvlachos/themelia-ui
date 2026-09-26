@@ -22,6 +22,12 @@ export interface UseFilterGroupsResult {
 	hasActive: boolean
 }
 
+/**
+ * Partitions the filter list into the four groups a bar draws differently — search, always,
+ * active, and behind the add button — for a consumer laying out their own bar. Exported so
+ * that consumer does not have to re-derive “which filters belong behind the add button”: a
+ * rule that is easy to get subtly wrong and impossible to notice when you do.
+ */
 export function useFilterGroups({
 	dynamicFilterOptions,
 }: UseFilterGroupsOptions = {}): UseFilterGroupsResult {

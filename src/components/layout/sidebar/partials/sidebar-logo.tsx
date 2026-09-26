@@ -14,6 +14,11 @@ export interface SidebarLogoProps {
 	className?: string
 }
 
+/**
+ * The product mark in the rail’s header. It swaps to the compact mark when the rail
+ * collapses to icons rather than scaling the full one down, because a squeezed wordmark is
+ * unreadable at rail width.
+ */
 export function SidebarLogo({ logo, collapsedLogo = null, className }: SidebarLogoProps) {
 	const { state } = useSidebar()
 	const content = state === "collapsed" ? collapsedLogo : logo

@@ -30,11 +30,20 @@ export interface ProgressProps extends Omit<React.ComponentProps<"div">, "childr
 	value?: number
 	/** A finite positive upper bound; invalid values resolve to 100. */
 	max?: number
+	/**
+	 * Semantic colour intent. Left unset the bar takes the primary tone — a progress bar that
+	 * changes colour at a threshold is the caller's decision, not the component's.
+	 * @default "primary"
+	 */
 	tone?: ProgressTone
 	/** Accessible name. Required when no visible label describes the bar. */
 	label?: string
 }
 
+/**
+ * A `progressbar` with its real bounds. Omit `value` for indeterminate; the ARIA value
+ * attributes are then dropped rather than reporting 0%.
+ */
 export function Progress({ value, max = 100, tone, label, className, ...props }: ProgressProps) {
 	const indeterminate = value === undefined
 	const range = normalizeProgressRange(value ?? 0, max)

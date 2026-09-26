@@ -17,13 +17,18 @@ import { Switch } from "./switch"
 export type ToggleFieldKind = "switch" | "checkbox"
 
 export interface ToggleFieldProps {
+	/** The row's label. */
 	label: ReactNode
+	/** The row's supporting sentence. */
 	description?: ReactNode
-	/** Short guidance under the description. */
+	/** Quieter, short guidance under the description. */
 	hint?: ReactNode
 	/** Leading glyph, drawn in a medallion. Most at home on `surface="card"`. */
 	icon?: ChoiceOption["icon"]
-	/** Which control renders. */
+	/**
+	 * Which control renders: a checkbox for a preference that is saved with the form, a switch
+	 * for state that applies immediately.
+	 */
 	kind?: ToggleFieldKind
 	/**
 	 * `row` is a plain settings row; `card` is a bordered card that takes the checked
@@ -32,9 +37,12 @@ export interface ToggleFieldProps {
 	surface?: "row" | "card"
 	/** Controlled state. */
 	value?: boolean
+	/** The initial state, uncontrolled. */
 	defaultValue?: boolean
+	/** Called with the next state. */
 	onValueChange?: (checked: boolean) => void
 	disabled?: boolean
+	/** The error surface. The message stays on the `FormField`. */
 	invalid?: boolean
 	name?: string
 	/**
@@ -48,6 +56,11 @@ export interface ToggleFieldProps {
 	className?: string
 }
 
+/**
+ * A clickable label-and-control row for a switch or a checkbox: a plain settings row, or with
+ * `surface="card"` a bordered card with an optional icon and hint. The whole row is the
+ * target.
+ */
 export const ToggleField = forwardRef<HTMLDivElement, ToggleFieldProps>(function ToggleField(
 	{
 		label,

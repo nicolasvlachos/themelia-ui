@@ -15,6 +15,10 @@ import { resolveCellClassName } from "./table-helpers"
 import type { DataTableHeaderProps } from "./table.types"
 import styles from "./table.module.css"
 
+/**
+ * The header rows — an optional band of column groups, then the columns. Sorting is base TableHead
+ * doing the work; this only translates the column's state into it.
+ */
 export function DataTableHeader<TData extends RowData>({
 	table,
 	stickyHeader = false,

@@ -12,7 +12,9 @@ import {
 } from "@/components/base/navigation"
 import { cx } from "@/lib/cx"
 
-import { resolveLayoutLinkRenderer, type LayoutNavigationAdapter } from "../layout.types"
+import { resolveLinkRenderer } from "@/lib/navigation"
+
+import type { LayoutNavigationAdapter } from "../layout.types"
 import { defaultPageHeaderStrings, type PageHeaderStrings } from "./page-header.strings"
 import styles from "./page.module.css"
 
@@ -31,7 +33,10 @@ export interface PageHeaderProps
 	extends LayoutNavigationAdapter,
 		Pick<PageHeadingProps, "eyebrow" | "description" | "level" | "breadcrumbs" | "withSeparator" | "className"> {
 	title: ReactNode
-	/** Decorative glyph before the title. Centred on the title line, never on the block. */
+	/**
+	 * Glyph before the title, centred on the title line, never on the block. Decorative by
+	 * default; `titleIconHref` or `onTitleIconClick` makes it a control with a name.
+	 */
 	titleIcon?: ComponentType<{ className?: string }>
 	/** Makes the title icon a link. Routed through `renderLink` like everything else. */
 	titleIconHref?: string
@@ -39,12 +44,24 @@ export interface PageHeaderProps
 	onTitleIconClick?: () => void
 	/** Overrides this header's own copy: the back control's and the title icon's accessible names. */
 	strings?: Partial<PageHeaderStrings>
-	/** Destination for the back control. Either this or `onBack` makes it appear. */
+	/**
+	 * Destination for the back control, which is then a real link routed through
+	 * `renderLink` — middle-clickable, and openable in a new tab. Either this or `onBack`
+	 * makes it appear.
+	 */
 	backHref?: string
+	/**
+	 * Makes the back control a button, which wins over `backHref`. Either this or `backHref`
+	 * makes it appear.
+	 */
 	onBack?: () => void
-	/** Status marks beside the title, as data — the tone comes from the kit's vocabulary. */
+	/**
+	 * Status marks beside the title, as data, passed through to the heading — the tone comes
+	 * from the kit's vocabulary.
+	 */
 	titleBadges?: PageHeadingBadge[]
 	actions?: ReactNode
+	/** Replaces a structural region without forking the header. */
 	slots?: PageHeaderSlots
 	children?: ReactNode
 }
@@ -70,7 +87,7 @@ export function PageHeader({
 	children,
 }: PageHeaderProps) {
 	const copy = { ...defaultPageHeaderStrings, ...strings }
-	const link = resolveLayoutLinkRenderer({ renderLink })
+	const link = resolveLinkRenderer(renderLink)
 	const hasBack = !!backHref || !!onBack
 
 	/* A real link when there is an href (middle-click, new tab); a button for `onBack`. */

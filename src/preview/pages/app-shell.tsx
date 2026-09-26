@@ -51,40 +51,18 @@ export function AppShellPage() {
 
 			<Example id="sidebar-api" title="API">
 				<PropTable
-					rows={[
-						{ name: "SidebarProvider defaultOpen", api: "@/components/base/sidebar#SidebarProvider.defaultOpen", type: "boolean", default: "true", description: "Initial expanded state when uncontrolled." },
-						{ name: "SidebarProvider persist", api: "@/components/base/sidebar#SidebarProvider.persist", type: "boolean", default: "true", description: "Remembers the state in localStorage, read during the initial render so the shell does not flash open then snap shut." },
-						{ name: "SidebarProvider keyboardShortcut", api: "@/components/base/sidebar#SidebarProvider.keyboardShortcut", type: "boolean", default: "true", description: "Binds ⌘B / Ctrl-B to the toggle." },
-						{ name: "SidebarProvider contained", api: "@/components/base/sidebar#SidebarProvider.contained", type: "boolean", default: "false", description: "Bounds the shell to its wrapper instead of the viewport. The panel is fixed by default, which is right for a shell that owns the screen and wrong everywhere else." },
-						{ name: "SidebarInsetLayout showTrigger", type: "boolean", default: "true", description: "The toolbar's collapse control. Off for a shell whose navigation is opened from somewhere else." },
-						{ name: "SidebarInsetLayout boundContent", type: "boolean", description: "Caps the inset's content at a reading measure instead of letting it run the shell's full width." },
-						{ name: "Sidebar variant", api: "@/components/base/sidebar#Sidebar.variant", type: '"sidebar" | "floating" | "inset"', default: '"sidebar"', description: "Against the edge with a border; a rounded inset panel; or inset with the page lifted into a card." },
-						{ name: "Sidebar collapsible", api: "@/components/base/sidebar#Sidebar.collapsible", type: '"offcanvas" | "icon" | "none"', default: '"offcanvas"', description: "Slides away; collapses to a glyph rail; or never collapses." },
-						{ name: "Sidebar side", api: "@/components/base/sidebar#Sidebar.side", type: '"left" | "right"', default: '"left"', description: "Docking edge, for the rail and the mobile sheet alike." },
-						{ name: "SidebarMenuButton size", api: "@/components/base/sidebar#SidebarMenuButton.size", type: '"sm" | "md" | "lg"', default: '"md"', description: "A shape, not a density: lg is the workspace switcher, sm a secondary row. The one place in the kit that keeps a size prop." },
-						{ name: "SidebarMenuButton render", api: "@/components/base/sidebar#SidebarMenuButton.render", type: "ReactElement", description: "The element the row becomes — a router link, most often. The row's content stays in `children`, so the link keeps its own navigation and the row keeps its icon and label." },
-						{ name: "SidebarMenuAction showOnHover", api: "@/components/base/sidebar#SidebarMenuAction.showOnHover", type: "boolean", default: "false", description: "Reveals on hover or keyboard focus — focus-within, so it is reachable without a pointer." },
-						{ name: "AppSidebar navigationGroups", type: "Record<string, SidebarNavItem[]>", description: "Navigation as data, grouped by heading. An item with children renders as a disclosure." },
-						{ name: "AppSidebar currentUrl", type: "string", description: "The current route. Active rows, and which parent is expanded, follow from this alone." },
-						{ name: "AppSidebar renderLink", type: "LayoutLinkRenderer", description: "The router seam. Without it, entries render as plain anchors." },
-						{ name: "AppSidebar liveBadges", type: "Record<string, string | number>", description: "Counts keyed by handle, overriding an item's declared badge — for a number that changes after the nav was defined." },
-						{ name: "AppSidebar iconMap", type: "Record<string, ComponentType>", description: "Resolves an icon NAME to a component, so navigation data stays serialisable." },
-						{ name: "SidebarMenuButton closeOnSelectMobile", api: "@/components/base/sidebar#SidebarMenuButton.closeOnSelectMobile", type: "boolean", default: "true", description: "Dismisses the mobile sheet on activation. Off for a row that opens something else, like a switcher." },
-						{ name: "useSidebar()", api: "@/components/base/sidebar#useSidebar", type: "{ state, open, setOpen, isMobile, toggleSidebar, … }", description: "The shell's state, for anything that needs to react to it." },
-						{ name: "headerClassName / toolbarClassName / contentClassName", api: ["StackedLayout.headerClassName", "SidebarInsetLayout.toolbarClassName", "SidebarInsetLayout.contentClassName"], type: "string", description: "Style one region without wrapping it. The shell owns the grid, so a wrapper around any of the three would break the sticky rows." },
-						{ name: "SidebarLogo", api: "@/components/layout/sidebar#SidebarLogo", type: "component", description: "The product mark in the rail\u2019s header. It swaps to the compact mark when the rail collapses to icons rather than scaling the full one down, because a squeezed wordmark is unreadable at rail width." },
-						{ name: "SidebarWorkspace", api: "@/components/layout/sidebar#SidebarWorkspace", type: "component", description: "The rail\u2019s header as a workspace switcher. The whole header row is the trigger, not a chevron beside a decorative name \u2014 the name is what a reader aims at." },
-						{ name: "SidebarUser", api: "@/components/layout/sidebar#SidebarUser", type: "component", description: "The account row at the foot of the rail. Its menu opens to the RIGHT when the rail is collapsed and BELOW when it is not, because a menu that always drops down is off-screen at the bottom of a full-height panel." },
-						{ name: "SidebarIcon", api: "@/components/layout/sidebar#SidebarIcon", type: "component", description: "Resolves an icon that may be a NAME. Exported because a caller supplying renderItem still wants the same resolution — a row rendered by hand should not need its own copy of \u201cstring means look it up, component means render it, node means use it\u201d." },
-						{ name: "TopbarSidebarLayout contained", type: "boolean", default: "false", description: "Fits a parent with a definite height. The default owns the viewport; sidebar and content scroll below the header." },
-						{ name: "TopbarSidebarLayout sidebar / sidebarSide", api: ["TopbarSidebarLayout.sidebar", "TopbarSidebarLayout.sidebarSide"], type: "ReactNode / left | right", description: "Use Sidebar or AppSidebar with icon/offcanvas collapse for a mobile drawer. Match the Sidebar side to sidebarSide. Omit the sidebar for a full-width body." },
-						{ name: "TopbarSidebarLayout mobileSidebarMode", type: '"drawer" | "inline"', default: '"drawer"', description: "Drawer mode uses the Sidebar mobile sheet. Inline mode stacks static navigation above content; pair it with collapsible=none and sidebarTrigger=false." },
-						{ name: "sidebarProviderProps", api: ["SidebarInsetLayout.sidebarProviderProps", "TopbarSidebarLayout.sidebarProviderProps"], type: "Pick<SidebarProviderProps, …>", description: "Pass open/onOpenChange, persist, keyboardShortcut and strings to the shell's provider. Disable persistence and shortcuts in independent embedded examples." },
-						{ name: "StackedLayout contained", type: "boolean", default: "false", description: "Fits a parent with a definite height and scrolls content below the header." },
-						{ name: "StackedLayout boundContent", type: "boolean", default: "true", description: "Caps the reading width. Set false for wide tables and composed workspaces." },
-						{ name: "TopbarSidebarLayout", type: "component", description: "The header-first admin shell. The header spans the full width and owns the brand, the search and the account; the sidebar and the content share the height below it. The only difference from SidebarInsetLayout is where the LOGO lives — and that decides the whole frame, which is why it is two components rather than a boolean." },
+					owners={[
+						"SidebarInsetLayout",
+						"TopbarSidebarLayout",
+						"StackedLayout",
+						"AppSidebar",
+						"SidebarProvider",
+						"Sidebar",
+						"SidebarMenuButton",
+						"SidebarMenuAction",
 					]}
 				/>
+				<PropTable symbols={["useSidebar", "SidebarLogo", "SidebarWorkspace", "SidebarUser", "SidebarIcon"]} />
 			</Example>
 		</ComponentPage>
 	)

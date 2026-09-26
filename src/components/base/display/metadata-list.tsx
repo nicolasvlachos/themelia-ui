@@ -25,17 +25,25 @@ export type MetadataLayout = "grid" | "rows" | "inline"
 /** `compact` tightens the rhythm for a dense panel. */
 export type MetadataDensity = "default" | "compact"
 
+/** One fact: a label and a value, and optionally a description, a tooltip and an icon. */
 export interface MetadataListItem {
 	/** Stable identity. Without one the label and index stand in. */
 	id?: string
+	/** Names the fact. */
 	label: ReactNode
 	/** A node, or a descriptor that names the fact's kind. */
 	value?: ReactNode | MetadataValueDescriptor | null
 	/** Supporting copy under the value. */
 	description?: ReactNode | null
-	/** Shown from an info trigger beside the label — for a fact that needs explaining. */
+	/**
+	 * Shown from an info trigger beside the label — for a fact that needs explaining. The
+	 * trigger is named after the label through `strings.formatInfoLabel` ("Amount info"), a
+	 * function rather than a suffix because word order differs by language.
+	 */
 	tooltip?: ReactNode
+	/** A glyph before the label. */
 	icon?: ComponentType<{ className?: string }>
+	/** Shown when this fact's value is absent, in place of the list's `emptyLabel`. */
 	emptyLabel?: ReactNode
 	/** Takes over the value entirely, for one fact that none of the kinds cover. */
 	render?: (item: MetadataListItem) => ReactNode
@@ -48,31 +56,55 @@ export type MetadataInlineListItem = Omit<MetadataListItem, "description"> & {
 
 interface MetadataListSharedProps {
 	/**
-	 * How many columns the grid uses. A plain number picks a responsive recipe; an object
-	 * sets the breakpoints itself.
+	 * How many columns the grid uses — a ceiling for the grid layout. A plain number picks a
+	 * responsive recipe; an object sets the breakpoints itself.
 	 */
 	columns?: ResponsiveValue<MetadataColumns>
+	/**
+	 * `compact` tightens the rhythm — the gaps and the row inset — for a dense panel. The value
+	 * keeps its size.
+	 */
 	density?: MetadataDensity
-	/** Shown for a fact whose value is absent. Defaults to an em dash. */
+	/**
+	 * Shown for a fact whose value is absent. A dash says "we looked"; an omitted row does
+	 * not.
+	 */
 	emptyLabel?: ReactNode
+	/** A label above the facts. */
 	title?: ReactNode
 	/** Draws a rule between the title and the first fact. */
 	titleSeparator?: boolean
 	className?: string
 	/** Between a label and its value, inline. Defaults to a colon. */
 	separator?: string
-	/** Between facts — `true` for the default rule, or a character for the inline layout. */
+	/**
+	 * Between facts: `true` for a rule in the rows layout, or a character for the inline
+	 * one.
+	 */
 	itemSeparator?: boolean | string
+	/** Overrides this list's own copy — the info triggers' names. */
 	strings?: Partial<MetadataListStrings>
 }
 
 interface MetadataGridRowsProps extends MetadataListSharedProps {
+	/**
+	 * The facts: a label and a value each, and optionally a description, a tooltip, an icon,
+	 * an empty label and a renderer.
+	 */
 	items: MetadataListItem[]
+	/**
+	 * How the facts are laid out: `grid` (label above value, in columns, for detail panels),
+	 * `rows` (a ruled list, for labels of varied length), or `inline` ("Created 4 Jan · By
+	 * Alice · v3.2"), whose items take no description. One component, because the three carry
+	 * the same data — a screen that switches between them changes a prop, not its items.
+	 */
 	layout?: "grid" | "rows"
 }
 
 interface MetadataInlineProps extends MetadataListSharedProps {
+	/** The facts, without descriptions: the inline layout has no second line for one. */
 	items: MetadataInlineListItem[]
+	/** The inline layout: "Created 4 Jan · By Alice · v3.2". */
 	layout: "inline"
 }
 
@@ -137,7 +169,8 @@ function renderValue(
 	return value
 }
 
-function InfoTrigger({ label, copy }: { label: ReactNode; copy: MetadataListStrings }) {
+/** The button is named after the fact (`label`), and opens its explanation (`content`). */
+function InfoTrigger({ label, content, copy }: { label: ReactNode; content: ReactNode; copy: MetadataListStrings }) {
 	const name = typeof label === "string" ? copy.formatInfoLabel(label) : copy.infoFallback
 	return (
 		<Tooltip>
@@ -159,7 +192,7 @@ function InfoTrigger({ label, copy }: { label: ReactNode; copy: MetadataListStri
 			/>
 			{/* No Text wrapper: TooltipContent owns its type and colour. */}
 			<TooltipContent side="top" align="start" className={styles.tooltip}>
-				{label}
+				{content}
 			</TooltipContent>
 		</Tooltip>
 	)
@@ -182,11 +215,15 @@ function ItemLabel({
 			<DisplayLabel className={cx("metadata-list--label", styles.label, className)}>
 				{item.label}
 			</DisplayLabel>
-			{item.tooltip != null && <InfoTrigger label={item.tooltip} copy={copy} />}
+			{item.tooltip != null && <InfoTrigger label={item.label} content={item.tooltip} copy={copy} />}
 		</>
 	)
 }
 
+/**
+ * Label/value facts about one thing, in three layouts over the same data. Returns `null`
+ * when the list is empty, so a caller can render it unconditionally.
+ */
 export function MetadataList({
 	items,
 	columns = 2,

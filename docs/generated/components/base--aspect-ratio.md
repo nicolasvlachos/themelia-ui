@@ -44,7 +44,7 @@ Extends: `ComponentProps<"div">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `ratio` | no | `ResponsiveValue<number>` | Width divided by height — `16 / 9`, `1`, `4 / 3` — as a number, never parsed. |
-| `fit` | no | `"cover" \| "contain"` | How a media child fills the box: `cover` crops to fill (the usual frame); `contain` fits<br>inside, for artwork whose edges matter (a logo, a diagram, a screenshot). |
+| `fit` | no | `"cover" \| "contain"` | How a media child fills the box: `cover` crops to fill it (the usual frame); `contain`<br>fits the whole image inside and leaves the rest of the box empty, for artwork whose edges<br>matter (a logo, a diagram, a screenshot). |
 
 ## Preview recipes
 

@@ -9,7 +9,7 @@ import * as React from "react"
 import { Text } from "@/components/base/typography"
 import { Badge } from "@/components/base/badge"
 import { cx } from "@/lib/cx"
-import { resolveActiveHref } from "@/lib/navigation"
+import { resolveActiveHref, resolveLinkRenderer, type LinkRenderer } from "@/lib/navigation"
 import type { StringsProp } from "@/lib/strings"
 
 import styles from "./navigation.module.css"
@@ -44,24 +44,22 @@ export interface SideNavGroup {
 export interface SideNavProps extends Omit<React.ComponentProps<"nav">, "children"> {
 	/** Flat entries. Mutually exclusive with `groups`. */
 	items?: SideNavItem[]
-	/** Captioned blocks of entries. Mutually exclusive with `items`. */
+	/**
+	 * Captioned blocks of entries, each of which can be collapsible. Mutually exclusive with
+	 * `items`.
+	 */
 	groups?: SideNavGroup[]
 	/**
-	 * The path considered current. Matched by longest prefix, so `/settings/members` marks
-	 * the members entry, not the `/settings` index.
+	 * The path considered current. Matched by longest prefix, so exactly one entry is
+	 * current: `/settings/members` marks the members entry, not the `/settings` index.
 	 */
 	currentPath?: string
 	/**
-	 * Renders each entry: receives the link props and returns the router's link element.
-	 * Without it, entries are plain anchors.
+	 * Routes entries through the app's router, as every component's `renderLink` does.
+	 * Without it, entries are plain anchors — the kit never imports a router.
 	 */
-	renderLink?: (props: {
-		href: string
-		className: string
-		children: React.ReactNode
-		"aria-current"?: "page"
-		"aria-disabled"?: boolean
-	}) => React.ReactElement
+	renderLink?: LinkRenderer
+	/** Overrides the rail's own copy — the collapse control's name. */
 	strings?: StringsProp<SideNavStrings>
 }
 
@@ -81,6 +79,7 @@ export function SideNav({
 	...props
 }: SideNavProps) {
 	const copy = { ...defaultSideNavStrings, ...strings }
+	const link = resolveLinkRenderer(renderLink)
 	const resolvedGroups: SideNavGroup[] = groups ?? [{ id: "default", items: items ?? [] }]
 	const allItems = resolvedGroups.flatMap((group) => group.items)
 	const activeHref = activeHrefOf(allItems, currentPath)
@@ -157,13 +156,10 @@ export function SideNav({
 									children: content,
 									"aria-current": isActive ? ("page" as const) : undefined,
 									"aria-disabled": item.disabled || undefined,
+									disabled: item.disabled,
 								}
 
-								return (
-									<li key={item.href}>
-										{renderLink ? renderLink(linkProps) : <a {...linkProps} />}
-									</li>
-								)
+								return <li key={item.href}>{link(linkProps)}</li>
 							})}
 						</ul>
 					</div>

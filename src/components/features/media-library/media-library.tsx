@@ -30,6 +30,10 @@ import styles from "./media-library.module.css"
 
 const ALL_TYPES: readonly MediaLibraryTypeFilter[] = ["all", "image", "video", "file"]
 
+/**
+ * The asset browser, as a panel. The detail panel is a column beside the grid, not an overlay,
+ * so several assets can be edited in a row.
+ */
 export function MediaLibrary<TItem = MediaLibraryItem>({
 	title,
 	description,

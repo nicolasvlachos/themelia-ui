@@ -41,8 +41,19 @@ export type SidebarVariant = "sidebar" | "floating" | "inset"
 export type SidebarCollapsible = "offcanvas" | "icon" | "none"
 
 export interface SidebarProps extends ComponentProps<"div"> {
+	/** Which edge the panel occupies, for the rail and the mobile sheet alike. */
 	side?: SidebarSide
+	/**
+	 * `sidebar` sits against the shell's edge with a border. `floating` and `inset` detach it,
+	 * so the panel reads as a card inside the page rather than as the page's own edge;
+	 * `inset` also lifts the page into a card of its own.
+	 */
 	variant?: SidebarVariant
+	/**
+	 * How it gets out of the way: slid away entirely (`offcanvas`), reduced to a rail of
+	 * glyphs (`icon`), or pinned open, never collapsing (`none`). On a narrow viewport a
+	 * collapsible panel becomes a sheet.
+	 */
 	collapsible?: SidebarCollapsible
 	/** Class for the visible panel surface, separate from the positioning container. */
 	surfaceClassName?: string
@@ -53,6 +64,7 @@ export interface SidebarProps extends ComponentProps<"div"> {
 	strings?: Partial<SidebarStrings>
 }
 
+/** The panel: a header, scrolling content and a footer, against one edge of the shell. */
 export function Sidebar({
 	side = "left",
 	variant = "sidebar",
@@ -134,16 +146,26 @@ export function Sidebar({
 	)
 }
 
-/** The toggle. Pair it with the rail, which does the same job from the panel's edge. */
-export function SidebarTrigger({ className, onClick, ...props }: ComponentProps<typeof Button>) {
+/**
+ * The button that toggles the panel. It reads the provider, so it works from anywhere
+ * inside it; pair it with the rail, which does the same job from the panel's edge.
+ */
+export function SidebarTrigger({
+	className,
+	onClick,
+	tone = "neutral",
+	buttonStyle = "ghost",
+	iconOnly = true,
+	...props
+}: ComponentProps<typeof Button>) {
 	const { isMobile, openMobile, toggleSidebar, strings: copy } = useSidebar()
 
 	return (
 		<Button
 			data-slot="sidebar-trigger"
-			tone="neutral"
-			buttonStyle="ghost"
-			iconOnly
+			tone={tone}
+			buttonStyle={buttonStyle}
+			iconOnly={iconOnly}
 			aria-label={copy.toggle}
 			className={cx("sidebar-trigger--component", className)}
 			onClick={(event) => {
@@ -160,7 +182,10 @@ export function SidebarTrigger({ className, onClick, ...props }: ComponentProps<
 	)
 }
 
-/** The strip on the panel's edge. Not a tab stop: it duplicates the trigger. */
+/**
+ * The strip along the panel's edge, which toggles it too. It reads the provider, so it works
+ * from anywhere inside it. Not a tab stop: it duplicates the trigger.
+ */
 export function SidebarRail({ className, ...props }: ComponentProps<"button">) {
 	const { toggleSidebar, strings: copy } = useSidebar()
 
@@ -181,8 +206,9 @@ export function SidebarRail({ className, ...props }: ComponentProps<"button">) {
 }
 
 /**
- * The page beside the panel. Renders `<main>`; a shell embedded in a host page that already
- * has one should pass `render={<div />}`.
+ * The page beside the panel. Renders `<main>`, so it is the document's main landmark rather
+ * than another div; a shell embedded in a host page that already has one should pass
+ * `render={<div />}`.
  */
 export function SidebarInset({ className, render, ...props }: useRender.ComponentProps<"main">) {
 	return useRender({
@@ -193,14 +219,20 @@ export function SidebarInset({ className, render, ...props }: useRender.Componen
 	})
 }
 
+/**
+ * The panel's top region. It holds its edge while the content scrolls, so a long navigation
+ * never scrolls its own search box away.
+ */
 export function SidebarHeader({ className, ...props }: ComponentProps<"div">) {
 	return <div data-slot="sidebar-header" className={cx("sidebar-header--component", styles.header, className)} {...props} />
 }
 
+/** The panel's bottom region. It holds its edge while the content scrolls. */
 export function SidebarFooter({ className, ...props }: ComponentProps<"div">) {
 	return <div data-slot="sidebar-footer" className={cx("sidebar-footer--component", styles.footer, className)} {...props} />
 }
 
+/** The scrolling region between the header and the footer. */
 export function SidebarContent({ className, ...props }: ComponentProps<"div">) {
 	return <div data-slot="sidebar-content" className={cx("sidebar-content--component", styles.content, className)} {...props} />
 }
@@ -215,10 +247,15 @@ export function SidebarInput({ className, ...props }: ComponentProps<typeof Inpu
 	return <Input data-slot="sidebar-input" className={cx("sidebar-input--component", styles.input, className)} {...props} />
 }
 
+/**
+ * A titled section of the panel, with an optional control on the label's line — an add, a
+ * filter.
+ */
 export function SidebarGroup({ className, ...props }: ComponentProps<"div">) {
 	return <div data-slot="sidebar-group" className={cx("sidebar-group--component", styles.group, className)} {...props} />
 }
 
+/** The section's title. */
 export function SidebarGroupLabel({ className, ...props }: ComponentProps<"div">) {
 	return (
 		<Text
@@ -233,6 +270,7 @@ export function SidebarGroupLabel({ className, ...props }: ComponentProps<"div">
 	)
 }
 
+/** A control on the section title's line — an add, a filter. */
 export function SidebarGroupAction({ className, ...props }: ComponentProps<"button">) {
 	return (
 		<button
@@ -244,16 +282,22 @@ export function SidebarGroupAction({ className, ...props }: ComponentProps<"butt
 	)
 }
 
+/** The section's body, under its label. */
 export function SidebarGroupContent({ className, ...props }: ComponentProps<"div">) {
 	return (
 		<div data-slot="sidebar-group-content" className={cx("sidebar-group-content--component", styles.groupContent, className)} {...props} />
 	)
 }
 
+/**
+ * The rows: a real `<ul>`, so the navigation announces as a list and its length is
+ * spoken.
+ */
 export function SidebarMenu({ className, ...props }: ComponentProps<"ul">) {
 	return <ul data-slot="sidebar-menu" className={cx("sidebar-menu--component", styles.menu, className)} {...props} />
 }
 
+/** One row: a real `<li>`, holding the row's button and anything beside it. */
 export function SidebarMenuItem({ className, ...props }: ComponentProps<"li">) {
 	return <li data-slot="sidebar-menu-item" className={cx("sidebar-menu-item--component", styles.menuItem, className)} {...props} />
 }
@@ -265,24 +309,29 @@ export function SidebarMenuItem({ className, ...props }: ComponentProps<"li">) {
 export type SidebarMenuButtonSize = "sm" | "md" | "lg"
 
 export interface SidebarMenuButtonProps extends Omit<ComponentProps<"button">, "size"> {
+	/**
+	 * The row's height, as a shape rather than a density: `lg` is the workspace switcher, `sm`
+	 * a secondary row. A size prop here, because a navigation row is not on the control
+	 * ladder that density scales.
+	 */
 	size?: SidebarMenuButtonSize
 	/** Marks the row as the current page. */
 	active?: boolean
 	/** `outline` gives the row its own frame — for a switcher that must read as a control. */
 	variant?: "default" | "outline"
 	/**
-	 * The element this row becomes instead of a `button` — usually a router link
-	 * (docs/adr/0005); `children` stays the row's content.
+	 * The element this row becomes instead of a `button` — usually a router link, so the row
+	 * navigates the app's own way. `children` stays the row's content.
 	 */
 	render?: React.ReactElement
 	/**
-	 * Dismisses the mobile sheet when the row is activated. Defaults to true; turn it off for
-	 * a row that opens something else (a switcher, a submenu toggle).
+	 * Dismisses the mobile sheet when the row is activated. Turn it off for a row that opens
+	 * something else (a switcher, a submenu toggle).
 	 */
 	closeOnSelectMobile?: boolean
 	/**
-	 * Shown beside the row while the sidebar is collapsed to its icon rail, usually the row's
-	 * label. Ignored while expanded and on phones.
+	 * The row's name, shown beside it while the sidebar is collapsed to its icon rail, where
+	 * the label is clipped away. Ignored while expanded and on phones.
 	 */
 	tooltip?: React.ReactNode
 }
@@ -293,6 +342,7 @@ const BUTTON_SIZE = {
 	lg: styles.menuButtonLg,
 } satisfies Record<SidebarMenuButtonSize, string | undefined>
 
+/** The row's control: a button, or through `render` a router link. */
 export function SidebarMenuButton({
 	size = "md",
 	active = false,
@@ -350,10 +400,17 @@ export function SidebarMenuButton({
 }
 
 export interface SidebarMenuActionProps extends ComponentProps<"button"> {
-	/** Reveals the action on hover or keyboard focus rather than showing it always. */
+	/**
+	 * Reveals the action on hover or keyboard focus rather than showing it always. Focus
+	 * counts through `focus-within`, so the action stays reachable without a pointer.
+	 */
 	showOnHover?: boolean
 }
 
+/**
+ * A secondary control on a row, positioned so it neither displaces the label nor steals the
+ * row's press target.
+ */
 export function SidebarMenuAction({ showOnHover = false, className, ...props }: SidebarMenuActionProps) {
 	return (
 		<button
@@ -370,6 +427,10 @@ export interface SidebarMenuBadgeProps extends ComponentProps<"div"> {
 	inline?: boolean
 }
 
+/**
+ * A count on a row, positioned so it neither displaces the label nor steals the row's press
+ * target.
+ */
 export function SidebarMenuBadge({ inline = false, className, ...props }: SidebarMenuBadgeProps) {
 	return (
 		<div
@@ -381,9 +442,14 @@ export function SidebarMenuBadge({ inline = false, className, ...props }: Sideba
 }
 
 export interface SidebarMenuSkeletonProps extends ComponentProps<"div"> {
+	/** Reserves the row's icon as well as its label. */
 	showIcon?: boolean
 }
 
+/**
+ * Reserves a row's exact box while the navigation loads, so the panel does not reflow when
+ * it lands.
+ */
 export function SidebarMenuSkeleton({ showIcon = false, className, style, ...props }: SidebarMenuSkeletonProps) {
 	return (
 		<div data-slot="sidebar-menu-skeleton" className={cx("sidebar-menu-skeleton--component", styles.menuSkeleton, className)} style={style as CSSProperties} {...props}>
@@ -393,26 +459,34 @@ export function SidebarMenuSkeleton({ showIcon = false, className, style, ...pro
 	)
 }
 
+/** A nested level under a row, indented against the parent's rail. */
 export function SidebarMenuSub({ className, ...props }: ComponentProps<"ul">) {
 	return <ul data-slot="sidebar-menu-sub" className={cx("sidebar-menu-sub--component", styles.menuSub, className)} {...props} />
 }
 
+/** One row of a nested level. */
 export function SidebarMenuSubItem({ className, ...props }: ComponentProps<"li">) {
 	return <li data-slot="sidebar-menu-sub-item" className={cx("sidebar-menu-sub-item--component", styles.menuSubItem, className)} {...props} />
 }
 
 export interface SidebarMenuSubButtonProps extends ComponentProps<"a"> {
+	/** The nested row's height. */
 	size?: "sm" | "md"
+	/** Marks the row as the current page. */
 	active?: boolean
 	/** Dismisses the mobile sheet when the row is activated. See SidebarMenuButton. */
 	closeOnSelectMobile?: boolean
 	/**
-	 * The element this row becomes instead of an `a` or `button` — usually a router link
-	 * (docs/adr/0005); `children` stays the row's content.
+	 * The element this row becomes instead of an `a` or `button` — usually a router link, so
+	 * the row navigates the app's own way. `children` stays the row's content.
 	 */
 	render?: React.ReactElement
 }
 
+/**
+ * A nested row's control: a link when it has an `href`, otherwise a button, or through
+ * `render` a router link.
+ */
 export function SidebarMenuSubButton({
 	size = "md",
 	active = false,

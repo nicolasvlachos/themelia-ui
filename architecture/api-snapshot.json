@@ -272,6 +272,10 @@
             "optional": true,
             "type": "DateInput"
           },
+          "pattern": {
+            "optional": true,
+            "type": "string"
+          },
           "separator": {
             "optional": true,
             "type": "string"
@@ -1196,6 +1200,10 @@
           "Omit<NumberProps, \"options\">"
         ],
         "members": {
+          "value": {
+            "optional": true,
+            "type": "number | string | null"
+          },
           "scaled": {
             "optional": true,
             "type": "boolean"
@@ -4783,7 +4791,8 @@
       "AccordionProps": {
         "kind": "interface",
         "extends": [
-          "AccordionPrimitive.Root.Props<string>"
+          "AccordionPrimitive.Root.Props<string>",
+          "Pick<AccordionPrimitive.Root.Props<string>, \"multiple\" | \"defaultValue\" | \"value\">"
         ],
         "members": {
           "surface": {
@@ -4839,7 +4848,7 @@
           },
           "renderLink": {
             "optional": true,
-            "type": "ActionLinkRenderer"
+            "type": "LinkRenderer"
           }
         }
       },
@@ -4940,39 +4949,6 @@
         "kind": "type",
         "signature": "ComponentType<{ className?: string; }> | ReactNode"
       },
-      "ActionLinkRenderer": {
-        "kind": "type",
-        "signature": "(props: ActionLinkRenderProps) => ReactElement"
-      },
-      "ActionLinkRenderProps": {
-        "kind": "interface",
-        "members": {
-          "href": {
-            "optional": false,
-            "type": "string"
-          },
-          "children": {
-            "optional": true,
-            "type": "ReactNode"
-          },
-          "target": {
-            "optional": true,
-            "type": "string"
-          },
-          "rel": {
-            "optional": true,
-            "type": "string"
-          },
-          "external": {
-            "optional": true,
-            "type": "boolean"
-          },
-          "disabled": {
-            "optional": true,
-            "type": "boolean"
-          }
-        }
-      },
       "ActionMenu": {
         "kind": "callable",
         "signature": "({ actions, label, icon, strings, buttonProps, align, side, contentClassName, width, minWidth, maxWidth, closeOnSelect, labelVisibility, preserveOrder, renderLink, renderTrigger, }: ActionMenuProps) => import(\"react\").JSX.Element | null"
@@ -5042,7 +5018,7 @@
           },
           "renderLink": {
             "optional": true,
-            "type": "ActionLinkRenderer"
+            "type": "LinkRenderer"
           },
           "renderTrigger": {
             "optional": true,
@@ -5102,6 +5078,63 @@
       "defaultActionMenuStrings": {
         "kind": "const",
         "signature": "ActionMenuStrings"
+      },
+      "LinkRenderer": {
+        "kind": "type",
+        "signature": "(props: LinkRenderProps) => ReactElement"
+      },
+      "LinkRenderProps": {
+        "kind": "interface",
+        "members": {
+          "href": {
+            "optional": true,
+            "type": "string"
+          },
+          "children": {
+            "optional": false,
+            "type": "ReactNode"
+          },
+          "className": {
+            "optional": true,
+            "type": "string"
+          },
+          "target": {
+            "optional": true,
+            "type": "string"
+          },
+          "rel": {
+            "optional": true,
+            "type": "string"
+          },
+          "onClick": {
+            "optional": true,
+            "type": "(event: MouseEvent<HTMLAnchorElement>) => void"
+          },
+          "\"aria-label\"": {
+            "optional": true,
+            "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
+          },
+          "active": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "disabled": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "external": {
+            "optional": true,
+            "type": "boolean"
+          }
+        }
       },
       "resolveContextActions": {
         "kind": "callable",
@@ -5192,7 +5225,7 @@
       },
       "AvatarImage": {
         "kind": "callable",
-        "signature": "({ className, ...props }: AvatarPrimitive.Image.Props) => React.JSX.Element"
+        "signature": "({ className, ...props }: AvatarPrimitive.Image.Props & Pick<AvatarPrimitive.Image.Props, \"src\" | \"alt\">) => React.JSX.Element"
       },
       "AvatarProps": {
         "kind": "type",
@@ -5526,7 +5559,7 @@
       },
       "TextButtonProps": {
         "kind": "type",
-        "signature": "Omit<ButtonProps, \"buttonStyle\" | \"iconOnly\" | \"fullWidth\">"
+        "signature": "Omit<ButtonProps, \"tone\" | \"buttonStyle\" | \"iconOnly\" | \"fullWidth\"> & { tone?: ButtonTone; }"
       },
       "TooltipButton": {
         "kind": "const",
@@ -5586,7 +5619,7 @@
           },
           "renderLink": {
             "optional": true,
-            "type": "ActionLinkRenderer"
+            "type": "LinkRenderer"
           }
         }
       },
@@ -5613,7 +5646,8 @@
       "CardPrimaryActionProps": {
         "kind": "interface",
         "extends": [
-          "ComponentProps<\"a\">"
+          "ComponentProps<\"a\">",
+          "Pick<ComponentProps<\"a\">, \"href\">"
         ],
         "members": {
           "label": {
@@ -5786,6 +5820,63 @@
       "defaultCardStrings": {
         "kind": "const",
         "signature": "CardStrings"
+      },
+      "LinkRenderer": {
+        "kind": "type",
+        "signature": "(props: LinkRenderProps) => ReactElement"
+      },
+      "LinkRenderProps": {
+        "kind": "interface",
+        "members": {
+          "href": {
+            "optional": true,
+            "type": "string"
+          },
+          "children": {
+            "optional": false,
+            "type": "ReactNode"
+          },
+          "className": {
+            "optional": true,
+            "type": "string"
+          },
+          "target": {
+            "optional": true,
+            "type": "string"
+          },
+          "rel": {
+            "optional": true,
+            "type": "string"
+          },
+          "onClick": {
+            "optional": true,
+            "type": "(event: MouseEvent<HTMLAnchorElement>) => void"
+          },
+          "\"aria-label\"": {
+            "optional": true,
+            "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
+          },
+          "active": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "disabled": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "external": {
+            "optional": true,
+            "type": "boolean"
+          }
+        }
       }
     },
     "./base/carousel": {
@@ -6199,7 +6290,8 @@
       "CheckboxProps": {
         "kind": "interface",
         "extends": [
-          "Omit<React.ComponentProps<\"input\">, \"type\" | \"size\">"
+          "Omit<React.ComponentProps<\"input\">, \"type\" | \"size\">",
+          "Pick<React.ComponentProps<\"input\">, \"checked\" | \"defaultChecked\" | \"onChange\">"
         ],
         "members": {
           "label": {
@@ -6377,7 +6469,8 @@
       "RadioProps": {
         "kind": "interface",
         "extends": [
-          "Omit<React.ComponentProps<\"input\">, \"type\" | \"size\">"
+          "Omit<React.ComponentProps<\"input\">, \"type\" | \"size\">",
+          "Pick<React.ComponentProps<\"input\">, \"value\" | \"checked\" | \"defaultChecked\" | \"onChange\">"
         ],
         "members": {
           "label": {
@@ -6632,7 +6725,8 @@
       "SwitchProps": {
         "kind": "interface",
         "extends": [
-          "Omit<React.ComponentProps<\"input\">, \"type\" | \"size\">"
+          "Omit<React.ComponentProps<\"input\">, \"type\" | \"size\">",
+          "Pick<React.ComponentProps<\"input\">, \"checked\" | \"defaultChecked\" | \"onChange\">"
         ],
         "members": {
           "label": {
@@ -6857,7 +6951,7 @@
       },
       "CommandGroup": {
         "kind": "callable",
-        "signature": "({ className, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) => React.JSX.Element"
+        "signature": "({ className, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Group> & Pick<React.ComponentProps<typeof CommandPrimitive.Group>, \"heading\">) => React.JSX.Element"
       },
       "CommandInput": {
         "kind": "callable",
@@ -6865,7 +6959,7 @@
       },
       "CommandItem": {
         "kind": "callable",
-        "signature": "({ className, children, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) => React.JSX.Element"
+        "signature": "({ className, children, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Item> & Pick<React.ComponentProps<typeof CommandPrimitive.Item>, \"value\" | \"onSelect\">) => React.JSX.Element"
       },
       "CommandList": {
         "kind": "callable",
@@ -8105,7 +8199,8 @@
       "SeparatorProps": {
         "kind": "interface",
         "extends": [
-          "SeparatorPrimitive.Props"
+          "SeparatorPrimitive.Props",
+          "Pick<SeparatorPrimitive.Props, \"aria-hidden\">"
         ],
         "members": {
           "variant": {
@@ -8150,7 +8245,7 @@
       },
       "DropdownMenuCheckboxItem": {
         "kind": "callable",
-        "signature": "({ className, children, checked, inset, icon, description, ...props }: MenuPrimitive.CheckboxItem.Props & Pick<MenuRowSlots, \"icon\" | \"description\" | \"inset\">) => React.JSX.Element"
+        "signature": "({ className, children, checked, inset, icon, description, ...props }: MenuPrimitive.CheckboxItem.Props & Pick<MenuPrimitive.CheckboxItem.Props, \"checked\" | \"onCheckedChange\"> & Pick<MenuRowSlots, \"icon\" | \"description\" | \"inset\">) => React.JSX.Element"
       },
       "DropdownMenuContent": {
         "kind": "callable",
@@ -8178,7 +8273,7 @@
       },
       "DropdownMenuRadioGroup": {
         "kind": "callable",
-        "signature": "({ ...props }: MenuPrimitive.RadioGroup.Props) => React.JSX.Element"
+        "signature": "({ ...props }: MenuPrimitive.RadioGroup.Props & Pick<MenuPrimitive.RadioGroup.Props, \"value\" | \"onValueChange\">) => React.JSX.Element"
       },
       "DropdownMenuRadioItem": {
         "kind": "callable",
@@ -8206,7 +8301,7 @@
       },
       "DropdownMenuTrigger": {
         "kind": "callable",
-        "signature": "({ ...props }: MenuPrimitive.Trigger.Props) => React.JSX.Element"
+        "signature": "({ ...props }: MenuPrimitive.Trigger.Props & Pick<MenuPrimitive.Trigger.Props, \"render\">) => React.JSX.Element"
       }
     },
     "./base/feedback": {
@@ -8258,6 +8353,14 @@
           "VariantProps<typeof alertVariants>"
         ],
         "members": {
+          "tone": {
+            "optional": true,
+            "type": "AlertTone"
+          },
+          "variant": {
+            "optional": true,
+            "type": "AlertVariant"
+          },
           "icon": {
             "optional": true,
             "type": "React.ReactNode | false"
@@ -9013,7 +9116,8 @@
       "DecimalInputProps": {
         "kind": "interface",
         "extends": [
-          "Omit<InputProps, \"type\" | \"inputMode\">"
+          "Omit<InputProps, \"type\" | \"inputMode\">",
+          "Pick<React.ComponentProps<\"input\">, \"value\" | \"onChange\">"
         ],
         "members": {
           "decimalPlaces": {
@@ -9460,19 +9564,39 @@
       },
       "InputGroupAddon": {
         "kind": "callable",
-        "signature": "({ className, align, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof inputGroupAddonVariants>) => React.JSX.Element"
+        "signature": "({ className, align, ...props }: InputGroupAddonProps) => React.JSX.Element"
       },
       "InputGroupAddonProps": {
-        "kind": "type",
-        "signature": "React.ComponentProps<\"div\">"
+        "kind": "interface",
+        "extends": [
+          "React.ComponentProps<\"div\">"
+        ],
+        "members": {
+          "align": {
+            "optional": true,
+            "type": "\"inline-start\" | \"inline-end\" | \"block-start\" | \"block-end\""
+          }
+        }
       },
       "InputGroupButton": {
         "kind": "callable",
-        "signature": "({ className, type, tone, buttonStyle, size, ...props }: Omit<React.ComponentProps<typeof Button>, \"size\" | \"type\"> & VariantProps<typeof inputGroupButtonVariants> & { type?: \"button\" | \"submit\" | \"reset\"; }) => React.JSX.Element"
+        "signature": "({ className, type, tone, buttonStyle, size, ...props }: InputGroupButtonProps) => React.JSX.Element"
       },
       "InputGroupButtonProps": {
-        "kind": "type",
-        "signature": "React.ComponentProps<typeof Button>"
+        "kind": "interface",
+        "extends": [
+          "Omit<React.ComponentProps<typeof Button>, \"size\" | \"type\">"
+        ],
+        "members": {
+          "size": {
+            "optional": true,
+            "type": "\"xs\" | \"sm\" | \"icon-xs\" | \"icon-sm\""
+          },
+          "type": {
+            "optional": true,
+            "type": "\"button\" | \"submit\" | \"reset\""
+          }
+        }
       },
       "InputGroupInput": {
         "kind": "callable",
@@ -9506,7 +9630,7 @@
     "./base/item": {
       "Item": {
         "kind": "callable",
-        "signature": "({ className, surface, render, ...props }: useRender.ComponentProps<\"div\"> & VariantProps<typeof itemVariants>) => React.JSX.Element"
+        "signature": "({ className, surface, render, ...props }: ItemProps) => React.JSX.Element"
       },
       "ItemActions": {
         "kind": "callable",
@@ -9546,7 +9670,7 @@
       },
       "ItemMedia": {
         "kind": "callable",
-        "signature": "({ className, variant, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof itemMediaVariants>) => React.JSX.Element"
+        "signature": "({ className, variant, ...props }: ItemMediaProps) => React.JSX.Element"
       },
       "ItemSeparator": {
         "kind": "callable",
@@ -9560,7 +9684,7 @@
     "./base/label": {
       "Label": {
         "kind": "callable",
-        "signature": "({ className, ...props }: React.ComponentProps<\"label\">) => React.JSX.Element"
+        "signature": "({ className, ...props }: LabelProps) => React.JSX.Element"
       }
     },
     "./base/menubar": {
@@ -9694,11 +9818,11 @@
         "kind": "type",
         "signature": "\"menu\" | \"pills\""
       },
-      "LayoutLinkRenderer": {
+      "LinkRenderer": {
         "kind": "type",
-        "signature": "(props: LayoutLinkRenderProps) => ReactNode"
+        "signature": "(props: LinkRenderProps) => ReactElement"
       },
-      "LayoutLinkRenderProps": {
+      "LinkRenderProps": {
         "kind": "interface",
         "members": {
           "href": {
@@ -9728,6 +9852,14 @@
           "\"aria-label\"": {
             "optional": true,
             "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
           },
           "active": {
             "optional": true,
@@ -9801,7 +9933,7 @@
           },
           "renderLink": {
             "optional": true,
-            "type": "LayoutLinkRenderer"
+            "type": "LinkRenderer"
           },
           "variant": {
             "optional": true,
@@ -9991,7 +10123,7 @@
       },
       "Pagination": {
         "kind": "callable",
-        "signature": "({ page, total, onPageChange, disabled: pagerDisabled, siblings, labels, numbers, renderLink, strings, className, ...props }: PaginationProps) => React.JSX.Element"
+        "signature": "({ page, total, onPageChange, disabled: pagerDisabled, siblings, labels, numbers, pageHref, renderLink, strings, className, ...props }: PaginationProps) => React.JSX.Element"
       },
       "PaginationProps": {
         "kind": "interface",
@@ -10027,9 +10159,13 @@
             "optional": true,
             "type": "boolean"
           },
+          "pageHref": {
+            "optional": true,
+            "type": "(page: number) => string"
+          },
           "renderLink": {
             "optional": true,
-            "type": "(page: number, props: PaginationLinkProps) => React.ReactNode"
+            "type": "LinkRenderer"
           },
           "strings": {
             "optional": true,
@@ -10440,7 +10576,7 @@
     "./base/popover": {
       "Popover": {
         "kind": "callable",
-        "signature": "({ ...props }: PopoverPrimitive.Root.Props) => React.JSX.Element"
+        "signature": "({ ...props }: PopoverProps) => React.JSX.Element"
       },
       "PopoverAnchor": {
         "kind": "callable",
@@ -10452,7 +10588,7 @@
       },
       "PopoverContentProps": {
         "kind": "type",
-        "signature": "PopoverPrimitive.Popup.Props & Pick<PopoverPrimitive.Positioner.Props, \"align\" | \"alignOffset\" | \"side\" | \"sideOffset\"> & { disablePortal?: boolean; inset?: \"padded\" | \"flush\"; width?: string | number | \"auto\" | \"trigger\"; minWidth?: string | number; maxWidth?: string | number; container?: UIPortalContainer; }"
+        "signature": "PopoverPrimitive.Popup.Props & Pick<PopoverPrimitive.Popup.Props, \"initialFocus\" | \"finalFocus\"> & Pick<PopoverPrimitive.Positioner.Props, \"align\" | \"alignOffset\" | \"side\" | \"sideOffset\"> & { disablePortal?: boolean; inset?: \"padded\" | \"flush\"; width?: string | number | \"auto\" | \"trigger\"; minWidth?: string | number; maxWidth?: string | number; container?: UIPortalContainer; }"
       },
       "PopoverDescription": {
         "kind": "callable",
@@ -11420,7 +11556,8 @@
       "ResizablePanelGroupProps": {
         "kind": "interface",
         "extends": [
-          "ResizablePrimitive.GroupProps"
+          "ResizablePrimitive.GroupProps",
+          "Pick<ResizablePrimitive.GroupProps, \"orientation\">"
         ]
       },
       "ResizablePanelProps": {
@@ -11778,7 +11915,7 @@
       },
       "SidebarTrigger": {
         "kind": "callable",
-        "signature": "({ className, onClick, ...props }: ComponentProps<typeof Button>) => React.JSX.Element"
+        "signature": "({ className, onClick, tone, buttonStyle, iconOnly, ...props }: ComponentProps<typeof Button>) => React.JSX.Element"
       },
       "SidebarVariant": {
         "kind": "type",
@@ -12413,6 +12550,10 @@
             "optional": true,
             "type": "boolean"
           },
+          "maxLength": {
+            "optional": true,
+            "type": "number"
+          },
           "clearable": {
             "optional": true,
             "type": "boolean"
@@ -12513,6 +12654,14 @@
           "onClear": {
             "optional": true,
             "type": "() => void"
+          },
+          "strings": {
+            "optional": true,
+            "type": "StringsProp<InputStrings>"
+          },
+          "placeholder": {
+            "optional": true,
+            "type": "string"
           }
         }
       },
@@ -12599,6 +12748,10 @@
           "invalid": {
             "optional": true,
             "type": "boolean"
+          },
+          "rows": {
+            "optional": true,
+            "type": "number"
           },
           "minRows": {
             "optional": true,
@@ -13041,7 +13194,8 @@
       "ToggleGroupProps": {
         "kind": "interface",
         "extends": [
-          "ToggleGroupPrimitive.Props"
+          "ToggleGroupPrimitive.Props",
+          "Pick<ToggleGroupPrimitive.Props, \"multiple\" | \"value\" | \"onValueChange\">"
         ],
         "members": {
           "attached": {
@@ -13053,7 +13207,8 @@
       "ToggleProps": {
         "kind": "interface",
         "extends": [
-          "TogglePrimitive.Props"
+          "TogglePrimitive.Props",
+          "Pick<TogglePrimitive.Props, \"pressed\" | \"defaultPressed\" | \"onPressedChange\" | \"value\">"
         ],
         "members": {
           "variant": {
@@ -13092,7 +13247,8 @@
       "ToolbarGroupProps": {
         "kind": "interface",
         "extends": [
-          "ToolbarPrimitive.Group.Props"
+          "ToolbarPrimitive.Group.Props",
+          "Pick<ToolbarPrimitive.Group.Props, \"disabled\">"
         ]
       },
       "ToolbarInput": {
@@ -13118,7 +13274,8 @@
       "ToolbarProps": {
         "kind": "interface",
         "extends": [
-          "ToolbarPrimitive.Root.Props"
+          "ToolbarPrimitive.Root.Props",
+          "Pick<ToolbarPrimitive.Root.Props, \"orientation\" | \"disabled\" | \"loopFocus\">"
         ]
       },
       "ToolbarSeparator": {
@@ -13143,11 +13300,11 @@
       },
       "TooltipProvider": {
         "kind": "callable",
-        "signature": "({ delay, delayDuration, ...props }: TooltipPrimitive.Provider.Props & { delayDuration?: number; }) => import(\"react\").JSX.Element"
+        "signature": "({ delay, delayDuration, ...props }: TooltipPrimitive.Provider.Props & Pick<TooltipPrimitive.Provider.Props, \"delay\"> & { delayDuration?: number; }) => import(\"react\").JSX.Element"
       },
       "TooltipTrigger": {
         "kind": "callable",
-        "signature": "({ render, children, ...props }: TooltipPrimitive.Trigger.Props) => import(\"react\").JSX.Element"
+        "signature": "({ render, children, ...props }: TooltipPrimitive.Trigger.Props & Pick<TooltipPrimitive.Trigger.Props, \"render\">) => import(\"react\").JSX.Element"
       }
     },
     "./base/typography": {
@@ -25178,7 +25335,7 @@
       },
       "MapTileLayerProps": {
         "kind": "type",
-        "signature": "Partial<TileLayerProps> & { name?: string; darkUrl?: string; darkAttribution?: string; ref?: Ref<TileLayer>; }"
+        "signature": "Partial<TileLayerProps> & Partial<Pick<TileLayerProps, \"url\" | \"attribution\">> & { name?: string; darkUrl?: string; darkAttribution?: string; ref?: Ref<TileLayer>; }"
       },
       "MapTooltip": {
         "kind": "callable",
@@ -33847,6 +34004,63 @@
         "kind": "callable",
         "signature": "(table: LegacyTable<TData>) => TData[]"
       },
+      "LinkRenderer": {
+        "kind": "type",
+        "signature": "(props: LinkRenderProps) => ReactElement"
+      },
+      "LinkRenderProps": {
+        "kind": "interface",
+        "members": {
+          "href": {
+            "optional": true,
+            "type": "string"
+          },
+          "children": {
+            "optional": false,
+            "type": "ReactNode"
+          },
+          "className": {
+            "optional": true,
+            "type": "string"
+          },
+          "target": {
+            "optional": true,
+            "type": "string"
+          },
+          "rel": {
+            "optional": true,
+            "type": "string"
+          },
+          "onClick": {
+            "optional": true,
+            "type": "(event: MouseEvent<HTMLAnchorElement>) => void"
+          },
+          "\"aria-label\"": {
+            "optional": true,
+            "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
+          },
+          "active": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "disabled": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "external": {
+            "optional": true,
+            "type": "boolean"
+          }
+        }
+      },
       "mergeDataTableStrings": {
         "kind": "callable",
         "signature": "(overrides?: DataTableStringsOverride) => DataTableStrings"
@@ -33866,27 +34080,6 @@
       "ResourceCellBadge": {
         "kind": "type",
         "signature": "ReactNode | { id?: string; label: ReactNode; tone?: BadgeTone; icon?: ReactNode; }"
-      },
-      "ResourceCellLinkProps": {
-        "kind": "interface",
-        "members": {
-          "href": {
-            "optional": false,
-            "type": "string"
-          },
-          "children": {
-            "optional": false,
-            "type": "ReactNode"
-          },
-          "className": {
-            "optional": true,
-            "type": "string"
-          },
-          "\"aria-label\"": {
-            "optional": true,
-            "type": "string"
-          }
-        }
       },
       "ResourceCellMetadataItem": {
         "kind": "interface",
@@ -33938,7 +34131,7 @@
           },
           "renderLink": {
             "optional": true,
-            "type": "(props: ResourceCellLinkProps) => ReactNode"
+            "type": "LinkRenderer"
           },
           "emptyLabel": {
             "optional": true,
@@ -35517,11 +35710,11 @@
         "kind": "const",
         "signature": "AuthShellStrings"
       },
-      "LayoutLinkRenderer": {
+      "LinkRenderer": {
         "kind": "type",
-        "signature": "(props: LayoutLinkRenderProps) => ReactNode"
+        "signature": "(props: LinkRenderProps) => ReactElement"
       },
-      "LayoutLinkRenderProps": {
+      "LinkRenderProps": {
         "kind": "interface",
         "members": {
           "href": {
@@ -35551,6 +35744,14 @@
           "\"aria-label\"": {
             "optional": true,
             "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
           },
           "active": {
             "optional": true,
@@ -36148,11 +36349,11 @@
           }
         }
       },
-      "LayoutLinkRenderer": {
+      "LinkRenderer": {
         "kind": "type",
-        "signature": "(props: LayoutLinkRenderProps) => ReactNode"
+        "signature": "(props: LinkRenderProps) => ReactElement"
       },
-      "LayoutLinkRenderProps": {
+      "LinkRenderProps": {
         "kind": "interface",
         "members": {
           "href": {
@@ -36182,6 +36383,14 @@
           "\"aria-label\"": {
             "optional": true,
             "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
           },
           "active": {
             "optional": true,
@@ -36326,6 +36535,63 @@
         "kind": "const",
         "signature": "SideNavStrings"
       },
+      "LinkRenderer": {
+        "kind": "type",
+        "signature": "(props: LinkRenderProps) => ReactElement"
+      },
+      "LinkRenderProps": {
+        "kind": "interface",
+        "members": {
+          "href": {
+            "optional": true,
+            "type": "string"
+          },
+          "children": {
+            "optional": false,
+            "type": "ReactNode"
+          },
+          "className": {
+            "optional": true,
+            "type": "string"
+          },
+          "target": {
+            "optional": true,
+            "type": "string"
+          },
+          "rel": {
+            "optional": true,
+            "type": "string"
+          },
+          "onClick": {
+            "optional": true,
+            "type": "(event: MouseEvent<HTMLAnchorElement>) => void"
+          },
+          "\"aria-label\"": {
+            "optional": true,
+            "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
+          },
+          "active": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "disabled": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "external": {
+            "optional": true,
+            "type": "boolean"
+          }
+        }
+      },
       "SectionNav": {
         "kind": "callable",
         "signature": "({ items, rootMargin, onSelect, strings, className, ...props }: SectionNavProps) => React.JSX.Element"
@@ -36454,7 +36720,7 @@
           },
           "renderLink": {
             "optional": true,
-            "type": "(props: { href: string; className: string; children: React.ReactNode; \"aria-current\"?: \"page\"; \"aria-disabled\"?: boolean; }) => React.ReactElement"
+            "type": "LinkRenderer"
           },
           "strings": {
             "optional": true,
@@ -36481,11 +36747,11 @@
         "kind": "const",
         "signature": "PageHeaderStrings"
       },
-      "LayoutLinkRenderer": {
+      "LinkRenderer": {
         "kind": "type",
-        "signature": "(props: LayoutLinkRenderProps) => ReactNode"
+        "signature": "(props: LinkRenderProps) => ReactElement"
       },
-      "LayoutLinkRenderProps": {
+      "LinkRenderProps": {
         "kind": "interface",
         "members": {
           "href": {
@@ -36515,6 +36781,14 @@
           "\"aria-label\"": {
             "optional": true,
             "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
           },
           "active": {
             "optional": true,
@@ -36798,13 +37072,70 @@
           },
           "renderLink": {
             "optional": true,
-            "type": "React.ComponentProps<typeof SideNav>[\"renderLink\"]"
+            "type": "LinkRenderer"
           },
           "actions": {
             "optional": true,
             "type": "React.ReactNode"
           },
           "stickyAside": {
+            "optional": true,
+            "type": "boolean"
+          }
+        }
+      },
+      "LinkRenderer": {
+        "kind": "type",
+        "signature": "(props: LinkRenderProps) => ReactElement"
+      },
+      "LinkRenderProps": {
+        "kind": "interface",
+        "members": {
+          "href": {
+            "optional": true,
+            "type": "string"
+          },
+          "children": {
+            "optional": false,
+            "type": "ReactNode"
+          },
+          "className": {
+            "optional": true,
+            "type": "string"
+          },
+          "target": {
+            "optional": true,
+            "type": "string"
+          },
+          "rel": {
+            "optional": true,
+            "type": "string"
+          },
+          "onClick": {
+            "optional": true,
+            "type": "(event: MouseEvent<HTMLAnchorElement>) => void"
+          },
+          "\"aria-label\"": {
+            "optional": true,
+            "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
+          },
+          "active": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "disabled": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "external": {
             "optional": true,
             "type": "boolean"
           }
@@ -36936,11 +37267,11 @@
         "kind": "callable",
         "signature": "(currentUrl: string, path: string) => boolean"
       },
-      "LayoutLinkRenderer": {
+      "LinkRenderer": {
         "kind": "type",
-        "signature": "(props: LayoutLinkRenderProps) => ReactNode"
+        "signature": "(props: LinkRenderProps) => ReactElement"
       },
-      "LayoutLinkRenderProps": {
+      "LinkRenderProps": {
         "kind": "interface",
         "members": {
           "href": {
@@ -36970,6 +37301,14 @@
           "\"aria-label\"": {
             "optional": true,
             "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
           },
           "active": {
             "optional": true,
@@ -37018,7 +37357,7 @@
           },
           "renderLink": {
             "optional": false,
-            "type": "LayoutLinkRenderer"
+            "type": "LinkRenderer"
           },
           "toggle": {
             "optional": true,
@@ -37226,11 +37565,11 @@
         "kind": "const",
         "signature": "WorkspaceRecordHeaderStrings"
       },
-      "LayoutLinkRenderer": {
+      "LinkRenderer": {
         "kind": "type",
-        "signature": "(props: LayoutLinkRenderProps) => ReactNode"
+        "signature": "(props: LinkRenderProps) => ReactElement"
       },
-      "LayoutLinkRenderProps": {
+      "LinkRenderProps": {
         "kind": "interface",
         "members": {
           "href": {
@@ -37260,6 +37599,14 @@
           "\"aria-label\"": {
             "optional": true,
             "type": "string"
+          },
+          "\"aria-current\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-current\"]"
+          },
+          "\"aria-disabled\"": {
+            "optional": true,
+            "type": "AriaAttributes[\"aria-disabled\"]"
           },
           "active": {
             "optional": true,
@@ -38874,6 +39221,10 @@
             "optional": true,
             "type": "DateInput"
           },
+          "pattern": {
+            "optional": true,
+            "type": "string"
+          },
           "separator": {
             "optional": true,
             "type": "string"
@@ -39668,6 +40019,10 @@
           "Omit<NumberProps, \"options\">"
         ],
         "members": {
+          "value": {
+            "optional": true,
+            "type": "number | string | null"
+          },
           "scaled": {
             "optional": true,
             "type": "boolean"

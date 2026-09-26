@@ -31,6 +31,11 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The search-driven single-select picker, for a screen that already holds its results: the
+consumer supplies the items, the query and the loading flag. It does not filter `items` —
+what is passed is what renders. The field shows the query while open and the selection's
+label while closed.
+
 ```text
 ({ selectedValue, onSelectedValueChange, clearSearchOnClose, minSearchLength, loading, showListContent, disabled, clearable, ...shared }: AsyncComboboxProps<T>) => import("react").JSX.Element
 ```
@@ -45,7 +50,7 @@ Extends: `AsyncComboboxSharedProps<T>`.
 | --- | :-: | --- | --- |
 | `selectedValue` | yes | `T \| null` | The selected item (not a key), or `null`. Controlled; survives `items` being replaced. |
 | `onSelectedValueChange` | yes | `(value: T \| null) => void` |  |
-| `clearSearchOnClose` | no | `boolean` | Clears the query when the popup closes. Defaults to `true`. |
+| `clearSearchOnClose` | no | `boolean` | Clears the query when the popup closes, so the next open is not filtered by something<br>forgotten. @default true |
 
 ### `AsyncComboboxSharedProps`
 
@@ -58,11 +63,11 @@ Kind: interface.
 | `searchValue` | yes | `string` | The text in the field. Controlled. |
 | `onSearchValueChange` | yes | `(value: string) => void` | Every keystroke, with the raw untrimmed value. |
 | `getItemLabel` | yes | `(item: T) => string` | The visible label. Also the identity when `getItemKey` is absent, and the string the<br>create row's duplicate check compares against. |
-| `getItemKey` | no | `(item: T) => string` | Stable identity. Defaults to the label; supply it whenever labels are not unique. |
+| `getItemKey` | no | `(item: T) => string` | Stable identity. Defaults to the label, so supply it whenever labels are not unique:<br>two people of one name would collide, and de-duplicating would drop one. |
 | `loading` | no | `boolean` |  |
 | `showListContent` | no | `boolean` | Whether list-owned content (status, results, create row, footer) may render. Defaults to<br>`true`. Turning it off does not clear the selection. |
 | `minSearchLength` | no | `number` | Characters required before the list becomes active. Defaults to 3. Below it the status<br>row replaces results and `onSearch` does not fire; `0` allows browsing before typing. |
-| `strings` | no | `Partial<AsyncComboboxStrings>` |  |
+| `strings` | no | `Partial<AsyncComboboxStrings>` | Overrides every word the pickers render, including the clear and chevron controls' names<br>and each chip's remove control. |
 | `disabled` | no | `boolean` |  |
 | `className` | no | `string` |  |
 | `clearable` | no | `boolean` |  |
@@ -74,14 +79,14 @@ Kind: interface.
 | `required` | no | `boolean` |  |
 | `onBlur` | no | `() => void` |  |
 | `onSearch` | no | `(value: string) => void` | The server query: fires after `debounceMs` with the trimmed value, only at or above<br>`minSearchLength`. To clear results below the threshold, use `onSearchValueChange`. |
-| `debounceMs` | no | `number` |  |
+| `debounceMs` | no | `number` | The quiet period before `onSearch` fires, in milliseconds. @default 300 |
 | `creatable` | no | `boolean` | Offers an inline create row when nothing matches. Needs `onCreate` to do anything. |
-| `onCreate` | no | `(value: string) => void` |  |
+| `onCreate` | no | `(value: string) => void` | Receives the create row's text: a created entry arrives here, not as a selection. The row<br>is withheld while nothing is typed, below `minSearchLength`, and when the text matches an<br>existing label case-insensitively. |
 | `getItemGroup` | no | `(item: T) => string` | Returns a group name per item. Absent means no grouping. |
 | `renderGroupLabel` | no | `(group: string) => ReactNode` |  |
 | `hasMore` | no | `boolean` | Enables scroll-triggered pagination. |
-| `onLoadMore` | no | `() => void` |  |
-| `loadingMore` | no | `boolean` |  |
+| `onLoadMore` | no | `() => void` | Asks for the next page once the list is scrolled 80% of the way down. A cooldown after<br>each request stops a second page being asked for while the first is in flight — the list<br>has not grown, so the scroll position is still past the threshold. |
+| `loadingMore` | no | `boolean` | Shows that the next page is loading, and holds off asking for another. |
 | `getItemDisabled` | no | `(item: T) => boolean` | Renders an option unselectable without hiding it. |
 | `highlightMatch` | no | `boolean` | Emphasises the matched substring. Ignored when `renderItem` is set. |
 | `open` | no | `boolean` |  |
@@ -112,6 +117,9 @@ Kind: interface.
 
 Kind: callable.
 
+The multi-select twin of `AsyncCombobox`: chips in the field, checks in the list, and an
+optional apply footer. Selections are merged ahead of the results, so they stay visible.
+
 ```text
 ({ selectedValues, onSelectedValuesChange, minSearchLength, loading, showListContent, disabled, closeOnSelect, applyButton, onApply, onCancel, open, onOpenChange, ...shared }: AsyncMultiComboboxProps<T>) => import("react").JSX.Element
 ```
@@ -128,12 +136,16 @@ Extends: `AsyncComboboxSharedProps<T>`.
 | `onSelectedValuesChange` | yes | `(values: T[]) => void` | With `applyButton`, this fires only on Apply. Without it, on every toggle. |
 | `closeOnSelect` | no | `boolean` | Defaults to false. In apply mode the list stays open until Apply or Cancel. |
 | `applyButton` | no | `boolean` | Renders an Apply / Cancel footer and holds edits in a draft until Apply. Without it every toggle commits. |
-| `onApply` | no | `() => void` |  |
-| `onCancel` | no | `() => void` |  |
+| `onApply` | no | `() => void` | Called when Apply commits the draft. |
+| `onCancel` | no | `() => void` | Called when Cancel discards the draft. Cancel and dismissal both restore the committed set. |
 
 ### `ComboboxDropdown`
 
 Kind: callable.
+
+The popup: status row, results, create row, pager and footer. It renders an empty popup
+rather than nothing, because a popup that vanishes mid-type reads as a broken control
+rather than an empty result.
 
 ```text
 ({ loading, showStatus, showEmpty, trimmedSearch, minSearchLength, items, groupedItems, createOptionItem, renderItemContent, getItemReactKey, getItemDisabled, renderGroupLabel, loadingMore, strings, portalContainer, listRef, anchor, applyFooter, errorSlot, }: ComboboxDropdownProps<T>) => import("react").JSX.Element
@@ -193,6 +205,9 @@ SuggestionsStrings
 
 Kind: callable.
 
+The matched span inside a result label. Exported so a custom row keeps the highlight
+rather than rendering a plain string beside ones that have it.
+
 ```text
 ({ text, highlight }: { text: string; highlight: string; }) => import("react").JSX.Element
 ```
@@ -208,6 +223,11 @@ T | Promise<T>
 ### `ResourceCombobox`
 
 Kind: callable.
+
+A self-fetching picker: give it a `fetcher` and it owns debounce, abort and the race guard.
+Browsable from the first keystroke, and preloaded on mount so the list is there on open. A
+failed fetch replaces the list content, as `AsyncCombobox`'s `showListContent` does when
+off, but keeps the selection and the query, for retry.
 
 ```text
 ({ fetcher, onAfterFetch, onError, getKey, getLabel, limit, debounceMs, preload, minSearchLength, defaultValue, errorMessage, ...props }: ResourceComboboxProps<T>) => import("react").JSX.Element
@@ -260,7 +280,7 @@ Extends: `Omit<AsyncComboboxProps<T>, "items" | "selectedValue" | "onSelectedVal
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `fetcher` | yes | `ResourceComboboxFetcher<T>` |  |
+| `fetcher` | yes | `ResourceComboboxFetcher<T>` | Fetches the options for a query. Debounce, abort, and the race guard are owned for you,<br>and the query arrives trimmed. Honour `signal`, so an abort does not surface as a failure. |
 | `value` | no | `T \| null` | Controlled. Omit entirely to let the component own the selection. |
 | `defaultValue` | no | `T \| null` | The starting selection when uncontrolled. Ignored once `value` is passed. |
 | `onValueChange` | no | `(value: T \| null) => void` |  |
@@ -269,7 +289,7 @@ Extends: `Omit<AsyncComboboxProps<T>, "items" | "selectedValue" | "onSelectedVal
 | `onSearchValueChange` | no | `(value: string) => void` | Every keystroke, with the raw untrimmed value. |
 | `defaultOpen` | no | `boolean` | The popup's starting state when `open` is not controlled. |
 | `clearSearchOnClose` | no | `boolean` | Clears the query when the popup closes. Defaults to `false`. A failed query is always kept for retry. |
-| `requestDelay` | no | `number` | A further wait before the fetcher runs, after the loading state is showing. For rate-limited endpoints. |
+| `requestDelay` | no | `number` | A further wait before the fetcher runs, after the loading state is showing. For<br>rate-limited endpoints: the reader sees something is happening, and the request that<br>would have been refused is never made. |
 | `onAfterFetch` | no | `(items: T[], context: ResourceComboboxFetcherArgs) => void` |  |
 | `onError` | no | `(error: unknown, context: ResourceComboboxFetcherArgs) => void` | Aborted and superseded requests never reach this. |
 | `getKey` | yes | `(item: T) => string` | Stable identity. Also decides which option reads as selected. |
@@ -279,7 +299,7 @@ Extends: `Omit<AsyncComboboxProps<T>, "items" | "selectedValue" | "onSelectedVal
 | `renderOption` | no | `(item: T, context: ResourceComboboxOptionContext) => ReactNode` | Replaces the whole option row. `getLabel` still supplies the input's text. |
 | `limit` | no | `number` |  |
 | `minSearchLength` | no | `number` | Characters required before fetching. Defaults to `0` (unlike `AsyncCombobox`'s `3`); an empty input follows `preload`. |
-| `preload` | no | `boolean` | Fetches with an empty query, so there is something to look at before typing. |
+| `preload` | no | `boolean` | Fetches with an empty query as the popup opens, without waiting out the debounce, so<br>there is something to look at before typing. Off, an empty field asks the reader to type<br>instead of claiming there are no results. |
 | `errorMessage` | no | `ReactNode` |  |
 | `renderError` | no | `(context: ResourceComboboxErrorContext) => ReactNode` |  |
 | `strings` | no | `Partial<AsyncComboboxStrings>` |  |
@@ -287,6 +307,11 @@ Extends: `Omit<AsyncComboboxProps<T>, "items" | "selectedValue" | "onSelectedVal
 ### `SuggestionsCombobox`
 
 Kind: callable.
+
+`useSuggestions` behind the kit's combobox: the same engine as `ResourceCombobox` in the
+hook's words — `fetchData(query, { signal })`, `itemKey`, `itemText`,
+`query`/`onQueryChange` — and with its defaults: one character before a request, and no
+preload.
 
 ```text
 ({ fetchData, itemKey, itemText, renderItem, minQueryLength, preload, query, defaultQuery, onQueryChange, allowClear, clearInputOnClose, disabled, strings, ...props }: SuggestionsComboboxProps<T>) => import("react").JSX.Element
@@ -301,8 +326,8 @@ Extends: `UseSuggestionsConfig<T>`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | no | `string` | Applied to the search input, so a `FormField` label can address it. |
-| `itemKey` | yes | `(item: T) => string \| number` |  |
-| `itemText` | yes | `(item: T) => string` |  |
+| `itemKey` | yes | `(item: T) => string \| number` | Stable identity for an item. |
+| `itemText` | yes | `(item: T) => string` | The item's label: what its row and the chosen value show. |
 | `renderItem` | no | `(item: T) => ReactNode` |  |
 | `renderError` | no | `(context: SuggestionsErrorContext) => ReactNode` |  |
 | `allowClear` | no | `boolean` |  |
@@ -355,6 +380,10 @@ The copy `SuggestionsCombobox` speaks, mapped onto `AsyncComboboxStrings` inside
 
 Kind: callable.
 
+The list state every picker shares: the threshold, the selection merged ahead of the
+results, the groups, the create row and the pager. The pickers differ only in what
+selected means, the field, and where the results come from.
+
 ```text
 ({ items, searchValue, getItemLabel, getItemKey, loading, showListContent, minSearchLength, strings, renderItem, onSearch, debounceMs, creatable, onCreate, getItemGroup, hasMore, onLoadMore, loadingMore, highlightMatch, ensuredItems, }: UseComboboxCoreOptions<T>) => UseComboboxCoreReturn<T>
 ```
@@ -395,6 +424,10 @@ Kind: interface.
 
 Kind: callable.
 
+The request lifecycle the self-fetching pickers run on — query, results, loading, error,
+selection and open, each controllable on its own — for a caller putting it behind their
+own field, or a surface that is not a combobox at all.
+
 ```text
 (config: UseSuggestionsConfig<T>) => UseSuggestionsResult<T>
 ```
@@ -405,10 +438,10 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `fetchData` | yes | `(query: string, context?: SuggestionsFetchContext) => MaybePromise<T[]>` |  |
+| `fetchData` | yes | `(query: string, context?: SuggestionsFetchContext) => MaybePromise<T[]>` | Fetches the suggestions for a query, as an array or a promise of one. Pass<br>`context.signal` to the request: it aborts when a newer query starts. |
 | `minQueryLength` | no | `number` | Characters required before a request is issued, not counting surrounding whitespace.<br>Defaults to 1. |
 | `debounceMs` | no | `number` | The quiet period that collapses a burst of typing into one request. Defaults to 300. |
-| `requestDelay` | no | `number` | A further wait before the fetcher runs, after the loading state is showing (unlike<br>`debounceMs`, which delays deciding to fetch). For rate-limited endpoints. |
+| `requestDelay` | no | `number` | A further wait before the fetcher runs, after the loading state is showing (unlike<br>`debounceMs`, which delays deciding to fetch). For rate-limited endpoints. @default 0 |
 | `preload` | no | `boolean` | Fetches the empty query, so there is something before typing. Not debounced. |
 | `query` | no | `string` |  |
 | `defaultQuery` | no | `string` |  |

@@ -32,6 +32,11 @@ export interface SidebarUserProps {
 	renderTrigger?: (user: LayoutUser) => ReactNode
 }
 
+/**
+ * The account row at the foot of the rail. Its menu opens to the RIGHT when the rail is
+ * collapsed and ABOVE when it is not, because a menu that always drops down is off-screen at
+ * the bottom of a full-height panel.
+ */
 export function SidebarUser({
 	user,
 	customContent,

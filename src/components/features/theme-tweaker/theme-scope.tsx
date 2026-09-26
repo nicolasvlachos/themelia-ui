@@ -10,6 +10,11 @@ import { cx } from "@/lib/cx"
 import type { ThemeScopeProps } from "./theme-tweaker.types"
 import { themeToStyle } from "./theme-tweaker.utils"
 
+/**
+ * Applies a theme to an intentionally isolated subtree: one DOM node carrying the theme's
+ * variables and its mode. An app-wide theme belongs on the shared root instead, through
+ * useAppliedTheme.
+ */
 export const ThemeScope = forwardRef<HTMLDivElement, ThemeScopeProps>(function ThemeScope(
 	{ theme, mode = theme.mode, className, style, children, ...props },
 	ref,

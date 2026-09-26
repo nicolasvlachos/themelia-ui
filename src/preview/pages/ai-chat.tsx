@@ -65,26 +65,23 @@ export function AiChatPage() {
 			</Example>
 
 			<Example id="ai-chat-api" title="API">
-				<PropTable owner="AiChat"
-					rows={[
-						{ name: "messages", type: "AiChatMessage[]", required: true, description: "Oldest first. Each carries parts[], which is where the mix lives — text, reasoning, a tool call, code, sources, a task, an artifact, a confirmation, attachments, or custom." },
-						{ name: "inputValue / onInputChange", type: "string / (value) => void", required: true, description: "Controlled. The composer holds no draft of its own, so clearing it after a submit is the consumer's, which is also where the failed-send-restores-the-text case lives." },
-						{ name: "onSubmit", type: "({ text, attachments }) => void", description: "Fires on Enter or the send button. An attachment on its own is a valid message — “here, look at this” needs no words." },
-						{ name: "streaming / onStop", type: "boolean / () => void", description: "Flips submit to stop. Separate from disabled, because a streaming chat is still readable and still cancellable; a disabled one is neither." },
-						{ name: "slots", type: "AiChatSlots", description: "Seven regions replaced outright — header, intro, belowMessages, empty, queue, suggestions, input — plus renderMessage for a turn. This is the seam that keeps a prop per idea out of the API." },
-						{ name: "agent", type: "AiChatAgent | null", description: "Name, icon, subtitle, tone and status. null hides the header strip entirely." },
-						{ name: "useAiChatScroll", type: "({ dependency }) => { containerRef, endRef, isAtBottom, scrollToBottom }", description: "The stick-to-bottom behaviour without the layout, for a consumer building their own transcript." },
-						{ name: "AiToolCall status", type: "\"pending\" | \"running\" | \"success\" | \"error\"", description: "With neither args nor result the header is a plain row, not a disclosure — a control that opens an empty panel is worse than no control." },
-						{ name: "AiReasoning expandWhileStreaming", type: "boolean", default: "true", description: "Opens on the edge where streaming starts and closes on the edge where it stops, so a reader who opened or closed it in between is not fought." },
-						{ name: "AiSources onSelect", type: "(source, index) => void", description: "Wins over url, so an app that routes internally is not forced to hand the reader a full page load to reach its own document." },
-						{ name: "AiCodeBlock highlightLines", type: "number[]", description: "1-indexed. The gutter and the line share a grid row, so a highlight covers both rather than stopping at the number." },
-						{ name: "AiChatConversation / AiChatPromptInput / AiChatEmptyState", type: "component", description: "The transcript, the composer and the state before the first turn. Each is exported because a consumer building a different chat layout against the same data should get the parts without taking the shell." },
-						{ name: "AiChatQueue / AiChatSuggestionsRow / AiChatAttachmentsStrip", type: "component", description: "The three strips above the composer: messages waiting to send, prompt suggestions, and the files attached to the turn being written." },
-						{ name: "AiShimmer", type: "component", description: "\u201cThinking\u2026\u201d as a swept highlight rather than a spinner. A spinner says something is happening; a sweep says something is being produced, which is the difference the reader is waiting on. It paints through background-clip, so its colour is transparent by design \u2014 a contrast probe reading `color` alone will call it a 1:1 failure." },
-						{ name: "AiChainOfThought / AiTask", type: "component", description: "The step timeline of an agent\u2019s plan, and one step in it. A task reports what is being done, not merely that something is." },
-						{ name: "AiAgent / AiConfirmation", type: "component", description: "The identity strip that says which agent is answering, and the approval prompt that stops one before it acts. A confirmation is a decision surface: it does not auto-dismiss." },
-						{ name: "AiCodeBlock / AiArtifact", type: "component", description: "Code as produced, and the frame around a produced artifact. There is deliberately no syntax highlighting \u2014 that means shipping a grammar per language, and a chat can be handed any of them." },
-						{ name: "AiSources / AiAttachment", type: "component", description: "What the model read, and what the turn carried. Sources are listed rather than footnoted, because a reader checking an answer is looking for the list, not for a marker in the prose." },
+				<PropTable owners={["AiChat", "AiToolCall", "AiReasoning", "AiSources", "AiCodeBlock"]} />
+				<PropTable
+					symbols={[
+						"useAiChatScroll",
+						"AiChatConversation",
+						"AiChatPromptInput",
+						"AiChatEmptyState",
+						"AiChatQueue",
+						"AiChatSuggestionsRow",
+						"AiChatAttachmentsStrip",
+						"AiShimmer",
+						"AiChainOfThought",
+						"AiTask",
+						"AiAgent",
+						"AiConfirmation",
+						"AiArtifact",
+						"AiAttachment",
 					]}
 				/>
 			</Example>

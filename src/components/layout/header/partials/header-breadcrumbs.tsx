@@ -13,6 +13,12 @@ import type { HeaderBreadcrumbsProps } from "../header.types"
 import { defaultHeaderBreadcrumbsStrings } from "../header.strings"
 import styles from "../header.module.css"
 
+/**
+ * The sidebar trigger, a rule, and the trail. The three travel together because their
+ * arrangement is the part that goes wrong — a trail without the rule reads as the first
+ * crumb, and a trigger placed after it reads as part of the path. The trigger stays fixed
+ * while the trail truncates.
+ */
 export function HeaderBreadcrumbs({
 	breadcrumbs = [],
 	homeCrumb = null,

@@ -31,6 +31,11 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A control that stays engaged, reported with `aria-pressed`: `pressed` and
+`defaultPressed` hold its state, controlled and uncontrolled, and `onPressedChange` fires
+with the next one. Inside a `ToggleGroup`, `value` names the toggle, and the group reads it
+into its own value; outside a group it is unused.
+
 ```text
 ({ variant, className, ...props }: ToggleProps) => import("react").JSX.Element
 ```
@@ -39,8 +44,10 @@ Kind: callable.
 
 Kind: callable.
 
-A set of `Toggle`s (each given a `value`) sharing one value. `multiple` makes it a
-checkbox set rather than one-at-a-time.
+A set of `Toggle`s (each given a `value`) sharing one value. `multiple` allows several at
+once rather than one: a view switch is one, text styles are several. The value is always
+an array, even when only one may be pressed, so switching `multiple` does not change its
+shape.
 
 ```text
 ({ attached, className, ...props }: ToggleGroupProps) => import("react").JSX.Element
@@ -50,21 +57,21 @@ checkbox set rather than one-at-a-time.
 
 Kind: interface.
 
-Extends: `ToggleGroupPrimitive.Props`.
+Extends: `ToggleGroupPrimitive.Props`, `Pick<ToggleGroupPrimitive.Props, "multiple" | "value" | "onValueChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `attached` | no | `boolean` | Joins the toggles into one framed control. Defaults to true. |
+| `attached` | no | `boolean` | Joins the toggles into one framed control with internal rules. Off leaves them as<br>separate buttons in a row. |
 
 ### `ToggleProps`
 
 Kind: interface.
 
-Extends: `TogglePrimitive.Props`.
+Extends: `TogglePrimitive.Props`, `Pick<TogglePrimitive.Props, "pressed" | "defaultPressed" | "onPressedChange" | "value">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `variant` | no | `"ghost" \| "outline"` | Sunk when engaged, or outlined. Match whatever sits beside it in the row. |
+| `variant` | no | `"ghost" \| "outline"` | Sunk when engaged, or outlined. Match whatever sits beside it in the row — `outline`<br>for a lone control, `ghost` inside a group. |
 
 ## Preview recipes
 

@@ -2,11 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 
 import { useLatest } from "@/hooks/use-latest"
 
-/**
- * Copy a value, confirm it, and reset — the shared implementation for every copy surface.
- * The window is keyed off a counter, not a boolean: re-setting `true` is a no-op, so a
- * second copy would inherit the first one's remaining window.
- */
+/** What `useCopyToClipboard` takes. */
 export interface UseCopyToClipboardOptions {
 	/** How long the confirmation stands, in ms. Defaults to 2000, Copyable's window. */
 	confirmMs?: number
@@ -29,12 +25,22 @@ export interface UseCopyToClipboardResult {
 /* One window for every copy surface; Copyable relies on it. */
 const DEFAULT_CONFIRM_MS = 2000
 
+/**
+ * Copy a value, confirm it, and reset — the hook `Copyable` is built on, and the shared
+ * implementation for every copy surface. `copy(value)` resolves `true` or `false` rather than
+ * rejecting. Takes `confirmMs`, `onCopy`, `onError`, and `write` — a destination for where
+ * `navigator.clipboard` is absent.
+ */
 export function useCopyToClipboard({
 	confirmMs = DEFAULT_CONFIRM_MS,
 	write,
 	onCopy,
 	onError,
 }: UseCopyToClipboardOptions = {}): UseCopyToClipboardResult {
+	/*
+	 * The window is keyed off a counter, not a boolean: re-setting `true` is a no-op, so a
+	 * second copy would inherit the first one's remaining window.
+	 */
 	const [copyCount, setCopyCount] = useState(0)
 	const [copied, setCopied] = useState(false)
 

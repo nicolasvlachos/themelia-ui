@@ -22,12 +22,7 @@ export function LabelPage() {
 			</Example>
 
 			<Example id="label-api" title="API">
-				<PropTable owner="Label"
-					rows={[
-						{ name: "htmlFor", type: "string", description: "The control's id. Without it the label is decoration — clicking does nothing and nothing is announced." },
-						{ name: "Native label props", api: "Label", type: 'ComponentProps<"label">', description: "Everything a native label takes." },
-					]}
-				/>
+				<PropTable owner="Label" />
 			</Example>
 		</ComponentPage>
 	)

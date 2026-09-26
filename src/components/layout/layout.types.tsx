@@ -4,54 +4,16 @@
  */
 import type { ComponentType, HTMLAttributes, ReactNode } from "react"
 
-import type { LayoutLinkRenderer } from "@/lib/navigation"
+import type { LinkRenderer } from "@/lib/navigation"
 
 /** Native region props, including typed `data-*` hooks a consumer may attach. */
 export type LayoutSlotAttributes<E extends HTMLElement> = HTMLAttributes<E> & {
 	[K in `data-${string}`]?: string | number | boolean | undefined
 }
 
-/*
- * The link-rendering seam lives in `@/lib/navigation` so a base family can use it without
- * importing this layer; re-exported here under the names consumers already import.
- */
-export type { LayoutLinkRenderProps, LayoutLinkRenderer } from "@/lib/navigation"
-
 export interface LayoutNavigationAdapter {
-	renderLink?: LayoutLinkRenderer
-}
-
-/** Native anchor, with a non-interactive fallback for a disabled or hrefless entry. */
-export const defaultRenderLink: LayoutLinkRenderer = ({
-	href,
-	children,
-	active,
-	disabled,
-	external,
-	rel,
-	target,
-	...props
-}) => {
-	// The shell styles the active row; a plain anchor has nothing to do with the hint.
-	void active
-
-	if (!href || disabled) return <span {...props}>{children}</span>
-
-	return (
-		<a
-			href={href}
-			target={target ?? (external ? "_blank" : undefined)}
-			// Without `noopener` the opened page can reach back through `window.opener`.
-			rel={rel ?? (external ? "noopener noreferrer" : undefined)}
-			{...props}
-		>
-			{children}
-		</a>
-	)
-}
-
-export function resolveLayoutLinkRenderer({ renderLink }: LayoutNavigationAdapter = {}): LayoutLinkRenderer {
-	return renderLink ?? defaultRenderLink
+	/** Renders links through the application's router; without it, plain anchors. */
+	renderLink?: LinkRenderer
 }
 
 /** An icon as a component, a rendered node, or a name resolved through an `iconMap`. */

@@ -20,6 +20,7 @@ export interface LocalizedStringRepeaterProps {
 	strings?: Partial<RepeaterStrings>
 	emptyState?: React.ReactNode
 	maxItems?: number
+	/** Adds the drag handle and arrow-key reordering. */
 	sortable?: boolean
 	multiline?: boolean
 	requiredLocales?: string[]
@@ -29,6 +30,11 @@ export interface LocalizedStringRepeaterProps {
 	"aria-label"?: string
 }
 
+/**
+ * An ordered list of localized strings, each row a `LocalizedStringField`: one value per
+ * language, with the active locale switchable in place. A translation UI built out of plain
+ * repeaters loses which language a row belongs to the moment rows reorder.
+ */
 export function LocalizedStringRepeater({
 	locales,
 	value,

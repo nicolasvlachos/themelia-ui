@@ -237,12 +237,15 @@ Kind: interface.
 
 Kind: interface.
 
+One figure, for every metric surface: formatted once, and moved between surfaces by
+changing the component alone.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | yes | `string` | Stable identity, for list keys. |
 | `label` | yes | `string` |  |
 | `value` | yes | `number \| string \| null` | `null` renders the empty marker rather than collapsing the tile. |
-| `valueType` | no | `MetricValueType` |  |
+| `valueType` | no | `MetricValueType` | How `formatMetricValue` renders the figure. Currency shows the code rather than the<br>symbol, because an admin screen routinely shows several at once and "$" does not say<br>which dollar. |
 | `currency` | no | `string` | ISO 4217, for `valueType: "currency"`. |
 | `change` | no | `MetricChange` |  |
 | `sparkline` | no | `readonly number[]` | Points for the tile's sparkline, in chronological order. |
@@ -277,6 +280,11 @@ Which way the figure moved against its baseline.
 ### `MetricGradient`
 
 Kind: callable.
+
+The one metric on a page allowed to shout. Its ramps come from the categorical chart
+palette, never the state tokens — a hero reports no success and no warning, and painting it
+`--success` would repaint it whenever a consumer retunes the colour that means things went
+right.
 
 ```text
 ({ title, value, change, data, theme, subtitle, className, ...props }: MetricGradientProps) => import("react").JSX.Element
@@ -336,7 +344,7 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 | `metrics` | yes | `MetricData[]` |  |
 | `variant` | no | `Extract<MetricVariant, "card" \| "compact" \| "bordered" \| "accent" \| "colored">` | Forwarded to every cell. |
 | `tone` | no | `MetricTone` |  |
-| `columns` | no | `MetricGridColumns` |  |
+| `columns` | no | `MetricGridColumns` | `auto` picks the break points from the cell count. |
 | `showSparklines` | no | `boolean` |  |
 | `showChanges` | no | `boolean` |  |
 | `showIcons` | no | `boolean` |  |
@@ -345,6 +353,11 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 ### `MetricMicroGrid`
 
 Kind: callable.
+
+Six dense cells, each pairing a figure with a different sketch — deliberately not six
+sparklines, because when every cell draws the same shape a reader scanning the block has
+nothing to tell them apart by except the label. One accent across the whole block: the
+SHAPE is the differentiator, and a hue per cell adds a second, weaker one.
 
 ```text
 ({ cells, className, ...props }: MetricMicroGridProps) => import("react").JSX.Element
@@ -379,20 +392,24 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `data` | yes | `MetricData` |  |
-| `variant` | no | `MetricVariant` |  |
-| `tone` | no | `MetricTone` | Tints the `bordered` and `colored` variants. |
-| `showSparkline` | no | `boolean` |  |
-| `showChange` | no | `boolean` |  |
-| `showIcon` | no | `boolean` |  |
-| `loading` | no | `boolean` |  |
-| `error` | no | `boolean` |  |
+| `data` | yes | `MetricData` | The figure and what surrounds it: id, label, value, and optionally valueType, currency,<br>change, sparkline, icon, subtitle, footer, trend. One shape for every metric surface. |
+| `variant` | no | `MetricVariant` | Structural only — every variant reads the same data. |
+| `tone` | no | `MetricTone` | Tints the `bordered` and `colored` variants. The kit's vocabulary, so never `danger` or<br>`default`. |
+| `showSparkline` | no | `boolean` | Draws the sparkline. Off drops a part the surrounding surface already states. |
+| `showChange` | no | `boolean` | Draws the change chip. Off drops a part the surrounding surface already states. |
+| `showIcon` | no | `boolean` | Draws the icon. Off drops a part the surrounding surface already states. |
+| `loading` | no | `boolean` | Renders the variant's skeleton, which reserves the resolved tile's height so a grid does<br>not jump when data lands. |
+| `error` | no | `boolean` | Renders the error state in place of the figure. |
 | `strings` | no | `Partial<AnalyticsStrings>` | Overrides this block's own copy. |
-| `progress` | no | `number` | `colored` only — 0–100. |
+| `progress` | no | `number` | `colored` only — 0–100, driving the segmented bar. |
 
 ### `MetricSkeleton`
 
 Kind: callable.
+
+The placeholder a Metric shows while its figure is in flight, per variant — a single
+generic block would be the wrong height for five of the seven, and the reflow that causes
+is the thing a skeleton exists to avoid.
 
 ```text
 ({ variant, className, ...props }: MetricSkeletonProps) => import("react").JSX.Element
@@ -432,6 +449,11 @@ down is good.
 ### `MetricTrendChip`
 
 Kind: callable.
+
+The delta beside a figure. Direction and tone are separate props on purpose: the direction
+in `change` is a fact about the number, `trend` is a judgement about it, and for churn,
+refunds or latency the two disagree. A chip that could only derive its colour from the
+arrow would paint a rising error rate green.
 
 ```text
 ({ change, trend, variant, className, ...props }: MetricTrendChipProps) => import("react").JSX.Element

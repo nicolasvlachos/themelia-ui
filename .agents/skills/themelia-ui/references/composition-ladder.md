@@ -38,7 +38,7 @@ higher rungs are meaningful; the columns start at accessors.
 | `features/rich-text-editor/tiptap` | · | · | · | · | · | · |
 | `features/schema-form` | ● | · | ● | ● | ● | ● |
 | `features/sync` | · | · | · | · | · | ● |
-| `features/table` | ● | ● | ● | ● | ● | ● |
+| `features/table` | ● | ● | · | ● | ● | ● |
 | `features/theme-tweaker` | · | ● | · | ● | ● | ● |
 
 ## The four the plan names

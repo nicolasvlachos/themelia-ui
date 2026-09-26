@@ -59,7 +59,12 @@ export interface StatusClusterCellProps {
 	className?: string
 }
 
-/** Several chips in one cell, e.g. overdue and partially paid. */
+/**
+ * Several status chips in one cell, e.g. overdue and partially paid; a status is a Badge. One of
+ * the cells every admin table has, so a page does not rewrite it per column: a thin arrangement
+ * over the kit's primitives that adds the cell's part — the alignment, the truncation, the empty
+ * case.
+ */
 export function StatusClusterCell({
 	items = [],
 	emptyLabel,
@@ -90,6 +95,11 @@ export interface DateCellProps {
 	className?: string
 }
 
+/**
+ * A date, in the scope's pattern unless `pattern` says otherwise. One of the cells every admin
+ * table has, so a page does not rewrite it per column: a thin arrangement over the kit's
+ * primitives that adds the cell's part — the alignment, the truncation, the empty case.
+ */
 export function DateCell({
 	value,
 	pattern,
@@ -115,6 +125,11 @@ export interface DateMetaCellProps extends DateCellProps {
 	secondary?: ReactNode | ((date: Date) => ReactNode)
 }
 
+/**
+ * A date with a second line under it, given or derived from the parsed date. One of the cells
+ * every admin table has, so a page does not rewrite it per column: a thin arrangement over the
+ * kit's primitives that adds the cell's part — the alignment, the truncation, the empty case.
+ */
 export function DateMetaCell({
 	value,
 	pattern,
@@ -158,6 +173,11 @@ export interface CurrencyCellProps {
 	className?: string
 }
 
+/**
+ * An amount through Money. One of the cells every admin table has, so a page does not rewrite it
+ * per column: a thin arrangement over the kit's primitives that adds the cell's part — the
+ * alignment, the truncation, the empty case.
+ */
 export function CurrencyCell({
 	value,
 	currency,
@@ -190,6 +210,11 @@ export interface AvatarCellProps {
 	className?: string
 }
 
+/**
+ * A name with its avatar, falling back to initials, and an optional subtitle. One of the cells
+ * every admin table has, so a page does not rewrite it per column: a thin arrangement over the
+ * kit's primitives that adds the cell's part — the alignment, the truncation, the empty case.
+ */
 export function AvatarCell({
 	name,
 	imageUrl,

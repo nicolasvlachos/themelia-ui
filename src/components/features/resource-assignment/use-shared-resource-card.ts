@@ -30,6 +30,10 @@ export type UseSharedResourceCardResult<TResource, TSuggestion> = SharedResource
 	TSuggestion
 >
 
+/**
+ * The state machine without the card: open state, pending choice, `canConfirmSelection`, and a
+ * confirm that awaits.
+ */
 export function useSharedResourceCard<TResource, TSuggestion>({
 	resource,
 	mapInitialSelected,

@@ -8,11 +8,16 @@ import { defaultBooleanIndicatorStrings, type BooleanIndicatorStrings } from "./
 import styles from "./display.module.css"
 
 export interface BooleanIndicatorProps extends Omit<React.ComponentProps<"span">, "children"> {
+	/** The state, drawn as a dot and a word so it does not rely on colour alone. */
 	value?: boolean | null
-	/** Overrides what each state is called. Yes/No, Enabled/Disabled, Paid/Unpaid. */
+	/**
+	 * Overrides what each state is called: `strings.true` and `strings.false`, the two words.
+	 * Yes/No, Enabled/Disabled, Paid/Unpaid — "Active"/"Paused" beats "true"/"false".
+	 */
 	strings?: Partial<BooleanIndicatorStrings>
 }
 
+/** A yes/no state as a dot and a word. The word is required, since colour alone fails. */
 export function BooleanIndicator({
 	value,
 	strings,

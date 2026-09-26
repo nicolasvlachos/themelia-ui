@@ -21,7 +21,10 @@ export const AsyncPreview = {
 	Empty: AsyncPreviewEmpty,
 }
 
-/** Binds the generics once, for a record shape used in more than one place. */
+/**
+ * Binds the generics once, for a record shape used in more than one place, instead of restating
+ * them at every part.
+ */
 export function createAsyncPreview<TData, TContext = unknown, TType extends string = string>() {
 	return {
 		Root: AsyncPreviewRoot<TData, TContext, TType>,

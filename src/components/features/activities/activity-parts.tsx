@@ -28,6 +28,10 @@ export interface ActivityMarkerProps {
 	className?: string
 }
 
+/**
+ * The dot on the rail. It knows whether it is last, because the connector below it is what
+ * tells a reader the run has ended.
+ */
 export function ActivityMarker({ icon, tone, density, last, className }: ActivityMarkerProps) {
 	return (
 		<div
@@ -49,6 +53,10 @@ export function ActivityMarker({ icon, tone, density, last, className }: Activit
 
 /* ── Date group label ────────────────────────────────────────────────────────────── */
 
+/**
+ * The date heading a group of rows on the rail. An empty label, from an ungrouped feed,
+ * renders nothing.
+ */
 export function ActivityDateLabel({
 	label,
 	first,
@@ -101,6 +109,10 @@ function ChangeValue({ change }: { change: ActivityChange }) {
 	)
 }
 
+/**
+ * The before-and-after of an edit. Changes render as pairs rather than prose so a long diff
+ * stays scannable.
+ */
 export function ActivityChanges({
 	changes,
 	bare = false,
@@ -138,6 +150,10 @@ export interface ActivityResourceTagProps {
 	showDetails?: boolean
 }
 
+/**
+ * The chip naming what was edited, or whatever else an event acted on. Its label is the
+ * registry entry's (`config`), then `fallbackText`, then the ref's own, then the raw key.
+ */
 export function ActivityResourceTag({
 	resource,
 	config,
@@ -207,6 +223,7 @@ export function ActivityResourceTag({
 
 /* ── Overflow menu ───────────────────────────────────────────────────────────────── */
 
+/** A row's overflow menu: its actions, bound to the activity. */
 export function ActivityActionsMenu<TData = unknown>({
 	activity,
 	actions,
@@ -240,6 +257,10 @@ export function ActivityActionsMenu<TData = unknown>({
 
 /* ── Expand toggle ───────────────────────────────────────────────────────────────── */
 
+/**
+ * The control that opens a row's detail. A real button rather than a clickable row, so a
+ * keyboard reader can reach it without traversing the entry.
+ */
 export function ActivityExpandToggle({
 	expanded,
 	showLabel,
@@ -283,7 +304,10 @@ export interface ActivityEmptyStateProps {
 	className?: string
 }
 
-/** The empty feed, with a glyph in the marker column so it reads as empty rather than broken. */
+/**
+ * The state with no events: the empty feed, with a glyph in the marker column so it reads as
+ * empty rather than broken.
+ */
 export function ActivityEmptyState({
 	title,
 	hint,

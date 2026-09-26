@@ -23,14 +23,22 @@ export interface KeyValueEditorProps {
 	strings?: Partial<KeyValueEditorStrings>
 	emptyState?: React.ReactNode
 	maxItems?: number
+	/** Adds the drag handle and arrow-key reordering. */
 	sortable?: boolean
 	disabled?: boolean
 	invalid?: boolean
-	/** Flags a key that is already used elsewhere in the list. */
+	/**
+	 * Flags a key that is already used elsewhere in the list. A blank key is not a
+	 * duplicate — it is an unfinished row.
+	 */
 	flagDuplicateKeys?: boolean
 	className?: string
 }
 
+/**
+ * Key/value pairs rather than an object, so a half-typed or blank key keeps its row and its
+ * value. Convert to an object on submit.
+ */
 export function KeyValueEditor({
 	value,
 	onValueChange,

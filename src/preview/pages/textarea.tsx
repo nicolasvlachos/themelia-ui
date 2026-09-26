@@ -12,17 +12,7 @@ export function TextareaPage() {
 			/>
 
 			<Example id="textarea-api" title="API">
-				<PropTable owner="Textarea"
-					rows={[
-						{ name: "rows", type: "number", description: "Visible lines before it scrolls." },
-						{ name: "showCharacterCount / maxLength", type: "boolean / number", description: "A count under the field, and the limit it counts against." },
-						{ name: "invalid", type: "boolean", description: "The error surface, same as Input." },
-						{ name: "minRows / maxRows", type: "number", description: "The floor and ceiling when the field grows with its content. Without a ceiling a long note pushes the submit button off the screen." },
-						{ name: "clearable / onClear", type: "boolean / () => void", description: "A clear control in the trailing lane. `strings.clear` is its accessible name." },
-						{ name: "loading", type: "boolean", default: "false", description: "Replaces the trailing affordance with a spinner." },
-						{ name: "strings", type: "Partial<InputStrings>", description: "Overrides this field's own copy — the clear label, the character-count format." },
-					]}
-				/>
+				<PropTable owner="Textarea" />
 			</Example>
 		</ComponentPage>
 	)

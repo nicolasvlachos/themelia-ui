@@ -75,9 +75,9 @@ Extends: `Omit<ComponentPropsWithoutRef<"address">, "children" | "color">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `AddressParts \| null` | The address, as fields. Anything empty simply drops out. |
-| `format` | no | `"block" \| "inline"` | `block` is the envelope form across several lines; `inline` is one line for a cell. |
-| `countryCode` | no | `string \| null` | An ISO country code deciding the line order (`US`, `GB`, `DE`). Read from<br>`value.country` when that is a code; never inferred from the reader's locale. |
+| `value` | no | `AddressParts \| null` | The address, as fields — line1, line2, city, region, postalCode, country. Anything<br>empty simply drops out. |
+| `format` | no | `"block" \| "inline"` | `block` is the envelope form: an `<address>` element with a line per row. `inline` is<br>one line, in a span, for a cell or a summary. |
+| `countryCode` | no | `string \| null` | An ISO country code deciding the line order (`US`, `GB`, `DE`). Read from<br>`value.country` when that is a code; never inferred from the reader's locale — the<br>locale is a language and the address is a place. |
 | `order` | no | `AddressOrder` | Overrides the ordering outright, for a country the kit does not know. |
 | `emptyLabel` | no | `ReactNode` |  |
 | `size` | no | `ValueProps["size"]` |  |
@@ -101,13 +101,13 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `latitude` | no | `number \| null` |  |
-| `longitude` | no | `number \| null` |  |
-| `format` | no | `"decimal" \| "dms"` | `decimal` is "48.85837, 2.29448"; `dms` is "48°51'30.1\"N 2°17'40.1\"E". |
-| `precision` | no | `number` | Decimal places in `decimal` form. Five is about a metre. |
-| `showHemisphere` | no | `boolean` | Adds hemisphere letters to the decimal form: "48.85837°N, 2.29448°E". Off by default<br>(a signed pair pastes into a map); `dms` always shows them. |
+| `latitude` | no | `number \| null` | Signed decimal degrees. Either one missing renders the empty label — half a coordinate<br>locates nothing. |
+| `longitude` | no | `number \| null` | Signed decimal degrees. Either one missing renders the empty label — half a coordinate<br>locates nothing. |
+| `format` | no | `"decimal" \| "dms"` | `decimal` is `48.85837, 2.29448`: what an API round-trips and what a reader pastes into<br>a map. `dms` is `48°51'30.1"N 2°17'40.1"E`, still what marine, aviation and survey<br>users read. |
+| `precision` | no | `number` | Decimal places in `decimal` form. Five is about a metre, three about a building. |
+| `showHemisphere` | no | `boolean` | Adds hemisphere letters (N/S/E/W) to the decimal form: "48.85837°N, 2.29448°E". Off by<br>default because a signed pair is the portable form, the one that pastes into a map.<br>`dms` always shows them — an unsigned DMS value is ambiguous. |
 | `locale` | no | `string` |  |
-| `strings` | no | `Partial<CoordinatesStrings>` |  |
+| `strings` | no | `Partial<CoordinatesStrings>` | The four hemisphere letters. |
 | `emptyLabel` | no | `ReactNode` |  |
 | `size` | no | `ValueProps["size"]` |  |
 | `align` | no | `ValueProps["align"]` |  |
@@ -130,6 +130,10 @@ Kind: interface.
 
 Kind: callable.
 
+A date in the scope's pattern. Also exported as `Date`, its natural name: `DatePrimitive`
+exists because `Date` collides with the global in a file that also constructs one, so
+import whichever reads better at the call site.
+
 ```text
 ({ value, pattern, ...props }: DateBaseProps) => import("react").JSX.Element
 ```
@@ -144,8 +148,8 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `DateInput` |  |
-| `pattern` | no | `string` | date-fns pattern. Falls back to the scope's `dateFormat`. |
+| `value` | no | `DateInput` | The moment to show: whatever the API returned — a Date, an ISO string or an epoch<br>number. Parsed once, here. |
+| `pattern` | no | `string` | A date-fns pattern, when the default is not what this column needs. `DatePrimitive`<br>falls back to the scope's `dates.format`, `Time` to its `dates.timeFormat`, and<br>`DateTime` to the two joined. |
 | `emptyLabel` | no | `ReactNode` |  |
 | `size` | no | `ValueProps["size"]` |  |
 | `align` | no | `ValueProps["align"]` |  |
@@ -164,6 +168,10 @@ Date | string | number | null | undefined
 ### `DatePrimitive`
 
 Kind: callable.
+
+A date in the scope's pattern. Also exported as `Date`, its natural name: `DatePrimitive`
+exists because `Date` collides with the global in a file that also constructs one, so
+import whichever reads better at the call site.
 
 ```text
 ({ value, pattern, ...props }: DateBaseProps) => import("react").JSX.Element
@@ -185,13 +193,17 @@ Extends: `Omit<DateBaseProps, "value">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `start` | no | `DateInput` |  |
-| `end` | no | `DateInput` |  |
-| `separator` | no | `string` |  |
+| `start` | no | `DateInput` | Where the range begins. Either end may be absent — an open range is a real state, not<br>an error. |
+| `end` | no | `DateInput` | Where the range ends. Either end may be absent — an open range is a real state, not an<br>error. |
+| `pattern` | no | `string` | A date-fns pattern for both ends, when the collapsing is not wanted: only the default<br>drops a repeated month. @default "d MMM yyyy" |
+| `separator` | no | `string` | Between the two ends. An en dash by default. |
 
 ### `DateTime`
 
 Kind: callable.
+
+The same value as a date and a time. Three components rather than a granularity prop,
+because a column shows one of them and never switches.
 
 ```text
 ({ value, pattern, ...props }: DateBaseProps) => import("react").JSX.Element
@@ -261,11 +273,11 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `width` | no | `DimensionPart` |  |
-| `height` | no | `DimensionPart` |  |
-| `depth` | no | `DimensionPart` |  |
-| `unit` | no | `ReactNode` |  |
-| `separator` | no | `ReactNode` |  |
+| `width` | no | `DimensionPart` | The first part. The parts stay separate numbers until the render joins them. |
+| `height` | no | `DimensionPart` | The second part. |
+| `depth` | no | `DimensionPart` | The third part, optional — two values render as a plane. |
+| `unit` | no | `ReactNode` | Appended once, not per part. |
+| `separator` | no | `ReactNode` | Between the parts. A multiplication sign, not the letter x. |
 | `locale` | no | `string` |  |
 | `options` | no | `Intl.NumberFormatOptions` |  |
 | `emptyLabel` | no | `ReactNode` |  |
@@ -291,11 +303,11 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `number \| null` |  |
+| `value` | no | `number \| null` | The length. Seconds unless `from` says otherwise. |
 | `from` | no | `DurationUnit` | The unit the incoming value is in. |
 | `locale` | no | `string` |  |
-| `maxParts` | no | `number` | How many units to show before truncating. |
-| `unitDisplay` | no | `DurationUnitDisplay` |  |
+| `maxParts` | no | `number` | How many units to show before truncating. "2 hours 14 minutes 3 seconds" is rarely<br>useful — the reader wants the magnitude, and the tail is noise. |
+| `unitDisplay` | no | `DurationUnitDisplay` | How each unit is written. |
 | `minimumFractionDigits` | no | `number` |  |
 | `maximumFractionDigits` | no | `number` |  |
 | `emptyLabel` | no | `ReactNode` |  |
@@ -339,10 +351,10 @@ Extends: `Omit<LinkProps, "href" | "children" | "ref">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `string \| null` |  |
-| `display` | no | `ReactNode` | Shown instead of the address — a person's name, for instance. |
-| `subject` | no | `string` |  |
-| `body` | no | `string` |  |
+| `value` | no | `string \| null` | The address. Becomes both the text and the `mailto:` href. |
+| `display` | no | `ReactNode` | Shown instead of the address — a person's name, for instance. The href is still the<br>address. |
+| `subject` | no | `string` | Prefills the message's subject. Encoded into the `mailto:`, not concatenated into it. |
+| `body` | no | `string` | Prefills the message's body. Encoded into the `mailto:`, not concatenated into it. |
 | `ref` | no | `Ref<HTMLAnchorElement>` |  |
 
 ### `EmptyValue`
@@ -399,13 +411,13 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `number \| null` |  |
-| `from` | no | `FileSizeUnit` |  |
-| `base` | no | `FileSizeBase` | `binary` (default), `decimal`, or `iec`. See file-size.format.ts. |
+| `value` | no | `number \| null` | The size. Bytes unless `from` says otherwise. |
+| `from` | no | `FileSizeUnit` | The unit `value` is given in. Converted with the same base, so `from="megabytes"` means<br>2^20 under `binary` and 10^6 under `decimal`. |
+| `base` | no | `FileSizeBase` | Which base and which labels. `binary` divides by 1024 and labels it MB — the pairing<br>Windows and most file managers show, chosen so a size agrees with the machine it<br>describes rather than with SI. `decimal` is SI-correct and what Apple platforms and<br>storage vendors use. `iec` is strictly correct. The default does not move, so nothing<br>already shipped changes. @default "binary" |
 | `locale` | no | `string` |  |
 | `emptyLabel` | no | `ReactNode` |  |
 | `size` | no | `ValueProps["size"]` |  |
-| `align` | no | `ValueProps["align"]` |  |
+| `align` | no | `ValueProps["align"]` | For a size given a box of its own. A COLUMN of sizes is aligned by the column —<br>`<TableCell align="end">` — because the primitive is a span, and blockifying it to<br>align would break the text runs it also sits in. |
 | `weight` | no | `ValueProps["weight"]` |  |
 | `type` | no | `ValueProps["type"]` |  |
 | `ref` | no | `Ref<HTMLSpanElement>` |  |
@@ -432,8 +444,9 @@ The same address on one line, for a cell or a summary row.
 
 Kind: callable.
 
-Returns the address as lines, each already joined. Empty fields drop out, and a line
-left with nothing drops with them, so a missing `line2` never leaves a blank row.
+The same ordering outside React: the address as lines, each already joined. Empty fields
+drop out, and a line left with nothing drops with them, so a missing `line2` never leaves
+a blank row.
 
 ```text
 (parts: AddressParts, { countryCode, order, separator, locale }?: FormatAddressOptions) => string[]
@@ -454,8 +467,8 @@ Kind: interface.
 
 Kind: callable.
 
-Collapses a range to its distinct parts: same day renders once, and a range within one
-month drops the repeated month from the start date.
+The same collapsing outside React: a range reduced to its distinct parts. The same day
+renders once, and a range within one month drops the repeated month from the start date.
 
 ```text
 (start: DateInput, end: DateInput, { pattern, separator, locale }?: FormatDateRangeOptions) => string | undefined
@@ -474,6 +487,8 @@ Kind: interface.
 ### `formatDimensions`
 
 Kind: callable.
+
+The same joining outside React.
 
 ```text
 (width: DimensionPart, height: DimensionPart, { depth, unit, separator, locale, options }?: FormatDimensionsOptions) => string | undefined
@@ -508,6 +523,8 @@ Kind: interface.
 
 Kind: callable.
 
+The same formatting outside React.
+
 ```text
 (value: number, { from, base, locale }?: FileSizeFormatOptions) => string
 ```
@@ -516,7 +533,8 @@ Kind: callable.
 
 Kind: callable.
 
-Derive short, Unicode-aware initials from a person or resource name.
+The same derivation outside React: short, Unicode-aware initials from a person or
+resource name.
 
 `first-last` is the identity default (`Mary Jane Smith` → `MS`). Use
 `first-words` for admin surfaces that intentionally use the first
@@ -530,6 +548,8 @@ the first N letters (`OpenAI` → `OP`).
 ### `formatName`
 
 Kind: callable.
+
+The same normalisation outside React — for a sort key, an export, a document title.
 
 ```text
 (value: string, { force }?: NameFormatOptions) => string
@@ -571,8 +591,8 @@ Extends: `Omit<ValueProps, "children">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `value` | no | `string \| null` | Person, organisation, or resource name to derive initials from. |
-| `strategy` | no | `InitialsStrategy` | First + last word by default; `first-words` keeps the leading N words instead. |
-| `maxCharacters` | no | `InitialsMaxCharacters` |  |
+| `strategy` | no | `InitialsStrategy` | First + last word by default; `first-words` keeps the leading N words instead. @default "first-last" |
+| `maxCharacters` | no | `InitialsMaxCharacters` | How many characters are kept. @default 2 |
 | `locale` | no | `string` |  |
 | `fallback` | no | `string` | Returned when no usable letter or number exists. |
 | `ref` | no | `Ref<HTMLSpanElement>` |  |
@@ -601,12 +621,12 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | no | `readonly string[] \| null` |  |
-| `join` | no | `"and" \| "or" \| "none"` | `and` is "A, B and C"; `or` is "A, B or C"; `none` is "A, B, C", for lists that are<br>not prose. (Not `type`, which primitives use for the text tone.) |
-| `joinStyle` | no | `"long" \| "short" \| "narrow"` | `long` is "and", `short` is "&" where the locale has one, `narrow` drops it.<br>(Not `style`, the DOM attribute.) |
+| `items` | no | `readonly string[] \| null` | Strings, not nodes: `Intl.ListFormat` formats text, and falling back to a hand join for<br>nodes would quietly lose the locale rules. A row of badges is a `Stack` with a gap. |
+| `join` | no | `"and" \| "or" \| "none"` | `and` is "A, B and C"; `or` is "A, B or C"; `none` is "A, B, C", for lists that are<br>not prose, where a trailing "and" reads as a claim the data is not making. Not called<br>`type`: every other primitive spends that word on the text tone. |
+| `joinStyle` | no | `"long" \| "short" \| "narrow"` | `long` is "and", `short` is "&" where the locale has one, `narrow` drops it. Not called<br>`style`, which is the DOM attribute and would have shadowed it. |
 | `max` | no | `number` | Shows at most this many, then a count of the rest inside the list, so the<br>conjunction still lands correctly: "Alice, Bob and 3 more". |
 | `locale` | no | `string` |  |
-| `strings` | no | `Partial<InlineListStrings>` |  |
+| `strings` | no | `Partial<InlineListStrings>` | Overrides the list's own copy: `more(count)`, which names the truncated remainder. |
 | `emptyLabel` | no | `ReactNode` |  |
 | `size` | no | `ValueProps["size"]` |  |
 | `align` | no | `ValueProps["align"]` |  |
@@ -625,6 +645,9 @@ Kind: interface.
 ### `Link`
 
 Kind: callable.
+
+The plain anchor the three contact primitives are built on: the kit's `TextLink`, or the
+empty mark when there is nothing to link.
 
 ```text
 ({ children, emptyLabel, className, ref, ...props }: LinkProps) => import("react").JSX.Element
@@ -658,7 +681,7 @@ Extends: `SharedProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `number \| null` |  |
+| `value` | no | `number \| null` | The amount. |
 | `unit` | no | `string` | A CSS-style unit identifier — `kilogram`, `meter`, `liter`, `celsius`, `byte`.<br><br>Passed to `Intl.NumberFormat`, which owns both the abbreviation and where it goes:<br>English writes "2.5 kg" and French writes "2,5 kg", and neither is a string this<br>component should be assembling. |
 | `unitDisplay` | no | `"short" \| "narrow" \| "long"` | `short` is "2.5 kg", `narrow` is "2.5kg", `long` is "2.5 kilograms". |
 | `maximumFractionDigits` | no | `number` | Caps the decimals. The value is not rounded before formatting. |
@@ -679,17 +702,17 @@ Extends: `SpanProps`, `MoneyValue`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `locale` | no | `string` |  |
+| `locale` | no | `string` | Overrides the scope's locale for this value. |
 | `emptyLabel` | no | `ReactNode` |  |
 | `size` | no | `ValueProps["size"]` |  |
 | `align` | no | `ValueProps["align"]` |  |
 | `weight` | no | `ValueProps["weight"]` |  |
 | `type` | no | `ValueProps["type"]` |  |
-| `secondary` | no | `MoneyValue \| null` | A converted value shown beside the primary one. The scope's policy can hide it<br>(`displayMode="primary-only"`) but never invents one. |
-| `displayMode` | no | `MoneyDisplayMode` |  |
-| `layout` | no | `MoneyLayout` |  |
-| `secondaryEmphasis` | no | `MoneySecondaryEmphasis` |  |
-| `separator` | no | `ReactNode` | Between the two, inline. A middle dot; pass an arrow for a conversion. |
+| `secondary` | no | `MoneyValue \| null` | A converted value shown beside the primary one. Passing it is the request for the pair:<br>the scope's policy can narrow that (`displayMode="primary-only"`) but never widen it,<br>and never invents a value. |
+| `displayMode` | no | `MoneyDisplayMode` | Whether the pair shows. `dynamic` shows it only when the two codes actually differ. |
+| `layout` | no | `MoneyLayout` | Beside, or under. Falls back to the scope's `money.layout`. |
+| `secondaryEmphasis` | no | `MoneySecondaryEmphasis` | How loud the second value is against the first. |
+| `separator` | no | `ReactNode` | Between the two, inline. A middle dot; pass an arrow for a conversion. It is<br>`aria-hidden`: read aloud, the mark between two amounts is punctuation for the eye. |
 | `ref` | no | `Ref<HTMLSpanElement>` |  |
 
 ### `MoneyUnit`
@@ -708,17 +731,18 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `amount` | no | `number \| string \| null` | A number or decimal string. A single dot is decimal; grouped US/EU strings are also accepted. |
-| `currency` | no | `string` |  |
-| `unit` | no | `MoneyUnit` | Defaults to `major`. Use `minor` for APIs that store integer minor units. |
-| `minorUnitScale` | no | `number` | Minor units per major unit. Defaults to 100. |
-| `formatMode` | no | `MoneyFormatMode` | How this amount is written, overriding the scope's `formatMode`. |
+| `amount` | no | `number \| string \| null` | The amount, in a channel separate from its currency. A number or a decimal string: a<br>single dot is decimal, and a grouped US or EU string is parsed by POSITION — whichever<br>of , or . appears last is the decimal point — so a value that came back through a<br>European locale does not parse a thousand times too large. |
+| `currency` | no | `string` | The amount's ISO currency code, kept apart from the amount all the way to the render. |
+| `unit` | no | `MoneyUnit` | The unit the amount ARRIVES in. Use `minor` for APIs that store integer minor units. @default "major" |
+| `minorUnitScale` | no | `number` | Minor units per major unit, for a currency whose exponent is not two. @default 100 |
+| `formatMode` | no | `MoneyFormatMode` | How this amount is written. Falls back to the scope's `money.formatMode`, so<br>`UIProvider` defaults can change it. @default "with-symbol" |
 
 ### `MonoValue`
 
 Kind: callable.
 
-Identifiers, hashes, SKUs — fixed width so they compare down a column.
+Tabular figures and a mono face, for identifiers, hashes and SKUs — codes compared by eye,
+down a column.
 
 ```text
 ({ className, ...props }: ValueProps) => import("react").JSX.Element
@@ -728,7 +752,8 @@ Identifiers, hashes, SKUs — fixed width so they compare down a column.
 
 Kind: callable.
 
-Incidental copy — present, but not something the reader is meant to act on.
+The same value two steps quieter, for incidental copy — present, but not something the
+reader is meant to act on.
 
 ```text
 ({ type, size, ...props }: ValueProps) => import("react").JSX.Element
@@ -758,9 +783,9 @@ Extends: `Omit<ValueProps, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `string \| null` |  |
+| `value` | no | `string \| null` | The whole name, however it was stored. |
 | `children` | no | `ReactNode` |  |
-| `force` | no | `boolean` |  |
+| `force` | no | `boolean` | Title-cases a name that already looks INTENTIONALLY cased. A name arriving all-shouting<br>or all-lowercase is re-cased without it — those two carry no intent to preserve. Off by<br>default, because a name is the one field where the stored casing is usually deliberate:<br>`force` is what overrides that judgement. Hyphens and apostrophes each take a capital<br>(jean-luc → Jean-Luc, o'brien → O'Brien); an intercap does not, so mcdonald becomes<br>Mcdonald — Mc, Mac and van der have no rule that is right for every name carrying them. |
 
 ### `Number`
 
@@ -778,8 +803,8 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `number \| string \| null` |  |
-| `locale` | no | `string` |  |
+| `value` | no | `number \| string \| null` | The number, drawn with locale grouping and tabular figures. |
+| `locale` | no | `string` | Overrides the scope's locale for this value. |
 | `options` | no | `Intl.NumberFormatOptions` |  |
 | `emptyLabel` | no | `ReactNode` |  |
 | `size` | no | `ValueProps["size"]` |  |
@@ -792,7 +817,8 @@ Extends: `SpanProps`.
 
 Kind: callable.
 
-Returns undefined rather than an Invalid Date, so the empty state renders instead.
+The single parse every date primitive goes through. Returns undefined rather than an
+Invalid Date, so the empty state renders instead.
 
 ```text
 (value: DateInput) => Date | undefined
@@ -814,7 +840,8 @@ Extends: `Omit<NumberProps, "options">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `scaled` | no | `boolean` | The value is already 0–100 rather than 0–1. |
+| `value` | no | `number \| string \| null` | A fraction, not a percentage — 0.214 renders as 21.4%. |
+| `scaled` | no | `boolean` | The value is already on 0–100 rather than 0–1. Needed because both conventions are in<br>the wild and neither is guessable from the number. |
 | `options` | no | `Intl.NumberFormatOptions` |  |
 
 ### `Phone`
@@ -833,8 +860,8 @@ Extends: `Omit<LinkProps, "href" | "children" | "ref">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `string \| null` |  |
-| `display` | no | `ReactNode` |  |
+| `value` | no | `string \| null` | The number as stored. Displayed with its grouping; dialled without it. |
+| `display` | no | `ReactNode` | Shown instead of the number. |
 | `ref` | no | `Ref<HTMLAnchorElement>` |  |
 
 ### `PluralForms`
@@ -869,9 +896,9 @@ Extends: `SharedProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `number \| null` |  |
-| `unit` | no | `PluralForms \| string` | The noun, in the forms the locale may need. A bare string is used for every form. |
-| `zeroLabel` | no | `ReactNode` | Rendered instead when the count is zero ("no items"). Off by default. |
+| `value` | no | `number \| null` | The count. |
+| `unit` | no | `PluralForms \| string` | The noun, in the forms the locale may need — one, other, and the zero, two, few and<br>many some languages select. A bare string is used for every form. |
+| `zeroLabel` | no | `ReactNode` | Replaces the whole thing at zero — "no items" rather than "0 items". Off by default: in<br>a column the zero is the value being reported. |
 
 ### `Range`
 
@@ -889,11 +916,11 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `from` | no | `number \| null` |  |
-| `to` | no | `number \| null` |  |
-| `currency` | no | `string` | An ISO currency code. Renders the range as money. |
-| `unit` | no | `string` | A CSS-style unit identifier — `kilogram`, `day`. Renders the range with its unit. |
-| `maximumFractionDigits` | no | `number` |  |
+| `from` | no | `number \| null` | The low end. One end alone still renders — "from £10", with the caller's copy around<br>the value. |
+| `to` | no | `number \| null` | The high end. One end alone still renders, with the caller's copy around the value. |
+| `currency` | no | `string` | An ISO currency code. Renders the range as money: Intl repeats the symbol on both ends,<br>which is its considered answer to the ambiguity a single symbol creates. |
+| `unit` | no | `string` | A CSS-style unit identifier — `kilogram`, `day`. Renders the range with its unit.<br>Ignored when `currency` is set. |
+| `maximumFractionDigits` | no | `number` | Caps the decimals on both ends. |
 | `locale` | no | `string` |  |
 | `emptyLabel` | no | `ReactNode` |  |
 | `size` | no | `ValueProps["size"]` |  |
@@ -918,10 +945,10 @@ Extends: `SharedProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `number \| null` |  |
+| `value` | no | `number \| null` | The score. Shown to at most one decimal, so 4 stays 4. |
 | `max` | no | `number` | The top of the scale. Five unless said otherwise, which is the common instrument. |
 | `hideMax` | no | `boolean` | Hides the scale, leaving the score alone.<br><br>For a surface that states the scale elsewhere — a column headed "Rating / 5", or a<br>row of stars that already shows it. Not the default, because "4.5" on its own is a<br>number a reader has to guess the meaning of. |
-| `strings` | no | `Partial<RatingStrings>` |  |
+| `strings` | no | `Partial<RatingStrings>` | The connector — "out of". |
 
 ### `RatingStrings`
 
@@ -947,10 +974,10 @@ Extends: `SharedProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `number \| null` |  |
+| `value` | no | `number \| null` | The count. |
 | `total` | no | `number \| null` | What the value is counted against. Without it the component renders the value alone. |
 | `format` | no | `"words" \| "fraction"` | `words` reads "3 of 10" (prose); `fraction` reads "3/10" (tables). |
-| `strings` | no | `Partial<RatioStrings>` |  |
+| `strings` | no | `Partial<RatioStrings>` | The connectors — "of", and the fraction separator. |
 
 ### `RatioStrings`
 
@@ -982,14 +1009,15 @@ Extends: `Omit<DateBaseProps, "pattern">`.
 | --- | :-: | --- | --- |
 | `now` | no | `DateInput` | The moment to measure against. Defaults to the clock.<br><br>Supply it wherever the render has to be reproducible — a server render whose<br>markup must match the client's, a test asserting the string, a visual snapshot.<br>Reading the clock inside the component makes all three of those flaky, and it<br>does not buy a live value in exchange: nothing re-renders it as time passes. |
 | `addSuffix` | no | `boolean` | "7 days ago" rather than "7 days". On by default, because a bare duration beside a<br>row of dates reads as a length rather than a moment. |
-| `includeSeconds` | no | `boolean` | Distinguishes "less than a minute" from "30 seconds". |
-| `formatRelativeTime` | no | `(date: Date, now: Date) => string` | Replaces the wording for this one value. Falls back to the scope's<br>`dates.formatRelativeTime`, and then to date-fns. |
+| `includeSeconds` | no | `boolean` | Distinguishes "less than a minute" from "30 seconds". Only worth it for a feed measured<br>in seconds. |
+| `formatRelativeTime` | no | `(date: Date, now: Date) => string` | Replaces the wording for this one value. Falls back to the scope's<br>`dates.formatRelativeTime`, and then to date-fns, whose built-in wording the scope's<br>`dates.locale` translates: a date-fns locale OBJECT, since the locales are modules and<br>cannot be looked up from a BCP-47 tag without putting every language in every bundle. |
 
 ### `SecondaryValue`
 
 Kind: callable.
 
-A value that supports the primary one — a subtitle, a unit, a qualifier.
+The same value one step quieter, for one that supports the primary value — a subtitle, a
+unit, a qualifier.
 
 ```text
 ({ type, ...props }: ValueProps) => import("react").JSX.Element
@@ -1006,6 +1034,9 @@ Omit<ComponentPropsWithoutRef<"span">, "children" | "color">
 ### `Time`
 
 Kind: callable.
+
+The same value as a time of day. Three components rather than a granularity prop, because
+a column shows one of them and never switches.
 
 ```text
 ({ value, pattern, ...props }: DateBaseProps) => import("react").JSX.Element
@@ -1027,9 +1058,9 @@ Extends: `Omit<LinkProps, "href" | "children" | "ref">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `string \| null` |  |
-| `display` | no | `ReactNode` |  |
-| `external` | no | `boolean` | Opens in a new tab, with the rel hardening that requires — and with the announcement<br>it requires too. See `strings.opensInNewTab`. |
+| `value` | no | `string \| null` | The address. The host is shown; the whole thing stays in the href. |
+| `display` | no | `ReactNode` | Shown instead of the host. |
+| `external` | no | `boolean` | Opens in a new tab WITH `rel="noopener noreferrer"` — the two are not separable — and<br>with the announcement a new tab requires too. See `strings.opensInNewTab`. |
 | `strings` | no | `Partial<UrlStrings>` | Overrides the new-tab announcement. |
 | `ref` | no | `Ref<HTMLAnchorElement>` |  |
 
@@ -1049,7 +1080,7 @@ Extends: `SpanProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `children` | no | `ReactNode` |  |
+| `children` | no | `ReactNode` | The value. `null`, `undefined` or an empty string renders the empty mark. |
 | `emptyLabel` | no | `ReactNode` | Rendered when the value is absent. |
 | `size` | no | `TextSize` |  |
 | `align` | no | `TextProps["align"]` |  |

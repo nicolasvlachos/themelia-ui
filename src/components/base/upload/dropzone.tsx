@@ -35,6 +35,12 @@ export interface DropzoneProps extends Omit<ComponentProps<"div">, "onDrop" | "c
 	footer?: ReactNode
 }
 
+/**
+ * The drop target on its own, for a surface that wants the drag behaviour without
+ * FileUpload's list and validation around it. It reports dropped or picked files and owns
+ * no state; the box is a `<label>` for a real file input, so it is keyboard-reachable and
+ * submits in a plain form.
+ */
 export function Dropzone({
 	onDrop,
 	accept,

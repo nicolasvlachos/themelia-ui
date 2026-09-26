@@ -7,7 +7,10 @@ import { useOptionalOverlayContext } from "../overlay-context"
 
 import styles from "../overlay.module.css"
 
-/** Supporting line under the title. Wraps bare strings the way OverlayTitle does. */
+/**
+ * The supporting line under the title, wired to the dialog's accessible description — a
+ * surface without one has none. Wraps bare strings the way OverlayTitle does.
+ */
 export const OverlayDescription = React.forwardRef<HTMLParagraphElement, React.ComponentProps<"p">>(
 	function OverlayDescription({ children, className, id, ...props }, ref) {
 		const overlay = useOptionalOverlayContext()

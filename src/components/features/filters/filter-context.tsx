@@ -23,10 +23,20 @@ import { FilterContext, FilterDraftResetContext } from "./filter-store"
 
 export interface FilterProviderProps {
 	children: ReactNode
+	/**
+	 * Every filter the surface offers. A filter's `type` decides its editor and which
+	 * comparisons it offers.
+	 */
 	filters: FilterConfig[]
+	/** The applied filters. Controlled: the provider never writes to its own state. */
 	activeFilters: ActiveFilter[]
+	/** Receives every change to `activeFilters`, which the provider never makes itself. */
 	onFilterChange: (filters: ActiveFilter[]) => void
-	/** A change is in flight. The bar dims rather than pretending it has applied. */
+	/**
+	 * A change is in flight. Controls are disabled, open editors close, and an updating status
+	 * appears while the current results remain visible — the bar dims rather than pretending it
+	 * has applied.
+	 */
 	navigating?: boolean
 	strings?: Partial<FilterStrings>
 	/** Receives fetch, validation, apply, and render failures. */
@@ -38,6 +48,10 @@ export interface FilterProviderProps {
 	cache?: FilterCache
 }
 
+/**
+ * The state every part of a filter bar reads: the filters on offer, the applied ones, and the
+ * async option cache.
+ */
 export function FilterProvider({
 	children,
 	filters,

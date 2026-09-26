@@ -7,8 +7,10 @@ import styles from "./media-library.module.css"
 
 
 /**
- * The asset's picture, or a stand-in: a broken `src` falls back to the type glyph, and
- * `tint` gives an asset without a preview a recognisable colour.
+ * The thumbnail that handles an image, a video, a PDF and a file with no preview at all — the
+ * last being the case a gallery usually forgets. It shows the asset's picture, or a stand-in: a
+ * broken `src` falls back to the type glyph, and `tint` gives an asset without a preview a
+ * recognisable colour.
  */
 export function MediaPreview<TItem>({
 	item,

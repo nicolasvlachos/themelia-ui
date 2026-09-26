@@ -19,6 +19,10 @@ import type {
 } from "./resource.types"
 import styles from "./resource.module.css"
 
+/**
+ * The title block of an index or show screen, for a page that wants the shell's rhythm without
+ * its whole frame.
+ */
 export function ResourceHeader({
 	title,
 	description,
@@ -90,6 +94,10 @@ export function ResourceHeader({
 	)
 }
 
+/**
+ * The verb row of an index or show screen, for a page that wants the shell's rhythm without its
+ * whole frame.
+ */
 export function ResourceActionBar({
 	children,
 	leading,
@@ -135,6 +143,11 @@ export function ResourceActionBar({
 	)
 }
 
+/**
+ * One of the three states the shells swap in for content. Loading, error and empty are
+ * replacements rather than overlays — they take the space the content will take, so nothing
+ * reflows when it arrives.
+ */
 export function ResourceEmptyState({ className, ...props }: ResourceEmptyStateProps) {
 	return (
 		<Empty
@@ -262,6 +275,7 @@ export function ResourceShowShell(props: ResourceShowShellProps) {
 	return <ResourceShellFrame {...props} variant="show" />
 }
 
+/** A show screen with a tab row in its toolbar. */
 export function TabbedResourceShell({
 	tabs,
 	activeTab,

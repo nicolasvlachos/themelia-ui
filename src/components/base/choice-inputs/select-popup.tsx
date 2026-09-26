@@ -28,6 +28,10 @@ export type SelectPopupContentProps = SelectPrimitive.Popup.Props &
 		container?: UIPortalContainer
 	}
 
+/**
+ * The popup behind `Select`, public so every finite-option control — a phone country, a unit
+ * picker — renders the same popup and rows.
+ */
 export function SelectPopupContent({
 	container,
 	className,
@@ -67,6 +71,7 @@ export function SelectPopupContent({
 	)
 }
 
+/** A division of the popup's options. */
 export function SelectPopupGroup({ className, ...props }: SelectPrimitive.Group.Props) {
 	return (
 		<SelectPrimitive.Group
@@ -77,6 +82,7 @@ export function SelectPopupGroup({ className, ...props }: SelectPrimitive.Group.
 	)
 }
 
+/** One option row, with the mark that shows it is chosen. */
 export function SelectPopupItem({ className, children, ...props }: SelectPrimitive.Item.Props) {
 	return (
 		<SelectPrimitive.Item
@@ -100,6 +106,10 @@ export function SelectPopupItem({ className, children, ...props }: SelectPrimiti
 	)
 }
 
+/**
+ * A group's caption. A label is not an item: it is not focusable and the arrow keys skip it,
+ * which a styled item would get wrong.
+ */
 export function SelectPopupLabel({ className, children, ...props }: SelectPrimitive.GroupLabel.Props) {
 	return (
 		<SelectPrimitive.GroupLabel
@@ -112,6 +122,7 @@ export function SelectPopupLabel({ className, children, ...props }: SelectPrimit
 	)
 }
 
+/** A rule between groups of options. */
 export function SelectPopupSeparator({ className, ...props }: SelectPrimitive.Separator.Props) {
 	return (
 		<SelectPrimitive.Separator
@@ -144,8 +155,20 @@ function SelectPopupScrollDownArrow(props: ComponentProps<typeof SelectPrimitive
 	)
 }
 
-/** The primitives, for a control that needs the state engine but not this presentation. */
+/*
+ * The unassembled parts behind Select, for a control that needs the state engine but not
+ * this presentation.
+ */
+
+/**
+ * The unassembled root behind `Select`. Reach for these parts when the trigger has to be
+ * something `Select` cannot express — an avatar and a name, a swatch, two lines — and keep
+ * the popup and the keyboard behaviour rather than rebuilding them.
+ */
 export const SelectRoot = SelectPrimitive.Root
+/** The unassembled trigger behind `Select`, for a trigger `Select` cannot express. */
 export const SelectTriggerPrimitive = SelectPrimitive.Trigger
+/** The unassembled value behind `Select`: what the trigger shows for the current choice. */
 export const SelectValuePrimitive = SelectPrimitive.Value
+/** The unassembled icon behind `Select`: the trigger's chevron. */
 export const SelectIconPrimitive = SelectPrimitive.Icon

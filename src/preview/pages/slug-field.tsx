@@ -12,14 +12,7 @@ export function SlugFieldPage() {
 			/>
 
 			<Example id="slug-api" title="API">
-				<PropTable owner="SlugField"
-					rows={[
-						{ name: "value", type: "string", description: "The source text. The field shows its slugified form." },
-						{ name: "prefix", type: "ReactNode", description: "The domain or path shown before the slug. Not part of the value." },
-						{ name: "slugify", type: "SlugifyOptions", description: "Separator, case, and which characters survive." },
-						{ name: "transform", type: "(value: string) => string", description: "Replaces the slugifier. The default lower-cases, strips accents and collapses runs to a single dash." },
-					]}
-				/>
+				<PropTable owner="SlugField" />
 			</Example>
 		</ComponentPage>
 	)

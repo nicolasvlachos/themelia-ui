@@ -27,8 +27,9 @@ export interface UseFieldValueResult {
 }
 
 /**
- * Value bookkeeping shared by the text controls (Input, Textarea): controlled or not, a
- * generated id, the character count and the limit — one branch, so fields agree.
+ * Value bookkeeping shared by Input and Textarea (SearchInput wraps Input): the controlled or
+ * uncontrolled value, a generated id, and the character count with its limit — one branch,
+ * so both fields behave the same under a form library.
  */
 export function useFieldValue({
 	controlledValue,

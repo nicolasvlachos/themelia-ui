@@ -7,9 +7,11 @@ import { Text } from "@/components/base/typography"
 import styles from "./button-group.module.css"
 
 export interface ButtonGroupProps extends React.ComponentProps<"div"> {
+	/** The direction the buttons run in. */
 	orientation?: "horizontal" | "vertical"
 }
 
+/** Adjacent buttons that read as one control: one hairline seam, squared inner corners. */
 export function ButtonGroup({
 	orientation = "horizontal",
 	className,
@@ -33,7 +35,10 @@ export function ButtonGroup({
 
 export interface ButtonGroupTextProps extends React.ComponentProps<"span"> {}
 
-/** A non-interactive segment — a unit, a prefix, a count. A span, so it adds no tab stop. */
+/**
+ * A label that sits in the run without becoming pressable — a unit, a prefix, a count. A
+ * span, so it adds no tab stop.
+ */
 export function ButtonGroupText({ className, ...props }: ButtonGroupTextProps) {
 	return (
 		<Text
@@ -48,10 +53,14 @@ export function ButtonGroupText({ className, ...props }: ButtonGroupTextProps) {
 }
 
 export interface ButtonGroupSeparatorProps extends React.ComponentProps<"div"> {
+	/** The orientation of the group it sits in; the seam runs across it. */
 	orientation?: "horizontal" | "vertical"
 }
 
-/** A rule between segments, where the collapsed border alone is not enough. */
+/**
+ * The seam between welded buttons, where the collapsed border alone is not enough. A plain
+ * `Separator` here would draw a full-height rule against the group's own border.
+ */
 export function ButtonGroupSeparator({
 	orientation = "horizontal",
 	className,

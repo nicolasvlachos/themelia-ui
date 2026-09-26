@@ -40,6 +40,10 @@ import styles from "./kanban.module.css"
 /** Pointer travel before a drag starts, so a click on a clickable card is not a zero-distance drag. */
 const DRAG_THRESHOLD = 6
 
+/**
+ * A drag-and-drop board. It never persists: `onValueChange` is the truth, and `onItemMove` the
+ * seam for saving it.
+ */
 export function Kanban<T>({
 	value,
 	onValueChange,
@@ -177,6 +181,10 @@ export function KanbanColumn({ value, className, children }: KanbanColumnProps) 
 	)
 }
 
+/**
+ * A column's droppable region, for a board that wants its own column chrome but the same drag
+ * behaviour.
+ */
 export function KanbanColumnContent({ value, className, children }: KanbanColumnContentProps) {
 	const context = useKanbanContext()
 	const ids = (context.value[value] ?? []).map((item) => context.getItemValue(item))
@@ -189,6 +197,10 @@ export function KanbanColumnContent({ value, className, children }: KanbanColumn
 	)
 }
 
+/**
+ * One draggable card, for a board that wants its own column chrome but the same drag
+ * behaviour.
+ */
 export function KanbanItem({
 	value,
 	className,
@@ -272,6 +284,11 @@ export function KanbanItem({
 	)
 }
 
+/**
+ * The grip. Optional: present, it becomes the only grip; absent, the whole card is. A handle
+ * rather than a draggable card body, because a card carrying a menu and a link has no way to
+ * tell a drag from a press otherwise — and text inside the card stays selectable.
+ */
 export function KanbanItemHandle({
 	className,
 	children,
@@ -312,6 +329,7 @@ export function KanbanItemHandle({
 	)
 }
 
+/** The card's verbs: its `itemActions`, in a menu. */
 export function KanbanItemActions<T = unknown>({
 	className,
 	icon,
@@ -353,6 +371,10 @@ export function KanbanItemActions<T = unknown>({
 	)
 }
 
+/**
+ * What follows the pointer during a drag — rendered outside the column so it is not clipped by
+ * the scroll container it started in.
+ */
 export function KanbanOverlay<T = unknown>({ className, render }: KanbanOverlayProps<T>) {
 	const { activeItem, activeId, findItem } = useKanbanContext<T>()
 	return (

@@ -39,6 +39,8 @@ Kind: callable.
 
 Kind: callable.
 
+The tip. Short — a sentence, not a paragraph.
+
 ```text
 ({ container, className, side, sideOffset, align, alignOffset, children, ...props }: TooltipPrimitive.Popup.Props & Pick<TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { container?: UIPortalContainer; }) => import("react").JSX.Element
 ```
@@ -47,16 +49,22 @@ Kind: callable.
 
 Kind: callable.
 
+Shares one open delay, `delay`, across every tooltip inside it. Wrap the app once rather
+than each tooltip.
+
 ```text
-({ delay, delayDuration, ...props }: TooltipPrimitive.Provider.Props & { delayDuration?: number; }) => import("react").JSX.Element
+({ delay, delayDuration, ...props }: TooltipPrimitive.Provider.Props & Pick<TooltipPrimitive.Provider.Props, "delay"> & { delayDuration?: number; }) => import("react").JSX.Element
 ```
 
 ### `TooltipTrigger`
 
 Kind: callable.
 
+What the tip anchors to, passed as `render`. It must be a real focusable element, so the
+tip opens on keyboard focus and not only on hover.
+
 ```text
-({ render, children, ...props }: TooltipPrimitive.Trigger.Props) => import("react").JSX.Element
+({ render, children, ...props }: TooltipPrimitive.Trigger.Props & Pick<TooltipPrimitive.Trigger.Props, "render">) => import("react").JSX.Element
 ```
 
 ## Preview recipes

@@ -23,7 +23,10 @@ export interface AsyncComboboxSharedProps<T> {
 	 * create row's duplicate check compares against.
 	 */
 	getItemLabel: (item: T) => string
-	/** Stable identity. Defaults to the label; supply it whenever labels are not unique. */
+	/**
+	 * Stable identity. Defaults to the label, so supply it whenever labels are not unique:
+	 * two people of one name would collide, and de-duplicating would drop one.
+	 */
 	getItemKey?: (item: T) => string
 	loading?: boolean
 	/**
@@ -36,6 +39,10 @@ export interface AsyncComboboxSharedProps<T> {
 	 * row replaces results and `onSearch` does not fire; `0` allows browsing before typing.
 	 */
 	minSearchLength?: number
+	/**
+	 * Overrides every word the pickers render, including the clear and chevron controls' names
+	 * and each chip's remove control.
+	 */
 	strings?: Partial<AsyncComboboxStrings>
 	disabled?: boolean
 	className?: string
@@ -57,10 +64,19 @@ export interface AsyncComboboxSharedProps<T> {
 	 * `minSearchLength`. To clear results below the threshold, use `onSearchValueChange`.
 	 */
 	onSearch?: (value: string) => void
+	/**
+	 * The quiet period before `onSearch` fires, in milliseconds.
+	 * @default 300
+	 */
 	debounceMs?: number
 
 	/** Offers an inline create row when nothing matches. Needs `onCreate` to do anything. */
 	creatable?: boolean
+	/**
+	 * Receives the create row's text: a created entry arrives here, not as a selection. The row
+	 * is withheld while nothing is typed, below `minSearchLength`, and when the text matches an
+	 * existing label case-insensitively.
+	 */
 	onCreate?: (value: string) => void
 
 	/** Returns a group name per item. Absent means no grouping. */
@@ -69,7 +85,13 @@ export interface AsyncComboboxSharedProps<T> {
 
 	/** Enables scroll-triggered pagination. */
 	hasMore?: boolean
+	/**
+	 * Asks for the next page once the list is scrolled 80% of the way down. A cooldown after
+	 * each request stops a second page being asked for while the first is in flight — the list
+	 * has not grown, so the scroll position is still past the threshold.
+	 */
 	onLoadMore?: () => void
+	/** Shows that the next page is loading, and holds off asking for another. */
 	loadingMore?: boolean
 
 	/** Renders an option unselectable without hiding it. */
@@ -86,7 +108,11 @@ export interface AsyncComboboxProps<T> extends AsyncComboboxSharedProps<T> {
 	/** The selected item (not a key), or `null`. Controlled; survives `items` being replaced. */
 	selectedValue: T | null
 	onSelectedValueChange: (value: T | null) => void
-	/** Clears the query when the popup closes. Defaults to `true`. */
+	/**
+	 * Clears the query when the popup closes, so the next open is not filtered by something
+	 * forgotten.
+	 * @default true
+	 */
 	clearSearchOnClose?: boolean
 }
 
@@ -99,7 +125,9 @@ export interface AsyncMultiComboboxProps<T> extends AsyncComboboxSharedProps<T> 
 	closeOnSelect?: boolean
 	/** Renders an Apply / Cancel footer and holds edits in a draft until Apply. Without it every toggle commits. */
 	applyButton?: boolean
+	/** Called when Apply commits the draft. */
 	onApply?: () => void
+	/** Called when Cancel discards the draft. Cancel and dismissal both restore the committed set. */
 	onCancel?: () => void
 }
 

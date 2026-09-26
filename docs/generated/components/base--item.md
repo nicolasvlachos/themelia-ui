@@ -31,8 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
-Item — a row. No size prop: row height follows `--density-scale`, so use a denser
-scope for a denser list.
+A row — a list row, a menu row, a table row. No size prop: row height follows
+`--density-scale`, so use a denser scope for a denser list.
 
 **Use when:** An identity row with a title, description, media and actions.
 
@@ -45,12 +45,14 @@ scope for a denser list.
 **Alternatives:** MetadataList, FormField.
 
 ```text
-({ className, surface, render, ...props }: useRender.ComponentProps<"div"> & VariantProps<typeof itemVariants>) => React.JSX.Element
+({ className, surface, render, ...props }: ItemProps) => React.JSX.Element
 ```
 
 ### `ItemActions`
 
 Kind: callable.
+
+Trailing controls. Kept out of the content flow, so a long title cannot displace them.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -59,6 +61,9 @@ Kind: callable.
 ### `ItemContent`
 
 Kind: callable.
+
+The title and description. Takes the remaining width and truncates rather than pushing
+the actions off the row.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -76,6 +81,9 @@ Kind: callable.
 
 Kind: callable.
 
+A full-width row below the row's own content, for an item that carries a footnote
+without it competing with the title line.
+
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
 ```
@@ -83,6 +91,8 @@ Kind: callable.
 ### `ItemGroup`
 
 Kind: callable.
+
+Stacks rows and owns the dividers, so a row never draws its own.
 
 ```text
 ({ className, ruled, ...props }: ItemGroupProps) => React.JSX.Element
@@ -96,11 +106,14 @@ Extends: `React.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `ruled` | no | `boolean` | Draws rules between rows instead of gaps, and neutral rows drop their inline padding.<br>Use for a run of rows inside one card. |
+| `ruled` | no | `boolean` | Draws hairlines between rows instead of gaps, and neutral rows drop their inline<br>padding and go flush. For a run of rows inside one card, where a rem of air between<br>each reads as unrelated blocks. Bordered and muted rows keep their inset, because they<br>do draw a surface. |
 
 ### `ItemHeader`
 
 Kind: callable.
+
+A full-width row above the row's own content, for an item that carries an eyebrow
+without it competing with the title line.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -110,13 +123,18 @@ Kind: callable.
 
 Kind: callable.
 
+The leading slot: a glyph, an avatar or a thumbnail, aligned to the first line.
+
 ```text
-({ className, variant, ...props }: React.ComponentProps<"div"> & VariantProps<typeof itemMediaVariants>) => React.JSX.Element
+({ className, variant, ...props }: ItemMediaProps) => React.JSX.Element
 ```
 
 ### `ItemSeparator`
 
 Kind: callable.
+
+A rule between items, for a group that wants one only in places. `ItemGroup ruled` is the
+answer when every row needs one.
 
 ```text
 ({ className, ...props }: React.ComponentProps<typeof Separator>) => React.JSX.Element

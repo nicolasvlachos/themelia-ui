@@ -118,7 +118,14 @@ export function useLeafletMapEvents(
 	return hooks.useMapEvents(handlers)
 }
 
-/** Leaflet plus draw and fullscreen once loaded; `null` until then, so callers must check. */
+/**
+ * Leaflet itself, with its draw and fullscreen plugins, once it has loaded — and `null` until
+ * then, so callers must check. For a consumer reaching for the imperative API. Everything here
+ * is lazy: Leaflet and its plugins are ~200KB, they touch `window` at import time, and most pages
+ * that ship this kit never render a map. Inside a Map, react-leaflet's hooks reach the controls
+ * through a provider that has already resolved the module, so a control calls `useMap` normally
+ * instead of managing its own load state.
+ */
 export function useLeaflet() {
 	const [L, setL] = useState<LeafletModule | null>(null)
 	const [LeafletDraw, setLeafletDraw] = useState<LeafletDrawModule | null>(null)

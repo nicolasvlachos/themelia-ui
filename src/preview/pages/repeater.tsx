@@ -40,26 +40,8 @@ export function RepeaterPage() {
 			</Example>
 
 			<Example id="repeater-api" title="API">
-				<PropTable owner="Repeater"
-					rows={[
-						{ name: "items", type: "T[]", description: "The rows. Required — the repeater renders what it is given and nothing else." },
-						{ name: "getKey", type: "(item: T, index: number) => string", description: "Stable identity per row. Index alone would re-key every row after a reorder and lose focus." },
-						{ name: "children", type: "(item: T, context) => ReactNode", description: "Render prop for one row. context carries index and dragging." },
-						{ name: "onAdd", type: "() => void", description: "Supplying it renders the add button." },
-						{ name: "onRemove", type: "(index: number) => void", description: "Supplying it renders the per-row remove button." },
-						{ name: "onMove", type: "(from: number, to: number) => void", description: "Supplying it enables reordering and renders the drag handle. The handle is the drag source, not the row." },
-						{ name: "rowVariant", type: '"inline" | "card"', default: '"inline"', description: "card wraps each row in a bordered surface, for multi-field rows." },
-						{ name: "maxItems", type: "number", description: "Hides the add button once reached." },
-						{ name: "strings", type: "Partial<RepeaterStrings>", description: "Overrides this list's own copy. `remove` is a FUNCTION of the row index — every remove button in a list saying the same thing is a column of controls a screen reader cannot tell apart." },
-						{ name: "emptyState", type: "ReactNode", description: "Shown in place of the rows when items is empty." },
-						{ name: "StringRepeater sortable", type: "boolean", default: "false", description: "Adds the drag handle and arrow-key reordering." },
-						{ name: "KeyValueEditor flagDuplicateKeys", type: "boolean", default: "true", description: "Marks a key already used elsewhere. A blank key is not a duplicate — it is an unfinished row." },
-						{ name: "LocalizedStringField locales", type: "LocaleDescriptor[]", description: "Which locales the switcher offers, in order. The first is the default." },
-						{ name: "showAdd", type: "boolean", description: "Hides the add control while keeping the rows, for a list at its cap or one whose entries come from elsewhere." },
-						{ name: "ObjectRepeater value / fields", type: "ObjectRow[] / ObjectFieldDef[]", description: "A repeating row of several fields, described once as data rather than assembled per row. The component reads and writes the array it is given; renderField lets the caller connect individual fields to a form library." },
-						{ name: "LocalizedStringRepeater / LocalizedObjectField", type: "component", description: "The same shapes with a locale axis: one value per language, with the active locale switchable in place. A translation UI built out of plain repeaters loses which language a row belongs to the moment rows reorder." },
-					]}
-				/>
+				<PropTable owners={["Repeater", "StringRepeater", "KeyValueEditor", "LocalizedStringField", "ObjectRepeater"]} />
+				<PropTable symbols={["LocalizedStringRepeater", "LocalizedObjectField"]} />
 			</Example>
 		</ComponentPage>
 	)

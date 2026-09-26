@@ -49,23 +49,15 @@ export function EventCalendarPage() {
 			</Example>
 
 			<Example id="calendar-api" title="API">
-				<PropTable owner="EventCalendar"
-					rows={[
-						{ name: "events / categories", type: "CalendarEvent[] / EventCategory[]", required: true, description: "The calendar does no fetching of its own. An event with an endDate appears on every day it spans, not only its first." },
-						{ name: "viewMode / defaultViewMode", type: "month | week | agenda", description: "Controlled or not — the switcher works either way. Week steps by weeks; month and agenda step by months." },
-						{ name: "date / defaultDate", type: "Date", description: "Where the calendar is looking. Controlled or not, like the view." },
-						{ name: "onEventClick / onDayClick", type: "(event) / (date, events)", description: "A chip press calls the first and stops there; anywhere else in the cell calls the second, with everything on that day." },
-						{ name: "enableCategoryFilter / visibleCategories", type: "boolean / string[]", description: "An EMPTY list means all are shown — a filter nobody has touched hides nothing." },
-						{ name: "maxEventsPerDay", type: "number", description: "Chips per day before the rest collapse. The overflow dots are the categories of the HIDDEN events, not the first three in the list." },
-						{ name: "weekStartsOn", type: "0–6", description: "Falls back to the provider's dates config, then Monday — the same source the kit's own pickers read." },
-						{ name: "minDate / maxDate / disabledDates", type: "Date / DateRule", description: "Navigation stops at the bounds; days beyond them are drawn but not clickable. DateRule takes dates, a predicate, or both, combined with OR." },
-						{ name: "filterEvent", type: "(event) => boolean", description: "Hides events at render time without touching `events`. Counts and the overflow line follow it, so what is drawn and what is counted agree." },
-						{ name: "renderEvent / renderDayCell", type: "render props", description: "renderDayCell receives defaultRender, so decorating is as easy as replacing." },
-						{ name: "useEventCalendar", type: "hook", description: "The date, the view, and the days — for a calendar whose surface is entirely yours." },
-						{ name: "EventCalendarHeader", type: "component", description: "The period and the controls that move it. The month jump is icon-only because the label beside it already names the month \u2014 spelling it on the button too is the same word twice." },
-						{ name: "EventCalendarDayCell", type: "component", description: "One day in the grid. Deliberately not a button: a cell holds events that are themselves pressable, and nesting controls makes both unreachable by keyboard." },
-						{ name: "EventCalendarEventBadge / EventCalendarEventCard", type: "component", description: "One event as a chip in a cell, and in full for an agenda row or a popover. The card reads its metadata by name, so a consumer\u2019s own fields appear without a mapping step." },
-						{ name: "EventCalendarLegend", type: "component", description: "The category key, and the filter when one is wired. The WHOLE chip toggles rather than a checkbox beside a swatch \u2014 the swatch is the target a reader aims at anyway." },
+				<PropTable owner="EventCalendar" />
+				<PropTable
+					symbols={[
+						"useEventCalendar",
+						"EventCalendarHeader",
+						"EventCalendarDayCell",
+						"EventCalendarEventBadge",
+						"EventCalendarEventCard",
+						"EventCalendarLegend",
 					]}
 				/>
 			</Example>

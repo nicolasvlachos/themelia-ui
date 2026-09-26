@@ -17,6 +17,12 @@ import { useOverlayConfig, useUIPortalContainer, type UIPortalContainer } from "
 
 import styles from "@/components/base/dropdown-menu/dropdown-menu.module.css"
 
+/**
+ * The dropdown's menu opened by right-click over a region, reusing its rows. The trigger is
+ * not a button — the whole area is the target. Every entry must also be reachable another
+ * way (a toolbar, an `ActionMenu`): right-click is undiscoverable, absent on touch and
+ * awkward from a keyboard.
+ */
 function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
 	return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
 }
@@ -29,6 +35,10 @@ function ContextMenuTrigger({ ...props }: ContextMenuPrimitive.Trigger.Props) {
 /** The portal, for a caller placing the surface itself. The content portals already. */
 const ContextMenuPortal = ContextMenuPrimitive.Portal
 
+/**
+ * The menu's surface. It portals already, escaping an ancestor that clips or transforms — a
+ * card with overflow hidden, a scrolling pane.
+ */
 function ContextMenuContent({
 	container,
 	className,
@@ -59,16 +69,39 @@ function ContextMenuContent({
 }
 
 /* Base UI's context menu renders the same Menu parts, so the dropdown's rows are reused as-is. */
+/**
+ * The dropdown's row, unchanged: `icon`, `description`, `shortcut`, `trailing` and
+ * `variant="destructive"` all apply.
+ */
 const ContextMenuItem = DropdownMenuItem
+/** A row that toggles rather than closing. */
 const ContextMenuCheckboxItem = DropdownMenuCheckboxItem
+/** A set of rows that behaves as one choice. */
 const ContextMenuRadioGroup = DropdownMenuRadioGroup
+/** One choice inside a `ContextMenuRadioGroup`; it toggles rather than closing. */
 const ContextMenuRadioItem = DropdownMenuRadioItem
+/**
+ * A group's caption. It must sit inside a group — Base UI throws otherwise — and is not an
+ * item: arrow keys skip it.
+ */
 const ContextMenuLabel = DropdownMenuLabel
+/** A titled run of items. */
 const ContextMenuGroup = DropdownMenuGroup
+/** The rule between runs of items. */
 const ContextMenuSeparator = DropdownMenuSeparator
+/**
+ * The key hint on an item's trailing edge. Presentational: the item already carries the
+ * accessible name.
+ */
 const ContextMenuShortcut = DropdownMenuShortcut
+/**
+ * A nested menu, opening sideways. It holds the open state, so trigger and panel cannot
+ * disagree.
+ */
 const ContextMenuSub = DropdownMenuSub
+/** The row that opens a nested menu. */
 const ContextMenuSubTrigger = DropdownMenuSubTrigger
+/** The panel a nested menu opens, sideways. */
 const ContextMenuSubContent = DropdownMenuSubContent
 
 export type ContextMenuProps = React.ComponentProps<typeof ContextMenu>

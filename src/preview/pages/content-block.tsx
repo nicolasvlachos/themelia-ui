@@ -39,7 +39,7 @@ export function ContentBlockPage() {
 			<Example
 				example="content-block/direction-slot"
 				title="DirectionProvider and Slot"
-				description="Two utilities with no appearance of their own. DirectionProvider sets the reading direction for a subtree, so a right-to-left region can sit inside a left-to-right page and every logical property in the kit follows it. Slot is the merge helper behind `render`: it puts a component&rsquo;s props and ref onto the single element it is given, which is how a trigger becomes your own Button rather than one the module styles."
+				description="Two utilities with no appearance of their own. DirectionProvider tells the menus and popovers in a subtree its reading direction, and `dir` on the region mirrors its layout, so a right-to-left region can sit inside a left-to-right page and every logical property in the kit follows it. Slot is the merge helper behind `render`: it puts a component&rsquo;s props and ref onto the single element it is given, which is how a trigger becomes your own Button rather than one the module styles."
 			/>
 
 			<Example id="content-block-rule" title="Not a Card">
@@ -52,18 +52,11 @@ export function ContentBlockPage() {
 			</Example>
 
 			<Example id="content-block-api" title="API">
-				<PropTable owner="ContentBlock"
+				<PropTable owners={["ContentBlock", "IconBadge", "DirectionProvider"]} />
+				<PropTable symbols={["PlaceholderPattern", "Slot"]} />
+				<PropTable
 					rows={[
-						{ name: "surface", type: '"plain" | "bordered" | "muted" | "card"', default: '"plain"', description: "Outer chrome. What separates bordered from card is the ground: a bordered block is a ruled region and the page shows through it; a card block lifts off it." },
-						{ name: "flush", type: "boolean", default: "false", description: "Drops the inset and clips to the radius, for content that runs to the edge. Only meaningful on a surface that has an inset to drop." },
-						{ name: "title / description", type: "ReactNode", description: "Either one renders the header; neither, and the block is a bare surface. The description is its own row, so a long one wraps under the whole header." },
-						{ name: "icon / titleSuffix / headerEnd", type: "ReactNode", description: "Leading glyph, content immediately after the title (a badge, a count), and controls at the end of the title line." },
 						{ name: "--content-block-p / --content-block-gap", api: ["css:--content-block-p", "css:--content-block-gap"], type: "token", description: "Optional local inset override and the gap between children. By default, framed blocks follow --surface-x and --surface-y; --content-block-p overrides both axes when explicitly set." },
-						{ name: "IconBadge icon", type: "ComponentType | ReactNode", description: "A component or a rendered node. A component is called with aria-hidden, because the badge is a mark beside a name that already says it." },
-						{ name: "IconBadge tone / solid / shape", type: 'IconBadgeTone / boolean / "rounded" | "circle"', default: '"neutral" / false / "rounded"', description: "Tone sets fill and glyph together so the two cannot come from different tones. solid inverts the pair. Size comes from `--icon-badge-size`, so a caller needing a smaller mark re-points the token instead of redrawing the badge." },
-						{ name: "PlaceholderPattern", type: "component", description: "Diagonal hatching for a region with nothing in it yet. It reads as deliberately empty; a blank box reads as broken." },
-						{ name: "DirectionProvider direction", type: '"ltr" | "rtl"', default: '"ltr"', description: "The reading direction for a subtree. Every measurement in the kit is a logical property, so a region mirrors from this one prop." },
-						{ name: "Slot", type: "component", description: "The merge helper behind `render`: props and ref onto the single element. Ported rather than depended on \u2014 it is one function, and a package for it is a package to keep." },
 					]}
 				/>
 			</Example>

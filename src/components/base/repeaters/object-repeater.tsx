@@ -64,22 +64,33 @@ function createRowKeys() {
 }
 
 export interface ObjectRepeaterProps {
+	/** The rows, one object per row, keyed by field name. */
 	value: ObjectRow[]
 	onValueChange: (value: ObjectRow[]) => void
+	/** The fields every row carries, described once as data rather than assembled per row. */
 	fields: ObjectFieldDef[]
 	/** Prefixes the generated field paths (`items.2.email`) to match a form library. Naming only. */
 	name?: string
 	emptyState?: ReactNode
 	maxItems?: number
+	/** Adds the drag handle and arrow-key reordering. */
 	sortable?: boolean
 	disabled?: boolean
 	invalid?: boolean
-	/** Replaces one field's control, keeping the row and array behaviour. */
+	/**
+	 * Replaces one field's control, keeping the row and array behaviour — how a caller
+	 * connects individual fields to a form library.
+	 */
 	renderField?: (field: ObjectFieldDef, context: ObjectRepeaterFieldContext) => ReactNode
 	strings?: Partial<ObjectRepeaterStrings>
 	className?: string
 }
 
+/**
+ * A repeating row of several fields, described once as data rather than assembled per row
+ * — contacts, line items, addresses. It reads and writes the array it is given and imports
+ * no form library, so any can drive it.
+ */
 export function ObjectRepeater({
 	value,
 	onValueChange,

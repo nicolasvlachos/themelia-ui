@@ -50,20 +50,8 @@ export function ButtonPage() {
 			<Example
 				id="api"
 				title="API">
-				<PropTable owner="Button"
-					rows={[
-						{ name: "tone", type: "SemanticTone", default: "primary", description: "Semantic colour intent. Resolves through the provider when omitted." },
-						{ name: "buttonStyle", type: '"solid" | "outline" | "ghost"', default: "solid", description: "Fill treatment, independent of tone." },
-						{ name: "iconOnly", type: "boolean", default: "false", description: "Square button sized to its height." },
-						{ name: "fullWidth", type: "boolean", default: "false", description: "Stretches to the container." },
-						{ name: "loading", type: "boolean", default: "false", description: "Shows a spinner and blocks interaction without resizing." },
-						{ name: "render", type: "ReactElement", description: "The element the button becomes — an anchor, a router link. The label keeps its wrapper, so a link still sizes like a button." },
-						{ name: "TextButton tone", type: "SemanticTone", default: '"primary"', description: "A button that reads as a link. It carries its own `data-slot` so nothing downstream mistakes it for a ghost button that should line up with controls — it is inline prose." },
-						{ name: "LoaderButton loading / onClick", type: "boolean / () => void | Promise<void>", description: "Omit loading and the button holds the state itself, from the promise the handler returns. It also announces the wait, which Button's own loading prop does not." },
-						{ name: "TooltipButton tooltip", type: "string", required: true, description: "Shown on hover and focus, AND used as the accessible name. That pairing is the point: an icon button with a tooltip and no aria-label is unnamed to everyone not using a mouse." },
-						{ name: "ButtonGroupSeparator / ButtonGroupText", type: "component", description: "The seam between welded buttons, and a label that sits in the run without becoming pressable. A plain Separator here would draw a full-height rule against the group's own border." },
-					]}
-				/>
+				<PropTable owners={["Button", "TextButton", "LoaderButton", "TooltipButton"]} />
+				<PropTable symbols={["ButtonGroup", "ButtonGroupSeparator", "ButtonGroupText"]} />
 			</Example>
 		</ComponentPage>
 	)

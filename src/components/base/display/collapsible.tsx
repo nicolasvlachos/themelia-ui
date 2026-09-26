@@ -16,11 +16,15 @@ function useCollapsible(part: string) {
 }
 
 export interface CollapsibleProps extends Omit<React.ComponentProps<"div">, "onToggle"> {
+	/** Whether the content is shown, for controlled state. */
 	open?: boolean
+	/** Whether the content starts shown, for uncontrolled state. */
 	defaultOpen?: boolean
+	/** Fires on every toggle, from the pointer or the keyboard. */
 	onOpenChange?: (open: boolean) => void
 }
 
+/** A disclosure that animates to its content's natural height, in CSS alone. */
 export function Collapsible({
 	open,
 	defaultOpen = false,
@@ -58,6 +62,7 @@ export function Collapsible({
 	)
 }
 
+/** The control. Carries `aria-expanded` and points at the content. */
 export function CollapsibleTrigger({
 	className,
 	children,
@@ -86,6 +91,10 @@ export function CollapsibleTrigger({
 	)
 }
 
+/**
+ * The disclosed region. It stays mounted while collapsed, to animate, and is inert then, so
+ * its controls leave the tab order.
+ */
 export function CollapsibleContent({ className, children, ...props }: React.ComponentProps<"div">) {
 	const { open, id } = useCollapsible("CollapsibleContent")
 	return (

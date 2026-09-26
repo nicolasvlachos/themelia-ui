@@ -12,13 +12,15 @@ import { defaultTagsInputStrings, type TagsInputStrings } from "./value-inputs.s
 import styles from "./value-inputs.module.css"
 
 export interface TagsInputProps {
-	/** Controlled value. */
+	/** The chips, controlled. */
 	value?: string[]
 	defaultValue?: string[]
+	/** Called with the next list of tags. */
 	onValueChange?: (value: string[]) => void
 
 	placeholder?: string
 	disabled?: boolean
+	/** Applies the invalid treatment. The message stays with FormField. */
 	invalid?: boolean
 	name?: string
 
@@ -28,26 +30,38 @@ export interface TagsInputProps {
 	showCount?: boolean
 	/** Shows a clear-all control under the field. */
 	showClearAll?: boolean
-	/** Overrides this field's own copy — clear-all, and each tag's remove. */
+	/**
+	 * Overrides this field's own copy — clear-all, and each tag's remove, named after the tag
+	 * it removes.
+	 */
 	strings?: Partial<TagsInputStrings>
 
+	/** Lets the same string appear twice. */
 	allowDuplicates?: boolean
 	/** Duplicate detection is case-insensitive unless this is set. */
 	caseSensitive?: boolean
 	/** Keeps the list sorted as tags are added. */
 	sortTags?: boolean
 
+	/** The shortest tag accepted. */
 	minLength?: number
+	/** The longest tag accepted. */
 	maxLength?: number
-	/** Rejects a tag when this returns false. Runs after the length checks. */
+	/**
+	 * Rejects a tag when this returns false. Runs after the length checks — the field refuses
+	 * the tag rather than accepting a bad one and reporting it later.
+	 */
 	validate?: (value: string) => boolean
 
-	/** Splits pasted and typed input into several tags. Defaults to a comma or a newline. */
+	/**
+	 * Splits pasted and typed input into several tags — which is what a column copied out of
+	 * a spreadsheet looks like. Defaults to a comma or a newline.
+	 */
 	delimiter?: string | RegExp
 	/** Commits whatever is typed when the field loses focus. */
 	addOnBlur?: boolean
 
-	/** Replaces the chip. */
+	/** Replaces the chip, for a tag that carries an avatar or a colour. */
 	renderTag?: (tag: string, index: number, remove: (index: number) => void) => ReactNode
 
 	className?: string

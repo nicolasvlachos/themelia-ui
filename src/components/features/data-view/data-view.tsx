@@ -26,6 +26,7 @@ import styles from "./data-view.module.css"
 
 /* ── The plain shells ─────────────────────────────────────────────────────────────── */
 
+/** The plain shell, for composing the same rhythm around something that is not a DataTable. */
 export function DataViewShell({
 	children,
 	header,
@@ -51,6 +52,11 @@ export function DataViewShell({
 	)
 }
 
+/**
+ * The filter bar. In a DataView it lives inside the table's topbar rather than above it, so
+ * filtering and the data it filters are one surface and scroll as one. It works bare too,
+ * around something that is not a DataTable.
+ */
 export function DataViewToolbar({
 	leading,
 	search,
@@ -81,6 +87,11 @@ export function DataViewToolbar({
 	)
 }
 
+/**
+ * The table frame the filter bar sits in, with the bar in the table's topbar so filtering and
+ * the data it filters scroll as one. It works bare too, around something that is not a
+ * DataTable.
+ */
 export function DataViewTableFrame({
 	toolbar,
 	children,
@@ -104,7 +115,12 @@ export function DataViewTableFrame({
 
 /* ── Saved views ──────────────────────────────────────────────────────────────────── */
 
-/** A saved-view row that is NOT filter-driven — for a consumer holding views themselves. */
+/**
+ * A compact select of saved views that is NOT filter-driven — for a consumer holding views
+ * themselves. The caller controls the selected view and applies its state through
+ * `onValueChange`. For filter-driven tabs, or a select with exact preset matching, use
+ * DataView's `filtering.tabs` or FilterTabs.
+ */
 export function SavedViewTabs({ views, value, onValueChange, className }: SavedViewTabsProps) {
 	return (
 		<Select
@@ -122,6 +138,10 @@ export function SavedViewTabs({ views, value, onValueChange, className }: SavedV
 
 /* ── Pagination ───────────────────────────────────────────────────────────────────── */
 
+/**
+ * Keeps the result summary visible, including zero results. Page controls appear only above
+ * one page; `disabled` makes every control unavailable to pointer and keyboard users.
+ */
 export function DataViewPagination({
 	page,
 	pageCount,
@@ -158,6 +178,10 @@ export function DataViewPagination({
 
 /* ── The whole thing ──────────────────────────────────────────────────────────────── */
 
+/**
+ * The filter bar and the table as one surface: filter state, row filtering, the bar inside the
+ * table's topbar, and pagination, all against one row set.
+ */
 export function DataView<TData extends RowData, TValue = unknown>({
 	data,
 	columns,

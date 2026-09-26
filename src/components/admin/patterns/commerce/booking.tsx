@@ -83,6 +83,10 @@ export interface BookingDetail {
 export interface BookingCardProps extends Omit<ComponentProps<typeof ContentBlock>, "children"> {
 	/** A chip, usually — the booking's state. */
 	status?: ReactNode
+	/**
+	 * Rendered as a real `<dl>`, so a screen reader pairs each value with its own label. A
+	 * `fullWidth` detail spans the row and gets its own ground.
+	 */
 	details: BookingDetail[]
 	actionLabel?: ReactNode
 	onAction?: () => void

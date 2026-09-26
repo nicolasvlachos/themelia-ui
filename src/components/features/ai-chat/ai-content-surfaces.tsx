@@ -31,6 +31,11 @@ import styles from "./ai-chat.module.css"
 /** How long "Copied" stays up. */
 const COPIED_MS = 1500
 
+/**
+ * Code as produced. There is deliberately no syntax highlighting — that means shipping a
+ * grammar per language, and a chat can be handed any of them. Bring a highlighter and pass its
+ * output as `AiArtifact` children, or replace the code block.
+ */
 export function AiCodeBlock({
 	code,
 	language,
@@ -115,6 +120,7 @@ export function AiCodeBlock({
 	)
 }
 
+/** The frame around a produced artifact: its title, its actions, and what it holds. */
 export function AiArtifact({
 	title,
 	subtitle,
@@ -308,6 +314,10 @@ function SourceRow({
 	)
 }
 
+/**
+ * What the model read. Sources are listed rather than footnoted, because a reader checking an
+ * answer is looking for the list, not for a marker in the prose.
+ */
 export function AiSources({
 	sources,
 	variant = "list",
@@ -393,6 +403,7 @@ const KIND_ICON = {
 	generic: FileTextIcon,
 } satisfies Record<AiAttachmentKind, LucideIcon>
 
+/** One file a turn carried, as a chip or a thumbnail tile, with its upload progress. */
 export function AiAttachment({
 	name,
 	meta,

@@ -131,10 +131,17 @@ export interface ThemeTweakerProps
 	 * mounted, so portaled menus and dialogs inherit the edit too.
 	 */
 	target?: ThemeTweakerTarget
+	/**
+	 * Writes the edited theme onto the target. Set `false` when the application owns theme
+	 * application, as with useAppliedTheme at its root.
+	 */
 	apply?: boolean
 	/** Manages `.light` / `.dark` on a non-self target. Off when a theme manager owns it. */
 	manageModeClass?: boolean
-	/** `false` hides it; a node replaces the built-in one. */
+	/**
+	 * The sample the edit is shown on. `false` hides it, so the editor edits the actual app
+	 * without a sample preview; a node replaces the built-in one.
+	 */
 	preview?: ReactNode | false
 	fileName?: string
 	config?: UIConfig

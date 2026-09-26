@@ -14,18 +14,27 @@ import type { ResponsiveValue, SplitSide, StructureGap, StructureWidth } from ".
 
 export interface SplitProps extends React.ComponentProps<"div"> {
 	/**
-	 * Which visual column is the fixed one. Defaults to `end`. DOM order never changes: the
-	 * first child is the main content, the second the side.
+	 * Which visual column is the fixed one. The DOM order never changes with it: the first
+	 * child is the main content and the second the side on both settings, so a reader
+	 * tabbing through reaches the content first either way.
 	 */
 	side?: SplitSide
 	/**
-	 * The fixed column's width — a step or any CSS length. A maximum, so it never squeezes
-	 * the fluid column to nothing.
+	 * The fixed column's width — a step or any CSS length. A maximum rather than an exact
+	 * size, so a narrow viewport shrinks the rail instead of squeezing the content beside it
+	 * to nothing.
+	 * @default "18rem"
 	 */
 	sideWidth?: ResponsiveValue<StructureWidth | (string & {})>
-	/** Space between the two columns. */
+	/**
+	 * Space between the two columns.
+	 * @default "md"
+	 */
 	gap?: ResponsiveValue<StructureGap>
-	/** Below this breakpoint the columns stack. Defaults to `md`; `never` keeps them side by side. */
+	/**
+	 * Below this breakpoint the two columns become one. `never` keeps them side by side at
+	 * every width.
+	 */
 	collapseBelow?: "sm" | "md" | "lg" | "xl" | "never"
 }
 

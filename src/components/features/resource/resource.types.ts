@@ -34,26 +34,40 @@ export interface ResourceShellSlots {
 export interface ResourceIndexShellProps {
 	/** The screen's own content. Replaced while loading, failed, or empty. */
 	children?: ReactNode
-	/** Generated header title. Omit when supplying `slots.header`. */
+	/**
+	 * Generated header title. With `description` and `actions` it feeds the generated header;
+	 * omit them and pass `slots.header` when the header is not a title and a description.
+	 */
 	title?: ReactNode
+	/** Generated header description. */
 	description?: ReactNode
 	/** Generated header actions. */
 	actions?: ReactNode
 	/** Between the header and the body. */
 	toolbar?: ReactNode
 	/**
-	 * Replaces the body with the empty state. Explicit rather than inferred from `children`:
-	 * only the screen knows "no records" from "no records matching".
+	 * Replaces the body with the empty state. A boolean rather than an inference from
+	 * `children`: a screen with a header row and no data still has children, and only the screen
+	 * knows "no records" from "no records MATCHING".
 	 */
 	empty?: boolean
+	/** Replaces the body with the loading state. */
 	loading?: boolean
 	/**
 	 * Anything truthy replaces the body. An `Error`, string or number becomes the generated error
 	 * state's description; any other node is rendered as the error state itself.
 	 */
 	error?: ReactNode | Error
-	/** Wiring this puts a retry control on the generated error state. */
+	/**
+	 * Wiring this puts a retry control on the generated error state. Without it there is nothing
+	 * to offer.
+	 */
 	onRetry?: () => void
+	/**
+	 * `header`, `toolbar`, `aside`, `footer`, `loading`, `empty`, `error`. Every one has a
+	 * generated default; the slot is for the screen where configuring that default prop by prop
+	 * is worse than replacing it.
+	 */
 	slots?: ResourceShellSlots
 	className?: string
 	headerClassName?: string
@@ -70,8 +84,13 @@ export interface ResourceHeaderProps {
 	description?: ReactNode
 	/** Quiet context above the title: the parent record, the section. */
 	eyebrow?: ReactNode
-	/** The media, in full. Takes precedence over `avatarUrl`, which takes precedence over `icon`. */
+	/**
+	 * The media, in full. Ordered, not exclusive: it takes precedence over `avatarUrl`, which
+	 * takes precedence over `icon`. A screen knows one of the three, and which one depends on
+	 * what the record is — a person has an avatar, a settings section has an icon.
+	 */
 	media?: ReactNode
+	/** An avatar image, used when there is no `media`. */
 	avatarUrl?: string
 	avatarAlt?: string
 	/** Defaults to initials derived from a string title. */
@@ -95,7 +114,11 @@ export interface ResourceActionBarProps {
 	/** Filters, a selection summary, the controls that act on the body. */
 	leading?: ReactNode
 	trailing?: ReactNode
-	/** Pins the bar below the shell header as the body scrolls, for selection counts and bulk actions. */
+	/**
+	 * Pins the bar below the shell header, not the viewport top, as the body scrolls — for a bar
+	 * carrying a selection count or bulk actions, which is needed exactly when a static bar has
+	 * scrolled away.
+	 */
 	sticky?: boolean
 	className?: string
 }
@@ -113,15 +136,19 @@ interface ResourceSectionFrameProps {
 	children?: ReactNode
 	/** After the body. */
 	footer?: ReactNode
+	/** Inner spacing: `sm`, `md` or `lg`. */
 	padding?: ResourceBlockPadding
-	/** `plain` when this sits inside a frame that already has chrome. */
+	/** A ContentBlock surface. `plain` when this sits inside a frame that already has chrome. */
 	surface?: ResourceBlockSurface
 	className?: string
 	contentClassName?: string
 }
 
 export interface ResourceDetailsSectionProps extends ResourceSectionFrameProps {
-	/** Structured facts, before any free-form body content. */
+	/**
+	 * Structured facts, before any free-form body content. `metadataColumns` is a ceiling; the
+	 * list steps down at narrow widths on its own.
+	 */
 	metadata?: MetadataListItem[]
 	/** A ceiling. The list steps down at narrow widths on its own. */
 	metadataColumns?: 1 | 2 | 3 | 4
@@ -133,6 +160,7 @@ export interface ResourceDetailsSectionProps extends ResourceSectionFrameProps {
 }
 
 export interface TabbedResourceShellProps extends ResourceShowShellProps {
+	/** The tab row. It goes into the toolbar slot, so `slots.toolbar` still wins outright. */
 	tabs: OverflowTabItem[]
 	/** Controlled active tab. */
 	activeTab?: string

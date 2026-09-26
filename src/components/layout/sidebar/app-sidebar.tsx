@@ -15,10 +15,9 @@ import {
 	type SidebarCollapsible, type SidebarSide, type SidebarVariant,
 } from "@/components/base/sidebar"
 
-import {
-	resolveLayoutLinkRenderer,
-	type LayoutIconSource, type LayoutNavigationAdapter, type LayoutUser,
-} from "../layout.types"
+import { resolveLinkRenderer } from "@/lib/navigation"
+
+import type { LayoutIconSource, LayoutNavigationAdapter, LayoutUser } from "../layout.types"
 import { SidebarLogo } from "./partials/sidebar-logo"
 import { SidebarUser } from "./partials/sidebar-user"
 import { SidebarWorkspace, type WorkspaceLink } from "./partials/sidebar-workspace"
@@ -27,15 +26,21 @@ import styles from "./layout-sidebar.module.css"
 import type { SidebarFlatNavItem, SidebarItemContext, SidebarNavItem } from "./nav.types"
 
 export interface AppSidebarProps extends LayoutNavigationAdapter {
-	/** Navigation grouped by section heading. An empty key renders an untitled group. */
+	/**
+	 * Navigation as data, grouped by section heading. An empty key renders an untitled group,
+	 * and an item with children renders as a disclosure.
+	 */
 	navigationGroups?: Record<string, SidebarNavItem[]>
 	/** Entries pinned to the footer — support, settings, sign out. */
 	footerNavItems?: SidebarFlatNavItem[]
-	/** The current route. Everything active follows from this. */
+	/** The current route. Active rows, and which parent is expanded, follow from this alone. */
 	currentUrl?: string
 	/** Resolves an icon name to a component, so navigation data can stay serialisable. */
 	iconMap?: Record<string, ComponentType<{ className?: string }>>
-	/** Counts keyed by `handle`, for values that change after the nav was defined. */
+	/**
+	 * Counts keyed by `handle`, overriding an item's declared badge — for a number that
+	 * changes after the nav was defined.
+	 */
 	liveBadges?: Record<string, string | number>
 	loading?: boolean
 	/** Rows shown while loading. */
@@ -75,7 +80,9 @@ export interface AppSidebarProps extends LayoutNavigationAdapter {
 
 /**
  * Resolves an icon that may be a name (looked up in `iconMap`), a component or a node.
- * Exported for `renderItem` callers.
+ * Exported because a caller supplying `renderItem` still wants the same resolution — a row
+ * rendered by hand should not need its own copy of “string means look it up, component
+ * means render it, node means use it”.
  */
 export function SidebarIcon({
 	icon,
@@ -129,7 +136,7 @@ export function AppSidebar({
 	renderItem,
 	renderLink,
 }: AppSidebarProps) {
-	const link = resolveLayoutLinkRenderer({ renderLink })
+	const link = resolveLinkRenderer(renderLink)
 
 	/* One pass over the tree for the single current entry; a per-row prefix test would light every ancestor. */
 	const activeHref = useMemo(() => {

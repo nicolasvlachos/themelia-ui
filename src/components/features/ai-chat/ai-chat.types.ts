@@ -51,7 +51,10 @@ export interface AiReasoningProps {
 	children?: ReactNode
 	streaming?: boolean
 	durationSeconds?: number
-	/** Opens while streaming and closes when it stops. */
+	/**
+	 * Opens on the edge where streaming starts and closes on the edge where it stops, so a reader
+	 * who opened or closed it in between is not fought.
+	 */
 	expandWhileStreaming?: boolean
 	defaultExpanded?: boolean
 	expanded?: boolean
@@ -89,6 +92,7 @@ export type AiToolCallStatus = "pending" | "running" | "success" | "error"
 
 export interface AiToolCallProps {
 	name: string
+	/** Where the call is, as the header's badge: its tone, glyph and label. */
 	status: AiToolCallStatus
 	icon?: LucideIcon
 	args?: ReactNode
@@ -177,7 +181,10 @@ export interface AiCodeBlockProps {
 	language?: string
 	filename?: string
 	showLineNumbers?: boolean
-	/** 1-indexed. */
+	/**
+	 * 1-indexed. The gutter and the line share a grid row, so a highlight covers both rather than
+	 * stopping at the number.
+	 */
 	highlightLines?: readonly number[]
 	hideHeader?: boolean
 	maxHeight?: number | string
@@ -234,7 +241,10 @@ export interface AiSourcesProps {
 	expanded?: boolean
 	defaultExpanded?: boolean
 	onExpandedChange?: (expanded: boolean) => void
-	/** Preferred over `url`, so a source can route inside the app. */
+	/**
+	 * Wins over `url`, so an app that routes internally is not forced to hand the reader a full
+	 * page load to reach its own document.
+	 */
 	onSelect?: (source: AiSourceItem, index: number) => void
 	className?: string
 	strings?: Partial<Strings.AiSourcesStrings>

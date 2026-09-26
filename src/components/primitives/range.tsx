@@ -10,12 +10,24 @@ import { useFormatting } from "@/lib/ui-provider"
 import { ValueRoot, type SpanProps, type ValueProps } from "./value"
 
 export interface RangeProps extends SpanProps {
+	/**
+	 * The low end. One end alone still renders — "from £10", with the caller's copy around
+	 * the value.
+	 */
 	from?: number | null
+	/** The high end. One end alone still renders, with the caller's copy around the value. */
 	to?: number | null
-	/** An ISO currency code. Renders the range as money. */
+	/**
+	 * An ISO currency code. Renders the range as money: Intl repeats the symbol on both ends,
+	 * which is its considered answer to the ambiguity a single symbol creates.
+	 */
 	currency?: string
-	/** A CSS-style unit identifier — `kilogram`, `day`. Renders the range with its unit. */
+	/**
+	 * A CSS-style unit identifier — `kilogram`, `day`. Renders the range with its unit.
+	 * Ignored when `currency` is set.
+	 */
 	unit?: string
+	/** Caps the decimals on both ends. */
 	maximumFractionDigits?: number
 	locale?: string
 	emptyLabel?: ReactNode

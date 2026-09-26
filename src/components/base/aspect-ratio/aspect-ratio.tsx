@@ -14,8 +14,9 @@ export interface AspectRatioProps extends ComponentProps<"div"> {
 	/** Width divided by height — `16 / 9`, `1`, `4 / 3` — as a number, never parsed. */
 	ratio?: ResponsiveValue<number>
 	/**
-	 * How a media child fills the box: `cover` crops to fill (the usual frame); `contain` fits
-	 * inside, for artwork whose edges matter (a logo, a diagram, a screenshot).
+	 * How a media child fills the box: `cover` crops to fill it (the usual frame); `contain`
+	 * fits the whole image inside and leaves the rest of the box empty, for artwork whose edges
+	 * matter (a logo, a diagram, a screenshot).
 	 */
 	fit?: "cover" | "contain"
 }

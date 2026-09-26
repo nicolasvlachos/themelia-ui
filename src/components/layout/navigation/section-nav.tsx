@@ -20,6 +20,7 @@ export interface SectionNavItem {
 }
 
 export interface SectionNavProps extends Omit<React.ComponentProps<"nav">, "children" | "onSelect"> {
+	/** The headings: an id, a label, and an optional depth for nesting. */
 	items: SectionNavItem[]
 	/**
 	 * Which part of the viewport counts as "here". The default makes a heading current once

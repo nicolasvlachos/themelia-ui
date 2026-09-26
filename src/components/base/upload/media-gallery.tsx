@@ -38,6 +38,10 @@ export interface MediaGalleryProps extends FileConstraints {
 // A stable empty array, so memoised callbacks do not rebuild every render.
 const NONE: never[] = []
 
+/**
+ * Chosen images as reorderable tiles, for a gallery rather than a queue. The order is part of
+ * the value: the first tile is the cover.
+ */
 export function MediaGallery({
 	value,
 	defaultValue,

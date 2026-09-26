@@ -4,7 +4,7 @@
  */
 import { cx } from "@/lib/cx"
 
-import { resolveLayoutLinkRenderer } from "../layout.types"
+import { resolveLinkRenderer } from "@/lib/navigation"
 import type { AuthFooterLinksProps } from "./auth.types"
 import styles from "./auth.module.css"
 
@@ -15,7 +15,7 @@ export function AuthFooterLinks({
 	renderLink,
 	className,
 }: AuthFooterLinksProps) {
-	const link = resolveLayoutLinkRenderer({ renderLink })
+	const link = resolveLinkRenderer(renderLink)
 	const visible = links.filter((entry) => entry.visible !== false)
 	if (visible.length === 0) return null
 

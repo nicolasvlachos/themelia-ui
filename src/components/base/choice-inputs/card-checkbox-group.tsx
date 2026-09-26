@@ -16,14 +16,22 @@ import { ChoiceCardText, ChoiceDescription, ChoiceLabel, renderChoiceIcon } from
 export type CardCheckboxOption = ChoiceOption
 
 export interface CardCheckboxGroupProps extends ChoiceGroupBaseProps {
+	/** The choices, in the shape `CardRadioGroup` takes. */
 	options: CardCheckboxOption[]
 	/** Controlled value. */
 	value?: string[]
+	/** The initial values, for uncontrolled selection. */
 	defaultValue?: string[]
+	/** Called with every chosen value. */
 	onValueChange?: (values: string[]) => void
+	/** Column count at full width, as on `CardRadioGroup`. */
 	columns?: ChoiceColumns
 }
 
+/**
+ * The same cards as `CardRadioGroup` for a multiple choice: takes and returns an array of
+ * values.
+ */
 export const CardCheckboxGroup = forwardRef<HTMLDivElement, CardCheckboxGroupProps>(
 	function CardCheckboxGroup(
 		{ options, value, defaultValue, onValueChange, name, columns = 3, invalid, disabled, className, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledby, "aria-describedby": ariaDescribedby },

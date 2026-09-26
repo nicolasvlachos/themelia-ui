@@ -10,14 +10,20 @@ import { Button, type ButtonProps } from "./button"
 
 export interface TooltipButtonProps extends ButtonProps {
 	/**
-	 * Shown on hover and focus. It is the accessible name only when the button has no text of
-	 * its own; beside a visible label it is the description.
+	 * Shown on hover and focus. It is also the accessible name when the button has no text
+	 * of its own, and that pairing is the point: an icon button with a tooltip and no
+	 * `aria-label` is unnamed to everyone not using a mouse. Beside a visible label it is the
+	 * description.
 	 */
 	tooltip: string
 	/** Where the tooltip opens. */
 	side?: React.ComponentProps<typeof TooltipContent>["side"]
 }
 
+/**
+ * A button with a tooltip. For an icon-only button the tooltip text is also the accessible
+ * name, so it is not unnamed to anyone not using a mouse.
+ */
 export const TooltipButton = React.forwardRef<HTMLButtonElement, TooltipButtonProps>(
 	function TooltipButton({ tooltip, side = "top", children, ...props }, ref) {
 		return (

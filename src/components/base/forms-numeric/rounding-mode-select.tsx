@@ -25,6 +25,10 @@ export interface RoundingModeSelectProps
 	strings?: Partial<RoundingModeStrings>
 }
 
+/**
+ * The rounding policies as a control, offering exactly the modes `DecimalInput` accepts —
+ * `round`, `floor`, `ceil`, and `half-even` when asked for. `strings` replaces the labels.
+ */
 export const RoundingModeSelect = forwardRef<HTMLButtonElement, RoundingModeSelectProps>(
 	function RoundingModeSelect({ value, onValueChange, modes, strings, ...props }, ref) {
 		/* Merge inside the memo: merged outside, a new object each render would defeat it. */

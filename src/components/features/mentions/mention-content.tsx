@@ -15,9 +15,15 @@ export interface MentionContentProps<TResource extends string = string>
 	/** The mentions the record carries, resolved against the body by `data-ref-id`. */
 	mentions?: ReadonlyArray<Mention<TResource>>
 	resources?: MentionsConfig<TResource>["resources"]
-	/** Takes over every chip. More specific than `resources.<kind>.renderChip`. */
+	/**
+	 * Takes over every chip. More specific than `resources.<kind>.renderChip`, which is more
+	 * specific than `resources.<kind>.tone`.
+	 */
 	renderMention?: (mention: Mention<TResource>) => ReactNode
-	/** Replaces the kit's allow-list. Sanitising cannot be turned off, only swapped. */
+	/**
+	 * Replaces the kit's allow-list. There is no way to turn sanitising off — the escape hatch is
+	 * a different sanitiser, not the absence of one.
+	 */
 	sanitizer?: (html: string) => string
 }
 

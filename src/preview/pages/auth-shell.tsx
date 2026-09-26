@@ -39,38 +39,7 @@ export function AuthShellPage() {
 			</Example>
 
 			<Example id="auth-api" title="API">
-				<PropTable owner="AuthShell"
-					rows={[
-						{ name: "brand", type: "ReactNode | AuthBrandConfig", description: "A rendered mark, or { logo, label, description, href } for the shell to arrange." },
-						{ name: "eyebrow / title / description", type: "ReactNode", description: "The card's heading block." },
-						{ name: "headerEnd", type: "ReactNode", description: "At the end of the header row — a locale switcher, a step count." },
-						{ name: "banner", type: "ReactNode", description: "Above the form: an expired link, a required invitation." },
-						{ name: "cardMedia / cardFooter", type: "ReactNode", description: "A strip above the header and a band under the content, inside the frame." },
-						{ name: "postCard / footer", type: "ReactNode", description: "Content after the card and after the link rows." },
-						{ name: "footerLinks / policyLinks / languageLinks", type: "AuthLink[]", description: "Named rows of links that wrap with the available width." },
-						{ name: "languageSwitcher", type: "ReactNode", description: "A rendered control when a link row is the wrong shape." },
-						{ name: "variant", type: '"card" | "bare" | "split"', default: '"card"', description: "A raised surface, a bare form, or a form with a companion panel." },
-						{ name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "The surface width." },
-						{ name: "align", type: '"center" | "start"', default: '"center"', description: "center distributes spare height; tall content still grows naturally. start keeps content at the top." },
-						{ name: "contentRender", type: 'useRender.ComponentProps<"main">["render"]', description: "Use <div /> when the host page already owns the main landmark." },
-						{ name: "splitPanel / splitSide", type: 'ReactNode / "start" | "end"', default: '"end"', description: "The companion panel and its column. The form stays first in the DOM." },
-						{ name: "splitMobile", type: '"hidden" | "stacked"', default: '"hidden"', description: "The panel's behavior below 56rem of shell width." },
-					]}
-				/>
-				<PropTable owner="AuthCard" rows={[
-					{ name: "surface", type: '"card" | "bare"', default: '"card"', description: "bare removes framing and padding while retaining the header, content, and footer rhythm." },
-					{ name: "eyebrow / title / description / headerEnd", type: "ReactNode", description: "The heading region and a trailing control or status." },
-					{ name: "media / banner / footer", type: "ReactNode", description: "Content above the header, above the form, and in the footer band." },
-				]} />
-				<PropTable owner="AuthSplitPanel" rows={[
-					{ name: "form / panel", type: "ReactNode", description: "Independent regions. Omitting panel gives the form the full available width." },
-					{ name: "panelPosition", type: '"start" | "end"', default: '"end"', description: "The panel's visual column. Reading and keyboard order remain form first." },
-					{ name: "panelMobile", type: '"hidden" | "stacked"', default: '"hidden"', description: "The panel's behavior below 56rem of this container's width." },
-				]} />
-				<PropTable owner="AuthFooterLinks" rows={[
-					{ name: "links / label", type: "AuthLink[] / string", description: "A wrapping link row and its accessible navigation name." },
-					{ name: "leadingIcon / renderLink", type: "ReactNode / LayoutLinkRenderer", description: "An optional leading glyph and the consumer's router link renderer." },
-				]} />
+				<PropTable owners={["AuthShell", "AuthCard", "AuthSplitPanel", "AuthFooterLinks"]} />
 			</Example>
 		</ComponentPage>
 	)

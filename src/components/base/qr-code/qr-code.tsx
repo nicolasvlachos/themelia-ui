@@ -22,14 +22,30 @@ import styles from "./qr-code.module.css"
 export type QRRobustness = "L" | "M" | "Q" | "H"
 
 export interface QRCodeProps extends Omit<ComponentProps<"div">, "children"> {
-	/** What the code encodes — a URL, a payment string, a token. */
+	/**
+	 * What the code encodes — a URL, a payment string, a token. An empty value renders
+	 * `emptyState`, or nothing at all when there is none.
+	 */
 	value: string
-	/** Overrides the dark modules. Defaults to the inverse background, dark in both themes. */
+	/**
+	 * Overrides the dark modules. Defaults to the inverse background, dark in both themes.
+	 * Any CSS colour; it is converted to hex for the encoder.
+	 */
 	foreground?: string
-	/** Overrides the light modules. Defaults to the inverse foreground, light in both themes. */
+	/**
+	 * Overrides the light modules. Defaults to the inverse foreground, light in both themes.
+	 * Any CSS colour; it is converted to hex for the encoder.
+	 */
 	background?: string
+	/**
+	 * Error correction: how much of the symbol can be obscured and still decode — L ≈ 7%,
+	 * M ≈ 15%, Q ≈ 25%, H ≈ 30%. Higher needs a denser grid.
+	 */
 	robustness?: QRRobustness
-	/** Shown while encoding. Defaults to this component's own `generating` string. */
+	/**
+	 * Shown while encoding. Defaults to this component's own `generating` string; a value
+	 * that cannot be encoded shows `strings.failed` instead.
+	 */
 	placeholder?: string
 	/** Overrides this code's own copy — the two placeholder states and its name. */
 	strings?: Partial<QRCodeStrings>

@@ -29,16 +29,7 @@ export function ProgressPage() {
 			</Example>
 
 			<Example id="progress-api" title="API">
-				<PropTable owner="Progress"
-					rows={[
-						{ name: "value", type: "number", description: "0–max. Omit for indeterminate." },
-						{ name: "max", type: "number", default: "100", description: "Finite positive upper bound. Invalid values resolve to 100." },
-						{ name: "tone", type: "ProgressTone", description: "Semantic colour intent. Left unset the bar takes the primary tone — a progress bar that changes colour at a threshold is the caller's decision, not the component's." },
-						{ name: "label", type: "string", description: "Accessible name. Required when no visible label describes the bar." },
-						{ name: "ProgressCircle value", type: "number", required: true, description: "0–max. There is no indeterminate ring: a travelling band reads as unknown, a spinning circle reads as a spinner." },
-						{ name: "ProgressCircle children", type: "ReactNode", description: "What sits in the hole — a percentage, a count, a verdict glyph. The reason to draw a ring at all." },
-					]}
-				/>
+				<PropTable owners={["Progress", "ProgressCircle"]} />
 			</Example>
 		</ComponentPage>
 	)

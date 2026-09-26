@@ -81,8 +81,8 @@ Extends: `React.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `amount` | no | `ResponsiveValue<StructureGap>` | How far to escape, on the spacing scale; match the padding being cancelled. |
-| `axis` | no | `BleedAxis` | Which way (`both` covers every direction). Defaults to `inline`. |
+| `amount` | no | `ResponsiveValue<StructureGap>` | How far to escape, on the spacing scale. Match it to the padding being cancelled — a<br>surface at `--space-md` bleeds `md` — so the two move together under a density change. @default "none" |
+| `axis` | no | `BleedAxis` | Which way to escape; `both` covers every direction. Sideways is the common case: an<br>image bleeds across and keeps its vertical rhythm. |
 
 ### `Grid`
 
@@ -167,10 +167,10 @@ Extends: `React.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `side` | no | `SplitSide` | Which visual column is the fixed one. Defaults to `end`. DOM order never changes: the<br>first child is the main content, the second the side. |
-| `sideWidth` | no | `ResponsiveValue<StructureWidth \| (string & {})>` | The fixed column's width — a step or any CSS length. A maximum, so it never squeezes<br>the fluid column to nothing. |
-| `gap` | no | `ResponsiveValue<StructureGap>` | Space between the two columns. |
-| `collapseBelow` | no | `"sm" \| "md" \| "lg" \| "xl" \| "never"` | Below this breakpoint the columns stack. Defaults to `md`; `never` keeps them side by side. |
+| `side` | no | `SplitSide` | Which visual column is the fixed one. The DOM order never changes with it: the first<br>child is the main content and the second the side on both settings, so a reader<br>tabbing through reaches the content first either way. |
+| `sideWidth` | no | `ResponsiveValue<StructureWidth \| (string & {})>` | The fixed column's width — a step or any CSS length. A maximum rather than an exact<br>size, so a narrow viewport shrinks the rail instead of squeezing the content beside it<br>to nothing. @default "18rem" |
+| `gap` | no | `ResponsiveValue<StructureGap>` | Space between the two columns. @default "md" |
+| `collapseBelow` | no | `"sm" \| "md" \| "lg" \| "xl" \| "never"` | Below this breakpoint the two columns become one. `never` keeps them side by side at<br>every width. |
 
 ### `SplitSide`
 
@@ -208,12 +208,12 @@ Extends: `Omit<React.ComponentProps<"div">, "dir">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `direction` | no | `ResponsiveValue<StructureDirection>` | Main axis. Defaults to vertical. |
-| `gap` | no | `ResponsiveValue<StructureGap>` | Space between children, on the semantic spacing scale. |
-| `align` | no | `ResponsiveValue<StructureAlign>` |  |
-| `justify` | no | `ResponsiveValue<StructureJustify>` |  |
-| `wrap` | no | `ResponsiveValue<boolean>` | Allows children to flow onto more than one line. |
-| `maxWidth` | no | `ResponsiveValue<StructureWidth \| (string & {})>` | Caps the box's width — a content step, or any CSS length (e.g. a form's `26rem`). |
+| `direction` | no | `ResponsiveValue<StructureDirection>` | Main axis. @default "vertical" |
+| `gap` | no | `ResponsiveValue<StructureGap>` | Space between children, on the semantic spacing scale. @default "md" |
+| `align` | no | `ResponsiveValue<StructureAlign>` | Cross-axis alignment. @default "stretch" |
+| `justify` | no | `ResponsiveValue<StructureJustify>` | Main-axis distribution. @default "start" |
+| `wrap` | no | `ResponsiveValue<boolean>` | Allows children to flow onto more than one line. @default false |
+| `maxWidth` | no | `ResponsiveValue<StructureWidth \| (string & {})>` | Caps the box's width — a content step (`sm` to `2xl`, `full`, `none`) or any CSS<br>length, such as a form's `26rem`. A field measure is a control decision rather than a<br>content one, which is why a raw length is allowed beside the scale. |
 
 ### `StructureAlign`
 

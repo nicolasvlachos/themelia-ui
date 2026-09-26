@@ -20,16 +20,37 @@ export interface SidebarInsetLayoutProps extends Omit<ComponentProps<"div">, "ch
 	toolbar?: ReactNode | false
 	/** Rendered at the toolbar's trailing edge — a search field, an account menu. */
 	toolbarEnd?: ReactNode
-	/** Shows the panel toggle in the toolbar. On mobile it is the only way to open it. */
+	/**
+	 * Shows the panel toggle, the toolbar's collapse control. On mobile it is the only way to
+	 * open the panel; turn it off for a shell whose navigation is opened from somewhere else.
+	 */
 	showTrigger?: boolean
-	/** Caps the content measure so a wide monitor does not stretch prose across the page. */
+	/**
+	 * Caps the content at a reading measure instead of letting it run the shell's full width,
+	 * so a wide monitor does not stretch prose across the page.
+	 */
 	boundContent?: boolean
-	/** Bounds the shell to its parent instead of the viewport. See SidebarProvider. */
+	/**
+	 * Bounds the shell to its parent instead of the viewport. The panel is fixed by default,
+	 * which is right for a shell that owns the screen and wrong everywhere else.
+	 */
 	contained?: boolean
 	defaultOpen?: boolean
-	/** Configure controlled state, persistence, shortcuts and translated sidebar controls. */
+	/**
+	 * Passes `open`/`onOpenChange`, `persist`, `keyboardShortcut` and `strings` to the
+	 * shell's provider: controlled state, persistence, shortcuts and translated sidebar
+	 * controls. Disable persistence and shortcuts in independent embedded examples.
+	 */
 	sidebarProviderProps?: Pick<SidebarProviderProps, "open" | "onOpenChange" | "persist" | "keyboardShortcut" | "strings">
+	/**
+	 * Styles the toolbar without wrapping it. The shell owns the grid, so a wrapper around a
+	 * region would break the sticky rows.
+	 */
 	toolbarClassName?: string
+	/**
+	 * Styles the content region without wrapping it. The shell owns the grid, so a wrapper
+	 * around a region would break the sticky rows.
+	 */
 	contentClassName?: string
 	/**
 	 * Replaces the element the content region is drawn as (`<main>` by default). Pass
@@ -84,9 +105,16 @@ export interface StackedLayoutProps extends Omit<ComponentProps<"div">, "childre
 	headerEnd?: ReactNode
 	/** Fit a parent with a definite height and scroll the content below the header. */
 	contained?: boolean
-	/** Set false for tables or composed workspaces that use the full content width. */
+	/**
+	 * Caps the reading width. Set false for wide tables and composed workspaces that use the
+	 * full content width.
+	 */
 	boundContent?: boolean
 	children: ReactNode
+	/**
+	 * Styles the header row without wrapping it. The shell owns the grid, so a wrapper around
+	 * a region would break the sticky rows.
+	 */
 	headerClassName?: string
 	contentClassName?: string
 	/**

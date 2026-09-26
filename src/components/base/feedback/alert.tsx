@@ -64,21 +64,32 @@ const TONE_ICON: Record<AlertTone, React.ReactNode> = {
 export interface AlertProps
 	extends React.ComponentProps<"div">,
 		VariantProps<typeof alertVariants> {
+	/** Semantic colour intent. Never `default` — the vocabulary is fixed across the kit. */
+	tone?: AlertTone
 	/**
-	 * Leading glyph. Defaults to the tone's own; pass a node to replace it, or `false`
-	 * for an alert that must have none.
+	 * Structural presentation. `inverse` is a solid slab for a single emphatic notice; the
+	 * tone still describes the intent.
+	 */
+	variant?: AlertVariant
+	/**
+	 * Leading glyph. Defaults to the tone's own conventional glyph; pass a node to replace
+	 * it, or `false` for an alert that must have none.
 	 */
 	icon?: React.ReactNode | false
 }
 
-function Alert({ className, tone, variant, icon, children, ...props }: AlertProps) {
-	const resolvedIcon = icon === undefined ? TONE_ICON[tone ?? "neutral"] : icon
+/**
+ * A notice in a tone. Status tones bring their own glyph, so colour is not the only signal.
+ * A destructive alert interrupts the screen reader; every other tone is a polite status.
+ */
+function Alert({ className, tone = "neutral", variant = "default", icon, children, ...props }: AlertProps) {
+	const resolvedIcon = icon === undefined ? TONE_ICON[tone] : icon
 
 	return (
 		<div
 			data-slot="alert"
-			data-tone={tone ?? "neutral"}
-			data-variant={variant ?? "default"}
+			data-tone={tone}
+			data-variant={variant}
 			/* `alert` interrupts the screen reader: right for errors only; everything else is `status`. */
 			role={tone === "destructive" ? "alert" : "status"}
 			className={cx("alert--component", alertVariants({ tone, variant, className }))}
@@ -94,6 +105,7 @@ function Alert({ className, tone, variant, icon, children, ...props }: AlertProp
  * The title inherits the alert's ink, and the description is the secondary role. The inverse
  * slab re-points both, so they follow it.
  */
+/** The alert's heading. It inherits the alert's ink. */
 function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<Text
@@ -108,6 +120,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
 	)
 }
 
+/** The message, in the secondary text role. */
 function AlertDescription({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<Text
@@ -121,6 +134,7 @@ function AlertDescription({ className, ...props }: React.ComponentProps<"div">) 
 	)
 }
 
+/** A single control, positioned in reserved inline space so it never overlaps the text. */
 function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
 	return <div data-slot="alert-action" className={cx("alert-action--component", styles.action, className)} {...props} />
 }

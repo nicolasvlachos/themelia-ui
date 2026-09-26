@@ -16,6 +16,11 @@ export interface ActionHttpErrorOptions {
 	response: Response;
 }
 
+/**
+ * The `Error` createHttpActionRunner throws for a failed response, carrying `status`,
+ * `statusText`, `body` and the `Response`, plus the body's own `errors` when it has them. What
+ * `parseErrors` receives for an HTTP failure.
+ */
 export class ActionHttpError extends Error {
 	status: number;
 	statusText: string;
@@ -109,6 +114,7 @@ export function createHttpActionRunner<TResult = unknown>({
 	};
 }
 
+/** Identity helper that keeps the generics inferred. */
 export function defineAction<
 	TPayload = unknown,
 	TValues = unknown,
@@ -119,6 +125,10 @@ export function defineAction<
 	return definition;
 }
 
+/**
+ * `defineAction` for a destructive action: its tone defaults to `"destructive"`, and its
+ * modality to a destructive `"alert"`.
+ */
 export function defineDeleteAction<
 	TPayload = unknown,
 	TResult = unknown,
@@ -141,6 +151,10 @@ export function defineDeleteAction<
 	};
 }
 
+/**
+ * `defineAction` for an action that asks through a form: the modality's `type` defaults to
+ * `"dialog"`.
+ */
 export function defineFormAction<
 	TPayload = unknown,
 	TValues = unknown,
@@ -162,6 +176,7 @@ export function defineFormAction<
 	};
 }
 
+/** `defineAction` for an action that runs without asking: its modality is `"none"`. */
 export function defineSilentAction<
 	TPayload = unknown,
 	TValues = unknown,

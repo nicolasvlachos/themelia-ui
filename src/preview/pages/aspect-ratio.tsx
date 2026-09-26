@@ -12,12 +12,7 @@ export function AspectRatioPage() {
 			/>
 
 			<Example id="aspect-ratio-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "AspectRatio ratio", type: "ResponsiveValue<number>", default: "1", description: "Width divided by height. 16 / 9, 1, 4 / 3." },
-						{ name: "AspectRatio fit", type: '"cover" | "contain"', default: '"cover"', description: "How a media child fills the box: cover crops to fill it, contain fits the whole image inside and leaves the rest of the box empty." },
-					]}
-				/>
+				<PropTable owner="AspectRatio" />
 			</Example>
 		</ComponentPage>
 	)

@@ -11,15 +11,19 @@ export default function PaginationLinks() {
 			total={12}
 			onPageChange={setPage}
 			strings={{ label: "Linked pagination example" }}
-			renderLink={(target, linkProps) => (
+			pageHref={(target) => `#/pagination?page=${target}`}
+			renderLink={({ href, children, onClick, ...rest }) => (
 				<a
-					href={`#/pagination?page=${target}`}
-					{...linkProps}
+					href={href}
+					{...rest}
 					onClick={(event) => {
+						/* A client router takes over the click; the href stays for a new tab. */
 						event.preventDefault()
-						linkProps.onClick(event)
+						onClick?.(event)
 					}}
-				/>
+				>
+					{children}
+				</a>
 			)}
 		/>
 	)

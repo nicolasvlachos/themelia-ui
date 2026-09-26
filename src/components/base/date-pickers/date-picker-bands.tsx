@@ -19,6 +19,10 @@ export interface DatePickerHeaderProps extends Omit<ComponentProps<"div">, "titl
 	action?: ReactNode
 }
 
+/**
+ * The region above the calendar inside the popup, for the picker's `header` slot — a title,
+ * a mode switch. Exported so a caller can supply their own without rebuilding the calendar.
+ */
 export function DatePickerHeader({
 	title,
 	description,
@@ -63,6 +67,11 @@ export interface DatePickerFooterProps extends ComponentProps<"div"> {
 	actions?: ReactNode
 }
 
+/**
+ * The region below the calendar inside the popup, for the picker's `footer` slot: the row
+ * that holds a summary and controls such as Clear and Apply. Exported so a caller can supply
+ * their own without rebuilding the calendar.
+ */
 export function DatePickerFooter({
 	summary,
 	actions,

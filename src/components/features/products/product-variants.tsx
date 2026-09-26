@@ -84,6 +84,10 @@ function summariseTotal(values: readonly ReactNode[]): ReactNode {
 	return String(numbers.reduce((sum, value) => sum + value, 0))
 }
 
+/**
+ * A variant's verbs, built from one array so the overflow cannot offer what the button already
+ * does. A separate menu from an option's or a row's, because each answers to a different set.
+ */
 export function ProductVariantActionMenu({
 	variant,
 	index = 0,

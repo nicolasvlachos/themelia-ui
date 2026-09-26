@@ -18,7 +18,10 @@ export interface SensitiveActionProps
 	extends Omit<ComponentProps<typeof ContentBlock>, "children" | "icon"> {
 	/** The control that performs it — usually a destructive Button. */
 	action?: ReactNode
-	/** What will happen, stated before it does. Rendered as a note, not an error. */
+	/**
+	 * What will happen, stated before it does. Rendered `role="note"`, not as an error —
+	 * nothing has gone wrong yet.
+	 */
 	confirmation?: ReactNode
 	icon?: ComponentProps<typeof IconBadge>["icon"]
 }

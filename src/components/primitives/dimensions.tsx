@@ -7,10 +7,15 @@ import { ValueRoot, type SpanProps, type ValueProps } from "./value"
 import { formatDimensions, type DimensionPart } from "./dimensions.format"
 
 export interface DimensionsProps extends SpanProps {
+	/** The first part. The parts stay separate numbers until the render joins them. */
 	width?: DimensionPart
+	/** The second part. */
 	height?: DimensionPart
+	/** The third part, optional — two values render as a plane. */
 	depth?: DimensionPart
+	/** Appended once, not per part. */
 	unit?: ReactNode
+	/** Between the parts. A multiplication sign, not the letter x. */
 	separator?: ReactNode
 	locale?: string
 	options?: Intl.NumberFormatOptions

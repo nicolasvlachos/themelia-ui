@@ -19,11 +19,17 @@ import {
 import styles from "./feedback.module.css"
 
 export interface LoadingStateProps extends ComponentProps<"div"> {
-	/** Replaces the default copy. */
+	/** Copy for the wait, replacing the default. */
 	label?: ReactNode
+	/** Overrides the default copy. */
 	strings?: StringsProp<LoadingStateStrings>
 }
 
+/**
+ * A whole region that is working. A region, not an overlay — it occupies what the content
+ * will occupy. Distinct from `Empty` and `ErrorState`: the three are different answers and
+ * must look different.
+ */
 export function LoadingState({ label, strings, className, ...props }: LoadingStateProps) {
 	const copy = { ...defaultLoadingStateStrings, ...strings }
 
@@ -46,13 +52,17 @@ export function LoadingState({ label, strings, className, ...props }: LoadingSta
 export interface ErrorStateProps extends Omit<ComponentProps<"div">, "title"> {
 	title?: ReactNode
 	description?: ReactNode
-	/** Renders the retry control when set. */
+	/**
+	 * Renders the retry control when set. With neither this nor `action`, the state reports
+	 * the failure without offering a dead button.
+	 */
 	onRetry?: () => void
 	/** Replaces the retry control entirely. */
 	action?: ReactNode
 	strings?: StringsProp<ErrorStateStrings>
 }
 
+/** A whole region that has failed, announced at once. */
 export function ErrorState({
 	title,
 	description,

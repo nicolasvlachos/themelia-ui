@@ -13,6 +13,11 @@ import { resolveCategoryColorToken, type EventCalendarDayCellProps } from "./eve
 import { getCategoryById } from "./use-event-calendar-data"
 import styles from "./event-calendar.module.css"
 
+/**
+ * One day in the grid. Deliberately not a button: a cell holds events that are themselves
+ * pressable, and nesting controls makes both unreachable by keyboard. The day number is the
+ * keyboard affordance; the cell's click only widens the pointer target.
+ */
 export function EventCalendarDayCell({
 	data,
 	categories,

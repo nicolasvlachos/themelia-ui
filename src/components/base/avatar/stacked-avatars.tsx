@@ -22,17 +22,22 @@ export interface StackedAvatarUser {
 }
 
 export interface StackedAvatarsProps extends Omit<ComponentProps<"div">, "children"> {
+	/** The people in the row, in order. */
 	users: StackedAvatarUser[]
 	/** Overrides this group's own copy — its accessible name, and the overflow chip. */
 	strings?: Partial<StackedAvatarsStrings>
-	/** How many faces to show before collapsing the rest into a count. */
+	/** How many faces to show. Beyond it, the remainder becomes a count. */
 	max?: number
-	/** Hides the "+N" tile, for a group where the total does not matter. */
+	/** Shows the "+N" tile. Turn it off for a group where the total does not matter. */
 	showOverflow?: boolean
-	/** Formats the overflow tile — "+12", "+12 more". Defaults to `strings.overflow`. */
+	/**
+	 * How the remainder reads on the overflow tile — "+12", "+12 more". Defaults to
+	 * `strings.overflow`, which reads "+N".
+	 */
 	overflowFormatter?: (overflow: number) => ReactNode
 }
 
+/** People as overlapping avatars, capped with a count of the rest. */
 export function StackedAvatars({
 	users,
 	strings,

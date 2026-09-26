@@ -31,13 +31,18 @@ export interface ChecklistStep {
 /* `defaultValue` is omitted: a div's is a string, which would be an invalid accordion value. */
 export interface ChecklistProps
 	extends Omit<ComponentProps<"div">, "children" | "onChange" | "defaultValue"> {
+	/** id, status, title, and optionally badge, content, disabled. */
 	steps: ChecklistStep[]
 	/** Uncontrolled starting state. Defaults to the first unfinished step. */
 	defaultExpanded?: string[]
-	/** Controlled. */
+	/**
+	 * The open steps, controlled. Uncontrolled, the checklist opens the first unfinished
+	 * step.
+	 */
 	expanded?: string[]
+	/** Reports the open steps when a reader opens or closes one. */
 	onExpandedChange?: (expanded: string[]) => void
-	/** Fires when a step opens — for analytics, not for state. */
+	/** Fires on the transition into open — for analytics, not for state. */
 	onStepOpen?: (id: string) => void
 	multiple?: boolean
 	surface?: AccordionSurface

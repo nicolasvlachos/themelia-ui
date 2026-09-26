@@ -14,9 +14,11 @@ export interface AlertMetadataItem {
 }
 
 export interface AlertMetadataProps extends Omit<ComponentProps<"dl">, "children"> {
+	/** Key/value detail under the message — a request id, a timestamp, a failing field. */
 	items: AlertMetadataItem[]
 }
 
+/** Key/value pairs under an alert's message, as a `<dl>` so each pair is read together. */
 export function AlertMetadata({ items, className, ...props }: AlertMetadataProps) {
 	if (items.length === 0) return null
 

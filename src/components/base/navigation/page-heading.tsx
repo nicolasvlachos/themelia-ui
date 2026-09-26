@@ -35,7 +35,10 @@ export interface PageHeadingProps extends Omit<ComponentProps<"header">, "title"
 	title: ReactNode
 	/** One sentence under the title, capped at a reading measure. */
 	description?: ReactNode
-	/** Heading level for a plain-text title; set it so the document outline is right. */
+	/**
+	 * Heading level for a plain-text title; set it so the document outline is right. It is
+	 * not the type size.
+	 */
 	level?: HeadingLevel
 	/** Convenience for a single badge. Ignored when `badges` is set. */
 	badge?: PageHeadingBadge
@@ -43,7 +46,7 @@ export interface PageHeadingProps extends Omit<ComponentProps<"header">, "title"
 	badges?: PageHeadingBadge[]
 	/** Trail above the block. */
 	breadcrumbs?: ReactNode
-	/** Left of the whole column — an avatar, a back control. Top-aligned. */
+	/** Left of the whole column — an avatar, a back control. Top-aligned; the description indents with it. */
 	leading?: ReactNode
 	/** Between the eyebrow and the title row — a banner or status strip. */
 	beforeTitle?: ReactNode

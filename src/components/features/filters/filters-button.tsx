@@ -24,6 +24,11 @@ export interface FiltersButtonProps {
 	className?: string
 }
 
+/**
+ * The add-filter button and its two-step popup: the filters not yet applied, then that
+ * filter's editor with a way back. Two steps rather than nested submenus, which cannot be
+ * operated by touch and close under a date picker.
+ */
 export function FiltersButton({ availableFilters, labelVisibility = "hidden", className }: FiltersButtonProps) {
 	const { strings, getFilterValue, setFilterValue, isNavigating } = useFilters()
 	const [open, setOpen] = useFilterTransientState(false)

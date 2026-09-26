@@ -40,16 +40,23 @@ const cardVariants = cvm(styles.root, {
 export interface CardProps extends Omit<React.ComponentProps<"div">, "title"> {
 	/** Leading glyph on the title line. */
 	icon?: React.ReactNode
+	/** Header copy. The title truncates rather than pushing header controls off the row. */
 	title?: React.ReactNode
 	/** Badges, status, or counts immediately after the title. */
 	titleSuffix?: React.ReactNode
 	/**
-	 * Explanatory copy behind a focusable info button on the title line — for a definition or
-	 * caveat too long for the description.
+	 * Explanatory copy behind an info button on the title line — for a definition or caveat
+	 * too long for the description. A real focusable button, not a `title` attribute;
+	 * `strings.tooltip` names it.
 	 */
 	tooltip?: React.ReactNode
+	/** Header copy under the title. */
 	description?: React.ReactNode
-	/** Outer chrome. */
+	/**
+	 * Outer chrome. `framed`, the bezel, is the default; `card` is the plain panel. Change it
+	 * for a whole product once with `UIProvider` `defaults.card.surface`.
+	 * @default "framed"
+	 */
 	surface?: CardSurface
 	/** Full-width row above the title — an eyebrow or breadcrumb. Rare. */
 	headerStart?: React.ReactNode
@@ -57,38 +64,66 @@ export interface CardProps extends Omit<React.ComponentProps<"div">, "title"> {
 	headerEnd?: React.ReactNode
 	/** A single control at the end of the header. Use `actions` for a list of commands. */
 	headerAction?: React.ReactNode
-	/** Overflow commands, collapsed into one menu trigger. */
+	/**
+	 * Overflow commands, collapsed into one menu trigger and rendered by the shared
+	 * `ActionMenu`: a destructive entry moves last and is separated.
+	 */
 	actions?: CardAction[]
 	/**
-	 * Renders the title as a heading of this level. Unset, the title is a span that heading
-	 * navigation can't find; set it when the card titles a page section.
+	 * Renders the title as a heading of this level, for a card that heads a page or a region.
+	 * Unset, the title is a span that heading navigation can't find.
 	 */
 	titleLevel?: 1 | 2 | 3 | 4 | 5 | 6
-	/** A full-bleed strip above the header — a cover image, an illustration, a preview. */
+	/**
+	 * A full-bleed strip above the header — a cover image, a map, a brand band — clipped to
+	 * the card's top corners.
+	 */
 	media?: React.ReactNode
-	/** Banner between header and content. A plain string is wrapped for you. */
+	/** Banner between header and content. A plain string is wrapped in an `Alert`. */
 	alert?: React.ReactNode
+	/** Tone of the alert band. */
 	alertTone?: CardAlertTone
+	/** Content inside the content inset, above `children`. */
 	contentTop?: React.ReactNode
+	/** Content inside the content inset, below `children`. */
 	contentBottom?: React.ReactNode
 	/** Muted text in the footer band. */
 	footerText?: React.ReactNode
 	/** Footer band under the content — a single primary action fits well here. */
 	footerSlot?: React.ReactNode
+	/**
+	 * A rule between the header and the content. `UIProvider` defaults can change it.
+	 * @default false
+	 */
 	headerDivider?: boolean
+	/**
+	 * A rule between the content and the footer.
+	 * @default false
+	 */
 	footerDivider?: boolean
 	/**
 	 * Clips content to a collapsed height with a fade, and adds a toggle. `true` uses
 	 * `--card-collapsed-height`; the object form sets the height for this card only.
 	 */
 	expandable?: boolean | { collapsedMaxHeight?: number | string }
+	/** Whether an expandable card's content is expanded, for controlled expansion. */
 	expanded?: boolean
+	/** Whether an expandable card starts expanded, for uncontrolled expansion. */
 	defaultExpanded?: boolean
+	/** Called with the new state when the reader expands or collapses the content. */
 	onExpandedChange?: (expanded: boolean) => void
-	/** Overrides this card's own copy — the info glyph, the overflow trigger, the disclosure. */
+	/**
+	 * Overrides this card's own copy — the info glyph, the overflow trigger, and the
+	 * disclosure control's name in each state.
+	 */
 	strings?: Partial<CardStrings>
 }
 
+/**
+ * The single surface primitive. Slot props (`title`, `description`, `actions`, `footerText`,
+ * …) cover the common shape; `CardHeader`, `CardContent` and `CardFooter` are exported for
+ * composing.
+ */
 export function Card({
 	icon,
 	title,

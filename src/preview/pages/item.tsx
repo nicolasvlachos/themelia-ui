@@ -34,17 +34,21 @@ export function ItemPage() {
 			</Example>
 
 			<Example id="item-api" title="API">
-				<PropTable owner="Item"
+				<PropTable
+					owners={[
+						"Item",
+						"ItemMedia",
+						"ItemContent",
+						"ItemActions",
+						"ItemHeader",
+						"ItemFooter",
+						"ItemGroup",
+						"ItemSeparator",
+					]}
+				/>
+				<PropTable
 					rows={[
-						{ name: "surface", type: '"neutral" | "bordered" | "muted"', default: '"neutral"', description: "Row chrome. Never 'default' — the vocabulary is fixed." },
-						{ name: "ItemGroup ruled", type: "boolean", default: "false", description: "Hairlines instead of gaps, and neutral rows go flush. For a run of rows inside one card, where a rem of air between each reads as unrelated blocks. bordered and muted rows keep their inset, because they do draw a surface." },
-						{ name: "ItemMedia variant", type: '"icon" | "image"', description: "Sizes the leading slot. image gets the larger box an avatar or thumbnail needs." },
-						{ name: "ItemContent", type: "component", description: "Title and description. Takes the remaining width and truncates rather than pushing the actions off the row." },
-						{ name: "ItemActions", type: "component", description: "Trailing controls. Kept out of the content flow so a long title cannot displace them." },
-						{ name: "ItemGroup", type: "component", description: "Stacks rows and owns the dividers, so a row never draws its own." },
 						{ name: "--density-scale", api: ["css:--density-scale"], type: "number", default: "var(--scale)", description: "Global density factor. Scope it so a dense list can sit inside a normally-scaled card." },
-						{ name: "ItemHeader / ItemFooter", type: "component", description: "Full-width rows above and below the row\u2019s own content, for an item that carries an eyebrow or a footnote without them competing with the title line." },
-						{ name: "ItemSeparator", type: "component", description: "A rule between items, for a group that wants one only in places. `ItemGroup ruled` is the answer when every row needs one." },
 					]}
 				/>
 			</Example>

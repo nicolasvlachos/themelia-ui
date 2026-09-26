@@ -8,10 +8,9 @@ import {
 } from "@/components/base/sidebar"
 import { VisuallyHidden } from "@/components/base/display"
 
-import {
-	resolveLayoutLinkRenderer,
-	type LayoutIconSource, type LayoutNavigationAdapter,
-} from "../../layout.types"
+import { resolveLinkRenderer } from "@/lib/navigation"
+
+import type { LayoutIconSource, LayoutNavigationAdapter } from "../../layout.types"
 import { defaultSidebarWorkspaceStrings, type SidebarWorkspaceStrings } from "../sidebar.strings"
 import styles from "../layout-sidebar.module.css"
 
@@ -32,6 +31,10 @@ export interface SidebarWorkspaceProps extends LayoutNavigationAdapter {
 	contentClassName?: string
 }
 
+/**
+ * The rail’s header as a workspace switcher. The whole header row is the trigger, not a
+ * chevron beside a decorative name — the name is what a reader aims at.
+ */
 export function SidebarWorkspace({
 	logo,
 	collapsedLogo,
@@ -41,7 +44,7 @@ export function SidebarWorkspace({
 	contentClassName,
 }: SidebarWorkspaceProps) {
 	const copy = { ...defaultSidebarWorkspaceStrings, ...strings }
-	const link = resolveLayoutLinkRenderer({ renderLink })
+	const link = resolveLinkRenderer(renderLink)
 	const { state } = useSidebar()
 	const isCollapsed = state === "collapsed"
 	const mark = isCollapsed ? (collapsedLogo ?? logo) : logo

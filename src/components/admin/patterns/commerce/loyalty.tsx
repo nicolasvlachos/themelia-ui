@@ -28,8 +28,12 @@ export interface LoyaltyMovement {
 export interface LoyaltyPointsProps extends Omit<ComponentProps<typeof ContentBlock>, "children"> {
 	/** A number gets locale grouping; a string is taken as already formatted. */
 	balance: number | string
-	/** The tier's name. A caller's word, so there is no English default to leak. */
+	/**
+	 * The tier's name. There is no default: it is a caller's word, and an English literal
+	 * here is one no strings override could reach.
+	 */
 	tier?: ReactNode
+	/** The tier badge's tone. */
 	tierTone?: BadgeTone
 	movements?: LoyaltyMovement[]
 	onRedeem?: () => void

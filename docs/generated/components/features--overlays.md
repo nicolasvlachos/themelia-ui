@@ -31,6 +31,10 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A dialog with a generated footer: cancel and confirm in a fixed order, an async- and
+form-aware confirm, and a tone for the glyph and the confirm colour. Use the base Dialog when
+the body owns its actions.
+
 ```text
 ({ width, surfaceStyle, ...props }: ActionDialogProps) => import("react").JSX.Element
 ```
@@ -43,12 +47,15 @@ Extends: `OverlayBaseProps`, `OverlayActionProps`, `OverlayEmphasisProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `width` | no | `OverlayWidth` | Maximum width. A CSS length, or one of the kit's steps. |
-| `trigger` | no | `ReactNode` | The element that opens it. Supply this OR `open`, not both. |
+| `width` | no | `OverlayWidth` | Maximum width: one of the kit's steps, or a CSS length. A dialog's max width is a real<br>per-dialog decision — a confirmation is narrow and a form is wide. |
+| `trigger` | no | `ReactNode` | The element that opens it, which makes the overlay uncontrolled. Supply this OR `open`,<br>not both. |
 
 ### `ActionSheet`
 
 Kind: callable.
+
+ActionDialog's recipe over a sheet, for longer work: a filter rail, an inspector, a long
+form. Its own props are the edge's — side, size, length, inset, modality.
 
 ```text
 ({ side, size, length, inset, modality, showFooter, ...props }: ActionSheetProps) => import("react").JSX.Element
@@ -67,8 +74,8 @@ Extends: `OverlayBaseProps`, `OverlayActionProps`, `OverlayEmphasisProps`.
 | `length` | no | `string` | How far it runs along its edge; `inset` sets the gap from the viewport. See base/sheet. |
 | `inset` | no | `boolean \| string` |  |
 | `showFooter` | no | `boolean` |  |
-| `modality` | no | `"modal" \| "trap-focus" \| "non-modal"` | `modal` traps focus, locks scroll and makes the page inert; `non-modal` sits beside<br>the app (inspectors, filter rails); `trap-focus` is in between. A non-modal panel is<br>not announced as a dialog, so never use it for a question that must be answered. |
-| `trigger` | no | `ReactNode` |  |
+| `modality` | no | `"modal" \| "trap-focus" \| "non-modal"` | How much of the page it takes hostage. `modal` traps focus, locks scroll and makes the page<br>inert; `non-modal` sits beside the app (inspectors, filter rails) and leaves the<br>surrounding page interactive; `trap-focus` is in between. A non-modal panel is not<br>announced as a dialog, so never use it for a question that must be answered. |
+| `trigger` | no | `ReactNode` | The element that opens it, which makes the overlay uncontrolled. Supply this OR `open`,<br>not both. |
 
 ### `ConfirmDialog`
 
@@ -89,7 +96,7 @@ Extends: `OverlayBaseProps`, `OverlayActionProps`.
 | `tone` | no | `OverlayTone` |  |
 | `showIcon` | no | `boolean` |  |
 | `alertMessage` | no | `ReactNode` |  |
-| `trigger` | no | `ReactNode` |  |
+| `trigger` | no | `ReactNode` | The element that opens it, which makes the overlay uncontrolled. Supply this OR `open`,<br>not both. |
 | `destructive` | no | `boolean` | Shorthand for the destructive presentation: tone, icon and confirm colour. |
 
 ### `defaultConfirmStrings`
@@ -127,15 +134,15 @@ Passing `onConfirm` alongside `onAsyncConfirm` therefore skips the async one.
 | `showCancel` | no | `boolean` |  |
 | `showConfirm` | no | `boolean` |  |
 | `onCancel` | no | `() => void` |  |
-| `onConfirm` | no | `() => void` |  |
-| `onAsyncConfirm` | no | `() => Promise<void>` |  |
-| `onError` | no | `(error: unknown) => void` | Receives a rejected async confirm, so a consumer can toast or report it. |
-| `closeOnAsyncComplete` | no | `boolean` | `false` keeps the overlay open after a resolved async confirm (multi-step flows). |
+| `onConfirm` | no | `() => void` | Runs, then the overlay closes. The second of the three confirm paths: `formId` wins over<br>it, and it wins over `onAsyncConfirm`. |
+| `onAsyncConfirm` | no | `() => Promise<void>` | Awaited with a spinner; closes on success, stays open on rejection and reports through<br>`onError`. The last of the three confirm paths, after `formId` and `onConfirm`. |
+| `onError` | no | `(error: unknown) => void` | Receives a rejected async confirm, so a consumer can toast or report it. The overlay stays<br>open. |
+| `closeOnAsyncComplete` | no | `boolean` | `false` keeps the overlay open after a resolved async confirm — a multi-step flow. @default true |
 | `confirmTone` | no | `OverlayButtonTone` |  |
 | `confirmStyle` | no | `OverlayButtonStyle` |  |
 | `loading` | no | `boolean` | Forces the pending presentation, for confirm work owned outside the overlay. |
-| `formId` | no | `string` |  |
-| `footer` | no | `ReactNode` | Replaces the generated footer. Every prop above stops applying. |
+| `formId` | no | `string` | The first of the three confirm paths: the confirm button calls `requestSubmit()` on that<br>form, so native validation runs and the form's own `onSubmit` owns the outcome. Neither<br>callback fires. |
+| `footer` | no | `ReactNode` | Replaces the generated footer. Every action prop stops applying. |
 
 ### `OverlayActionStrings`
 
@@ -152,7 +159,7 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `open` | no | `boolean` |  |
+| `open` | no | `boolean` | Controlled: hands the open state to the caller. Supply this OR `trigger`, not both. |
 | `onOpenChange` | no | `(open: boolean) => void` |  |
 | `onClose` | no | `() => void` | Fires after it closes, whatever dismissed it. |
 | `children` | no | `ReactNode` |  |
@@ -192,10 +199,10 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `emphasis` | no | `boolean` | Lets `tone` drive the header glyph and the confirm button's colour. Without it the<br>tone is presentational only (a warning notice with an ordinary primary confirm). |
-| `tone` | no | `OverlayTone` |  |
-| `showIcon` | no | `boolean` |  |
-| `alertMessage` | no | `ReactNode` | A notice between the header and the body: the consequence, before committing. |
+| `emphasis` | no | `boolean` | Lets `tone` drive the confirm button's colour as well as the header glyph. Without it the<br>tone is presentational only — a warning-toned dialog whose action is just the action, with<br>an ordinary primary confirm, is a real combination. |
+| `tone` | no | `OverlayTone` | The semantic tone of the header glyph and the notice, and with `emphasis` the confirm. |
+| `showIcon` | no | `boolean` | Draws the tone's glyph beside the title. |
+| `alertMessage` | no | `ReactNode` | A notice between the header and the body — the consequence, before committing — inside the<br>scroll region: a warning pinned above it would stay while the thing it warns about scrolls<br>away. |
 
 ### `OverlayOpenSetter`
 
@@ -248,6 +255,10 @@ A named step or any CSS length.
 
 Kind: callable.
 
+The confirm button's behaviour — the pending state, the error routing, and the close on
+success — shared by the three overlays, so they agree on what "confirm" means. For a bespoke
+surface that still needs that lifecycle.
+
 ```text
 ({ close, open, onConfirm, onAsyncConfirm, closeOnAsyncComplete, confirmTone, loading, formId, onCancel, onError, strings, defaults, emphasis, tone, }: UseOverlayActionsOptions) => UseOverlayActionsReturn
 ```
@@ -284,6 +295,10 @@ Kind: interface.
 
 Kind: callable.
 
+One overlay's state, controlled or not, so a component that supports both its own trigger
+and external openers keeps one source of truth: `open`, `setOpen`, `show`, `hide`, `toggle`,
+and `overlayProps`, which spreads straight onto any overlay in the kit.
+
 ```text
 ({ defaultOpen, open: controlledOpen, onOpenChange, onOpen, onClose, }?: UseOverlayVisibilityOptions) => UseOverlayVisibilityReturn
 ```
@@ -292,7 +307,9 @@ Kind: callable.
 
 Kind: callable.
 
-Several overlays keyed by name from one hook, coordinated by `closeOthersOnOpen`.
+Several overlays keyed by name from one hook: one handle per overlay when a component drives
+several — create, edit, delete. Three separate useState calls is how two of them end up open
+at once; `closeOthersOnOpen` is for a set where two open at once is never right.
 
 ```text
 (keys: readonly TKey[], { defaultOpen, open: controlledOpen, onOpenChange, closeOthersOnOpen, }?: UseOverlayVisibilityGroupOptions<TKey>) => UseOverlayVisibilityGroupReturn<TKey>

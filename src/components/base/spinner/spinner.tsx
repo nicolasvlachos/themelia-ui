@@ -27,13 +27,24 @@ const spinnerVariants = cvm(styles.root, {
 })
 
 export interface SpinnerProps extends Omit<React.ComponentProps<"span">, "children"> {
+	/**
+	 * The ring's size: `sm`, `md` or `lg`. The one place a size prop survives: a spinner has
+	 * no content to scale with.
+	 */
 	size?: ComponentScale
+	/**
+	 * Borrows the button tone contract, so a spinner inside or beside an action matches it
+	 * rather than sitting on it in the primary hue.
+	 */
 	tone?: SemanticTone
-	/** Visible label beside the ring. Also becomes the announced status. */
+	/**
+	 * Visible label beside the ring, and the announced status. Without one the spinner is
+	 * decorative and hidden from assistive technology.
+	 */
 	label?: React.ReactNode
 }
 
-export function Spinner({ size, tone, label, className, ...props }: SpinnerProps) {
+export function Spinner({ size = "md", tone = "primary", label, className, ...props }: SpinnerProps) {
 	return (
 		<span
 			data-slot="spinner"

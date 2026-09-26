@@ -31,6 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The command palette's root: filtering, keyboard navigation and the rows' shared state.
+
 ```text
 ({ className, ...props }: CommandProps) => React.JSX.Element
 ```
@@ -38,6 +40,9 @@ Kind: callable.
 ### `CommandDialog`
 
 Kind: callable.
+
+The palette as an overlay, opened and closed through `open` and `onOpenChange`. The
+caller binds the shortcut that opens it.
 
 ```text
 ({ title, description, strings, commandProps, children, className, showCloseButton, ...props }: CommandDialogProps) => React.JSX.Element
@@ -55,6 +60,8 @@ Omit<OverlayRootProps, "children"> & { title?: string; description?: string; str
 
 Kind: callable.
 
+Shown when nothing matches. Not optional — a silent empty list reads as broken.
+
 ```text
 ({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) => React.JSX.Element
 ```
@@ -63,13 +70,17 @@ Kind: callable.
 
 Kind: callable.
 
+A captioned block of rows.
+
 ```text
-({ className, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) => React.JSX.Element
+({ className, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Group> & Pick<React.ComponentProps<typeof CommandPrimitive.Group>, "heading">) => React.JSX.Element
 ```
 
 ### `CommandInput`
 
 Kind: callable.
+
+The filter. Owns focus when the palette opens.
 
 ```text
 ({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) => React.JSX.Element
@@ -79,13 +90,17 @@ Kind: callable.
 
 Kind: callable.
 
+A row. Its `value` is what the filter matches; its label is what is read.
+
 ```text
-({ className, children, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) => React.JSX.Element
+({ className, children, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Item> & Pick<React.ComponentProps<typeof CommandPrimitive.Item>, "value" | "onSelect">) => React.JSX.Element
 ```
 
 ### `CommandList`
 
 Kind: callable.
+
+The scrolling list of results.
 
 ```text
 ({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) => React.JSX.Element
@@ -103,6 +118,9 @@ React.ComponentProps<typeof CommandPrimitive>
 
 Kind: callable.
 
+The rule between groups. Presentational and skipped by the keyboard, so arrowing through
+results never lands on it.
+
 ```text
 ({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Separator>) => React.JSX.Element
 ```
@@ -110,6 +128,8 @@ Kind: callable.
 ### `CommandShortcut`
 
 Kind: callable.
+
+The key hint at the end of a row.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"span">) => React.JSX.Element

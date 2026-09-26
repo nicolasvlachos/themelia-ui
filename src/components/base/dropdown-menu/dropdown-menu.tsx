@@ -7,18 +7,31 @@ import { useOverlayConfig, useUIPortalContainer, type UIPortalContainer } from "
 
 import styles from "./dropdown-menu.module.css"
 
+/** A menu that opens from a trigger. It holds the open state the parts share. */
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
 	return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
 }
 
+/**
+ * Escapes the menu from an ancestor that clips or transforms — a card with overflow hidden,
+ * a scrolling pane. `DropdownMenuContent` portals already; this is for a caller placing the
+ * surface itself.
+ */
 function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
 	return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
-function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
+/** The control the menu hangs off. */
+function DropdownMenuTrigger({
+	...props
+}: MenuPrimitive.Trigger.Props & Pick<MenuPrimitive.Trigger.Props, "render">) {
 	return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
 }
 
+/**
+ * The menu's surface. It sizes to its widest row by default, capped at a reading measure;
+ * `width`, `minWidth` and `maxWidth` change that.
+ */
 function DropdownMenuContent({
 	container,
 	align = "start",
@@ -40,7 +53,11 @@ function DropdownMenuContent({
 		width?: string | number | "trigger"
 		/** Floor for the content-sized default. */
 		minWidth?: string | number
-		/** Ceiling for the content-sized default: a reading measure, so one long label doesn't widen every row. */
+		/**
+		 * Ceiling for the content-sized default: a reading measure, so one long label doesn't
+		 * widen every row. Unset, the surface also stops at the space available.
+		 * @default "20rem"
+		 */
 		maxWidth?: string | number
 		/**
 		 * Where the popup renders. Defaults to the nearest `UIPortalHost`, else the primitive's
@@ -81,10 +98,16 @@ function DropdownMenuContent({
 	)
 }
 
+/** A titled run of items. */
 function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
 	return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
 }
 
+/**
+ * A group caption. It must sit inside a `DropdownMenuGroup` — it throws otherwise. The label
+ * is not an item: it is not focusable and arrow keys skip it, which is why a styled item
+ * would be wrong here.
+ */
 function DropdownMenuLabel({
 	className,
 	inset,
@@ -113,6 +136,7 @@ interface MenuRowSlots {
 	shortcut?: React.ReactNode
 	/** Trailing content beside the shortcut, for anything that is not a shortcut. */
 	trailing?: React.ReactNode
+	/** Indents a row with no icon, so its label lines up with rows that have one. */
 	inset?: boolean
 }
 
@@ -143,6 +167,10 @@ function MenuRowContent({ icon, description, shortcut, trailing, children }: Men
 	)
 }
 
+/**
+ * A menu row. Its icon, description, shortcut and trailing content are props rather than
+ * children, so every row lays out the same and only the label gives way.
+ */
 function DropdownMenuItem({
 	className,
 	inset,
@@ -153,7 +181,11 @@ function DropdownMenuItem({
 	trailing,
 	children,
 	...props
-}: MenuPrimitive.Item.Props & MenuRowSlots & { variant?: "default" | "destructive" }) {
+}: MenuPrimitive.Item.Props &
+	MenuRowSlots & {
+		/** `destructive` marks a row that deletes or discards. */
+		variant?: "default" | "destructive"
+	}) {
 	return (
 		<MenuPrimitive.Item
 			data-slot="dropdown-menu-item"
@@ -169,6 +201,10 @@ function DropdownMenuItem({
 	)
 }
 
+/**
+ * An item that navigates. A real anchor, so middle-click and copy-link work and a screen
+ * reader announces a link rather than a button.
+ */
 function DropdownMenuLinkItem({
 	className,
 	inset,
@@ -179,7 +215,11 @@ function DropdownMenuLinkItem({
 	trailing,
 	children,
 	...props
-}: MenuPrimitive.LinkItem.Props & MenuRowSlots & { variant?: "default" | "destructive" }) {
+}: MenuPrimitive.LinkItem.Props &
+	MenuRowSlots & {
+		/** `destructive` marks a row that deletes or discards. */
+		variant?: "default" | "destructive"
+	}) {
 	return (
 		<MenuPrimitive.LinkItem
 			data-slot="dropdown-menu-link-item"
@@ -195,10 +235,15 @@ function DropdownMenuLinkItem({
 	)
 }
 
+/**
+ * A nested menu: `DropdownMenuSubTrigger`, then `DropdownMenuSubContent`. It holds the open
+ * state both belong to.
+ */
 function DropdownMenuSub({ ...props }: MenuPrimitive.SubmenuRoot.Props) {
 	return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />
 }
 
+/** The row that opens a nested menu. It belongs to a `DropdownMenuSub`, which holds the open state. */
 function DropdownMenuSubTrigger({
 	className,
 	inset,
@@ -218,6 +263,7 @@ function DropdownMenuSubTrigger({
 	)
 }
 
+/** The panel a nested menu opens. It belongs to a `DropdownMenuSub`, which holds the open state. */
 function DropdownMenuSubContent({
 	align = "start",
 	/*
@@ -243,6 +289,7 @@ function DropdownMenuSubContent({
 	)
 }
 
+/** A row that toggles rather than closing. */
 function DropdownMenuCheckboxItem({
 	className,
 	children,
@@ -251,7 +298,9 @@ function DropdownMenuCheckboxItem({
 	icon,
 	description,
 	...props
-}: MenuPrimitive.CheckboxItem.Props & Pick<MenuRowSlots, "icon" | "description" | "inset">) {
+}: MenuPrimitive.CheckboxItem.Props &
+	Pick<MenuPrimitive.CheckboxItem.Props, "checked" | "onCheckedChange"> &
+	Pick<MenuRowSlots, "icon" | "description" | "inset">) {
 	return (
 		<MenuPrimitive.CheckboxItem
 			data-slot="dropdown-menu-checkbox-item"
@@ -273,10 +322,14 @@ function DropdownMenuCheckboxItem({
 	)
 }
 
-function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
+/** One choice from the menu: a set of `DropdownMenuRadioItem`s. */
+function DropdownMenuRadioGroup({
+	...props
+}: MenuPrimitive.RadioGroup.Props & Pick<MenuPrimitive.RadioGroup.Props, "value" | "onValueChange">) {
 	return <MenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />
 }
 
+/** A single-choice item inside a `DropdownMenuRadioGroup`, carrying its own indicator. */
 function DropdownMenuRadioItem({
 	className,
 	children,
@@ -305,6 +358,7 @@ function DropdownMenuRadioItem({
 	)
 }
 
+/** The rule between runs of items. */
 function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.Props) {
 	return (
 		<MenuPrimitive.Separator
@@ -315,6 +369,10 @@ function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.
 	)
 }
 
+/**
+ * The key hint on the trailing edge of an item. Presentational: it announces nothing,
+ * because the shortcut is already on the item that owns it.
+ */
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
 	return (
 		<span data-slot="dropdown-menu-shortcut" className={cx("dropdown-menu-shortcut--component", styles.shortcut, className)} {...props} />

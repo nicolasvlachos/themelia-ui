@@ -20,4 +20,4 @@ export {
 	type WorkspaceNavStrings, type WorkspaceLocaleStripStrings,
 	type WorkspaceRecordHeaderStrings,
 } from "./workspace.strings"
-export type { LayoutLinkRenderer, LayoutLinkRenderProps } from "@/lib/navigation"
+export type { LinkRenderer, LinkRenderProps } from "@/lib/navigation"

@@ -49,6 +49,9 @@ Filters are ANDed; the values within one filter are ORed.
 
 Kind: callable.
 
+The filter bar and the table as one surface: filter state, row filtering, the bar inside the
+table's topbar, and pagination, all against one row set.
+
 **Use when:** A resource browser combining a table, search, filters and saved views.
 
 **Avoid when:** Only needing a table or replacing one small visual region with a new state machine.
@@ -72,12 +75,12 @@ Kind: interface.
 | `filters` | yes | `FilterConfig[]` |  |
 | `activeFilters` | yes | `ActiveFilter[]` |  |
 | `onFilterChange` | yes | `(filters: ActiveFilter[]) => void` |  |
-| `filterRows` | no | `DataViewFilterRows<TData>` |  |
-| `getFilterValue` | no | `DataViewFilterValueGetter<TData>` |  |
+| `filterRows` | no | `DataViewFilterRows<TData>` | Replaces the built-in matching entirely. What a server-filtered index passes: the rows are<br>already right, so nothing local runs. |
+| `getFilterValue` | no | `DataViewFilterValueGetter<TData>` | Reads the value a filter compares against, for a nested or computed field. Without it the<br>filter's key is read as a path. |
 | `tabs` | no | `FilterTab[]` |  |
-| `tabsDisplay` | no | `"tabs" \| "select"` | A tab row, or a select — the same saved views, at two widths. |
+| `tabsDisplay` | no | `"tabs" \| "select"` | A tab row, or a select — the same saved views, at two widths. A tab row is better when it<br>fits and useless when it does not, and a bar carrying five pills often does not. |
 | `tabsLabel` | no | `string` |  |
-| `mobilePresentation` | no | `"sheet" \| "inline"` | Narrow viewports use the filters sheet by default. |
+| `mobilePresentation` | no | `"sheet" \| "inline"` | Below 768px, `sheet` keeps search inline and opens filter editors in an inset sheet.<br>Choose `inline` for a caller-owned mobile layout. @default "sheet" |
 | `isFiltering` | no | `boolean` | A change is in flight; the bar dims. |
 | `strings` | no | `Partial<FilterStrings>` |  |
 | `onError` | no | `FilterErrorHandler` |  |
@@ -116,6 +119,9 @@ Reads the value a filter compares against, for a nested or computed field.
 
 Kind: callable.
 
+Keeps the result summary visible, including zero results. Page controls appear only above
+one page; `disabled` makes every control unavailable to pointer and keyboard users.
+
 ```text
 ({ page, pageCount, total, onPageChange, disabled, className, strings, }: DataViewPaginationProps) => import("react").JSX.Element | null
 ```
@@ -151,17 +157,19 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `data` | yes | `readonly TData[]` |  |
-| `columns` | yes | `DataTableProps<TData, TValue>["columns"]` |  |
-| `filtering` | no | `DataViewFilteringConfig<TData>` |  |
-| `strings` | no | `Partial<DataViewStrings>` |  |
-| `table` | no | `DataViewTableOptions<TData, TValue>` |  |
-| `slots` | no | `DataViewSlots` |  |
+| `data` | yes | `readonly TData[]` | The rows, passed straight through to DataTable after the filters have run. |
+| `columns` | yes | `DataTableProps<TData, TValue>["columns"]` | Passed straight through to DataTable. |
+| `filtering` | no | `DataViewFilteringConfig<TData>` | `filters`, `activeFilters` and `onFilterChange` are meaningless apart — two of the three<br>describe a state nobody can read — so they travel as one object the whole feature can be<br>optional on. Without it a DataView is a table in a frame. |
+| `strings` | no | `Partial<DataViewStrings>` | Customizes the filter failure warning, `filterError`. Filter-control copy belongs to<br>`filtering.strings`; pager copy belongs to `DataViewPagination`'s `strings`. |
+| `table` | no | `DataViewTableOptions<TData, TValue>` | Everything DataTable takes except `columns`, `data`, `surface`, `headerTransparent`, and<br>the two topbar slots — the view owns those. |
+| `slots` | no | `DataViewSlots` | `topbarContent` above the bar, `toolbarStart` and `toolbarAfterFilters` around the<br>saved-view select, `topbarEnd` beside the table's controls, `footer` below the table. |
 | `className` | no | `string` |  |
 
 ### `DataViewShell`
 
 Kind: callable.
+
+The plain shell, for composing the same rhythm around something that is not a DataTable.
 
 ```text
 ({ children, header, toolbar, footer, emptySlot, empty, className, contentClassName, }: DataViewShellProps) => import("react").JSX.Element
@@ -190,7 +198,7 @@ Kind: interface.
 | --- | :-: | --- | --- |
 | `topbarContent` | no | `ReactNode` | Above the filter bar, inside the table's topbar. |
 | `toolbarStart` | no | `ReactNode` | Leading content in the auxiliary row, beside the saved-view select. |
-| `toolbarAfterFilters` | no | `ReactNode` |  |
+| `toolbarAfterFilters` | no | `ReactNode` | Content in the auxiliary row, after the saved-view select. |
 | `topbarEnd` | no | `ReactNode` | Trailing content in the table's topbar, beside its own controls. |
 | `footer` | no | `ReactNode` | Below the table, inside the frame. |
 
@@ -205,6 +213,10 @@ Kind: interface.
 ### `DataViewTableFrame`
 
 Kind: callable.
+
+The table frame the filter bar sits in, with the bar in the table's topbar so filtering and
+the data it filters scroll as one. It works bare too, around something that is not a
+DataTable.
 
 ```text
 ({ toolbar, children, footer, className, toolbarClassName, contentClassName, footerClassName, }: DataViewTableFrameProps) => import("react").JSX.Element
@@ -237,6 +249,10 @@ Omit<DataTableProps<TData, TValue>, "columns" | "data" | "surface" | "headerTran
 ### `DataViewToolbar`
 
 Kind: callable.
+
+The filter bar. In a DataView it lives inside the table's topbar rather than above it, so
+filtering and the data it filters are one surface and scroll as one. It works bare too,
+around something that is not a DataTable.
 
 ```text
 ({ leading, search, filters, views, actions, className, }: DataViewToolbarProps) => import("react").JSX.Element
@@ -294,7 +310,10 @@ Kind: interface.
 
 Kind: callable.
 
-A saved-view row that is NOT filter-driven — for a consumer holding views themselves.
+A compact select of saved views that is NOT filter-driven — for a consumer holding views
+themselves. The caller controls the selected view and applies its state through
+`onValueChange`. For filter-driven tabs, or a select with exact preset matching, use
+DataView's `filtering.tabs` or FilterTabs.
 
 ```text
 ({ views, value, onValueChange, className }: SavedViewTabsProps) => import("react").JSX.Element
@@ -314,6 +333,11 @@ Kind: interface.
 ### `useDataView`
 
 Kind: callable.
+
+The rows after filtering, plus `failed` and the `error` for a custom surface. If a matcher
+throws, the unfiltered rows come back with `failed` set and `onError` called, rather than a
+misleading empty list; DataView shows a warning for this fallback, which `strings.filterError`
+customizes.
 
 ```text
 ({ data, filtering, }: UseDataViewOptions<TData>) => UseDataViewResult<TData>

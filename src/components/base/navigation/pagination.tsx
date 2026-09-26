@@ -5,44 +5,57 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { Button } from "@/components/base/buttons"
 import { VisuallyHidden } from "@/components/base/display"
 import { cx } from "@/lib/cx"
+import { resolveLinkRenderer, type LinkRenderer } from "@/lib/navigation"
 
 import { defaultPaginationStrings, type PaginationStrings } from "./navigation.strings"
 import styles from "./navigation.module.css"
 import { paginationRange } from "./pagination.range"
 
 export interface PaginationProps extends Omit<React.ComponentProps<"nav">, "onChange"> {
+	/** The current page, 1-indexed. */
 	page: number
+	/** Total pages. */
 	total: number
+	/** Called with the page a control goes to. */
 	onPageChange: (page: number) => void
-	/** Disables every page control, including links, while navigation is unavailable. */
+	/**
+	 * Disables every page control while navigation is unavailable. Linked controls become
+	 * disabled buttons until it is available again.
+	 */
 	disabled?: boolean
-	/** Pages either side of the current one. */
+	/** Pages shown either side of the current one. */
 	siblings?: number
 	/**
 	 * Whether the arrows carry their words: `icon` (chevrons only), `text` (Previous/Next),
-	 * or `responsive` (the default: words from `sm` up). The words, from `strings`, are also
-	 * the accessible names.
+	 * or `responsive`, words from `sm` up and chevrons below — the words are what a pager
+	 * under a wide table wants, and the width is what a phone has not got. The words come
+	 * from `strings`, so they are the accessible names too.
 	 */
 	labels?: "icon" | "text" | "responsive"
-	/** Drops the numbers, leaving the two arrows. For a cursor pager with no page count. */
+	/**
+	 * `false` drops the numbers and leaves the two arrows alone — a cursor pager, where there
+	 * is no page count to show.
+	 */
 	numbers?: boolean
 	/**
-	 * Renders each control as the caller's own link, so pages work as `<a href>` without JS.
-	 * `onPageChange` still fires. Disabled arrows stay buttons.
+	 * The address of a page. With it, every control is a link: a pager is navigation, and on
+	 * a server-rendered list each page should be an `<a href>` that works without JavaScript
+	 * and opens in a new tab. `onPageChange` still fires. A disabled arrow stays a button,
+	 * because there is no href for a page that does not exist.
 	 *
-	 *   renderLink={(page, props) => <Link href={`?page=${page}`} {...props} />}
+	 *   pageHref={(page) => `?page=${page}`}
 	 */
-	renderLink?: (page: number, props: PaginationLinkProps) => React.ReactNode
-	/** Overrides this pager's own copy — the region, the two arrows, each page. */
+	pageHref?: (page: number) => string
+	/**
+	 * Renders those links through the application's router, as every component's
+	 * `renderLink` does; without it, plain anchors. Only used with `pageHref`.
+	 */
+	renderLink?: LinkRenderer
+	/**
+	 * Overrides this pager's own copy — the region name, the two arrows, the ellipsis, and
+	 * each page control, named by the page it goes to.
+	 */
 	strings?: Partial<PaginationStrings>
-}
-
-/** What a `renderLink` element must spread to be the control it replaces. */
-export interface PaginationLinkProps {
-	"aria-label": string
-	"aria-current"?: "page"
-	onClick: (event: React.MouseEvent) => void
-	children: React.ReactNode
 }
 
 export function Pagination({
@@ -53,6 +66,7 @@ export function Pagination({
 	siblings = 1,
 	labels = "responsive",
 	numbers = true,
+	pageHref,
 	renderLink,
 	strings,
 	className,
@@ -83,20 +97,23 @@ export function Pagination({
 			onPageChange(target)
 		}
 		const current_ = current ? ("page" as const) : undefined
-		if (renderLink && !isDisabled) {
-			const link = renderLink(target, { "aria-label": label, "aria-current": current_, onClick: go, children })
+		if (pageHref && !isDisabled) {
+			const link = resolveLinkRenderer(renderLink)({
+				href: pageHref(target),
+				"aria-label": label,
+				"aria-current": current_,
+				onClick: go,
+				children,
+			})
 			/*
-			 * The caller's element becomes the Button's `render`, so it keeps the pager's
-			 * geometry. The click handler is on the link's props only, so it runs once.
+			 * The link becomes the Button's `render`, so it keeps the pager's geometry. The
+			 * click handler is on the link's props only, so it runs once.
 			 */
-			if (React.isValidElement(link)) {
-				return (
-					<Button aria-label={label} aria-current={current_} render={link} {...rest}>
-						{children}
-					</Button>
-				)
-			}
-			return link
+			return (
+				<Button aria-label={label} aria-current={current_} render={link} {...rest}>
+					{children}
+				</Button>
+			)
 		}
 		/*
 		 * An arrow at the end of the range is `aria-disabled`, so focus stays on the button just

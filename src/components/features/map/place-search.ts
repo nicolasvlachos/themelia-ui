@@ -55,7 +55,11 @@ export function formatAddress(properties: PlaceFeatureProperties): string {
 	return [...new Set(parts)].join(", ")
 }
 
-/** The lookup on its own, for a consumer building their own field. */
+/**
+ * The geocoding search behind PlaceAutocomplete, without the field: debounced and abort-safe —
+ * every keystroke cancels the request before it. For a caller building their own field against
+ * the same debounce, abort and result shape.
+ */
 export function usePlaceSearch({
 	debounceMs = DEFAULT_DEBOUNCE_MS,
 	searchUrl = PHOTON_URL,

@@ -18,6 +18,11 @@ import { defaultHeaderUserMenuStrings } from "../header.strings"
 import type { HeaderUserMenuProps } from "../header.types"
 import styles from "../header.module.css"
 
+/**
+ * The account control. The three callbacks build a command menu; supplying none and
+ * passing `customContent` instead gives a panel, which is the escape hatch for an account
+ * area that is not a list of verbs.
+ */
 export function HeaderUserMenu({
 	user,
 	showIdentity = true,

@@ -1,3 +1,8 @@
+/**
+ * The copy of a `PopoverMenu` or `PopoverMenuPanel`. `error`, `retry` and
+ * `formatTypeToSearch` are optional in the type, so a translation written before them still
+ * compiles; the defaults fill them.
+ */
 export interface PopoverMenuStrings {
 	/** Announced while the items are being fetched. */
 	loading: string
@@ -5,10 +10,9 @@ export interface PopoverMenuStrings {
 	searchPlaceholder: string
 	/** Shown when the filter matches nothing. */
 	empty: string
-	/* Optional in the type only, so older complete translations still compile; defaults fill in. */
 	/** Shown in place of the rows when `error` is `true`. */
 	error?: string
-	/** The control beside the error, when `onRetry` is wired. */
+	/** Labels the retry control under the error, when `onRetry` is wired. */
 	retry?: string
 	/** Shown in place of the rows while the search is shorter than `minSearchLength`. */
 	formatTypeToSearch?: (minimum: number) => string

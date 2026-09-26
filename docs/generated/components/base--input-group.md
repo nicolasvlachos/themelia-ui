@@ -31,6 +31,9 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The shell, with `role="group"`. It owns the border and the focus ring for whatever is
+inside, so the control strips its own.
+
 ```text
 ({ className, id, "aria-labelledby": labelledBy, "aria-describedby": describedBy, "aria-invalid": invalid, "aria-required": required, ...props }: React.ComponentProps<"div">) => React.JSX.Element
 ```
@@ -39,37 +42,50 @@ Kind: callable.
 
 Kind: callable.
 
+Something attached to the field — a unit, a prefix, a submit. Clicking it focuses the
+control, as a label does, unless the click lands on a button.
+
 ```text
-({ className, align, ...props }: React.ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>) => React.JSX.Element
+({ className, align, ...props }: InputGroupAddonProps) => React.JSX.Element
 ```
 
 ### `InputGroupAddonProps`
 
-Kind: type.
+Kind: interface.
 
-```text
-React.ComponentProps<"div">
-```
+Extends: `React.ComponentProps<"div">`.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `align` | no | `"inline-start" \| "inline-end" \| "block-start" \| "block-end"` | Where the addon attaches. The inline edges sit on the control's line; the block edges<br>take a row of their own, for a toolbar above a textarea or a hint below one. |
 
 ### `InputGroupButton`
 
 Kind: callable.
 
+A quiet Button sized to sit inside the field rather than beside it.
+
 ```text
-({ className, type, tone, buttonStyle, size, ...props }: Omit<React.ComponentProps<typeof Button>, "size" | "type"> & VariantProps<typeof inputGroupButtonVariants> & { type?: "button" | "submit" | "reset"; }) => React.JSX.Element
+({ className, type, tone, buttonStyle, size, ...props }: InputGroupButtonProps) => React.JSX.Element
 ```
 
 ### `InputGroupButtonProps`
 
-Kind: type.
+Kind: interface.
 
-```text
-React.ComponentProps<typeof Button>
-```
+Extends: `Omit<React.ComponentProps<typeof Button>, "size" | "type">`.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `size` | no | `"xs" \| "sm" \| "icon-xs" \| "icon-sm"` | The sizes that fit inside a field: two text sizes and their icon-only twins. A<br>full-height Button would set the field's height rather than fit in it, which is why<br>this is the one place the kit keeps a size prop on a control. |
+| `type` | no | `"button" \| "submit" \| "reset"` | The native button type: `button` unless set, so pressing it never submits the form around the field. |
 
 ### `InputGroupInput`
 
 Kind: callable.
+
+The kit's Input with its chrome removed, because the group is drawing it. Every other
+prop passes through.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"input">) => React.JSX.Element
@@ -95,6 +111,9 @@ React.ComponentProps<"div">
 
 Kind: callable.
 
+Secondary text at the group's own size — a unit, a domain suffix, a counter. It inherits
+the size, so it cannot drift from the input beside it.
+
 ```text
 ({ className, ...props }: React.ComponentProps<"span">) => React.JSX.Element
 ```
@@ -102,6 +121,9 @@ Kind: callable.
 ### `InputGroupTextarea`
 
 Kind: callable.
+
+The kit's Textarea with its chrome removed, because the group is drawing it. Every other
+prop passes through.
 
 ```text
 ({ className, ...props }: TextareaProps) => React.JSX.Element

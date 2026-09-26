@@ -61,7 +61,10 @@ export interface MentionResource<TKind extends string = string, TData = unknown>
 	icon?: ComponentType<{ className?: string }>
 	/** Names the tab: "Person", "Booking". */
 	label?: string
-	/** The character that opens the picker inline. Optional: a kind without one is reached from the picker button. */
+	/**
+	 * The character that opens the picker inline. Optional — a kind with no trigger is still
+	 * reachable from the picker button, which is right for one that is browsed rather than typed.
+	 */
 	trigger?: string
 	/** Per-kind search. Wins over the global fallback. */
 	search?: (

@@ -32,6 +32,11 @@ export interface BreadcrumbProgressProps extends Omit<ComponentProps<"div">, "on
 	strings?: Partial<BreadcrumbProgressStrings>
 }
 
+/**
+ * A wizard’s position, as a trail. Not Breadcrumbs: a trail describes where you ARE in a
+ * hierarchy you can climb, and this describes how far along a sequence you have got — the
+ * steps behind you are done, not ancestors.
+ */
 export function BreadcrumbProgress({
 	steps,
 	currentIndex,

@@ -38,6 +38,7 @@ function resolveRowClass<TData>(
 	return typeof value === "function" ? value(activity) : value
 }
 
+/** The timeline of events, grouped by date on one rail. */
 export function ActivityFeed<TData = unknown>({
 	activities = [],
 	density = "default",

@@ -22,13 +22,32 @@ import type {
 import styles from "./ai-chat.module.css"
 
 export interface AiChatProps<TSuggestionData = unknown> {
-	/** Oldest first. */
+	/**
+	 * Oldest first. Each carries `parts`, which is where the mix lives — text, reasoning, a chain
+	 * of thought, a tool call, code, sources, a task, an artifact, a confirmation, attachments,
+	 * or custom.
+	 */
 	messages: readonly AiChatMessageData[]
 
+	/**
+	 * The composer's text. Controlled: the composer holds no draft of its own, so clearing it
+	 * after a submit is the consumer's, which is also where the failed-send-restores-the-text
+	 * case lives.
+	 */
 	inputValue: string
+	/** Receives every edit to `inputValue`. */
 	onInputChange: (value: string) => void
+	/**
+	 * Fires on Enter or the send button. An attachment on its own is a valid message — “here,
+	 * look at this” needs no words.
+	 */
 	onSubmit?: (values: AiChatSubmitValues) => void
+	/** What the stop control calls while `streaming`. */
 	onStop?: () => void
+	/**
+	 * Flips submit to stop. Separate from `disabled`, because a streaming chat is still readable
+	 * and still cancellable; a disabled one is neither.
+	 */
 	streaming?: boolean
 	disabled?: boolean
 
@@ -37,7 +56,10 @@ export interface AiChatProps<TSuggestionData = unknown> {
 	onAttach?: () => void
 	showAttach?: boolean
 
-	/** `null` hides the header strip. */
+	/**
+	 * Name, icon, subtitle, tone and status for the header strip. `null` hides the strip
+	 * entirely.
+	 */
 	agent?: AiChatAgent | null
 	headerActions?: ReactNode
 
@@ -53,11 +75,21 @@ export interface AiChatProps<TSuggestionData = unknown> {
 
 	disableAutoScroll?: boolean
 
+	/**
+	 * Seven regions replaced outright — `header`, `intro`, `belowMessages`, `empty`, `queue`,
+	 * `suggestions`, `input` — plus `renderMessage` for a turn. This is the seam that keeps a
+	 * prop per idea out of the API.
+	 */
 	slots?: AiChatSlots
 	strings?: Partial<AiChatStrings>
 	className?: string
 }
 
+/**
+ * The agent header, the transcript, and the composer, wired together. No fetcher, router or
+ * streaming client: messages, input, queue and attachments are props, and submitting is a
+ * callback.
+ */
 export function AiChat<TSuggestionData = unknown>({
 	messages,
 	inputValue,

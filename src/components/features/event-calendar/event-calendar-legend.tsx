@@ -10,6 +10,10 @@ import { defaultEventCalendarStrings } from "./event-calendar.strings"
 import { resolveCategoryColorToken, type EventCalendarLegendProps } from "./event-calendar.types"
 import styles from "./event-calendar.module.css"
 
+/**
+ * The category key, and the filter when one is wired. The WHOLE chip toggles rather than a
+ * checkbox beside a swatch — the swatch is the target a reader aims at anyway.
+ */
 export function EventCalendarLegend({
 	categories,
 	visibleCategories,

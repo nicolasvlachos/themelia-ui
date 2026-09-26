@@ -26,6 +26,10 @@ const SHEET_SIDE: Record<ActionDrawerDirection, SheetSide> = {
 	bottom: "block-end",
 }
 
+/**
+ * Renders the active action's modality — alert, dialog, or drawer. Mount one inside the
+ * `ActionProvider`; every surface that runs an action with a `modality` then shares it.
+ */
 export function ActionOverlayOutlet({ strings }: ActionOverlayOutletProps = {}) {
 	const active = useActiveAction()
 	const copy = { ...defaultActionOverlayStrings, ...strings }

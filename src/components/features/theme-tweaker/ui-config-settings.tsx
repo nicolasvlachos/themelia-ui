@@ -42,6 +42,11 @@ function options(values: readonly string[], strings: UIConfigSettingsStrings) {
 	}))
 }
 
+/**
+ * The provider settings editor — the non-CSS half of a theme, which ThemeTweaker includes under
+ * Provider. Connect its controlled `config` to your root UIProvider to update mounted
+ * consumers.
+ */
 export function UIConfigSettings({
 	config,
 	onChange,

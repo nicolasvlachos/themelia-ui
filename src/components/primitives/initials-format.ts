@@ -28,7 +28,8 @@ function uppercase(value: string, locale?: string) {
 }
 
 /**
- * Derive short, Unicode-aware initials from a person or resource name.
+ * The same derivation outside React: short, Unicode-aware initials from a person or
+ * resource name.
  *
  * `first-last` is the identity default (`Mary Jane Smith` → `MS`). Use
  * `first-words` for admin surfaces that intentionally use the first

@@ -26,6 +26,11 @@ export interface UseAsyncOptionsResult {
 	minQueryLength: number
 }
 
+/**
+ * The fetch, debounce and cache behind AsyncFilterEditor, for a caller supplying their own
+ * editor against the same lifecycle. Results are cached by filter and query for `staleTime`,
+ * each keystroke aborts the previous request, and only the newest response may land.
+ */
 export function useAsyncOptions(
 	filter: FilterConfig,
 	search: string,

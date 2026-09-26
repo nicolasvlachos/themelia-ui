@@ -35,22 +35,16 @@ export function KanbanPage() {
 			/>
 
 			<Example id="kanban-api" title="API">
-				<PropTable owner="Kanban"
-					rows={[
-						{ name: "value / onValueChange", type: "Record<columnId, T[]>", required: true, description: "The board is a plain object because that is what a board is, and it serialises without a thought. Column titles and limits are the consumer's — only the ORDER lives here." },
-						{ name: "getItemValue", type: "(item: T) => string", required: true, description: "A stable id per item. Everything else is keyed off it." },
-						{ name: "onItemMove", type: "(event) => void", description: "Both ends of the move — from column and index, to column and index. The seam for persistence. Idempotent: a move that changes nothing fires nothing." },
-						{ name: "itemActions", type: "action[] | (item) => action[]", description: "The factory form is what a real board needs: “Reopen” belongs on a card in Done and nowhere else, and a fixed list would render it everywhere and disable it." },
-						{ name: "onItemClick", type: "(item: T) => void", description: "Fires on a card click that was not the handle or the menu — both mark themselves, so a click on an icon inside either is caught too." },
-						{ name: "KanbanItemHandle", type: "component", description: "Optional. Present, it becomes the only grip; absent, the whole card is. See the rule above." },
-						{ name: "KanbanOverlay render", type: "({ item, columnId }) => ReactNode", description: "Replaces the default outline. The default is a placeholder rather than a copy of the card, because the card's markup lives at the call site." },
-						{ name: "useKanban", type: "({ value, onValueChange, getItemValue }) => { findItem, move }", description: "The move without the drag." },
-						{ name: "SyncRangeForm formId", type: "string", required: true, description: "Set on the form so a dialog footer outside it can submit it. That is why this takes an id rather than rendering its own buttons." },
-						{ name: "SyncRangeForm transformSubmit", type: "(values) => TSubmit", description: "Replaces the numeric default, which THROWS rather than coercing — Number(\"since-last-run\") is NaN, and an API asked to reconcile NaN hours does something unpredictable." },
-						{ name: "KanbanColumnContent / KanbanItem", type: "component", description: "A column\u2019s droppable region and one draggable card, for a board that wants its own column chrome but the same drag behaviour." },
-						{ name: "KanbanItemHandle / KanbanItemActions", type: "component", description: "The grip and the card\u2019s verbs. A handle rather than a draggable card body, because a card carrying a menu and a link has no way to tell a drag from a press otherwise." },
-						{ name: "KanbanOverlay", type: "component", description: "What follows the pointer during a drag \u2014 rendered outside the column so it is not clipped by the scroll container it started in." },
-						{ name: "useKanbanContext / useKanbanItemContext", type: "hook", description: "The board\u2019s state and one card\u2019s drag state, for a custom card that still needs to know it is being dragged." },
+				<PropTable owners={["Kanban", "KanbanOverlay", "SyncRangeForm"]} />
+				<PropTable
+					symbols={[
+						"useKanban",
+						"KanbanColumnContent",
+						"KanbanItem",
+						"KanbanItemHandle",
+						"KanbanItemActions",
+						"useKanbanContext",
+						"useKanbanItemContext",
 					]}
 				/>
 			</Example>

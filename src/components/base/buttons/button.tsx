@@ -44,12 +44,20 @@ const shapeVariants = cvm(styles.root, {
 })
 
 export interface ButtonProps extends Omit<React.ComponentProps<"button">, "children"> {
-	/** Semantic colour intent. */
+	/**
+	 * Semantic colour intent. Resolves through the provider when omitted, so `UIProvider`
+	 * defaults can change it.
+	 * @default "primary"
+	 */
 	tone?: ButtonTone
-	/** Fill treatment. */
+	/**
+	 * Fill treatment, independent of `tone`. `UIProvider` defaults can change it.
+	 * @default "solid"
+	 */
 	buttonStyle?: ButtonStyle
 	/** Square button sized to its height. The label becomes the accessible name. */
 	iconOnly?: boolean
+	/** Stretches the button to its container's width. */
 	fullWidth?: boolean
 	/**
 	 * Shows a spinner and blocks interaction. The label keeps its space so the button does
@@ -57,8 +65,10 @@ export interface ButtonProps extends Omit<React.ComponentProps<"button">, "child
 	 */
 	loading?: boolean
 	/**
-	 * The element this button becomes — an anchor, a router link, a label (docs/adr/0005).
-	 * `children` stay the content and keep the button's label wrapper.
+	 * The element this button becomes — an anchor, a router link, a label. `children` stay
+	 * the content and keep the button's label wrapper, so a link still sizes like a button.
+	 * `render` is how every kit component changes its element, the contract Base UI's parts
+	 * already take.
 	 *
 	 *   <Button render={<a href="/settings" />}>Settings</Button>
 	 */
@@ -67,8 +77,8 @@ export interface ButtonProps extends Omit<React.ComponentProps<"button">, "child
 }
 
 /**
- * No `size` prop by design: geometry follows the scale factors, so a denser region is a
- * scope (styles/FACTORS.md).
+ * The kit's action primitive. No `size` prop by design: geometry follows the scale factors,
+ * so a denser region is a scope (styles/FACTORS.md).
  */
 export function Button({
 	tone,

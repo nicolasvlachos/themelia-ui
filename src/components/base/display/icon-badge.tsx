@@ -13,10 +13,15 @@ export type IconBadgeTone = "neutral" | "primary" | "success" | "warning" | "des
 export type IconBadgeShape = "rounded" | "circle"
 
 export interface IconBadgeProps extends Omit<ComponentProps<"span">, "children"> {
-	/** A component or a rendered node. */
+	/**
+	 * A component or a rendered node. A component is called with `aria-hidden`, because the
+	 * badge is a mark beside a name that already says it.
+	 */
 	icon?: ComponentType<{ className?: string }> | ReactNode
 	children?: ReactNode
+	/** Sets the fill and the glyph together, so the two cannot come from different tones. */
 	tone?: IconBadgeTone
+	/** A rounded square, or a circle. */
 	shape?: IconBadgeShape
 	/** Fills with the tone and inverts the glyph — for the one badge that must stand out. */
 	solid?: boolean
@@ -33,6 +38,10 @@ const TONE = {
 	info: styles.toneInfo,
 } satisfies Record<IconBadgeTone, string>
 
+/**
+ * A glyph in a tinted medallion. Its size comes from `--icon-badge-size`, so a caller
+ * needing a smaller mark re-points the token instead of redrawing the badge.
+ */
 export function IconBadge({
 	icon,
 	children,

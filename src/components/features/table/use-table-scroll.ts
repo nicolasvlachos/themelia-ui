@@ -25,6 +25,11 @@ export interface UseDataTableScrollStateResult {
 	scrollRight: () => void
 }
 
+/**
+ * Whether the table is scrolled away from either edge, and the nudges that move it — what the
+ * toolbar's scroll arrows react to. For a consumer building their own toolbar: reimplementing the
+ * overflow booleans and the nudges means two answers to “can this scroll right”.
+ */
 export function useDataTableScrollState(
 	tableAreaRef: RefObject<HTMLDivElement | null>,
 	options: { stepPx?: number; deps?: readonly unknown[] } = {},

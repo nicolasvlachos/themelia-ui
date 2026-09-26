@@ -19,18 +19,35 @@ import styles from "./calendar.module.css"
 import type { CalendarConstraints, DateRangeValue, DateSelectionMode } from "./calendar.types"
 
 export interface CalendarProps extends CalendarConstraints {
-	/** Overrides this calendar's own copy — the three caption controls. */
+	/**
+	 * Overrides this calendar's own copy — the caption controls, which are icon-only and have
+	 * no other name. `DatePicker` passes its own strings straight through, so one override
+	 * names both.
+	 */
 	strings?: Partial<CalendarStrings>
+	/** Selection behaviour, as on `DatePicker`: one date, a range, or several dates. */
 	mode?: DateSelectionMode
 	/** The selection, in the shape the mode uses. */
 	value?: Date | Date[] | DateRangeValue
+	/** Called with the new selection, in the shape the mode uses. */
 	onValueChange?: (value: Date | Date[] | DateRangeValue | undefined) => void
-	/** The month shown. Uncontrolled unless supplied. */
+	/**
+	 * The month shown, for a calendar whose position is driven from outside. Uncontrolled
+	 * unless supplied.
+	 */
 	month?: Date
+	/** Called with the first day of the month the calendar moves to. */
 	onMonthChange?: (month: Date) => void
-	/** How many months to show side by side. Two is the usual range picker. */
+	/**
+	 * How many months to show side by side. Two is the usual range picker; each grid keeps its
+	 * own caption, so the second month is not anonymous.
+	 */
 	numberOfMonths?: number
-	/** 0 is Sunday. Falls back to the provider's formatting config. */
+	/**
+	 * Which day begins the week; `0` is Sunday. Falls back to the provider's dates setting
+	 * rather than a hard-coded Monday, so `UIProvider` defaults can change it.
+	 * @default 1
+	 */
 	weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 	className?: string
 }

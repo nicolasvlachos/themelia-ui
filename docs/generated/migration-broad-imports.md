@@ -35,7 +35,7 @@ own worse stepper instead.
 | `themelia-ui/blocks/commerce` | `themelia-ui/admin/patterns/commerce` |
 | `themelia-ui/blocks/admin` | `themelia-ui/admin/patterns/access` |
 
-## Where each symbol went (2138)
+## Where each symbol went (2135)
 
 | symbol | import from |
 | --- | --- |
@@ -73,8 +73,6 @@ own worse stepper instead.
 | `ActionIcon` | `themelia-ui/base/action-menu` |
 | `ActionLifecycleEvent` | `themelia-ui/features/actions` |
 | `ActionLifecycleType` | `themelia-ui/features/actions` |
-| `ActionLinkRenderer` | `themelia-ui/base/action-menu` |
-| `ActionLinkRenderProps` | `themelia-ui/base/action-menu` |
 | `ActionMenu` | `themelia-ui/base/action-menu` |
 | `ActionMenuLabelVisibility` | `themelia-ui/base/action-menu` |
 | `ActionMenuProps` | `themelia-ui/base/action-menu` |
@@ -1133,10 +1131,10 @@ own worse stepper instead.
 | `LanguageSwitcher` | `themelia-ui/base/navigation` |
 | `LanguageSwitcherProps` | `themelia-ui/base/navigation` |
 | `LanguageSwitcherVariant` | `themelia-ui/base/navigation` |
-| `LayoutLinkRenderer` | `themelia-ui/base/navigation` |
-| `LayoutLinkRenderProps` | `themelia-ui/base/navigation` |
 | `LeafletDrawModule` | `themelia-ui/features/map` |
 | `LeafletModule` | `themelia-ui/features/map` |
+| `LinkRenderer` | `themelia-ui/base/action-menu` |
+| `LinkRenderProps` | `themelia-ui/base/action-menu` |
 | `ListRadioGroup` | `themelia-ui/base/choice-inputs` |
 | `ListRadioGroupProps` | `themelia-ui/base/choice-inputs` |
 | `ListRadioOption` | `themelia-ui/base/choice-inputs` |
@@ -1636,7 +1634,6 @@ own worse stepper instead.
 | `ResourceBlockSurface` | `themelia-ui/features/resource` |
 | `ResourceCell` | `themelia-ui/features/table` |
 | `ResourceCellBadge` | `themelia-ui/features/table` |
-| `ResourceCellLinkProps` | `themelia-ui/features/table` |
 | `ResourceCellMetadataItem` | `themelia-ui/features/table` |
 | `ResourceCellProps` | `themelia-ui/features/table` |
 | `ResourceCombobox` | `themelia-ui/features/combobox` |
@@ -2183,9 +2180,9 @@ own worse stepper instead.
 These are exported by more than one module. The subpath decides which one you get, and
 the broad barrel used to decide for you — silently, by tier order.
 
+- `LinkRenderer` — `themelia-ui/base/action-menu`, `themelia-ui/base/cards`, `themelia-ui/base/navigation`, `themelia-ui/features/table`, `themelia-ui/layout/auth`, `themelia-ui/layout/header`, `themelia-ui/layout/navigation`, `themelia-ui/layout/page`, `themelia-ui/layout/settings`, `themelia-ui/layout/sidebar`, `themelia-ui/layout/workspace`
+- `LinkRenderProps` — `themelia-ui/base/action-menu`, `themelia-ui/base/cards`, `themelia-ui/base/navigation`, `themelia-ui/features/table`, `themelia-ui/layout/auth`, `themelia-ui/layout/header`, `themelia-ui/layout/navigation`, `themelia-ui/layout/page`, `themelia-ui/layout/settings`, `themelia-ui/layout/sidebar`, `themelia-ui/layout/workspace`
 - `ActionDefinition` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`
 - `ActionPlacement` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`
 - `ActionPredicate` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`
 - `ResolvedAction` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`
-- `LayoutLinkRenderer` — `themelia-ui/base/navigation`, `themelia-ui/layout/auth`, `themelia-ui/layout/header`, `themelia-ui/layout/page`, `themelia-ui/layout/sidebar`, `themelia-ui/layout/workspace`
-- `LayoutLinkRenderProps` — `themelia-ui/base/navigation`, `themelia-ui/layout/auth`, `themelia-ui/layout/header`, `themelia-ui/layout/page`, `themelia-ui/layout/sidebar`, `themelia-ui/layout/workspace`

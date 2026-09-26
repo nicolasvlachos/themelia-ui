@@ -16,6 +16,11 @@ import type { DataTableToolbarProps } from "./table.types"
 import { useDataTableScrollState } from "./use-table-scroll"
 import styles from "./table.module.css"
 
+/**
+ * The table's own controls — scroll arrows, the columns menu, full screen — in one bordered group.
+ * It renders NOTHING when it has nothing to offer: a table that fits, cannot hide a column and has
+ * no full-screen toggle would otherwise show an empty frame.
+ */
 export function DataTableToolbar<TData extends RowData>({
 	table,
 	tableAreaRef,

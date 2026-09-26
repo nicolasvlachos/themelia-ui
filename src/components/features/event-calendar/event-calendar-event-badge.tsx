@@ -14,6 +14,10 @@ import { defaultEventCalendarEventCardStrings } from "./event-calendar.strings"
 import { resolveCategoryColorToken, type EventCalendarEventBadgeProps } from "./event-calendar.types"
 import styles from "./event-calendar.module.css"
 
+/**
+ * One event as a chip in a day cell: a category dot, the title and the start time. At the
+ * narrowest widths only the dot remains.
+ */
 export function EventCalendarEventBadge({
 	event,
 	category,

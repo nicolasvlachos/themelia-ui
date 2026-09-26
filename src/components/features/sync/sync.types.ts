@@ -20,7 +20,10 @@ export interface SyncRangeFormSubmit {
 }
 
 export interface SyncRangeFormProps<TSubmit = SyncRangeFormSubmit> {
-	/** Set on the `<form>` so the overlay's footer, outside it, can submit it. */
+	/**
+	 * Set on the `<form>` so the overlay's footer, outside it, can submit it. That is why this
+	 * takes an id rather than rendering its own buttons.
+	 */
 	formId: string
 	/** The windows offered. */
 	options: CardRadioOption[]
@@ -29,7 +32,11 @@ export interface SyncRangeFormProps<TSubmit = SyncRangeFormSubmit> {
 	value?: SyncRangeFormValues
 	defaultValue?: Partial<SyncRangeFormValues>
 	onValueChange?: (value: SyncRangeFormValues) => void
-	/** Maps the form's values to the consumer's payload. Replaces the numeric default. */
+	/**
+	 * Maps the form's values to the consumer's payload. Replaces the numeric default, which
+	 * THROWS rather than coercing — `Number("since-last-run")` is NaN, and an API asked to
+	 * reconcile NaN hours does something unpredictable.
+	 */
 	transformSubmit?: (value: SyncRangeFormValues) => TSubmit
 	onSubmit: (data: TSubmit, values: SyncRangeFormValues) => void | Promise<void>
 	onError?: (error: unknown) => void

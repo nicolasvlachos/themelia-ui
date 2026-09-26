@@ -223,22 +223,60 @@ export interface MediaLibraryState<TItem = MediaLibraryItem> {
 }
 
 export interface UseMediaLibraryOptions<TItem = MediaLibraryItem> {
-	/** Ignored entirely when `fetcher` is set. */
+	/**
+	 * The assets, when the library searches, filters and sorts them itself. Supply this or
+	 * `fetcher`, not both: it is ignored entirely when `fetcher` is set.
+	 */
 	items?: readonly TItem[]
-	/** Supplying it hands searching, filtering, and sorting to the server. */
+	/**
+	 * Supplying it hands searching, filtering, and sorting to the server: the fetcher owns all
+	 * three, and `items` is ignored.
+	 */
 	fetcher?: MediaLibraryFetcher<TItem>
+	/**
+	 * Reads id, name, src, type, size, and the rest off your own shape. Supply only the ones that
+	 * differ from MediaLibraryItem's names.
+	 */
 	accessors?: MediaLibraryAccessors<TItem>
+	/** The collections the toolbar offers. */
 	collections?: readonly MediaLibraryCollectionOption[]
+	/**
+	 * `single` replaces the selection rather than toggling off, so a picker never ends up empty
+	 * by accident.
+	 */
 	selectionMode?: MediaLibrarySelectionMode
 
+	/** Controlled: the selected ids. */
 	value?: readonly string[]
+	/** Uncontrolled: the ids selected at first. */
 	defaultValue?: readonly string[]
+	/**
+	 * Receives the selected ids, controlled or not, and the resolved assets too, so a consumer
+	 * never has to look them up again.
+	 */
 	onValueChange?: (ids: string[], items: TItem[]) => void
 
+	/**
+	 * Awaited. A rejection rolls the local overlay back and reaches `onError`; the panel stays
+	 * open so the reader can see what failed.
+	 */
 	onItemUpdate?: (item: TItem, patch: MediaLibraryItemPatch) => void | Promise<void>
-	/** Applies editable fields to a custom record shape without mutating the original. */
+	/**
+	 * Maps a standard metadata patch onto a consumer-owned record shape, without mutating the
+	 * original. Defaults to merging fields onto MediaLibraryItem.
+	 */
 	applyItemPatch?: (item: TItem, patch: MediaLibraryItemPatch) => TItem
+	/**
+	 * Awaited. A rejection keeps the asset and reaches `onError`; the panel stays open so the
+	 * reader can see what failed.
+	 */
 	onItemDelete?: (item: TItem) => void | Promise<void>
+	/**
+	 * Receives the files, the upload options, and helpers carrying stable staged files and IDs,
+	 * an AbortSignal, `setProgress`, and `setFileStatus`. Failed files stay queued for retry.
+	 * Returning the created items adds AND selects them — the reader uploaded them in order to
+	 * use them.
+	 */
 	onUpload?: MediaLibraryUploadHandler<TItem>
 	/** Receives failures from the fetcher, uploads, updates, and deletes. */
 	onError?: (error: unknown) => void
@@ -281,8 +319,12 @@ export interface MediaLibraryProps<TItem = MediaLibraryItem>
 	/** Shows each asset's size and dimensions under its name. */
 	showMeta?: boolean
 	allowUpload?: boolean
+	/** The type filters the toolbar offers. A single type filter draws no control. */
 	typeFilters?: readonly MediaLibraryTypeFilter[]
-	/** Picking confirms and the footer is removed. For a single-select picker. */
+	/**
+	 * Picking is confirming: fires `onConfirm` immediately and removes the footer. The shape a
+	 * single-select picker wants.
+	 */
 	confirmOnSelect?: boolean
 	onConfirm?: (items: TItem[], ids: string[]) => void
 	onCancel?: () => void
@@ -293,6 +335,10 @@ export interface MediaLibraryProps<TItem = MediaLibraryItem>
 	 */
 	bulkActions?: (context: MediaLibraryBulkActionContext<TItem>) => ReactNode
 	strings?: Partial<MediaLibraryStrings>
+	/**
+	 * `headerStart`/`headerEnd`, `toolbarEnd`, `empty`, `loading`, `error`, `footer`,
+	 * `uploadEmpty`, plus `renderItem` and `renderDetail`.
+	 */
 	slots?: MediaLibrarySlots<TItem>
 }
 

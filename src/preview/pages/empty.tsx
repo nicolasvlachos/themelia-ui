@@ -40,18 +40,14 @@ export function EmptyPage() {
 				</Callout>
 			</Example>
 			<Example id="empty-api" title="API">
-				<PropTable owner="Empty"
-					rows={[
-						{ name: "title", type: "ReactNode", description: "Names the absence. 'No invoices yet', not 'Nothing here'. Falls back to strings.title so a bare <Empty /> still renders during scaffolding." },
-						{ name: "description", type: "ReactNode | false", description: "Why it is empty, or what will fill it. `false` hides it, for a title that already tells the story." },
-						{ name: "media / mediaVariant", type: "ReactNode / \"none\" | \"icon\" | \"icon-soft\" | \"illustration\"", default: '"none"', description: "The visual and its chrome. `none` renders the media raw." },
-						{ name: "renderMedia", type: "(ctx) => ReactNode", description: "Media as a function of the variant, for a visual that changes with the chrome around it." },
-						{ name: "action", type: "ReactNode", description: "The next step. An empty state that only explains is a dead end." },
-						{ name: "footer", type: "ReactNode", description: "Quiet copy under the action — a hint, a learn-more, a shortcut." },
-						{ name: "padding", type: '"sm" | "md" | "lg"', default: '"md"', description: "Breathing room, on both axes. The inline padding is what keeps copy off a dashed edge." },
-						{ name: "border", type: "boolean", default: "false", description: "The dashed outline." },
-						{ name: "strings", type: "Partial<EmptyStrings>", description: "title, description, and ariaLabel. The region announces through role=\"status\", so a list that empties out while the reader is on the page says so." },
-						{ name: "DocumentStackIllustration / InboxCleanIllustration / UsersCircleIllustration", type: "component", description: "The rest of the set. Each is drawn from the theme\u2019s own tokens rather than shipped as an image, so an empty state cannot be the one thing on the page that ignores a rebrand \u2014 and it costs no request." },
+				<PropTable owner="Empty" />
+				<PropTable
+					symbols={[
+						"StackedCardsIllustration",
+						"DocumentStackIllustration",
+						"InboxCleanIllustration",
+						"SearchGlassIllustration",
+						"UsersCircleIllustration",
 					]}
 				/>
 			</Example>

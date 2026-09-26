@@ -92,6 +92,9 @@ Empty sections are dropped.
 
 Kind: callable.
 
+Renders and validates a form described as data. `validate()` runs on submit, and a message
+clears as soon as its field changes.
+
 ```text
 ({ schema, value, defaultValue, errors, disabled, layout, columns, id, name, title, description, headerSlot, footerSlot, actionsSlot, emptySlot, showActions, submitLabel, resetLabel, submitDisabled, resetDisabled, submitting, onValueChange, onFieldChange, onSubmit, onReset, onError, renderField, renderSection, strings, className, contentClassName, sectionClassName, fieldClassName, }: SchemaFormProps) => import("react").JSX.Element
 ```
@@ -99,6 +102,10 @@ Kind: callable.
 ### `SchemaFormActions`
 
 Kind: callable.
+
+The form's submit row, generated from the same schema; reset renders only when there is an
+`onReset` for it to reach. Exported so a screen can place it somewhere the generated layout
+does not — a drawer footer, a sticky bar.
 
 ```text
 ({ submitLabel, resetLabel, showReset, disabled, submitDisabled, resetDisabled, submitting, onReset, className, }: SchemaFormActionsProps) => import("react").JSX.Element
@@ -172,26 +179,28 @@ SchemaFormTextField | SchemaFormTextareaField | SchemaFormNumberField | SchemaFo
 
 Kind: interface.
 
+The keys every field shares, whatever its `type`.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `key` | yes | `string` |  |
-| `type` | no | `SchemaFormFieldType` |  |
+| `type` | no | `SchemaFormFieldType` | Picks the control. Omitted means `text`. |
 | `label` | yes | `string` |  |
 | `description` | no | `string` |  |
 | `hint` | no | `string` |  |
 | `helperText` | no | `string` |  |
 | `placeholder` | no | `string` |  |
 | `required` | no | `boolean` |  |
-| `disabled` | no | `boolean \| ((values: SchemaFormValues) => boolean)` | A function form, for a field only editable once a sibling says so. |
-| `hidden` | no | `boolean \| ((values: SchemaFormValues) => boolean)` | A hidden field is not rendered AND not validated. |
+| `disabled` | no | `boolean \| ((values: SchemaFormValues) => boolean)` | The predicate form reads the whole value set, for a field only editable once a sibling<br>says so. |
+| `hidden` | no | `boolean \| ((values: SchemaFormValues) => boolean)` | A hidden field is not rendered AND not validated — blocking a submit on a required field<br>the reader cannot see is a dead end. The predicate form reads the whole value set, for a<br>field that only matters once a sibling says so. |
 | `defaultValue` | no | `SchemaFormValue` |  |
 | `sectionId` | no | `string` | Puts the field in a section without listing it there. |
-| `width` | no | `SchemaFormFieldWidth` |  |
+| `width` | no | `SchemaFormFieldWidth` | Column span inside the section grid, which is keyed to a container. A form in a 320px<br>drawer collapses to one column whatever the section asked for. |
 | `className` | no | `string` |  |
 | `controlClassName` | no | `string` | Merged onto the control rather than the field wrapper. |
-| `validate` | no | `SchemaFormValidator \| SchemaFormValidator[]` |  |
-| `formatValue` | no | `(value: SchemaFormValue, values: SchemaFormValues) => string` | Turns the stored value into what the control displays. |
-| `parseValue` | no | `(value: string, values: SchemaFormValues) => SchemaFormValue` | Turns what the control produced back into the stored value. |
+| `validate` | no | `SchemaFormValidator \| SchemaFormValidator[]` | Return a string to fail. The first message wins: the rest are about a value already known<br>to be wrong. |
+| `formatValue` | no | `(value: SchemaFormValue, values: SchemaFormValues) => string` | Turns the stored value into what the control displays: with `parseValue`, the two halves<br>of a custom representation. |
+| `parseValue` | no | `(value: string, values: SchemaFormValues) => SchemaFormValue` | Turns what the control produced back into the stored value: with `formatValue`, the two<br>halves of a custom representation. |
 | `meta` | no | `Record<string, unknown>` | Free-form payload, carried through to `renderField`. |
 
 ### `SchemaFormFieldContext`
@@ -223,6 +232,10 @@ Kind: type.
 ### `SchemaFormFieldRenderer`
 
 Kind: callable.
+
+One field, resolved from its schema entry to a control, with FormField owning the label, hint
+and message. Reach for it when a form is mostly generated but one field needs to be placed by
+hand.
 
 ```text
 ({ field, value, values, error, disabled, required, fieldId, onValueChange, onError, strings, className, }: SchemaFormFieldRendererProps) => import("react").JSX.Element
@@ -319,12 +332,12 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `schema` | yes | `SchemaFormSchema` |  |
-| `value` | no | `SchemaFormValues` |  |
-| `defaultValue` | no | `SchemaFormValues` |  |
-| `errors` | no | `SchemaFormErrors` | Server-side messages, keyed by field. Merged over the form's own. |
+| `schema` | yes | `SchemaFormSchema` | Sections and fields. A section names its fields explicitly or claims the ones carrying its<br>`sectionId`; whatever no section claimed lands in a leading default bucket. |
+| `value` | no | `SchemaFormValues` | Controlled values. Under a controlled value the schema's own defaults still apply, so a<br>consumer holding two fields does not blank the rest. |
+| `defaultValue` | no | `SchemaFormValues` | Uncontrolled starting values. An explicit default outranks the schema's own. |
+| `errors` | no | `SchemaFormErrors` | Server-side messages, keyed by field. Merged over the form's own and not cleared by<br>typing. |
 | `disabled` | no | `boolean` |  |
-| `layout` | no | `SchemaFormLayout` |  |
+| `layout` | no | `SchemaFormLayout` | One bordered surface with sections inside it, or one surface per section. The schema does<br>not change between them. |
 | `columns` | no | `SchemaFormColumns` |  |
 | `id` | no | `string` |  |
 | `name` | no | `string` |  |
@@ -342,11 +355,11 @@ Kind: interface.
 | `submitting` | no | `boolean` | Additional external busy state. An async onSubmit also sets busy automatically. |
 | `onValueChange` | no | `(values: SchemaFormValues) => void` |  |
 | `onFieldChange` | no | `(key: string, value: SchemaFormValue, values: SchemaFormValues) => void` |  |
-| `onSubmit` | no | `(values: SchemaFormValues, helpers: SchemaFormSubmitHelpers, event: FormEvent<HTMLFormElement>) => void \| Promise<void>` |  |
+| `onSubmit` | no | `(values: SchemaFormValues, helpers: SchemaFormSubmitHelpers, event: FormEvent<HTMLFormElement>) => void \| Promise<void>` | Runs only if validation passed. `helpers` carries `setFieldValue`, `setValues`, `reset`,<br>and `validate` — for a server response that has to write back into the form. |
 | `onReset` | no | `(values: SchemaFormValues, helpers: SchemaFormSubmitHelpers) => void` |  |
 | `onError` | no | `(error: unknown) => void` | Receives errors from submission and consumer predicates, validators, or parsers. |
-| `renderField` | no | `(context: SchemaFormRenderFieldContext) => ReactNode` |  |
-| `renderSection` | no | `(context: SchemaFormRenderSectionContext) => ReactNode` |  |
+| `renderField` | no | `(context: SchemaFormRenderFieldContext) => ReactNode` | Replaces how a field renders. It receives `defaultField`, so decorating is as easy as<br>replacing. |
+| `renderSection` | no | `(context: SchemaFormRenderSectionContext) => ReactNode` | Replaces how a section renders, with its fields already laid out. |
 | `strings` | no | `Partial<SchemaFormStrings>` |  |
 | `className` | no | `string` |  |
 | `contentClassName` | no | `string` |  |
@@ -538,6 +551,10 @@ Record<string, SchemaFormValue>
 ### `useSchemaForm`
 
 Kind: callable.
+
+The values, the errors, and `validate()` without any of the rendering. Server `errors` win
+over local messages for the same key; local messages clear on the field's next change,
+server messages stay until the consumer replaces them.
 
 ```text
 ({ fields, value, defaultValue, errors: externalErrors, onValueChange, onFieldChange, requiredError, validationError, onError, }: UseSchemaFormOptions) => UseSchemaFormResult

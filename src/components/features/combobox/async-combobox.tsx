@@ -96,6 +96,12 @@ function useAsyncComboboxWiring<T>(props: AsyncComboboxSharedProps<T>, ensuredIt
 	}
 }
 
+/**
+ * The search-driven single-select picker, for a screen that already holds its results: the
+ * consumer supplies the items, the query and the loading flag. It does not filter `items` —
+ * what is passed is what renders. The field shows the query while open and the selection's
+ * label while closed.
+ */
 export function AsyncCombobox<T>({
 	selectedValue,
 	onSelectedValueChange,
@@ -173,6 +179,10 @@ export function AsyncCombobox<T>({
 	)
 }
 
+/**
+ * The multi-select twin of `AsyncCombobox`: chips in the field, checks in the list, and an
+ * optional apply footer. Selections are merged ahead of the results, so they stay visible.
+ */
 export function AsyncMultiCombobox<T>({
 	selectedValues,
 	onSelectedValuesChange,

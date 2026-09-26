@@ -19,6 +19,12 @@ export type PercentageInputProps = Omit<DecimalInputProps, "allowNegative"> & {
 	allowNegative?: boolean
 }
 
+/**
+ * `DecimalInput` bounded to a percentage, with a trailing `%`. The value is the number only,
+ * as a string — the `%` is chrome, not data: read `event.target.value` in `onChange`. With a
+ * `step`, the sign moves inside the stepper group: a stepper field is already a shell, and a
+ * second one around it would double the border.
+ */
 export const PercentageInput = forwardRef<HTMLInputElement, PercentageInputProps>(
 	function PercentageInput(
 		{ decimalPlaces = 2, min = 0, max = 100, allowNegative = false, step, className, ...props },

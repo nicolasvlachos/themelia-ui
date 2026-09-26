@@ -23,13 +23,24 @@ export interface SliderFieldProps<TValue extends number | number[] = number | nu
 	 */
 	value?: TValue
 	defaultValue?: TValue
+	/** The lower bound. */
 	min?: number
+	/** The upper bound. */
 	max?: number
+	/** The increment between values. */
 	step?: number
 	disabled?: boolean
+	/** Applies the invalid treatment. The message stays on the FormField. */
 	invalid?: boolean
+	/**
+	 * The track's direction. A vertical slider takes its height from
+	 * `--slider-vertical-min-h`, because a slider has no content to size it.
+	 */
 	orientation?: "horizontal" | "vertical"
-	/** Track and thumb size: `md` is a larger drag target (touch, media controls). */
+	/**
+	 * Track and thumb size: `md` is a larger drag target (touch, media controls). A slider is
+	 * dragged, which is why this one keeps a size prop.
+	 */
 	size?: "sm" | "md"
 
 	/** Native-shaped handler, for form libraries. */
@@ -41,7 +52,10 @@ export interface SliderFieldProps<TValue extends number | number[] = number | nu
 
 	/** Shows the current value beside the track. */
 	showValue?: boolean
-	/** Formats ONE value. A range formats each end and joins them. */
+	/**
+	 * How the readout writes ONE value. A range formats each end and joins them with an en
+	 * dash.
+	 */
 	formatValue?: (value: number) => string
 	/** Suffix on the displayed value — "px", "%", "mm". Ignored when `formatValue` is given. */
 	unit?: string
@@ -51,10 +65,20 @@ export interface SliderFieldProps<TValue extends number | number[] = number | nu
 	"aria-labelledby"?: string
 	"aria-describedby"?: string
 	"aria-invalid"?: boolean | "true" | "false" | "grammar" | "spelling"
-	/** Overrides this slider's own copy: each range thumb's name ("Minimum", "Maximum") and the fallback name. */
+	/**
+	 * Overrides this slider's own copy: each range thumb's name and the fallback name.
+	 * `thumb` is a function of the thumb's index, defaulting to "Minimum" and "Maximum" — two
+	 * handles called the same thing are two handles a screen reader cannot tell apart, and a
+	 * range may have more than two.
+	 */
 	strings?: Partial<SliderStrings>
 }
 
+/**
+ * One number on a track, or a range when the value is an array. It emits both a bare value
+ * and a native-shaped change event, because a form library registers a field by handing it
+ * an `onChange` and reading `event.target.value`.
+ */
 export const SliderField = forwardRef(function SliderField<TValue extends number | number[]>(
 	{
 		name,
@@ -156,7 +180,11 @@ export const SliderField = forwardRef(function SliderField<TValue extends number
 	)
 }) as <TValue extends number | number[] = number>(props: SliderFieldProps<TValue> & RefAttributes<HTMLDivElement>) => ReactElement | null
 
-/** `SliderField` without the readout (`showValue`, `unit`) — for a toolbar or a canvas control. */
+/**
+ * The bare control: `SliderField` without the value readout (`showValue`, `unit`) — for a
+ * slider inside a toolbar, a popover or a canvas control, where the surrounding surface
+ * already says what it adjusts.
+ */
 export const Slider = forwardRef(function Slider<TValue extends number | number[]>(props: SliderProps<TValue>, ref: Ref<HTMLDivElement>) {
 	return <SliderField ref={ref} {...props} />
 }) as <TValue extends number | number[] = number>(props: SliderProps<TValue> & RefAttributes<HTMLDivElement>) => ReactElement | null

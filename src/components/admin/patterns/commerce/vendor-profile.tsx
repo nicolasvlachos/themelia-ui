@@ -49,10 +49,19 @@ export interface VendorProfileProps
 	verified?: boolean
 	/** Already formatted, including its currency. */
 	earnings?: string
+	/**
+	 * Operating facts, for the overview. Supplying both this and `stats` gives tabs;
+	 * supplying either alone renders that view bare.
+	 */
 	metrics?: VendorMetric[]
+	/**
+	 * Performance tiles, for the stats view. Supplying both this and `metrics` gives tabs;
+	 * supplying either alone renders that view bare.
+	 */
 	stats?: VendorStat[]
-	/** Controlled. */
+	/** Controlled. Uncontrolled, the profile opens on whichever view has data. */
 	view?: VendorView
+	/** Reports the view a reader switches to. */
 	onViewChange?: (view: VendorView) => void
 	onMessage?: () => void
 	onHire?: () => void

@@ -56,13 +56,13 @@ Extends: `Omit<ComponentProps<"div">, "children" | "title" | "onCopy">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `Credential[]` |  |
+| `items` | yes | `Credential[]` | id, name, value, and `displayValue` for the masked form shown in the row. |
 | `title` | no | `ReactNode` |  |
 | `defaultOpen` | no | `boolean` | Uncontrolled. |
 | `open` | no | `boolean` | Controlled. |
 | `onOpenChange` | no | `(open: boolean) => void` |  |
 | `onAdd` | no | `() => void` | Omit to hide the add action. |
-| `onDelete` | no | `(id: string, item: Credential) => void` | Omit to hide the delete entry. The confirmation belongs to the caller. |
+| `onDelete` | no | `(id: string, item: Credential) => void` | Omit to hide the delete action. The delete confirmation belongs to the caller. |
 | `onCopy` | no | `(id: string, item: Credential) => void` | Fires after the value reaches the clipboard — for analytics. |
 | `strings` | no | `Partial<CredentialListStrings>` |  |
 
@@ -134,7 +134,7 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 | `roleName` | yes | `ReactNode` |  |
 | `description` | no | `ReactNode` |  |
 | `memberCount` | no | `number` |  |
-| `groups` | yes | `PermissionGroup[]` |  |
+| `groups` | yes | `PermissionGroup[]` | Each group names an area and lists its permissions with a granted flag. |
 | `onEdit` | no | `() => void` | Omit to hide the edit action. |
 | `strings` | no | `Partial<RolePermissionsStrings>` |  |
 
@@ -166,7 +166,7 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children" | "icon">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `action` | no | `ReactNode` | The control that performs it — usually a destructive Button. |
-| `confirmation` | no | `ReactNode` | What will happen, stated before it does. Rendered as a note, not an error. |
+| `confirmation` | no | `ReactNode` | What will happen, stated before it does. Rendered `role="note"`, not as an error —<br>nothing has gone wrong yet. |
 | `icon` | no | `ComponentProps<typeof IconBadge>["icon"]` |  |
 
 ## Preview recipes

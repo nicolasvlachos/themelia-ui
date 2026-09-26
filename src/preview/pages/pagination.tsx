@@ -20,23 +20,12 @@ export function PaginationPage() {
 			<Example
 				example="pagination/pagination-links"
 				title="A pager is navigation"
-				description="renderLink hands every control to the caller's own link, so a server-rendered list gets real hrefs — openable in a new tab, and working with JavaScript off. onPageChange still fires, so a client router intercepts without a second prop. A disabled arrow stays a button: there is no href for a page that does not exist."
+				description="pageHref makes every control a link, so a server-rendered list gets real hrefs — openable in a new tab, and working with JavaScript off. renderLink renders those links through the router, and onPageChange still fires, so a client router intercepts without a second prop. A disabled arrow stays a button: there is no href for a page that does not exist."
 			/>
 
 			<Example id="pagination-api" title="API">
-				<PropTable owner="Pagination"
-					rows={[
-						{ name: "page", type: "number", required: true, description: "Current page, 1-indexed." },
-						{ name: "total", type: "number", required: true, description: "Total pages. (This table said `pageCount` for as long as it existed; the prop has always been `total`.)" },
-						{ name: "siblings", type: "number", default: "1", description: "Pages shown either side of the current one." },
-						{ name: "disabled", type: "boolean", default: "false", description: "Disables every control while navigation is unavailable. Linked controls become disabled buttons until navigation is available again." },
-						{ name: "labels", type: "\"icon\" | \"text\" | \"responsive\"", default: "\"responsive\"", description: "Whether the arrows carry their words. responsive is text from sm up and chevrons below, because the words are what a pager under a wide table wants and the width is what a phone has not got. The words come from strings, so they are the accessible name too." },
-						{ name: "numbers", type: "boolean", default: "true", description: "false leaves the two arrows alone — a cursor pager, where there is no page count to show." },
-						{ name: "renderLink", type: "(page, props) => ReactNode", description: "Renders each control as the caller's own link. A pager is navigation: on a server-rendered list every control should be an <a href> that works without JavaScript and opens in a new tab. A DISABLED arrow stays a button, because there is no href for a page that does not exist." },
-						{ name: "paginationRange()", type: "(page, pageCount, siblings) => (number | 'ellipsis')[]", description: "The arithmetic on its own, for a custom control." },
-						{ name: "strings", type: "Partial<PaginationStrings>", description: "Overrides this pager's own copy — the region name, the two icon-only arrows, the ellipsis, and each page control named by the page it goes to." },
-					]}
-				/>
+				<PropTable owner="Pagination" />
+				<PropTable symbols={["paginationRange"]} />
 			</Example>
 		</ComponentPage>
 	)

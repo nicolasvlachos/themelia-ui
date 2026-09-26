@@ -47,6 +47,9 @@ SyncRangeFormStrings
 
 Kind: callable.
 
+The body of a "reconcile the last N hours" dialog. It renders no buttons: the overlay's
+footer submits it through `formId`, so native validation runs first.
+
 ```text
 ({ formId, options, syncOptions, value, defaultValue, onValueChange, transformSubmit, onSubmit, onError, resetKey, disabled, submitting, errors, strings, className, }: SyncRangeFormProps<TSubmit>) => import("react").JSX.Element
 ```
@@ -57,13 +60,13 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `formId` | yes | `string` | Set on the `<form>` so the overlay's footer, outside it, can submit it. |
+| `formId` | yes | `string` | Set on the `<form>` so the overlay's footer, outside it, can submit it. That is why this<br>takes an id rather than rendering its own buttons. |
 | `options` | yes | `CardRadioOption[]` | The windows offered. |
 | `syncOptions` | no | `CardCheckboxOption[]` |  |
 | `value` | no | `SyncRangeFormValues` | Controlled. |
 | `defaultValue` | no | `Partial<SyncRangeFormValues>` |  |
 | `onValueChange` | no | `(value: SyncRangeFormValues) => void` |  |
-| `transformSubmit` | no | `(value: SyncRangeFormValues) => TSubmit` | Maps the form's values to the consumer's payload. Replaces the numeric default. |
+| `transformSubmit` | no | `(value: SyncRangeFormValues) => TSubmit` | Maps the form's values to the consumer's payload. Replaces the numeric default, which<br>THROWS rather than coercing — `Number("since-last-run")` is NaN, and an API asked to<br>reconcile NaN hours does something unpredictable. |
 | `onSubmit` | yes | `(data: TSubmit, values: SyncRangeFormValues) => void \| Promise<void>` |  |
 | `onError` | no | `(error: unknown) => void` |  |
 | `resetKey` | no | `string \| number` | Changing it resets an uncontrolled form, e.g. after a mutation or for a new record. |

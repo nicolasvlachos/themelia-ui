@@ -22,14 +22,7 @@ export function TooltipPage() {
 			</Example>
 
 			<Example id="tooltip-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "TooltipTrigger render", type: "ReactElement", description: "The element the tip anchors to. Must be focusable, or the tip is hover-only." },
-						{ name: "TooltipContent", type: "component", description: "The tip. Short — a sentence, not a paragraph." },
-						{ name: "TooltipProvider delay", type: "number", description: "Shared open delay. Wrap the app once rather than per tooltip." },
-						{ name: "TooltipButton tooltip", type: "ReactNode", description: "A button and its tip in one component, for the common case." },
-					]}
-				/>
+				<PropTable owners={["TooltipTrigger", "TooltipContent", "TooltipProvider", "TooltipButton"]} />
 			</Example>
 		</ComponentPage>
 	)

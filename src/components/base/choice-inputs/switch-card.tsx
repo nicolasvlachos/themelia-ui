@@ -13,6 +13,11 @@ export interface SwitchCardProps
 	label: string
 }
 
+/**
+ * The top-of-list feature switch: a bordered card with an icon, a title, an optional
+ * description and hint, and a trailing switch; the whole card toggles. A `ToggleField`
+ * preset with `surface="card"`, a switch, and an off value that still submits: `"0"`.
+ */
 export const SwitchCard = forwardRef<HTMLDivElement, SwitchCardProps>(function SwitchCard(props, ref) {
 	/* An unchecked switch submits nothing, so the card submits "0" when off. */
 	return <ToggleField ref={ref} {...props} kind="switch" surface="card" uncheckedValue="0" />

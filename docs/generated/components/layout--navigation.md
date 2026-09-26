@@ -31,6 +31,10 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A wizard’s position, as a trail. Not Breadcrumbs: a trail describes where you ARE in a
+hierarchy you can climb, and this describes how far along a sequence you have got — the
+steps behind you are done, not ancestors.
+
 ```text
 ({ steps, currentIndex, onStepClick, strings, className, ...props }: BreadcrumbProgressProps) => import("react").JSX.Element
 ```
@@ -70,6 +74,10 @@ Kind: interface.
 ### `CategoryNav`
 
 Kind: callable.
+
+A vertical list of destinations with a count on each. Not SideNav: this is a FILTER rail,
+where the rows are categories of one list rather than pages of a product, and the count
+is the reason a reader picks one.
 
 ```text
 ({ label, items, activeId, onSelect, className, ...props }: CategoryNavProps) => import("react").JSX.Element
@@ -124,6 +132,45 @@ Kind: const.
 SideNavStrings
 ```
 
+### `LinkRenderer`
+
+Kind: type.
+
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
+
+```tsx fragment — declaration JSDoc excerpt
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
+```
+
+```text
+(props: LinkRenderProps) => ReactElement
+```
+
+### `LinkRenderProps`
+
+Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `href` | no | `string` | Destination. When absent, render non-interactive content. |
+| `children` | yes | `ReactNode` |  |
+| `className` | no | `string` |  |
+| `target` | no | `string` |  |
+| `rel` | no | `string` |  |
+| `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
+| `"aria-label"` | no | `string` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
+
 ### `SectionNav`
 
 Kind: callable.
@@ -150,7 +197,7 @@ Extends: `Omit<React.ComponentProps<"nav">, "children" | "onSelect">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `SectionNavItem[]` |  |
+| `items` | yes | `SectionNavItem[]` | The headings: an id, a label, and an optional depth for nesting. |
 | `rootMargin` | no | `string` | Which part of the viewport counts as "here". The default makes a heading current once<br>it reaches the upper quarter. |
 | `onSelect` | no | `(id: string) => void` |  |
 | `strings` | no | `StringsProp<SectionNavStrings>` |  |
@@ -204,10 +251,10 @@ Extends: `Omit<React.ComponentProps<"nav">, "children">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `items` | no | `SideNavItem[]` | Flat entries. Mutually exclusive with `groups`. |
-| `groups` | no | `SideNavGroup[]` | Captioned blocks of entries. Mutually exclusive with `items`. |
-| `currentPath` | no | `string` | The path considered current. Matched by longest prefix, so `/settings/members` marks<br>the members entry, not the `/settings` index. |
-| `renderLink` | no | `(props: { href: string; className: string; children: React.ReactNode; "aria-current"?: "page"; "aria-disabled"?: boolean; }) => React.ReactElement` | Renders each entry: receives the link props and returns the router's link element.<br>Without it, entries are plain anchors. |
-| `strings` | no | `StringsProp<SideNavStrings>` |  |
+| `groups` | no | `SideNavGroup[]` | Captioned blocks of entries, each of which can be collapsible. Mutually exclusive with<br>`items`. |
+| `currentPath` | no | `string` | The path considered current. Matched by longest prefix, so exactly one entry is<br>current: `/settings/members` marks the members entry, not the `/settings` index. |
+| `renderLink` | no | `LinkRenderer` | Routes entries through the app's router, as every component's `renderLink` does.<br>Without it, entries are plain anchors — the kit never imports a router. |
+| `strings` | no | `StringsProp<SideNavStrings>` | Overrides the rail's own copy — the collapse control's name. |
 
 ### `SideNavStrings`
 

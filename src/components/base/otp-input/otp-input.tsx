@@ -13,18 +13,34 @@ import styles from "./otp-input.module.css"
 import { defaultOtpInputStrings, type OtpInputStrings } from "./otp-input.strings"
 
 export interface OtpInputProps extends Omit<OTPField.Root.Props, "length"> {
-	/** How many characters. Six is the near-universal length. */
+	/** How many boxes, one per character. Six is the near-universal length. */
 	length?: number
-	/** Splits the boxes into groups, for a code written as "123 456". */
+	/**
+	 * Groups the boxes for the eye, for a code written as "123 456". The grouping never
+	 * changes which character a box holds.
+	 */
 	groupSize?: number
+	/**
+	 * Marks the code invalid as one field — a code is right or wrong as a whole, so every box
+	 * shows it together.
+	 */
 	invalid?: boolean
+	/**
+	 * Overrides this field's own copy. `fieldLabel` names the field, and with it the first
+	 * box, when nothing else labels it; `slotLabel(position, length)` names each other box —
+	 * "Character 2 of 6".
+	 */
 	strings?: Partial<OtpInputStrings>
 }
 
+/**
+ * A one-time code, one box per character, on Base UI's OTPField, so paste and SMS autofill
+ * fill every box.
+ */
 export function OtpInput({
 	length = 6,
 	groupSize,
-	invalid,
+	invalid = false,
 	className,
 	strings,
 	"aria-label": ariaLabel,

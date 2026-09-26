@@ -8,6 +8,7 @@ import type { DataTableSize } from "./table.types"
 
 export const DataTableSizeContext = createContext<DataTableSize>("md")
 
+/** The table's `size` — its row density — for a part rendered inside a row. */
 export function useDataTableSize(): DataTableSize {
 	return useContext(DataTableSizeContext)
 }

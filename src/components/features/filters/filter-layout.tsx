@@ -30,10 +30,19 @@ export interface FilterLayoutProps {
 	variant?: "default" | "compact"
 	showClearFilters?: boolean
 	tabs?: FilterTab[]
-	/** Narrow viewports use a sheet; opt into inline controls for a custom mobile layout. */
+	/**
+	 * `sheet` uses an inset filter sheet and a saved-view select below 768px; search stays
+	 * inline. In the sheet an editor's Apply commits values, Back discards unapplied edits, and
+	 * Done closes it; `mobileFilters`, `filterSummary` and `done` in `strings` localize it. Opt
+	 * into `inline` controls for a custom mobile layout.
+	 */
 	mobilePresentation?: "sheet" | "inline"
 }
 
+/**
+ * The default bar: saved tabs, search boxes, active pills, always-shown pills, the add button,
+ * then Clear. For a custom bar, place the exported parts using `useFilterGroups()`.
+ */
 export function FilterLayout({
 	className,
 	dynamicFilterOptions,

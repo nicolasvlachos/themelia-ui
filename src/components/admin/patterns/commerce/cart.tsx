@@ -235,27 +235,24 @@ export function DiscountStack({
 
 /* ══ CodeEntry ════════════════════════════════════════════════════════════════════ */
 
-/**
- * CodeEntry — a discount code or a gift card.
- *
- * One component for both: a title, a field, a button, and an applied state. The only real
- * difference is that a gift card holds a BALANCE — money that may outlast this order —
- * where a discount either applies or does not. That is one optional prop, not a second
- * component.
- *
- * `kind` picks the preset: the icon, the default copy, and whether the code is upper-cased
- * on submit. Gift card codes are printed in capitals and nobody types them that way.
- */
+/** Which preset a CodeEntry takes: a discount code or a gift card. */
 export type CodeEntryKind = "discount" | "gift"
 
 export interface CodeEntryProps
 	extends Omit<ComponentProps<typeof ContentBlock>, "children" | "onSubmit"> {
+	/**
+	 * Picks the preset: the icon, the default copy, and whether the code is upper-cased on
+	 * submit. Gift card codes are printed in capitals and nobody types them that way.
+	 */
 	kind?: CodeEntryKind
 	/** The code in force. Present switches the card to its applied state. */
 	appliedCode?: string
 	/** What it took off, already formatted. */
 	appliedDiscount?: string
-	/** What is left on the card, already formatted. Gift cards only. */
+	/**
+	 * What is left on the card, already formatted — money that may outlast this order, and
+	 * the one real difference between the two kinds. Gift cards only.
+	 */
 	balance?: string
 	/** A rejection message, shown under the field. */
 	error?: string
@@ -265,6 +262,12 @@ export interface CodeEntryProps
 	strings?: Partial<CodeEntryStrings>
 }
 
+/**
+ * A discount code or a gift card. One component for both: a title, a field, a button, and
+ * an applied state. The only real difference is that a gift card holds a BALANCE — money
+ * that may outlast this order — where a discount either applies or does not. That is one
+ * optional prop, not a second component.
+ */
 export function CodeEntry({
 	kind = "discount",
 	appliedCode,

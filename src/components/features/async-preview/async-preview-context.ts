@@ -13,6 +13,10 @@ export interface PreviewContextValue {
 
 export const PreviewContext = createContext<PreviewContextValue | null>(null)
 
+/**
+ * The current state and data, for a part rendered outside the provided ones — a footer that
+ * counts results, a header that names what is loading.
+ */
 export function useAsyncPreviewContext<
 	TData,
 	TContext = unknown,

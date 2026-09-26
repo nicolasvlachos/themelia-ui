@@ -31,13 +31,22 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The root: holds the open state its trigger and panel share. `onOpenChange` receives Base
+UI's `eventDetails`, which says what an outside interaction does: `eventDetails.reason` is
+`"outside-press"`, and `eventDetails.cancel()` keeps the panel open through a click that
+belongs to it.
+
 ```text
-({ ...props }: PopoverPrimitive.Root.Props) => React.JSX.Element
+({ ...props }: PopoverProps) => React.JSX.Element
 ```
 
 ### `PopoverAnchor`
 
 Kind: callable.
+
+What the panel points at, when that is not what opens it: a panel opened by a toolbar
+button but anchored to the selection it acts on, or opened by a row's menu and anchored
+to the row.
 
 ```text
 ({ render, children, ...props }: React.ComponentPropsWithoutRef<"span"> & { render?: React.ReactElement; }) => React.JSX.Element
@@ -46,6 +55,11 @@ Kind: callable.
 ### `PopoverContent`
 
 Kind: callable.
+
+The panel. It sits against its anchor at `side` and `align`, and flips when the chosen
+side has no room; `sideOffset` and `alignOffset` are the gap to the anchor along each
+axis. `initialFocus` and `finalFocus`, from Base UI's popup, decide where focus lands on
+open and returns on close; `false` leaves it where it is.
 
 ```text
 ({ container, className, align, alignOffset, side, sideOffset, disablePortal, inset, width, minWidth, maxWidth, style, ...props }: PopoverContentProps) => React.JSX.Element
@@ -56,12 +70,14 @@ Kind: callable.
 Kind: type.
 
 ```text
-PopoverPrimitive.Popup.Props & Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { disablePortal?: boolean; inset?: "padded" | "flush"; width?: string | number | "auto" | "trigger"; minWidth?: string | number; maxWidth?: string | number; container?: UIPortalContainer; }
+PopoverPrimitive.Popup.Props & Pick<PopoverPrimitive.Popup.Props, "initialFocus" | "finalFocus"> & Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & { disablePortal?: boolean; inset?: "padded" | "flush"; width?: string | number | "auto" | "trigger"; minWidth?: string | number; maxWidth?: string | number; container?: UIPortalContainer; }
 ```
 
 ### `PopoverDescription`
 
 Kind: callable.
+
+Supporting text, wired to the panel's accessible description.
 
 ```text
 ({ className, ...props }: PopoverPrimitive.Description.Props) => React.JSX.Element
@@ -71,6 +87,8 @@ Kind: callable.
 
 Kind: callable.
 
+The band at the bottom of the panel, for its actions.
+
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
 ```
@@ -78,6 +96,8 @@ Kind: callable.
 ### `PopoverHeader`
 
 Kind: callable.
+
+The band at the top of the panel, for its title and description.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -87,6 +107,9 @@ Kind: callable.
 
 Kind: callable.
 
+The panel's heading, wired to its accessible name. Without a title and description the
+panel announces as an unnamed group.
+
 ```text
 ({ className, ...props }: PopoverPrimitive.Title.Props) => React.JSX.Element
 ```
@@ -94,6 +117,9 @@ Kind: callable.
 ### `PopoverTrigger`
 
 Kind: callable.
+
+What opens the panel. It is separate from `PopoverAnchor`, so a toolbar button can open a
+panel anchored to the thing it acts on.
 
 ```text
 ({ nativeButton, render, children, ...props }: PopoverPrimitive.Trigger.Props & { nativeButton?: boolean; }) => React.JSX.Element

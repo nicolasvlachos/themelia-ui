@@ -34,12 +34,19 @@ export interface MentionInlineSuggestionsProps<TResource extends string = string
 	/** Fires when the writer picks a tab, so the hook can stop auto-switching. */
 	onManualKindChange?: () => void
 	onSelect: (suggestion: MentionSuggestion<TResource>) => void
-	/** Escape or leaving the editor dismisses the current completion session. */
+	/**
+	 * Closes the completion session on Escape or editor blur. Wire to `setPickerOpen(false)`.
+	 * Unchanged caret callbacks do not reopen a dismissed query.
+	 */
 	onDismiss?: () => void
 	strings?: Partial<MentionInlineSuggestionsStrings>
 	className?: string
 }
 
+/**
+ * The panel for the inline-trigger flow. Not a popover: the editor keeps focus and the caret.
+ * The consumer wraps the editor in a relatively positioned element; this pins itself below it.
+ */
 export function MentionInlineSuggestions<TResource extends string = string>({
 	open,
 	activeKind,

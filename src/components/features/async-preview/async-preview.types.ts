@@ -40,6 +40,7 @@ export interface AsyncPreviewState<TData, TContext = unknown, TType extends stri
 	close: () => void
 }
 
+/** What `onShow` is given. */
 export interface AsyncPreviewShowArgs<TContext, TType extends string> {
 	type: TType
 	context: TContext
@@ -50,6 +51,7 @@ export interface AsyncPreviewShowArgs<TContext, TType extends string> {
 	cached: boolean
 	/** Reports a slow step — "Decrypting…" — without resolving. */
 	setLoading: (loading: AsyncPreviewLoadingState) => void
+	/** Carries a count or a permission alongside the record. */
 	setMeta: (meta: Record<string, unknown>) => void
 }
 
@@ -64,14 +66,29 @@ interface AsyncPreviewCallbacks<TData, TContext, TType extends string> {
 
 export interface AsyncPreviewRootBaseProps<TData, TContext, TType extends string>
 	extends AsyncPreviewCallbacks<TData, TContext, TType> {
-	/** Names the kind of record, passed to the fetcher. Caching requires cacheKey. */
+	/**
+	 * Names the kind of record. Passed back to `onShow`, so one fetcher can serve several types.
+	 * Caching requires `cacheKey`.
+	 */
 	type: TType
-	/** Whatever the fetcher needs — usually an id. */
+	/** Whatever the fetcher needs — usually an id. Handed to `onShow` unchanged. */
 	context: TContext
-	/** The record identity and cache key. Change it when switching records; without one nothing is cached. */
+	/**
+	 * The record identity and cache key: it enables the cache. Change it when the record
+	 * changes; absent, nothing is cached, and each open fetches or consumes its hover prefetch.
+	 */
 	cacheKey?: string
+	/**
+	 * `cache-first` serves a fresh cache entry without a request. `always` refetches on every
+	 * open — for a value that changes while the reader is on the page.
+	 * @default "cache-first"
+	 */
 	cachePolicy?: AsyncPreviewCachePolicy
-	/** How long a cache entry counts as fresh. Defaults to five minutes. */
+	/**
+	 * How long a cache entry counts as fresh, in ms: five minutes. Entries are evicted on read;
+	 * nothing wakes up on a timer.
+	 * @default 300_000
+	 */
 	staleTime?: number
 	open?: boolean
 	defaultOpen?: boolean
@@ -82,6 +99,10 @@ export interface AsyncPreviewRootBaseProps<TData, TContext, TType extends string
 /** A preview that fetches. */
 export interface AsyncPreviewDynamicRootProps<TData, TContext, TType extends string>
 	extends AsyncPreviewRootBaseProps<TData, TContext, TType> {
+	/**
+	 * The fetcher, run when the preview opens or the trigger prefetches it. Supply this or
+	 * `data`, not both.
+	 */
 	onShow: (args: AsyncPreviewShowArgs<TContext, TType>) => Promise<TData | null | undefined>
 	data?: never
 }
@@ -89,6 +110,10 @@ export interface AsyncPreviewDynamicRootProps<TData, TContext, TType extends str
 /** A preview whose data is already in hand: same component and states, no request. */
 export interface AsyncPreviewStaticRootProps<TData, TContext, TType extends string>
 	extends AsyncPreviewRootBaseProps<TData, TContext, TType> {
+	/**
+	 * The static form, in place of `onShow`: same component, same states, no request, for a row
+	 * that already loaded what the preview shows.
+	 */
 	data: TData | null
 	onShow?: never
 }
@@ -104,7 +129,10 @@ export interface AsyncPreviewTriggerRenderProps<TData, TContext, TType extends s
 export interface AsyncPreviewTriggerProps<TData, TContext, TType extends string> {
 	/** The element the preview hangs off. */
 	children?: ReactNode | ((props: AsyncPreviewTriggerRenderProps<TData, TContext, TType>) => ReactElement)
-	/** Starts the fetch on pointer-enter, before the popover opens. */
+	/**
+	 * Starts the fetch on pointer-enter, before the popover opens — once per record. Not on
+	 * focus: prefetching for every trigger a keyboard user tabs past would fire a request per row.
+	 */
 	prefetchOnHover?: boolean
 	className?: string
 }
@@ -123,7 +151,7 @@ export interface AsyncPreviewStateProps<TData, TContext, TType extends string> {
 }
 
 export interface AsyncPreviewBodyProps<TData, TContext, TType extends string> {
-	/** Rendered only in the `success` state, with the data non-null. */
+	/** Runs only in the `success` state, with the data non-null — so `data.name` needs no guard. */
 	children: (data: TData, state: AsyncPreviewState<TData, TContext, TType>) => ReactNode
 }
 
@@ -134,6 +162,10 @@ export interface AsyncPreviewSlotProps<
 	TType extends string = string,
 > {
 	className?: string
+	/**
+	 * Replaces the default. The function form is what an error slot wants — it is the only way
+	 * to show the error.
+	 */
 	children?: ReactNode | ((state: AsyncPreviewState<TData, TContext, TType>) => ReactNode)
 }
 

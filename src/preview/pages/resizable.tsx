@@ -12,13 +12,7 @@ export function ResizablePage() {
 			/>
 
 			<Example id="resizable-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "ResizablePanelGroup orientation", type: '"horizontal" | "vertical"', description: "The axis of the split. Use defaultLayout and onLayoutChanged to own persistence." },
-						{ name: "ResizableHandle withHandle", type: "boolean", default: "false", description: "Draws a grip on the line. The hit area is wider than the 1px rule either way." },
-						{ name: "ResizablePanel / ResizableHandle", type: "component", description: "A panel inside a ResizablePanelGroup and the grip between two. The handle is focusable and takes arrow keys, so the split is adjustable without a pointer." },
-					]}
-				/>
+				<PropTable owners={["ResizablePanelGroup", "ResizablePanel", "ResizableHandle"]} />
 			</Example>
 		</ComponentPage>
 	)

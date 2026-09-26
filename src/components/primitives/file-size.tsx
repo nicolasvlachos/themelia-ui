@@ -10,13 +10,30 @@ import { ValueRoot, type SpanProps, type ValueProps } from "./value"
 import { formatFileSize, type FileSizeBase, type FileSizeUnit } from "./file-size.format"
 
 export interface FileSizeProps extends SpanProps {
+	/** The size. Bytes unless `from` says otherwise. */
 	value?: number | null
+	/**
+	 * The unit `value` is given in. Converted with the same base, so `from="megabytes"` means
+	 * 2^20 under `binary` and 10^6 under `decimal`.
+	 */
 	from?: FileSizeUnit
-	/** `binary` (default), `decimal`, or `iec`. See file-size.format.ts. */
+	/**
+	 * Which base and which labels. `binary` divides by 1024 and labels it MB — the pairing
+	 * Windows and most file managers show, chosen so a size agrees with the machine it
+	 * describes rather than with SI. `decimal` is SI-correct and what Apple platforms and
+	 * storage vendors use. `iec` is strictly correct. The default does not move, so nothing
+	 * already shipped changes.
+	 * @default "binary"
+	 */
 	base?: FileSizeBase
 	locale?: string
 	emptyLabel?: ReactNode
 	size?: ValueProps["size"]
+	/**
+	 * For a size given a box of its own. A COLUMN of sizes is aligned by the column —
+	 * `<TableCell align="end">` — because the primitive is a span, and blockifying it to
+	 * align would break the text runs it also sits in.
+	 */
 	align?: ValueProps["align"]
 	weight?: ValueProps["weight"]
 	type?: ValueProps["type"]

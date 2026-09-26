@@ -41,22 +41,8 @@ export function ResourcePage() {
 			</Example>
 
 			<Example id="resource-api" title="API">
-				<PropTable owner="TabbedResourceShell"
-					rows={[
-						{ name: "title / description / actions", type: "ReactNode", description: "Feed the generated header. Omit them and pass slots.header when the header is not a title and a description." },
-						{ name: "loading / empty", type: "boolean", description: "Replace the body. `empty` is a boolean rather than an inference from children — a screen with a header row and no data still has children, and only the screen knows 'no records' from 'no records MATCHING'." },
-						{ name: "error", type: "ReactNode | Error", description: "Anything truthy replaces the body. See the rule above for which half it takes." },
-						{ name: "onRetry", type: "() => void", description: "Wiring it puts a retry control on the generated error state. Without it there is nothing to offer." },
-						{ name: "slots", type: "ResourceShellSlots", description: "header, toolbar, aside, footer, loading, empty, error. Every one has a generated default; the slot is for the screen where configuring that default prop by prop is worse than replacing it." },
-						{ name: "TabbedResourceShell tabs", type: "OverflowTabItem[]", required: true, description: "Goes into the toolbar slot, so slots.toolbar still wins outright." },
-						{ name: "ResourceHeader media / avatarUrl / icon", type: "ReactNode / string / ComponentType", description: "Ordered, not exclusive. A screen knows one of the three, and which one depends on what the record is — a person has an avatar, a settings section has an icon." },
-						{ name: "ResourceActionBar sticky", type: "boolean", default: "false", description: "Pins the bar below the shell header, not the viewport top — for a bar carrying a selection count, which is needed exactly when a static bar has scrolled away." },
-						{ name: "ResourceDetailsSection metadata", type: "MetadataListItem[]", description: "Structured facts before any free-form body. metadataColumns is a ceiling; the list steps down at narrow widths on its own." },
-						{ name: "ResourceDetailsSection padding / surface", type: '"sm" | "md" | "lg" / ContentBlockSurface', default: '"md" / "bordered"', description: "Use surface=\"plain\" when the section sits inside a frame that already has chrome." },
-						{ name: "ResourceHeader / ResourceActionBar", type: "component", description: "The title block and the verb row of an index or show screen, for a page that wants the shell\u2019s rhythm without its whole frame." },
-						{ name: "ResourceEmptyState", type: "component", description: "One of the three states the shells swap in for content. loading, error and empty are replacements rather than overlays \u2014 they take the space the content will take, so nothing reflows when it arrives." },
-					]}
-				/>
+				<PropTable owners={["TabbedResourceShell", "ResourceHeader", "ResourceActionBar", "ResourceDetailsSection"]} />
+				<PropTable symbols={["ResourceEmptyState"]} />
 			</Example>
 		</ComponentPage>
 	)

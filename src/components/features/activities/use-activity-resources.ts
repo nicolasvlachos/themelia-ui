@@ -25,6 +25,11 @@ export interface UseActivityResourcesReturn {
 	reset: () => void
 }
 
+/**
+ * Resolves the resources an event refers to, from a registry keyed like `order:1234`, so a feed
+ * can render a chip per subject without every consumer re-implementing the lookup and its
+ * cache. Every mutation emits the whole registry through `onResourcesChange` for persistence.
+ */
 export function useActivityResources({
 	resources,
 	onResourcesChange,

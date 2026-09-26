@@ -51,7 +51,7 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `children` | yes | `(data: TData, state: AsyncPreviewState<TData, TContext, TType>) => ReactNode` | Rendered only in the `success` state, with the data non-null. |
+| `children` | yes | `(data: TData, state: AsyncPreviewState<TData, TContext, TType>) => ReactNode` | Runs only in the `success` state, with the data non-null — so `data.name` needs no guard. |
 
 ### `AsyncPreviewCachePolicy`
 
@@ -67,6 +67,8 @@ open — for a value that changes while the reader is on the page.
 ### `AsyncPreviewContent`
 
 Kind: callable.
+
+The popover the states render in, labelled by its trigger.
 
 ```text
 ({ className, children, width, side, align, }: AsyncPreviewContentProps) => import("react").JSX.Element
@@ -94,12 +96,15 @@ Extends: `AsyncPreviewRootBaseProps<TData, TContext, TType>`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `onShow` | yes | `(args: AsyncPreviewShowArgs<TContext, TType>) => Promise<TData \| null \| undefined>` |  |
+| `onShow` | yes | `(args: AsyncPreviewShowArgs<TContext, TType>) => Promise<TData \| null \| undefined>` | The fetcher, run when the preview opens or the trigger prefetches it. Supply this or<br>`data`, not both. |
 | `data` | no | `never` |  |
 
 ### `AsyncPreviewEmpty`
 
 Kind: callable.
+
+The case where the fetch resolved to nothing. One part per state, so each is styled where it
+is written.
 
 ```text
 ({ className, children }: AsyncPreviewSlotProps) => import("react").JSX.Element | null
@@ -117,6 +122,9 @@ AsyncPreviewSlotProps<TData, TContext, TType>
 
 Kind: callable.
 
+The error case: a message with a retry, unless replaced. One part per state, so each is
+styled where it is written.
+
 ```text
 ({ className, children }: AsyncPreviewSlotProps) => import("react").JSX.Element | null
 ```
@@ -132,6 +140,9 @@ AsyncPreviewSlotProps<TData, TContext, TType>
 ### `AsyncPreviewLoading`
 
 Kind: callable.
+
+The loading case: a spinner with the fetcher's slow-step label, unless replaced. One part per
+state, so each is styled where it is written.
 
 ```text
 ({ className, children }: AsyncPreviewSlotProps) => import("react").JSX.Element | null
@@ -169,6 +180,11 @@ Why a fetch ran. `prefetch` fires on pointer-enter and is not repeated by the op
 
 Kind: callable.
 
+The root of the compound over `useAsyncPreview`: it runs the fetch, the cache and the open
+state for the parts inside it. Compound rather than one `renderPreview` prop because the four
+states want four different shapes, and a single render prop makes the caller branch on all
+of them every time.
+
 ```text
 ({ children, strings, ...options }: AsyncPreviewRootProps<TData, TContext, TType>) => import("react").JSX.Element
 ```
@@ -181,11 +197,11 @@ Extends: `AsyncPreviewCallbacks<TData, TContext, TType>`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `type` | yes | `TType` | Names the kind of record, passed to the fetcher. Caching requires cacheKey. |
-| `context` | yes | `TContext` | Whatever the fetcher needs — usually an id. |
-| `cacheKey` | no | `string` | The record identity and cache key. Change it when switching records; without one nothing is cached. |
-| `cachePolicy` | no | `AsyncPreviewCachePolicy` |  |
-| `staleTime` | no | `number` | How long a cache entry counts as fresh. Defaults to five minutes. |
+| `type` | yes | `TType` | Names the kind of record. Passed back to `onShow`, so one fetcher can serve several types.<br>Caching requires `cacheKey`. |
+| `context` | yes | `TContext` | Whatever the fetcher needs — usually an id. Handed to `onShow` unchanged. |
+| `cacheKey` | no | `string` | The record identity and cache key: it enables the cache. Change it when the record<br>changes; absent, nothing is cached, and each open fetches or consumes its hover prefetch. |
+| `cachePolicy` | no | `AsyncPreviewCachePolicy` | `cache-first` serves a fresh cache entry without a request. `always` refetches on every<br>open — for a value that changes while the reader is on the page. @default "cache-first" |
+| `staleTime` | no | `number` | How long a cache entry counts as fresh, in ms: five minutes. Entries are evicted on read;<br>nothing wakes up on a timer. @default 300_000 |
 | `open` | no | `boolean` |  |
 | `defaultOpen` | no | `boolean` |  |
 | `strings` | no | `Partial<AsyncPreviewStrings>` |  |
@@ -203,6 +219,8 @@ AsyncPreviewDynamicRootProps<TData, TContext, TType> | AsyncPreviewStaticRootPro
 
 Kind: interface.
 
+What `onShow` is given.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `type` | yes | `TType` |  |
@@ -211,7 +229,7 @@ Kind: interface.
 | `reason` | yes | `AsyncPreviewReason` |  |
 | `cached` | yes | `boolean` | Whether a cache entry existed. A revalidating fetch can render through it. |
 | `setLoading` | yes | `(loading: AsyncPreviewLoadingState) => void` | Reports a slow step — "Decrypting…" — without resolving. |
-| `setMeta` | yes | `(meta: Record<string, unknown>) => void` |  |
+| `setMeta` | yes | `(meta: Record<string, unknown>) => void` | Carries a count or a permission alongside the record. |
 
 ### `AsyncPreviewSlotProps`
 
@@ -222,13 +240,14 @@ The three placeholder slots. `children` may be a function of the state, e.g. to 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `className` | no | `string` |  |
-| `children` | no | `ReactNode \| ((state: AsyncPreviewState<TData, TContext, TType>) => ReactNode)` |  |
+| `children` | no | `ReactNode \| ((state: AsyncPreviewState<TData, TContext, TType>) => ReactNode)` | Replaces the default. The function form is what an error slot wants — it is the only way<br>to show the error. |
 
 ### `AsyncPreviewState`
 
 Kind: callable.
 
-The whole state, for a preview that renders its own four cases.
+The whole state, for a preview that renders its own four cases: the escape hatch for a caller
+who genuinely wants to branch themselves.
 
 ```text
 ({ children, }: AsyncPreviewStateProps<TData, TContext, TType>) => import("react").JSX.Element
@@ -271,7 +290,7 @@ Extends: `AsyncPreviewRootBaseProps<TData, TContext, TType>`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `data` | yes | `TData \| null` |  |
+| `data` | yes | `TData \| null` | The static form, in place of `onShow`: same component, same states, no request, for a row<br>that already loaded what the preview shows. |
 | `onShow` | no | `never` |  |
 
 ### `AsyncPreviewStatus`
@@ -301,6 +320,8 @@ Kind: interface.
 
 Kind: callable.
 
+The element the preview hangs off: it opens the popover, and hovering it prefetches.
+
 ```text
 ({ children, prefetchOnHover, className, }: AsyncPreviewTriggerProps<TData, TContext, TType>) => import("react").JSX.Element
 ```
@@ -312,7 +333,7 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `children` | no | `ReactNode \| ((props: AsyncPreviewTriggerRenderProps<TData, TContext, TType>) => ReactElement)` | The element the preview hangs off. |
-| `prefetchOnHover` | no | `boolean` | Starts the fetch on pointer-enter, before the popover opens. |
+| `prefetchOnHover` | no | `boolean` | Starts the fetch on pointer-enter, before the popover opens — once per record. Not on<br>focus: prefetching for every trigger a keyboard user tabs past would fire a request per row. |
 | `className` | no | `string` |  |
 
 ### `AsyncPreviewTriggerRenderProps`
@@ -337,7 +358,8 @@ Clears one key, or everything. Call it after a mutation invalidates a record.
 
 Kind: callable.
 
-Binds the generics once, for a record shape used in more than one place.
+Binds the generics once, for a record shape used in more than one place, instead of restating
+them at every part.
 
 ```text
 () => { Root: ({ children, strings, ...options }: AsyncPreviewRootProps<TData, TContext, TType>) => import("react").JSX.Element; Trigger: ({ children, prefetchOnHover, className, }: AsyncPreviewTriggerProps<TData, TContext, TType>) => import("react").JSX.Element; Content: typeof AsyncPreviewContent; Body: ({ children, }: AsyncPreviewBodyProps<TData, TContext, TType>) => import("react").JSX.Element | null; State: ({ children, }: AsyncPreviewStateProps<TData, TContext, TType>) => import("react").JSX.Element; Loading: typeof AsyncPreviewLoading; Error: typeof AsyncPreviewError; Empty: typeof AsyncPreviewEmpty; }
@@ -354,6 +376,9 @@ AsyncPreviewStrings
 ### `PreviewTriggerCell`
 
 Kind: callable.
+
+The trigger, shaped for a table cell. It is a button only when there is something to open;
+otherwise the same text renders inert.
 
 ```text
 ({ value, secondary, leading, trailing, badge, icon: Icon, emptyLabel, hasPreview, disabledReason, asName, disabled, className, ...props }: PreviewTriggerCellProps) => import("react").JSX.Element
@@ -374,7 +399,7 @@ Extends: `Omit<ComponentProps<"button">, "children" | "value" | "name">`.
 | `badge` | no | `BadgeSpec` |  |
 | `icon` | no | `ComponentType<{ className?: string; }>` |  |
 | `emptyLabel` | no | `ReactNode` | Shown when `value` is absent — the em dash, unless a column wants its own word. |
-| `hasPreview` | no | `boolean` | Whether this row has a preview at all. Off renders plain text. |
+| `hasPreview` | no | `boolean` | Whether this row has a preview at all. Off renders an inert span with the same text and<br>rhythm, and no caret, pointer or popup ARIA. |
 | `disabledReason` | no | `ReactNode` | Why it is unavailable. Shown as a tooltip on the inert cell. |
 | `asName` | no | `boolean` | Runs the value through `Name` to normalise casing. |
 | `className` | no | `string` |  |
@@ -383,6 +408,9 @@ Extends: `Omit<ComponentProps<"button">, "children" | "value" | "name">`.
 
 Kind: callable.
 
+Fetching tied to a popover's open state. Closing aborts the request, only the newest request
+may write state, and a module cache keyed by `cacheKey` spares a repeat within `staleTime`.
+
 ```text
 (options: UseAsyncPreviewOptions<TData, TContext, TType>) => UseAsyncPreviewReturn<TData, TContext, TType>
 ```
@@ -390,6 +418,9 @@ Kind: callable.
 ### `useAsyncPreviewContext`
 
 Kind: callable.
+
+The current state and data, for a part rendered outside the provided ones — a footer that
+counts results, a header that names what is loading.
 
 ```text
 () => AsyncPreviewState<TData, TContext, TType>

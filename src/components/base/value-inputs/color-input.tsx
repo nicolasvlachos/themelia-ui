@@ -12,14 +12,33 @@ import { defaultColorInputStrings, type ColorInputStrings } from "./value-inputs
 import styles from "./value-inputs.module.css"
 
 export interface ColorInputProps extends Omit<InputProps, "type"> {
-	/** What the swatch shows. Defaults to the current value. */
+	/**
+	 * What the swatch shows, when it differs from the value — a resolved token, say. Defaults
+	 * to the current value.
+	 */
 	previewValue?: string
+	/**
+	 * Called with the colour as a string. Typed text is any CSS colour and is not normalised —
+	 * what is typed is what is stored; the picker's value arrives in `format`.
+	 */
 	onValueChange?: (value: string) => void
-	/** Overrides this field's own copy — the swatch's name. */
+	/**
+	 * Overrides this field's own copy — the swatch's name. The swatch is a control, with the
+	 * native picker under it, so it needs one.
+	 */
 	strings?: Partial<ColorInputStrings>
-	/** The notation the picker emits. Defaults to `oklch` (or `hex` with the deprecated `emitHex`). */
+	/**
+	 * The notation the picker emits — typed text is never rewritten. The kit's own palette is
+	 * OKLCH, which is why that is the default; a consumer whose tokens are hex, rgb or hsl
+	 * gets their own notation back. The conversion is culori's. With the deprecated `emitHex`
+	 * and no `format`, it is `hex`.
+	 * @default "oklch"
+	 */
 	format?: "oklch" | "hex" | "rgb" | "hsl"
-	/** @deprecated Use `format="hex"`. */
+	/**
+	 * Makes the picker emit hex. `format` wins where both are given.
+	 * @deprecated Use `format="hex"`; this spelling stays because it is published API.
+	 */
 	emitHex?: boolean
 }
 

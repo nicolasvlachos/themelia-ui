@@ -30,6 +30,10 @@ export interface Milestone {
 }
 
 export interface MilestonesTimelineProps extends Omit<ComponentProps<"div">, "children"> {
+	/**
+	 * `status` is completed | inProgress | upcoming | blocked. `progress` is drawn only while
+	 * the milestone is in flight.
+	 */
 	milestones: Milestone[]
 	strings?: Partial<MilestonesStrings>
 }

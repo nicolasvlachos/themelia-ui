@@ -4,7 +4,10 @@ import { cx } from "@/lib/cx"
 
 import styles from "../overlay.module.css"
 
-/** Scroll-owning region between the fixed header and footer. */
+/**
+ * The region between the fixed header and footer, and the one that scrolls, so a long
+ * surface never scrolls its own title or its buttons away.
+ */
 export const OverlayBody = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
 	function OverlayBody({ className, ...props }, ref) {
 		return (

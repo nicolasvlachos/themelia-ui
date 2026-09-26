@@ -20,6 +20,10 @@ export interface SuggestionsFetchContext {
 }
 
 export interface UseSuggestionsConfig<T> {
+	/**
+	 * Fetches the suggestions for a query, as an array or a promise of one. Pass
+	 * `context.signal` to the request: it aborts when a newer query starts.
+	 */
 	fetchData: (query: string, context?: SuggestionsFetchContext) => MaybePromise<T[]>
 	/**
 	 * Characters required before a request is issued, not counting surrounding whitespace.
@@ -31,6 +35,7 @@ export interface UseSuggestionsConfig<T> {
 	/**
 	 * A further wait before the fetcher runs, after the loading state is showing (unlike
 	 * `debounceMs`, which delays deciding to fetch). For rate-limited endpoints.
+	 * @default 0
 	 */
 	requestDelay?: number
 	/** Fetches the empty query, so there is something before typing. Not debounced. */
@@ -88,6 +93,11 @@ function wait(ms: number, signal: AbortSignal) {
 /* One shared empty list, so `items` keeps its identity for downstream memos. */
 const EMPTY: never[] = []
 
+/**
+ * The request lifecycle the self-fetching pickers run on — query, results, loading, error,
+ * selection and open, each controllable on its own — for a caller putting it behind their
+ * own field, or a surface that is not a combobox at all.
+ */
 export function useSuggestions<T>(config: UseSuggestionsConfig<T>): UseSuggestionsResult<T> {
 	const {
 		fetchData,

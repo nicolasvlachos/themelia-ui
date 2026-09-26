@@ -36,6 +36,11 @@ function draftId() {
 		: `attachment-${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
+/**
+ * The files staged on a draft and their uploads — the part with three things that are easy to
+ * get wrong: cancelling in flight, retrying one of several, and discarding a draft that still
+ * has uploads running.
+ */
 export function useAttachmentUpload(
 	options: UseAttachmentUploadOptions = {},
 ): UseAttachmentUploadReturn {

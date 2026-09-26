@@ -3,6 +3,7 @@ export interface NameFormatOptions {
 	force?: boolean
 }
 
+/** The same normalisation outside React — for a sort key, an export, a document title. */
 export function formatName(value: string, { force = false }: NameFormatOptions = {}) {
 	const trimmed = value.trim().replace(/\s+/g, " ")
 	if (!trimmed) return ""

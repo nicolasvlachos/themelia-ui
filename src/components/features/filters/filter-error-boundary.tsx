@@ -85,6 +85,11 @@ class FilterErrorBoundaryBase extends Component<
 	}
 }
 
+/**
+ * Keeps one broken filter from taking the page with it. A filter's editor is the most
+ * consumer-owned surface in the feature — custom renders, fetched options, consumer value
+ * shapes — so it is the one most likely to throw.
+ */
 export function FilterErrorBoundary(props: FilterErrorBoundaryProps) {
 	const { strings, reportError } = useFilters()
 

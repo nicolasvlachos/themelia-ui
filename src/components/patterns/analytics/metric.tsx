@@ -23,18 +23,34 @@ import styles from "./analytics.module.css"
 const SEGMENTS = 16
 
 export interface MetricProps extends Omit<ComponentProps<"div">, "children"> {
+	/**
+	 * The figure and what surrounds it: id, label, value, and optionally valueType, currency,
+	 * change, sparkline, icon, subtitle, footer, trend. One shape for every metric surface.
+	 */
 	data: MetricData
+	/** Structural only — every variant reads the same data. */
 	variant?: MetricVariant
-	/** Tints the `bordered` and `colored` variants. */
+	/**
+	 * Tints the `bordered` and `colored` variants. The kit's vocabulary, so never `danger` or
+	 * `default`.
+	 */
 	tone?: MetricTone
+	/** Draws the sparkline. Off drops a part the surrounding surface already states. */
 	showSparkline?: boolean
+	/** Draws the change chip. Off drops a part the surrounding surface already states. */
 	showChange?: boolean
+	/** Draws the icon. Off drops a part the surrounding surface already states. */
 	showIcon?: boolean
+	/**
+	 * Renders the variant's skeleton, which reserves the resolved tile's height so a grid does
+	 * not jump when data lands.
+	 */
 	loading?: boolean
+	/** Renders the error state in place of the figure. */
 	error?: boolean
 	/** Overrides this block's own copy. */
 	strings?: Partial<AnalyticsStrings>
-	/** `colored` only — 0–100. */
+	/** `colored` only — 0–100, driving the segmented bar. */
 	progress?: number
 }
 

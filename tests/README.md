@@ -1,7 +1,7 @@
 # Tests
 
 <!-- GENERATED:suites by scripts/gen-test-docs.mjs — do not edit between these markers. -->
-35 Playwright suites over the docs site, and 138 unit test files beside the
+35 Playwright suites over the docs site, and 139 unit test files beside the
 code they cover.
 
 | suite | covers | script |
@@ -66,6 +66,7 @@ portals, and hook behaviour across prop changes.
 - `src/components/base/date-pickers/date-picker.test.tsx`
 - `src/components/base/date-pickers/locale.test.tsx`
 - `src/components/base/date-pickers/time-picker.test.tsx`
+- `src/components/base/display/metadata-list.test.tsx`
 - `src/components/base/feedback/progress.test.tsx`
 - `src/components/base/forms-numeric/decimal-input.test.tsx`
 - `src/components/base/forms-numeric/decimal.format.test.ts`

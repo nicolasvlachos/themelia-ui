@@ -53,14 +53,14 @@ Extends: `CalendarConstraints`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `strings` | no | `Partial<CalendarStrings>` | Overrides this calendar's own copy — the three caption controls. |
-| `mode` | no | `DateSelectionMode` |  |
+| `strings` | no | `Partial<CalendarStrings>` | Overrides this calendar's own copy — the caption controls, which are icon-only and have<br>no other name. `DatePicker` passes its own strings straight through, so one override<br>names both. |
+| `mode` | no | `DateSelectionMode` | Selection behaviour, as on `DatePicker`: one date, a range, or several dates. |
 | `value` | no | `Date \| Date[] \| DateRangeValue` | The selection, in the shape the mode uses. |
-| `onValueChange` | no | `(value: Date \| Date[] \| DateRangeValue \| undefined) => void` |  |
-| `month` | no | `Date` | The month shown. Uncontrolled unless supplied. |
-| `onMonthChange` | no | `(month: Date) => void` |  |
-| `numberOfMonths` | no | `number` | How many months to show side by side. Two is the usual range picker. |
-| `weekStartsOn` | no | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | 0 is Sunday. Falls back to the provider's formatting config. |
+| `onValueChange` | no | `(value: Date \| Date[] \| DateRangeValue \| undefined) => void` | Called with the new selection, in the shape the mode uses. |
+| `month` | no | `Date` | The month shown, for a calendar whose position is driven from outside. Uncontrolled<br>unless supplied. |
+| `onMonthChange` | no | `(month: Date) => void` | Called with the first day of the month the calendar moves to. |
+| `numberOfMonths` | no | `number` | How many months to show side by side. Two is the usual range picker; each grid keeps its<br>own caption, so the second month is not anonymous. |
+| `weekStartsOn` | no | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | Which day begins the week; `0` is Sunday. Falls back to the provider's dates setting<br>rather than a hard-coded Monday, so `UIProvider` defaults can change it. @default 1 |
 | `className` | no | `string` |  |
 
 ### `CalendarStrings`
@@ -97,6 +97,10 @@ Kind: callable.
 
 Kind: callable.
 
+The region below the calendar inside the popup, for the picker's `footer` slot: the row
+that holds a summary and controls such as Clear and Apply. Exported so a caller can supply
+their own without rebuilding the calendar.
+
 ```text
 ({ summary, actions, className, children, ...props }: DatePickerFooterProps) => import("react").JSX.Element | null
 ```
@@ -115,6 +119,9 @@ Extends: `ComponentProps<"div">`.
 ### `DatePickerHeader`
 
 Kind: callable.
+
+The region above the calendar inside the popup, for the picker's `header` slot — a title,
+a mode switch. Exported so a caller can supply their own without rebuilding the calendar.
 
 ```text
 ({ title, description, action, className, children, ...props }: DatePickerHeaderProps) => import("react").JSX.Element | null
@@ -142,22 +149,22 @@ Extends: `CalendarConstraints`.
 | --- | :-: | --- | --- |
 | `ref` | no | `Ref<HTMLButtonElement>` | The trigger button — the element a caller would focus or measure. |
 | `id` | no | `string` | Applied to the trigger, the only labelable element. Its name comes from the chosen date,<br>so the field's label must reach it. |
-| `mode` | no | `DateSelectionMode` |  |
-| `value` | no | `Date \| Date[] \| DateRangeValue` |  |
-| `onValueChange` | no | `(value: Date \| Date[] \| DateRangeValue \| undefined) => void` |  |
-| `displayFormat` | no | `string` | How the chosen value is written in the trigger. |
+| `mode` | no | `DateSelectionMode` | What a click selects: one date, a range, or several dates. |
+| `value` | no | `Date \| Date[] \| DateRangeValue` | The chosen value. Its shape follows `mode`: a `Date`, a `{ from, to }`, or an array. |
+| `onValueChange` | no | `(value: Date \| Date[] \| DateRangeValue \| undefined) => void` | Called with the new value, in the shape `mode` gives it. |
+| `displayFormat` | no | `string` | How the chosen value is written in the trigger: a date-fns pattern. The popup is unaffected. |
 | `placeholder` | no | `string` |  |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
-| `clearable` | no | `boolean` | Adds a clear control to the trigger once something is chosen. |
-| `strings` | no | `Partial<DatePickerStrings>` | Overrides this picker's own copy — the clear control and the calendar's captions. |
-| `presets` | no | `DatePreset[]` | Shortcuts down the side — "Last 30 days", "This month". |
-| `numberOfMonths` | no | `number` |  |
-| `closeOnSelect` | no | `boolean` | Closes the popup as soon as a complete value is chosen. |
+| `invalid` | no | `boolean` | The error surface. The message stays on the `FormField`. |
+| `clearable` | no | `boolean` | Adds a clear control to the trigger once something is chosen: a real button beside the<br>calendar glyph, named through `strings` — not an icon with a click handler. |
+| `strings` | no | `Partial<DatePickerStrings>` | Overrides this picker's own copy — the clear control and the calendar's captions. The<br>same object reaches the calendar inside the popup, so one override names the month<br>controls too. |
+| `presets` | no | `DatePreset[]` | Shortcuts down the side — "Last 30 days", "This month": the rail beside a range<br>calendar. `createRangePresets({ strings, weekStartsOn })` builds the built-in set in your<br>language and week. |
+| `numberOfMonths` | no | `number` | How many months are shown side by side: two for a range, one otherwise. The header<br>becomes a range when more than one. |
+| `closeOnSelect` | no | `boolean` | Closes the popup as soon as a complete value is chosen. On by default for a single date<br>and off for a range, because a range is not chosen until both ends are. |
 | `header` | no | `ReactNode` | A band above the calendar — a title, a mode switch. Use `DatePickerHeader`. |
 | `footer` | no | `ReactNode` | A band below it — a summary, Clear and Apply. Use `DatePickerFooter`. |
 | `className` | no | `string` |  |
-| `contentClassName` | no | `string` |  |
+| `contentClassName` | no | `string` | Styles the popup surface. `className` stays on the trigger. |
 | `"aria-label"` | no | `string` |  |
 | `"aria-labelledby"` | no | `string` |  |
 | `"aria-describedby"` | no | `string` |  |
@@ -235,6 +242,9 @@ TimePickerStrings
 ### `MonthYearPicker`
 
 Kind: callable.
+
+Month and year without a day grid, for a period rather than a date — a billing month, a
+report window, an expiry. A day grid would imply a precision the value lacks.
 
 ```text
 ({ value, onValueChange, minYear, maxYear, disabledMonths, strings, className, ...props }: MonthYearPickerProps) => import("react").JSX.Element
@@ -362,12 +372,12 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | no | `string` | Applied to the hours segment, the one a `FormField` label addresses; each segment keeps<br>its own part name. |
-| `value` | no | `TimeValue` |  |
-| `onValueChange` | no | `(value: TimeValue) => void` |  |
-| `withSeconds` | no | `boolean` | Adds a seconds segment. |
-| `minuteStep` | no | `number` | Minutes snap to this. 15 gives a quarter-hour picker. |
+| `value` | no | `TimeValue` | The time: `{ hours, minutes }`, not a `Date`, because a time of day has no date. |
+| `onValueChange` | no | `(value: TimeValue) => void` | Called with the new time. |
+| `withSeconds` | no | `boolean` | Adds a third segment, for seconds. Most times of day do not have one, and an empty<br>seconds box invites a value nobody wanted. |
+| `minuteStep` | no | `number` | The minute increment: minutes snap to it. 15 gives a quarter-hour picker. |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
+| `invalid` | no | `boolean` | The error surface. The message stays on the `FormField`. |
 | `className` | no | `string` |  |
 | `strings` | no | `Partial<TimePickerStrings>` | Overrides this picker's own copy — the group and the three segments. |
 | `"aria-labelledby"` | no | `string` |  |
@@ -389,6 +399,8 @@ Kind: interface.
 ### `TimeValue`
 
 Kind: interface.
+
+A time of day: `{ hours, minutes }`, not a `Date`, because a time of day has no date.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |

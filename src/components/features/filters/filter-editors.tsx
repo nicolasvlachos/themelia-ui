@@ -175,6 +175,11 @@ function OptionListEditor({
 	)
 }
 
+/**
+ * The editor for a `select` or `multi_select` filter. A multi-select STAGES its value and
+ * commits on Apply — one that committed on each tick would be one request per tick; a single
+ * select with `closeOnSelect` commits at once.
+ */
 export function SelectFilterEditor(props: FilterEditorProps) {
 	const options = props.filter.options ?? []
 
@@ -190,6 +195,10 @@ export function SelectFilterEditor(props: FilterEditorProps) {
 	)
 }
 
+/**
+ * The editor for an `async_select` filter: the select editor's staging, with options fetched
+ * through `useAsyncOptions`.
+ */
 export function AsyncFilterEditor(props: FilterEditorProps) {
 	const { filter } = props
 	const { cacheAsyncOptions, reportError } = useFilters()
@@ -221,6 +230,10 @@ export function AsyncFilterEditor(props: FilterEditorProps) {
 	)
 }
 
+/**
+ * The editor for a `date` filter: one date, or a range for `between`. A date commits as it is
+ * picked.
+ */
 export function DateFilterEditor({
 	filter, value, onValueChange, onBack, triggerSource = "chip",
 }: FilterEditorProps) {
@@ -269,6 +282,7 @@ export function DateFilterEditor({
 	)
 }
 
+/** The editor for a `tags` filter. It stages the tags and commits them on Apply. */
 export function TagsFilterEditor({
 	filter, value, onValueChange, onBack, onClose, triggerSource = "chip",
 }: FilterEditorProps) {
@@ -302,6 +316,10 @@ export function TagsFilterEditor({
 	)
 }
 
+/**
+ * The editor for a `range` filter: a minimum, and a maximum for `between`. It stages the
+ * bounds and commits them on Apply.
+ */
 export function RangeFilterEditor({
 	filter, value, onValueChange, onBack, onClose, triggerSource = "chip",
 }: FilterEditorProps) {
@@ -353,7 +371,13 @@ export function RangeFilterEditor({
 	)
 }
 
-/** Dispatches on the filter's type. One place that knows which editor a type gets. */
+/**
+ * Dispatches on the filter's type to one of the five typed editors — SelectFilterEditor,
+ * DateFilterEditor, RangeFilterEditor, TagsFilterEditor and AsyncFilterEditor — behind one
+ * popover: the one place that knows which editor a type gets. Most editors STAGE their value
+ * and commit it on Apply — a multi-select that committed on each tick would be one request per
+ * tick; a date commits as it is picked.
+ */
 export function FilterEditor(props: FilterEditorProps) {
 	const { getFilterOperator } = useFilters()
 	const editorProps = { ...props, filter: { ...props.filter, operator: getFilterOperator(props.filter.key) } }

@@ -20,22 +20,40 @@ export interface RepeaterRowContext {
 }
 
 export interface RepeaterProps<T> {
+	/** The rows. The repeater renders what it is given and nothing else. */
 	items: T[]
-	/** Stable key for a row. An index is a poor key while rows reorder. */
+	/**
+	 * Stable identity per row. An index alone would re-key every row after a reorder and
+	 * lose focus.
+	 */
 	getKey: (item: T, index: number) => string
+	/** Renders one row. `context` carries the row's `index` and whether it is `dragging`. */
 	children: (item: T, context: RepeaterRowContext) => ReactNode
 
+	/** Supplying it renders the add button. */
 	onAdd?: () => void
+	/** Supplying it renders each row's remove button. */
 	onRemove?: (index: number) => void
-	/** Enables reordering. Without it, no handle is rendered. */
+	/**
+	 * Supplying it enables reordering and renders the drag handle; without it, no handle is
+	 * rendered. The handle is the drag source, not the row.
+	 */
 	onMove?: (from: number, to: number) => void
 
 	/** `card` wraps each row in a bordered surface, for multi-field rows. */
 	rowVariant?: "inline" | "card"
-	/** Overrides this list's own copy — the add control and each row's remove. */
+	/**
+	 * Overrides this list's own copy — the add control and each row's remove. `remove` is a
+	 * function of the row index: every remove button in a list saying the same thing is a
+	 * column of controls a screen reader cannot tell apart.
+	 */
 	strings?: Partial<RepeaterStrings>
+	/** Shown in place of the rows when `items` is empty. Replaces `strings.emptyState`. */
 	emptyState?: ReactNode
-	/** Hides the add button, for a list with a fixed set of rows. */
+	/**
+	 * Hides the add button while keeping the rows — for a list at its cap, a fixed set of
+	 * rows, or one whose entries come from elsewhere.
+	 */
 	showAdd?: boolean
 	/** Caps the list. The add button disables at the limit. */
 	maxItems?: number
@@ -43,6 +61,11 @@ export interface RepeaterProps<T> {
 	className?: string
 }
 
+/**
+ * The chrome every list-style field shares: rows with an optional drag handle and remove
+ * control, an empty state, and an add button. It never owns the array — you pass `items`
+ * and the handlers, which keeps it usable with a form library or with plain state.
+ */
 export function Repeater<T>({
 	items,
 	getKey,

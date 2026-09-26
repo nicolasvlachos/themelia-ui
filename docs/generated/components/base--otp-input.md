@@ -39,6 +39,9 @@ OtpInputStrings
 
 Kind: callable.
 
+A one-time code, one box per character, on Base UI's OTPField, so paste and SMS autofill
+fill every box.
+
 ```text
 ({ length, groupSize, invalid, className, strings, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, ...props }: OtpInputProps) => React.JSX.Element
 ```
@@ -51,10 +54,10 @@ Extends: `Omit<OTPField.Root.Props, "length">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `length` | no | `number` | How many characters. Six is the near-universal length. |
-| `groupSize` | no | `number` | Splits the boxes into groups, for a code written as "123 456". |
-| `invalid` | no | `boolean` |  |
-| `strings` | no | `Partial<OtpInputStrings>` |  |
+| `length` | no | `number` | How many boxes, one per character. Six is the near-universal length. |
+| `groupSize` | no | `number` | Groups the boxes for the eye, for a code written as "123 456". The grouping never<br>changes which character a box holds. |
+| `invalid` | no | `boolean` | Marks the code invalid as one field — a code is right or wrong as a whole, so every box<br>shows it together. |
+| `strings` | no | `Partial<OtpInputStrings>` | Overrides this field's own copy. `fieldLabel` names the field, and with it the first<br>box, when nothing else labels it; `slotLabel(position, length)` names each other box —<br>"Character 2 of 6". |
 
 ### `OtpInputStrings`
 

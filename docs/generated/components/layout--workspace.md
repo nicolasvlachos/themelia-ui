@@ -51,25 +51,29 @@ Kind: const.
 WorkspaceRecordHeaderStrings
 ```
 
-### `LayoutLinkRenderer`
+### `LinkRenderer`
 
 Kind: type.
 
-The navigation seam.
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
 
 ```tsx fragment — declaration JSDoc excerpt
-<AppSidebar renderLink={({ href, children, ...rest }) => (
-  <Link to={href ?? "#"} {...rest}>{children}</Link>
-)} />
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
 ```
 
 ```text
-(props: LayoutLinkRenderProps) => ReactNode
+(props: LinkRenderProps) => ReactElement
 ```
 
-### `LayoutLinkRenderProps`
+### `LinkRenderProps`
 
 Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -80,9 +84,11 @@ Kind: interface.
 | `rel` | no | `string` |  |
 | `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
 | `"aria-label"` | no | `string` |  |
-| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the shell styles the row itself. |
-| `disabled` | no | `boolean` |  |
-| `external` | no | `boolean` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ### `WorkspaceContentWidth`
 
@@ -97,6 +103,10 @@ How wide the content column is allowed to get.
 ### `WorkspaceLayout`
 
 Kind: callable.
+
+The frame a single RECORD is edited in. Not an app shell — it sits inside one: a record
+with many sections needs its own navigation, and nesting a second shell is how a page ends
+up with two sidebars.
 
 ```text
 ({ header, sidebar, rail, children, contentWidth, label, sidebarWidth, railWidth, className, headerClassName, bodyClassName, sidebarClassName, contentClassName, contentRender, railClassName, style, ...props }: WorkspaceLayoutProps) => import("react").JSX.Element
@@ -142,6 +152,10 @@ Kind: interface.
 
 Kind: callable.
 
+The languages a record exists in, and how complete each is. A strip rather than a
+select, because the completeness is the reason to switch and a select hides it behind a
+press.
+
 ```text
 ({ locales, activeLocale, onLocaleChange, actions, strings, className, ...props }: WorkspaceLocaleStripProps) => import("react").JSX.Element
 ```
@@ -173,6 +187,10 @@ Kind: interface.
 ### `WorkspaceNav`
 
 Kind: callable.
+
+Navigation for a record filled in over time. The difference from every other nav in the
+kit is COMPLETION: each section reports how much of it is done, because that is what
+decides where the reader goes next.
 
 ```text
 ({ groups, activeId, onSelect, renderItem, renderLink, footerSlot, strings, className, ...props }: WorkspaceNavProps) => import("react").JSX.Element
@@ -264,16 +282,16 @@ Extends: `Omit<React.ComponentProps<"div">, "title">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `title` | yes | `React.ReactNode` |  |
-| `description` | no | `React.ReactNode` |  |
+| `title` | yes | `React.ReactNode` | What the record IS. Gives way before the badges do. |
+| `description` | no | `React.ReactNode` | One line under the title. |
 | `media` | no | `React.ReactNode` | An avatar, an icon medallion, a thumbnail. |
 | `badges` | no | `React.ReactNode` | Status marks beside the title. Short — the title is what gives way, not these. |
 | `status` | no | `React.ReactNode` | A single prominent status, rendered after the badges. |
-| `metadata` | no | `WorkspaceRecordMetadataItem[]` | Key/value pairs, drawn inline: each label and its value are one item, read as one fact. |
+| `metadata` | no | `WorkspaceRecordMetadataItem[]` | Key/value pairs, drawn as an inline MetadataList: each label and its value are one item,<br>read as one fact, with a middle dot between items. |
 | `strings` | no | `Partial<WorkspaceRecordHeaderStrings>` | Overrides this header's own copy — the names of its two unlabelled regions. |
 | `actions` | no | `React.ReactNode` | Primary actions, pinned to the end of the title row. |
 | `secondaryActions` | no | `React.ReactNode` | A second, quieter row beneath — filters, tabs, bulk controls. |
-| `headingLevel` | no | `1 \| 2 \| 3` |  |
+| `headingLevel` | no | `1 \| 2 \| 3` | The heading element, for the document outline. |
 
 ### `WorkspaceRecordHeaderStrings`
 

@@ -9,12 +9,17 @@ import { useIPhoneInputZoom } from "./use-iphone-input-zoom"
 export type UIDocumentTarget = "documentElement" | "body" | false
 
 export interface UIRootProps {
-	/** The application's defaults. Merged over the library's own. */
+	/**
+	 * The application's defaults, merged over the library's own. Resolution is component
+	 * prop → nearest scope → root config → component fallback.
+	 */
 	config?: UIConfig
 	/**
 	 * Which element gets the theme and density attributes, or `false` (default) for none.
-	 * Opt-in because it writes outside the tree, which could fight another root or an app's
-	 * own `data-theme`; it is the only way a root can theme the page canvas.
+	 * Explicit on purpose: mirroring onto the document is the only way a root can own the
+	 * page canvas, and it is also the only thing here that touches state outside the tree. A
+	 * component that reaches for the document unasked fights the next React root, the next
+	 * test, and any app already managing its own `data-theme`.
 	 */
 	documentTarget?: UIDocumentTarget
 	children: ReactNode
@@ -88,6 +93,17 @@ function reconcileTarget(target: UIDocumentElementTarget) {
 /**
  * `<UIRoot>` — the application's configuration, once. Renders no element; region scoping
  * is `UIScope`, which does.
+ *
+ * It restores, never removes: it captures what each attribute was before it mounted and
+ * puts it back on unmount. Deleting them instead would take an app's own theme with it
+ * whenever a provider unmounted inside that app.
+ *
+ * One owner, handed on: two independent React roots — a host app and an embedded widget —
+ * both think they are the top. Each asks for the document and the OLDEST root still mounted
+ * owns it; the rest leave it alone. When the owner unmounts the document goes to the next
+ * root in line rather than reverting, so a widget still on the page is still honoured.
+ * `body` and `documentElement` are tracked separately, and a final unmount restores what
+ * was there before the first root arrived — not what the previous owner wrote.
  */
 export function UIRoot({ config, documentTarget = false, children }: UIRootProps) {
 	const parent = useContext(UIConfigContext)

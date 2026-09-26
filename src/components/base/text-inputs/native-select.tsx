@@ -15,6 +15,10 @@ export interface NativeSelectProps extends Omit<React.ComponentProps<"select">, 
 	placeholder?: string
 }
 
+/**
+ * The platform `<select>` on the same field surface as `Select`, for a short list, the native
+ * picker on mobile, or a form that must post without JavaScript.
+ */
 export const NativeSelect = React.forwardRef<HTMLSelectElement, NativeSelectProps>(function NativeSelect(
 	{ className, placeholder, children, ...props },
 	ref,

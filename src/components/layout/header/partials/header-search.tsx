@@ -25,6 +25,11 @@ function detectMac(): boolean {
 	return /Mac|iPhone|iPad/.test(navigator.platform)
 }
 
+/**
+ * The trigger for a command palette, not a search field. It LOOKS like an input and IS a
+ * button, which is the honest shape: typing happens in the palette, so a real field here
+ * would take a keystroke and then throw it away.
+ */
 export function HeaderSearch({
 	onOpen,
 	shortcutModifier,
@@ -62,8 +67,9 @@ export function HeaderSearch({
 }
 
 /**
- * The same trigger, reporting into a controlled `open`. A separate component so a trigger
- * never half-owns the palette's state.
+ * The same trigger — a button shaped like a field, for a palette where the typing happens —
+ * reporting into a controlled `open`. A separate component so a trigger never half-owns the
+ * palette's state.
  */
 export function HeaderGlobalSearchTrigger({
 	onOpen,

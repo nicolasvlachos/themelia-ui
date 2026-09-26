@@ -26,7 +26,10 @@ export interface PreviewTriggerCellProps
 	icon?: ComponentType<{ className?: string }>
 	/** Shown when `value` is absent — the em dash, unless a column wants its own word. */
 	emptyLabel?: ReactNode
-	/** Whether this row has a preview at all. Off renders plain text. */
+	/**
+	 * Whether this row has a preview at all. Off renders an inert span with the same text and
+	 * rhythm, and no caret, pointer or popup ARIA.
+	 */
 	hasPreview?: boolean
 	/** Why it is unavailable. Shown as a tooltip on the inert cell. */
 	disabledReason?: ReactNode
@@ -44,6 +47,10 @@ function CellBadge({ badge }: { badge: BadgeSpec }) {
 	return <Badge tone="neutral">{badge as ReactNode}</Badge>
 }
 
+/**
+ * The trigger, shaped for a table cell. It is a button only when there is something to open;
+ * otherwise the same text renders inert.
+ */
 export function PreviewTriggerCell({
 	value,
 	secondary,

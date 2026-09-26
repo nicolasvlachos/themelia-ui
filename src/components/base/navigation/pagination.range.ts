@@ -1,4 +1,7 @@
-/** Page numbers to render, with `null` marking a gap. Always includes the first and last page. */
+/**
+ * The page numbers a pager renders, with `null` marking a gap: the arithmetic on its own,
+ * for a custom control. Always includes the first and last page.
+ */
 export function paginationRange(page: number, total: number, siblings = 1): (number | null)[] {
 	const window = siblings * 2 + 5
 	if (total <= window) return Array.from({ length: total }, (_, i) => i + 1)

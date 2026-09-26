@@ -31,6 +31,15 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+OverlayContent at an edge. `side` is OverlayContent's `placement` minus centre — logical,
+so it follows the writing mode — and the sheet adds a default shape: `side="inline-end"`,
+`size="md"`, `length="full"` and `inset={false}`. `UIProvider`'s `defaults.sheet` takes
+the same four, for a product that decides the shape once.
+
+`modality`, `surface`, `dismissal`, `initialFocusRef` and `showCloseButton` pass through
+unchanged, with the Overlay defaults. A sheet is where `non-modal` earns its place: an
+inspector you keep working beside.
+
 ```text
 ({ side, size, length, inset, className, ...props }: SheetContentProps) => React.JSX.Element
 ```
@@ -43,7 +52,7 @@ Extends: `Omit<OverlayContentProps, "placement">`, `Omit<React.ComponentProps<"d
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `side` | no | `SheetSide` | The edge it enters from. |
+| `side` | no | `SheetSide` | The edge it enters from, as a logical side. `UIProvider` defaults can change it. @default "inline-end" |
 
 ### `SheetSide`
 

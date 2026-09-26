@@ -31,6 +31,9 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A notice in a tone. Status tones bring their own glyph, so colour is not the only signal.
+A destructive alert interrupts the screen reader; every other tone is a polite status.
+
 ```text
 ({ className, tone, variant, icon, children, ...props }: AlertProps) => React.JSX.Element
 ```
@@ -38,6 +41,8 @@ Kind: callable.
 ### `AlertAction`
 
 Kind: callable.
+
+A single control, positioned in reserved inline space so it never overlaps the text.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -47,6 +52,8 @@ Kind: callable.
 
 Kind: callable.
 
+The message, in the secondary text role.
+
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
 ```
@@ -54,6 +61,8 @@ Kind: callable.
 ### `AlertMetadata`
 
 Kind: callable.
+
+Key/value pairs under an alert's message, as a `<dl>` so each pair is read together.
 
 ```text
 ({ items, className, ...props }: AlertMetadataProps) => import("react").JSX.Element | null
@@ -76,7 +85,7 @@ Extends: `Omit<ComponentProps<"dl">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `AlertMetadataItem[]` |  |
+| `items` | yes | `AlertMetadataItem[]` | Key/value detail under the message — a request id, a timestamp, a failing field. |
 
 ### `AlertProps`
 
@@ -86,11 +95,15 @@ Extends: `React.ComponentProps<"div">`, `VariantProps<typeof alertVariants>`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `icon` | no | `React.ReactNode \| false` | Leading glyph. Defaults to the tone's own; pass a node to replace it, or `false`<br>for an alert that must have none. |
+| `tone` | no | `AlertTone` | Semantic colour intent. Never `default` — the vocabulary is fixed across the kit. |
+| `variant` | no | `AlertVariant` | Structural presentation. `inverse` is a solid slab for a single emphatic notice; the<br>tone still describes the intent. |
+| `icon` | no | `React.ReactNode \| false` | Leading glyph. Defaults to the tone's own conventional glyph; pass a node to replace<br>it, or `false` for an alert that must have none. |
 
 ### `AlertTitle`
 
 Kind: callable.
+
+The alert's heading. It inherits the alert's ink.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -140,7 +153,9 @@ LoadingStateStrings
 
 Kind: callable.
 
-Two staggered documents — for invoices, reports, files.
+Two staggered documents — for invoices, reports, files. Drawn from the theme's own tokens
+rather than shipped as an image, so an empty state cannot be the one thing on the page
+that ignores a rebrand — and it costs no request.
 
 ```text
 ({ className }: EmptyIllustrationProps) => import("react").JSX.Element
@@ -149,6 +164,9 @@ Two staggered documents — for invoices, reports, files.
 ### `Empty`
 
 Kind: callable.
+
+What a surface shows when it has nothing to show, with an `action` slot for the next step.
+`mediaVariant` dresses the media, and `padding` sizes it from a panel cell to a whole page.
 
 ```text
 ({ media, mediaVariant, renderMedia, title, description, action, footer, padding, border, className, children, strings, "aria-label": ariaLabel, ...props }: EmptyProps) => React.JSX.Element
@@ -204,16 +222,16 @@ Extends: `Omit<React.ComponentProps<"div">, "title">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `media` | no | `React.ReactNode` | Icon or illustration. |
-| `mediaVariant` | no | `EmptyMediaVariant` |  |
+| `media` | no | `React.ReactNode` | Icon or illustration: the visual. |
+| `mediaVariant` | no | `EmptyMediaVariant` | The media's chrome. `none` renders the media raw; `icon` and `icon-soft` set a glyph in<br>a tile; `illustration` centres it with room below. |
 | `renderMedia` | no | `(context: EmptyMediaContext) => React.ReactNode` | Media as a function of the variant, for a visual that changes with its chrome. |
-| `title` | no | `React.ReactNode` |  |
-| `description` | no | `React.ReactNode \| false` | `false` hides it, for a title that already tells the whole story. |
-| `action` | no | `React.ReactNode` | Buttons or links offering the next step. |
+| `title` | no | `React.ReactNode` | Names the absence: "No invoices yet", not "Nothing here". Falls back to `strings.title`,<br>so a bare `<Empty />` still renders during scaffolding. |
+| `description` | no | `React.ReactNode \| false` | Why it is empty, or what will fill it. `false` hides it, for a title that already tells<br>the whole story. |
+| `action` | no | `React.ReactNode` | Buttons or links offering the next step. An empty state that only explains is a dead<br>end. |
 | `footer` | no | `React.ReactNode` | Quiet copy under the action — a hint, a learn-more, a shortcut. |
-| `padding` | no | `EmptyPadding` |  |
+| `padding` | no | `EmptyPadding` | Breathing room, on both axes: `sm` for panels and cells, `lg` for a whole page. The<br>inline padding is what keeps copy off a dashed edge. |
 | `border` | no | `boolean` | The dashed outline. Off by default; use it when the empty state stands in for a card's<br>body and the edge says "something goes here". |
-| `strings` | no | `Partial<EmptyStrings>` |  |
+| `strings` | no | `Partial<EmptyStrings>` | Overrides this state's own copy: `title`, `description`, and `ariaLabel`. The region<br>announces through `role="status"`, so a list that empties out while the reader is on the<br>page says so. |
 
 ### `EmptyStrings`
 
@@ -229,6 +247,8 @@ Kind: interface.
 
 Kind: callable.
 
+A whole region that has failed, announced at once.
+
 ```text
 ({ title, description, onRetry, action, strings, className, ...props }: ErrorStateProps) => import("react").JSX.Element
 ```
@@ -243,7 +263,7 @@ Extends: `Omit<ComponentProps<"div">, "title">`.
 | --- | :-: | --- | --- |
 | `title` | no | `ReactNode` |  |
 | `description` | no | `ReactNode` |  |
-| `onRetry` | no | `() => void` | Renders the retry control when set. |
+| `onRetry` | no | `() => void` | Renders the retry control when set. With neither this nor `action`, the state reports<br>the failure without offering a dead button. |
 | `action` | no | `ReactNode` | Replaces the retry control entirely. |
 | `strings` | no | `StringsProp<ErrorStateStrings>` |  |
 
@@ -261,7 +281,9 @@ Kind: interface.
 
 Kind: callable.
 
-An open tray under a check — for "all caught up", not for "nothing exists".
+An open tray under a check — for "all caught up", not for "nothing exists". Drawn from the
+theme's own tokens rather than shipped as an image, so it follows a rebrand and costs no
+request.
 
 ```text
 ({ className }: EmptyIllustrationProps) => import("react").JSX.Element
@@ -270,6 +292,10 @@ An open tray under a check — for "all caught up", not for "nothing exists".
 ### `LoadingState`
 
 Kind: callable.
+
+A whole region that is working. A region, not an overlay — it occupies what the content
+will occupy. Distinct from `Empty` and `ErrorState`: the three are different answers and
+must look different.
 
 ```text
 ({ label, strings, className, ...props }: LoadingStateProps) => import("react").JSX.Element
@@ -283,8 +309,8 @@ Extends: `ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | no | `ReactNode` | Replaces the default copy. |
-| `strings` | no | `StringsProp<LoadingStateStrings>` |  |
+| `label` | no | `ReactNode` | Copy for the wait, replacing the default. |
+| `strings` | no | `StringsProp<LoadingStateStrings>` | Overrides the default copy. |
 
 ### `LoadingStateStrings`
 
@@ -298,6 +324,9 @@ Kind: interface.
 
 Kind: callable.
 
+A `progressbar` with its real bounds. Omit `value` for indeterminate; the ARIA value
+attributes are then dropped rather than reporting 0%.
+
 ```text
 ({ value, max, tone, label, className, ...props }: ProgressProps) => React.JSX.Element
 ```
@@ -305,6 +334,9 @@ Kind: callable.
 ### `ProgressCircle`
 
 Kind: callable.
+
+A determinate ring with the reading inside it, for tiles, scores and grids of small
+measures. Its size comes from `--progress-circle`; there is no size prop.
 
 ```text
 ({ value, max, tone, label, children, className, style, ...props }: ProgressCircleProps) => React.JSX.Element
@@ -318,11 +350,11 @@ Extends: `React.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `number` | 0–`max`. Non-finite values resolve to 0; overflow fills rather than wrapping. |
+| `value` | yes | `number` | 0–`max`. Non-finite values resolve to 0; overflow fills rather than wrapping. There is<br>no indeterminate ring: a travelling band reads as unknown, a spinning circle reads as a<br>spinner. |
 | `max` | no | `number` | A finite positive upper bound; invalid values resolve to 100. |
-| `tone` | no | `ProgressTone` |  |
+| `tone` | no | `ProgressTone` | Semantic colour intent, as on `Progress`. @default "primary" |
 | `label` | no | `string` | Accessible name. Required when no visible label describes the ring. |
-| `children` | no | `React.ReactNode` | What sits in the hole — a percentage, a count, a verdict glyph. |
+| `children` | no | `React.ReactNode` | What sits in the hole — a percentage, a count, a verdict glyph. The reason to draw a<br>ring at all. |
 
 ### `ProgressProps`
 
@@ -334,7 +366,7 @@ Extends: `Omit<React.ComponentProps<"div">, "children">`.
 | --- | :-: | --- | --- |
 | `value` | no | `number` | 0–`max`. Non-finite values resolve to 0. Omit for indeterminate. |
 | `max` | no | `number` | A finite positive upper bound; invalid values resolve to 100. |
-| `tone` | no | `ProgressTone` |  |
+| `tone` | no | `ProgressTone` | Semantic colour intent. Left unset the bar takes the primary tone — a progress bar that<br>changes colour at a threshold is the caller's decision, not the component's. @default "primary" |
 | `label` | no | `string` | Accessible name. Required when no visible label describes the bar. |
 
 ### `ProgressTone`
@@ -349,7 +381,9 @@ Kind: type.
 
 Kind: callable.
 
-A magnifier on a soft disc — for "nothing matches", not "nothing exists".
+A magnifier on a soft disc — for "nothing matches", not "nothing exists". Drawn from the
+theme's own tokens rather than shipped as an image, so it follows a rebrand and costs no
+request.
 
 ```text
 ({ className }: EmptyIllustrationProps) => import("react").JSX.Element
@@ -359,7 +393,8 @@ A magnifier on a soft disc — for "nothing matches", not "nothing exists".
 
 Kind: callable.
 
-Three stacked cards fading out — the generic "no records".
+Three stacked cards fading out — the generic "no records". Drawn from the theme's own
+tokens rather than shipped as an image, so it follows a rebrand and costs no request.
 
 ```text
 ({ className }: EmptyIllustrationProps) => import("react").JSX.Element
@@ -369,7 +404,9 @@ Three stacked cards fading out — the generic "no records".
 
 Kind: callable.
 
-Three overlapping discs — for people: members, customers, contributors.
+Three overlapping discs — for people: members, customers, contributors. Drawn from the
+theme's own tokens rather than shipped as an image, so it follows a rebrand and costs no
+request.
 
 ```text
 ({ className }: EmptyIllustrationProps) => import("react").JSX.Element

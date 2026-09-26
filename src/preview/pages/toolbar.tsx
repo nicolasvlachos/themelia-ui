@@ -18,15 +18,7 @@ export function ToolbarPage() {
 			/>
 
 			<Example id="toolbar-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "Toolbar", type: "Root", description: "role=toolbar, orientation, disabled state, loopFocus, and one roving tab stop." },
-						{ name: "ToolbarGroup", type: "Group", description: "Groups related items and can disable the group as one unit." },
-						{ name: "ToolbarButton", type: "Button", description: "Base UI navigation behavior rendered through the kit Button. Supports tone, buttonStyle, iconOnly, loading, and render." },
-						{ name: "ToolbarLink / ToolbarInput", type: "item", description: "Anchor and native input items that participate in the same roving-focus order." },
-						{ name: "ToolbarSeparator", type: "Separator", description: "Defaults to the opposite orientation of the toolbar." },
-					]}
-				/>
+				<PropTable owners={["Toolbar", "ToolbarGroup", "ToolbarButton", "ToolbarLink", "ToolbarInput", "ToolbarSeparator"]} />
 			</Example>
 		</ComponentPage>
 	)

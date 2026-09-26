@@ -18,18 +18,35 @@ import { ValueRoot, type SpanProps, type ValueProps } from "./value"
 export type MoneyUnit = "major" | "minor"
 
 export interface MoneyValue {
-	/** A number or decimal string. A single dot is decimal; grouped US/EU strings are also accepted. */
+	/**
+	 * The amount, in a channel separate from its currency. A number or a decimal string: a
+	 * single dot is decimal, and a grouped US or EU string is parsed by POSITION — whichever
+	 * of , or . appears last is the decimal point — so a value that came back through a
+	 * European locale does not parse a thousand times too large.
+	 */
 	amount?: number | string | null
+	/** The amount's ISO currency code, kept apart from the amount all the way to the render. */
 	currency?: string
-	/** Defaults to `major`. Use `minor` for APIs that store integer minor units. */
+	/**
+	 * The unit the amount ARRIVES in. Use `minor` for APIs that store integer minor units.
+	 * @default "major"
+	 */
 	unit?: MoneyUnit
-	/** Minor units per major unit. Defaults to 100. */
+	/**
+	 * Minor units per major unit, for a currency whose exponent is not two.
+	 * @default 100
+	 */
 	minorUnitScale?: number
-	/** How this amount is written, overriding the scope's `formatMode`. */
+	/**
+	 * How this amount is written. Falls back to the scope's `money.formatMode`, so
+	 * `UIProvider` defaults can change it.
+	 * @default "with-symbol"
+	 */
 	formatMode?: MoneyFormatMode
 }
 
 export interface MoneyProps extends SpanProps, MoneyValue {
+	/** Overrides the scope's locale for this value. */
 	locale?: string
 	emptyLabel?: ReactNode
 	size?: ValueProps["size"]
@@ -37,14 +54,21 @@ export interface MoneyProps extends SpanProps, MoneyValue {
 	weight?: ValueProps["weight"]
 	type?: ValueProps["type"]
 	/**
-	 * A converted value shown beside the primary one. The scope's policy can hide it
-	 * (`displayMode="primary-only"`) but never invents one.
+	 * A converted value shown beside the primary one. Passing it is the request for the pair:
+	 * the scope's policy can narrow that (`displayMode="primary-only"`) but never widen it,
+	 * and never invents a value.
 	 */
 	secondary?: MoneyValue | null
+	/** Whether the pair shows. `dynamic` shows it only when the two codes actually differ. */
 	displayMode?: MoneyDisplayMode
+	/** Beside, or under. Falls back to the scope's `money.layout`. */
 	layout?: MoneyLayout
+	/** How loud the second value is against the first. */
 	secondaryEmphasis?: MoneySecondaryEmphasis
-	/** Between the two, inline. A middle dot; pass an arrow for a conversion. */
+	/**
+	 * Between the two, inline. A middle dot; pass an arrow for a conversion. It is
+	 * `aria-hidden`: read aloud, the mark between two amounts is punctuation for the eye.
+	 */
 	separator?: ReactNode
 	ref?: Ref<HTMLSpanElement>
 }

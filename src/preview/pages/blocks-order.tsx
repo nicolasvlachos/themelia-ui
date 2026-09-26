@@ -50,23 +50,16 @@ export function BlocksOrderPage() {
 					multiplied would be confidently wrong on exactly the lines that matter.
 				</Callout>
 				<PropTable
-					rows={[
-						{ name: "OrderHeader fulfillmentStatus", type: '"unfulfilled" | "partiallyFulfilled" | "fulfilled" | "scheduled" | "onHold" | "cancelled"', description: "Where the goods are. Independent of payment." },
-						{ name: "OrderHeader paymentStatus", type: '"pending" | "authorized" | "paid" | "partiallyRefunded" | "refunded" | "voided"', description: "Where the money is. Both, one, or neither reads correctly — an order with nothing to ship has no fulfillment state to state." },
-						{ name: "OrderHeader vocabulary", type: "Partial<OrderStatusVocabulary>", description: "Overrides the words for either axis without touching the tones, which stay derived." },
-						{ name: "FulfillmentGroup items / children", type: "OrderLine[] / ReactNode", description: "items renders the rows; children replaces them wholesale, for a caller who needs control of a row. The same seam Accordion offers." },
-						{ name: "FulfillmentGroup actions", type: "ActionDefinition[]", description: "The first becomes a button, the rest an overflow — one array, so the menu cannot duplicate the button." },
-						{ name: "FulfillmentGroup notice / noticeIcon", type: "ReactNode / LucideIcon", description: "A standing fact about the group and the glyph beside it. The icon is a prop rather than a node because one passed as a child arrives at lucide's own 24px default — three lines tall against the text it annotates." },
-						{ name: "OrderLineItem properties", type: "{ label, value }[]", description: "Per-line custom data, styled once so every consumer's extras match." },
-						{ name: "OrderLineItem total", type: "string", required: true, description: "Already formatted. Passed rather than computed." },
-						{ name: "OrderSummary goods / total / payments", type: "SummaryLine[] / SummaryLine / SummaryLine[]", description: "Goods and payments render as separate panels. A SummaryLine's note is a middle column, so counts and rates align down a stack." },
-						{ name: "OrderSummary alert", type: "ReactNode", description: 'Standing information about the balance, rendered role="note" — nothing has gone wrong yet.' },
-						{ name: "OrderTransactions transactions", type: "Transaction[]", required: true, description: "kind drives the sign; a failed attempt stays in the list, because an order showing only what worked cannot answer why it was never captured." },
-						{ name: "OrderCustomer billingSameAsShipping", type: "boolean", default: "false", description: "Renders a line in place of a repeated address." },
-						{ name: "OrderTimeline", type: "component", description: "An order\u2019s events on the shared rail, for a surface that wants the history without OrderStatusCard\u2019s facts panel around it." },
-						{ name: "SummaryPanel / AmountRow", type: "component", description: "The money ledger \u2014 the shape almost every commerce surface is made of: a tinted block of label/amount rows, a rule, and one row that matters more than the rest. A cart, a tax breakdown, an invoice and a subscription all draw it, and each rebuilding it inline is how one of them ends up emphasising its total differently from the others." },
+					owners={[
+						"OrderHeader",
+						"FulfillmentGroup",
+						"OrderLineItem",
+						"OrderSummary",
+						"OrderTransactions",
+						"OrderCustomer",
 					]}
 				/>
+				<PropTable symbols={["OrderTimeline", "SummaryPanel", "AmountRow"]} />
 			</Example>
 		</ComponentPage>
 	)

@@ -26,8 +26,7 @@ export {
 } from "./cell-renderers"
 export {
 	ResourceCell,
-	type ResourceCellBadge, type ResourceCellLinkProps, type ResourceCellMetadataItem,
-	type ResourceCellProps,
+	type ResourceCellBadge, type ResourceCellMetadataItem, type ResourceCellProps,
 } from "./resource-cell"
 export {
 	defaultDataTableStrings, mergeDataTableStrings,
@@ -41,3 +40,4 @@ export type {
 	SortingHandler, TableAction,
 } from "./table.types"
 export { useDataTableSize } from "./data-table-size"
+export type { LinkRenderer, LinkRenderProps } from "@/lib/navigation"

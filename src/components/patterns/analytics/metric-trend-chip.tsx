@@ -31,6 +31,12 @@ function toneFor(trend: MetricTrend | undefined, direction: MetricDirection): Me
 	return "neutral"
 }
 
+/**
+ * The delta beside a figure. Direction and tone are separate props on purpose: the direction
+ * in `change` is a fact about the number, `trend` is a judgement about it, and for churn,
+ * refunds or latency the two disagree. A chip that could only derive its colour from the
+ * arrow would paint a rising error rate green.
+ */
 export function MetricTrendChip({
 	change,
 	trend,

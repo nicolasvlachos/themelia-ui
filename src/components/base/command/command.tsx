@@ -22,23 +22,32 @@ export type CommandProps = React.ComponentProps<typeof CommandPrimitive>
 
 const CommandDialogInputContext = React.createContext<React.RefObject<HTMLInputElement | null> | null>(null)
 
+/** The command palette's root: filtering, keyboard navigation and the rows' shared state. */
 function Command({ className, ...props }: CommandProps) {
 	return <CommandPrimitive data-slot="command" className={cx("command--component", styles.root, className)} {...props} />
 }
 
 export type CommandDialogProps = Omit<OverlayRootProps, "children"> & {
-	/** Shorthands for the matching `strings` key. */
+	/** Shorthand for `strings.title`: the palette's accessible name. */
 	title?: string
+	/** Shorthand for `strings.description`. */
 	description?: string
 	/** Overrides this palette's own copy. All of it is hidden from view. */
 	strings?: Partial<CommandStrings>
-	/** Filtering, keyboard loop, and other cmdk root behavior. */
+	/**
+	 * Configures the cmdk root the dialog owns: custom filtering, looping, labels, and other
+	 * command behaviour.
+	 */
 	commandProps?: CommandProps
 	className?: string
 	showCloseButton?: boolean
 	children: React.ReactNode
 }
 
+/**
+ * The palette as an overlay, opened and closed through `open` and `onOpenChange`. The
+ * caller binds the shortcut that opens it.
+ */
 function CommandDialog({
 	title,
 	description,
@@ -79,6 +88,7 @@ function CommandDialog({
 	)
 }
 
+/** The filter. Owns focus when the palette opens. */
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
 	const dialogInputRef = React.useContext(CommandDialogInputContext)
 	const { ref: consumerRef, ...inputProps } = props
@@ -104,12 +114,14 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
 	)
 }
 
+/** The scrolling list of results. */
 function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
 	return (
 		<CommandPrimitive.List data-slot="command-list" className={cx("command-list--component", styles.list, className)} {...props} />
 	)
 }
 
+/** Shown when nothing matches. Not optional — a silent empty list reads as broken. */
 function CommandEmpty({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
 	return (
 		<CommandPrimitive.Empty
@@ -147,7 +159,13 @@ function withListScroll<T extends HTMLElement>(ref: React.Ref<T> | undefined, fi
 
 const groupHeading = (node: HTMLElement) => node.querySelector<HTMLElement>("[cmdk-group-heading]")
 
-function CommandGroup({ className, ref, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {
+/** A captioned block of rows. */
+function CommandGroup({
+	className,
+	ref,
+	...props
+}: React.ComponentProps<typeof CommandPrimitive.Group> &
+	Pick<React.ComponentProps<typeof CommandPrimitive.Group>, "heading">) {
 	return (
 		<CommandPrimitive.Group
 			ref={withListScroll(ref, groupHeading)}
@@ -158,6 +176,10 @@ function CommandGroup({ className, ref, ...props }: React.ComponentProps<typeof 
 	)
 }
 
+/**
+ * The rule between groups. Presentational and skipped by the keyboard, so arrowing through
+ * results never lands on it.
+ */
 function CommandSeparator({
 	className,
 	...props
@@ -172,12 +194,14 @@ function CommandSeparator({
 	)
 }
 
+/** A row. Its `value` is what the filter matches; its label is what is read. */
 function CommandItem({
 	className,
 	children,
 	ref,
 	...props
-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
+}: React.ComponentProps<typeof CommandPrimitive.Item> &
+	Pick<React.ComponentProps<typeof CommandPrimitive.Item>, "value" | "onSelect">) {
 	return (
 		<CommandPrimitive.Item
 			ref={withListScroll(ref)}
@@ -191,6 +215,7 @@ function CommandItem({
 	)
 }
 
+/** The key hint at the end of a row. */
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
 	return <span data-slot="command-shortcut" className={cx("command-shortcut--component", styles.shortcut, className)} {...props} />
 }

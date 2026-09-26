@@ -19,6 +19,11 @@ export interface SearchFilterProps {
 	className?: string
 }
 
+/**
+ * One inline search box. A `search` filter never becomes a pill: typing is the interaction,
+ * and burying a text field two presses deep is how a search box stops being used. It debounces
+ * locally, so the URL is not rewritten on every keystroke.
+ */
 export function SearchFilter({ filter, className }: SearchFilterProps) {
 	const { getFilterValue, setFilterValue, isNavigating, strings } = useFilters()
 	const applied = getFilterValue(filter.key)[0] ?? ""
@@ -62,6 +67,7 @@ export interface SearchFiltersProps {
 	className?: string
 }
 
+/** The inline search boxes, one per `search` filter. A search filter never becomes a pill. */
 export function SearchFilters({ filters, className }: SearchFiltersProps) {
 	if (filters.length === 0) return null
 	return (

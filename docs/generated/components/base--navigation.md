@@ -31,6 +31,9 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The trail to the current page, in a `<nav>`. The current page is a span marked
+`aria-current="page"`, not a link: a link to the page you are on is a dead control.
+
 ```text
 ({ items, separator, label, strings, className, ...props }: BreadcrumbsProps) => React.JSX.Element
 ```
@@ -43,8 +46,8 @@ Extends: `Omit<React.ComponentProps<"nav">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `Crumb[]` |  |
-| `separator` | no | `React.ReactNode` |  |
+| `items` | yes | `Crumb[]` | The trail. The last entry renders as the current page. |
+| `separator` | no | `React.ReactNode` | Replaces the chevron between crumbs. It is decorative either way — the trail's meaning<br>is in the links. |
 | `label` | no | `string` | Names this one trail. Overrides the strings default. |
 | `strings` | no | `Partial<BreadcrumbsStrings>` | Overrides the default name for every trail. |
 
@@ -59,6 +62,8 @@ Kind: interface.
 ### `Crumb`
 
 Kind: type.
+
+One entry in a `Breadcrumbs` trail.
 
 ### `defaultBreadcrumbsStrings`
 
@@ -104,6 +109,9 @@ TabListStrings
 
 Kind: callable.
 
+The locale control. Each option is named in its own language and carries `lang`, so a
+screen reader pronounces it correctly.
+
 ```text
 ({ locales, value, onSelect, variant, label, strings, className, ...props }: LanguageSwitcherProps) => import("react").JSX.Element
 ```
@@ -116,11 +124,11 @@ Extends: `Omit<ComponentProps<"div">, "onSelect">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `locales` | yes | `LocaleOption[]` |  |
-| `value` | no | `string` |  |
-| `onSelect` | no | `(value: string) => void` |  |
-| `variant` | no | `LanguageSwitcherVariant` | `pills` for two or three languages; `menu` once there are more. |
-| `label` | no | `string` |  |
+| `locales` | yes | `LocaleOption[]` | The languages offered, each named in its own language. |
+| `value` | no | `string` | The current locale's `value`. |
+| `onSelect` | no | `(value: string) => void` | Called with the chosen locale's `value`. |
+| `variant` | no | `LanguageSwitcherVariant` | `pills` for two or three languages, where every option is worth showing; `menu` once<br>there are more, where a row of pills becomes a second navigation. |
+| `label` | no | `string` | Names this one switcher. Overrides the strings default. |
 | `strings` | no | `Partial<LanguageSwitcherStrings>` | Overrides the default name for every switcher. |
 
 ### `LanguageSwitcherVariant`
@@ -131,25 +139,29 @@ Kind: type.
 "menu" | "pills"
 ```
 
-### `LayoutLinkRenderer`
+### `LinkRenderer`
 
 Kind: type.
 
-The navigation seam.
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
 
 ```tsx fragment — declaration JSDoc excerpt
-<AppSidebar renderLink={({ href, children, ...rest }) => (
-  <Link to={href ?? "#"} {...rest}>{children}</Link>
-)} />
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
 ```
 
 ```text
-(props: LayoutLinkRenderProps) => ReactNode
+(props: LinkRenderProps) => ReactElement
 ```
 
-### `LayoutLinkRenderProps`
+### `LinkRenderProps`
 
 Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -160,9 +172,11 @@ Kind: interface.
 | `rel` | no | `string` |  |
 | `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
 | `"aria-label"` | no | `string` |  |
-| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the shell styles the row itself. |
-| `disabled` | no | `boolean` |  |
-| `external` | no | `boolean` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ### `LocaleOption`
 
@@ -189,6 +203,10 @@ Kind: interface.
 
 Kind: callable.
 
+Tabs that navigate, so they render anchors in a `<nav>`, and the active one follows from
+the current path. `Tabs` and `TabPanel` are for panels in one page; this is for routes,
+and mixing the two is how a browser back button stops working.
+
 ```text
 ({ items, currentPath, renderLink, variant, strings, className, ...props }: NavigationTabsProps) => import("react").JSX.Element
 ```
@@ -201,9 +219,9 @@ Extends: `Omit<ComponentProps<"nav">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `NavigationTabItem[]` |  |
+| `items` | yes | `NavigationTabItem[]` | The routes: each a `label` and an `href`, with an optional `icon`, `badge` or `disabled`. |
 | `currentPath` | no | `string` | The current route. The active tab follows from this. |
-| `renderLink` | no | `LayoutLinkRenderer` | Routes entries through the app's router. Without it they are plain anchors. |
+| `renderLink` | no | `LinkRenderer` | Routes entries through the app's router. Without it they are plain anchors. |
 | `variant` | no | `"underline" \| "pill"` | `pill` draws the current route as a filled chip, as `TabList variant="pill"` does. |
 | `strings` | no | `Partial<NavigationTabsStrings>` | Overrides this row's own copy — the region name. |
 
@@ -219,6 +237,10 @@ Kind: interface.
 
 Kind: callable.
 
+Tabs as data, in a row that scrolls rather than wrapping: wrapping onto a second line
+changes the page's height as the reader switches. Renders through `Tabs`, or through
+`NavigationTabs` — a `<nav>` of links — when every item has an `href`.
+
 ```text
 ({ items, value, onValueChange, strings, className, ...props }: OverflowTabBarProps) => import("react").JSX.Element
 ```
@@ -231,9 +253,9 @@ Extends: `Omit<ComponentProps<"div">, "children" | "onChange" | "defaultValue">`
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `OverflowTabItem[]` |  |
-| `value` | no | `string` |  |
-| `onValueChange` | no | `(id: string) => void` |  |
+| `items` | yes | `OverflowTabItem[]` | The tabs: an `id`, a `label`, and optionally an `icon`, a `badge`, an `href`, or<br>`disabled`. A tab with an `href` is a link; without one it is a button. |
+| `value` | no | `string` | The active section's `id`. The bar owns no panels — the caller renders what the id<br>selects. |
+| `onValueChange` | no | `(id: string) => void` | Called with the `id` of the section the reader picks. |
 | `strings` | no | `Partial<OverflowTabBarStrings>` | Overrides this row's own copy — the region name. |
 
 ### `OverflowTabBarStrings`
@@ -242,7 +264,7 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | yes | `string` |  |
+| `label` | yes | `string` | Accessible name for the row. @default "Sections" |
 
 ### `OverflowTabItem`
 
@@ -286,11 +308,11 @@ Extends: `Omit<ComponentProps<"header">, "title">`.
 | `eyebrow` | no | `ReactNode` | Small label above the title. Plain text is rendered as a DisplayLabel. |
 | `title` | yes | `ReactNode` | The title. Plain text becomes a Heading; pass an element to own the markup. |
 | `description` | no | `ReactNode` | One sentence under the title, capped at a reading measure. |
-| `level` | no | `HeadingLevel` | Heading level for a plain-text title; set it so the document outline is right. |
+| `level` | no | `HeadingLevel` | Heading level for a plain-text title; set it so the document outline is right. It is<br>not the type size. |
 | `badge` | no | `PageHeadingBadge` | Convenience for a single badge. Ignored when `badges` is set. |
 | `badges` | no | `PageHeadingBadge[]` | Badges beside the title, in order. Data, so their tone comes from the kit. |
 | `breadcrumbs` | no | `ReactNode` | Trail above the block. |
-| `leading` | no | `ReactNode` | Left of the whole column — an avatar, a back control. Top-aligned. |
+| `leading` | no | `ReactNode` | Left of the whole column — an avatar, a back control. Top-aligned; the description indents with it. |
 | `beforeTitle` | no | `ReactNode` | Between the eyebrow and the title row — a banner or status strip. |
 | `titlePrefix` | no | `ReactNode` | Immediately left of the title, aligned to the title line alone. Unlike `leading`, the<br>description still aligns with the title, not with this slot. |
 | `titleSuffix` | no | `ReactNode` | After the title and its badges, on the same line. |
@@ -307,7 +329,7 @@ Extends: `Omit<ComponentProps<"header">, "title">`.
 Kind: callable.
 
 ```text
-({ page, total, onPageChange, disabled: pagerDisabled, siblings, labels, numbers, renderLink, strings, className, ...props }: PaginationProps) => React.JSX.Element
+({ page, total, onPageChange, disabled: pagerDisabled, siblings, labels, numbers, pageHref, renderLink, strings, className, ...props }: PaginationProps) => React.JSX.Element
 ```
 
 ### `PaginationProps`
@@ -318,21 +340,23 @@ Extends: `Omit<React.ComponentProps<"nav">, "onChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `page` | yes | `number` |  |
-| `total` | yes | `number` |  |
-| `onPageChange` | yes | `(page: number) => void` |  |
-| `disabled` | no | `boolean` | Disables every page control, including links, while navigation is unavailable. |
-| `siblings` | no | `number` | Pages either side of the current one. |
-| `labels` | no | `"icon" \| "text" \| "responsive"` | Whether the arrows carry their words: `icon` (chevrons only), `text` (Previous/Next),<br>or `responsive` (the default: words from `sm` up). The words, from `strings`, are also<br>the accessible names. |
-| `numbers` | no | `boolean` | Drops the numbers, leaving the two arrows. For a cursor pager with no page count. |
-| `renderLink` | no | `(page: number, props: PaginationLinkProps) => React.ReactNode` | Renders each control as the caller's own link, so pages work as `<a href>` without JS.<br>`onPageChange` still fires. Disabled arrows stay buttons.<br><br>  renderLink={(page, props) => <Link href={`?page=${page}`} {...props} />} |
-| `strings` | no | `Partial<PaginationStrings>` | Overrides this pager's own copy — the region, the two arrows, each page. |
+| `page` | yes | `number` | The current page, 1-indexed. |
+| `total` | yes | `number` | Total pages. |
+| `onPageChange` | yes | `(page: number) => void` | Called with the page a control goes to. |
+| `disabled` | no | `boolean` | Disables every page control while navigation is unavailable. Linked controls become<br>disabled buttons until it is available again. |
+| `siblings` | no | `number` | Pages shown either side of the current one. |
+| `labels` | no | `"icon" \| "text" \| "responsive"` | Whether the arrows carry their words: `icon` (chevrons only), `text` (Previous/Next),<br>or `responsive`, words from `sm` up and chevrons below — the words are what a pager<br>under a wide table wants, and the width is what a phone has not got. The words come<br>from `strings`, so they are the accessible names too. |
+| `numbers` | no | `boolean` | `false` drops the numbers and leaves the two arrows alone — a cursor pager, where there<br>is no page count to show. |
+| `pageHref` | no | `(page: number) => string` | The address of a page. With it, every control is a link: a pager is navigation, and on<br>a server-rendered list each page should be an `<a href>` that works without JavaScript<br>and opens in a new tab. `onPageChange` still fires. A disabled arrow stays a button,<br>because there is no href for a page that does not exist.<br><br>  pageHref={(page) => `?page=${page}`} |
+| `renderLink` | no | `LinkRenderer` | Renders those links through the application's router, as every component's<br>`renderLink` does; without it, plain anchors. Only used with `pageHref`. |
+| `strings` | no | `Partial<PaginationStrings>` | Overrides this pager's own copy — the region name, the two arrows, the ellipsis, and<br>each page control, named by the page it goes to. |
 
 ### `paginationRange`
 
 Kind: callable.
 
-Page numbers to render, with `null` marking a gap. Always includes the first and last page.
+The page numbers a pager renders, with `null` marking a gap: the arithmetic on its own,
+for a custom control. Always includes the first and last page.
 
 ```text
 (page: number, total: number, siblings?: number) => (number | null)[]
@@ -354,6 +378,8 @@ Kind: interface.
 
 Kind: callable.
 
+One tab. Only the selected tab is in the tab sequence; the arrows move between the rest.
+
 ```text
 ({ value, className, onClick, ...props }: TabProps) => React.JSX.Element
 ```
@@ -361,6 +387,9 @@ Kind: callable.
 ### `TabList`
 
 Kind: callable.
+
+The row of tabs. It scrolls rather than wrapping, because a second row of tabs reads as a
+second level of navigation, which it is not.
 
 **Use when:** Scrollable tabs with edge fade and overflow navigation.
 
@@ -384,10 +413,10 @@ Extends: `React.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `variant` | no | `"underline" \| "enclosed" \| "pill"` | Structural presentation: a rule with an indicator, a tinted rail, or — for a row that<br>picks what one list shows rather than switching panels — filled chips with no rule. |
+| `variant` | no | `"underline" \| "enclosed" \| "pill"` | Structural presentation: a rule with an indicator, a tinted rail, or filled chips with<br>no rule. `pill` is for a row that picks what one list shows rather than switching<br>panels — saved views, result types — and is what OverflowTabBar draws. |
 | `label` | no | `string` | Accessible name for the tab set. |
-| `edgeFade` | no | `boolean` | Fade edges with hidden tabs. Defaults to false; follows scroll position and direction. |
-| `strings` | no | `Partial<TabListStrings>` | Accessible names for the automatic overflow scroll controls. |
+| `edgeFade` | no | `boolean` | Fades only the edges that have hidden tabs beyond them. Updates while scrolling and<br>follows the writing direction, so it works in RTL. |
+| `strings` | no | `Partial<TabListStrings>` | Accessible names for the previous and next scroll controls that appear when the tabs<br>overflow. |
 
 ### `TabListStrings`
 
@@ -402,6 +431,8 @@ Kind: interface.
 
 Kind: callable.
 
+The content for one tab, rendered while that tab is selected.
+
 ```text
 ({ value, className, children, ...props }: TabPanelProps) => React.JSX.Element | null
 ```
@@ -414,7 +445,7 @@ Extends: `React.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `string` |  |
+| `value` | yes | `string` | Which tab the panel belongs to: that tab's `value`. |
 
 ### `TabProps`
 
@@ -424,11 +455,13 @@ Extends: `Omit<React.ComponentProps<"button">, "value">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `string` |  |
+| `value` | yes | `string` | Names the tab: the value `Tabs` selects, and the one its `TabPanel` shares. |
 
 ### `Tabs`
 
 Kind: callable.
+
+The root: holds which tab is selected, for the list and the panels inside it.
 
 ```text
 ({ value, defaultValue, onValueChange, className, children, ...props }: TabsProps) => React.JSX.Element
@@ -442,9 +475,9 @@ Extends: `Omit<React.ComponentProps<"div">, "onChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `string` |  |
-| `defaultValue` | no | `string` |  |
-| `onValueChange` | no | `(value: string) => void` |  |
+| `value` | no | `string` | Controlled selection: the `value` of the selected tab. Pair with `onValueChange`. |
+| `defaultValue` | no | `string` | The tab selected first, when uncontrolled. |
+| `onValueChange` | no | `(value: string) => void` | Called with the `value` of the tab the reader selects. |
 
 ## Preview recipes
 
@@ -612,15 +645,19 @@ export default function PaginationLinks() {
 			total={12}
 			onPageChange={setPage}
 			strings={{ label: "Linked pagination example" }}
-			renderLink={(target, linkProps) => (
+			pageHref={(target) => `#/pagination?page=${target}`}
+			renderLink={({ href, children, onClick, ...rest }) => (
 				<a
-					href={`#/pagination?page=${target}`}
-					{...linkProps}
+					href={href}
+					{...rest}
 					onClick={(event) => {
+						/* A client router takes over the click; the href stays for a new tab. */
 						event.preventDefault()
-						linkProps.onClick(event)
+						onClick?.(event)
 					}}
-				/>
+				>
+					{children}
+				</a>
 			)}
 		/>
 	)

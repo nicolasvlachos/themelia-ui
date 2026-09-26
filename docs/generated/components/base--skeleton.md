@@ -31,6 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A paragraph of prose, optionally under a title bar.
+
 ```text
 ({ lines, showTitle, label, strings, className, ...props }: ContentSkeletonProps) => import("react").JSX.Element
 ```
@@ -45,7 +47,7 @@ Extends: `ComponentProps<"div">`.
 | --- | :-: | --- | --- |
 | `lines` | no | `number` | Number of text lines. The last is short, so the block reads as prose. |
 | `showTitle` | no | `boolean` | A heading above the lines. |
-| `label` | no | `string` | Announced in place of the shapes. |
+| `label` | no | `string` | Announced while loading, in place of the shapes. |
 | `strings` | no | `Partial<SkeletonStrings>` | Overrides the default announcement. `label` still wins for one instance. |
 
 ### `defaultSkeletonStrings`
@@ -59,6 +61,8 @@ SkeletonStrings
 ### `PageSkeleton`
 
 Kind: callable.
+
+PageHeader's row — title, description, actions — over card-shaped panels.
 
 ```text
 ({ showHeader, blocks, label, strings, className, ...props }: PageSkeletonProps) => import("react").JSX.Element
@@ -74,12 +78,14 @@ Extends: `ComponentProps<"div">`.
 | --- | :-: | --- | --- |
 | `showHeader` | no | `boolean` | The page header: a title, its description, and the actions at the end of the row. |
 | `blocks` | no | `number` | Content panels below the header. |
-| `label` | no | `string` |  |
+| `label` | no | `string` | Announced while loading, in place of the shapes. |
 | `strings` | no | `Partial<SkeletonStrings>` | Overrides the default announcement. `label` still wins for one instance. |
 
 ### `Skeleton`
 
 Kind: callable.
+
+The primitive box. Size it with `style` or a class; the composed skeletons are built from it.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -101,6 +107,9 @@ What a skeleton announces while there is nothing to read. `label` overrides per 
 
 Kind: callable.
 
+A table's geometry before the data lands: the real row and head heights, a wide first
+column, a right-aligned last one.
+
 ```text
 ({ rows, columns, showHeader, framed, label, strings, className, ...props }: TableSkeletonProps) => import("react").JSX.Element
 ```
@@ -113,18 +122,18 @@ Extends: `ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `rows` | no | `number` |  |
+| `rows` | no | `number` | Body rows, at the real row height. |
 | `columns` | no | `number` | Match the real table, or the placeholder reflows when the data lands. |
-| `showHeader` | no | `boolean` |  |
-| `framed` | no | `boolean` | Draws the table's own edge, as DataView does. Turn off inside a card that has one. |
-| `label` | no | `string` |  |
+| `showHeader` | no | `boolean` | A head row above the body, at the real head height. |
+| `framed` | no | `boolean` | Draws the table's own edge and corner, as DataView does. Off when it stands in for a<br>table inside a card that already draws one. |
+| `label` | no | `string` | Announced while loading, in place of the shapes. |
 | `strings` | no | `Partial<SkeletonStrings>` | Overrides the default announcement. `label` still wins for one instance. |
 
 ### `TwoColumnPageSkeleton`
 
 Kind: callable.
 
-A detail page: a title over the record's panel, beside its owner and facts.
+A detail page: a title over the record's panel, and beside it its owner and facts.
 
 ```text
 ({ label, strings, className, ...props }: TwoColumnPageSkeletonProps) => import("react").JSX.Element
@@ -138,7 +147,7 @@ Extends: `ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | no | `string` |  |
+| `label` | no | `string` | Announced while loading, in place of the shapes. |
 | `strings` | no | `Partial<SkeletonStrings>` | Overrides the default announcement. `label` still wins for one instance. |
 
 ## Preview recipes

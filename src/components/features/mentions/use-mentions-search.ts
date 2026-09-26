@@ -22,7 +22,15 @@ function isAbortError(error: unknown) {
 }
 
 export interface UseMentionsSearchOptions<TResource extends string = string> {
+	/**
+	 * The registry. Each kind supplies a label, an icon, a tone, an optional trigger character,
+	 * and either its own search or a static catalogue.
+	 */
 	resources?: Partial<Record<TResource, MentionResource<TResource>>>
+	/**
+	 * The fallback, for a kind that registers neither `search` nor `suggestions`. One endpoint
+	 * taking a kind is the common shape.
+	 */
 	onResourceSearch?: MentionsResourceSearch<TResource>
 	initialMentions?: ReadonlyArray<Mention<TResource>>
 	debounceMs?: number
@@ -46,7 +54,10 @@ export interface UseMentionsSearchReturn<TResource extends string = string> {
 	isLoading: boolean
 	error: unknown | null
 	isError: boolean
-	/** Failures per kind; one kind failing still leaves the others' results usable. */
+	/**
+	 * Failures per kind. One kind failing is not the search failing: three registries answering
+	 * and a fourth timing out is still a usable panel.
+	 */
 	errorsByKind: Readonly<Partial<Record<TResource, unknown>>>
 	retry: () => void
 
@@ -66,11 +77,21 @@ export interface UseMentionsSearchReturn<TResource extends string = string> {
 
 	selectSuggestion: (suggestion: MentionSuggestion<TResource>) => Mention<TResource>
 
-	/** True once the writer has picked a tab. Suspends the auto-jump. */
+	/**
+	 * True once the writer has picked a tab, set by the panel. Suspends the auto-jump, because a
+	 * list that keeps moving under someone who just said where to look is worse than one showing
+	 * nothing.
+	 */
 	manualKindOverride: boolean
 	setManualKindOverride: (override: boolean) => void
 }
 
+/**
+ * The picker's suggestion state. Every kind is searched rather than only the active tab, so the
+ * tab counts are true the moment the panel opens, and the panel can jump to the kind that
+ * matched. Lookup per kind: its `search`, then its static `suggestions`, then the global
+ * `onResourceSearch`.
+ */
 export function useMentionsSearch<TResource extends string = string>(
 	options: UseMentionsSearchOptions<TResource> = {},
 ): UseMentionsSearchReturn<TResource> {

@@ -49,6 +49,10 @@ Record<string, ChartSeriesConfig>
 
 Kind: callable.
 
+Recharts on the kit's tokens: Recharts owns geometry, this owns chrome. Each series key
+maps to `--color-<key>`, so colours are set once in the config; prefer `var(--chart-1)` …
+`var(--chart-5)`, which follow the theme.
+
 ```text
 ({ config, label, description, className, children, style, ...props }: ChartContainerProps) => React.JSX.Element
 ```
@@ -61,8 +65,8 @@ Extends: `Omit<React.ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `config` | yes | `ChartConfig` |  |
-| `children` | yes | `React.ComponentProps<typeof Recharts.ResponsiveContainer>["children"]` |  |
+| `config` | yes | `ChartConfig` | Maps each data key to a label, a colour, and an icon. Each colour becomes<br>`--color-{key}` on the container. |
+| `children` | yes | `React.ComponentProps<typeof Recharts.ResponsiveContainer>["children"]` | One Recharts chart. `label` and `description` become its `<title>` and `<desc>` unless<br>it sets its own. |
 | `label` | no | `string` | What the chart shows, as a sentence a screen reader can speak ("Monthly revenue against<br>expenses, January to June"). Without it the focusable plot is announced by its tick text. |
 | `description` | no | `string` | A longer summary of the data or its takeaway, read after the label. |
 
@@ -78,6 +82,9 @@ Kind: callable.
 
 Kind: callable.
 
+The legend body, passed to `ChartLegend` as its `content`. Names, colours and icons come
+from the container's config.
+
 ```text
 ({ payload, hideIcon, nameKey, className, ...props }: ChartLegendContentProps) => React.JSX.Element | null
 ```
@@ -91,8 +98,8 @@ Extends: `React.ComponentProps<"div">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `payload` | no | `ChartPayloadItem[]` | Supplied by Recharts. |
-| `hideIcon` | no | `boolean` |  |
-| `nameKey` | no | `string` |  |
+| `hideIcon` | no | `boolean` | Drops the swatch, for a legend beside a chart whose colours are already named. |
+| `nameKey` | no | `string` | Key in the payload holding each series name, when it is not the data key. |
 
 ### `ChartPayloadItem`
 
@@ -131,6 +138,9 @@ typeof Recharts.Tooltip
 
 Kind: callable.
 
+The tooltip body, passed to `ChartTooltip` as its `content`. Names, colours and icons come
+from the container's config.
+
 ```text
 ({ active, payload, label, hideLabel, hideIndicator, indicator, nameKey, labelKey, labelFormatter, formatter, className, ...props }: ChartTooltipContentProps) => React.JSX.Element | null
 ```
@@ -143,20 +153,24 @@ Extends: `Omit<React.ComponentProps<"div">, "color">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `active` | no | `boolean` | Supplied by Recharts. |
-| `payload` | no | `ChartPayloadItem[]` |  |
-| `label` | no | `React.ReactNode` |  |
-| `hideLabel` | no | `boolean` |  |
-| `hideIndicator` | no | `boolean` |  |
-| `indicator` | no | `"dot" \| "line" \| "dashed"` |  |
-| `nameKey` | no | `string` | Key in the payload holding each series name. |
-| `labelKey` | no | `string` | Key in the payload holding the tooltip label. |
-| `labelFormatter` | no | `(label: React.ReactNode, payload: ChartPayloadItem[]) => React.ReactNode` |  |
-| `formatter` | no | `(value: NonNullable<ChartPayloadItem["value"]>, name: NonNullable<ChartPayloadItem["name"]>, item: ChartPayloadItem, index: number) => React.ReactNode` |  |
+| `active` | no | `boolean` | Supplied by Recharts. A content component is cloned with it; it never receives it from<br>you. |
+| `payload` | no | `ChartPayloadItem[]` | The entries under the cursor. Supplied by Recharts, which clones a content component with<br>them; it never receives them from you. |
+| `label` | no | `React.ReactNode` | The hovered category, supplied by Recharts. `labelKey` and `labelFormatter` change what shows. |
+| `hideLabel` | no | `boolean` | Drops the label row. |
+| `hideIndicator` | no | `boolean` | Drops the swatches. |
+| `indicator` | no | `"dot" \| "line" \| "dashed"` | Shape of the swatch beside each value. |
+| `nameKey` | no | `string` | Key in the payload holding each series name, when it is not the data key. |
+| `labelKey` | no | `string` | Key in the payload holding the tooltip label, when it is not the data key. |
+| `labelFormatter` | no | `(label: React.ReactNode, payload: ChartPayloadItem[]) => React.ReactNode` | Formats the tooltip's heading — a date key into a readable date. |
+| `formatter` | no | `(value: NonNullable<ChartPayloadItem["value"]>, name: NonNullable<ChartPayloadItem["name"]>, item: ChartPayloadItem, index: number) => React.ReactNode` | Formats each value. Without it, numbers get locale grouping. |
 
 ### `Sparkline`
 
 Kind: callable.
+
+A trend line with no axes, no grid and no tooltip — the shape of a series beside the figure
+it belongs to. Not a small `ChartContainer`: it draws no chrome, so it can sit inside a table
+cell or a metric tile.
 
 ```text
 ({ data, tone, animated, label, className, ...props }: SparklineProps) => import("react").JSX.Element

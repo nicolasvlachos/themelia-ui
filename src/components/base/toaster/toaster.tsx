@@ -33,23 +33,43 @@ const STATUS_CLASS: Record<ToastStatus, string | undefined> = {
 }
 
 export interface ToasterProps {
+	/**
+	 * One of six: top or bottom, crossed with start, center, or end. Bottom stacks grow
+	 * upward so the newest is nearest the edge. `UIProvider` defaults can change it.
+	 * @default "bottom-end"
+	 */
 	position?: ToastPosition
-	/** Default lifetime in ms. A toast with its own `duration` still wins. */
+	/**
+	 * Default lifetime in ms. A toast with its own `duration` still wins. `UIProvider`
+	 * defaults can change it.
+	 * @default 4000
+	 */
 	duration?: number
-	/** Maximum toasts on screen. Older ones are dropped from the render, not the store. */
+	/**
+	 * Maximum toasts on screen — a cap on the render, not the store: older ones are dropped
+	 * from the render, and a capped toast still runs its timer and `onDismiss`. `UIProvider`
+	 * defaults can change it.
+	 * @default 3
+	 */
 	visibleToasts?: number
+	/**
+	 * Shows each toast's dismiss control. `UIProvider` defaults can change it.
+	 * @default true
+	 */
 	closeButton?: boolean
 	/** Overrides this region's own copy — its name, and each toast's dismiss. */
 	strings?: Partial<ToasterStrings>
 	className?: string
 	/**
-	 * The queue this Toaster renders. Defaults to the singleton `toast()` writes to; pass a
-	 * `createToastStore()` instance for independent Toasters (a host app and an embedded widget).
+	 * The queue this Toaster renders, dismisses and pauses. Defaults to the singleton
+	 * `toast()` writes to; pass a `createToastStore()` instance to isolate it — a host app and
+	 * an embedded widget.
 	 */
 	store?: ToastStore
 	/**
 	 * Where the toast region renders. Defaults to the nearest `UIPortalHost`, else
-	 * `document.body`, so scoped density and theme apply.
+	 * `document.body` — so toasts raised inside a scoped region are drawn with that region's
+	 * density and theme.
 	 */
 	container?: UIPortalContainer
 }

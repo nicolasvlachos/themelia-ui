@@ -14,6 +14,7 @@ const toNumber = (value: DimensionPart) => {
 	return Number.isFinite(parsed) ? parsed : undefined
 }
 
+/** The same joining outside React. */
 export function formatDimensions(
 	width: DimensionPart,
 	height: DimensionPart,

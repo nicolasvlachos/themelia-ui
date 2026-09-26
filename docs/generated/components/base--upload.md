@@ -31,6 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The round variant, sized for a profile image.
+
 ```text
 ({ strings, ...props }: AvatarUploadProps) => import("react").JSX.Element
 ```
@@ -111,6 +113,11 @@ UploadTrayStrings
 
 Kind: callable.
 
+The drop target on its own, for a surface that wants the drag behaviour without
+FileUpload's list and validation around it. It reports dropped or picked files and owns
+no state; the box is a `<label>` for a real file input, so it is keyboard-reachable and
+submits in a plain form.
+
 ```text
 ({ onDrop, accept, multiple, disabled, invalid, compact, icon, inputProps, strings, label, hint, footer, className, ...props }: DropzoneProps) => import("react").JSX.Element
 ```
@@ -153,9 +160,9 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `accept` | no | `string` | Native accept filter, e.g. `.pdf,image/*`. Enforced here as well as by the dialog. |
-| `minSizeBytes` | no | `number` |  |
-| `maxSizeBytes` | no | `number` |  |
+| `accept` | no | `string` | Native accept filter, e.g. `.pdf,image/*`. Enforced here as well as by the dialog, and<br>checked before `onValueChange` rather than after, like every constraint. |
+| `minSizeBytes` | no | `number` | Smallest file accepted, in bytes. |
+| `maxSizeBytes` | no | `number` | Largest file accepted, in bytes. |
 | `validateFile` | no | `FileValidator` | Runs after the type and size checks. |
 
 ### `FileDropTargetProps`
@@ -172,6 +179,10 @@ Kind: interface.
 ### `FilePickerInput`
 
 Kind: callable.
+
+A file field shaped like an Input, showing the chosen file's name, for a form row. The
+file input covers the whole control, so any part of it opens the dialog, and the `accept`
+wiring and the re-validation come with it. `FileUpload` is the drop-zone alternative.
 
 ```text
 ({ value, onValueChange, onRejectedFiles, constraints, disabled, invalid, name, strings, className, ...props }: FilePickerInputProps) => import("react").JSX.Element
@@ -254,21 +265,21 @@ Extends: `FileConstraints`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | no | `string` | Applied to the file input itself, so a `FormField` label can address it. |
-| `value` | no | `File[]` | Controlled selection. |
+| `value` | no | `File[]` | The chosen files, controlled. |
 | `defaultValue` | no | `File[]` |  |
-| `onValueChange` | no | `(files: File[]) => void` |  |
-| `onRejectedFiles` | no | `(rejections: FileRejection[]) => void` | Receives what was refused. Rejected files never reach `onValueChange`. |
-| `multiple` | no | `boolean` |  |
+| `onValueChange` | no | `(files: File[]) => void` | Called with the next selection, after validation. |
+| `onRejectedFiles` | no | `(rejections: FileRejection[]) => void` | Receives the files that failed validation, each with a reason code. Rejected files never<br>reach `onValueChange`. |
+| `multiple` | no | `boolean` | Accepts more than one file. |
 | `maxFiles` | no | `number` | Cap on the selection. Defaults to 1 for single, unlimited for multiple. |
-| `selectionMode` | no | `"append" \| "replace"` | Whether a new selection adds to the list or replaces it. |
+| `selectionMode` | no | `"append" \| "replace"` | Whether a second drop adds to the set or replaces it. Defaults to `append` with<br>`multiple`, else `replace`. |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
-| `compact` | no | `boolean` | A compact single row, for a zone that sits inside a form rather than owning a page. |
+| `invalid` | no | `boolean` | Applies the invalid treatment to the zone. The message stays with FormField. |
+| `compact` | no | `boolean` | A single row rather than a panel, for a zone that sits inside a form rather than owning<br>a page. |
 | `label` | no | `ReactNode` | Shorthand for `strings.instruction`. |
 | `strings` | no | `Partial<FileUploadStrings>` | Overrides this control's own copy, the rejection sentences included. |
-| `hint` | no | `ReactNode` |  |
-| `showList` | no | `boolean` | Hides the built-in list, for a caller rendering their own. |
-| `showRejections` | no | `boolean` | Shows the refusals under the zone. |
+| `hint` | no | `ReactNode` | The line under the zone: the constraint text a reader needs before they choose. |
+| `showList` | no | `boolean` | Shows the chosen files under the zone. Turn it off only when something else on the page<br>shows them — a caller rendering its own list. |
+| `showRejections` | no | `boolean` | Shows the refused files under the zone, each with its reason. Turn it off only when<br>something else on the page shows them. |
 | `progress` | no | `Record<string, number>` | Per-file transfer progress, 0–100, keyed by file name. |
 | `name` | no | `string` |  |
 | `className` | no | `string` |  |
@@ -305,6 +316,9 @@ Return `true` to accept, `false` for the default message, or a message of your o
 
 Kind: callable.
 
+A single image, where the picker is the preview in the shape it will have in the
+product — a cover, a banner. Add an image, replace it, or remove it.
+
 ```text
 ({ strings, ...props }: ImageUploadProps) => import("react").JSX.Element
 ```
@@ -320,6 +334,9 @@ MediaUploadProps
 ### `MediaGallery`
 
 Kind: callable.
+
+Chosen images as reorderable tiles, for a gallery rather than a queue. The order is part of
+the value: the first tile is the cover.
 
 ```text
 ({ value, defaultValue, onValueChange, onRejectedFiles, maxFiles, disabled, invalid, showCover, strings, accept, ...constraints }: MediaGalleryProps & { className?: string; }) => import("react").JSX.Element
@@ -369,6 +386,9 @@ Kind: interface.
 
 Kind: callable.
 
+A thumbnail for a file that has not been uploaded yet, or any image, that falls back to a
+glyph rather than the browser's broken-image mark when it fails to load.
+
 ```text
 ({ src, alt, fallback, className }: PreviewImageProps) => import("react").JSX.Element
 ```
@@ -388,13 +408,15 @@ Kind: interface.
 
 Kind: interface.
 
+One file on its way. The caller creates it, sends the file, and feeds status and progress back.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | yes | `string` | Stable identity. The caller's, not a file name — two files may share one. |
 | `name` | yes | `string` |  |
 | `size` | no | `number` | In bytes. Formatted for display here. |
 | `progress` | no | `number` | 0–100. Ignored unless the status is `uploading`. |
-| `status` | yes | `UploadStatus` |  |
+| `status` | yes | `UploadStatus` | Drives the row's icon, bar and trailing control. |
 | `error` | no | `string` | Shown under the row when the status is `error`. |
 | `preview` | no | `string` | A thumbnail, used in place of the status glyph. |
 
@@ -412,11 +434,11 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `UploadItem[]` |  |
+| `items` | yes | `UploadItem[]` | The rows: id, name, size, status, and progress or error. Entirely caller-owned. |
 | `strings` | no | `Partial<UploadProgressListStrings>` | Overrides this list's own copy — the five status words and the row controls. |
 | `onCancel` | no | `(id: string) => void` | Offered while a row is queued or uploading. |
-| `onRetry` | no | `(id: string) => void` | Offered when a row has failed. |
-| `onRemove` | no | `(id: string) => void` | Offered once a row is done, cancelled or failed, and on a queued row without<br>`onCancel`. Never on a transfer in flight (that is cancel). |
+| `onRetry` | no | `(id: string) => void` | Offered when a row has failed. Supplying it renders the retry control. |
+| `onRemove` | no | `(id: string) => void` | Offered once a row is done, cancelled or failed, and on a queued row without<br>`onCancel`. Never on a transfer in flight (that is cancel). Supplying it renders the<br>dismiss control. |
 | `className` | no | `string` |  |
 
 ### `UploadProgressListStrings`
@@ -444,6 +466,11 @@ Kind: type.
 
 Kind: callable.
 
+The same list docked as a tray, with a drop target above it and a summary beneath — for
+uploads that outlive the page they started on. Adding files does not write to `items`:
+the tray reports the drop through `onAddFiles`, and the caller starts the transfer and
+reports back.
+
 ```text
 ({ items, onAddFiles, onCancel, onRetry, onRemove, onClearAll, strings, showSummary, className, ...uploadProps }: UploadTrayProps) => import("react").JSX.Element
 ```
@@ -456,14 +483,14 @@ Extends: `Omit<FileUploadProps, "value" | "onValueChange" | "showList">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `UploadItem[]` | Everything in the tray, at whatever stage. |
+| `items` | yes | `UploadItem[]` | Everything in the tray, at whatever stage: id, name, size, status, and progress or<br>error. Entirely caller-owned. |
 | `onAddFiles` | yes | `(files: File[]) => void` | Fires when files are dropped or browsed; the caller adds them to `items` and starts the transfer. |
-| `onCancel` | no | `(id: string) => void` |  |
-| `onRetry` | no | `(id: string) => void` |  |
-| `onRemove` | no | `(id: string) => void` |  |
-| `onClearAll` | no | `() => void` |  |
-| `strings` | no | `Partial<UploadTrayStrings>` | Overrides this tray's own copy — the clear-all control. |
-| `showSummary` | no | `boolean` | Hides the counts row. |
+| `onCancel` | no | `(id: string) => void` | Stops one transfer. Supplying it renders the cancel control on a row in flight. |
+| `onRetry` | no | `(id: string) => void` | Supplying it renders the retry control on a failed row. |
+| `onRemove` | no | `(id: string) => void` | Supplying it renders the dismiss control on a finished row. |
+| `onClearAll` | no | `() => void` | Empties the tray. Supplying it renders the clear-all control. |
+| `strings` | no | `Partial<UploadTrayStrings>` | Overrides this tray's own copy, which names its controls — clear-all among them. |
+| `showSummary` | no | `boolean` | Shows the counts row above the list — "Uploading 1, Uploaded 1, Failed 1". |
 
 ### `UploadTrayStrings`
 
@@ -479,8 +506,9 @@ Extends: `FileUploadStrings`, `UploadProgressListStrings`.
 
 Kind: callable.
 
-Drag state that survives descendants: `dragleave` fires on entering a child, so enters
-and leaves are counted and dragging clears only at zero.
+The drop behaviour on its own, for a custom target. Its drag state survives descendants:
+`dragleave` fires on entering a child, so enters and leaves are counted and dragging
+clears only at zero.
 
 ```text
 ({ disabled, onFiles, }: { disabled?: boolean; onFiles: (files: File[]) => void; }) => { isDragging: boolean; dropTargetProps: { onDragEnter: DragEventHandler<HTMLElement>; onDragOver: DragEventHandler<HTMLElement>; onDragLeave: DragEventHandler<HTMLElement>; onDrop: DragEventHandler<HTMLElement>; }; }
@@ -490,7 +518,8 @@ and leaves are counted and dragging clears only at zero.
 
 Kind: callable.
 
-Validates a selection; each file gets its own verdict, so one rejection does not stop the rest.
+The validation FileUpload runs, as a plain call, so a caller can pre-check. Each file gets
+its own verdict, so one rejection does not stop the rest.
 
 ```text
 ({ incoming, current, maxFiles, append, ...constraints }: ValidateOptions) => ValidationResult

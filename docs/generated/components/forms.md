@@ -30,7 +30,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: interface.
 
-What a bound field hands to a control.
+What a bound field hands to a control: what `useFormFieldBinding` returns, spreadable onto
+the control.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -46,7 +47,8 @@ What a bound field hands to a control.
 
 Kind: interface.
 
-One field's state, as an adapter reports it.
+One field's state, as an adapter reports it. Everything past `value` and `setValue` is
+optional.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -60,8 +62,9 @@ One field's state, as an adapter reports it.
 
 Kind: interface.
 
-The adapter contract. `useField` is a hook, called once per bound field during render,
-so an RHF adapter can delegate to `useController`.
+The adapter contract: the one-method interface a form library satisfies to work with the
+kit's fields. `useField` is a hook, called once per bound field during render, so an RHF
+adapter can delegate to `useController`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -71,7 +74,9 @@ so an RHF adapter can delegate to `useController`.
 
 Kind: callable.
 
-Binds one field. The only API a component needs to be form-library agnostic.
+Binds one field: turns a control and a field name into the exact props a kit control
+takes — value, onValueChange, onBlur, invalid, error, disabled. The only API a component
+needs to be form-library agnostic.
 
 ```text
 ({ name, control, disabled, }: { name: Extract<keyof TValues, string> | string; control: FormControl<TValues>; disabled?: boolean; }) => FieldBinding<TValue>
@@ -81,7 +86,8 @@ Binds one field. The only API a component needs to be form-library agnostic.
 
 Kind: callable.
 
-A `FormControl` over plain React state — the zero-dependency default.
+A `FormControl` over plain React state — the zero-dependency default. Also exposes the
+current values and a reset, which a library-backed control owns itself.
 
 ```text
 (initialValues: TValues, options?: { errors?: Partial<Record<keyof TValues, string>>; }) => FormControl<TValues> & { values: TValues; reset: (next?: TValues) => void; }

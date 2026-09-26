@@ -32,6 +32,11 @@ export interface CategoryNavProps extends Omit<ComponentProps<"nav">, "onSelect"
 	onSelect?: (id: string) => void
 }
 
+/**
+ * A vertical list of destinations with a count on each. Not SideNav: this is a FILTER rail,
+ * where the rows are categories of one list rather than pages of a product, and the count
+ * is the reason a reader picks one.
+ */
 export function CategoryNav({
 	label,
 	items,

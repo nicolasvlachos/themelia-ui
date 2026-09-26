@@ -25,6 +25,10 @@ import type { RichTextCommand } from "./rich-text-engine.types"
 import styles from "./rich-text-editor.module.css"
 
 
+/**
+ * An editing surface with a toolbar and an imperative handle. Content is controlled through
+ * `value` and `onValueChange`; the handle covers what a prop cannot.
+ */
 export function RichTextEditor({
 	engine,
 	value,
@@ -45,7 +49,14 @@ export function RichTextEditor({
 	onCaretChange,
 	strings,
 	ref,
-}: RichTextEditorProps & { ref?: Ref<RichTextEditorHandle> }) {
+}: RichTextEditorProps & {
+	/**
+	 * The imperative handle: `focus`, `getHTML`, `setHTML`, `insertHTML`, `isEmpty`, `clear`,
+	 * `getCaretContext`, `replaceBeforeCaret`. A superset of MentionEditorHandle, so the two
+	 * plug together with no adapter.
+	 */
+	ref?: Ref<RichTextEditorHandle>
+}) {
 	const copy = {
 		...defaultRichTextEditorStrings,
 		...strings,

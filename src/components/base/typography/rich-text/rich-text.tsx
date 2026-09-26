@@ -28,6 +28,11 @@ export interface RichTextProps
 	tag?: "div" | "p"
 }
 
+/**
+ * Renders stored rich text — the READ half of the rich-text editor — in `Text`'s styles. It
+ * sanitises on the way in, with no opt-out, so content from a database or an API cannot carry
+ * script or event handlers into the page.
+ */
 export function RichText({
 	html,
 	children,

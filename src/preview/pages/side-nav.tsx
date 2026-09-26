@@ -40,28 +40,12 @@ export function SideNavPage() {
 			/>
 
 			<Example id="side-nav-api" title="SideNav and SectionNav API">
-				<PropTable
-					rows={[
-						{ name: "SideNav items / groups", type: "SideNavItem[] / SideNavGroup[]", description: "Flat entries or captioned blocks. A group can be collapsible." },
-						{ name: "SideNav currentPath", type: "string", description: "Matched by longest prefix, so exactly one entry is current." },
-						{ name: "SideNav renderLink", type: "(props) => ReactElement", description: "Routes entries through the app's router. Without it they are plain anchors — this library never imports a router." },
-						{ name: "SectionNav items", type: "SectionNavItem[]", description: "id, label, and an optional depth for nesting." },
-						{ name: "SectionNav rootMargin", type: "string", description: "Which band of the viewport counts as the current position. The default keeps the marker near the top." },
-						{ name: "SideNav strings", type: "Partial<SideNavStrings>", description: "Overrides the rail's own copy — the collapse control's name." },
-						{ name: "CategoryNav", type: "component", description: "A vertical list of destinations with a count on each. Not SideNav: this is a FILTER rail, where the rows are categories of one list rather than pages of a product, and the count is the reason a reader picks one." },
-						{ name: "BreadcrumbProgress", type: "component", description: "A wizard\u2019s position, as a trail. Not Breadcrumbs: a trail describes where you ARE in a hierarchy you can climb, and this describes how far along a sequence you have got \u2014 the steps behind you are done, not ancestors." },
-					]}
-				/>
+				<PropTable owners={["SideNav", "SectionNav"]} />
+				<PropTable symbols={["CategoryNav", "BreadcrumbProgress"]} />
 			</Example>
 
 			<Example id="settings-shell-api" title="AsideNavShell API">
-				<PropTable owner="AsideNavShell"
-					rows={[
-						{ name: "title / description", type: "ReactNode", description: "The section heading above both columns." },
-						{ name: "items / groups / currentPath / renderLink", api: ["AsideNavShell.items", "AsideNavShell.groups", "AsideNavShell.currentPath", "AsideNavShell.renderLink"], type: "SideNav's", description: "Passed straight to the SideNav it draws — the same entries, current-path matching and router hook as above." },
-						{ name: "stickyAside", type: "boolean", default: "true", description: "A settings rail is short and the content beside it usually is not." },
-					]}
-				/>
+				<PropTable owner="AsideNavShell" />
 			</Example>
 		</ComponentPage>
 	)

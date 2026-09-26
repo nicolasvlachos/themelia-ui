@@ -43,11 +43,11 @@ Extends: `ChoiceGroupBaseProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `options` | yes | `CardCheckboxOption[]` |  |
+| `options` | yes | `CardCheckboxOption[]` | The choices, in the shape `CardRadioGroup` takes. |
 | `value` | no | `string[]` | Controlled value. |
-| `defaultValue` | no | `string[]` |  |
-| `onValueChange` | no | `(values: string[]) => void` |  |
-| `columns` | no | `ChoiceColumns` |  |
+| `defaultValue` | no | `string[]` | The initial values, for uncontrolled selection. |
+| `onValueChange` | no | `(values: string[]) => void` | Called with every chosen value. |
+| `columns` | no | `ChoiceColumns` | Column count at full width, as on `CardRadioGroup`. |
 
 ### `CardCheckboxOption`
 
@@ -73,11 +73,11 @@ Extends: `ChoiceGroupBaseProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `options` | yes | `CardRadioOption[]` |  |
+| `options` | yes | `CardRadioOption[]` | The choices, in the one shape card, list and pill groups share: value, label,<br>description, icon, and an optional tooltip. |
 | `value` | no | `string` | Controlled value. |
-| `defaultValue` | no | `string` |  |
-| `onValueChange` | no | `(value: string) => void` |  |
-| `columns` | no | `ChoiceColumns` | Column count at full width. The grid steps down on narrow containers. |
+| `defaultValue` | no | `string` | The initial value, for uncontrolled selection. |
+| `onValueChange` | no | `(value: string) => void` | Called with the chosen value. |
+| `columns` | no | `ChoiceColumns` | Column count at full width: the track floor, not a fixed count — the grid still steps<br>down on its own container's width. Pick it from how much each card has to say. @default 3 |
 
 ### `CardRadioOption`
 
@@ -99,12 +99,12 @@ React.ForwardRefExoticComponent<Omit<CheckboxProps, "ref"> & React.RefAttributes
 
 Kind: interface.
 
-Extends: `Omit<React.ComponentProps<"input">, "type" | "size">`.
+Extends: `Omit<React.ComponentProps<"input">, "type" | "size">`, `Pick<React.ComponentProps<"input">, "checked" | "defaultChecked" | "onChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | no | `React.ReactNode` |  |
-| `indeterminate` | no | `boolean` | Partially-selected: neither on nor off. Outranks `checked` visually. |
+| `label` | no | `React.ReactNode` | Rendered beside the box and wired to it, so the text is part of the target. |
+| `indeterminate` | no | `boolean` | The dash state, for a parent whose children are partly checked: neither on nor off.<br>Independent of `checked`, which it outranks visually. |
 
 ### `ChoiceColumns`
 
@@ -170,10 +170,10 @@ Extends: `ChoiceGroupBaseProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `options` | yes | `ListRadioOption[]` |  |
+| `options` | yes | `ListRadioOption[]` | The choices, in the one shape card, list and pill groups share: value, label,<br>description, icon, and an optional tooltip. |
 | `value` | no | `string` | Controlled value. |
-| `defaultValue` | no | `string` |  |
-| `onValueChange` | no | `(value: string) => void` |  |
+| `defaultValue` | no | `string` | The initial value, for uncontrolled selection. |
+| `onValueChange` | no | `(value: string) => void` | Called with the chosen value. |
 
 ### `ListRadioOption`
 
@@ -199,11 +199,11 @@ Extends: `ChoiceGroupBaseProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `options` | yes | `PillRadioOption[]` |  |
+| `options` | yes | `PillRadioOption[]` | The choices, in the one shape card, list and pill groups share. A pill shows no<br>description — it has no room for one. |
 | `value` | yes | `string \| null \| undefined` | Controlled value. `null` is the cleared state. |
-| `onValueChange` | yes | `(value: string \| null) => void` |  |
-| `allowClear` | no | `boolean` | Lets the active pill be clicked again to clear the selection. |
-| `fullWidth` | no | `boolean` | Stretches the pills to fill the container. |
+| `onValueChange` | yes | `(value: string \| null) => void` | Called with the chosen value, or `null` when the selection is cleared. |
+| `allowClear` | no | `boolean` | Lets the active pill be clicked again to clear the selection, for a filter whose empty<br>state is "all". |
+| `fullWidth` | no | `boolean` | Stretches the pills to fill the container, for a segmented control that owns its row. |
 
 ### `PillRadioOption`
 
@@ -225,6 +225,8 @@ React.ForwardRefExoticComponent<Omit<RadioProps, "ref"> & React.RefAttributes<HT
 
 Kind: callable.
 
+Radios that exclude each other. The group supplies the shared `name` that does it.
+
 ```text
 ({ name, orientation, className, children, ...props }: RadioGroupProps) => React.JSX.Element
 ```
@@ -237,18 +239,18 @@ Extends: `Omit<React.ComponentProps<"div">, "onChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `name` | yes | `string` | Shared across every radio inside, which is what makes them exclusive. |
-| `orientation` | no | `"vertical" \| "horizontal"` |  |
+| `name` | yes | `string` | Groups the options: shared across every radio inside, which is what makes them<br>exclusive. A native radio group needs it to behave as one. |
+| `orientation` | no | `"vertical" \| "horizontal"` | The direction the options run in. |
 
 ### `RadioProps`
 
 Kind: interface.
 
-Extends: `Omit<React.ComponentProps<"input">, "type" | "size">`.
+Extends: `Omit<React.ComponentProps<"input">, "type" | "size">`, `Pick<React.ComponentProps<"input">, "value" | "checked" | "defaultChecked" | "onChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | no | `React.ReactNode` |  |
+| `label` | no | `React.ReactNode` | Rendered beside the circle and wired to it, so the text is part of the target. |
 
 ### `Select`
 
@@ -282,6 +284,9 @@ Kind: interface.
 
 Kind: callable.
 
+The popup behind `Select`, public so every finite-option control — a phone country, a unit
+picker — renders the same popup and rows.
+
 ```text
 ({ container, className, children, side, sideOffset, align, alignOffset, alignItemWithTrigger, ...props }: SelectPopupContentProps) => import("react").JSX.Element
 ```
@@ -298,6 +303,8 @@ SelectPrimitive.Popup.Props & Pick<SelectPrimitive.Positioner.Props, "align" | "
 
 Kind: callable.
 
+A division of the popup's options.
+
 ```text
 ({ className, ...props }: SelectPrimitive.Group.Props) => import("react").JSX.Element
 ```
@@ -305,6 +312,8 @@ Kind: callable.
 ### `SelectPopupItem`
 
 Kind: callable.
+
+One option row, with the mark that shows it is chosen.
 
 ```text
 ({ className, children, ...props }: SelectPrimitive.Item.Props) => import("react").JSX.Element
@@ -314,6 +323,9 @@ Kind: callable.
 
 Kind: callable.
 
+A group's caption. A label is not an item: it is not focusable and the arrow keys skip it,
+which a styled item would get wrong.
+
 ```text
 ({ className, children, ...props }: SelectPrimitive.GroupLabel.Props) => import("react").JSX.Element
 ```
@@ -321,6 +333,8 @@ Kind: callable.
 ### `SelectPopupSeparator`
 
 Kind: callable.
+
+A rule between groups of options.
 
 ```text
 ({ className, ...props }: SelectPrimitive.Separator.Props) => import("react").JSX.Element
@@ -332,36 +346,36 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `options` | yes | `SelectOption[]` |  |
-| `placeholder` | no | `string` | Shorthand for `strings.placeholder`. |
+| `options` | yes | `SelectOption[]` | The choices. Each carries a value, a label, and an optional description and icon. |
+| `placeholder` | no | `string` | Shown while nothing is selected. Shorthand for `strings.placeholder`, and wins over it. |
 | `strings` | no | `Partial<SelectStrings>` | Overrides this select's own copy — the placeholder and the clear row. |
-| `allowClear` | no | `boolean` | Prepends an option that clears the selection. |
-| `invalid` | no | `boolean` | Applies the invalid treatment. Pair it with a message on the FormField. |
+| `allowClear` | no | `boolean` | Prepends an option that clears the selection, for a field whose empty state is a real<br>answer. |
+| `invalid` | no | `boolean` | Applies the invalid treatment; the trigger only carries it. Pair it with a message on the<br>`FormField`. |
 | `value` | no | `string \| null` | Controlled value. Passing `undefined` explicitly keeps it controlled and clear. |
-| `defaultValue` | no | `string \| null` |  |
+| `defaultValue` | no | `string \| null` | The initial value, for an uncontrolled select. |
 | `onValueChange` | no | `(value: string \| undefined) => void` | Fires with `undefined` when the selection is cleared. |
 | `disabled` | no | `boolean` |  |
-| `readOnly` | no | `boolean` |  |
-| `required` | no | `boolean` |  |
+| `readOnly` | no | `boolean` | Shows the value but prevents choosing another. |
+| `required` | no | `boolean` | Requires a value before the owning form submits. |
 | `name` | no | `string` | Field name for the hidden native input. |
-| `form` | no | `string` | The owning form's id, when the select renders outside it. |
-| `autoComplete` | no | `string` |  |
+| `form` | no | `string` | The owning form's id, when the select renders outside it. Like `name`, `autoComplete` and<br>`inputRef`, it is for the hidden native input that carries the value into a form submit. |
+| `autoComplete` | no | `string` | Autofill hint for the hidden native input that carries the value into a form submit. |
 | `inputRef` | no | `Ref<HTMLInputElement>` | Ref to the hidden native input used for submission. |
 | `id` | no | `string` |  |
-| `open` | no | `boolean` |  |
-| `defaultOpen` | no | `boolean` |  |
-| `onOpenChange` | no | `(open: boolean) => void` |  |
-| `modal` | no | `boolean` | Isolates interaction with the rest of the page while open. |
-| `highlightItemOnHover` | no | `boolean` | Pointer movement highlights options. |
-| `side` | no | `SelectPopupContentProps["side"]` | Where the popup opens relative to the trigger. |
-| `align` | no | `SelectPopupContentProps["align"]` |  |
-| `alignItemWithTrigger` | no | `boolean` | Positions the selected option over the trigger, macOS-style. Off by default: inside<br>a form it covers the field's own label. |
+| `open` | no | `boolean` | Whether the popup is open, for a select driven from outside — a tour, a keyboard<br>shortcut. |
+| `defaultOpen` | no | `boolean` | Whether the popup starts open, uncontrolled. |
+| `onOpenChange` | no | `(open: boolean) => void` | Called when the popup opens or closes. |
+| `modal` | no | `boolean` | Isolates interaction with the rest of the page while open. Turn it off for a select<br>inside a surface that is already modal. @default true |
+| `highlightItemOnHover` | no | `boolean` | Pointer movement highlights options. Off, the highlight belongs to the keyboard alone. @default true |
+| `side` | no | `SelectPopupContentProps["side"]` | Where the popup opens relative to the trigger. @default "bottom" |
+| `align` | no | `SelectPopupContentProps["align"]` | How the popup lines up with the trigger along that side. @default "start" |
+| `alignItemWithTrigger` | no | `boolean` | Positions the chosen option over the trigger, the native macOS behaviour. Off, the list<br>opens under the field: inside a form, a popup over the trigger covers the field's own<br>label. @default false |
 | `renderOption` | no | `(option: SelectOption) => ReactNode` | Replaces the default icon/label/description row. |
-| `renderValue` | no | `(option: SelectOption \| undefined) => ReactNode` | Replaces the trigger's value. Receives `undefined` in the placeholder state. |
+| `renderValue` | no | `(option: SelectOption \| undefined) => ReactNode` | Replaces what the trigger shows — what a select of avatars needs. Receives `undefined` in<br>the placeholder state. |
 | `className` | no | `string` |  |
-| `contentClassName` | no | `string` | Class for the popup surface. |
-| `onFocus` | no | `FocusEventHandler<HTMLButtonElement>` |  |
-| `onBlur` | no | `FocusEventHandler<HTMLButtonElement>` |  |
+| `contentClassName` | no | `string` | Class for the popup surface. `className` stays on the trigger. |
+| `onFocus` | no | `FocusEventHandler<HTMLButtonElement>` | Called on the trigger, so a form library can track touched state. |
+| `onBlur` | no | `FocusEventHandler<HTMLButtonElement>` | Called on the trigger, so a form library can track touched state. |
 | `"aria-label"` | no | `string` |  |
 | `"aria-labelledby"` | no | `string` |  |
 | `"aria-describedby"` | no | `string` |  |
@@ -430,11 +444,11 @@ Extends: `Omit<ToggleFieldProps, "kind" | "surface" | "controlPosition" | "unche
 
 Kind: interface.
 
-Extends: `Omit<React.ComponentProps<"input">, "type" | "size">`.
+Extends: `Omit<React.ComponentProps<"input">, "type" | "size">`, `Pick<React.ComponentProps<"input">, "checked" | "defaultChecked" | "onChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | no | `React.ReactNode` |  |
+| `label` | no | `React.ReactNode` | Rendered beside the track and wired to it. |
 
 ### `ToggleField`
 
@@ -458,17 +472,17 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | yes | `ReactNode` |  |
-| `description` | no | `ReactNode` |  |
-| `hint` | no | `ReactNode` | Short guidance under the description. |
+| `label` | yes | `ReactNode` | The row's label. |
+| `description` | no | `ReactNode` | The row's supporting sentence. |
+| `hint` | no | `ReactNode` | Quieter, short guidance under the description. |
 | `icon` | no | `ChoiceOption["icon"]` | Leading glyph, drawn in a medallion. Most at home on `surface="card"`. |
-| `kind` | no | `ToggleFieldKind` | Which control renders. |
+| `kind` | no | `ToggleFieldKind` | Which control renders: a checkbox for a preference that is saved with the form, a switch<br>for state that applies immediately. |
 | `surface` | no | `"row" \| "card"` | `row` is a plain settings row; `card` is a bordered card that takes the checked<br>colour — the form `SwitchCard` presets. |
 | `value` | no | `boolean` | Controlled state. |
-| `defaultValue` | no | `boolean` |  |
-| `onValueChange` | no | `(checked: boolean) => void` |  |
+| `defaultValue` | no | `boolean` | The initial state, uncontrolled. |
+| `onValueChange` | no | `(checked: boolean) => void` | Called with the next state. |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
+| `invalid` | no | `boolean` | The error surface. The message stays on the `FormField`. |
 | `name` | no | `string` |  |
 | `uncheckedValue` | no | `string` | What the field submits when off. Unset, an unchecked control submits nothing (the<br>platform rule). Set, a hidden input always submits `"1"` when on and this when off.<br>`SwitchCard` sets `"0"`. |
 | `controlPosition` | no | `"leading" \| "trailing"` | Puts the control on the leading edge instead of the trailing one. |

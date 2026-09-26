@@ -18,18 +18,8 @@ export function CommandPage() {
 			/>
 
 			<Example id="command-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "CommandInput", type: "component", description: "The filter. Owns focus when the palette opens." },
-						{ name: "CommandEmpty", type: "component", description: "Shown when nothing matches. Not optional — a silent empty list reads as broken." },
-						{ name: "CommandGroup heading", type: "string", description: "A captioned block of rows." },
-						{ name: "CommandItem value / onSelect", type: "string / () => void", description: "value is what the filter matches; the label is what is read." },
-						{ name: "CommandShortcut", type: "component", description: "The key hint at the end of a row." },
-						{ name: "CommandDialog open / onOpenChange", type: "boolean", description: "The overlay form. The caller binds the shortcut." },
-						{ name: "CommandDialog commandProps", type: "CommandProps", description: "Configures the cmdk root the dialog owns: custom filtering, looping, labels, and other command behavior." },
-						{ name: "CommandSeparator", type: "component", description: "The rule between groups. Presentational and skipped by the keyboard, so arrowing through results never lands on it." },
-					]}
-				/>
+				<PropTable owners={["CommandDialog", "CommandGroup", "CommandItem"]} />
+				<PropTable symbols={["CommandInput", "CommandEmpty", "CommandShortcut", "CommandSeparator"]} />
 			</Example>
 		</ComponentPage>
 	)

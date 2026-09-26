@@ -13,6 +13,10 @@ import { defaultDataTableStrings } from "./table.strings"
 import type { DataTableActionsProps } from "./table.types"
 import styles from "./table.module.css"
 
+/**
+ * Row actions as a menu, as buttons, or whichever fits. `auto` measures the CONTAINER, not the
+ * window: whether three buttons fit in an actions column is a question about that column.
+ */
 export function DataTableActions<TData extends RowData>({
 	row,
 	actions,

@@ -2233,8 +2233,7 @@
       "import": "themelia-ui/base/navigation",
       "exports": [
         "Pagination",
-        "paginationRange",
-        "type PaginationLinkProps"
+        "paginationRange"
       ],
       "keywords": [
         "pagination",

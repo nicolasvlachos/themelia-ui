@@ -1,5 +1,5 @@
 import { MoreVerticalIcon } from "lucide-react"
-import { Fragment, isValidElement, useMemo, type ComponentProps, type ComponentType, type ReactElement, type ReactNode } from "react"
+import { Fragment, isValidElement, useMemo, type ComponentProps, type ComponentType, type ReactNode } from "react"
 
 import { Button, type ButtonStyle } from "@/components/base/buttons"
 import {
@@ -9,60 +9,102 @@ import {
 } from "@/components/base/dropdown-menu"
 import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
+import type { LinkRenderer } from "@/lib/navigation"
 import { useDefaults } from "@/lib/ui-provider"
 
 import styles from "./action-menu.module.css"
 import { splitActions } from "./context-actions"
 import { defaultActionMenuStrings, type ActionMenuStrings } from "./action-menu.strings"
 import type {
-	ActionDefinition, ActionIcon, ActionLinkRenderer, ActionMenuLabelVisibility, ResolvedAction } from "./action-menu.types"
+	ActionDefinition, ActionIcon, ActionMenuLabelVisibility, ResolvedAction } from "./action-menu.types"
 
 export interface ActionMenuProps {
-	/** Commands to offer. Destructive entries move last unless `preserveOrder` is set. */
+	/**
+	 * Commands to offer; `visible: false` omits one entirely. Destructive entries move last
+	 * unless `preserveOrder` is set.
+	 */
 	actions: readonly ActionDefinition[]
 	/** Trigger text. Omit for an icon-only trigger — `strings.trigger` names it then. */
 	label?: string
 	/** Trigger glyph. Defaults to the vertical ellipsis. */
 	icon?: ActionIcon
-	/** Overrides this menu's own copy. */
+	/**
+	 * Overrides this menu's own copy: `trigger` names an icon-only trigger, which without a
+	 * visible label has no other name.
+	 */
 	strings?: Partial<ActionMenuStrings>
+	/** Props for the default trigger button. Ignored when `renderTrigger` replaces it. */
 	buttonProps?: Omit<ComponentProps<typeof Button>, "children">
+	/**
+	 * How the surface lines up with the trigger along the side it opens on.
+	 * `UIProvider` defaults can change it.
+	 * @default "end"
+	 */
 	align?: "start" | "center" | "end"
+	/** Where the surface opens relative to the trigger. */
 	side?: "top" | "right" | "bottom" | "left"
+	/** Class for the menu surface itself: the escape hatch for styling it. */
 	contentClassName?: string
 	/**
-	 * Fixed surface width, any CSS length, or `"trigger"` to match the trigger. Left
-	 * unset the menu sizes to its widest row.
+	 * Fixed surface width: any CSS length, or `"trigger"` to match the trigger, for a menu that
+	 * reads as the field's own list. Left unset the menu sizes to its widest row.
 	 */
 	width?: string | number | "trigger"
+	/** A floor under the content-sized width. */
 	minWidth?: string | number
-	/** Ceiling for the content-sized default: a reading measure, so one long label doesn't widen every row. */
-	maxWidth?: string | number
-	closeOnSelect?: boolean
-	labelVisibility?: ActionMenuLabelVisibility
-	/** Keeps the incoming order instead of moving destructive entries last. */
-	preserveOrder?: boolean
-	/** Routes `href` actions through the app's router, keeping this framework-agnostic. */
-	renderLink?: ActionLinkRenderer
 	/**
-	 * Replaces the trigger entirely — an account block, a sidebar row, a tab. For different
-	 * words on a plain button, use `label` and `icon`.
+	 * Ceiling for the content-sized default: a reading measure rather than the viewport, so one
+	 * long label doesn't widen every row. Unset, the surface also stops at the space available.
+	 * @default "20rem"
+	 */
+	maxWidth?: string | number
+	/**
+	 * Closes the menu when an entry is chosen. Turn it off for a menu of checkbox rows, where
+	 * the reader is setting several things at once; an entry's own `closeOnSelect` overrides
+	 * it. `UIProvider` defaults can change it.
+	 * @default true
+	 */
+	closeOnSelect?: boolean
+	/**
+	 * Where the trigger's `label` shows. `responsive` hides it below `sm`, leaving the glyph,
+	 * for a toolbar that has to survive a phone; `hidden` hides it at every width.
+	 * `UIProvider` defaults can change it.
+	 * @default "visible"
+	 */
+	labelVisibility?: ActionMenuLabelVisibility
+	/** Keeps the declared order instead of moving destructive entries last. */
+	preserveOrder?: boolean
+	/**
+	 * Routes `href` actions through the app's router, keeping this framework-agnostic. Return
+	 * an element, not a function that spreads props: the menu merges its own props onto the
+	 * element, so the row keeps its menu item role.
+	 */
+	renderLink?: LinkRenderer
+	/**
+	 * Replaces the trigger entirely, for a menu hanging off something that is not a button:
+	 * an account block, a sidebar row, a tab. For different words on a plain button, use
+	 * `label` and `icon`.
 	 */
 	renderTrigger?: ComponentProps<typeof DropdownMenuTrigger>["render"]
 }
 
 export interface ActionButtonsProps {
-	/** The same definitions, side by side rather than collapsed into a menu. */
+	/**
+	 * The same definitions `ActionMenu` takes, side by side rather than collapsed into a menu:
+	 * that is the point of the shape. Each entry's `tone` and `buttonStyle` carry through to
+	 * its button.
+	 */
 	actions: readonly ActionDefinition[]
 	/**
 	 * How many render as buttons before the rest collapse into an overflow menu built from
 	 * the same array. Unset, every definition is a button.
 	 */
 	max?: number
-	/** Overrides this toolbar's own copy — the overflow trigger's name. */
+	/** Overrides this toolbar's own copy: `strings.overflow` names the overflow menu's trigger. */
 	strings?: Partial<ActionMenuStrings>
 	className?: string
-	renderLink?: ActionLinkRenderer
+	/** Routes `href` actions through the app's router, as `ActionMenu`'s `renderLink` does. */
+	renderLink?: LinkRenderer
 }
 
 function isDestructive(action: ActionDefinition) {
@@ -104,7 +146,7 @@ function renderMenuAction(
 	action: ActionDefinition,
 	index: number,
 	closeOnSelect: boolean,
-	renderLink?: ActionLinkRenderer,
+	renderLink?: LinkRenderer,
 	/* True when another row in the menu has an icon and this one does not. */
 	inset = false,
 ) {
@@ -222,7 +264,7 @@ function toGroups(actions: readonly ActionDefinition[]) {
 function renderGrouped(
 	actions: readonly ActionDefinition[],
 	closeOnSelect: boolean,
-	renderLink?: ActionLinkRenderer,
+	renderLink?: LinkRenderer,
 ) {
 	/* One label column for the whole menu: iconless rows are inset when any row has an icon. */
 	const anyIcon = actions.some((action) => action.icon != null)
@@ -371,7 +413,7 @@ export function ActionButtons({
 						<Button
 							key={actionKey(action, index)}
 							/* The anchor arrives complete; `render` keeps its own content. */
-							render={anchor as ReactElement}
+							render={anchor}
 							tone={action.tone ?? "primary"}
 							buttonStyle={buttonStyle}
 							className={cx(asLink && styles.linkButton, action.className)}

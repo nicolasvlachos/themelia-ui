@@ -31,6 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The identity strip that says which agent is answering.
+
 ```text
 ({ name, icon, avatar, subtitle, tone, status, variant, trailing, className, strings, }: AiAgentProps) => import("react").JSX.Element
 ```
@@ -79,6 +81,8 @@ Exclude<SemanticTone, "secondary">
 ### `AiArtifact`
 
 Kind: callable.
+
+The frame around a produced artifact: its title, its actions, and what it holds.
 
 ```text
 ({ title, subtitle, icon, copyText, children, collapsed, onOpen, actions, onDownload, className, strings, }: AiArtifactProps) => import("react").JSX.Element
@@ -129,6 +133,8 @@ Kind: interface.
 
 Kind: callable.
 
+One file a turn carried, as a chip or a thumbnail tile, with its upload progress.
+
 ```text
 ({ name, meta, kind, icon, thumbnailUrl, progress, errored, onOpen, onRemove, className, strings, }: AiAttachmentProps) => import("react").JSX.Element
 ```
@@ -172,6 +178,8 @@ Kind: interface.
 ### `AiChainOfThought`
 
 Kind: callable.
+
+The step timeline of an agent's plan.
 
 ```text
 ({ steps, hideHeader, streaming, className, strings, }: AiChainOfThoughtProps) => import("react").JSX.Element
@@ -223,6 +231,10 @@ Kind: type.
 
 Kind: callable.
 
+The agent header, the transcript, and the composer, wired together. No fetcher, router or
+streaming client: messages, input, queue and attachments are props, and submitting is a
+callback.
+
 ```text
 ({ messages, inputValue, onInputChange, onSubmit, onStop, streaming, disabled, attachments, onRemoveAttachment, onAttach, showAttach, agent, headerActions, queue, onCancelQueueItem, suggestions, onPickSuggestion, onMessageCopy, onMessageRegenerate, onAttachmentOpen, disableAutoScroll, slots, strings, className, }: AiChatProps<TSuggestionData>) => import("react").JSX.Element
 ```
@@ -257,6 +269,9 @@ Kind: interface.
 
 Kind: callable.
 
+The files attached to the turn being written, as one of the strips above the composer's
+field; a sent turn's attachments render as one too.
+
 ```text
 ({ attachments, onRemove, onOpen, className, }: AiChatAttachmentsStripProps) => import("react").JSX.Element | null
 ```
@@ -275,6 +290,9 @@ Kind: interface.
 ### `AiChatConversation`
 
 Kind: callable.
+
+The transcript. Exported, like the composer and the empty state, because a consumer building
+a different chat layout against the same data should get the parts without taking the shell.
 
 ```text
 ({ messages, renderMessage, intro, footer, empty, disableAutoScroll, className, strings, }: AiChatConversationProps) => import("react").JSX.Element
@@ -309,6 +327,10 @@ Kind: interface.
 ### `AiChatEmptyState`
 
 Kind: callable.
+
+The state before the first turn. Exported, like the transcript and the composer, because a
+consumer building a different chat layout against the same data should get the parts
+without taking the shell.
 
 ```text
 ({ title, description, icon, below, className, }: AiChatEmptyStateProps) => import("react").JSX.Element
@@ -388,6 +410,9 @@ Kind: interface.
 
 Kind: callable.
 
+The composer. Exported, like the transcript and the empty state, because a consumer building
+a different chat layout against the same data should get the parts without taking the shell.
+
 ```text
 ({ value, onValueChange, onSubmit, onStop, streaming, disabled, attachments, onRemoveAttachment, onAttach, showAttach, leadingActions, trailingActions, hideHint, minRows, maxRows, autoFocus, submitKeyLabel, className, strings, }: AiChatPromptInputProps) => import("react").JSX.Element
 ```
@@ -436,18 +461,18 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `messages` | yes | `readonly AiChatMessageData[]` | Oldest first. |
-| `inputValue` | yes | `string` |  |
-| `onInputChange` | yes | `(value: string) => void` |  |
-| `onSubmit` | no | `(values: AiChatSubmitValues) => void` |  |
-| `onStop` | no | `() => void` |  |
-| `streaming` | no | `boolean` |  |
+| `messages` | yes | `readonly AiChatMessageData[]` | Oldest first. Each carries `parts`, which is where the mix lives — text, reasoning, a chain<br>of thought, a tool call, code, sources, a task, an artifact, a confirmation, attachments,<br>or custom. |
+| `inputValue` | yes | `string` | The composer's text. Controlled: the composer holds no draft of its own, so clearing it<br>after a submit is the consumer's, which is also where the failed-send-restores-the-text<br>case lives. |
+| `onInputChange` | yes | `(value: string) => void` | Receives every edit to `inputValue`. |
+| `onSubmit` | no | `(values: AiChatSubmitValues) => void` | Fires on Enter or the send button. An attachment on its own is a valid message — “here,<br>look at this” needs no words. |
+| `onStop` | no | `() => void` | What the stop control calls while `streaming`. |
+| `streaming` | no | `boolean` | Flips submit to stop. Separate from `disabled`, because a streaming chat is still readable<br>and still cancellable; a disabled one is neither. |
 | `disabled` | no | `boolean` |  |
 | `attachments` | no | `readonly AiChatAttachment[]` |  |
 | `onRemoveAttachment` | no | `(id: string) => void` |  |
 | `onAttach` | no | `() => void` |  |
 | `showAttach` | no | `boolean` |  |
-| `agent` | no | `AiChatAgent \| null` | `null` hides the header strip. |
+| `agent` | no | `AiChatAgent \| null` | Name, icon, subtitle, tone and status for the header strip. `null` hides the strip<br>entirely. |
 | `headerActions` | no | `ReactNode` |  |
 | `queue` | no | `readonly AiChatQueueItem[]` |  |
 | `onCancelQueueItem` | no | `(id: string) => void` |  |
@@ -457,13 +482,15 @@ Kind: interface.
 | `onMessageRegenerate` | no | `(message: AiChatMessageData) => void` |  |
 | `onAttachmentOpen` | no | `(messageId: string, attachmentId: string) => void` |  |
 | `disableAutoScroll` | no | `boolean` |  |
-| `slots` | no | `AiChatSlots` |  |
+| `slots` | no | `AiChatSlots` | Seven regions replaced outright — `header`, `intro`, `belowMessages`, `empty`, `queue`,<br>`suggestions`, `input` — plus `renderMessage` for a turn. This is the seam that keeps a<br>prop per idea out of the API. |
 | `strings` | no | `Partial<AiChatStrings>` |  |
 | `className` | no | `string` |  |
 
 ### `AiChatQueue`
 
 Kind: callable.
+
+The strip above the composer holding the messages waiting to send.
 
 ```text
 ({ items, hideHeader, onCancel, className, strings, }: AiChatQueueProps) => import("react").JSX.Element | null
@@ -565,6 +592,8 @@ Kind: interface.
 
 Kind: callable.
 
+The strip above the composer offering prompt suggestions.
+
 ```text
 ({ suggestions, onPick, hideHeader, className, strings, }: AiChatSuggestionsRowProps<TData>) => import("react").JSX.Element | null
 ```
@@ -593,6 +622,10 @@ Kind: interface.
 
 Kind: callable.
 
+Code as produced. There is deliberately no syntax highlighting — that means shipping a
+grammar per language, and a chat can be handed any of them. Bring a highlighter and pass its
+output as `AiArtifact` children, or replace the code block.
+
 ```text
 ({ code, language, filename, showLineNumbers, highlightLines, hideHeader, maxHeight, headerActions, onCopy, className, strings, }: AiCodeBlockProps) => import("react").JSX.Element
 ```
@@ -607,7 +640,7 @@ Kind: interface.
 | `language` | no | `string` |  |
 | `filename` | no | `string` |  |
 | `showLineNumbers` | no | `boolean` |  |
-| `highlightLines` | no | `readonly number[]` | 1-indexed. |
+| `highlightLines` | no | `readonly number[]` | 1-indexed. The gutter and the line share a grid row, so a highlight covers both rather than<br>stopping at the number. |
 | `hideHeader` | no | `boolean` |  |
 | `maxHeight` | no | `number \| string` |  |
 | `headerActions` | no | `ReactNode` |  |
@@ -629,6 +662,9 @@ Kind: interface.
 ### `AiConfirmation`
 
 Kind: callable.
+
+The approval prompt that stops an agent before it acts. A confirmation is a decision surface:
+it does not auto-dismiss.
 
 ```text
 ({ title, description, icon, tone, status, onApprove, onReject, approveLabel, rejectLabel, details, className, strings, }: AiConfirmationProps) => import("react").JSX.Element
@@ -734,6 +770,8 @@ Kind: type.
 
 Kind: callable.
 
+The reasoning disclosure: the model's trace, and how long it thought.
+
 ```text
 ({ children, streaming, durationSeconds, expandWhileStreaming, defaultExpanded, expanded: expandedProp, onExpandedChange, className, strings, }: AiReasoningProps) => import("react").JSX.Element
 ```
@@ -747,7 +785,7 @@ Kind: interface.
 | `children` | no | `ReactNode` | The trace. A string is rendered pre-wrapped; anything else is rendered as given. |
 | `streaming` | no | `boolean` |  |
 | `durationSeconds` | no | `number` |  |
-| `expandWhileStreaming` | no | `boolean` | Opens while streaming and closes when it stops. |
+| `expandWhileStreaming` | no | `boolean` | Opens on the edge where streaming starts and closes on the edge where it stops, so a reader<br>who opened or closed it in between is not fought. |
 | `defaultExpanded` | no | `boolean` |  |
 | `expanded` | no | `boolean` |  |
 | `onExpandedChange` | no | `(expanded: boolean) => void` |  |
@@ -769,6 +807,11 @@ Kind: interface.
 ### `AiShimmer`
 
 Kind: callable.
+
+“Thinking…” as a swept highlight rather than a spinner. A spinner says something is
+happening; a sweep says something is being produced, which is the difference the reader is
+waiting on. It paints through `background-clip`, so its colour is transparent by design — a
+contrast probe reading `color` alone will call it a 1:1 failure.
 
 ```text
 ({ children, paused, duration, className, }: AiShimmerProps) => import("react").JSX.Element
@@ -802,6 +845,9 @@ Kind: interface.
 
 Kind: callable.
 
+What the model read. Sources are listed rather than footnoted, because a reader checking an
+answer is looking for the list, not for a marker in the prose.
+
 ```text
 ({ sources, variant, maxAvatars, expanded: expandedProp, defaultExpanded, onExpandedChange, onSelect, className, strings, }: AiSourcesProps) => import("react").JSX.Element
 ```
@@ -818,7 +864,7 @@ Kind: interface.
 | `expanded` | no | `boolean` |  |
 | `defaultExpanded` | no | `boolean` |  |
 | `onExpandedChange` | no | `(expanded: boolean) => void` |  |
-| `onSelect` | no | `(source: AiSourceItem, index: number) => void` | Preferred over `url`, so a source can route inside the app. |
+| `onSelect` | no | `(source: AiSourceItem, index: number) => void` | Wins over `url`, so an app that routes internally is not forced to hand the reader a full<br>page load to reach its own document. |
 | `className` | no | `string` |  |
 | `strings` | no | `Partial<Strings.AiSourcesStrings>` |  |
 
@@ -844,6 +890,9 @@ Kind: type.
 ### `AiTask`
 
 Kind: callable.
+
+One task of an agent's plan, with its status and its sub-tasks. A task reports what is being
+done, not merely that something is.
 
 ```text
 ({ task, density, indent, className, strings, }: AiTaskProps) => import("react").JSX.Element
@@ -897,6 +946,10 @@ Kind: interface.
 
 Kind: callable.
 
+One tool call: its name, status, arguments and result. With neither args nor result (nor an
+error) the header is a plain row, not a disclosure — a control that opens an empty panel is
+worse than no control.
+
 ```text
 ({ name, status, icon, args, result, error, durationMs, expanded: expandedProp, defaultExpanded, onExpandedChange, className, strings, }: AiToolCallProps) => import("react").JSX.Element
 ```
@@ -908,7 +961,7 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `name` | yes | `string` |  |
-| `status` | yes | `AiToolCallStatus` |  |
+| `status` | yes | `AiToolCallStatus` | Where the call is, as the header's badge: its tone, glyph and label. |
 | `icon` | no | `LucideIcon` |  |
 | `args` | no | `ReactNode` |  |
 | `result` | no | `ReactNode` |  |
@@ -1083,6 +1136,11 @@ AiToolCallStrings
 ### `useAiChatScroll`
 
 Kind: callable.
+
+The stick-to-bottom behaviour without the layout, for a consumer building their own
+transcript: new content scrolls it only while the reader is at the bottom. Returns the
+`containerRef` for the scroll viewport, the `endRef` sentinel for the end of the content,
+`isAtBottom`, and `scrollToBottom`.
 
 ```text
 ({ threshold, dependency, disableAutoScroll, }?: UseAiChatScrollOptions) => UseAiChatScrollResult

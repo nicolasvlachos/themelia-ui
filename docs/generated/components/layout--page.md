@@ -43,25 +43,29 @@ Kind: const.
 PageHeaderStrings
 ```
 
-### `LayoutLinkRenderer`
+### `LinkRenderer`
 
 Kind: type.
 
-The navigation seam.
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
 
 ```tsx fragment — declaration JSDoc excerpt
-<AppSidebar renderLink={({ href, children, ...rest }) => (
-  <Link to={href ?? "#"} {...rest}>{children}</Link>
-)} />
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
 ```
 
 ```text
-(props: LayoutLinkRenderProps) => ReactNode
+(props: LinkRenderProps) => ReactElement
 ```
 
-### `LayoutLinkRenderProps`
+### `LinkRenderProps`
 
 Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -72,9 +76,11 @@ Kind: interface.
 | `rel` | no | `string` |  |
 | `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
 | `"aria-label"` | no | `string` |  |
-| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the shell styles the row itself. |
-| `disabled` | no | `boolean` |  |
-| `external` | no | `boolean` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ### `Page`
 
@@ -130,9 +136,9 @@ Extends: `LayoutNavigationAdapter`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `actions` | no | `readonly PageAction[]` |  |
+| `actions` | no | `readonly PageAction[]` | The entries: `ActionDefinition` data plus a `placement`. |
 | `display` | no | `PageActionsDisplay` | `auto` watches the width and collapses everything into a menu below `breakpoint`;<br>`inline` and `menu` are the two fixed ends. |
-| `breakpoint` | no | `number` | Viewport width, in px, below which `auto` collapses to a menu. Defaults to the `lg` breakpoint. |
+| `breakpoint` | no | `number` | Viewport width, in px, below which `auto` collapses to a menu. Defaults to the `lg`<br>breakpoint, 1024px. |
 | `maxInlineActions` | no | `number` | How many entries render as buttons before the rest overflow. |
 | `strings` | no | `Partial<PageActionsStrings>` |  |
 | `className` | no | `string` |  |
@@ -162,15 +168,15 @@ Extends: `LayoutNavigationAdapter`, `Pick<PageHeadingProps, "eyebrow" | "descrip
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `title` | yes | `ReactNode` |  |
-| `titleIcon` | no | `ComponentType<{ className?: string; }>` | Decorative glyph before the title. Centred on the title line, never on the block. |
+| `titleIcon` | no | `ComponentType<{ className?: string; }>` | Glyph before the title, centred on the title line, never on the block. Decorative by<br>default; `titleIconHref` or `onTitleIconClick` makes it a control with a name. |
 | `titleIconHref` | no | `string` | Makes the title icon a link. Routed through `renderLink` like everything else. |
 | `onTitleIconClick` | no | `() => void` | Makes the title icon a button. Takes precedence over `titleIconHref`. |
 | `strings` | no | `Partial<PageHeaderStrings>` | Overrides this header's own copy: the back control's and the title icon's accessible names. |
-| `backHref` | no | `string` | Destination for the back control. Either this or `onBack` makes it appear. |
-| `onBack` | no | `() => void` |  |
-| `titleBadges` | no | `PageHeadingBadge[]` | Status marks beside the title, as data — the tone comes from the kit's vocabulary. |
+| `backHref` | no | `string` | Destination for the back control, which is then a real link routed through<br>`renderLink` — middle-clickable, and openable in a new tab. Either this or `onBack`<br>makes it appear. |
+| `onBack` | no | `() => void` | Makes the back control a button, which wins over `backHref`. Either this or `backHref`<br>makes it appear. |
+| `titleBadges` | no | `PageHeadingBadge[]` | Status marks beside the title, as data, passed through to the heading — the tone comes<br>from the kit's vocabulary. |
 | `actions` | no | `ReactNode` |  |
-| `slots` | no | `PageHeaderSlots` |  |
+| `slots` | no | `PageHeaderSlots` | Replaces a structural region without forking the header. |
 | `children` | no | `ReactNode` |  |
 
 ### `PageHeaderSlots`
@@ -202,8 +208,8 @@ Extends: `Omit<React.ComponentProps<"div">, "title">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `header` | no | `PageHeaderProps` | The title block, as `PageHeader` props. Omit for a page that supplies its own header. |
-| `maxWidth` | no | `ContainerMaxWidth` |  |
-| `gutter` | no | `ContainerGutter` |  |
+| `maxWidth` | no | `ContainerMaxWidth` | The reading measure, handed to the Container underneath. |
+| `gutter` | no | `ContainerGutter` | The inline gutter, handed to the Container underneath. |
 | `bodyProps` | no | `React.ComponentProps<"div">` | Attributes for the body region, for a page that needs to address it. |
 
 ## Preview recipes

@@ -23,7 +23,9 @@ export interface WorkspaceRecordMetadataItem {
 
 export interface WorkspaceRecordHeaderProps
 	extends Omit<React.ComponentProps<"div">, "title"> {
+	/** What the record IS. Gives way before the badges do. */
 	title: React.ReactNode
+	/** One line under the title. */
 	description?: React.ReactNode
 	/** An avatar, an icon medallion, a thumbnail. */
 	media?: React.ReactNode
@@ -31,7 +33,10 @@ export interface WorkspaceRecordHeaderProps
 	badges?: React.ReactNode
 	/** A single prominent status, rendered after the badges. */
 	status?: React.ReactNode
-	/** Key/value pairs, drawn inline: each label and its value are one item, read as one fact. */
+	/**
+	 * Key/value pairs, drawn as an inline MetadataList: each label and its value are one item,
+	 * read as one fact, with a middle dot between items.
+	 */
 	metadata?: WorkspaceRecordMetadataItem[]
 	/** Overrides this header's own copy — the names of its two unlabelled regions. */
 	strings?: Partial<WorkspaceRecordHeaderStrings>
@@ -39,6 +44,7 @@ export interface WorkspaceRecordHeaderProps
 	actions?: React.ReactNode
 	/** A second, quieter row beneath — filters, tabs, bulk controls. */
 	secondaryActions?: React.ReactNode
+	/** The heading element, for the document outline. */
 	headingLevel?: 1 | 2 | 3
 }
 

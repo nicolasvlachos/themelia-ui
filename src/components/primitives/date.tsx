@@ -12,8 +12,16 @@ import { formatDateRange, parseDateInput, type DateInput } from "./date.format"
 
 /** What DatePrimitive, Time, and DateTime all take. Three components, one shape. */
 export interface DateBaseProps extends SpanProps {
+	/**
+	 * The moment to show: whatever the API returned — a Date, an ISO string or an epoch
+	 * number. Parsed once, here.
+	 */
 	value?: DateInput
-	/** date-fns pattern. Falls back to the scope's `dateFormat`. */
+	/**
+	 * A date-fns pattern, when the default is not what this column needs. `DatePrimitive`
+	 * falls back to the scope's `dates.format`, `Time` to its `dates.timeFormat`, and
+	 * `DateTime` to the two joined.
+	 */
 	pattern?: string
 	emptyLabel?: ReactNode
 	size?: ValueProps["size"]
@@ -23,6 +31,11 @@ export interface DateBaseProps extends SpanProps {
 	ref?: Ref<HTMLSpanElement>
 }
 
+/**
+ * A date in the scope's pattern. Also exported as `Date`, its natural name: `DatePrimitive`
+ * exists because `Date` collides with the global in a file that also constructs one, so
+ * import whichever reads better at the call site.
+ */
 export function DatePrimitive({ value, pattern, ...props }: DateBaseProps) {
 	const { format, locale } = useDatesConfig()
 	const date = parseDateInput(value)
@@ -33,29 +46,52 @@ export function DatePrimitive({ value, pattern, ...props }: DateBaseProps) {
 	)
 }
 
-export function Time({ value, pattern = "HH:mm", ...props }: DateBaseProps) {
-	const { locale } = useDatesConfig()
+/**
+ * The same value as a time of day. Three components rather than a granularity prop, because
+ * a column shows one of them and never switches.
+ */
+export function Time({ value, pattern, ...props }: DateBaseProps) {
+	const { locale, timeFormat } = useDatesConfig()
 	const date = parseDateInput(value)
 	return (
 		<ValueRoot hook="time" numeric {...props}>
-			{date ? formatDateFns(date, pattern, { locale }) : undefined}
+			{date ? formatDateFns(date, pattern ?? timeFormat ?? "HH:mm", { locale }) : undefined}
 		</ValueRoot>
 	)
 }
 
+/**
+ * The same value as a date and a time. Three components rather than a granularity prop,
+ * because a column shows one of them and never switches.
+ */
 export function DateTime({ value, pattern, ...props }: DateBaseProps) {
-	const { format, locale } = useDatesConfig()
+	const { format, locale, timeFormat } = useDatesConfig()
 	const date = parseDateInput(value)
 	return (
 		<ValueRoot hook="date-time" {...props}>
-			{date ? formatDateFns(date, pattern ?? `${format} HH:mm`, { locale }) : undefined}
+			{date ? formatDateFns(date, pattern ?? `${format} ${timeFormat ?? "HH:mm"}`, { locale }) : undefined}
 		</ValueRoot>
 	)
 }
 
 export interface DateRangeProps extends Omit<DateBaseProps, "value"> {
+	/**
+	 * Where the range begins. Either end may be absent — an open range is a real state, not
+	 * an error.
+	 */
 	start?: DateInput
+	/**
+	 * Where the range ends. Either end may be absent — an open range is a real state, not an
+	 * error.
+	 */
 	end?: DateInput
+	/**
+	 * A date-fns pattern for both ends, when the collapsing is not wanted: only the default
+	 * drops a repeated month.
+	 * @default "d MMM yyyy"
+	 */
+	pattern?: string
+	/** Between the two ends. An en dash by default. */
 	separator?: string
 }
 
@@ -83,11 +119,16 @@ export interface RelativeTimeProps extends Omit<DateBaseProps, "pattern"> {
 	 * row of dates reads as a length rather than a moment.
 	 */
 	addSuffix?: boolean
-	/** Distinguishes "less than a minute" from "30 seconds". */
+	/**
+	 * Distinguishes "less than a minute" from "30 seconds". Only worth it for a feed measured
+	 * in seconds.
+	 */
 	includeSeconds?: boolean
 	/**
 	 * Replaces the wording for this one value. Falls back to the scope's
-	 * `dates.formatRelativeTime`, and then to date-fns.
+	 * `dates.formatRelativeTime`, and then to date-fns, whose built-in wording the scope's
+	 * `dates.locale` translates: a date-fns locale OBJECT, since the locales are modules and
+	 * cannot be looked up from a BCP-47 tag without putting every language in every bundle.
 	 */
 	formatRelativeTime?: (date: Date, now: Date) => string
 }

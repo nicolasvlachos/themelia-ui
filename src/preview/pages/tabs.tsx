@@ -29,20 +29,16 @@ export function TabsPage() {
 			</Example>
 
 			<Example id="tabs-api" title="API">
-				<PropTable owner="Tabs"
-					rows={[
-						{ name: "value", type: "string", description: "Controlled selection. Pair with onValueChange." },
-						{ name: "TabList variant", type: '"underline" | "enclosed" | "pill"', default: '"underline"', description: "Structural presentation — a rule with an indicator, a tinted rail, or filled chips with no rule. pill is for a row that picks what one list shows (saved views, result types); OverflowTabBar draws it." },
-						{ name: "TabList label", type: "string", description: "Accessible name for the tab set." },
-						{ name: "TabList edgeFade", type: "boolean", default: "false", description: "Fade only the edges with hidden tabs; updates while scrolling and supports RTL." },
-						{ name: "TabList strings", type: "Partial<TabListStrings>", description: "Accessible labels for the automatic previous and next scroll controls." },
-						{ name: "TabPanel value", type: "string", description: "Which tab the panel belongs to." },
-						{ name: "OverflowTabBar items", type: "OverflowTabItem[]", description: "id, label, and optionally an icon, a badge, an href, or disabled. A tab with an href is a link; without one it is a button." },
-						{ name: "OverflowTabBar value / onValueChange", type: "string / (id) => void", description: "The active section. It owns no panels — the caller renders what the id selects." },
-						{ name: "OverflowTabBar strings.label", type: "string", default: '"Sections"', description: "Accessible name for the row." },
-						{ name: "NavigationTabs variant", type: '"underline" | "pill"', default: '"underline"', description: "The same chip presentation as TabList variant=\"pill\", for a row of routes." },
-						{ name: "NavigationTabs items / currentPath / renderLink", type: "NavigationTabItem[] / string / LayoutLinkRenderer", description: "Tabs that NAVIGATE, so they render anchors in a <nav> and the active one follows from the current path. Tabs and TabPanel are for panels in one page; this is for routes, and mixing them is how a browser back button stops working." },
-						{ name: "LanguageSwitcher locales / value / onSelect / variant", type: "LocaleOption[] / string / (value) => void / \"pills\" | \"menu\"", description: "The locale control. pills for two or three languages, where every option is worth showing; menu once there are more, where a row of pills becomes a second navigation." },
+				<PropTable
+					owners={[
+						"Tabs",
+						"TabList",
+						"Tab",
+						"TabPanel",
+						"OverflowTabBar",
+						"OverflowTabBarStrings",
+						"NavigationTabs",
+						"LanguageSwitcher",
 					]}
 				/>
 			</Example>

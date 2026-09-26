@@ -1,4 +1,4 @@
-import type { ComponentType, ReactElement, ReactNode } from "react"
+import type { ComponentType, ReactNode } from "react"
 
 import type { ButtonStyle, ButtonTone } from "@/components/base/buttons"
 
@@ -7,21 +7,20 @@ export type ActionIcon = ComponentType<{ className?: string }> | ReactNode
 
 export type ActionMenuLabelVisibility = "visible" | "responsive" | "hidden"
 
-export interface ActionLinkRenderProps {
-	href: string
-	children?: ReactNode
-	target?: string
-	rel?: string
-	external?: boolean
-	disabled?: boolean
-}
-
+/** One command, in the shape `ActionMenu`, `ActionButtons` and a card's `actions` all take. */
 export interface ActionDefinition {
 	/** Stable key. Falls back to a string `label`, then the index. */
 	id?: string
+	/**
+	 * What the entry says. The only part of the row that gives way: a long label truncates
+	 * instead of pushing the shortcut or trailing content off.
+	 */
 	label: ReactNode
 	icon?: ActionIcon
-	/** `checkbox` renders a toggle driven by `checked` / `onCheckedChange`. */
+	/**
+	 * `checkbox` renders a toggle driven by `checked` / `onCheckedChange`.
+	 * @default "item"
+	 */
 	type?: "item" | "checkbox"
 	/**
 	 * Renders the entry as a link. A native `<a href>` by default, which is a full page
@@ -49,7 +48,10 @@ export interface ActionDefinition {
 	tone?: ButtonTone
 	/** Treatment when the action renders as a button. `link` is a ghost that underlines. */
 	buttonStyle?: ButtonStyle | "link"
-	/** `false` omits the action entirely. */
+	/**
+	 * `false` omits the action entirely.
+	 * @default true
+	 */
 	visible?: boolean
 	disabled?: boolean
 	/** Overrides the menu's `closeOnSelect` for this entry. */
@@ -58,8 +60,6 @@ export interface ActionDefinition {
 	/** Replaces the rendered entry — a framework `<Link>`, for instance. */
 	render?: ReactNode
 }
-
-export type ActionLinkRenderer = (props: ActionLinkRenderProps) => ReactElement
 
 /** Where an action renders when a set is split between buttons and a menu. */
 export type ActionPlacement = "auto" | "inline" | "menu"
@@ -73,13 +73,23 @@ export type ActionPredicate<TContext> = boolean | ((context: TContext) => boolea
  * activity actions extend it, and `resolveContextActions` resolves them.
  */
 export interface ContextAction<TContext> extends Omit<ActionDefinition, "onClick" | "visible" | "disabled"> {
+	/** Receives the subject the set was resolved against. */
 	onClick?: (context: TContext) => void
-	/** `false`, or a predicate returning false, omits the action for that subject. */
+	/**
+	 * `false`, or a predicate returning false, omits the action for that subject.
+	 * @default true
+	 */
 	visible?: ActionPredicate<TContext>
+	/**
+	 * Worked out per subject, so a locked row shows the action greyed rather than missing.
+	 * @default false
+	 */
 	disabled?: ActionPredicate<TContext>
 	/**
-	 * Forces this entry to one side when the set is split between buttons and a menu: `menu`
-	 * keeps it out of the button row, `inline` pins it there, `auto` lets the renderer decide.
+	 * Forces this entry to one side when the set is split between buttons and a menu:
+	 * `inline` stays a button whatever `max` is, `menu` always overflows, and `auto` fills
+	 * the buttons in order up to `max`.
+	 * @default "auto"
 	 */
 	placement?: ActionPlacement
 }

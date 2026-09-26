@@ -43,16 +43,16 @@ Extends: `Omit<ComponentPropsWithoutRef<"span">, "children" | "onCopy" | "onErro
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `string` | Value written to the clipboard. |
-| `displayValue` | no | `ReactNode` | Display content, when it differs from the copied value. |
-| `mono` | no | `boolean` | Monospace the display content. For ids, keys, and hashes. |
-| `truncate` | no | `boolean` | Truncates the display content at the width the caller allots. |
-| `compact` | no | `boolean` | Sizes the trigger to the text rather than a control's height, for values inside a list<br>row. The target keeps its minimum hit area. |
-| `strings` | no | `Partial<CopyableStrings>` | Overrides this control's own copy. |
-| `silent` | no | `boolean` | Suppresses the toasts. The copied state on the control is the confirmation then. |
-| `buttonProps` | no | `Omit<ButtonProps, "children" \| "onClick" \| "type">` |  |
-| `onCopy` | no | `(value: string) => void` |  |
-| `onError` | no | `(error: unknown) => void` |  |
+| `value` | yes | `string` | What lands on the clipboard. |
+| `displayValue` | no | `ReactNode` | Shown instead of the raw value, when it differs from what is copied. A rich node is<br>rendered as-is. |
+| `mono` | no | `boolean` | Monospaced, tabular figures for the display content — for an id, a key or a hash, where<br>one character matters. |
+| `truncate` | no | `boolean` | Truncates the display content at the width the caller allots, keeping the button in view. |
+| `compact` | no | `boolean` | Sizes the trigger to the text rather than to a control's height. A control's height is<br>right beside a field and wrong inside a list row where the value is a description under<br>a title: there the button is twice the height of the line it belongs to, and the row's<br>rhythm bends around it. Every behaviour is unchanged, and the target keeps its minimum<br>hit area; what it gives up is the pointer target a standalone control is entitled to. |
+| `strings` | no | `Partial<CopyableStrings>` | Overrides this control's own copy. The name changes between `copy` and `copied`, because<br>the confirmation is the name for a screen reader. |
+| `silent` | no | `boolean` | Suppresses both toasts. The copied state on the control is the confirmation then. |
+| `buttonProps` | no | `Omit<ButtonProps, "children" \| "onClick" \| "type">` | Passed to the copy control, for a tone or a treatment that suits the surface. |
+| `onCopy` | no | `(value: string) => void` | Called with the value once it is on the clipboard. |
+| `onError` | no | `(error: unknown) => void` | Called when the clipboard refuses — an insecure origin, a denied permission. A copy that<br>fails silently is worse than one that never offered. |
 
 ### `CopyableStrings`
 
@@ -77,6 +77,11 @@ CopyableStrings
 
 Kind: callable.
 
+Copy a value, confirm it, and reset — the hook `Copyable` is built on, and the shared
+implementation for every copy surface. `copy(value)` resolves `true` or `false` rather than
+rejecting. Takes `confirmMs`, `onCopy`, `onError`, and `write` — a destination for where
+`navigator.clipboard` is absent.
+
 ```text
 ({ confirmMs, write, onCopy, onError, }?: UseCopyToClipboardOptions) => UseCopyToClipboardResult
 ```
@@ -85,9 +90,7 @@ Kind: callable.
 
 Kind: interface.
 
-Copy a value, confirm it, and reset — the shared implementation for every copy surface.
-The window is keyed off a counter, not a boolean: re-setting `true` is a no-op, so a
-second copy would inherit the first one's remaining window.
+What `useCopyToClipboard` takes.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |

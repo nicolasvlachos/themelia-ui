@@ -158,7 +158,11 @@ export interface CommentsAttachmentsConfig {
 	/** Passed straight to the file input. */
 	accept?: string
 	disabled?: boolean
-	/** Receives a refusal before any upload starts. */
+	/**
+	 * Receives a refusal before any upload starts, as a code and the number behind it — never a
+	 * sentence. The hook has no idea what language the reader speaks, and “too large” is useless
+	 * without the limit.
+	 */
 	onReject?: (rejection: CommentAttachmentRejection) => void
 }
 
@@ -221,7 +225,12 @@ export interface CommentsSlots<
 	emptySlot?: ReactNode
 	headerSlot?: ReactNode
 	footerSlot?: ReactNode
+	/**
+	 * Replaces a comment. It receives `defaultItem`, so a consumer can wrap the kit's comment
+	 * rather than rebuild it.
+	 */
 	renderItem?: (context: CommentRenderItemContext<TUser, TMeta, TResource>) => ReactNode
+	/** Replaces an attachment's chip. */
 	renderAttachment?: (attachment: CommentAttachment) => ReactNode
 	/** Overrides the mention registry's own `renderChip`. */
 	renderReference?: (reference: Mention<TResource>) => ReactNode
@@ -234,12 +243,15 @@ export interface CommentThreadOptions<
 	TResource extends string = string,
 > {
 	/**
-	 * Extra entries for each comment's overflow menu, bound to the comment (`visible`,
-	 * `disabled` and `onClick` receive it). Listed above pin, edit and delete; `destructive` sorts last.
+	 * Extra entries for each comment's overflow menu — copy a link, report, resolve. Bound to the
+	 * comment like a table row's actions: `visible` and `disabled` may be predicates, and
+	 * `onClick` receives the comment. They sit after pin and edit, before delete; a
+	 * `destructive` entry still sorts last.
 	 */
 	commentActions?: ContextActionSource<CommentData<TUser, TMeta, TResource>>
 	/**
-	 * Latest replies shown before earlier ones fold behind "Show N earlier replies". `0` shows all.
+	 * Replies an open thread shows; the earlier ones fold behind "Show N earlier replies". The
+	 * LAST ones are kept, so list replies oldest first. `0` shows them all.
 	 * @default 3
 	 */
 	maxVisibleReplies?: number
@@ -249,12 +261,14 @@ export interface CommentThreadOptions<
 	 */
 	clampLines?: number
 	/**
-	 * Attachments shown before the rest fold behind "Show N more". `0` shows every file.
+	 * Attachments shown before the rest fold behind "Show N more". Folding one file saves
+	 * nothing, so the fold starts at two hidden. `0` shows every file.
 	 * @default 3
 	 */
 	maxVisibleAttachments?: number
 	/**
-	 * The reactions "Add reaction" offers. One reacts immediately; more open a picker.
+	 * The reactions "Add reaction" offers. One reacts at once; more open a picker that marks the
+	 * reader's own. Every choice arrives through `onReact`.
 	 * @default ["👍"]
 	 */
 	reactionChoices?: readonly string[]
@@ -339,11 +353,25 @@ export interface CommentsProps<
 > extends CommentsAccessors,
 		CommentThreadOptions<TUser, TMeta, TResource>,
 		CommentsSlots<TUser, TMeta, TResource> {
+	/**
+	 * What the thread hangs off: an `id` and a `type`, and a `moduleKey` where one record carries
+	 * several threads. Passed straight through to `onSubmit`. Changing it clears the draft — a
+	 * composer that stays mounted must not carry one record's text to the next.
+	 */
 	context: CommentableContext
-	/** In display order. Replies are nested by `replyToId`, not by position. */
+	/**
+	 * Flat, in display order. Replies nest by `replyToId`, not by position, so one posted an hour
+	 * late still appears under its parent. A reply whose parent is not in the array is promoted
+	 * rather than dropped.
+	 */
 	comments: ReadonlyArray<CommentData<TUser, TMeta, TResource>>
 	canComment?: boolean
 	canModerate?: boolean
+	/**
+	 * Where the composer sits — a real per-thread decision: an activity log reads newest-first
+	 * and a discussion reads like a chat, and the same page can want both. Replies and edits open
+	 * inside the thread either way.
+	 */
 	composerPosition?: CommentsComposerPosition
 	maxAttachments?: number
 	allowAttachments?: boolean
@@ -351,21 +379,44 @@ export interface CommentsProps<
 	allowReplies?: boolean
 	/** Drops the card chrome, for a thread already inside a panel. */
 	bare?: boolean
-	/** `false` hides the title outright. */
+	/** The heading. `false` hides it outright. */
 	title?: ReactNode | false
+	/**
+	 * Posts a comment or a reply. `helpers.reset()` is what clears the composer — a resolved
+	 * promise is not proof of success, and a server answering validation with a 200 would
+	 * otherwise throw away what the writer typed.
+	 */
 	onSubmit?: CommentsConfig<TUser, TMeta, TResource>["onSubmit"]
+	/** Deletes a comment, after a confirmation unless `confirmDelete` is off. */
 	onDelete?: CommentsConfig<TUser, TMeta, TResource>["onDelete"]
-	/** Asks before deleting. Off when the app already confirms upstream. */
+	/**
+	 * Asks before deleting. The confirmation is opt-out because deleting takes the replies with
+	 * it; turn it off when the app already asks upstream.
+	 */
 	confirmDelete?: boolean
 	onAttachmentRemove?: (commentId: string, attachmentId: string) => void | Promise<void>
+	/** Saves an edit. As with `onSubmit`, `helpers.reset()` is what clears the composer. */
 	onUpdate?: CommentsConfig<TUser, TMeta, TResource>["onUpdate"]
 	onAfterMutate?: CommentsConfig<TUser, TMeta, TResource>["onAfterMutate"]
 	onError?: CommentsConfig<TUser, TMeta, TResource>["onError"]
 	onPinToggle?: CommentsConfig<TUser, TMeta, TResource>["onPinToggle"]
 	onReact?: CommentsConfig<TUser, TMeta, TResource>["onReact"]
 	onReply?: CommentsConfig<TUser, TMeta, TResource>["onReply"]
+	/**
+	 * The mention registry, as `useMentions` takes it. Without it the reference control does not
+	 * appear.
+	 */
 	resources?: CommentsConfig<TUser, TMeta, TResource>["resources"]
+	/**
+	 * The fallback search, for a mention kind that registers neither `search` nor
+	 * `suggestions`.
+	 */
 	onResourceSearch?: CommentsConfig<TUser, TMeta, TResource>["onResourceSearch"]
+	/**
+	 * Uploads: `onUpload`, `maxSize`, `maxFiles`, `accept`. Without `onUpload` there is no
+	 * attachment control. The uploader resolves to a `CommentAttachment` with a permanent `url`;
+	 * the composer submits what it returns, not the file it was given.
+	 */
 	attachments?: CommentsAttachmentsConfig
 	sanitizer?: CommentsConfig<TUser, TMeta, TResource>["sanitizer"]
 	strings?: Partial<CommentsStrings>

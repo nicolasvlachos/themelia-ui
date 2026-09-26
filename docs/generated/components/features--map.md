@@ -89,6 +89,9 @@ typeof LeafletNamespace
 
 Kind: callable.
 
+A Leaflet map in the kit's vocabulary. Everything else from react-leaflet's MapContainer
+passes through, except `zoomControl` — MapZoomControl replaces it.
+
 ```text
 ({ zoom, maxZoom, height, surface, className, children, strings, style, ...props }: MapProps) => import("react").JSX.Element
 ```
@@ -97,6 +100,10 @@ Kind: callable.
 
 Kind: callable.
 
+A circle sized in metres, so it grows as the map zooms in — MapCircleMarker is sized in
+pixels, and the difference matters the moment someone zooms. Like every shape primitive it
+takes the kit's tokens for stroke and fill, so a drawn area matches the surface it sits on.
+
 ```text
 ({ className, ...props }: CircleProps & { ref?: Ref<Circle>; }) => import("react").JSX.Element
 ```
@@ -104,6 +111,10 @@ Kind: callable.
 ### `MapCircleMarker`
 
 Kind: callable.
+
+A circle sized in pixels, so it keeps its size at every zoom — MapCircle is sized in metres.
+Like every shape primitive it takes the kit's tokens for stroke and fill, so a drawn area
+matches the surface it sits on.
 
 ```text
 ({ className, ...props }: CircleMarkerProps & { ref?: Ref<CircleMarker>; }) => import("react").JSX.Element
@@ -128,7 +139,7 @@ Extends: `ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `position` | no | `MapControlPosition` |  |
+| `position` | no | `MapControlPosition` | The corner it anchors to. |
 
 ### `MapControlPosition`
 
@@ -144,6 +155,9 @@ Corner the control anchors to.
 
 Kind: callable.
 
+The drawing button for a circle. Each shape's button takes Leaflet's own draw options for that
+shape, so nothing is re-declared here.
+
 ```text
 ({ showRadius, shapeOptions, ...props }: DrawOptions.CircleOptions) => import("react").JSX.Element
 ```
@@ -151,6 +165,9 @@ Kind: callable.
 ### `MapDrawControl`
 
 Kind: callable.
+
+The drawing toolbar. It composes the tool buttons, so a caller who wants only two of them
+mounts those two instead of configuring the toolbar out.
 
 ```text
 ({ onLayersChange, position, className, children, ...props }: MapDrawControlProps) => import("react").JSX.Element
@@ -164,12 +181,14 @@ Extends: `ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `onLayersChange` | no | `(layers: FeatureGroup) => void` |  |
+| `onLayersChange` | no | `(layers: FeatureGroup) => void` | Fires on create, edit, and delete, with the FeatureGroup — call `toGeoJSON()` on it to<br>persist. |
 | `position` | no | `MapControlPosition` |  |
 
 ### `MapDrawDelete`
 
 Kind: callable.
+
+Deletes shapes from the drawing's feature group.
 
 ```text
 () => import("react").JSX.Element
@@ -179,6 +198,8 @@ Kind: callable.
 
 Kind: callable.
 
+Edits the shapes in the drawing's feature group.
+
 ```text
 ({ selectedPathOptions, ...props }: Omit<EditToolbar.EditHandlerOptions, "featureGroup">) => import("react").JSX.Element
 ```
@@ -186,6 +207,9 @@ Kind: callable.
 ### `MapDrawMarker`
 
 Kind: callable.
+
+The drawing button for a marker. Each shape's button takes Leaflet's own draw options for that
+shape, so nothing is re-declared here.
 
 ```text
 (props: DrawOptions.MarkerOptions) => import("react").JSX.Element
@@ -195,6 +219,9 @@ Kind: callable.
 
 Kind: callable.
 
+The drawing button for a polygon. Each shape's button takes Leaflet's own draw options for that
+shape, so nothing is re-declared here.
+
 ```text
 ({ drawError, shapeOptions, ...props }: DrawOptions.PolygonOptions) => import("react").JSX.Element
 ```
@@ -202,6 +229,9 @@ Kind: callable.
 ### `MapDrawPolyline`
 
 Kind: callable.
+
+The drawing button for a line. Each shape's button takes Leaflet's own draw options for that
+shape, so nothing is re-declared here.
 
 ```text
 ({ showLength, drawError, shapeOptions, ...props }: DrawOptions.PolylineOptions) => import("react").JSX.Element
@@ -211,6 +241,9 @@ Kind: callable.
 
 Kind: callable.
 
+The drawing button for a rectangle. Each shape's button takes Leaflet's own draw options for that
+shape, so nothing is re-declared here.
+
 ```text
 ({ showArea, shapeOptions, ...props }: DrawOptions.RectangleOptions) => import("react").JSX.Element
 ```
@@ -219,6 +252,9 @@ Kind: callable.
 
 Kind: callable.
 
+Undo for the current edit or delete: it steps back what that mode has staged, rather than the
+whole session. Outside one there is nothing to undo — leaflet-draw has already committed it.
+
 ```text
 ({ className, ...props }: ComponentProps<"button">) => import("react").JSX.Element
 ```
@@ -226,6 +262,9 @@ Kind: callable.
 ### `MapFeatureGroup`
 
 Kind: callable.
+
+A toggleable group of overlays that also answers as one shape for events and bounds, which is
+what the drawing tools edit against.
 
 ```text
 ({ name, disabled, ...props }: MapFeatureGroupProps) => import("react").JSX.Element | null
@@ -242,6 +281,8 @@ LayerGroupProps & MapLayerGroupOption & { ref?: Ref<FeatureGroup>; }
 ### `MapFullscreenControl`
 
 Kind: callable.
+
+Toggles the map in and out of full screen.
 
 ```text
 ({ position, className, ...props }: MapFullscreenControlProps) => import("react").JSX.Element
@@ -261,6 +302,8 @@ Extends: `ComponentProps<"button">`.
 
 Kind: callable.
 
+A toggleable group of overlays, registered with the enclosing MapLayers by `name`.
+
 ```text
 ({ name, disabled, ...props }: MapLayerGroupProps) => import("react").JSX.Element | null
 ```
@@ -277,6 +320,10 @@ LayerGroupProps & MapLayerGroupOption & { ref?: Ref<LayerGroup>; }
 
 Kind: callable.
 
+Holds the registry every named layer reports into. Tile layers become a radio group and
+layer groups a checkbox list in MapLayersControl — no array to keep in step with the
+children.
+
 ```text
 ({ defaultTileLayer, defaultLayerGroups, onError, children, }: MapLayersProps) => import("react").JSX.Element
 ```
@@ -284,6 +331,9 @@ Kind: callable.
 ### `MapLayersControl`
 
 Kind: callable.
+
+The layer picker. It throws when mounted outside MapLayers rather than rendering an empty
+menu, because a control with nothing to control is a wiring mistake, not a state.
 
 ```text
 ({ tileLayersLabel, layerGroupsLabel, position, className, ...props }: MapLayersControlProps) => import("react").JSX.Element | null
@@ -297,9 +347,9 @@ Extends: `ComponentProps<"button">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `tileLayersLabel` | no | `string` |  |
-| `layerGroupsLabel` | no | `string` |  |
-| `position` | no | `MapControlPosition` |  |
+| `tileLayersLabel` | no | `string` | Heads the tile layers' radio group. |
+| `layerGroupsLabel` | no | `string` | Heads the layer groups' checkboxes. |
+| `position` | no | `MapControlPosition` | The corner it anchors to. |
 
 ### `MapLayersProps`
 
@@ -308,13 +358,17 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `children` | no | `ReactNode` |  |
-| `defaultTileLayer` | no | `string` | Must name a MapTileLayer. The first registered one wins when it does not. |
-| `defaultLayerGroups` | no | `string[]` |  |
-| `onError` | no | `(error: Error) => void` | Hears about a `defaultTileLayer` or `defaultLayerGroups` naming nothing. |
+| `defaultTileLayer` | no | `string` | Names a MapTileLayer. Naming nothing REPORTS through `onError` and shows the first<br>registered layer, rather than throwing — a typo should not take down the page. |
+| `defaultLayerGroups` | no | `string[]` | The layer groups switched on at first, by name. |
+| `onError` | no | `(error: Error) => void` | Hears about a `defaultTileLayer` or `defaultLayerGroups` naming nothing — a typo that would<br>otherwise show an empty map and no reason for it. |
 
 ### `MapLocateControl`
 
 Kind: callable.
+
+Find-me. It draws a pulse at the fix rather than only recentring, because a map that jumps
+with no mark leaves the reader hunting for what moved. `watch` follows the device; the watch
+is stopped on unmount, since one left running keeps the radio awake.
 
 ```text
 ({ watch, onLocationFound, onLocationError, position, className, ...props }: MapLocateControlProps) => import("react").JSX.Element
@@ -344,6 +398,9 @@ Kind: callable.
 
 Kind: callable.
 
+Collapses markers into counted clusters as the map zooms out. Above a few hundred pins the map
+stops being readable and starts being a texture.
+
 ```text
 ({ polygonOptions, spiderLegPolylineOptions, icon, ...props }: MapMarkerClusterGroupProps) => import("react").JSX.Element | null
 ```
@@ -368,6 +425,9 @@ Omit<MarkerProps, "icon"> & Pick<DivIconOptions, "iconAnchor" | "bgPos" | "popup
 
 Kind: callable.
 
+A polygon, taking the kit's tokens for stroke and fill so a drawn area matches the surface it
+sits on.
+
 ```text
 ({ className, ...props }: PolygonProps & { ref?: Ref<Polygon>; }) => import("react").JSX.Element
 ```
@@ -376,6 +436,8 @@ Kind: callable.
 
 Kind: callable.
 
+A line, taking the kit's tokens for stroke so it matches the surface it sits on.
+
 ```text
 ({ className, ...props }: PolylineProps & { ref?: Ref<Polyline>; }) => import("react").JSX.Element
 ```
@@ -383,6 +445,9 @@ Kind: callable.
 ### `MapPopup`
 
 Kind: callable.
+
+Attached to a marker or a shape, a popup is clicked open and stays. A popup is where an
+action belongs; a tooltip cannot hold one.
 
 ```text
 ({ className, ...props }: Omit<PopupProps, "content"> & { ref?: Ref<Popup>; }) => import("react").JSX.Element
@@ -400,6 +465,9 @@ Omit<MapContainerProps, "zoomControl"> & { center: LatLngExpression; height?: "s
 
 Kind: callable.
 
+A rectangle, taking the kit's tokens for stroke and fill so a drawn area matches the surface
+it sits on.
+
 ```text
 ({ className, ...props }: RectangleProps & { ref?: Ref<Rectangle>; }) => import("react").JSX.Element
 ```
@@ -407,6 +475,8 @@ Kind: callable.
 ### `MapSearchControl`
 
 Kind: callable.
+
+Place search over the map: a PlaceAutocomplete in one of the control corners.
 
 ```text
 ({ position, className, ...props }: MapSearchControlProps) => import("react").JSX.Element
@@ -460,6 +530,10 @@ Kind: interface.
 
 Kind: callable.
 
+A base map. Give it a `name` and it registers itself with the enclosing MapLayers, which is
+how the layers control knows what to offer without being told twice. Without a `url` it draws
+OpenStreetMap's own tiles — the only basemap that renders with no key.
+
 ```text
 ({ name: nameProp, url, attribution, darkUrl, darkAttribution, ...props }: MapTileLayerProps) => import("react").JSX.Element | null
 ```
@@ -469,12 +543,16 @@ Kind: callable.
 Kind: type.
 
 ```text
-Partial<TileLayerProps> & { name?: string; darkUrl?: string; darkAttribution?: string; ref?: Ref<TileLayer>; }
+Partial<TileLayerProps> & Partial<Pick<TileLayerProps, "url" | "attribution">> & { name?: string; darkUrl?: string; darkAttribution?: string; ref?: Ref<TileLayer>; }
 ```
 
 ### `MapTooltip`
 
 Kind: callable.
+
+Attached to a marker or a shape, a tooltip comes and goes with the pointer, so it cannot hold
+an action; that is what a popup is for. It takes a `side` and an offset, and Leaflet's own tip
+is removed, because a single built-in tip cannot sit on a side this component chose.
 
 ```text
 ({ className, children, side, sideOffset, ...props }: MapTooltipProps) => import("react").JSX.Element
@@ -509,6 +587,9 @@ Extends: `ComponentProps<"div">`.
 ### `PlaceAutocomplete`
 
 Kind: callable.
+
+A text field that turns typing into places. It defaults to the free, key-less, rate-limited
+Photon geocoder; set `searchUrl` for production.
 
 ```text
 ({ debounceMs, searchUrl, lang, limit, bbox, lat, lon, zoom, locationBiasScale, className, value, defaultValue, onValueChange, onPlaceSelect, onResultsChange, strings, onFocus, ...props }: PlaceAutocompleteProps) => import("react").JSX.Element
@@ -610,7 +691,12 @@ Photon's query parameters.
 
 Kind: callable.
 
-Leaflet plus draw and fullscreen once loaded; `null` until then, so callers must check.
+Leaflet itself, with its draw and fullscreen plugins, once it has loaded — and `null` until
+then, so callers must check. For a consumer reaching for the imperative API. Everything here
+is lazy: Leaflet and its plugins are ~200KB, they touch `window` at import time, and most pages
+that ship this kit never render a map. Inside a Map, react-leaflet's hooks reach the controls
+through a provider that has already resolved the module, so a control calls `useMap` normally
+instead of managing its own load state.
 
 ```text
 () => { L: typeof LeafletNamespace | null; LeafletDraw: typeof LeafletDrawNamespace | null; }
@@ -620,7 +706,9 @@ Leaflet plus draw and fullscreen once loaded; `null` until then, so callers must
 
 Kind: callable.
 
-The lookup on its own, for a consumer building their own field.
+The geocoding search behind PlaceAutocomplete, without the field: debounced and abort-safe —
+every keystroke cancels the request before it. For a caller building their own field against
+the same debounce, abort and result shape.
 
 ```text
 ({ debounceMs, searchUrl, query, lang, limit, bbox, lat, lon, zoom, locationBiasScale, }: UsePlaceSearchOptions) => { results: PlaceFeature[]; isLoading: boolean; error: Error | null; hasSearched: boolean; }

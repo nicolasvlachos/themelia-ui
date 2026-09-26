@@ -30,41 +30,16 @@ export function InputPage() {
 			/>
 
 			<Example id="input-api" title="API">
-				<PropTable owner="Input"
-					rows={[
-						{ name: "startIcon / endIcon", type: "ReactNode", description: "Glyphs inside the field, in their own lane so the text never runs under them." },
-						{ name: "startAddon / endAddon", type: "ReactNode", description: "Attached chrome outside the text — a prefix, a unit, a currency." },
-						{ name: "clearable / onClear", type: "boolean / () => void", description: "A clear affordance once there is a value. Goes through the native value setter so React's tracker stays in sync." },
-						{ name: "loading", type: "boolean", description: "A spinner in the trailing lane. Outranks every other trailing affordance." },
-						{ name: "showCharacterCount / maxLength", type: "boolean / number", description: "A count in the trailing lane, and the limit it counts against." },
-						{ name: "invalid", type: "boolean", description: "The error surface. Pair with FormField's error for the message — the border and the announcement then cannot disagree." },
-						{ name: "FieldShell", type: "component", description: "The surface on its own, for composing a control the kit does not ship." },
-						{ name: "strings", type: "Partial<InputStrings>", description: "Overrides this field's own copy — the clear label, the character-count format." },
-						{ name: "returnValueWithAddons", type: "boolean", default: "false", description: "Includes the addons in the reported value. Off, because an addon is presentation and a caller that stores \"$\" + the number has to strip it again on the way out." },
-						{ name: "useFieldValue", type: "hook", description: "The controlled/uncontrolled value, the generated id, and the character count with its limit, shared by Input and Textarea (SearchInput wraps Input), so both fields behave the same under a form library." },
-					]}
-				/>
+				<PropTable owner="Input" />
+				<PropTable symbols={["FieldShell", "useFieldValue"]} />
 			</Example>
 
 			<Example id="search-api" title="SearchInput API">
-				<PropTable owner="SearchInput"
-					rows={[
-						{ name: "onClear", type: "() => void", description: "Notified when the field is cleared. The clear control is always present once there is a value — Input does the clearing itself." },
-						{ name: "strings", type: "Partial<InputStrings>", default: '{ clear: "Clear search" }', description: "Overrides this field's own copy. It is Input's strings object with one default narrowed — a search field's only copy is one word of Input's." },
-						{ name: "…InputProps", api: "@/components/base/text-inputs#InputProps", type: "InputProps", description: "Everything else is Input's API — SearchInput only pre-wires the magnifier and the clear." },
-						{ name: "placeholder", type: "string", description: "Say what is being searched, not just 'Search'." },
-					]}
-				/>
+				<PropTable owners={["SearchInput"]} />
 			</Example>
 
 			<Example id="password-api" title="PasswordInput API">
-				<PropTable owner="PasswordInput"
-					rows={[
-						{ name: "value / defaultValue", type: "string", description: "Same as Input." },
-						{ name: "invalid", type: "boolean", description: "The error surface." },
-						{ name: "strings", type: "Partial<PasswordInputStrings>", description: "Overrides this field's own copy — the reveal control's name in each state, which IS its state for a screen reader, and Input's own strings." },
-					]}
-				/>
+				<PropTable owners={["PasswordInput"]} />
 			</Example>
 		</ComponentPage>
 	)

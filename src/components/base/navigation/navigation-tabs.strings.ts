@@ -8,6 +8,10 @@ export const defaultNavigationTabsStrings: NavigationTabsStrings = {
 }
 
 export interface OverflowTabBarStrings {
+	/**
+	 * Accessible name for the row.
+	 * @default "Sections"
+	 */
 	label: string
 }
 

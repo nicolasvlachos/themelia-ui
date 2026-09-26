@@ -12,6 +12,10 @@ const PARTS = {
 	Content: SheetContent as ActionOverlayParts["Content"],
 } satisfies ActionOverlayParts
 
+/**
+ * ActionDialog's recipe over a sheet, for longer work: a filter rail, an inspector, a long
+ * form. Its own props are the edge's — side, size, length, inset, modality.
+ */
 export function ActionSheet({
 	side = "inline-end",
 	size,

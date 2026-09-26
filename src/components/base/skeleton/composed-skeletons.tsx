@@ -18,12 +18,13 @@ export interface ContentSkeletonProps extends ComponentProps<"div"> {
 	lines?: number
 	/** A heading above the lines. */
 	showTitle?: boolean
-	/** Announced in place of the shapes. */
+	/** Announced while loading, in place of the shapes. */
 	label?: string
 	/** Overrides the default announcement. `label` still wins for one instance. */
 	strings?: Partial<SkeletonStrings>
 }
 
+/** A paragraph of prose, optionally under a title bar. */
 export function ContentSkeleton({
 	lines = 3,
 	showTitle = false,
@@ -59,12 +60,13 @@ export interface PageSkeletonProps extends ComponentProps<"div"> {
 	showHeader?: boolean
 	/** Content panels below the header. */
 	blocks?: number
+	/** Announced while loading, in place of the shapes. */
 	label?: string
 	/** Overrides the default announcement. `label` still wins for one instance. */
 	strings?: Partial<SkeletonStrings>
 }
 
-/* PageHeader's row (title and description, then actions) over card-like panels. */
+/** PageHeader's row — title, description, actions — over card-shaped panels. */
 export function PageSkeleton({
 	showHeader = true,
 	blocks = 2,
@@ -116,12 +118,13 @@ function SkeletonPanel() {
 }
 
 export interface TwoColumnPageSkeletonProps extends ComponentProps<"div"> {
+	/** Announced while loading, in place of the shapes. */
 	label?: string
 	/** Overrides the default announcement. `label` still wins for one instance. */
 	strings?: Partial<SkeletonStrings>
 }
 
-/** A detail page: a title over the record's panel, beside its owner and facts. */
+/** A detail page: a title over the record's panel, and beside it its owner and facts. */
 export function TwoColumnPageSkeleton({ label, strings, className, ...props }: TwoColumnPageSkeletonProps) {
 	return (
 		<div
@@ -158,17 +161,27 @@ export function TwoColumnPageSkeleton({ label, strings, className, ...props }: T
 }
 
 export interface TableSkeletonProps extends ComponentProps<"div"> {
+	/** Body rows, at the real row height. */
 	rows?: number
 	/** Match the real table, or the placeholder reflows when the data lands. */
 	columns?: number
+	/** A head row above the body, at the real head height. */
 	showHeader?: boolean
-	/** Draws the table's own edge, as DataView does. Turn off inside a card that has one. */
+	/**
+	 * Draws the table's own edge and corner, as DataView does. Off when it stands in for a
+	 * table inside a card that already draws one.
+	 */
 	framed?: boolean
+	/** Announced while loading, in place of the shapes. */
 	label?: string
 	/** Overrides the default announcement. `label` still wins for one instance. */
 	strings?: Partial<SkeletonStrings>
 }
 
+/**
+ * A table's geometry before the data lands: the real row and head heights, a wide first
+ * column, a right-aligned last one.
+ */
 export function TableSkeleton({
 	rows = 5,
 	columns = 4,

@@ -14,6 +14,11 @@ export interface FilterOperatorSelectProps {
 	onOperatorChange: (operator: FilterOperator) => void
 }
 
+/**
+ * The comparison segment of a pill. It renders as plain text when there is only one operator,
+ * because a menu offering a single choice is a control that cannot be used and still costs a
+ * chevron and a tab stop.
+ */
 export function FilterOperatorSelect({
 	operator,
 	operators,

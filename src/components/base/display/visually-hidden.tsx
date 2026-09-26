@@ -13,6 +13,10 @@ export interface VisuallyHiddenProps extends React.ComponentProps<"span"> {
 	render?: React.ReactElement<{ className?: string }>
 }
 
+/**
+ * Present to assistive technology, absent on screen. Not `display: none`, which removes it
+ * from both.
+ */
 export function VisuallyHidden({ className, render, ...props }: VisuallyHiddenProps) {
 	const merged = cx(styles.visuallyHidden, className)
 

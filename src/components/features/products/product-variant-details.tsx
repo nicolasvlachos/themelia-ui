@@ -41,6 +41,11 @@ function derivedFacts(
 	].filter((fact) => isPresent(fact.value))
 }
 
+/**
+ * One variant, read-only: what it is, what it costs, and which options it stands for. `variant`
+ * is optional because the panel is also what a page shows before one is chosen. Facts derive
+ * from the variant's own fields; `metadata` replaces them.
+ */
 export function ProductVariantDetails({
 	variant,
 	metadata,

@@ -18,28 +18,11 @@ export function SwitchPage() {
 			/>
 
 			<Example id="switch-api" title="Switch API">
-				<PropTable owner="Switch"
-					rows={[
-						{ name: "label", type: "ReactNode", description: "Rendered beside the track and wired to it." },
-						{ name: "checked / defaultChecked", type: "boolean", description: "Controlled and uncontrolled state." },
-						{ name: "onChange", type: "ChangeEventHandler<HTMLInputElement>", description: "Receives the native change event. Read event.target.checked for the next state." },
-					]}
-				/>
+				<PropTable owners={["Switch"]} />
 			</Example>
 
 			<Example id="toggle-field-api" title="ToggleField and SwitchCard API">
-				<PropTable owner="ToggleField"
-					rows={[
-						{ name: "label / description / hint", type: "ReactNode", description: "The row's label, its supporting sentence, and quieter guidance under that." },
-						{ name: "kind", type: '"switch" | "checkbox"', default: '"switch"', description: "A checkbox for a preference that is saved with the form; a switch for state that applies immediately." },
-						{ name: "surface", type: '"row" | "card"', default: '"row"', description: "A plain settings row, or the bordered feature card that takes the checked colour. SwitchCard presets \"card\"." },
-						{ name: "icon", type: "LucideIcon | ReactNode", description: "A leading glyph in a medallion. At home on the card surface." },
-						{ name: "controlPosition", type: '"leading" | "trailing"', default: '"trailing"', description: "Which side the control sits on." },
-						{ name: "value / defaultValue / onValueChange", type: "boolean", description: "Controlled and uncontrolled state." },
-						{ name: "uncheckedValue", type: "string", description: "What submits when off. Unset, an unchecked control submits nothing — the platform's rule. SwitchCard sets \"0\" (and \"1\" when on)." },
-						{ name: "invalid", type: "boolean", description: "The error surface. The message stays on the FormField." },
-					]}
-				/>
+				<PropTable owners={["ToggleField", "SwitchCard"]} />
 			</Example>
 		</ComponentPage>
 	)

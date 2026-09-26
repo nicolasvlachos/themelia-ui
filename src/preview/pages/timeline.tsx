@@ -35,19 +35,7 @@ export function TimelinePage() {
 					would put noise between every two entries. Anything a reader must know belongs in
 					the title or the description.
 				</Callout>
-				<PropTable owner="Timeline"
-					rows={[
-						{ name: "items", type: "TimelineItem[]", required: true, description: "The entries, in the order they should be read. Rendered as an <ol>, because these have an order and a screen reader should say so." },
-						{ name: "item.id", api: "TimelineItem.id", type: "string", required: true, description: "Stable identity for the row." },
-						{ name: "item.title", api: "TimelineItem.title", type: "ReactNode", required: true, description: "What happened." },
-						{ name: "item.description", api: "TimelineItem.description", type: "ReactNode", description: "Supporting copy under the title." },
-						{ name: "item.timestamp", api: "TimelineItem.timestamp", type: "ReactNode", description: "Already formatted — the kit's date primitives decide the format, not this component." },
-						{ name: "item.trailing", api: "TimelineItem.trailing", type: "ReactNode", description: "The trailing lane of the title row when what belongs there is not a time — an amount, a count. Replaces the timestamp rather than joining it; there is one lane." },
-						{ name: "item.icon", api: "TimelineItem.icon", type: "LucideIcon", description: "Decorative glyph inside the dot." },
-						{ name: "item.status", api: "TimelineItem.status", type: '"progress" | "completed" | "current" | "pending" | "success" | "warning" | "destructive" | "neutral"', default: '"neutral"', description: "Colours the dot, and the connector that runs from it to the next entry. progress and completed are not the same thing: a step you walked past is a POSITION, so it takes the same primary tone as the step you are on and a sequence reads as one journey in one colour; completed is an OUTCOME, a milestone that landed. A bare progress dot is hollow where current is solid, because on a rail with no glyphs the card still has to say where the thing IS." },
-						{ name: "item.children", api: "TimelineItem.children", type: "ReactNode", description: "Anything the entry carries below its description." },
-					]}
-				/>
+				<PropTable owners={["Timeline", "TimelineItem"]} />
 			</Example>
 			<Example
 				example="timeline/stepper-default"
@@ -72,19 +60,7 @@ export function TimelinePage() {
 					pressable, because that is where focus lands, and on the list item otherwise. The
 					marker and the connectors are <code>aria-hidden</code>.
 				</Callout>
-				<PropTable owner="Stepper"
-					rows={[
-						{ name: "steps", type: "StepperStep[]", required: true, description: "The steps, in order. Rendered as an <ol>, because the order is the meaning." },
-						{ name: "step.id", api: "StepperStep.id", type: "string", required: true, description: "Stable identity for the step, handed back to onStepClick." },
-						{ name: "step.label", api: "StepperStep.label", type: "ReactNode", required: true, description: "What the step is called." },
-						{ name: "step.hint", api: "StepperStep.hint", type: "ReactNode", description: "A second, quieter line under the label." },
-						{ name: "step.status", api: "StepperStep.status", type: '"completed" | "complete" | "current" | "upcoming"', default: '"upcoming"', description: "Where the step stands. completed is the canonical spelling; complete is accepted as the same state and normalised, so the DOM only ever says completed." },
-						{ name: "step.accessibleName", api: "StepperStep.accessibleName", type: "string", description: "The step's whole accessible name, worded by the caller. Replaces the position, label, hint and state text rather than joining them; aria-current still marks the current step." },
-						{ name: "variant", type: '"bar" | "trail"', default: '"bar"', description: "bar: labels under ringed markers in equal columns, with the connector through the marker row. trail: labels beside filled markers, a rule taking the rest of the row, labels visually hidden below lg." },
-						{ name: "onStepClick", type: "(id: string, index: number) => void", description: "Makes each step a button. Completed and current steps are reachable, upcoming ones disabled. Without it the steps are plain list items." },
-						{ name: "strings", type: "Partial<StepperStrings>", description: "position(index, total) names what the numeral counts; completed and current are said with those steps." },
-					]}
-				/>
+				<PropTable owners={["Stepper", "StepperStep"]} />
 			</Example>
 		</ComponentPage>
 	)

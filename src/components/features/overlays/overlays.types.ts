@@ -22,6 +22,7 @@ export type OverlayButtonTone = SemanticTone
 export type OverlayButtonStyle = Exclude<ButtonStyle, "ghost">
 
 export interface OverlayBaseProps {
+	/** Controlled: hands the open state to the caller. Supply this OR `trigger`, not both. */
 	open?: boolean
 	onOpenChange?: (open: boolean) => void
 	/** Fires after it closes, whatever dismissed it. */
@@ -59,30 +60,56 @@ export interface OverlayActionProps {
 	showCancel?: boolean
 	showConfirm?: boolean
 	onCancel?: () => void
+	/**
+	 * Runs, then the overlay closes. The second of the three confirm paths: `formId` wins over
+	 * it, and it wins over `onAsyncConfirm`.
+	 */
 	onConfirm?: () => void
+	/**
+	 * Awaited with a spinner; closes on success, stays open on rejection and reports through
+	 * `onError`. The last of the three confirm paths, after `formId` and `onConfirm`.
+	 */
 	onAsyncConfirm?: () => Promise<void>
-	/** Receives a rejected async confirm, so a consumer can toast or report it. */
+	/**
+	 * Receives a rejected async confirm, so a consumer can toast or report it. The overlay stays
+	 * open.
+	 */
 	onError?: (error: unknown) => void
-	/** `false` keeps the overlay open after a resolved async confirm (multi-step flows). */
+	/**
+	 * `false` keeps the overlay open after a resolved async confirm — a multi-step flow.
+	 * @default true
+	 */
 	closeOnAsyncComplete?: boolean
 	confirmTone?: OverlayButtonTone
 	confirmStyle?: OverlayButtonStyle
 	/** Forces the pending presentation, for confirm work owned outside the overlay. */
 	loading?: boolean
+	/**
+	 * The first of the three confirm paths: the confirm button calls `requestSubmit()` on that
+	 * form, so native validation runs and the form's own `onSubmit` owns the outcome. Neither
+	 * callback fires.
+	 */
 	formId?: string
-	/** Replaces the generated footer. Every prop above stops applying. */
+	/** Replaces the generated footer. Every action prop stops applying. */
 	footer?: ReactNode
 }
 
 export interface OverlayEmphasisProps {
 	/**
-	 * Lets `tone` drive the header glyph and the confirm button's colour. Without it the
-	 * tone is presentational only (a warning notice with an ordinary primary confirm).
+	 * Lets `tone` drive the confirm button's colour as well as the header glyph. Without it the
+	 * tone is presentational only — a warning-toned dialog whose action is just the action, with
+	 * an ordinary primary confirm, is a real combination.
 	 */
 	emphasis?: boolean
+	/** The semantic tone of the header glyph and the notice, and with `emphasis` the confirm. */
 	tone?: OverlayTone
+	/** Draws the tone's glyph beside the title. */
 	showIcon?: boolean
-	/** A notice between the header and the body: the consequence, before committing. */
+	/**
+	 * A notice between the header and the body — the consequence, before committing — inside the
+	 * scroll region: a warning pinned above it would stay while the thing it warns about scrolls
+	 * away.
+	 */
 	alertMessage?: ReactNode
 }
 
@@ -93,9 +120,15 @@ export interface ActionDialogProps
 	extends OverlayBaseProps,
 		OverlayActionProps,
 		OverlayEmphasisProps {
-	/** Maximum width. A CSS length, or one of the kit's steps. */
+	/**
+	 * Maximum width: one of the kit's steps, or a CSS length. A dialog's max width is a real
+	 * per-dialog decision — a confirmation is narrow and a form is wide.
+	 */
 	width?: OverlayWidth
-	/** The element that opens it. Supply this OR `open`, not both. */
+	/**
+	 * The element that opens it, which makes the overlay uncontrolled. Supply this OR `open`,
+	 * not both.
+	 */
 	trigger?: ReactNode
 }
 
@@ -111,11 +144,16 @@ export interface ActionSheetProps
 	inset?: boolean | string
 	showFooter?: boolean
 	/**
-	 * `modal` traps focus, locks scroll and makes the page inert; `non-modal` sits beside
-	 * the app (inspectors, filter rails); `trap-focus` is in between. A non-modal panel is
-	 * not announced as a dialog, so never use it for a question that must be answered.
+	 * How much of the page it takes hostage. `modal` traps focus, locks scroll and makes the page
+	 * inert; `non-modal` sits beside the app (inspectors, filter rails) and leaves the
+	 * surrounding page interactive; `trap-focus` is in between. A non-modal panel is not
+	 * announced as a dialog, so never use it for a question that must be answered.
 	 */
 	modality?: "modal" | "trap-focus" | "non-modal"
+	/**
+	 * The element that opens it, which makes the overlay uncontrolled. Supply this OR `open`,
+	 * not both.
+	 */
 	trigger?: ReactNode
 }
 
@@ -123,6 +161,10 @@ export interface ConfirmDialogProps extends OverlayBaseProps, OverlayActionProps
 	tone?: OverlayTone
 	showIcon?: boolean
 	alertMessage?: ReactNode
+	/**
+	 * The element that opens it, which makes the overlay uncontrolled. Supply this OR `open`,
+	 * not both.
+	 */
 	trigger?: ReactNode
 	/** Shorthand for the destructive presentation: tone, icon and confirm colour. */
 	destructive?: boolean

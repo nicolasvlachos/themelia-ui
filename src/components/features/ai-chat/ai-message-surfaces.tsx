@@ -26,6 +26,12 @@ import styles from "./ai-chat.module.css"
 /** How long "Copied" stays up. */
 const COPIED_MS = 1500
 
+/**
+ * “Thinking…” as a swept highlight rather than a spinner. A spinner says something is
+ * happening; a sweep says something is being produced, which is the difference the reader is
+ * waiting on. It paints through `background-clip`, so its colour is transparent by design — a
+ * contrast probe reading `color` alone will call it a 1:1 failure.
+ */
 export function AiShimmer({
 	children = "Thinking…",
 	paused = false,
@@ -164,6 +170,7 @@ function thoughtForLabel(template: string, seconds: number): ReactNode {
 	)
 }
 
+/** The reasoning disclosure: the model's trace, and how long it thought. */
 export function AiReasoning({
 	children,
 	streaming = false,
@@ -251,6 +258,7 @@ const STEP_ICON = {
 	failed: AlertCircleIcon,
 } satisfies Record<AiChainStepStatus, typeof CircleIcon>
 
+/** The step timeline of an agent's plan. */
 export function AiChainOfThought({
 	steps,
 	hideHeader = false,

@@ -12,12 +12,7 @@ export function KbdPage() {
 			/>
 
 			<Example id="kbd-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "Kbd", type: "component", description: "One key, or one chord pressed together written as a single string — “⌘K”, not three caps. Every native kbd attribute passes through." },
-						{ name: "KbdGroup", type: "component", description: "Several Kbd in a row, for a sequence pressed one after another — “G then I”. The caps sit further apart than the characters inside one, and that gap is what tells a reader the keys are pressed in turn rather than together." },
-					]}
-				/>
+				<PropTable symbols={["Kbd", "KbdGroup"]} />
 			</Example>
 		</ComponentPage>
 	)

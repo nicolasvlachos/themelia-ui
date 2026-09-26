@@ -49,20 +49,10 @@ export function TablePage() {
 			/>
 
 			<Example id="table-api" title="API">
+				<PropTable owners={["Table", "TableHead", "TableRow", "TableCell", "TableEmpty", "TableCaption"]} />
 				<PropTable
 					rows={[
-						{ name: "containerClassName", api: "Table.containerClassName", type: "string", description: "Class for the scroll container rather than the table element." },
-						{ name: "stickyHeader", api: "Table.stickyHeader", type: "boolean", default: "false", description: "Pins the header while the body scrolls. Only meaningful when the container is bounded." },
-						{ name: "TableHead sortable", type: "boolean", description: "Renders the label as a sort control and puts aria-sort on the th." },
-						{ name: "TableHead sortDirection", type: '"ascending" | "descending" | null', description: "This column's order, or null when another column is the sort." },
-						{ name: "TableHead onSort", type: "() => void", description: "Fires on activation. The table does not sort — the caller owns the data." },
-						{ name: "TableEmpty colSpan", type: "number", description: "The no-rows row, spanning every column." },
-						{ name: "TableCell align", type: '"start" | "center" | "end"', description: "Column alignment. Numeric columns belong at the end." },
-						{ name: "TableCell wrap", type: "boolean", default: "false", description: "Lets the cell wrap. Cells are nowrap by default so columns stay aligned." },
-						{ name: "TableRow data-state", api: "TableRow", type: '"selected"', description: "Marks a selected row. A data attribute, not a prop — rows are plain elements." },
-						{ name: "TableCaption", type: "component", description: "Names the table for assistive technology. Rendered below the table, as the element specifies." },
 						{ name: "--density-scale", api: ["css:--density-scale"], type: "number", default: "var(--scale)", description: "Global density factor. Scope it to make one region denser than the page." },
-						{ name: "TableEmpty", type: "component", description: "A row that spans every column and states that there are none. A table with a header and no body reads as broken; this is what says it is empty on purpose." },
 					]}
 				/>
 			</Example>

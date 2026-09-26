@@ -31,6 +31,10 @@ export interface Step {
 }
 
 export interface StepsProps extends Omit<ComponentProps<"div">, "children"> {
+	/**
+	 * `status` is completed | current | upcoming. The vertical form also takes per-step
+	 * `content`.
+	 */
 	steps: Step[]
 	strings?: Partial<StepsStrings>
 }

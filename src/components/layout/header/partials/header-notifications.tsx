@@ -14,11 +14,16 @@ import { VisuallyHidden } from "@/components/base/display"
 import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
-import { resolveLayoutLinkRenderer, type LayoutLinkRenderer } from "../../layout.types"
+import { resolveLinkRenderer, type LinkRenderer } from "@/lib/navigation"
 import { defaultHeaderNotificationsStrings } from "../header.strings"
 import type { HeaderNotification, HeaderNotificationsProps } from "../header.types"
 import styles from "../header.module.css"
 
+/**
+ * The bell and its list. It renders what it is handed and reports what was clicked;
+ * fetching, marking read and paging belong to the app, because only the app knows what
+ * “read” costs.
+ */
 export function HeaderNotifications({
 	notifications = [],
 	unreadCount = 0,
@@ -35,7 +40,7 @@ export function HeaderNotifications({
 	renderNotification,
 }: HeaderNotificationsProps) {
 	const copy = { ...defaultHeaderNotificationsStrings, ...strings }
-	const link = resolveLayoutLinkRenderer({ renderLink })
+	const link = resolveLinkRenderer(renderLink)
 	// Capped at "99+" to keep the badge narrow.
 	const badge = unreadCount > 99 ? "99+" : String(unreadCount)
 
@@ -138,7 +143,7 @@ function NotificationRow({
 }: {
 	notification: HeaderNotification
 	onClick?: (notification: HeaderNotification) => void
-	link: LayoutLinkRenderer
+	link: LinkRenderer
 	renderNotification?: HeaderNotificationsProps["renderNotification"]
 	unreadLabel: string
 }) {

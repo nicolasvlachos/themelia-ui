@@ -39,6 +39,9 @@ StepperStrings
 
 Kind: callable.
 
+A numbered sequence the reader is partway through: a marker per step — a numeral that
+becomes a tick — connectors, and a label with an optional hint.
+
 ```text
 ({ steps, variant, onStepClick, strings, className, ...props }: StepperProps) => import("react").JSX.Element
 ```
@@ -51,10 +54,10 @@ Extends: `Omit<ComponentProps<"ol">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `steps` | yes | `StepperStep[]` |  |
-| `variant` | no | `StepperVariant` | Which drawing. Defaults to `bar`. |
+| `steps` | yes | `StepperStep[]` | The steps, in order. Rendered as an `<ol>`, because the order is the meaning. |
+| `variant` | no | `StepperVariant` | Which drawing. `bar`: labels under ringed markers in equal columns, with the connector<br>through the marker row. `trail`: labels beside filled markers and a rule taking the<br>rest of the row; below `lg` the labels are visually hidden and only the markers show. |
 | `onStepClick` | no | `(id: string, index: number) => void` | Makes each step a button: completed steps and the current one are reachable, upcoming<br>ones disabled. Without it the steps are plain list items. |
-| `strings` | no | `Partial<StepperStrings>` |  |
+| `strings` | no | `Partial<StepperStrings>` | Overrides this stepper's own copy: `position(index, total)` names what the numeral<br>counts, and `completed` and `current` are said with those steps. |
 
 ### `StepperStatus`
 
@@ -71,13 +74,15 @@ Where a step stands: a position, not an outcome (a failed step is a Timeline ent
 
 Kind: interface.
 
+One step of a `Stepper`.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | yes | `string` | Stable identity for the step, handed back to `onStepClick`. |
-| `label` | yes | `ReactNode` |  |
+| `label` | yes | `ReactNode` | What the step is called. |
 | `hint` | no | `ReactNode` | A second, quieter line under the label. |
-| `status` | no | `StepperStatus` | Where the step stands. Defaults to `upcoming`. |
-| `accessibleName` | no | `string` | The step's whole accessible name, replacing its announced position, label, hint and<br>state. `aria-current` still marks the current step. |
+| `status` | no | `StepperStatus` | Where the step stands. `completed` is the canonical spelling; `complete` is accepted as<br>the same state and normalised, so the DOM only ever says `completed`. @default "upcoming" |
+| `accessibleName` | no | `string` | The step's whole accessible name, worded by the caller. It replaces the announced<br>position, label, hint and state rather than joining them; `aria-current` still marks<br>the current step. |
 
 ### `StepperStrings`
 
@@ -107,6 +112,8 @@ markers show.
 
 Kind: callable.
 
+An ordered run of events on one rail — changelogs, milestones, an order's progress.
+
 ```text
 ({ items, className, ...props }: TimelineProps) => import("react").JSX.Element
 ```
@@ -115,15 +122,17 @@ Kind: callable.
 
 Kind: interface.
 
+One entry of a `Timeline`. Everything an entry needs travels in the item.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | yes | `string` | Stable identity for the row. |
-| `title` | yes | `ReactNode` |  |
+| `title` | yes | `ReactNode` | What happened. |
 | `description` | no | `ReactNode` | Supporting copy under the title. |
-| `timestamp` | no | `ReactNode` | Already formatted — the kit's date primitives decide the format, not this. |
-| `trailing` | no | `ReactNode` | The title row's trailing lane when it holds something other than a time; replaces `timestamp`. |
+| `timestamp` | no | `ReactNode` | Already formatted — the kit's date primitives decide the format, not this component. |
+| `trailing` | no | `ReactNode` | The title row's trailing lane when what belongs there is not a time — an amount, a<br>count. It replaces `timestamp` rather than joining it: there is one lane. |
 | `icon` | no | `LucideIcon` | Decorative glyph inside the dot. |
-| `status` | no | `TimelineStatus` |  |
+| `status` | no | `TimelineStatus` | Colours the dot, and the connector that runs from it to the next entry. `progress` and<br>`completed` are not the same thing: a step you walked past is a position, so it takes<br>the same primary tone as the step you are on and a sequence reads as one journey in one<br>colour; `completed` is an outcome, a milestone that landed. A bare `progress` dot is<br>hollow where `current` is solid, because on a rail with no glyphs the card still has to<br>say where the thing is. @default "neutral" |
 | `children` | no | `ReactNode` | Anything the entry carries below its description — a card, a diff, an action row. |
 
 ### `TimelineProps`
@@ -134,7 +143,7 @@ Extends: `Omit<ComponentProps<"ol">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `TimelineItem[]` |  |
+| `items` | yes | `TimelineItem[]` | The entries, in the order they should be read. Rendered as an `<ol>`, because these<br>have an order and a screen reader should say so. |
 
 ### `TimelineStatus`
 

@@ -14,7 +14,10 @@ import styles from "./media-library.module.css"
 
 export interface MediaLibraryTableProps<TItem> extends MediaLibraryListProps<TItem> { className?: string; collections?: readonly MediaLibraryCollectionOption[] }
 
-/** A metadata table for inspecting assets; selection and details remain separate controls. */
+/**
+ * The composable metadata table for inspecting assets; selection and details remain separate
+ * controls. Like the grid and the list, it uses the same accessors and selection callbacks.
+ */
 export function MediaLibraryTable<TItem>({ items, selectedSet, accessors, strings, onToggle, onDetails, className, collections = [] }: MediaLibraryTableProps<TItem>) {
 	const copy = resolveStrings(defaultMediaLibraryStrings, strings)
 	return <Table aria-label={copy.title} containerClassName={cx("media-library-table--component", styles.table, className)}>

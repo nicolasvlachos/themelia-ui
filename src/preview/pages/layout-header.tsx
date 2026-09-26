@@ -28,21 +28,16 @@ export function LayoutHeaderPage() {
 			</Example>
 
 			<Example id="header-api" title="API">
-				<PropTable owner="Header"
-					rows={[
-						{ name: "slots", type: "{ brand, breadcrumbs, left, center, right }", description: "The regions. brand is hidden below md, where the sidebar trigger stands in for it." },
-						{ name: "slots.center", type: "ReactNode", description: "Shrinks before the right cluster. A search field belongs here." },
-						{ name: "slots.right", type: "ReactNode", description: "Fixed-size controls: notifications, account, theme. Never shrinks." },
-						{ name: "slots.breadcrumbs", type: "ReactNode", description: "Replaces the built-in trail entirely." },
-						{ name: "breadcrumbs", type: "Crumb[]", default: "[]", description: "The trail, rendered by the built-in Breadcrumbs." },
-						{ name: "homeCrumb", type: "Crumb | null", default: "null", description: "Prepended to the trail. null omits it deliberately." },
-						{ name: "showBreadcrumbs", type: "boolean", default: "true", description: "Off for a shell whose pages carry their own trail." },
-						{ name: "contentClassName", type: "string", description: "For the inner content row, when the bar itself must stay untouched." },
-						{ name: "HeaderBreadcrumbs", type: "component", description: "The sidebar trigger, a rule, and the trail. The three travel together because their arrangement is the part that goes wrong \u2014 a trail without the rule reads as the first crumb, and a trigger placed after it reads as part of the path." },
-						{ name: "HeaderSearch / HeaderGlobalSearchTrigger", type: "component", description: "The trigger for a command palette, not a search field. It LOOKS like an input and IS a button, which is the honest shape: typing happens in the palette, so a real field here would take a keystroke and then throw it away." },
-						{ name: "HeaderToolButton / HeaderToolPopover", type: "component", description: "The icon controls in the right cluster \u2014 one shape for all of them, because a row where the theme toggle is 32px and the help button is 36px reads as a mistake before anyone can name it." },
-						{ name: "HeaderNotifications", type: "component", description: "The bell and its list. It renders what it is handed and reports what was clicked; fetching, marking read and paging belong to the app, because only the app knows what \u201cread\u201d costs." },
-						{ name: "HeaderUserMenu", type: "component", description: "The account control. The three callbacks build a command menu; supplying none and passing customContent instead gives a panel, which is the escape hatch for an account area that is not a list of verbs." },
+				<PropTable owners={["Header", "HeaderSlots"]} />
+				<PropTable
+					symbols={[
+						"HeaderBreadcrumbs",
+						"HeaderSearch",
+						"HeaderGlobalSearchTrigger",
+						"HeaderToolButton",
+						"HeaderToolPopover",
+						"HeaderNotifications",
+						"HeaderUserMenu",
 					]}
 				/>
 			</Example>

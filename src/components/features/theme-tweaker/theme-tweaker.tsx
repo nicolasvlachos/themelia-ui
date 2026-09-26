@@ -372,6 +372,12 @@ function DefaultThemePreview({ strings }: { strings: ThemeTweakerStrings }) {
 	)
 }
 
+/**
+ * Edits the kit's public theme contract live and exports the result. Controlled through
+ * `value` / `onValueChange` for the theme and `config` / `onConfigChange` for the provider
+ * settings. Set `apply={false}` when the application owns theme application; `preview={false}`
+ * edits the actual app without a sample preview.
+ */
 export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(function ThemeTweaker(
 	{
 		value,

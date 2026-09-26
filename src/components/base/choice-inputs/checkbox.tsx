@@ -11,12 +11,24 @@ import { cx } from "@/lib/cx"
 
 import styles from "./choice.module.css"
 
-export interface CheckboxProps extends Omit<React.ComponentProps<"input">, "type" | "size"> {
+export interface CheckboxProps
+	extends Omit<React.ComponentProps<"input">, "type" | "size">,
+		Pick<React.ComponentProps<"input">, "checked" | "defaultChecked" | "onChange"> {
+	/** Rendered beside the box and wired to it, so the text is part of the target. */
 	label?: React.ReactNode
-	/** Partially-selected: neither on nor off. Outranks `checked` visually. */
+	/**
+	 * The dash state, for a parent whose children are partly checked: neither on nor off.
+	 * Independent of `checked`, which it outranks visually.
+	 */
 	indeterminate?: boolean
 }
 
+/**
+ * A native checkbox under the kit's styling, so form, keyboard and label behaviour are the
+ * platform's. `checked` and `defaultChecked` are its controlled and uncontrolled state, and
+ * `onChange` receives the native change event: read `event.target.checked` for the next
+ * state.
+ */
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
 	{ label, indeterminate = false, className, ...props },
 	forwardedRef,

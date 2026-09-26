@@ -58,30 +58,7 @@ export function CardPage() {
 			/>
 
 			<Example id="card-api" title="API">
-				<PropTable owner="Card"
-					rows={[
-						{ name: "surface", type: '"card" | "framed" | "flat" | "bordered"', default: '"framed"', description: "Outer chrome. framed, the bezel, is the default; card is the plain panel. Change it for a whole product once with UIProvider defaults.card.surface." },
-						{ name: "title / description", type: "ReactNode", description: "Header copy. The title truncates rather than pushing header controls off the row." },
-						{ name: "titleSuffix", type: "ReactNode", description: "Badges, status, or counts immediately after the title." },
-						{ name: "titleLevel", type: "1 | 2 | 3 | 4 | 5 | 6", description: "Renders the title as that heading, for a card that heads a page or a region. Unset, the title is styled text and outlines nothing." },
-						{ name: "media", type: "ReactNode", description: "A full-bleed strip above the header — a cover image, a map, a brand band — clipped to the card's top corners." },
-						{ name: "actions", type: "ActionDefinition[]", description: "Overflow commands, rendered by the shared ActionMenu. A destructive entry moves last and is separated." },
-						{ name: "headerAction", type: "ReactNode", description: "A single control at the end of the header. Use actions for a list of commands." },
-						{ name: "alert", type: "ReactNode | string", description: "Banner between header and content. A plain string is wrapped in an Alert." },
-						{ name: "footerText / footerSlot", type: "ReactNode", description: "The footer band. Muted text and a control." },
-						{ name: "tooltip", type: "ReactNode", description: "Explanatory copy behind an info affordance on the title line. A real focusable button, not a title attribute — `strings.tooltip` names it." },
-						{ name: "alertTone", type: "AlertTone", default: '"neutral"', description: "Tone of the alert band." },
-						{ name: "headerStart / headerEnd", type: "ReactNode", description: "A full-width row above the title, and metadata before the header controls." },
-						{ name: "contentTop / contentBottom", type: "ReactNode", description: "Content inside the content inset, around children." },
-						{ name: "headerDivider / footerDivider", type: "boolean", default: "false", description: "Rules between the regions." },
-						{ name: "expandable", type: "boolean | { collapsedMaxHeight }", default: "false", description: "Clips content to a collapsed height with a fade, and adds a toggle. The object form sets the height for this card only." },
-						{ name: "expanded / defaultExpanded / onExpandedChange", type: "boolean", description: "Controlled and uncontrolled expansion." },
-						{ name: "strings", type: "Partial<CardStrings>", description: "Overrides this card's own copy — the info glyph, the overflow trigger, and the disclosure control's name in each state." },
-						{ name: "CardActionStrip actions / align / separator / fullWidthPrimary", type: "ActionDefinition[] / …", description: "One array decides which action is primary and how the rest follow, so a page of cards cannot disagree about it. separator rules the strip off from the content; fullWidthPrimary is for a card whose action is the point." },
-						{ name: "CardPrimaryAction href / label", type: "string", description: "Stretches an anchor across the whole card, so the card is one tab stop rather than a grid of them. The label is the accessible name — the visible title is not necessarily the destination." },
-						{ name: "CardSkeleton surface / showHeader / lines", type: "CardSurface / boolean / number", description: "Reserves the real card\u2019s box. Matching the surface and the line count is the whole job: a placeholder of the wrong shape moves the page twice." },
-					]}
-				/>
+				<PropTable owners={["Card", "CardActionStrip", "CardPrimaryAction", "CardSkeleton"]} />
 			</Example>
 		</ComponentPage>
 	)

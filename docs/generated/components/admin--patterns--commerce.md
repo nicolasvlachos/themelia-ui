@@ -86,6 +86,10 @@ Kind: interface.
 
 Kind: callable.
 
+The ledger row every money surface is built from, inside a `SummaryPanel`. Not
+InlineStat: this one knows about money — deductions and totals — and InlineStat displays
+any value.
+
 ```text
 ({ label, amount, total, deduction, note, className, ...props }: AmountRowProps) => import("react").JSX.Element
 ```
@@ -98,10 +102,10 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | yes | `ReactNode` |  |
+| `label` | yes | `ReactNode` | What the amount is — "Subtotal", "Shipping". |
 | `amount` | yes | `string` | Already formatted, including its currency. |
 | `total` | no | `boolean` | Marks the row the eye should land on — a total, an amount due. |
-| `deduction` | no | `boolean` | Money coming off the total. Rewrites the sign rather than trusting the caller's, and tints the figure. |
+| `deduction` | no | `boolean` | Money coming off the total. Rewrites the sign to U+2212 whatever the caller passed,<br>and tints the figure. |
 | `note` | no | `ReactNode` | A rate, a qualifier — sits quietly beside the label. |
 
 ### `Booking`
@@ -134,7 +138,7 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `status` | no | `ReactNode` | A chip, usually — the booking's state. |
-| `details` | yes | `BookingDetail[]` |  |
+| `details` | yes | `BookingDetail[]` | Rendered as a real `<dl>`, so a screen reader pairs each value with its own label. A<br>`fullWidth` detail spans the row and gets its own ground. |
 | `actionLabel` | no | `ReactNode` |  |
 | `onAction` | no | `() => void` |  |
 
@@ -152,6 +156,9 @@ Kind: interface.
 ### `calculateSeoScore`
 
 Kind: callable.
+
+Plain function, no React. Returns the total, a status, and a per-check breakdown with the
+measured lengths.
 
 ```text
 (input: SeoScoreInput) => SeoScore
@@ -218,6 +225,11 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children">`.
 
 Kind: callable.
 
+A discount code or a gift card. One component for both: a title, a field, a button, and
+an applied state. The only real difference is that a gift card holds a BALANCE — money
+that may outlast this order — where a discount either applies or does not. That is one
+optional prop, not a second component.
+
 ```text
 ({ kind, appliedCode, appliedDiscount, balance, error, loading, onApply, onRemove, strings, className, ...props }: CodeEntryProps) => import("react").JSX.Element
 ```
@@ -226,15 +238,7 @@ Kind: callable.
 
 Kind: type.
 
-CodeEntry — a discount code or a gift card.
-
-One component for both: a title, a field, a button, and an applied state. The only real
-difference is that a gift card holds a BALANCE — money that may outlast this order —
-where a discount either applies or does not. That is one optional prop, not a second
-component.
-
-`kind` picks the preset: the icon, the default copy, and whether the code is upper-cased
-on submit. Gift card codes are printed in capitals and nobody types them that way.
+Which preset a CodeEntry takes: a discount code or a gift card.
 
 ```text
 "discount" | "gift"
@@ -248,10 +252,10 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children" | "onSubmit">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `kind` | no | `CodeEntryKind` |  |
+| `kind` | no | `CodeEntryKind` | Picks the preset: the icon, the default copy, and whether the code is upper-cased on<br>submit. Gift card codes are printed in capitals and nobody types them that way. |
 | `appliedCode` | no | `string` | The code in force. Present switches the card to its applied state. |
 | `appliedDiscount` | no | `string` | What it took off, already formatted. |
-| `balance` | no | `string` | What is left on the card, already formatted. Gift cards only. |
+| `balance` | no | `string` | What is left on the card, already formatted — money that may outlast this order, and<br>the one real difference between the two kinds. Gift cards only. |
 | `error` | no | `string` | A rejection message, shown under the field. |
 | `loading` | no | `boolean` |  |
 | `onApply` | no | `(code: string) => void` |  |
@@ -547,10 +551,10 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 | `status` | yes | `FulfillmentStatus` |  |
 | `location` | no | `ReactNode` | Where it ships from. |
 | `notice` | no | `ReactNode` | A standing fact about the group — "Shipping not required". |
-| `noticeIcon` | no | `LucideIcon` | The glyph beside the notice. A component, so the group sizes it. |
-| `items` | no | `OrderLine[]` |  |
-| `children` | no | `ReactNode` | Overrides `items` entirely, for a caller who needs the rows themselves. |
-| `actions` | no | `ActionDefinition[]` | The first renders as a button; the rest collapse into an overflow menu. |
+| `noticeIcon` | no | `LucideIcon` | The glyph beside the notice. A component rather than a node, so the group sizes it:<br>one passed as a child arrives at lucide's own 24px default — three lines tall against<br>the text it annotates. |
+| `items` | no | `OrderLine[]` | The rows, as data. |
+| `children` | no | `ReactNode` | Replaces `items` wholesale, for a caller who needs control of a row — the same seam<br>Accordion offers. |
+| `actions` | no | `ActionDefinition[]` | The first renders as a button; the rest collapse into an overflow menu. One array, so<br>the menu cannot duplicate the button. |
 | `strings` | no | `Partial<FulfillmentGroupStrings>` |  |
 | `vocabulary` | no | `Partial<OrderStatusVocabulary>` |  |
 
@@ -591,8 +595,8 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children">`.
 | --- | :-: | --- | --- |
 | `productName` | yes | `string` |  |
 | `variant` | no | `string` | The chosen option, when the product has any. |
-| `stock` | yes | `number` |  |
-| `reorderLevel` | yes | `number` | Below this, the level reads as low rather than healthy. |
+| `stock` | yes | `number` | Units on hand. Zero reads as out, which is checked before low. |
+| `reorderLevel` | yes | `number` | At or below this, the level reads as low rather than healthy. |
 | `maxStock` | yes | `number` | The gauge's upper bound. |
 | `lastRestocked` | no | `string` | Already formatted. |
 | `strings` | no | `Partial<InventoryStrings>` |  |
@@ -641,9 +645,9 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children" | "onChange">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `InventorySectionValue` |  |
-| `onFieldChange` | no | `(change: { field: InventorySectionField; value: InventorySectionValue[InventorySectionField]; previousValue: InventorySectionValue[InventorySectionField]; }) => void` | Reports the field, its new value, and what it replaced. Omit for a read-only record. |
-| `sections` | no | `InventorySectionName[]` |  |
+| `value` | yes | `InventorySectionValue` | The record: sku, barcode, trackQuantity, available, committed, incoming,<br>lowStockThreshold, inventoryPolicy, binLocation, requiresShipping, weight,<br>countryOfOrigin, hsCode, tags. |
+| `onFieldChange` | no | `(change: { field: InventorySectionField; value: InventorySectionValue[InventorySectionField]; previousValue: InventorySectionValue[InventorySectionField]; }) => void` | Reports the field, its new value, and what it replaced — an undo stack that has to<br>remember that itself is one that gets it wrong once. Omit for a read-only record. |
+| `sections` | no | `InventorySectionName[]` | Narrows what is drawn, so one surface serves a simple product, a variant and a location<br>record without forking. Every section by default. |
 | `strings` | no | `Partial<InventorySectionStrings>` |  |
 
 ### `InventorySectionStrings`
@@ -856,8 +860,8 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `balance` | yes | `number \| string` | A number gets locale grouping; a string is taken as already formatted. |
-| `tier` | no | `ReactNode` | The tier's name. A caller's word, so there is no English default to leak. |
-| `tierTone` | no | `BadgeTone` |  |
+| `tier` | no | `ReactNode` | The tier's name. There is no default: it is a caller's word, and an English literal<br>here is one no strings override could reach. |
+| `tierTone` | no | `BadgeTone` | The tier badge's tone. |
 | `movements` | no | `LoyaltyMovement[]` |  |
 | `onRedeem` | no | `() => void` |  |
 | `strings` | no | `Partial<LoyaltyStrings>` |  |
@@ -978,13 +982,13 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `orderNumber` | yes | `string` |  |
-| `fulfillmentStatus` | no | `FulfillmentStatus` | Where the goods are. |
-| `paymentStatus` | no | `PaymentStatus` | Where the money is. |
+| `fulfillmentStatus` | no | `FulfillmentStatus` | Where the goods are. Independent of payment. |
+| `paymentStatus` | no | `PaymentStatus` | Where the money is. Both statuses, one, or neither reads correctly — an order with<br>nothing to ship has no fulfillment state to state. |
 | `placedAt` | no | `string` | Already formatted. |
 | `source` | no | `string` | Where the order came from — a channel, an app, an import. |
 | `actions` | no | `ActionDefinition[]` |  |
 | `strings` | no | `Partial<OrderHeaderStrings>` |  |
-| `vocabulary` | no | `Partial<OrderStatusVocabulary>` |  |
+| `vocabulary` | no | `Partial<OrderStatusVocabulary>` | Overrides the words for either axis without touching the tones, which stay derived. |
 
 ### `OrderHeaderStrings`
 
@@ -1010,7 +1014,7 @@ Kind: interface.
 | `unitPrice` | yes | `string` | Already formatted, including its currency. |
 | `quantity` | yes | `number` |  |
 | `total` | yes | `string` | Already formatted. Passed, never multiplied. |
-| `properties` | no | `OrderLineProperty[]` | Rendered as label/value rows under the title, so every consumer's extras match. |
+| `properties` | no | `OrderLineProperty[]` | Per-line custom data, rendered as label/value rows under the title and styled once, so<br>every consumer's extras match. |
 | `children` | no | `ReactNode` | Whatever `properties` cannot express. |
 
 ### `OrderLineItem`
@@ -1069,10 +1073,10 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `orderNumber` | yes | `string` |  |
-| `status` | yes | `OrderStatus` |  |
+| `status` | yes | `OrderStatus` | Drives the chip's tone. There is no tone override. |
 | `events` | yes | `OrderEvent[]` | Oldest first, so "latest complete" and "next" are found by position. |
 | `eta` | no | `string` | Already formatted. |
-| `defaultHistoryOpen` | no | `boolean` | Opens the full event list on first render. Closed by default: the panel above<br>already summarises it. |
+| `defaultHistoryOpen` | no | `boolean` | Opens the full event list on first render. Closed by default: the panel above already<br>says what just happened, what is next and when it lands, and the list repeats two of<br>the three. |
 | `strings` | no | `Partial<OrderStatusStrings>` |  |
 
 ### `OrderStatusStrings`
@@ -1121,11 +1125,11 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `goods` | yes | `SummaryLine[]` | What was ordered — subtotal, discount, shipping, tax. |
+| `goods` | yes | `SummaryLine[]` | What was ordered — subtotal, discount, shipping, tax. Goods and payments render as<br>separate panels, and a line's `note` is a middle column, so counts and rates align down<br>a stack. |
 | `total` | yes | `SummaryLine` | The line the eye should land on. |
-| `payments` | no | `SummaryLine[]` | What has actually moved — paid, refunded, balance. |
+| `payments` | no | `SummaryLine[]` | What has actually moved — paid, refunded, balance. A separate panel from the goods. |
 | `paymentStatus` | no | `PaymentStatus` |  |
-| `alert` | no | `ReactNode` | A standing caveat about the balance, not an error. |
+| `alert` | no | `ReactNode` | Standing information about the balance, rendered `role="note"` — a caveat, not an<br>error: nothing has gone wrong yet. |
 | `strings` | no | `Partial<OrderSummaryStrings>` |  |
 | `vocabulary` | no | `Partial<OrderStatusVocabulary>` |  |
 
@@ -1140,6 +1144,9 @@ Kind: interface.
 ### `OrderTimeline`
 
 Kind: callable.
+
+An order’s events on the shared rail, for a surface that wants the history without
+OrderStatusCard’s facts panel around it.
 
 ```text
 ({ events, className, ...props }: OrderTimelineProps) => import("react").JSX.Element
@@ -1183,7 +1190,7 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `transactions` | yes | `Transaction[]` |  |
+| `transactions` | yes | `Transaction[]` | `kind` drives the sign; a failed attempt stays in the list, because an order showing<br>only what worked cannot answer why it was never captured. |
 | `strings` | no | `Partial<TransactionStrings>` |  |
 
 ### `OUTGOING_TRANSACTION_KINDS`
@@ -1412,8 +1419,8 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children" | "title">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `listing` | yes | `SeoScoreInput` | What the result will read as. |
-| `score` | no | `SeoScore` | A score computed elsewhere (e.g. per keystroke by an editor). Without it, the listing is scored here. |
+| `listing` | yes | `SeoScoreInput` | What the result will read as: title, description, permalink, baseUrl, keyword, and<br>optional limits. Scored on render unless a `score` is supplied. |
+| `score` | no | `SeoScore` | A score computed elsewhere — by an editor scoring as the user types. Without it the<br>card scores the listing itself. |
 | `onEdit` | no | `() => void` |  |
 | `strings` | no | `Partial<SeoStrings>` |  |
 
@@ -1608,13 +1615,18 @@ Kind: interface.
 | --- | :-: | --- | --- |
 | `id` | no | `string` |  |
 | `label` | yes | `ReactNode` |  |
-| `note` | no | `ReactNode` | A middle column — "3 items", "20%". |
+| `note` | no | `ReactNode` | A middle column — "3 items", "20%" — so counts and rates align down a stack. |
 | `amount` | yes | `string` | Already formatted, including its currency. |
 | `deduction` | no | `boolean` | Money off the customer's total. |
 
 ### `SummaryPanel`
 
 Kind: callable.
+
+The money ledger — the shape almost every commerce surface is made of: a tinted block of
+label/amount rows, a rule, and one row that matters more than the rest. A cart, a tax
+breakdown, an invoice and a subscription all draw it, and each rebuilding it inline is how
+one of them ends up emphasising its total differently from the others.
 
 ```text
 ({ children, className, ...props }: SummaryPanelProps) => import("react").JSX.Element
@@ -1793,10 +1805,10 @@ Extends: `Omit<ComponentProps<typeof ContentBlock>, "children" | "title" | "role
 | `role` | no | `ReactNode` | Category, market, location — whatever places them. |
 | `verified` | no | `boolean` |  |
 | `earnings` | no | `string` | Already formatted, including its currency. |
-| `metrics` | no | `VendorMetric[]` |  |
-| `stats` | no | `VendorStat[]` |  |
-| `view` | no | `VendorView` | Controlled. |
-| `onViewChange` | no | `(view: VendorView) => void` |  |
+| `metrics` | no | `VendorMetric[]` | Operating facts, for the overview. Supplying both this and `stats` gives tabs;<br>supplying either alone renders that view bare. |
+| `stats` | no | `VendorStat[]` | Performance tiles, for the stats view. Supplying both this and `metrics` gives tabs;<br>supplying either alone renders that view bare. |
+| `view` | no | `VendorView` | Controlled. Uncontrolled, the profile opens on whichever view has data. |
+| `onViewChange` | no | `(view: VendorView) => void` | Reports the view a reader switches to. |
 | `onMessage` | no | `() => void` |  |
 | `onHire` | no | `() => void` |  |
 | `strings` | no | `Partial<VendorStrings>` |  |

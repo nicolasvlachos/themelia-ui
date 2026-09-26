@@ -35,13 +35,19 @@ export interface ThemeConfig {
 	vars?: Record<string, string>
 }
 
+/** `UIConfig`'s `typography` slice: the type factor, the default size, fonts and sizes. */
 export interface TypographyConfig {
 	/**
-	 * Type factor (`--text-scale`): multiplies every type role, control labels included, and
-	 * leaves geometry alone. Unset, type follows `scale`.
+	 * Type-only override (`--text-scale`): multiplies every `--text-*` role, control labels
+	 * included, without changing geometry. Unset, type follows `scale`.
+	 * @default 1
 	 */
 	scale?: number
-	/** Size components fall back to when they set none. Defaults to `sm` (14px). */
+	/**
+	 * Size components fall back to when they set none. 14px, not 16px: `base` is a deliberate
+	 * step up for a dense surface.
+	 * @default "sm"
+	 */
 	defaultTextSize?: TextSize
 	/** Font stack overrides. */
 	fonts?: Partial<Record<"sans" | "serif" | "mono" | "heading", string>>
@@ -66,18 +72,25 @@ export interface OverlayConfig {
 	 * Dropdown and context menus render in the dark scheme whatever the page is. Default
 	 * `true`; `false` lets them follow the scheme they are portalled into, like other popups.
 	 * A config value, not a CSS switch: Firefox lacks CSS `if()`.
+	 * @default true
 	 */
 	darkMenus?: boolean
 }
 
 export interface FormsConfig {
-	/** Opt in to a 16px minimum for native text fields on detected iPhones only. Default false. */
+	/**
+	 * Opt in to a 16px minimum for native text fields on detected iPhones only.
+	 * @default false
+	 */
 	preventIPhoneZoom?: boolean
 }
 
 /** The locale shared by every formatter. Money and dates have their own slices. */
 export interface FormattingConfig {
-	/** BCP-47 tag used by every Intl formatter in the kit. */
+	/**
+	 * BCP-47 tag used by every Intl formatter in the kit.
+	 * @default "en-US"
+	 */
 	locale?: string
 }
 
@@ -93,28 +106,67 @@ export type MoneyLayout = "inline" | "stacked"
 /** How loud the second value is against the first. */
 export type MoneySecondaryEmphasis = "discrete" | "muted" | "match" | "hidden"
 
+/**
+ * `UIConfig`'s `money` slice: the store's currency policy, decided once, so a call site
+ * passes an amount and a conversion, never a policy.
+ */
 export interface MoneyConfig {
-	/** Used when a `<Money>` is given no currency. */
+	/**
+	 * Used when a `<Money>` is given no currency.
+	 * @default "USD"
+	 */
 	defaultCurrency?: string
 	/** A converted currency shown beside the primary one. */
 	displayCurrency?: string
-	/** The master switch. Off, a `secondary` passed at a call site still renders. */
+	/**
+	 * The master switch. Off, a `secondary` passed at a call site still renders.
+	 * @default false
+	 */
 	dualPricingEnabled?: boolean
+	/**
+	 * Whether a second currency shows. `dynamic` shows it only when the two codes differ;
+	 * `dual` would print a price twice when they match.
+	 * @default "dynamic"
+	 */
 	displayMode?: MoneyDisplayMode
+	/**
+	 * Where the second value sits: beside the first, or under it.
+	 * @default "inline"
+	 */
 	layout?: MoneyLayout
+	/**
+	 * How an amount is written. `with-symbol` is Intl's own placement, which varies by locale
+	 * and currency.
+	 * @default "with-symbol"
+	 */
 	formatMode?: MoneyFormatMode
 }
 
+/**
+ * `UIConfig`'s `dates` slice: the week start, the fallback patterns, the date-fns locale and
+ * the relative-time wording.
+ */
 export interface DatesConfig {
-	/** First day of the week in calendars and pickers. 0 = Sunday. */
+	/**
+	 * First day of the week in calendars and pickers. 0 = Sunday.
+	 * @default 1
+	 */
 	weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
-	/** date-fns pattern the date primitives fall back to. */
+	/**
+	 * date-fns pattern the date primitives fall back to.
+	 * @default "dd MMM yyyy"
+	 */
 	format?: string
-	/** date-fns pattern for a time of day. `"p"` uses the locale's own convention. */
+	/**
+	 * date-fns pattern for a time of day. `"p"` uses the locale's own convention.
+	 * @default "HH:mm"
+	 */
 	timeFormat?: string
 	/**
-	 * The date-fns locale object that translates month and weekday names. Not derived from
-	 * `formatting.locale`, so the bundle carries only the locale the consumer imports.
+	 * The date-fns Locale OBJECT — what actually translates month and weekday names, and the
+	 * built-in relative-time wording. It cannot be derived from a BCP-47 tag such as
+	 * `formatting.locale`: the locales are modules, and importing all of them to look one up
+	 * would put every language in every bundle, so the consumer imports the one it needs.
 	 */
 	locale?: Locale
 	/** Replaces the relative-time wording ("7 days ago", "in 2 hours"). */
@@ -135,24 +187,45 @@ export interface DatesConfig {
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ComponentDefaults {}
 
+/**
+ * The configuration `UIProvider`, `UIRoot` and `UIScope` take. A scope names only what it
+ * changes; everything else inherits from the scope around it.
+ */
 export interface UIConfig {
-	/** Colour scheme. `system` follows `prefers-color-scheme`. */
+	/**
+	 * Colour scheme. `system` follows `prefers-color-scheme`.
+	 * @default "system"
+	 */
 	colorScheme?: ColorScheme
+	/** Radius, colour, palette and custom-property overrides. */
 	theme?: ThemeConfig
-	/** Named spacing/control-density preset. Readable typography is unchanged. */
+	/**
+	 * Named spacing and control-geometry preset: `compact`, `default` and `comfortable` scale
+	 * by 0.941176 (32px actions), 1 and 1.075. Readable typography is unchanged.
+	 * @default "default"
+	 */
 	density?: Density
 	/**
-	 * Whole-UI factor (`--scale`). Default 1. Multiplies geometry, spacing, icons and type; use
-	 * `density` or `typography.scale` to move only one of them.
+	 * Master factor (`--scale`). Geometry, spacing, icons and the type ramp follow it by
+	 * default; use `density` or `typography.scale` to move only one of them.
+	 * @default 1
 	 */
 	scale?: number
+	/** The type factor, the default text size, font stacks and per-step sizes. */
 	typography?: TypographyConfig
+	/** Duration overrides, and motion forced off. */
 	motion?: MotionConfig
+	/** The modal scrim's blur, and whether menus render dark. */
 	overlay?: OverlayConfig
+	/** Form-control behaviour: the iPhone zoom guard. */
 	forms?: FormsConfig
+	/** The locale every formatter uses. */
 	formatting?: FormattingConfig
+	/** The store's currency policy: the default and display currencies, and how a pair shows. */
 	money?: MoneyConfig
+	/** The week start, date patterns, the date-fns locale and relative-time wording. */
 	dates?: DatesConfig
+	/** Per-component prop defaults, keyed by family and merged over each component's own. */
 	defaults?: { [K in keyof ComponentDefaults]?: Partial<ComponentDefaults[K]> }
 }
 

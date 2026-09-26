@@ -143,6 +143,12 @@ function Mark({
 	)
 }
 
+/**
+ * Six dense cells, each pairing a figure with a different sketch — deliberately not six
+ * sparklines, because when every cell draws the same shape a reader scanning the block has
+ * nothing to tell them apart by except the label. One accent across the whole block: the
+ * SHAPE is the differentiator, and a hue per cell adds a second, weaker one.
+ */
 export function MetricMicroGrid({ cells, className, ...props }: MetricMicroGridProps) {
 	return (
 		<div className={cx("metric-micro-grid--component", styles.microGridRoot, className)} {...props}>

@@ -1,5 +1,5 @@
 import { Stack } from "@/components/base/structure"
-import { Heading, Text } from "@/components/base/typography"
+import { Text } from "@/components/base/typography"
 
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
@@ -92,17 +92,7 @@ export function ScalePage() {
 			/>
 
 			<Example id="scale-api" title="API">
-				<Heading level={3} size="sm">
-					UIProvider config
-				</Heading>
-				<PropTable
-					rows={[
-						{ name: "scale", api: "@/lib/ui-provider#UIConfig.scale", type: "number", default: "1", description: "Master factor. Geometry, spacing, icons, and the type ramp follow it by default." },
-						{ name: "typography.scale", api: "@/lib/ui-provider#UIConfig.typography.scale", type: "number", default: "1", description: "Type-only override. Every `--text-*` role, including control labels, without changing geometry." },
-						{ name: "typography.defaultTextSize", api: "@/lib/ui-provider#UIConfig.typography.defaultTextSize", type: "TextSize", default: '"sm"', description: "Size components fall back to. 14px, not 16px: base is a deliberate step up for a dense surface." },
-							{ name: "density", api: "@/lib/ui-provider#UIConfig.density", type: '"compact" | "default" | "comfortable"', default: '"default"', description: "Named spacing/control presets: 0.941176 (32px actions), 1, and 1.075. Readable type stays unchanged." },
-					]}
-				/>
+				<PropTable owners={["UIConfig", "TypographyConfig"]} />
 			</Example>
 
 			<Example id="scale-tokens" title="What --scale drives">

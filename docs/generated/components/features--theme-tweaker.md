@@ -394,9 +394,9 @@ Extends: `Omit<HTMLAttributes<HTMLDivElement>, "children" | "defaultValue" | "on
 | `onModeChange` | no | `(mode: ThemeMode) => void` |  |
 | `fields` | no | `readonly ThemeTweakerField[]` | The catalog of editable variables. Defaults to the kit's whole public surface. |
 | `target` | no | `ThemeTweakerTarget` | `self` themes only the editor and its preview; `document` themes the whole app while<br>mounted, so portaled menus and dialogs inherit the edit too. |
-| `apply` | no | `boolean` |  |
+| `apply` | no | `boolean` | Writes the edited theme onto the target. Set `false` when the application owns theme<br>application, as with useAppliedTheme at its root. |
 | `manageModeClass` | no | `boolean` | Manages `.light` / `.dark` on a non-self target. Off when a theme manager owns it. |
-| `preview` | no | `ReactNode \| false` | `false` hides it; a node replaces the built-in one. |
+| `preview` | no | `ReactNode \| false` | The sample the edit is shown on. `false` hides it, so the editor edits the actual app<br>without a sample preview; a node replaces the built-in one. |
 | `fileName` | no | `string` |  |
 | `config` | no | `UIConfig` |  |
 | `defaultConfig` | no | `UIConfig` |  |
@@ -533,6 +533,10 @@ Kind: type.
 
 Kind: callable.
 
+The provider settings editor — the non-CSS half of a theme, which ThemeTweaker includes under
+Provider. Connect its controlled `config` to your root UIProvider to update mounted
+consumers.
+
 ```text
 ({ config, onChange, strings, className, }: UIConfigSettingsProps) => import("react").JSX.Element
 ```
@@ -569,6 +573,10 @@ Kind: interface.
 ### `useAppliedTheme`
 
 Kind: callable.
+
+Writes an edited theme onto a live element and removes it on cleanup. Keep it mounted with
+`target: "document"` and `apply: true` to apply document-wide values; set
+`manageModeClass: false` when UIProvider owns the colour scheme.
 
 ```text
 ({ apply, manageModeClass, selfRef, target, theme, }: UseAppliedThemeOptions) => void

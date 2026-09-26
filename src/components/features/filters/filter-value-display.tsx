@@ -15,6 +15,11 @@ export interface FilterValueDisplayProps {
 	className?: string
 }
 
+/**
+ * The value segment of a pill: up to two overlapped icons, then a count, before the label.
+ * Icons come before words — a reader scanning five pills recognises the status colours before
+ * reading any label.
+ */
 export function FilterValueDisplay({ filter, value, className }: FilterValueDisplayProps) {
 	const { strings, getAsyncOptionLabel } = useFilters()
 

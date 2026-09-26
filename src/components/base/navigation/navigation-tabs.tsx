@@ -5,7 +5,7 @@
 import { useRef, type ComponentProps, type ReactNode } from "react"
 
 import { cx } from "@/lib/cx"
-import { resolveActiveHref, type LayoutLinkRenderer } from "@/lib/navigation"
+import { resolveActiveHref, type LinkRenderer } from "@/lib/navigation"
 import { useScrollEdges } from "@/lib/scroll-edges"
 
 import { defaultNavigationTabsStrings, type NavigationTabsStrings } from "./navigation-tabs.strings"
@@ -21,17 +21,23 @@ export interface NavigationTabItem {
 }
 
 export interface NavigationTabsProps extends Omit<ComponentProps<"nav">, "children"> {
+	/** The routes: each a `label` and an `href`, with an optional `icon`, `badge` or `disabled`. */
 	items: NavigationTabItem[]
 	/** The current route. The active tab follows from this. */
 	currentPath?: string
 	/** Routes entries through the app's router. Without it they are plain anchors. */
-	renderLink?: LayoutLinkRenderer
+	renderLink?: LinkRenderer
 	/** `pill` draws the current route as a filled chip, as `TabList variant="pill"` does. */
 	variant?: "underline" | "pill"
 	/** Overrides this row's own copy — the region name. */
 	strings?: Partial<NavigationTabsStrings>
 }
 
+/**
+ * Tabs that navigate, so they render anchors in a `<nav>`, and the active one follows from
+ * the current path. `Tabs` and `TabPanel` are for panels in one page; this is for routes,
+ * and mixing the two is how a browser back button stops working.
+ */
 export function NavigationTabs({
 	items,
 	currentPath = "/",

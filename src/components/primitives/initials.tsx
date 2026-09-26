@@ -11,8 +11,15 @@ import {
 export interface InitialsProps extends Omit<ValueProps, "children"> {
 	/** Person, organisation, or resource name to derive initials from. */
 	value?: string | null
-	/** First + last word by default; `first-words` keeps the leading N words instead. */
+	/**
+	 * First + last word by default; `first-words` keeps the leading N words instead.
+	 * @default "first-last"
+	 */
 	strategy?: InitialsStrategy
+	/**
+	 * How many characters are kept.
+	 * @default 2
+	 */
 	maxCharacters?: InitialsMaxCharacters
 	locale?: string
 	/** Returned when no usable letter or number exists. */

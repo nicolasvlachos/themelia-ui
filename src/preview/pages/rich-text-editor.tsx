@@ -66,24 +66,8 @@ function CustomEditor() {
 			</Example>
 
 			<Example id="editor-api" title="API">
-				<PropTable owner="RichTextEditor"
-					rows={[
-						{ name: "engine", type: "RichTextEngine", default: "TipTap", description: "Defaults to StarterKit and atomic mentions. Supply a RichTextEngine for a custom schema or implementation; the caller owns its destruction." },
-						{ name: "value / onValueChange", type: "string / (html: string) => void", required: true, description: "The controlled document, as HTML. Parent echoes preserve the selection. Actual external changes update the document, including while focused. Output is normalized to the active engine schema." },
-						{ name: "placeholder", type: "string", description: "Drawn over the first line, because a contenteditable has no placeholder attribute. Sitting over it rather than replacing the document means the caret is already in the right place." },
-						{ name: "compact", type: "boolean", default: "false", description: "A line and a half instead of a page — enough to look like it takes more than a word, without claiming a screen for a one-sentence reply." },
-						{ name: "minHeight / maxHeight", type: "string", description: "maxHeight is where the body starts scrolling instead of growing." },
-						{ name: "showCounts / maxLength", type: "boolean / number", description: "Over the limit the count turns error-toned; input is NOT refused. A composer that stops accepting characters mid-word loses what the writer was in the middle of." },
-						{ name: "extraToolbarItems", type: "RichTextEditorToolbarItem[]", description: "Appended after the built-ins, behind a rule. Each takes an icon, a label used for both the accessible name and the tooltip, and an optional isActive." },
-						{ name: "toolbarTrailing / footerSlot", type: "ReactNode", description: "The end of the toolbar, and under the body. Both inside the frame, so the composer reads as one control." },
-						{ name: "onCaretChange", type: "() => void", description: "Fires on input AND on selection change. Two events, because a caret moves without the document changing — and a trigger detector watching only input misses the writer moving back into a half-typed mention." },
-						{ name: "ref", type: "RichTextEditorHandle", description: "focus, getHTML, setHTML, insertHTML, isEmpty, clear, getCaretContext, replaceBeforeCaret. A superset of MentionEditorHandle, so the two plug together with no adapter." },
-						{ name: "replaceBeforeCaret", type: "(length, html) => void", description: "One operation, not a delete then an insert: the caret never visits an in-between state, and undo gets one entry for what the writer experienced as one act." },
-						{ name: "RichText", type: "component", description: "Renders stored rich text \u2014 the READ half of the editor. It sanitises on the way in, so content from a database or an API cannot carry script or event handlers into the page." },
-						{ name: "RichTextEditorToolbar", type: "component", description: "The formatting row, exported so an editor can be mounted with the toolbar somewhere else \u2014 a sticky bar above a long document, or a shared bar over two editors." },
-						{ name: "EditorCounts", type: "component", description: "The word and character counts under the editor. Separate because a limit is often shown beside a submit button rather than under the field it applies to." },
-					]}
-				/>
+				<PropTable owners={["RichTextEditor", "RichTextEditorHandle"]} />
+				<PropTable symbols={["RichText", "RichTextEditorToolbar", "EditorCounts"]} />
 			</Example>
 		</ComponentPage>
 	)

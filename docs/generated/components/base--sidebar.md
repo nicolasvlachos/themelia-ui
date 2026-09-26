@@ -39,6 +39,8 @@ SidebarStrings
 
 Kind: callable.
 
+The panel: a header, scrolling content and a footer, against one edge of the shell.
+
 ```text
 ({ side, variant, collapsible, className, surfaceClassName, mobileTitle, mobileDescription, strings, children, ...props }: SidebarProps) => React.JSX.Element
 ```
@@ -56,6 +58,8 @@ Kind: type.
 ### `SidebarContent`
 
 Kind: callable.
+
+The scrolling region between the header and the footer.
 
 ```text
 ({ className, ...props }: ComponentProps<"div">) => React.JSX.Element
@@ -80,6 +84,8 @@ Kind: interface.
 
 Kind: callable.
 
+The panel's bottom region. It holds its edge while the content scrolls.
+
 ```text
 ({ className, ...props }: ComponentProps<"div">) => React.JSX.Element
 ```
@@ -87,6 +93,9 @@ Kind: callable.
 ### `SidebarGroup`
 
 Kind: callable.
+
+A titled section of the panel, with an optional control on the label's line — an add, a
+filter.
 
 ```text
 ({ className, ...props }: ComponentProps<"div">) => React.JSX.Element
@@ -96,6 +105,8 @@ Kind: callable.
 
 Kind: callable.
 
+A control on the section title's line — an add, a filter.
+
 ```text
 ({ className, ...props }: ComponentProps<"button">) => React.JSX.Element
 ```
@@ -103,6 +114,8 @@ Kind: callable.
 ### `SidebarGroupContent`
 
 Kind: callable.
+
+The section's body, under its label.
 
 ```text
 ({ className, ...props }: ComponentProps<"div">) => React.JSX.Element
@@ -112,6 +125,8 @@ Kind: callable.
 
 Kind: callable.
 
+The section's title.
+
 ```text
 ({ className, ...props }: ComponentProps<"div">) => React.JSX.Element
 ```
@@ -119,6 +134,9 @@ Kind: callable.
 ### `SidebarHeader`
 
 Kind: callable.
+
+The panel's top region. It holds its edge while the content scrolls, so a long navigation
+never scrolls its own search box away.
 
 ```text
 ({ className, ...props }: ComponentProps<"div">) => React.JSX.Element
@@ -136,8 +154,9 @@ Kind: callable.
 
 Kind: callable.
 
-The page beside the panel. Renders `<main>`; a shell embedded in a host page that already
-has one should pass `render={<div />}`.
+The page beside the panel. Renders `<main>`, so it is the document's main landmark rather
+than another div; a shell embedded in a host page that already has one should pass
+`render={<div />}`.
 
 ```text
 ({ className, render, ...props }: useRender.ComponentProps<"main">) => React.ReactElement<unknown, string | React.JSXElementConstructor<any>>
@@ -147,6 +166,9 @@ has one should pass `render={<div />}`.
 
 Kind: callable.
 
+The rows: a real `<ul>`, so the navigation announces as a list and its length is
+spoken.
+
 ```text
 ({ className, ...props }: ComponentProps<"ul">) => React.JSX.Element
 ```
@@ -154,6 +176,9 @@ Kind: callable.
 ### `SidebarMenuAction`
 
 Kind: callable.
+
+A secondary control on a row, positioned so it neither displaces the label nor steals the
+row's press target.
 
 ```text
 ({ showOnHover, className, ...props }: SidebarMenuActionProps) => React.JSX.Element
@@ -167,11 +192,14 @@ Extends: `ComponentProps<"button">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `showOnHover` | no | `boolean` | Reveals the action on hover or keyboard focus rather than showing it always. |
+| `showOnHover` | no | `boolean` | Reveals the action on hover or keyboard focus rather than showing it always. Focus<br>counts through `focus-within`, so the action stays reachable without a pointer. |
 
 ### `SidebarMenuBadge`
 
 Kind: callable.
+
+A count on a row, positioned so it neither displaces the label nor steals the row's press
+target.
 
 ```text
 ({ inline, className, ...props }: SidebarMenuBadgeProps) => React.JSX.Element
@@ -191,6 +219,8 @@ Extends: `ComponentProps<"div">`.
 
 Kind: callable.
 
+The row's control: a button, or through `render` a router link.
+
 ```text
 ({ size, active, variant, render, closeOnSelectMobile, tooltip, className, children, onClick, ...props }: SidebarMenuButtonProps) => React.JSX.Element
 ```
@@ -203,12 +233,12 @@ Extends: `Omit<ComponentProps<"button">, "size">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `size` | no | `SidebarMenuButtonSize` |  |
+| `size` | no | `SidebarMenuButtonSize` | The row's height, as a shape rather than a density: `lg` is the workspace switcher, `sm`<br>a secondary row. A size prop here, because a navigation row is not on the control<br>ladder that density scales. |
 | `active` | no | `boolean` | Marks the row as the current page. |
 | `variant` | no | `"default" \| "outline"` | `outline` gives the row its own frame — for a switcher that must read as a control. |
-| `render` | no | `React.ReactElement` | The element this row becomes instead of a `button` — usually a router link<br>(docs/adr/0005); `children` stays the row's content. |
-| `closeOnSelectMobile` | no | `boolean` | Dismisses the mobile sheet when the row is activated. Defaults to true; turn it off for<br>a row that opens something else (a switcher, a submenu toggle). |
-| `tooltip` | no | `React.ReactNode` | Shown beside the row while the sidebar is collapsed to its icon rail, usually the row's<br>label. Ignored while expanded and on phones. |
+| `render` | no | `React.ReactElement` | The element this row becomes instead of a `button` — usually a router link, so the row<br>navigates the app's own way. `children` stays the row's content. |
+| `closeOnSelectMobile` | no | `boolean` | Dismisses the mobile sheet when the row is activated. Turn it off for a row that opens<br>something else (a switcher, a submenu toggle). |
+| `tooltip` | no | `React.ReactNode` | The row's name, shown beside it while the sidebar is collapsed to its icon rail, where<br>the label is clipped away. Ignored while expanded and on phones. |
 
 ### `SidebarMenuButtonSize`
 
@@ -225,6 +255,8 @@ Row shape, not density: `lg` is an account or workspace switcher (avatar over tw
 
 Kind: callable.
 
+One row: a real `<li>`, holding the row's button and anything beside it.
+
 ```text
 ({ className, ...props }: ComponentProps<"li">) => React.JSX.Element
 ```
@@ -232,6 +264,9 @@ Kind: callable.
 ### `SidebarMenuSkeleton`
 
 Kind: callable.
+
+Reserves a row's exact box while the navigation loads, so the panel does not reflow when
+it lands.
 
 ```text
 ({ showIcon, className, style, ...props }: SidebarMenuSkeletonProps) => React.JSX.Element
@@ -245,11 +280,13 @@ Extends: `ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `showIcon` | no | `boolean` |  |
+| `showIcon` | no | `boolean` | Reserves the row's icon as well as its label. |
 
 ### `SidebarMenuSub`
 
 Kind: callable.
+
+A nested level under a row, indented against the parent's rail.
 
 ```text
 ({ className, ...props }: ComponentProps<"ul">) => React.JSX.Element
@@ -258,6 +295,9 @@ Kind: callable.
 ### `SidebarMenuSubButton`
 
 Kind: callable.
+
+A nested row's control: a link when it has an `href`, otherwise a button, or through
+`render` a router link.
 
 ```text
 ({ size, active, closeOnSelectMobile, render, className, onClick, children, ...props }: SidebarMenuSubButtonProps) => React.JSX.Element
@@ -271,14 +311,16 @@ Extends: `ComponentProps<"a">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `size` | no | `"sm" \| "md"` |  |
-| `active` | no | `boolean` |  |
+| `size` | no | `"sm" \| "md"` | The nested row's height. |
+| `active` | no | `boolean` | Marks the row as the current page. |
 | `closeOnSelectMobile` | no | `boolean` | Dismisses the mobile sheet when the row is activated. See SidebarMenuButton. |
-| `render` | no | `React.ReactElement` | The element this row becomes instead of an `a` or `button` — usually a router link<br>(docs/adr/0005); `children` stays the row's content. |
+| `render` | no | `React.ReactElement` | The element this row becomes instead of an `a` or `button` — usually a router link, so<br>the row navigates the app's own way. `children` stays the row's content. |
 
 ### `SidebarMenuSubItem`
 
 Kind: callable.
+
+One row of a nested level.
 
 ```text
 ({ className, ...props }: ComponentProps<"li">) => React.JSX.Element
@@ -292,9 +334,9 @@ Extends: `ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `side` | no | `SidebarSide` |  |
-| `variant` | no | `SidebarVariant` |  |
-| `collapsible` | no | `SidebarCollapsible` |  |
+| `side` | no | `SidebarSide` | Which edge the panel occupies, for the rail and the mobile sheet alike. |
+| `variant` | no | `SidebarVariant` | `sidebar` sits against the shell's edge with a border. `floating` and `inset` detach it,<br>so the panel reads as a card inside the page rather than as the page's own edge;<br>`inset` also lifts the page into a card of its own. |
+| `collapsible` | no | `SidebarCollapsible` | How it gets out of the way: slid away entirely (`offcanvas`), reduced to a rail of<br>glyphs (`icon`), or pinned open, never collapsing (`none`). On a narrow viewport a<br>collapsible panel becomes a sheet. |
 | `surfaceClassName` | no | `string` | Class for the visible panel surface, separate from the positioning container. |
 | `mobileTitle` | no | `string` | Accessible name for the mobile sheet. |
 | `mobileDescription` | no | `string` |  |
@@ -303,6 +345,9 @@ Extends: `ComponentProps<"div">`.
 ### `SidebarProvider`
 
 Kind: callable.
+
+Holds the panel's state above both the trigger and the rail, so the two cannot disagree,
+and shares it with every part inside.
 
 ```text
 ({ defaultOpen, open: openProp, onOpenChange, persist, keyboardShortcut, contained, strings, className, style, children, ref, ...props }: SidebarProviderProps) => import("react").JSX.Element
@@ -318,17 +363,18 @@ Extends: `Omit<React.ComponentProps<"div">, "onChange">`.
 | --- | :-: | --- | --- |
 | `strings` | no | `Partial<SidebarStrings>` | Overrides the sidebar's own copy for every part (it travels through the context). |
 | `defaultOpen` | no | `boolean` | Initial expanded state when uncontrolled. |
-| `open` | no | `boolean` |  |
-| `onOpenChange` | no | `(open: boolean) => void` |  |
-| `persist` | no | `boolean` | Remembers the expanded state across reloads, in `localStorage`. Defaults to true. |
-| `keyboardShortcut` | no | `boolean` | Enables the ⌘B / Ctrl-B toggle shortcut. Defaults to true. |
-| `contained` | no | `boolean` | Bounds the shell to this element instead of the viewport — for a shell that does not<br>own the screen (inside a tab, a preview, a nested editor). |
+| `open` | no | `boolean` | Controlled expanded state. It is held here, above both the trigger and the rail, so the<br>two cannot disagree. |
+| `onOpenChange` | no | `(open: boolean) => void` | Called with the next expanded state. |
+| `persist` | no | `boolean` | Remembers the expanded state across reloads, in `localStorage`. It is read during the<br>first render, so the shell does not flash open and then snap shut. |
+| `keyboardShortcut` | no | `boolean` | Enables the ⌘B / Ctrl-B toggle shortcut. |
+| `contained` | no | `boolean` | Bounds the shell to this element instead of the viewport — for a shell that does not<br>own the screen (inside a tab, a preview, a nested editor). The panel is<br>`position: fixed` by default, which is correct for a real shell and the reason a demo<br>of one has to opt out. |
 
 ### `SidebarRail`
 
 Kind: callable.
 
-The strip on the panel's edge. Not a tab stop: it duplicates the trigger.
+The strip along the panel's edge, which toggles it too. It reads the provider, so it works
+from anywhere inside it. Not a tab stop: it duplicates the trigger.
 
 ```text
 ({ className, ...props }: ComponentProps<"button">) => React.JSX.Element
@@ -366,10 +412,11 @@ Kind: interface.
 
 Kind: callable.
 
-The toggle. Pair it with the rail, which does the same job from the panel's edge.
+The button that toggles the panel. It reads the provider, so it works from anywhere
+inside it; pair it with the rail, which does the same job from the panel's edge.
 
 ```text
-({ className, onClick, ...props }: ComponentProps<typeof Button>) => React.JSX.Element
+({ className, onClick, tone, buttonStyle, iconOnly, ...props }: ComponentProps<typeof Button>) => React.JSX.Element
 ```
 
 ### `SidebarVariant`
@@ -387,8 +434,9 @@ inset from it; `inset` additionally lifts the page content into a rounded card.
 
 Kind: callable.
 
-The context, or `null` outside a provider — for shell parts that render with or without
-a sidebar (a header above a plain page).
+The panel's state, or `null` outside a provider — for the parts a shell renders whether
+or not it has a sidebar. A header above a plain page still wants its breadcrumbs, and
+throwing there takes the page down over a toggle that has nothing to toggle.
 
 ```text
 () => SidebarContextValue | null
@@ -397,6 +445,8 @@ a sidebar (a header above a plain page).
 ### `useSidebar`
 
 Kind: callable.
+
+The panel's state from anywhere inside `SidebarProvider`. Throws outside one.
 
 ```text
 () => SidebarContextValue

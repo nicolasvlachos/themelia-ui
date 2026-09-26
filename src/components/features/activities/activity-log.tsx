@@ -112,6 +112,10 @@ function mapEventToActivity<TResource extends string>(
 	}
 }
 
+/**
+ * Events and comments on one rail, built on ActivityFeed: a comment is an activity whose row is
+ * a `CommentItem`, so both share markers, date groups and ordering.
+ */
 export function ActivityLog<
 	TUser extends CommentUser = CommentUser,
 	TMeta = unknown,

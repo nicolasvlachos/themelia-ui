@@ -30,16 +30,7 @@ export function BatchActionBarPage() {
 						Omit <code>onClear</code> to render no clear control. A selection the reader cannot drop
 						needs a deliberate reason.
 					</Callout>
-					<PropTable owner="BatchActionBar"
-						rows={[
-							{ name: "selectedCount", type: "number", description: "Renders nothing at zero, so the bar can be mounted unconditionally." },
-							{ name: "totalCount", type: "number", description: "Optional denominator. Omit when the total is unknown or unbounded." },
-							{ name: "onClear", type: "() => void", description: "Drops the selection. Omitted renders no clear control." },
-							{ name: "placement", type: '"floating" | "inline"', description: "Docked to the viewport, or in flow. Defaults to floating." },
-							{ name: "strings", type: "Partial<BatchActionBarStrings>", description: "summary(selected, total), clear, and the region's accessible label." },
-							{ name: "children", type: "ReactNode", description: "The bulk actions — buttons, a menu, whatever the surface needs." },
-						]}
-					/>
+					<PropTable owner="BatchActionBar" />
 				</Stack>
 			</Example>
 		</ComponentPage>

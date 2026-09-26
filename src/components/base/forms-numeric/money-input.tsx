@@ -22,6 +22,11 @@ export interface MoneyInputProps
 	onValueChange?: (value: MoneyValue) => void
 }
 
+/**
+ * The same field as `CurrencyInput`, taking a single `{ amount, currency }` object, for a form
+ * that stores it that way: it cannot submit one without the other. The amount stays a
+ * string — floats lose cents, and parsing is the caller's decision.
+ */
 export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function MoneyInput(
 	{ value, onValueChange, currencies = ["USD", "EUR", "GBP"], className, ...props },
 	ref,

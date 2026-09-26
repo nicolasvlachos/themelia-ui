@@ -1,7 +1,9 @@
 export {
-	defaultRenderLink, resolveLayoutLinkRenderer,
-	type LayoutIconSource, type LayoutLinkRenderProps, type LayoutLinkRenderer,
-	type LayoutNavigationAdapter, type LayoutSlotAttributes, type LayoutUser, type NavLink,
+	defaultRenderLink, resolveLinkRenderer, type LinkRenderProps, type LinkRenderer,
+} from "@/lib/navigation"
+export {
+	type LayoutIconSource, type LayoutNavigationAdapter, type LayoutSlotAttributes, type LayoutUser,
+	type NavLink,
 } from "./layout.types"
 export { useActivePath } from "./hooks/use-active-path"
 export {

@@ -21,32 +21,51 @@ import { useObjectUrls } from "@/hooks/use-object-urls"
 export interface FileUploadProps extends FileConstraints {
 	/** Applied to the file input itself, so a `FormField` label can address it. */
 	id?: string
-	/** Controlled selection. */
+	/** The chosen files, controlled. */
 	value?: File[]
 	defaultValue?: File[]
+	/** Called with the next selection, after validation. */
 	onValueChange?: (files: File[]) => void
-	/** Receives what was refused. Rejected files never reach `onValueChange`. */
+	/**
+	 * Receives the files that failed validation, each with a reason code. Rejected files never
+	 * reach `onValueChange`.
+	 */
 	onRejectedFiles?: (rejections: FileRejection[]) => void
 
+	/** Accepts more than one file. */
 	multiple?: boolean
 	/** Cap on the selection. Defaults to 1 for single, unlimited for multiple. */
 	maxFiles?: number
-	/** Whether a new selection adds to the list or replaces it. */
+	/**
+	 * Whether a second drop adds to the set or replaces it. Defaults to `append` with
+	 * `multiple`, else `replace`.
+	 */
 	selectionMode?: "append" | "replace"
 
 	disabled?: boolean
+	/** Applies the invalid treatment to the zone. The message stays with FormField. */
 	invalid?: boolean
-	/** A compact single row, for a zone that sits inside a form rather than owning a page. */
+	/**
+	 * A single row rather than a panel, for a zone that sits inside a form rather than owning
+	 * a page.
+	 */
 	compact?: boolean
 
 	/** Shorthand for `strings.instruction`. */
 	label?: ReactNode
 	/** Overrides this control's own copy, the rejection sentences included. */
 	strings?: Partial<FileUploadStrings>
+	/** The line under the zone: the constraint text a reader needs before they choose. */
 	hint?: ReactNode
-	/** Hides the built-in list, for a caller rendering their own. */
+	/**
+	 * Shows the chosen files under the zone. Turn it off only when something else on the page
+	 * shows them — a caller rendering its own list.
+	 */
 	showList?: boolean
-	/** Shows the refusals under the zone. */
+	/**
+	 * Shows the refused files under the zone, each with its reason. Turn it off only when
+	 * something else on the page shows them.
+	 */
 	showRejections?: boolean
 	/** Per-file transfer progress, 0–100, keyed by file name. */
 	progress?: Record<string, number>

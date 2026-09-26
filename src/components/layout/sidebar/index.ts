@@ -13,5 +13,5 @@ export type {
 } from "./nav.types"
 /* Path matching lives in `@/lib/navigation`; re-exported under its published names. */
 export {
-	isPathMatch, resolveActiveHref, toPath, type LayoutLinkRenderer, type LayoutLinkRenderProps,
+	isPathMatch, resolveActiveHref, toPath, type LinkRenderer, type LinkRenderProps,
 } from "@/lib/navigation"

@@ -28,9 +28,14 @@ export interface FileRejection {
 export type FileValidator = (file: File) => boolean | string
 
 export interface FileConstraints {
-	/** Native accept filter, e.g. `.pdf,image/*`. Enforced here as well as by the dialog. */
+	/**
+	 * Native accept filter, e.g. `.pdf,image/*`. Enforced here as well as by the dialog, and
+	 * checked before `onValueChange` rather than after, like every constraint.
+	 */
 	accept?: string
+	/** Smallest file accepted, in bytes. */
 	minSizeBytes?: number
+	/** Largest file accepted, in bytes. */
 	maxSizeBytes?: number
 	/** Runs after the type and size checks. */
 	validateFile?: FileValidator

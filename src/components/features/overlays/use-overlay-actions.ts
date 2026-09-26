@@ -33,6 +33,11 @@ export interface UseOverlayActionsReturn {
 	busy: boolean
 }
 
+/**
+ * The confirm button's behaviour — the pending state, the error routing, and the close on
+ * success — shared by the three overlays, so they agree on what "confirm" means. For a bespoke
+ * surface that still needs that lifecycle.
+ */
 export function useOverlayActions({
 	close,
 	open = true,

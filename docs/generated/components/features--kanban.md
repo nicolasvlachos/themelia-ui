@@ -47,6 +47,9 @@ KanbanStrings
 
 Kind: callable.
 
+A drag-and-drop board. It never persists: `onValueChange` is the truth, and `onItemMove` the
+seam for saving it.
+
 ```text
 ({ value, onValueChange, getItemValue, onItemMove, itemActions, onItemClick, strings, className, children, }: KanbanProps<T>) => import("react").JSX.Element
 ```
@@ -80,6 +83,9 @@ Kind: callable.
 ### `KanbanColumnContent`
 
 Kind: callable.
+
+A column's droppable region, for a board that wants its own column chrome but the same drag
+behaviour.
 
 ```text
 ({ value, className, children }: KanbanColumnContentProps) => import("react").JSX.Element
@@ -125,6 +131,9 @@ Kind: interface.
 
 Kind: callable.
 
+One draggable card, for a board that wants its own column chrome but the same drag
+behaviour.
+
 ```text
 ({ value, className, disabled, onClick, children, }: KanbanItemProps) => import("react").JSX.Element
 ```
@@ -146,6 +155,8 @@ Extends: `ContextAction<T>`.
 ### `KanbanItemActions`
 
 Kind: callable.
+
+The card's verbs: its `itemActions`, in a menu.
 
 ```text
 ({ className, icon, label, }: KanbanItemActionsProps) => import("react").JSX.Element | null
@@ -191,6 +202,10 @@ itself, and the card then attaches drag listeners to the handle instead of its s
 
 Kind: callable.
 
+The grip. Optional: present, it becomes the only grip; absent, the whole card is. A handle
+rather than a draggable card body, because a card carrying a menu and a link has no way to
+tell a drag from a press otherwise — and text inside the card stays selectable.
+
 ```text
 ({ className, children, ref, }: KanbanItemHandleProps & { ref?: Ref<HTMLButtonElement>; }) => import("react").JSX.Element
 ```
@@ -231,6 +246,9 @@ Kind: interface.
 
 Kind: callable.
 
+What follows the pointer during a drag — rendered outside the column so it is not clipped by
+the scroll container it started in.
+
 ```text
 ({ className, render }: KanbanOverlayProps<T>) => import("react").JSX.Element
 ```
@@ -242,7 +260,7 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `className` | no | `string` |  |
-| `render` | no | `(context: { item: T \| null; columnId: string \| null; }) => ReactNode` | Replaces the default outline with the consumer's own card. |
+| `render` | no | `(context: { item: T \| null; columnId: string \| null; }) => ReactNode` | Replaces the default outline with the consumer's own card. The default is a placeholder<br>rather than a copy of the card, because the card's markup lives at the call site. |
 
 ### `KanbanProps`
 
@@ -250,12 +268,12 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `KanbanValue<T>` |  |
-| `onValueChange` | yes | `(next: KanbanValue<T>) => void` |  |
+| `value` | yes | `KanbanValue<T>` | The board, as `Record<columnId, T[]>`: a plain object because that is what a board is,<br>and it serialises without a thought. Column titles and limits are the consumer's — only<br>the ORDER lives here. |
+| `onValueChange` | yes | `(next: KanbanValue<T>) => void` | Receives the whole next board after every move. |
 | `getItemValue` | yes | `(item: T) => string` | A stable id per item. Everything else is keyed off this. |
-| `onItemMove` | no | `(event: KanbanItemMoveEvent<T>) => void` | Fires after a move lands, with both ends of it, for persistence or analytics. |
-| `itemActions` | no | `KanbanItemActions<T>` |  |
-| `onItemClick` | no | `(item: T) => void` | Fires on a card click that was not the handle or the menu. |
+| `onItemMove` | no | `(event: KanbanItemMoveEvent<T>) => void` | Fires after a move lands, with both ends of it — from column and index, to column and<br>index. The seam for persistence or analytics. Idempotent: a move that changes nothing<br>fires nothing. |
+| `itemActions` | no | `KanbanItemActions<T>` | Each card's actions, or a function of the card. The factory form is what a real board<br>needs: “Reopen” belongs on a card in Done and nowhere else, and a fixed list would render<br>it everywhere and disable it. |
+| `onItemClick` | no | `(item: T) => void` | Fires on a card click that was not the handle or the menu — both mark themselves, so a<br>click on an icon inside either is caught too. |
 | `strings` | no | `Partial<KanbanStrings>` |  |
 | `className` | no | `string` |  |
 | `children` | no | `ReactNode` |  |
@@ -286,6 +304,10 @@ Record<string, T[]>
 
 Kind: callable.
 
+The move without the drag: `findItem` and `move` over the same `value`, `onValueChange` and
+`getItemValue` the board takes — for a keyboard board, a "move to column" menu, or a test
+that moves items without simulating a pointer.
+
 ```text
 ({ value, onValueChange, getItemValue, onItemMove, }: UseKanbanOptions<T>) => UseKanbanResult<T>
 ```
@@ -294,6 +316,8 @@ Kind: callable.
 
 Kind: callable.
 
+The board's state, for a custom card or column rendered inside it.
+
 ```text
 () => KanbanContextValue<T>
 ```
@@ -301,6 +325,8 @@ Kind: callable.
 ### `useKanbanItemContext`
 
 Kind: callable.
+
+One card's drag state, for a custom card that still needs to know it is being dragged.
 
 ```text
 () => KanbanItemContextValue<T>

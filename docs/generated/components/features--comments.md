@@ -67,6 +67,10 @@ Kind: interface.
 
 Kind: callable.
 
+One file, in four states: staged, uploading, failed and posted. One row for all four,
+because a failed upload that looks different from a staged one is a row the reader has to
+learn twice — and finishing an upload never reflows.
+
 ```text
 ({ attachment, editable, onRemove, onRetry, accessors, strings, className, }: CommentAttachmentChipProps) => import("react").JSX.Element
 ```
@@ -172,6 +176,10 @@ Kind: interface.
 
 Kind: callable.
 
+A comment's body in whichever format it was stored — plain `text`, sanitised `html`, or a
+read-only `rich` block document. Three of them, because a comments table outlives any one
+editor and the rows written last year still have to render.
+
 ```text
 ({ comment, resources, renderReference, sanitizer, strings, className, }: CommentContentProps<TUser, TMeta, TResource>) => ReactNode
 ```
@@ -251,6 +259,11 @@ Kind: interface.
 
 Kind: callable.
 
+One comment and the controls that act on it: the author, time and message in a bubble,
+reactions and Reply under it, everything else in the overflow menu beside it. Its replies
+hang off a rail from its avatar, so who answered whom is a line to follow rather than an
+indent to infer.
+
 ```text
 ({ comment, replies: suppliedReplies, canModerate, onDelete, onAttachmentRemove, onEdit, onPinToggle, onReact, onReply, allowReactions, allowReplies, commentActions, maxVisibleReplies, clampLines, maxVisibleAttachments, reactionChoices, sanitizer, strings, getMediaUrl, getMediaName, getStatusLabel, resources, renderAttachment, renderReference, className, }: CommentItemProps<TUser, TMeta, TResource>) => import("react").JSX.Element
 ```
@@ -311,6 +324,10 @@ Kind: interface.
 
 Kind: callable.
 
+The composer and the timeline, wired together. A control appears only when its callback is
+supplied (`onDelete`, `onUpdate`, …); `canComment`, `canModerate` and `allowReplies` cover
+viewer permission and thread shape.
+
 **Use when:** Compact comments or posts with replies and a composer.
 
 **Avoid when:** A feed of system events or mixed audit history.
@@ -348,7 +365,7 @@ Kind: interface.
 | `maxFiles` | no | `number` |  |
 | `accept` | no | `string` | Passed straight to the file input. |
 | `disabled` | no | `boolean` |  |
-| `onReject` | no | `(rejection: CommentAttachmentRejection) => void` | Receives a refusal before any upload starts. |
+| `onReject` | no | `(rejection: CommentAttachmentRejection) => void` | Receives a refusal before any upload starts, as a code and the number behind it — never a<br>sentence. The hook has no idea what language the reader speaks, and “too large” is useless<br>without the limit. |
 
 ### `CommentsComposerPosition`
 
@@ -393,30 +410,30 @@ Extends: `CommentsAccessors`, `CommentThreadOptions<TUser, TMeta, TResource>`, `
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `context` | yes | `CommentableContext` |  |
-| `comments` | yes | `ReadonlyArray<CommentData<TUser, TMeta, TResource>>` | In display order. Replies are nested by `replyToId`, not by position. |
+| `context` | yes | `CommentableContext` | What the thread hangs off: an `id` and a `type`, and a `moduleKey` where one record carries<br>several threads. Passed straight through to `onSubmit`. Changing it clears the draft — a<br>composer that stays mounted must not carry one record's text to the next. |
+| `comments` | yes | `ReadonlyArray<CommentData<TUser, TMeta, TResource>>` | Flat, in display order. Replies nest by `replyToId`, not by position, so one posted an hour<br>late still appears under its parent. A reply whose parent is not in the array is promoted<br>rather than dropped. |
 | `canComment` | no | `boolean` |  |
 | `canModerate` | no | `boolean` |  |
-| `composerPosition` | no | `CommentsComposerPosition` |  |
+| `composerPosition` | no | `CommentsComposerPosition` | Where the composer sits — a real per-thread decision: an activity log reads newest-first<br>and a discussion reads like a chat, and the same page can want both. Replies and edits open<br>inside the thread either way. |
 | `maxAttachments` | no | `number` |  |
 | `allowAttachments` | no | `boolean` |  |
 | `allowReactions` | no | `boolean` |  |
 | `allowReplies` | no | `boolean` |  |
 | `bare` | no | `boolean` | Drops the card chrome, for a thread already inside a panel. |
-| `title` | no | `ReactNode \| false` | `false` hides the title outright. |
-| `onSubmit` | no | `CommentsConfig<TUser, TMeta, TResource>["onSubmit"]` |  |
-| `onDelete` | no | `CommentsConfig<TUser, TMeta, TResource>["onDelete"]` |  |
-| `confirmDelete` | no | `boolean` | Asks before deleting. Off when the app already confirms upstream. |
+| `title` | no | `ReactNode \| false` | The heading. `false` hides it outright. |
+| `onSubmit` | no | `CommentsConfig<TUser, TMeta, TResource>["onSubmit"]` | Posts a comment or a reply. `helpers.reset()` is what clears the composer — a resolved<br>promise is not proof of success, and a server answering validation with a 200 would<br>otherwise throw away what the writer typed. |
+| `onDelete` | no | `CommentsConfig<TUser, TMeta, TResource>["onDelete"]` | Deletes a comment, after a confirmation unless `confirmDelete` is off. |
+| `confirmDelete` | no | `boolean` | Asks before deleting. The confirmation is opt-out because deleting takes the replies with<br>it; turn it off when the app already asks upstream. |
 | `onAttachmentRemove` | no | `(commentId: string, attachmentId: string) => void \| Promise<void>` |  |
-| `onUpdate` | no | `CommentsConfig<TUser, TMeta, TResource>["onUpdate"]` |  |
+| `onUpdate` | no | `CommentsConfig<TUser, TMeta, TResource>["onUpdate"]` | Saves an edit. As with `onSubmit`, `helpers.reset()` is what clears the composer. |
 | `onAfterMutate` | no | `CommentsConfig<TUser, TMeta, TResource>["onAfterMutate"]` |  |
 | `onError` | no | `CommentsConfig<TUser, TMeta, TResource>["onError"]` |  |
 | `onPinToggle` | no | `CommentsConfig<TUser, TMeta, TResource>["onPinToggle"]` |  |
 | `onReact` | no | `CommentsConfig<TUser, TMeta, TResource>["onReact"]` |  |
 | `onReply` | no | `CommentsConfig<TUser, TMeta, TResource>["onReply"]` |  |
-| `resources` | no | `CommentsConfig<TUser, TMeta, TResource>["resources"]` |  |
-| `onResourceSearch` | no | `CommentsConfig<TUser, TMeta, TResource>["onResourceSearch"]` |  |
-| `attachments` | no | `CommentsAttachmentsConfig` |  |
+| `resources` | no | `CommentsConfig<TUser, TMeta, TResource>["resources"]` | The mention registry, as `useMentions` takes it. Without it the reference control does not<br>appear. |
+| `onResourceSearch` | no | `CommentsConfig<TUser, TMeta, TResource>["onResourceSearch"]` | The fallback search, for a mention kind that registers neither `search` nor<br>`suggestions`. |
+| `attachments` | no | `CommentsAttachmentsConfig` | Uploads: `onUpload`, `maxSize`, `maxFiles`, `accept`. Without `onUpload` there is no<br>attachment control. The uploader resolves to a `CommentAttachment` with a permanent `url`;<br>the composer submits what it returns, not the file it was given. |
 | `sanitizer` | no | `CommentsConfig<TUser, TMeta, TResource>["sanitizer"]` |  |
 | `strings` | no | `Partial<CommentsStrings>` |  |
 | `className` | no | `string` |  |
@@ -432,8 +449,8 @@ Kind: interface.
 | `emptySlot` | no | `ReactNode` |  |
 | `headerSlot` | no | `ReactNode` |  |
 | `footerSlot` | no | `ReactNode` |  |
-| `renderItem` | no | `(context: CommentRenderItemContext<TUser, TMeta, TResource>) => ReactNode` |  |
-| `renderAttachment` | no | `(attachment: CommentAttachment) => ReactNode` |  |
+| `renderItem` | no | `(context: CommentRenderItemContext<TUser, TMeta, TResource>) => ReactNode` | Replaces a comment. It receives `defaultItem`, so a consumer can wrap the kit's comment<br>rather than rebuild it. |
+| `renderAttachment` | no | `(attachment: CommentAttachment) => ReactNode` | Replaces an attachment's chip. |
 | `renderReference` | no | `(reference: Mention<TResource>) => ReactNode` | Overrides the mention registry's own `renderChip`. |
 
 ### `CommentsStrings`
@@ -513,11 +530,11 @@ How a thread reads: what folds away and what a reader can do beyond reply and re
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `commentActions` | no | `ContextActionSource<CommentData<TUser, TMeta, TResource>>` | Extra entries for each comment's overflow menu, bound to the comment (`visible`,<br>`disabled` and `onClick` receive it). Listed above pin, edit and delete; `destructive` sorts last. |
-| `maxVisibleReplies` | no | `number` | Latest replies shown before earlier ones fold behind "Show N earlier replies". `0` shows all. @default 3 |
+| `commentActions` | no | `ContextActionSource<CommentData<TUser, TMeta, TResource>>` | Extra entries for each comment's overflow menu — copy a link, report, resolve. Bound to the<br>comment like a table row's actions: `visible` and `disabled` may be predicates, and<br>`onClick` receives the comment. They sit after pin and edit, before delete; a<br>`destructive` entry still sorts last. |
+| `maxVisibleReplies` | no | `number` | Replies an open thread shows; the earlier ones fold behind "Show N earlier replies". The<br>LAST ones are kept, so list replies oldest first. `0` shows them all. @default 3 |
 | `clampLines` | no | `number` | Lines of a long body shown before "See more" (measured, so short bodies get no control). `0` never clamps. @default 6 |
-| `maxVisibleAttachments` | no | `number` | Attachments shown before the rest fold behind "Show N more". `0` shows every file. @default 3 |
-| `reactionChoices` | no | `readonly string[]` | The reactions "Add reaction" offers. One reacts immediately; more open a picker. @default ["👍"] |
+| `maxVisibleAttachments` | no | `number` | Attachments shown before the rest fold behind "Show N more". Folding one file saves<br>nothing, so the fold starts at two hidden. `0` shows every file. @default 3 |
+| `reactionChoices` | no | `readonly string[]` | The reactions "Add reaction" offers. One reacts at once; more open a picker that marks the<br>reader's own. Every choice arrives through `onReact`. @default ["👍"] |
 
 ### `CommentTimeline`
 
@@ -568,6 +585,10 @@ Required<CommentsStrings>
 
 Kind: callable.
 
+The files staged on a draft and their uploads — the part with three things that are easy to
+get wrong: cancelling in flight, retrying one of several, and discarding a draft that still
+has uploads running.
+
 ```text
 (options?: UseAttachmentUploadOptions) => UseAttachmentUploadReturn
 ```
@@ -601,6 +622,10 @@ Kind: interface.
 ### `useComments`
 
 Kind: callable.
+
+The state machine on its own — `composerMode`, `submit`, `deleteComment`, `resetKey` — for a
+fully custom thread. The mode is one union rather than three booleans, so “editing a reply
+while replying” cannot be represented.
 
 ```text
 (options?: UseCommentsOptions<TUser, TMeta, TResource>) => UseCommentsReturn<TUser, TMeta, TResource>

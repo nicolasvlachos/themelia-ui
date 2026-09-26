@@ -39,21 +39,10 @@ export function ProductVariantsPage() {
 			</Example>
 
 			<Example id="variants-api" title="API">
-				<PropTable owner="ProductVariantsManager"
-					rows={[
-						{ name: "ProductOptionsMatrix confirmDelete", type: "boolean", default: "true", description: "Removing an option removes every variant generated from it — which is not visible from the option's own row. Off when the app already confirms, so nobody is asked twice." },
-						{ name: "onSaveEditingOption", type: "(option, draft) => void", description: "The staged name and values, committed together. Cancel discards them; the draft is re-seeded from the option each time editing opens, so a cancelled edit cannot leak into the next one." },
-						{ name: "cellDisplay", type: "\"text\" | \"field\" | Partial<Record<field, …>>", description: "Per field, so a table can make price editable and leave stock read-only — which is what a price update run actually needs." },
-						{ name: "onVariantFieldChange / onVariantFieldBlur", type: "(variant, field, value, context) => void", description: "Both, and the consumer picks. Change alone makes every keystroke a state update; blur alone loses the value if the row is removed mid-edit." },
-						{ name: "groupByOptionId", type: "string | null", description: "Groups rows under that option's values, in the order the option declares them — not alphabetically, and not by whichever variant was created first. null leaves the list flat." },
-						{ name: "renderBulkActions", type: "(context) => ReactNode", description: "Replaces the default pair. The context carries the selected rows, the counts, and both clearSelection and setSelectedIds, so a custom bar can act and then deselect." },
-						{ name: "ProductVariantDetails variant", type: "ProductVariantSummary", description: "Optional. Absent renders the empty state — this panel is usually bound to a selection, and “nothing chosen yet” is a thing to say, not a reason to unmount." },
-						{ name: "ProductVariantEditor submitting", type: "boolean", description: "OR-ed with an internal flag. A consumer holding the request already knows it is in flight; one that just handed over an async onSubmit does not, and a form that stays live during a save takes the same submit twice." },
-						{ name: "ProductVariantEditor optionFields", type: "ProductVariantOptionField[]", description: "A select when the field carries choices, a text input when it does not — an app with a free-text status should not have to invent a list to use this." },
-						{ name: "ProductVariantsManager optionsStrings / variantsStrings", type: "Partial<…Strings>", description: "The two children keep their own copy objects. One merged bag would collide on title, description and the create labels, which both of them have." },
-						{ name: "ProductVariantCell", type: "component", description: "A label/value pair that survives losing its table: the label is screen-reader-only while the column heading names the value, and becomes visible below the md breakpoint where the headings are gone." },
-					]}
+				<PropTable
+					owners={["ProductVariantsManager", "ProductOptionsMatrix", "ProductVariantDetails", "ProductVariantEditor"]}
 				/>
+				<PropTable symbols={["ProductVariantCell"]} />
 			</Example>
 		</ComponentPage>
 	)

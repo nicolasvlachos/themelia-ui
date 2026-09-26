@@ -31,8 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
-No `size` prop by design: geometry follows the scale factors, so a denser region is a
-scope (styles/FACTORS.md).
+The kit's action primitive. No `size` prop by design: geometry follows the scale factors,
+so a denser region is a scope (styles/FACTORS.md).
 
 ```text
 ({ tone, buttonStyle, iconOnly, fullWidth, loading, render, className, disabled, children, onClick, ...props }: ButtonProps) => React.JSX.Element
@@ -41,6 +41,8 @@ scope (styles/FACTORS.md).
 ### `ButtonGroup`
 
 Kind: callable.
+
+Adjacent buttons that read as one control: one hairline seam, squared inner corners.
 
 ```text
 ({ orientation, className, ...props }: ButtonGroupProps) => React.JSX.Element
@@ -54,13 +56,14 @@ Extends: `React.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `orientation` | no | `"horizontal" \| "vertical"` |  |
+| `orientation` | no | `"horizontal" \| "vertical"` | The direction the buttons run in. |
 
 ### `ButtonGroupSeparator`
 
 Kind: callable.
 
-A rule between segments, where the collapsed border alone is not enough.
+The seam between welded buttons, where the collapsed border alone is not enough. A plain
+`Separator` here would draw a full-height rule against the group's own border.
 
 ```text
 ({ orientation, className, ...props }: ButtonGroupSeparatorProps) => React.JSX.Element
@@ -74,13 +77,14 @@ Extends: `React.ComponentProps<"div">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `orientation` | no | `"horizontal" \| "vertical"` |  |
+| `orientation` | no | `"horizontal" \| "vertical"` | The orientation of the group it sits in; the seam runs across it. |
 
 ### `ButtonGroupText`
 
 Kind: callable.
 
-A non-interactive segment — a unit, a prefix, a count. A span, so it adds no tab stop.
+A label that sits in the run without becoming pressable — a unit, a prefix, a count. A
+span, so it adds no tab stop.
 
 ```text
 ({ className, ...props }: ButtonGroupTextProps) => React.JSX.Element
@@ -110,12 +114,12 @@ Extends: `Omit<React.ComponentProps<"button">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `tone` | no | `ButtonTone` | Semantic colour intent. |
-| `buttonStyle` | no | `ButtonStyle` | Fill treatment. |
+| `tone` | no | `ButtonTone` | Semantic colour intent. Resolves through the provider when omitted, so `UIProvider`<br>defaults can change it. @default "primary" |
+| `buttonStyle` | no | `ButtonStyle` | Fill treatment, independent of `tone`. `UIProvider` defaults can change it. @default "solid" |
 | `iconOnly` | no | `boolean` | Square button sized to its height. The label becomes the accessible name. |
-| `fullWidth` | no | `boolean` |  |
+| `fullWidth` | no | `boolean` | Stretches the button to its container's width. |
 | `loading` | no | `boolean` | Shows a spinner and blocks interaction. The label keeps its space so the button does<br>not resize mid-action. |
-| `render` | no | `React.ReactElement` | The element this button becomes — an anchor, a router link, a label (docs/adr/0005).<br>`children` stay the content and keep the button's label wrapper.<br><br>  <Button render={<a href="/settings" />}>Settings</Button> |
+| `render` | no | `React.ReactElement` | The element this button becomes — an anchor, a router link, a label. `children` stay<br>the content and keep the button's label wrapper, so a link still sizes like a button.<br>`render` is how every kit component changes its element, the contract Base UI's parts<br>already take.<br><br>  <Button render={<a href="/settings" />}>Settings</Button> |
 | `children` | no | `React.ReactNode` |  |
 
 ### `ButtonStyle`
@@ -160,10 +164,10 @@ Extends: `Omit<ButtonProps, "onClick">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `loading` | no | `boolean` | Controlled pending state. Omit to let the button manage it from `onClick`. |
+| `loading` | no | `boolean` | Controlled pending state. Omit it and the button holds the state itself, from the<br>promise `onClick` returns. |
 | `handlesLoading` | no | `boolean` | Accepted so call sites that pass it keep compiling; inert. Choosing `LoaderButton` is<br>already that decision. Swallowed rather than spread, so it never reaches the DOM. |
 | `onClick` | no | `(event: React.MouseEvent<HTMLButtonElement>) => void \| Promise<unknown>` | May return a promise; the button then stays pending until it settles. |
-| `strings` | no | `StringsProp<ButtonLoadingStrings>` |  |
+| `strings` | no | `StringsProp<ButtonLoadingStrings>` | Overrides the button's own copy: what it announces while it works. |
 
 ### `TextButton`
 
@@ -178,7 +182,7 @@ React.ForwardRefExoticComponent<Omit<TextButtonProps, "ref"> & React.RefAttribut
 Kind: type.
 
 ```text
-Omit<ButtonProps, "buttonStyle" | "iconOnly" | "fullWidth">
+Omit<ButtonProps, "tone" | "buttonStyle" | "iconOnly" | "fullWidth"> & { tone?: ButtonTone; }
 ```
 
 ### `TooltipButton`
@@ -197,7 +201,7 @@ Extends: `ButtonProps`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `tooltip` | yes | `string` | Shown on hover and focus. It is the accessible name only when the button has no text of<br>its own; beside a visible label it is the description. |
+| `tooltip` | yes | `string` | Shown on hover and focus. It is also the accessible name when the button has no text<br>of its own, and that pairing is the point: an icon button with a tooltip and no<br>`aria-label` is unnamed to everyone not using a mouse. Beside a visible label it is the<br>description. |
 | `side` | no | `React.ComponentProps<typeof TooltipContent>["side"]` | Where the tooltip opens. |
 
 ## Preview recipes

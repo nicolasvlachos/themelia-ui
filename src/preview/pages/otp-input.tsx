@@ -12,13 +12,7 @@ export function OtpInputPage() {
 			/>
 
 			<Example id="otp-input-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "OtpInput length / groupSize", type: "number", default: "6 / —", description: "How many boxes, and how they are grouped for the eye. The grouping never changes which character a box holds." },
-						{ name: "OtpInput invalid", type: "boolean", default: "false", description: "Marks the code invalid as one field — a code is right or wrong as a whole, so every box shows it together." },
-						{ name: "OtpInput strings", type: "Partial<OtpInputStrings>", description: "fieldLabel names the field, and with it the first box, when nothing else labels it; slotLabel(position, length) names each box — “Character 2 of 6”." },
-					]}
-				/>
+				<PropTable owner="OtpInput" />
 			</Example>
 		</ComponentPage>
 	)

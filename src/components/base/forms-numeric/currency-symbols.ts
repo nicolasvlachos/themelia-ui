@@ -1,6 +1,10 @@
 /* Currency symbols, in their own module so component files export only components (fast refresh). */
 
-/** A starting set. Anything not here is passed as a full option. */
+/**
+ * The code-to-symbol map the currency options are labelled from, exported so a caller can
+ * render the same symbol elsewhere. A starting set: anything not here is passed as a full
+ * option.
+ */
 export const CURRENCY_SYMBOLS: Record<string, string> = {
 	USD: "$",
 	EUR: "€",

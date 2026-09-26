@@ -12,11 +12,14 @@ export function MenubarPage() {
 			/>
 
 			<Example id="menubar-api" title="API">
+				<PropTable owners={["Menubar", "MenubarTrigger"]} />
 				<PropTable
-					rows={[
-						{ name: "Menubar", type: "component", description: "The bar. Its menus are DropdownMenu roots, each with a MenubarTrigger and DropdownMenuContent holding every row the dropdown menu offers." },
-						{ name: "MenubarTrigger", type: "component", description: "One menu’s word in the bar, placed inside a DropdownMenu beside its DropdownMenuContent. Once a menu is open, moving along the bar opens the next without a second click — which is what makes a menubar a menubar rather than a row of dropdowns." },
-						{ name: "DropdownMenu / DropdownMenuContent / DropdownMenuItem / DropdownMenuSeparator / DropdownMenuShortcut", api: ["@/components/base/dropdown-menu#DropdownMenu", "@/components/base/dropdown-menu#DropdownMenuContent", "@/components/base/dropdown-menu#DropdownMenuItem", "@/components/base/dropdown-menu#DropdownMenuSeparator", "@/components/base/dropdown-menu#DropdownMenuShortcut"], type: "component", description: "The menu itself is the dropdown menu module’s, not a copy under a second name — so groups, labels, checkbox and radio items, submenus and the portal are the dropdown menu’s parts too, and a reader who has learned one has learned the other." },
+					symbols={[
+						"DropdownMenu",
+						"DropdownMenuContent",
+						"DropdownMenuItem",
+						"DropdownMenuSeparator",
+						"DropdownMenuShortcut",
 					]}
 				/>
 			</Example>

@@ -34,21 +34,8 @@ export function CarouselPage() {
 			</Example>
 
 			<Example id="carousel-api" title="API">
-				<PropTable owner="Carousel"
-					rows={[
-						{ name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Which axis snaps." },
-						{ name: "controls", type: '"outside" | "overlay" | "none"', default: '"outside"', description: "Where the previous/next buttons sit. none when you compose your own with CarouselControl." },
-						{ name: "showDots", type: "boolean", default: "false", description: "Position indicators, clickable." },
-						{ name: "dotStyle", type: '"dot" | "pill"', default: '"dot"', description: "pill stretches the active indicator instead of only recolouring it." },
-						{ name: "label", type: "string", description: "Names the region for assistive technology. A carousel with no label is an unexplained scroll box." },
-						{ name: "CarouselSlide size", type: "string", default: '"100%"', description: "Track width the slide occupies — 100%, 50%, 18rem." },
-						{ name: "CarouselControl direction", type: '"previous" | "next"', description: "A single control, for composing your own layout with controls=\"none\"." },
-						{ name: "CarouselDots", type: "component", description: "The indicators on their own, to place outside the track." },
-						{ name: "useCarousel()", type: "hook", description: "Position, count, and the scroll helpers, for a fully custom control surface. Must be called inside a Carousel." },
-						{ name: "strings", type: "Partial<CarouselStrings>", description: "Overrides this carousel's own copy — the region name, the two icon-only controls, and each pagination dot. It travels through the context, so a control placed with CarouselControl is named by the same override as one the root rendered." },
-						{ name: "viewportClassName", type: "string", description: "Styles the scroll container rather than the outer frame — for a carousel that needs its own padding inside the clip." },
-					]}
-				/>
+				<PropTable owners={["Carousel", "CarouselSlide", "CarouselControl"]} />
+				<PropTable symbols={["CarouselDots", "useCarousel"]} />
 			</Example>
 		</ComponentPage>
 	)

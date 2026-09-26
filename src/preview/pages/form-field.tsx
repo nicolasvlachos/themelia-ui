@@ -48,18 +48,8 @@ export function FormFieldPage() {
 			</Example>
 
 			<Example id="form-field-api" title="API">
-				<PropTable owner="FormField"
-					rows={[
-						{ name: "label", type: "ReactNode", description: "Wired to the control by a generated id unless the control has one." },
-						{ name: "helperText", type: "ReactNode", description: "Middle priority: replaces hint, and is itself replaced by error." },
-						{ name: "error", type: "ReactNode", description: "Highest priority of the three supporting lines. Announced politely and switches the control to its invalid state." },
-						{ name: "orientation", type: '"vertical" | "horizontal"', default: '"vertical"', description: "Label above the control, or beside it." },
-						{ name: "required", type: "boolean", description: "Marks the label and the control." },
-						{ name: "FieldGroup", type: "component", description: "Several fields sharing one label and one supporting line — a date range, a name split in two." },
-						{ name: "htmlFor", type: "string", description: "Associates the label with a control that already has an id, instead of the generated one." },
-						{ name: "children", type: "ReactNode | (controlProps) => ReactNode", description: "Use the function form when a consumer wrapper hides the actual control; spread the supplied id and aria props onto it." },
-					]}
-				/>
+				<PropTable owner="FormField" />
+				<PropTable symbols={["FieldGroup"]} />
 			</Example>
 		</ComponentPage>
 	)

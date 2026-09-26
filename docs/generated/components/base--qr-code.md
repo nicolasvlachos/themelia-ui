@@ -51,11 +51,11 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `string` | What the code encodes — a URL, a payment string, a token. |
-| `foreground` | no | `string` | Overrides the dark modules. Defaults to the inverse background, dark in both themes. |
-| `background` | no | `string` | Overrides the light modules. Defaults to the inverse foreground, light in both themes. |
-| `robustness` | no | `QRRobustness` |  |
-| `placeholder` | no | `string` | Shown while encoding. Defaults to this component's own `generating` string. |
+| `value` | yes | `string` | What the code encodes — a URL, a payment string, a token. An empty value renders<br>`emptyState`, or nothing at all when there is none. |
+| `foreground` | no | `string` | Overrides the dark modules. Defaults to the inverse background, dark in both themes.<br>Any CSS colour; it is converted to hex for the encoder. |
+| `background` | no | `string` | Overrides the light modules. Defaults to the inverse foreground, light in both themes.<br>Any CSS colour; it is converted to hex for the encoder. |
+| `robustness` | no | `QRRobustness` | Error correction: how much of the symbol can be obscured and still decode — L ≈ 7%,<br>M ≈ 15%, Q ≈ 25%, H ≈ 30%. Higher needs a denser grid. |
+| `placeholder` | no | `string` | Shown while encoding. Defaults to this component's own `generating` string; a value<br>that cannot be encoded shows `strings.failed` instead. |
 | `strings` | no | `Partial<QRCodeStrings>` | Overrides this code's own copy — the two placeholder states and its name. |
 | `emptyState` | no | `React.ReactNode` | Shown when `value` is empty. Defaults to rendering nothing (it is not a loading state). |
 | `label` | no | `string` | Announced in place of the symbol, which is meaningless to a screen reader. |

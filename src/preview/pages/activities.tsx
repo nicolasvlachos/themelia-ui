@@ -82,28 +82,19 @@ const entries = auditRows.map(toEntry)`}
 			</Example>
 
 			<Example id="activities-api" title="API">
-				<PropTable owner="ActivityFeed"
-					rows={[
-						{ name: "activities", type: "ActivityItem[]", description: "In display order. Grouped by date as they come, not bucketed — bucketing would silently reorder a feed sorted by something other than date." },
-						{ name: "loading", type: "boolean", description: "Shows initial loading for an empty feed, or an update status above existing rows. Keeps loaded details and composer drafts mounted. Also available on ActivityLog." },
-						{ name: "error / onRetry", api: "ActivityFeedProps.error", type: "ReactNode / () => void", description: "Failure feedback with an optional retry action. A failed refresh keeps existing history visible; the consumer owns the request and its loading state. Also available on ActivityLog." },
-						{ name: "segments", api: "ActivityItem.segments", type: "ActivityHeadlineSegment[]", description: "actor | field | value | status | resource | text. Preferred over `headline`: “Maria changed Status from Draft to Published” is a person, a field, and two values, and a template string cannot express that." },
-						{ name: "headline", api: "ActivityItem.headline", type: "string", description: "The fallback. The actor's name is split out of it so a feed migrated from a system that only stored sentences still gets a clickable actor." },
-						{ name: "density", type: '"compact" | "default" | "rich"', default: '"default"', description: "How much of a row is drawn. rich adds metadata, changes, resources, and actions." },
-						{ name: "itemSpacing", type: '"compact" | "default" | "relaxed"', default: '"default"', description: "The rhythm between rows, independent of how much each row draws." },
-						{ name: "eventConfig", type: "Record<string, { icon, tone, label }>", description: "Merged over the kit's defaults, so one event can be redefined without restating the rest. Every `status_changed` in an application should look the same; deciding per call site guarantees it eventually does not." },
-						{ name: "resources / onResourcesChange", type: "Record<key, config> / (registry) => void", description: "The registry rows look their resources up in. A hundred rows referencing order:1234 follow when it is renamed, and none of them stores the name." },
-						{ name: "expandedIds / defaultExpandedIds", type: "string[]", description: "Controlled and uncontrolled. The change callback always gets the full id list, because a consumer persisting the set needs the set." },
-						{ name: "currentUserId", type: "string", description: "Turns this person's own name into “You”. Both ids must be defined for the match, or a feed with no ids anywhere would call every actor “You”." },
-						{ name: "slots", type: "{ renderRow, renderHeadline, renderMarker, renderDetails, … }", description: "renderRow returning undefined hands the row back to the feed — which is how ActivityLog replaces only its comment rows." },
-						{ name: "ActivityLog entries", type: "ActivityLogEntry[]", required: true, description: "A union of comment entries and activity entries, sorted here. An entry with no timestamp sorts to the far end rather than shuffling." },
-						{ name: "ActivityLog composer", type: "{ enabled, context, onSubmit, position }", description: "Omit to render the log read-only. inlineSubmit defaults to false here, unlike a standalone composer: a log's submit sits above a wall of history and one hidden on the toolbar reads as formatting." },
-						{ name: "ActivityRow", type: "component", description: "One entry on the rail. Density changes the marker size and the row rhythm together \u2014 changing one without the other is what makes a compact feed look mis-aligned rather than dense." },
-						{ name: "ActivityHeadline", type: "component", description: "The sentence, assembled from typed segments rather than interpolated. The fallback is the point: an event whose actor or subject is missing still reads as a sentence instead of rendering \u201cundefined updated\u201d." },
-						{ name: "ActivityMarker / ActivityDateLabel", type: "component", description: "The dot on the rail and the time beside it. The marker knows whether it is last, because the connector below it is what tells a reader the run has ended." },
-						{ name: "ActivityChanges / ActivityResourceTag", type: "component", description: "The before-and-after of an edit, and the chip naming what was edited. Changes render as pairs rather than prose so a long diff stays scannable." },
-						{ name: "ActivityActionsMenu / ActivityExpandToggle / ActivityEmptyState", type: "component", description: "The row\u2019s overflow, the control that opens its detail, and the state with no events. The toggle is a real button rather than a clickable row, so a keyboard reader can reach it without traversing the entry." },
-						{ name: "useActivityResources", type: "hook", description: "Resolves the resources an event refers to, so a feed can render a chip per subject without every consumer re-implementing the lookup and its cache." },
+				<PropTable owners={["ActivityFeed", "ActivityLog", "ActivityItem"]} />
+				<PropTable
+					symbols={[
+						"ActivityRow",
+						"ActivityHeadline",
+						"ActivityMarker",
+						"ActivityDateLabel",
+						"ActivityChanges",
+						"ActivityResourceTag",
+						"ActivityActionsMenu",
+						"ActivityExpandToggle",
+						"ActivityEmptyState",
+						"useActivityResources",
 					]}
 				/>
 			</Example>

@@ -782,6 +782,10 @@ export function createActionStore(): ActionStore {
 export const ActionStoreContext = createContext<ActionStore | null>(null);
 export const ActionScopeContext = createContext<string | null>(null);
 
+/**
+ * The store itself, for logic the hooks do not cover. Throws outside an `ActionProvider` rather
+ * than returning null.
+ */
 export function useActionStore(): ActionStore {
 	const store = useContext(ActionStoreContext);
 	if (!store) {

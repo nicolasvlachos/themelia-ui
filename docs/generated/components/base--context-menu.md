@@ -31,6 +31,11 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+The dropdown's menu opened by right-click over a region, reusing its rows. The trigger is
+not a button — the whole area is the target. Every entry must also be reachable another
+way (a toolbar, an `ActionMenu`): right-click is undiscoverable, absent on touch and
+awkward from a keyboard.
+
 ```text
 ({ ...props }: ContextMenuPrimitive.Root.Props) => React.JSX.Element
 ```
@@ -46,6 +51,9 @@ typeof DropdownMenuCheckboxItem
 ### `ContextMenuContent`
 
 Kind: callable.
+
+The menu's surface. It portals already, escaping an ancestor that clips or transforms — a
+card with overflow hidden, a scrolling pane.
 
 ```text
 ({ container, className, ...props }: MenuPrimitive.Popup.Props & { className?: string; container?: UIPortalContainer; }) => React.JSX.Element

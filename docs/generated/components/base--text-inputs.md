@@ -65,6 +65,10 @@ React.ComponentType<{ className?: string; }> | React.ReactNode
 
 Kind: callable.
 
+The field surface on its own, for composing a control the kit does not ship. The shell
+wears the surface and the control inside gives up its own, so an icon or a trailing
+action reads as part of one field rather than a box inside a box.
+
 ```text
 ({ start, end, className, children, id, "aria-labelledby": ariaLabelledBy, "aria-invalid": ariaInvalid, "aria-describedby": ariaDescribedBy, "aria-required": ariaRequired, ...props }: FieldShellProps) => React.JSX.Element
 ```
@@ -121,17 +125,18 @@ Extends: `Omit<React.ComponentProps<"input">, "size">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `startIcon` | no | `FieldIcon` | Glyph before the value. |
-| `endIcon` | no | `FieldIcon` | Glyph after the value. |
-| `startAddon` | no | `React.ReactNode` | Short text before the value — a currency symbol, a protocol, an @ . |
-| `endAddon` | no | `React.ReactNode` | Short text after the value — a unit, a domain. |
+| `startIcon` | no | `FieldIcon` | Glyph before the value, in its own lane so the text never runs under it. |
+| `endIcon` | no | `FieldIcon` | Glyph after the value, in its own lane so the text never runs under it. |
+| `startAddon` | no | `React.ReactNode` | Short text attached before the value, outside the text itself — a currency symbol, a<br>protocol, an at sign. |
+| `endAddon` | no | `React.ReactNode` | Short text attached after the value, outside the text itself — a unit, a domain. |
 | `showCharacterCount` | no | `boolean` | Shows "12 / 80" in the trailing lane. Requires `maxLength`. |
-| `clearable` | no | `boolean` | Shows a clear control once the field has a value. |
+| `maxLength` | no | `number` | Character cap, and the limit the count counts against. Input past it is refused. |
+| `clearable` | no | `boolean` | Shows a clear control once the field has a value. Clearing goes through the native<br>value setter, so React's value tracker stays in sync. |
 | `onClear` | no | `() => void` | Called after the clear control empties the field. |
-| `loading` | no | `boolean` | Replaces the trailing affordance with a spinner. |
-| `invalid` | no | `boolean` | Applies the invalid treatment. The message stays with FormField. |
-| `returnValueWithAddons` | no | `boolean` | Includes string addons in the value reported by `onChange`. Off by default (addons are presentation). |
-| `strings` | no | `StringsProp<InputStrings>` |  |
+| `loading` | no | `boolean` | Replaces the trailing affordance with a spinner, which outranks every other trailing<br>affordance. |
+| `invalid` | no | `boolean` | Applies the invalid treatment. Pair it with FormField's error for the message, so the<br>border and the announcement cannot disagree. |
+| `returnValueWithAddons` | no | `boolean` | Includes string addons in the value reported by `onChange`. Off, because an addon is<br>presentation: a caller that stores "$" and the number has to strip it again on the way<br>out. |
+| `strings` | no | `StringsProp<InputStrings>` | Overrides this field's own copy — the clear label, the character-count format. |
 
 ### `InputStrings`
 
@@ -176,7 +181,7 @@ Extends: `Omit<InputProps, "type">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `strings` | no | `Partial<PasswordInputStrings>` | Overrides this field's own copy — the reveal control's name in each state. |
+| `strings` | no | `Partial<PasswordInputStrings>` | Overrides this field's own copy — the reveal control's name in each state, which is its<br>state for a screen reader — and Input's own strings. |
 
 ### `PasswordInputStrings`
 
@@ -207,7 +212,9 @@ Extends: `Omit<InputProps, "type" | "startIcon">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `onClear` | no | `() => void` | Called when the reader clears the field. The clear control is always offered. |
+| `onClear` | no | `() => void` | Called when the reader clears the field — a notification only, because Input does the<br>clearing itself. The clear control is always present once there is a value. |
+| `strings` | no | `StringsProp<InputStrings>` | Overrides this field's own copy. It is Input's strings object with one default<br>narrowed: a search field's only copy is one word of Input's. @default { clear: "Clear search" } |
+| `placeholder` | no | `string` | Say what is being searched, not just "Search". |
 
 ### `SlugField`
 
@@ -225,9 +232,9 @@ Extends: `Omit<InputProps, "value" | "defaultValue" | "onChange" | "readOnly" | 
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `string \| number \| null \| undefined` | The source value. Controlled — the slug is derived, never held. |
-| `transform` | no | `(value: string \| number \| null \| undefined) => string` | Replaces the built-in derivation entirely. |
-| `prefix` | no | `React.ReactNode` | Rendered before the slug, inside the field — a domain or a path prefix. |
+| `value` | yes | `string \| number \| null \| undefined` | The source text; the field shows its slugified form. Controlled — the slug is derived,<br>never held. |
+| `transform` | no | `(value: string \| number \| null \| undefined) => string` | Replaces the built-in derivation entirely. The default lower-cases, strips accents,<br>keeps letters and numbers in any script, and collapses every other run to a single<br>separator. |
+| `prefix` | no | `React.ReactNode` | Rendered before the slug, inside the field — a domain or a path prefix. Not part of the<br>value. |
 
 ### `slugify`
 
@@ -247,7 +254,7 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `separator` | no | `string` | Character joining words. |
-| `lowercase` | no | `boolean` |  |
+| `lowercase` | no | `boolean` | Lower-cases the slug. |
 | `trim` | no | `boolean` | Strips leading and trailing separators. |
 
 ### `Textarea`
@@ -269,12 +276,13 @@ Extends: `Omit<React.ComponentProps<"textarea">, "onChange">`.
 | `strings` | no | `StringsProp<InputStrings>` | Overrides the character-count and clear copy. |
 | `maxLength` | no | `number` | Character cap, also the denominator of the count. |
 | `showCharacterCount` | no | `boolean` | Shows the current and maximum character count. |
-| `clearable` | no | `boolean` | Shows an inline clear action once the field has a value. |
-| `onClear` | no | `() => void` |  |
+| `clearable` | no | `boolean` | Shows a clear control in the trailing lane once the field has a value. `strings.clear`<br>is its accessible name. |
+| `onClear` | no | `() => void` | Called after the clear control empties the field. |
 | `loading` | no | `boolean` | Replaces the trailing affordance with a loading indicator. |
-| `invalid` | no | `boolean` | Applies the invalid styling. Validation copy stays with FormField. |
-| `minRows` | no | `number` | Smallest height, in rows. |
-| `maxRows` | no | `number` | Height at which the field stops growing and starts scrolling. |
+| `invalid` | no | `boolean` | Applies the invalid styling, the same as Input. Validation copy stays with FormField. |
+| `rows` | no | `number` | Visible lines. Without `minRows` it is the floor the field grows from; `maxRows` sets<br>where it stops growing and scrolls. |
+| `minRows` | no | `number` | The floor when the field grows with its content: its smallest height, in rows. |
+| `maxRows` | no | `number` | Height at which the field stops growing and starts scrolling. Without a ceiling a long<br>note pushes the submit button off the screen. |
 | `onChange` | no | `(event: React.ChangeEvent<HTMLTextAreaElement>) => void` |  |
 | `value` | no | `string` |  |
 | `defaultValue` | no | `string` |  |
@@ -283,8 +291,9 @@ Extends: `Omit<React.ComponentProps<"textarea">, "onChange">`.
 
 Kind: callable.
 
-Value bookkeeping shared by the text controls (Input, Textarea): controlled or not, a
-generated id, the character count and the limit — one branch, so fields agree.
+Value bookkeeping shared by Input and Textarea (SearchInput wraps Input): the controlled or
+uncontrolled value, a generated id, and the character count with its limit — one branch,
+so both fields behave the same under a form library.
 
 ```text
 ({ controlledValue, defaultValue, maxLength, showCharacterCount, providedId, idPrefix, }: UseFieldValueOptions) => UseFieldValueResult

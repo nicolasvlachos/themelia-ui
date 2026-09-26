@@ -28,22 +28,8 @@ export function WorkspaceHeaderPage() {
 			</Example>
 
 			<Example id="record-header-api" title="API">
-				<PropTable owner="WorkspaceRecordHeader"
-					rows={[
-						{ name: "title", type: "ReactNode", description: "What the record IS. Gives way before the badges do." },
-						{ name: "headingLevel", type: "1 | 2 | 3", default: "1", description: "The heading element, for the document outline." },
-						{ name: "description", type: "ReactNode", description: "One line under the title." },
-						{ name: "media", type: "ReactNode", description: "An avatar, an icon medallion, a thumbnail." },
-						{ name: "badges", type: "ReactNode", description: "Status marks beside the title. Short — the title is what gives way, not these." },
-						{ name: "status", type: "ReactNode", description: "A single prominent status, rendered after the badges." },
-						{ name: "metadata", type: "{ id?, label, value }[]", description: "An inline MetadataList: each label and value is one item, with a middle dot between items." },
-						{ name: "actions", type: "ReactNode", description: "Primary actions, pinned to the end of the title row." },
-						{ name: "secondaryActions", type: "ReactNode", description: "A second, quieter row beneath — filters, tabs, bulk controls." },
-						{ name: "WorkspaceLayout", type: "component", description: "The frame a single RECORD is edited in. Not an app shell \u2014 it sits inside one: a record with many sections needs its own navigation, and nesting a second shell is how a page ends up with two sidebars." },
-						{ name: "WorkspaceNav", type: "component", description: "Navigation for a record filled in over time. The difference from every other nav in the kit is COMPLETION: each section reports how much of it is done, because that is what decides where the reader goes next." },
-						{ name: "WorkspaceLocaleStrip", type: "component", description: "The languages a record exists in, and how complete each is. A strip rather than a select, because the completeness is the reason to switch and a select hides it behind a press." },
-					]}
-				/>
+				<PropTable owner="WorkspaceRecordHeader" />
+				<PropTable symbols={["WorkspaceLayout", "WorkspaceNav", "WorkspaceLocaleStrip"]} />
 			</Example>
 		</ComponentPage>
 	)

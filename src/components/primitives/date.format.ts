@@ -9,7 +9,10 @@ export interface FormatDateRangeOptions {
 	locale?: Locale
 }
 
-/** Returns undefined rather than an Invalid Date, so the empty state renders instead. */
+/**
+ * The single parse every date primitive goes through. Returns undefined rather than an
+ * Invalid Date, so the empty state renders instead.
+ */
 export function parseDateInput(value: DateInput): Date | undefined {
 	if (value === null || value === undefined || value === "") return undefined
 	const date = value instanceof Date ? value : new Date(value)
@@ -17,8 +20,8 @@ export function parseDateInput(value: DateInput): Date | undefined {
 }
 
 /**
- * Collapses a range to its distinct parts: same day renders once, and a range within one
- * month drops the repeated month from the start date.
+ * The same collapsing outside React: a range reduced to its distinct parts. The same day
+ * renders once, and a range within one month drops the repeated month from the start date.
  */
 export function formatDateRange(
 	start: DateInput,

@@ -10,7 +10,9 @@ import { useFormatting } from "@/lib/ui-provider"
 import { ValueRoot, type SpanProps, type ValueProps } from "./value"
 
 export interface NumberProps extends SpanProps {
+	/** The number, drawn with locale grouping and tabular figures. */
 	value?: number | string | null
+	/** Overrides the scope's locale for this value. */
 	locale?: string
 	options?: Intl.NumberFormatOptions
 	emptyLabel?: ReactNode
@@ -44,7 +46,12 @@ export function Number_({ value, locale, options, align, ...props }: NumberProps
 export { Number_ as Number }
 
 export interface PercentProps extends Omit<NumberProps, "options"> {
-	/** The value is already 0–100 rather than 0–1. */
+	/** A fraction, not a percentage — 0.214 renders as 21.4%. */
+	value?: number | string | null
+	/**
+	 * The value is already on 0–100 rather than 0–1. Needed because both conventions are in
+	 * the wild and neither is guessable from the number.
+	 */
 	scaled?: boolean
 	options?: Intl.NumberFormatOptions
 }

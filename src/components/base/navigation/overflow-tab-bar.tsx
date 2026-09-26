@@ -25,13 +25,27 @@ export interface OverflowTabItem {
 }
 
 export interface OverflowTabBarProps extends Omit<ComponentProps<"div">, "children" | "onChange" | "defaultValue"> {
+	/**
+	 * The tabs: an `id`, a `label`, and optionally an `icon`, a `badge`, an `href`, or
+	 * `disabled`. A tab with an `href` is a link; without one it is a button.
+	 */
 	items: OverflowTabItem[]
+	/**
+	 * The active section's `id`. The bar owns no panels — the caller renders what the id
+	 * selects.
+	 */
 	value?: string
+	/** Called with the `id` of the section the reader picks. */
 	onValueChange?: (id: string) => void
 	/** Overrides this row's own copy — the region name. */
 	strings?: Partial<OverflowTabBarStrings>
 }
 
+/**
+ * Tabs as data, in a row that scrolls rather than wrapping: wrapping onto a second line
+ * changes the page's height as the reader switches. Renders through `Tabs`, or through
+ * `NavigationTabs` — a `<nav>` of links — when every item has an `href`.
+ */
 export function OverflowTabBar({
 	items,
 	value,

@@ -89,6 +89,10 @@ function isMultiValue(config: FilterConfig): boolean {
 	)
 }
 
+/**
+ * A plain query record → the active filters, for whichever router you have. Driven by the
+ * CONFIGS, not the query: an undeclared key is somebody else's parameter.
+ */
 export function parseFiltersFromQuery(
 	filterConfigs: readonly FilterConfig[],
 	query: FilterQueryInput,
@@ -121,6 +125,12 @@ export function parseFiltersFromQuery(
 	})
 }
 
+/**
+ * The active filters → a plain query record, laid over `currentQuery`, for whichever router
+ * you have. Driven by the CONFIGS, not the query: an undeclared key is somebody else's
+ * parameter, and is left alone. The operator travels in a companion key
+ * (`status=confirmed&status__op=not`), written only when it differs from the type's default.
+ */
 export function serializeFiltersToQuery(
 	filterConfigs: readonly FilterConfig[],
 	activeFilters: readonly ActiveFilter[],

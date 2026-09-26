@@ -81,6 +81,11 @@ export interface ComboboxDropdownProps<T> {
 	errorSlot?: ReactNode
 }
 
+/**
+ * The popup: status row, results, create row, pager and footer. It renders an empty popup
+ * rather than nothing, because a popup that vanishes mid-type reads as a broken control
+ * rather than an empty result.
+ */
 export function ComboboxDropdown<T>({
 	loading,
 	showStatus,

@@ -50,17 +50,7 @@ export function TypographyPage() {
 			<Example
 				id="text-api"
 				title="Text API">
-				<PropTable owner="Text"
-					rows={[
-						{ name: "type", type: '"inherit" | "main" | "inverse" | "secondary" | "error" | "success" | "primary"', default: '"main"', description: "Semantic role, which selects the colour token. `inherit` selects none, for text inside a surface that already sets its own — a solid tab, a tooltip, a coloured chip. Without it those places would drop Text and hand-roll a span, which is how a kit ends up with two ways to set type." },
-						{ name: "size", type: '"inherit" | "xxs" | "xs" | "pxs" | "sm" | "base" | "lg" | "xl"', default: "provider", description: "Step on the type scale. Omit on primary content. `xxs` renders as `xs`; use `xs`." },
-						{ name: "weight", type: '"normal" | "medium" | "semibold" | "bold"', default: '"regular"', description: "Font weight." },
-						{ name: "lineHeight", type: '"none" | "tight" | "snug" | "normal" | "relaxed" | "loose"', default: "paired", description: "Overrides the leading paired with the size step (--text-<step>--line-height)." },
-						{ name: "numeric", type: "boolean", default: "false", description: "Tabular figures for values in a column." },
-						{ name: "truncate", type: "boolean", default: "false", description: "Ellipsises at one line rather than wrapping. Makes the Text a block, for the same reason `align` does. The flex parent needs its own `min-width: 0`. `Heading` and every `primitives` value take it too." },
-						{ name: "tag", type: '"p" | "div" | "span"', default: '"p"', description: "Element to render. Headings use Heading." },
-					]}
-				/>
+				<PropTable owner="Text" />
 			</Example>
 		</ComponentPage>
 	)

@@ -15,15 +15,36 @@ import type {
 } from "./structure.types"
 
 export interface StackProps extends Omit<React.ComponentProps<"div">, "dir"> {
-	/** Main axis. Defaults to vertical. */
+	/**
+	 * Main axis.
+	 * @default "vertical"
+	 */
 	direction?: ResponsiveValue<StructureDirection>
-	/** Space between children, on the semantic spacing scale. */
+	/**
+	 * Space between children, on the semantic spacing scale.
+	 * @default "md"
+	 */
 	gap?: ResponsiveValue<StructureGap>
+	/**
+	 * Cross-axis alignment.
+	 * @default "stretch"
+	 */
 	align?: ResponsiveValue<StructureAlign>
+	/**
+	 * Main-axis distribution.
+	 * @default "start"
+	 */
 	justify?: ResponsiveValue<StructureJustify>
-	/** Allows children to flow onto more than one line. */
+	/**
+	 * Allows children to flow onto more than one line.
+	 * @default false
+	 */
 	wrap?: ResponsiveValue<boolean>
-	/** Caps the box's width — a content step, or any CSS length (e.g. a form's `26rem`). */
+	/**
+	 * Caps the box's width — a content step (`sm` to `2xl`, `full`, `none`) or any CSS
+	 * length, such as a form's `26rem`. A field measure is a control decision rather than a
+	 * content one, which is why a raw length is allowed beside the scale.
+	 */
 	maxWidth?: ResponsiveValue<StructureWidth | (string & {})>
 }
 

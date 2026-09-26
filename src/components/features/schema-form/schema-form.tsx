@@ -48,6 +48,10 @@ function SectionHeading({ section }: { section: ResolvedSchemaFormSection }) {
 	)
 }
 
+/**
+ * Renders and validates a form described as data. `validate()` runs on submit, and a message
+ * clears as soon as its field changes.
+ */
 export function SchemaForm({
 	schema,
 	value,

@@ -47,23 +47,8 @@ export function ResourceAssignmentPage() {
 			</Example>
 
 			<Example id="assignment-api" title="API">
-				<PropTable owner="SharedResourceCard"
-					rows={[
-						{ name: "resource", type: "TResource | null", required: true, description: "The persisted assignment. null is the only empty state; hasResource is derived from it and never independently controlled." },
-						{ name: "selector", type: "SelectorConfig", description: "The picker, its copy, and the write. Omit it and the card is read-only — no change action, and an empty state that offers nothing." },
-						{ name: "selector.SelectorComponent", type: "ComponentType<SelectorProps>", required: true, description: "Yours. It receives selected, onSelect, and inModal — a picker that adapts inside a dialog can read the last one." },
-						{ name: "selector.mapInitialSelected", type: "(resource) => TSuggestion | null", required: true, description: "Turns the persisted resource into a starting choice, so “Change” opens on what the record holds." },
-						{ name: "selector.onConfirmSelection", type: "(selection) => void | Promise", required: true, description: "Persists it. A returned promise is awaited and drives the confirming state; a rejection keeps the dialog open and reaches onError." },
-						{ name: "selector.isConfirmDisabled", type: "(selection) => boolean", description: "Refuses a pending choice — an inactive venue, a room too small. The confirm stays disabled rather than failing after the press." },
-						{ name: "selector.getSelectionLabel", type: "(selection) => ReactNode", description: "How the choice reads in the summary above the buttons. Without it the card looks for a string `label` field, which is a guess — a cheap and usually right one." },
-						{ name: "renderResourceContent / ResourceContentComponent / sections", type: "ladder", description: "The assigned body, most specific first. A render prop closes over local state, a component is reusable, and sections are data — each rung exists because the one below it is wrong for someone." },
-						{ name: "actions", type: "ActionDefinition[]", description: "Extra overflow actions. Alone, the change action is a header button; alongside these it joins them — two triggers side by side is worse than one menu holding both." },
-						{ name: "viewAction / viewLink", type: "ReactNode / { href, label }", description: "The router-neutral slot and the native-anchor convenience. Both render only when a resource is assigned." },
-						{ name: "useSharedResourceCard", type: "hook", description: "The state machine without the card: open state, pending choice, canConfirmSelection, and a confirm that awaits." },
-						{ name: "DefaultDialogContent", type: "component", description: "The picker the assignment dialog shows when a consumer supplies none. Exported so a custom dialog can keep it and add to it, rather than starting from nothing." },
-						{ name: "DefaultDialogSummary", type: "component", description: "What is about to be committed, restated above the confirm. A picker can scroll, and the chosen row is often out of sight by the time the reader reaches the button." },
-					]}
-				/>
+				<PropTable owners={["SharedResourceCard", "SharedResourceCardSelectorConfig"]} />
+				<PropTable symbols={["useSharedResourceCard", "DefaultDialogContent", "DefaultDialogSummary"]} />
 			</Example>
 		</ComponentPage>
 	)

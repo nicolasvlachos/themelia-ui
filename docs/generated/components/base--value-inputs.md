@@ -43,11 +43,11 @@ Extends: `Omit<InputProps, "type">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `previewValue` | no | `string` | What the swatch shows. Defaults to the current value. |
-| `onValueChange` | no | `(value: string) => void` |  |
-| `strings` | no | `Partial<ColorInputStrings>` | Overrides this field's own copy — the swatch's name. |
-| `format` | no | `"oklch" \| "hex" \| "rgb" \| "hsl"` | The notation the picker emits. Defaults to `oklch` (or `hex` with the deprecated `emitHex`). |
-| `emitHex` | no | `boolean` | @deprecated Use `format="hex"`. |
+| `previewValue` | no | `string` | What the swatch shows, when it differs from the value — a resolved token, say. Defaults<br>to the current value. |
+| `onValueChange` | no | `(value: string) => void` | Called with the colour as a string. Typed text is any CSS colour and is not normalised —<br>what is typed is what is stored; the picker's value arrives in `format`. |
+| `strings` | no | `Partial<ColorInputStrings>` | Overrides this field's own copy — the swatch's name. The swatch is a control, with the<br>native picker under it, so it needs one. |
+| `format` | no | `"oklch" \| "hex" \| "rgb" \| "hsl"` | The notation the picker emits — typed text is never rewritten. The kit's own palette is<br>OKLCH, which is why that is the default; a consumer whose tokens are hex, rgb or hsl<br>gets their own notation back. The conversion is culori's. With the deprecated `emitHex`<br>and no `format`, it is `hex`. @default "oklch" |
+| `emitHex` | no | `boolean` | Makes the picker emit hex. `format` wins where both are given. @deprecated Use `format="hex"`; this spelling stays because it is published API. |
 
 ### `ColorInputStrings`
 
@@ -184,14 +184,14 @@ Extends: `Omit<InputProps, "type" | "prefix">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `invalid` | no | `boolean` | Applies the invalid treatment to both the picker and the number field. |
-| `prefix` | no | `string` | Controlled dial code, e.g. "+1", or an ISO code that is resolved to one. |
-| `defaultPrefix` | no | `string` |  |
-| `onPrefixChange` | no | `(prefix: string) => void` |  |
-| `prefixes` | no | `CountryPrefixInput[]` | The list offered. ISO codes are looked up; unknown countries take a full object. |
-| `disablePrefixSelector` | no | `boolean` | Hides the picker, for a form that captures the country elsewhere. |
-| `strings` | no | `Partial<PhoneInputStrings>` | Overrides this field's own copy — the dial-code lane. |
-| `normalizeOnBlur` | no | `boolean` | Tidies the number when the field loses focus. |
+| `invalid` | no | `boolean` | Applies the invalid treatment to both the picker and the number field. The message<br>stays on the FormField. |
+| `prefix` | no | `string` | Controlled dial code, e.g. "+1", or an ISO code that is resolved to one — the dial code<br>as its own channel, apart from the number. |
+| `defaultPrefix` | no | `string` | The dial code the field starts with, when uncontrolled. |
+| `onPrefixChange` | no | `(prefix: string) => void` | Called with the dial code the reader picks. |
+| `prefixes` | no | `CountryPrefixInput[]` | Which dial codes the picker offers. ISO codes are looked up; unknown countries take a<br>full object. `DEFAULT_COUNTRY_PREFIXES` is the built-in set. |
+| `disablePrefixSelector` | no | `boolean` | Hides the picker, so the code cannot be changed — a form scoped to one country should<br>not offer the list, and one that captures the country elsewhere need not. |
+| `strings` | no | `Partial<PhoneInputStrings>` | Overrides this field's own copy — the dial-code lane's placeholder and its accessible name. |
+| `normalizeOnBlur` | no | `boolean` | Tidies the number when focus leaves, rather than fighting the reader mid-entry. |
 | `showCountryName` | no | `boolean` | Shows the country name beside the dial code in the list. |
 
 ### `PhoneInputStrings`
@@ -241,25 +241,25 @@ Kind: interface.
 | `id` | no | `string` |  |
 | `value` | no | `TValue` | Controlled value. An array makes it a range, one thumb per entry. Handlers report back<br>in the same shape: a number in, a number out. |
 | `defaultValue` | no | `TValue` |  |
-| `min` | no | `number` |  |
-| `max` | no | `number` |  |
-| `step` | no | `number` |  |
+| `min` | no | `number` | The lower bound. |
+| `max` | no | `number` | The upper bound. |
+| `step` | no | `number` | The increment between values. |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
-| `orientation` | no | `"horizontal" \| "vertical"` |  |
-| `size` | no | `"sm" \| "md"` | Track and thumb size: `md` is a larger drag target (touch, media controls). |
+| `invalid` | no | `boolean` | Applies the invalid treatment. The message stays on the FormField. |
+| `orientation` | no | `"horizontal" \| "vertical"` | The track's direction. A vertical slider takes its height from<br>`--slider-vertical-min-h`, because a slider has no content to size it. |
+| `size` | no | `"sm" \| "md"` | Track and thumb size: `md` is a larger drag target (touch, media controls). A slider is<br>dragged, which is why this one keeps a size prop. |
 | `onChange` | no | `(event: SliderChangeEvent<TValue extends number ? number : TValue>) => void` | Native-shaped handler, for form libraries. |
 | `onValueChange` | no | `(value: TValue extends number ? number : TValue) => void` | The value on its own, for everything else. |
 | `onValueCommitted` | no | `(value: TValue extends number ? number : TValue) => void` | Fires once on pointer release or keyboard commit, not on every step. |
 | `showValue` | no | `boolean` | Shows the current value beside the track. |
-| `formatValue` | no | `(value: number) => string` | Formats ONE value. A range formats each end and joins them. |
+| `formatValue` | no | `(value: number) => string` | How the readout writes ONE value. A range formats each end and joins them with an en<br>dash. |
 | `unit` | no | `string` | Suffix on the displayed value — "px", "%", "mm". Ignored when `formatValue` is given. |
 | `className` | no | `string` |  |
 | `"aria-label"` | no | `string` |  |
 | `"aria-labelledby"` | no | `string` |  |
 | `"aria-describedby"` | no | `string` |  |
 | `"aria-invalid"` | no | `boolean \| "true" \| "false" \| "grammar" \| "spelling"` |  |
-| `strings` | no | `Partial<SliderStrings>` | Overrides this slider's own copy: each range thumb's name ("Minimum", "Maximum") and the fallback name. |
+| `strings` | no | `Partial<SliderStrings>` | Overrides this slider's own copy: each range thumb's name and the fallback name.<br>`thumb` is a function of the thumb's index, defaulting to "Minimum" and "Maximum" — two<br>handles called the same thing are two handles a screen reader cannot tell apart, and a<br>range may have more than two. |
 
 ### `SliderProps`
 
@@ -292,26 +292,26 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `string[]` | Controlled value. |
+| `value` | no | `string[]` | The chips, controlled. |
 | `defaultValue` | no | `string[]` |  |
-| `onValueChange` | no | `(value: string[]) => void` |  |
+| `onValueChange` | no | `(value: string[]) => void` | Called with the next list of tags. |
 | `placeholder` | no | `string` |  |
 | `disabled` | no | `boolean` |  |
-| `invalid` | no | `boolean` |  |
+| `invalid` | no | `boolean` | Applies the invalid treatment. The message stays with FormField. |
 | `name` | no | `string` |  |
 | `maxTags` | no | `number` | Cap on the number of tags. Entry is refused once it is reached. |
 | `showCount` | no | `boolean` | Shows a "3 / 5" summary under the field. Requires `maxTags`. |
 | `showClearAll` | no | `boolean` | Shows a clear-all control under the field. |
-| `strings` | no | `Partial<TagsInputStrings>` | Overrides this field's own copy — clear-all, and each tag's remove. |
-| `allowDuplicates` | no | `boolean` |  |
+| `strings` | no | `Partial<TagsInputStrings>` | Overrides this field's own copy — clear-all, and each tag's remove, named after the tag<br>it removes. |
+| `allowDuplicates` | no | `boolean` | Lets the same string appear twice. |
 | `caseSensitive` | no | `boolean` | Duplicate detection is case-insensitive unless this is set. |
 | `sortTags` | no | `boolean` | Keeps the list sorted as tags are added. |
-| `minLength` | no | `number` |  |
-| `maxLength` | no | `number` |  |
-| `validate` | no | `(value: string) => boolean` | Rejects a tag when this returns false. Runs after the length checks. |
-| `delimiter` | no | `string \| RegExp` | Splits pasted and typed input into several tags. Defaults to a comma or a newline. |
+| `minLength` | no | `number` | The shortest tag accepted. |
+| `maxLength` | no | `number` | The longest tag accepted. |
+| `validate` | no | `(value: string) => boolean` | Rejects a tag when this returns false. Runs after the length checks — the field refuses<br>the tag rather than accepting a bad one and reporting it later. |
+| `delimiter` | no | `string \| RegExp` | Splits pasted and typed input into several tags — which is what a column copied out of<br>a spreadsheet looks like. Defaults to a comma or a newline. |
 | `addOnBlur` | no | `boolean` | Commits whatever is typed when the field loses focus. |
-| `renderTag` | no | `(tag: string, index: number, remove: (index: number) => void) => ReactNode` | Replaces the chip. |
+| `renderTag` | no | `(tag: string, index: number, remove: (index: number) => void) => ReactNode` | Replaces the chip, for a tag that carries an avatar or a colour. |
 | `className` | no | `string` |  |
 | `id` | no | `string` | Goes on the text input, not the wrapper, so a `FormField` label names it. |
 | `"aria-label"` | no | `string` |  |

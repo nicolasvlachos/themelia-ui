@@ -13,15 +13,26 @@ import { cx } from "@/lib/cx"
 
 import styles from "./navigation.module.css"
 
+/** One entry in a `Breadcrumbs` trail. */
 export type Crumb = {
+	/** What the crumb reads as. */
 	label: React.ReactNode
+	/** Where the crumb goes, as a plain anchor. */
 	href?: string
-	/** Router link element, so the library never imports a router. */
+	/**
+	 * A router link element, so the library never imports a router. It replaces the plain
+	 * anchor, and `label` becomes its content.
+	 */
 	render?: React.ReactElement<{ className?: string; children?: React.ReactNode }>
 }
 
 export interface BreadcrumbsProps extends Omit<React.ComponentProps<"nav">, "children"> {
+	/** The trail. The last entry renders as the current page. */
 	items: Crumb[]
+	/**
+	 * Replaces the chevron between crumbs. It is decorative either way — the trail's meaning
+	 * is in the links.
+	 */
 	separator?: React.ReactNode
 	/** Names this one trail. Overrides the strings default. */
 	label?: string
@@ -29,6 +40,10 @@ export interface BreadcrumbsProps extends Omit<React.ComponentProps<"nav">, "chi
 	strings?: Partial<BreadcrumbsStrings>
 }
 
+/**
+ * The trail to the current page, in a `<nav>`. The current page is a span marked
+ * `aria-current="page"`, not a link: a link to the page you are on is a dead control.
+ */
 export function Breadcrumbs({
 	items,
 	separator,

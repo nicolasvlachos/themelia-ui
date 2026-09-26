@@ -27,16 +27,7 @@ export function CalendarPage() {
 			</Example>
 
 			<Example id="calendar-api" title="API">
-				<PropTable owner="Calendar"
-					rows={[
-						{ name: "mode", type: '"single" | "range" | "multiple"', description: "Selection behaviour, same as DatePicker." },
-						{ name: "numberOfMonths", type: "number", default: "1", description: "Months side by side. Each grid keeps its own caption so the second month is not anonymous." },
-						{ name: "disabledDates", type: "(date: Date) => boolean", description: "Which days cannot be chosen." },
-						{ name: "month / onMonthChange", type: "Date / (month) => void", description: "The page being shown, for a calendar whose position is driven from outside." },
-						{ name: "weekStartsOn", type: "0–6", description: "Which day begins the week. Falls back to the provider's locale setting rather than assuming Monday." },
-						{ name: "strings", type: "Partial<CalendarStrings>", description: "Overrides this calendar's own copy — the three caption controls, which are icon-only and have no other name. DatePicker passes its own strings straight through, so one override names both." },
-					]}
-				/>
+				<PropTable owner="Calendar" />
 			</Example>
 		</ComponentPage>
 	)

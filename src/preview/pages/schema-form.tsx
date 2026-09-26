@@ -42,24 +42,8 @@ export function SchemaFormPage() {
 			</Example>
 
 			<Example id="schema-form-api" title="API">
-				<PropTable owner="SchemaForm"
-					rows={[
-						{ name: "schema", type: "SchemaFormSchema", required: true, description: "Sections and fields. A section names its fields explicitly or claims the ones carrying its sectionId; whatever no section claimed lands in a leading default bucket." },
-						{ name: "field.type", api: "SchemaFormField.type", type: "SchemaFormFieldType", description: "text / email / password / url / tel / search, textarea, number / integer / decimal, select, radio-cards, checkbox-cards, tags, switch, json, custom. Omitted means text." },
-						{ name: "field.hidden / field.disabled", api: ["SchemaFormField.hidden", "SchemaFormField.disabled"], type: "boolean | (values) => boolean", description: "The predicate form reads the whole value set, for a field that only matters once a sibling says so. A hidden field is not rendered and not validated — blocking a submit on a required field the reader cannot see is a dead end." },
-						{ name: "field.validate", api: "SchemaFormField.validate", type: "validator | validator[]", description: "Return a string to fail. The first message wins: the rest are about a value already known to be wrong." },
-						{ name: "field.formatValue / parseValue", api: ["SchemaFormField.formatValue", "SchemaFormField.parseValue"], type: "(value, values) => …", description: "The two halves of a custom representation — what the control shows, and what the form stores." },
-						{ name: "field.width", api: "SchemaFormField.width", type: "auto | half | third | full", description: "Column span inside the section grid, which is keyed to a container. A form in a 320px drawer collapses to one column whatever the section asked for." },
-						{ name: "layout", type: "form | cards", description: "One bordered surface with sections inside it, or one surface per section. The schema does not change between them." },
-						{ name: "value / defaultValue", type: "SchemaFormValues", description: "Controlled or not. Under a controlled value the schema's own defaults still apply, so a consumer holding two fields does not blank the rest." },
-						{ name: "errors", type: "Record<key, string>", description: "Server messages. Merged over the form's own and not cleared by typing." },
-						{ name: "renderField / renderSection", type: "(context) => ReactNode", description: "renderField receives defaultField, so decorating is as easy as replacing." },
-						{ name: "onSubmit", type: "(values, helpers, event) => void | Promise", description: "Runs only if validation passed. helpers carries setFieldValue, setValues, reset, and validate — for a server response that has to write back into the form." },
-						{ name: "useSchemaForm", type: "hook", description: "The values, the errors, and validate() without any of the rendering." },
-						{ name: "SchemaFormActions", type: "component", description: "The form\u2019s submit row, generated from the same schema. Exported so a screen can place it somewhere the generated layout does not \u2014 a drawer footer, a sticky bar." },
-						{ name: "SchemaFormFieldRenderer", type: "component", description: "One field, resolved from its schema entry to a control. Reach for it when a form is mostly generated but one field needs to be placed by hand." },
-					]}
-				/>
+				<PropTable owners={["SchemaForm", "SchemaFormFieldBase"]} />
+				<PropTable symbols={["useSchemaForm", "SchemaFormActions", "SchemaFormFieldRenderer"]} />
 			</Example>
 		</ComponentPage>
 	)

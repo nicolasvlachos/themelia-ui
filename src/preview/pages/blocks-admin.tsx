@@ -57,17 +57,15 @@ export function BlocksAdminPage() {
 					reverse edge.
 				</Callout>
 				<PropTable
-					rows={[
-						{ name: "ChangelogTimeline entries", type: "ChangelogEntry[]", required: true, description: "id, kind, title, and optionally description, version, timestamp, author. kind is added | removed | modified | fixed." },
-						{ name: "MilestonesTimeline milestones", type: "Milestone[]", required: true, description: "status is completed | inProgress | upcoming | blocked. progress is drawn only while in flight." },
-						{ name: "Steps / StepsBar steps", api: ["Steps.steps", "StepsBar.steps"], type: "Step[]", required: true, description: "status is completed | current | upcoming. The vertical form also takes per-step content." },
-						{ name: "Checklist steps", type: "ChecklistStep[]", required: true, description: "id, status, title, and optionally badge, content, disabled." },
-						{ name: "Checklist expanded / onExpandedChange", type: "string[] / (ids) => void", description: "Controlled. Uncontrolled it opens the first unfinished step." },
-						{ name: "Checklist onStepOpen", type: "(id) => void", description: "Fires on the transition into open — for analytics, not for state." },
-						{ name: "CredentialList items", type: "Credential[]", required: true, description: "id, name, value, and displayValue for the masked form shown in the row." },
-						{ name: "CredentialList onAdd / onDelete", type: "() => void / (id, item) => void", description: "Omit either to hide its action. The delete confirmation belongs to the caller." },
-						{ name: "RolePermissions groups", type: "PermissionGroup[]", required: true, description: "Each group names an area and lists its permissions with a granted flag." },
-						{ name: "SensitiveAction action / confirmation", type: "ReactNode", description: "The control, and what will happen before it does. The confirmation renders role=\"note\" — nothing has gone wrong yet." },
+					owners={[
+						"ChangelogTimeline",
+						"MilestonesTimeline",
+						"Steps",
+						"StepsBar",
+						"Checklist",
+						"CredentialList",
+						"RolePermissions",
+						"SensitiveAction",
 					]}
 				/>
 			</Example>

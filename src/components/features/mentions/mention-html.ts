@@ -60,9 +60,10 @@ export function buildMentionHtml<TKind extends string = string>(
 }
 
 /**
- * Reads the mentions back out of a body, e.g. so a composer's list shrinks when a chip is
- * deleted. First occurrence wins. Returns id, kind and label only; merge with known
- * mentions to keep `href` and `data`.
+ * Reads the mentions back out of a body — the other direction from `buildMentionHtml` — e.g. so
+ * a composer's list shrinks when a chip is deleted. First occurrence wins. Returns id, kind and
+ * label only; merge against the mentions you already know to keep `href` and `data`, which
+ * HTML cannot express.
  */
 export function parseMentionsFromHtml<TKind extends string = string>(
 	html: string,

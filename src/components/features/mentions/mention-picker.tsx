@@ -29,6 +29,11 @@ export interface MentionPickerProps<TResource extends string = string> {
 	className?: string
 }
 
+/**
+ * The popover for the button flow — the same tabs and rows as the inline panel, plus a search
+ * field of its own, because a reader who pressed a button has typed nothing to search with. The
+ * consumer supplies the Popover and its trigger.
+ */
 export function MentionPicker<TResource extends string = string>({
 	open,
 	activeKind,

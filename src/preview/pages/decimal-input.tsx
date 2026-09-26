@@ -27,20 +27,8 @@ export function DecimalInputPage() {
 			</Example>
 
 			<Example id="decimal-input-api" title="API">
-				<PropTable owner="DecimalInput"
-					rows={[
-						{ name: "decimalPlaces", type: "number", description: "How many digits after the separator are accepted." },
-						{ name: "min / max / step", type: "number", description: "Bounds and increment." },
-						{ name: "allowEmpty / allowNegative", type: "boolean", description: "Whether a blank is a valid value, and whether a minus sign is accepted." },
-						{ name: "normalizeOnBlur", type: "boolean", description: "Rounds and reformats when focus leaves. Doing it per keystroke fights the reader mid-number." },
-						{ name: "strings", type: "Partial<DecimalInputStrings>", description: "Overrides this field's own copy — the two icon-only steppers, plus everything Input contributes." },
-						{ name: "value / onChange", type: "string / ChangeEventHandler<HTMLInputElement>", description: "Read event.target.value in onChange. A string, never a number — see the rule above." },
-						{ name: "roundingMode", type: "RoundingMode", default: '"round"', description: "How halves resolve. half-even keeps a long column of rows from accumulating a bias." },
-						{ name: "RoundingModeSelect", type: "component", description: "The policies as a control, offering exactly the modes DecimalInput accepts. strings replaces the labels." },
-						{ name: "applyRounding / formatDecimal", type: "function", description: "The rounding and formatting used internally, exported so a caller can match it." },
-						{ name: "endAdornment", type: "ReactNode", description: "A unit rendered after the field, INSIDE the stepper group. A stepper field is already a shell, so a caller cannot wrap a second one around it to add a suffix without doubling the border." },
-					]}
-				/>
+				<PropTable owners={["DecimalInput"]} />
+				<PropTable symbols={["RoundingModeSelect", "applyRounding", "formatDecimal"]} />
 			</Example>
 		</ComponentPage>
 	)

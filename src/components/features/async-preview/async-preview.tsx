@@ -25,6 +25,12 @@ function useInternal(): PreviewContextValue {
 	return value
 }
 
+/**
+ * The root of the compound over `useAsyncPreview`: it runs the fetch, the cache and the open
+ * state for the parts inside it. Compound rather than one `renderPreview` prop because the four
+ * states want four different shapes, and a single render prop makes the caller branch on all
+ * of them every time.
+ */
 export function AsyncPreviewRoot<TData, TContext = unknown, TType extends string = string>({
 	children,
 	strings,
@@ -45,6 +51,7 @@ export function AsyncPreviewRoot<TData, TContext = unknown, TType extends string
 	)
 }
 
+/** The element the preview hangs off: it opens the popover, and hovering it prefetches. */
 export function AsyncPreviewTrigger<TData, TContext = unknown, TType extends string = string>({
 	children,
 	prefetchOnHover = true,
@@ -75,6 +82,7 @@ export function AsyncPreviewTrigger<TData, TContext = unknown, TType extends str
 	)
 }
 
+/** The popover the states render in, labelled by its trigger. */
 export function AsyncPreviewContent({
 	className, children, width, side, align,
 }: AsyncPreviewContentProps) {
@@ -92,7 +100,10 @@ export function AsyncPreviewContent({
 	)
 }
 
-/** The whole state, for a preview that renders its own four cases. */
+/**
+ * The whole state, for a preview that renders its own four cases: the escape hatch for a caller
+ * who genuinely wants to branch themselves.
+ */
 export function AsyncPreviewState<TData, TContext = unknown, TType extends string = string>({
 	children,
 }: AsyncPreviewStateProps<TData, TContext, TType>) {
@@ -117,6 +128,10 @@ function slotChildren(
 	return typeof children === "function" ? children(state) : children
 }
 
+/**
+ * The loading case: a spinner with the fetcher's slow-step label, unless replaced. One part per
+ * state, so each is styled where it is written.
+ */
 export function AsyncPreviewLoading({ className, children }: AsyncPreviewSlotProps) {
 	const { state, copy } = useInternal()
 	if (state.status !== "loading") return null
@@ -133,6 +148,10 @@ export function AsyncPreviewLoading({ className, children }: AsyncPreviewSlotPro
 	)
 }
 
+/**
+ * The error case: a message with a retry, unless replaced. One part per state, so each is
+ * styled where it is written.
+ */
 export function AsyncPreviewError({ className, children }: AsyncPreviewSlotProps) {
 	const { state, copy } = useInternal()
 	if (state.status !== "error") return null
@@ -146,6 +165,10 @@ export function AsyncPreviewError({ className, children }: AsyncPreviewSlotProps
 	)
 }
 
+/**
+ * The case where the fetch resolved to nothing. One part per state, so each is styled where it
+ * is written.
+ */
 export function AsyncPreviewEmpty({ className, children }: AsyncPreviewSlotProps) {
 	const { state, copy } = useInternal()
 	if (state.status !== "empty") return null

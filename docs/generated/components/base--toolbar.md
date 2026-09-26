@@ -31,9 +31,10 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
-A named set of related controls with one tab stop and orientation-aware arrow
-navigation. Supply `aria-label` or `aria-labelledby` whenever no visible label names
-the set.
+A named set of related controls: `role="toolbar"`, with one roving tab stop and
+orientation-aware arrow navigation. `orientation`, `disabled` and `loopFocus` come from
+Base UI's toolbar root. Supply `aria-label` or `aria-labelledby` whenever no visible label
+names the set.
 
 ```text
 ({ className, ...props }: ToolbarProps) => React.JSX.Element
@@ -42,6 +43,9 @@ the set.
 ### `ToolbarButton`
 
 Kind: callable.
+
+A toolbar item rendered through the kit Button: Base UI owns the navigation behaviour, the
+Button its look. It takes `tone`, `buttonStyle`, `iconOnly`, `loading` and `render`.
 
 ```text
 ({ render, tone, buttonStyle, iconOnly, loading, fullWidth, className, ...props }: ToolbarButtonProps) => React.JSX.Element
@@ -61,6 +65,8 @@ Extends: `Omit<ToolbarPrimitive.Button.Props, "render">`, `Pick<ButtonProps, "to
 
 Kind: callable.
 
+Groups related items, and can disable the group as one unit.
+
 ```text
 ({ className, ...props }: ToolbarGroupProps) => React.JSX.Element
 ```
@@ -69,13 +75,15 @@ Kind: callable.
 
 Kind: interface.
 
-Extends: `ToolbarPrimitive.Group.Props`.
+Extends: `ToolbarPrimitive.Group.Props`, `Pick<ToolbarPrimitive.Group.Props, "disabled">`.
 
 No own members are present in the normalized public snapshot.
 
 ### `ToolbarInput`
 
 Kind: callable.
+
+A native input item that joins the same roving-focus order.
 
 ```text
 ({ className, ...props }: ToolbarInputProps) => React.JSX.Element
@@ -93,6 +101,8 @@ No own members are present in the normalized public snapshot.
 
 Kind: callable.
 
+An anchor item that joins the same roving-focus order.
+
 ```text
 ({ className, ...props }: ToolbarLinkProps) => React.JSX.Element
 ```
@@ -109,13 +119,15 @@ No own members are present in the normalized public snapshot.
 
 Kind: interface.
 
-Extends: `ToolbarPrimitive.Root.Props`.
+Extends: `ToolbarPrimitive.Root.Props`, `Pick<ToolbarPrimitive.Root.Props, "orientation" | "disabled" | "loopFocus">`.
 
 No own members are present in the normalized public snapshot.
 
 ### `ToolbarSeparator`
 
 Kind: callable.
+
+A rule between items. It takes the orientation opposite to the toolbar's.
 
 ```text
 ({ className, ...props }: ToolbarSeparatorProps) => React.JSX.Element

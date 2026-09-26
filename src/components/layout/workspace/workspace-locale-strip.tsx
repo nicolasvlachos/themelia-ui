@@ -34,6 +34,11 @@ export interface WorkspaceLocaleStripProps extends Omit<ComponentProps<"div">, "
 	strings?: Partial<WorkspaceLocaleStripStrings>
 }
 
+/**
+ * The languages a record exists in, and how complete each is. A strip rather than a
+ * select, because the completeness is the reason to switch and a select hides it behind a
+ * press.
+ */
 export function WorkspaceLocaleStrip({
 	locales,
 	activeLocale,

@@ -12,6 +12,7 @@ import { HeaderBreadcrumbs } from "./partials/header-breadcrumbs"
 import type { HeaderBreadcrumbsStrings } from "./header.strings"
 import styles from "./header.module.css"
 
+/** The regions `Header` arranges, passed as its `slots`. */
 export interface HeaderSlots {
 	/** Product mark. Hidden below `md`, where the sidebar trigger stands in for it. */
 	brand?: React.ReactNode
@@ -27,18 +28,22 @@ export interface HeaderSlots {
 export interface HeaderProps
 	extends React.ComponentProps<"header">,
 		LayoutNavigationAdapter {
+	/** Off for a shell whose pages carry their own trail. */
 	showBreadcrumbs?: boolean
 	/** Renders the sidebar collapse control before the trail. */
 	showSidebarTrigger?: boolean
+	/** The trail, rendered by the built-in Breadcrumbs. */
 	breadcrumbs?: Crumb[]
 	/**
-	 * Prepended to the trail, for a root that is not part of the route. `null` omits it;
-	 * leaving it undefined keeps the default.
+	 * Prepended to the trail, for a root that is not part of the route. `null` omits it
+	 * deliberately.
 	 */
 	homeCrumb?: Crumb | null
 	/** Overrides the trail's copy — its landmark name, for a page carrying two headers. */
 	breadcrumbsStrings?: Partial<HeaderBreadcrumbsStrings>
+	/** The regions. `brand` is hidden below `md`, where the sidebar trigger stands in for it. */
 	slots?: HeaderSlots
+	/** For the inner content row, when the bar itself must stay untouched. */
 	contentClassName?: string
 }
 

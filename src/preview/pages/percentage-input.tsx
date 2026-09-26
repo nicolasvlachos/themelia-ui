@@ -12,15 +12,7 @@ export function PercentageInputPage() {
 			/>
 
 			<Example id="percentage-input-api" title="API">
-				<PropTable owner="PercentageInput"
-					rows={[
-						{ name: "value / onChange", type: "string / ChangeEventHandler<HTMLInputElement>", description: "Read event.target.value in onChange. The number only. The % is chrome, not data." },
-						{ name: "min / max", type: "number", description: "Bounds. Defaults to 0–100." },
-						{ name: "decimalPlaces", type: "number", default: "2", description: "Digits after the separator." },
-						{ name: "step", type: "number", description: "Renders − / + controls that snap to multiples of it. The sign moves inside the group there — a stepper field is already a shell, and a second one around it would double the border." },
-						{ name: "allowNegative", type: "boolean", default: "false", description: "Lets the value go below zero — a CHANGE in percent rather than a proportion." },
-					]}
-				/>
+				<PropTable owners={["PercentageInput"]} />
 			</Example>
 		</ComponentPage>
 	)

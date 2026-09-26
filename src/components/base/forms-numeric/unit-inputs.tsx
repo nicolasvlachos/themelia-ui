@@ -61,30 +61,51 @@ export interface WeightInputProps extends ClusterFieldWiring {
 	 * keeps its own `aria-label` for its part.
 	 */
 	id?: string
-	/** Overrides this field's own copy — the unit selector's name. */
+	/**
+	 * Overrides this field's own copy — the unit selector's name. Like every other piece of
+	 * copy, each string can be overridden on its own.
+	 */
 	strings?: Partial<UnitInputStrings>
-	/** Controlled amount, as a plain string. */
+	/** Controlled amount: the number, as a plain string. */
 	value?: string
+	/** The starting amount, for an uncontrolled field. */
 	defaultValue?: string
+	/** Called with a change event shaped like a native one, carrying the amount. */
 	onChange?: (event: ValueChangeEvent) => void
-	/** Controlled unit. */
+	/**
+	 * Controlled unit, apart from the number. Switching unit does not convert — it relabels.
+	 */
 	unit?: WeightUnit
+	/** The unit the field starts in. */
 	defaultUnit?: WeightUnit
+	/** Called with the new unit. Switching relabels rather than converting — the number is the caller's. */
 	onUnitChange?: (unit: WeightUnit) => void
+	/** Which units the selector offers. */
 	units?: WeightUnit[]
+	/** Digits after the separator. */
 	decimalPlaces?: number
+	/** The lower bound. */
 	min?: number
+	/** The upper bound. */
 	max?: number
+	/** The increment for the − / + controls. */
 	step?: number
+	/** Shows the unit selector. Turn it off for a field with one fixed unit. */
 	showUnitSelector?: boolean
+	/** Shows the unit selector read-only, for a value whose unit is decided elsewhere. */
 	disableUnitSelector?: boolean
 	placeholder?: string
 	disabled?: boolean
+	/** The error surface. The message stays on the `FormField`. */
 	invalid?: boolean
 	className?: string
 	"aria-label"?: string
 }
 
+/**
+ * A weight: the number and its unit in separate channels, as `CurrencyInput` keeps the
+ * currency — "1.5 kg" in one string is ambiguous to parse.
+ */
 export const WeightInput = forwardRef<HTMLInputElement, WeightInputProps>(function WeightInput(
 	{
 		id,
@@ -194,23 +215,42 @@ export interface DimensionsInputProps extends ClusterFieldWiring {
 	 * keeps its own `aria-label` for its part.
 	 */
 	id?: string
+	/**
+	 * `{ length, width, height }`: three strings, one field. Each part is independently
+	 * editable.
+	 */
 	value?: DimensionsValue
+	/** Called with the whole value when any part changes. */
 	onValueChange?: (value: DimensionsValue) => void
+	/** Controlled unit. Switching unit does not convert — it relabels. */
 	unit?: DimensionUnit
+	/** The unit the field starts in. */
 	defaultUnit?: DimensionUnit
+	/** Called with the new unit. Switching relabels rather than converting — the number is the caller's. */
 	onUnitChange?: (unit: DimensionUnit) => void
+	/** Which units the selector offers. */
 	units?: DimensionUnit[]
+	/** Digits after the separator, applied to every part of the field. */
 	decimalPlaces?: number
-	/** Drops the height field, for a two-dimensional measurement. */
+	/**
+	 * Shows the third dimension box. Turn it off for a value that is a plane rather than a
+	 * solid: a two-dimensional measurement.
+	 */
 	showHeight?: boolean
+	/** Shows the unit selector. Turn it off for a field with one fixed unit. */
 	showUnitSelector?: boolean
-	/** Overrides this field's own copy — the three axis names and the unit selector. */
+	/**
+	 * Overrides this field's own copy — the three axis names and the unit selector. Like every
+	 * other piece of copy, each string can be overridden on its own.
+	 */
 	strings?: Partial<DimensionsInputStrings>
 	disabled?: boolean
+	/** The error surface. The message stays on the `FormField`. */
 	invalid?: boolean
 	className?: string
 }
 
+/** Length, width and height as one field, with one unit for all three. */
 export const DimensionsInput = forwardRef<HTMLDivElement, DimensionsInputProps>(
 	function DimensionsInput(
 		{
@@ -313,17 +353,27 @@ export interface CoordinatesInputProps extends ClusterFieldWiring {
 	 * keeps its own `aria-label` for its part.
 	 */
 	id?: string
+	/**
+	 * `{ latitude, longitude }`: two strings, kept apart so a half-typed latitude cannot
+	 * corrupt the longitude.
+	 */
 	value?: CoordinatesValue
+	/** Called with the whole value when either part changes. */
 	onValueChange?: (value: CoordinatesValue) => void
 	/** Six places is roughly 0.1 m — past the precision of consumer GPS. */
 	decimalPlaces?: number
-	/** Overrides this field's own copy — the two axis names. */
+	/**
+	 * Overrides this field's own copy — the two axis names. Like every other piece of copy,
+	 * each string can be overridden on its own.
+	 */
 	strings?: Partial<CoordinatesInputStrings>
 	disabled?: boolean
+	/** The error surface. The message stays on the `FormField`. */
 	invalid?: boolean
 	className?: string
 }
 
+/** A latitude and a longitude as one field, each with its own bounds. */
 export const CoordinatesInput = forwardRef<HTMLDivElement, CoordinatesInputProps>(
 	function CoordinatesInput(
 		{

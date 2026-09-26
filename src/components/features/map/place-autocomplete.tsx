@@ -96,6 +96,10 @@ export interface PlaceAutocompleteProps
 	strings?: Partial<PlaceAutocompleteStrings>
 }
 
+/**
+ * A text field that turns typing into places. It defaults to the free, key-less, rate-limited
+ * Photon geocoder; set `searchUrl` for production.
+ */
 export function PlaceAutocomplete({
 	debounceMs = DEFAULT_DEBOUNCE_MS,
 	searchUrl,

@@ -30,6 +30,7 @@ export interface RolePermissionsProps extends Omit<ComponentProps<"div">, "child
 	roleName: ReactNode
 	description?: ReactNode
 	memberCount?: number
+	/** Each group names an area and lists its permissions with a granted flag. */
 	groups: PermissionGroup[]
 	/** Omit to hide the edit action. */
 	onEdit?: () => void

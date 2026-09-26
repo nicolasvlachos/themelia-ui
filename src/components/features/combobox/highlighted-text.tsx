@@ -7,6 +7,10 @@ function escapeRegExp(value: string) {
 	return value.replace(/[$()*+.?[\\\]^{|}]/g, "\\$&")
 }
 
+/**
+ * The matched span inside a result label. Exported so a custom row keeps the highlight
+ * rather than rendering a plain string beside ones that have it.
+ */
 export function HighlightedText({ text, highlight }: { text: string; highlight: string }) {
 	if (!highlight.trim()) {
 		return <Text tag="span" size="inherit" type="inherit" lineHeight="tight" className="highlighted-text--component">{text}</Text>

@@ -22,6 +22,11 @@ export interface UseEventCalendarOptions {
 	dataOptions?: UseEventCalendarDataOptions
 }
 
+/**
+ * The date, the view, and the days — for a calendar whose surface is entirely yours. Each is
+ * independently controllable: the prop wins when given, and setters always call the consumer's
+ * handler.
+ */
 export function useEventCalendar({
 	events,
 	date,

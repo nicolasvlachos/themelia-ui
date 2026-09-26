@@ -83,6 +83,8 @@ Extends: `ContextAction<ActivityItem<TData>>`.
 
 Kind: callable.
 
+A row's overflow menu: its actions, bound to the activity.
+
 ```text
 ({ activity, actions, onAction, label, }: { activity: ActivityItem<TData>; actions: readonly ActivityAction<TData>[]; onAction?: (actionId: string, activity: ActivityItem<TData>) => void; label: string; }) => import("react").JSX.Element | null
 ```
@@ -115,6 +117,9 @@ Kind: interface.
 
 Kind: callable.
 
+The before-and-after of an edit. Changes render as pairs rather than prose so a long diff
+stays scannable.
+
 ```text
 ({ changes, bare, className, }: { changes: readonly ActivityChange[]; bare?: boolean; className?: string; }) => import("react").JSX.Element | null
 ```
@@ -131,6 +136,9 @@ Kind: interface.
 ### `ActivityDateLabel`
 
 Kind: callable.
+
+The date heading a group of rows on the rail. An empty label, from an ungrouped feed,
+renders nothing.
 
 ```text
 ({ label, first, className, }: { label: string; first: boolean; className?: string; }) => import("react").JSX.Element | null
@@ -154,7 +162,8 @@ How much of a row is drawn.
 
 Kind: callable.
 
-The empty feed, with a glyph in the marker column so it reads as empty rather than broken.
+The state with no events: the empty feed, with a glyph in the marker column so it reads as
+empty rather than broken.
 
 ```text
 ({ title, hint, action, className, }: ActivityEmptyStateProps) => import("react").JSX.Element
@@ -221,6 +230,9 @@ Readonly<Record<string, ActivityEventConfig>>
 
 Kind: callable.
 
+The control that opens a row's detail. A real button rather than a clickable row, so a
+keyboard reader can reach it without traversing the entry.
+
 ```text
 ({ expanded, showLabel, hideLabel, onToggle, controls, }: { expanded: boolean; showLabel: string; hideLabel: string; onToggle: () => void; controls?: string; }) => import("react").JSX.Element
 ```
@@ -228,6 +240,8 @@ Kind: callable.
 ### `ActivityFeed`
 
 Kind: callable.
+
+The timeline of events, grouped by date on one rail.
 
 **Use when:** A structured timeline of activity events.
 
@@ -276,22 +290,22 @@ Extends: `ActivityFeedAccessors<TData>`, `ActivityFeedCallbacks<TData>`, `Activi
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `activities` | no | `ReadonlyArray<ActivityItem<TData>>` |  |
-| `density` | no | `ActivityDensity` |  |
-| `itemSpacing` | no | `ActivityItemSpacing` |  |
+| `activities` | no | `ReadonlyArray<ActivityItem<TData>>` | In display order. Grouped by date as they come, not bucketed — bucketing would silently<br>reorder a feed sorted by something other than date. |
+| `density` | no | `ActivityDensity` | How much of a row is drawn. `rich` adds metadata, changes, resources, and actions. |
+| `itemSpacing` | no | `ActivityItemSpacing` | The rhythm between rows, independent of how much each row draws. |
 | `groupByDate` | no | `boolean` |  |
 | `expandedByDefault` | no | `boolean` |  |
 | `detailsCollapsible` | no | `boolean` |  |
-| `defaultExpandedIds` | no | `ReadonlyArray<string>` |  |
+| `defaultExpandedIds` | no | `ReadonlyArray<string>` | Uncontrolled: the rows expanded at first. |
 | `expandedIds` | no | `ReadonlyArray<string>` | Controlled. Supplying it hands expansion to the caller. |
-| `onExpandedIdsChange` | no | `(ids: string[]) => void` |  |
-| `currentUserId` | no | `string` | Turns this person's own name into "You". |
-| `loading` | no | `boolean` |  |
-| `error` | no | `ReactNode` | A failed load or refresh. Existing activity stays visible. |
-| `onRetry` | no | `() => void` |  |
-| `eventConfig` | no | `ActivityEventConfigMap` | Merged over the kit's defaults, so one event can be redefined without the rest. |
+| `onExpandedIdsChange` | no | `(ids: string[]) => void` | Always gets the full id list, controlled or not, because a consumer persisting the set<br>needs the set. |
+| `currentUserId` | no | `string` | Turns this person's own name into “You”. Both ids must be defined for the match, or a<br>feed with no ids anywhere would call every actor “You”. |
+| `loading` | no | `boolean` | Shows initial loading for an empty feed, or an update status above existing rows. Keeps<br>loaded details and composer drafts mounted. |
+| `error` | no | `ReactNode` | Failure feedback for a load or refresh, with an optional retry action through `onRetry`.<br>A failed refresh keeps existing history visible; the consumer owns the request and its<br>loading state. |
+| `onRetry` | no | `() => void` | The retry action offered with `error`. |
+| `eventConfig` | no | `ActivityEventConfigMap` | Merged over the kit's defaults, so one event can be redefined without restating the rest.<br>Every `status_changed` in an application should look the same; deciding per call site<br>guarantees it eventually does not. |
 | `strings` | no | `Partial<ActivitiesStrings>` |  |
-| `slots` | no | `ActivityFeedSlots<TData>` |  |
+| `slots` | no | `ActivityFeedSlots<TData>` | `renderRow`, `renderHeadline`, `renderMarker` and `renderDetails` replace a row's parts;<br>`renderDateLabel`, `empty`, `loading`, `header` and `footer` the feed's own regions.<br>`renderRow` returning `undefined` hands the row back to the feed — which is how<br>ActivityLog replaces only its comment rows. |
 | `rowClassNames` | no | `ActivityRowClassNames<TData>` |  |
 | `className` | no | `string` |  |
 | `locale` | no | `Locale` | Overrides the scope's dates locale, for a feed rendered in another language. |
@@ -315,6 +329,10 @@ Kind: interface.
 ### `ActivityHeadline`
 
 Kind: callable.
+
+The sentence, assembled from typed segments rather than interpolated. The fallback is the
+point: an event whose actor or subject is missing still reads as a sentence instead of
+rendering “undefined updated”.
 
 ```text
 (props: ActivityHeadlineProps<TData>) => import("react").JSX.Element
@@ -351,8 +369,8 @@ Kind: interface.
 | `event` | yes | `string` | The domain event key. Looked up in the event registry for an icon and a tone. |
 | `source` | no | `string` | Which system it came from. Drives the source badge. |
 | `actor` | no | `ActivityActor` |  |
-| `segments` | no | `readonly ActivityHeadlineSegment[]` | Preferred over `headline`. |
-| `headline` | no | `string` | The fallback when there are no segments. |
+| `segments` | no | `readonly ActivityHeadlineSegment[]` | The headline as typed parts: actor, field, value, status, resource, text. Preferred over<br>`headline`: “Maria changed Status from Draft to Published” is a person, a field, and two<br>values, and a template string cannot express that. |
+| `headline` | no | `string` | The fallback when there are no segments. The actor's name is split out of it, so a feed<br>migrated from a system that only stored sentences still gets a clickable actor. |
 | `description` | no | `ReactNode` |  |
 | `createdAt` | no | `string` |  |
 | `timestamp` | no | `string` | A pre-formatted time, bypassing the formatters entirely. |
@@ -388,6 +406,9 @@ Kind: interface.
 ### `ActivityLog`
 
 Kind: callable.
+
+Events and comments on one rail, built on ActivityFeed: a comment is an activity whose row is
+a `CommentItem`, so both share markers, date groups and ordering.
 
 **Use when:** A mixed history of events and discussion.
 
@@ -521,10 +542,10 @@ Extends: `CommentsAccessors`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `entries` | yes | `ReadonlyArray<ActivityLogEntry<TUser, TMeta, TResource>>` |  |
-| `loading` | no | `boolean` | Keep loaded entries and the composer mounted during a refresh. |
-| `error` | no | `ReactNode` | Fetch failure feedback, independent of comment submission errors. |
-| `onRetry` | no | `() => void` |  |
+| `entries` | yes | `ReadonlyArray<ActivityLogEntry<TUser, TMeta, TResource>>` | A union of comment entries and activity entries, sorted here by `order`. An entry with no<br>timestamp sorts to the far end rather than shuffling. |
+| `loading` | no | `boolean` | Shows initial loading for an empty log, or an update status above existing entries. Keeps<br>loaded entries and the composer mounted during a refresh. |
+| `error` | no | `ReactNode` | Fetch failure feedback, independent of comment submission errors, with an optional retry<br>action through `onRetry`. A failed refresh keeps existing history visible; the consumer<br>owns the request and its loading state. |
+| `onRetry` | no | `() => void` | The retry action offered with `error`. |
 | `order` | no | `"asc" \| "desc"` | `desc` puts the newest first, which is what a log usually wants. |
 | `itemSpacing` | no | `ActivityItemSpacing` |  |
 | `resources` | no | `MentionsConfig<TResource>["resources"]` |  |
@@ -545,7 +566,7 @@ Extends: `CommentsAccessors`.
 | `onEventExpandedChange` | no | `(entry: ActivityLogActivityEntry<TResource>, expanded: boolean) => void` |  |
 | `onEventAction` | no | `(actionId: string, entry: ActivityLogActivityEntry<TResource>) => void` |  |
 | `classNames` | no | `ActivityLogClassNames<TResource>` |  |
-| `composer` | no | `ActivityLogComposerConfig<TResource>` | Omit to render the log read-only. |
+| `composer` | no | `ActivityLogComposerConfig<TResource>` | The comment composer: `enabled`, the `context` it posts against, `onSubmit`, and its<br>`position`. Omit to render the log read-only. Its `inlineSubmit` defaults to `false` here,<br>unlike a standalone composer: a log's submit sits above a wall of history, and one hidden<br>on the toolbar reads as formatting. |
 | `bare` | no | `boolean` |  |
 | `title` | no | `ReactNode` |  |
 | `className` | no | `string` |  |
@@ -569,6 +590,9 @@ Kind: type.
 ### `ActivityMarker`
 
 Kind: callable.
+
+The dot on the rail. It knows whether it is last, because the connector below it is what
+tells a reader the run has ended.
 
 ```text
 ({ icon, tone, density, last, className }: ActivityMarkerProps) => import("react").JSX.Element
@@ -650,12 +674,15 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `resources` | no | `Readonly<Record<string, ActivityResourceConfig>>` | The registry's seed. Re-seeded whenever this reference changes. |
+| `resources` | no | `Readonly<Record<string, ActivityResourceConfig>>` | The registry rows look their resources up in, by key. A hundred rows referencing<br>`order:1234` follow when it is renamed, and none of them stores the name. This is the<br>registry's seed, re-seeded whenever this reference changes. |
 | `onResourcesChange` | no | `(registry: Readonly<Record<string, ActivityResourceConfig>>) => void` | Fires on every mutation, so the registry can be persisted. |
 
 ### `ActivityResourceTag`
 
 Kind: callable.
+
+The chip naming what was edited, or whatever else an event acted on. Its label is the
+registry entry's (`config`), then `fallbackText`, then the ref's own, then the raw key.
 
 ```text
 ({ resource, config, fallbackText, onClick, showDetails, }: ActivityResourceTagProps) => import("react").JSX.Element
@@ -676,6 +703,10 @@ Kind: interface.
 ### `ActivityRow`
 
 Kind: callable.
+
+One entry on the rail. Density changes the marker size and the row rhythm together —
+changing one without the other is what makes a compact feed look mis-aligned rather than
+dense.
 
 ```text
 ({ activity, density, itemSpacing, eventConfig, tone, last, expanded, onExpandedChange, detailsCollapsible, detailLabels, relativeTime, absoluteTime, sourceLabel, youLabel, showChangesLabel, hideChangesLabel, moreLabel, actionsLabel, currentUserId, actions, onActivityClick, onActorClick, onResourceClick, onAction, getResourceConfig, headlineOverride, markerOverride, customDetails, rowClassName, markerClassName, contentClassName, detailsClassName, }: ActivityRowProps<TData>) => import("react").JSX.Element
@@ -850,6 +881,10 @@ Kind: interface.
 ### `useActivityResources`
 
 Kind: callable.
+
+Resolves the resources an event refers to, from a registry keyed like `order:1234`, so a feed
+can render a chip per subject without every consumer re-implementing the lookup and its
+cache. Every mutation emits the whole registry through `onResourcesChange` for persistence.
 
 ```text
 ({ resources, onResourcesChange, }?: UseActivityResourcesOptions) => UseActivityResourcesReturn

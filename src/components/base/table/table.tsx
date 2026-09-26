@@ -35,18 +35,28 @@ export type TableSortDirection = "ascending" | "descending" | null
 
 /* `align` is an HTML attribute on `<td>`/`<th>` (a string), so the prop must replace it. */
 export interface TableCellProps extends Omit<ComponentProps<"td">, "align"> {
+	/** Column alignment. Numeric columns belong at the end. */
 	align?: TableAlign
-	/** Allows the cell to wrap. Cells are nowrap by default so columns stay readable. */
+	/**
+	 * Lets the cell wrap. Cells are nowrap by default so columns stay aligned — a column that
+	 * holds prose opts out here rather than the whole table losing its alignment.
+	 */
 	wrap?: boolean
 }
 
 export interface TableHeadProps extends Omit<ComponentProps<"th">, "align"> {
+	/** Column alignment. Numeric columns belong at the end. */
 	align?: TableAlign
+	/** Lets the head cell wrap. Cells are nowrap by default so columns stay aligned. */
 	wrap?: boolean
-	/** Renders the label as a sort control. Pair with `sortDirection` and `onSort`. */
+	/**
+	 * Renders the label as a sort control and puts `aria-sort` on the `<th>`. Pair with
+	 * `sortDirection` and `onSort`.
+	 */
 	sortable?: boolean
 	/** This column's current direction, or `null` when another column is the sort. */
 	sortDirection?: TableSortDirection
+	/** Fires on activation. The table does not sort — the caller owns the data. */
 	onSort?: () => void
 }
 
@@ -69,7 +79,11 @@ interface TableEdges {
 
 const RESTING: TableEdges = { scrollable: false, start: false, end: false }
 
-export function Table({ className, containerClassName, strings, stickyHeader, ...props }: TableProps) {
+/**
+ * The table, inside its own scroll container. The container becomes a tab stop only while it
+ * scrolls, so a wide table can be scrolled from the keyboard.
+ */
+export function Table({ className, containerClassName, strings, stickyHeader = false, ...props }: TableProps) {
 	const copy = useMemo(() => ({ ...defaultTableStrings, ...strings }), [strings])
 	const containerRef = useRef<HTMLDivElement>(null)
 	const captionId = useId()
@@ -144,15 +158,20 @@ export function TableFooter({ className, ...props }: ComponentProps<"tfoot">) {
 	return <tfoot className={cx("table--footer", styles.footer, className)} {...props} />
 }
 
+/**
+ * A row: a plain `<tr>`. Mark a selected row with `data-state="selected"` — a data
+ * attribute, not a prop, because rows are plain elements.
+ */
 export function TableRow({ className, ...props }: ComponentProps<"tr">) {
 	return <tr className={cx("table--row", styles.row, className)} {...props} />
 }
 
+/** A column's head cell, and with `sortable` its sort control. */
 export function TableHead({
 	className,
 	children,
 	align,
-	wrap,
+	wrap = false,
 	sortable,
 	sortDirection = null,
 	onSort,
@@ -203,7 +222,8 @@ export function TableHead({
 	)
 }
 
-export function TableCell({ className, children, align, wrap, ...props }: TableCellProps) {
+/** A cell. A plain string is wrapped in `Text`; a node is left exactly as passed. */
+export function TableCell({ className, children, align, wrap = false, ...props }: TableCellProps) {
 	return (
 		<td
 			className={cx(
@@ -233,7 +253,10 @@ export interface TableEmptyProps extends Omit<ComponentProps<"td">, "children"> 
 	children?: ReactNode
 }
 
-/** The "no rows" row, spanning every column. */
+/**
+ * The "no rows" row: it spans every column and states that there are none. A table with a
+ * header and no body reads as broken; this is what says it is empty on purpose.
+ */
 export function TableEmpty({ className, colSpan, children, ...props }: TableEmptyProps) {
 	const copy = useContext(TableStringsContext)
 	return (
@@ -247,6 +270,10 @@ export function TableEmpty({ className, colSpan, children, ...props }: TableEmpt
 	)
 }
 
+/**
+ * Names the table for assistive technology, and the scroll container with it. Rendered
+ * below the table.
+ */
 export function TableCaption({ className, children, id, ...props }: ComponentProps<"caption">) {
 	const context = useContext(TableCaptionContext)
 	const register = context?.register

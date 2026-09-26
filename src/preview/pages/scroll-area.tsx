@@ -24,14 +24,8 @@ export function ScrollAreaPage() {
 			/>
 
 			<Example id="scroll-area-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "ScrollArea", type: "component", description: "A scroll container with the kit's scrollbar treatment. Give it a max height; it does not impose one." },
-						{ name: "BooleanIndicator value", type: "boolean", description: "A yes/no state as a dot and a word, so it does not rely on colour alone." },
-						{ name: "BooleanIndicator strings.true / strings.false", type: "string", description: "The two words. 'Active'/'Paused' beats 'true'/'false'." },
-						{ name: "VisuallyHidden", type: "component", description: "Present to assistive technology, absent on screen. Not display:none, which removes it from both." },
-					]}
-				/>
+				<PropTable symbols={["ScrollArea", "VisuallyHidden"]} />
+				<PropTable owners={["BooleanIndicator"]} />
 			</Example>
 		</ComponentPage>
 	)

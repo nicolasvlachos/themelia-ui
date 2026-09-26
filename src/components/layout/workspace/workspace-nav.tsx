@@ -14,7 +14,9 @@ import { SecondaryValue } from "@/components/primitives"
 import { DisplayLabel, Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
-import { resolveLayoutLinkRenderer, type LayoutNavigationAdapter } from "../layout.types"
+import { resolveLinkRenderer } from "@/lib/navigation"
+
+import type { LayoutNavigationAdapter } from "../layout.types"
 import { defaultWorkspaceNavStrings, type WorkspaceNavStrings } from "./workspace.strings"
 import styles from "./workspace.module.css"
 
@@ -83,6 +85,11 @@ function resolveStatus(item: WorkspaceNavItem, active: boolean): WorkspaceNavSta
 	return "idle"
 }
 
+/**
+ * Navigation for a record filled in over time. The difference from every other nav in the
+ * kit is COMPLETION: each section reports how much of it is done, because that is what
+ * decides where the reader goes next.
+ */
 export function WorkspaceNav({
 	groups,
 	activeId,
@@ -95,7 +102,7 @@ export function WorkspaceNav({
 	...props
 }: WorkspaceNavProps) {
 	const copy = { ...defaultWorkspaceNavStrings, ...strings }
-	const link = resolveLayoutLinkRenderer({ renderLink })
+	const link = resolveLinkRenderer(renderLink)
 
 	return (
 		<nav

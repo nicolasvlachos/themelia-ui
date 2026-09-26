@@ -6,16 +6,30 @@ runtime. Those concerns meet through explicit props rather than hidden framework
 
 ## Routing
 
-Pass the router's link through `render` or a module's documented `renderLink` adapter. Do
-not put navigation in an `onClick` when the destination is a URL: a real link preserves
-open-in-new-tab, the status-bar destination, and browser semantics.
+Pass the router's link through `render`, or through `renderLink` where a component renders
+links of its own. Do not put navigation in an `onClick` when the destination is a URL: a
+real link preserves open-in-new-tab, the status-bar destination, and browser semantics.
 
 ```tsx fragment — replace AppLink with the link component from the consuming router
 <Button render={<AppLink to="/invoices/new" />}>New invoice</Button>
 ```
 
-Layout navigation adapters accept the same idea at the page or shell boundary. The kit does
-not import React Router, Next.js, Remix, or another router.
+Every `renderLink` takes the same function, a `LinkRenderer`: the sidebar and header, page
+headers and actions, menus and action buttons, navigation tabs, pagination, and table
+cells. Write it once:
+
+```tsx fragment — replace AppLink with the link component from the consuming router
+import type { LinkRenderer } from "themelia-ui/layout/sidebar"
+
+export const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <AppLink to={href} {...rest}>{children}</AppLink>
+```
+
+Return one element and spread the rest of the props onto it: they carry the class, the
+`aria-current` of the current page and the click handler the component needs. `active`,
+`disabled` and `external` are hints to read. `Pagination` builds its addresses with
+`pageHref={(page) => ...}` and then renders them through the same `renderLink`. The kit
+does not import React Router, Next.js, Remix, or another router.
 
 ## Queries and mutations
 

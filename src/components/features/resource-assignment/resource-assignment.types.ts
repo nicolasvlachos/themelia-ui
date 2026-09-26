@@ -76,12 +76,25 @@ export interface SharedResourceCardSelectorConfig<
 	cancelText: string
 	/** Names the change action. Alone it is a header button; with other actions it joins the overflow menu. */
 	actionLabel?: string
-	/** Turns the persisted resource into a starting choice for the picker. */
+	/**
+	 * Turns the persisted resource into a starting choice for the picker, so “Change” opens on
+	 * what the record holds.
+	 */
 	mapInitialSelected: (resource: TResource | null) => TSuggestion | null
-	/** How the pending choice reads in the summary. */
+	/**
+	 * How the pending choice reads in the summary above the buttons. Without it the card looks
+	 * for a string `label` field, which is a guess — a cheap and usually right one.
+	 */
 	getSelectionLabel?: (selection: TSuggestion) => ReactNode
-	/** Persists it. The card awaits a returned promise and shows the confirming state. */
+	/**
+	 * Persists it. A returned promise is awaited and drives the confirming state; a rejection
+	 * keeps the dialog open and reaches `onError`.
+	 */
 	onConfirmSelection: (selection: TSuggestion) => void | Promise<void>
+	/**
+	 * The picker. Yours: it receives `selected`, `onSelect`, and `inModal` — a picker that adapts
+	 * inside a dialog can read the last one.
+	 */
 	SelectorComponent: ComponentType<SharedResourceSelectorProps<TSuggestion, TSelectorProps>>
 	selectorProps?: TSelectorProps
 	DialogContentComponent?: ComponentType<
@@ -90,7 +103,10 @@ export interface SharedResourceCardSelectorConfig<
 	>
 	dialogContentProps?: Record<string, unknown>
 	DialogSummaryComponent?: ComponentType<SharedResourceCardContentProps<TResource, TSuggestion>>
-	/** Refuses a pending choice: an inactive venue, a full room. */
+	/**
+	 * Refuses a pending choice — an inactive venue, a room that is full or too small. The confirm
+	 * stays disabled rather than failing after the press.
+	 */
 	isConfirmDisabled?: (selection: TSuggestion | null) => boolean
 	/** Fires once per closed-to-open cycle, with the choice the dialog opened on. */
 	onDialogOpen?: (selection: TSuggestion | null) => void
@@ -119,14 +135,27 @@ export interface SharedResourceCardProps<
 	contentClassName?: string
 	alert?: ReactNode
 	alertTone?: Extract<AlertTone, "neutral" | "destructive" | "warning">
-	/** Extra overflow actions. The change action joins them when they exist. */
+	/**
+	 * Extra overflow actions. Alone, the change action is a header button; alongside these it
+	 * joins them — two triggers side by side is worse than one menu holding both.
+	 */
 	actions?: ActionDefinition[]
 	headerAction?: ReactNode
 	footerText?: ReactNode
-	/** The persisted assignment. `null` is the only empty state. */
+	/**
+	 * The persisted assignment. `null` is the only empty state; `hasResource` is derived from it
+	 * and never independently controlled.
+	 */
 	resource: TResource | null
+	/**
+	 * The picker, its copy, and the write. Omit it and the card is read-only — no change action,
+	 * and an empty state that offers nothing.
+	 */
 	selector?: SharedResourceCardSelectorConfig<TResource, TSuggestion, TSelectorProps>
-	/** Declarative body blocks, used when no content override is given. */
+	/**
+	 * Declarative body blocks, used when no content override is given: the last rung of the
+	 * assigned body's ladder, after `renderResourceContent` and `ResourceContentComponent`.
+	 */
 	sections?: SharedResourceCardSection<TResource, TSuggestion>[]
 	sectionsClassName?: string
 	/**
@@ -134,10 +163,22 @@ export interface SharedResourceCardProps<
 	 * Takes precedence over `viewLink`.
 	 */
 	viewAction?: ReactNode
-	/** The native-anchor convenience, for an app with no router in the way. */
+	/**
+	 * The native-anchor convenience, for an app with no router in the way. Like `viewAction`, it
+	 * renders only when a resource is assigned.
+	 */
 	viewLink?: { href: string; label: ReactNode; className?: string }
+	/**
+	 * The assigned body as a component: the second rung of the ladder, after
+	 * `renderResourceContent` and before `sections`. A component is reusable.
+	 */
 	ResourceContentComponent?: ComponentType<SharedResourceCardContentProps<TResource, TSuggestion>>
 	EmptyContentComponent?: ComponentType<SharedResourceCardContentProps<TResource, TSuggestion>>
+	/**
+	 * The assigned body, most specific first: this, then `ResourceContentComponent`, then
+	 * `sections`. A render prop closes over local state, a component is reusable, and sections
+	 * are data — each rung exists because the one below it is wrong for someone.
+	 */
 	renderResourceContent?: (context: SharedResourceCardContext<TResource, TSuggestion>) => ReactNode
 	renderEmptyContent?: (context: SharedResourceCardContext<TResource, TSuggestion>) => ReactNode
 	strings?: Partial<SharedResourceCardStrings>

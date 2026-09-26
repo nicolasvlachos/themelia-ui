@@ -34,7 +34,10 @@ export interface OrderLine {
 	quantity: number
 	/** Already formatted. Passed, never multiplied. */
 	total: string
-	/** Rendered as label/value rows under the title, so every consumer's extras match. */
+	/**
+	 * Per-line custom data, rendered as label/value rows under the title and styled once, so
+	 * every consumer's extras match.
+	 */
 	properties?: OrderLineProperty[]
 	/** Whatever `properties` cannot express. */
 	children?: ReactNode

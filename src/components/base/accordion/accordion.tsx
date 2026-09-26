@@ -15,15 +15,25 @@ const SURFACE = {
 	flat: styles.surfaceFlat,
 } satisfies Record<AccordionSurface, string>
 
-export interface AccordionProps extends AccordionPrimitive.Root.Props<string> {
-	/** Outer chrome. Resolves through the provider when omitted. */
+export interface AccordionProps
+	extends AccordionPrimitive.Root.Props<string>,
+		Pick<AccordionPrimitive.Root.Props<string>, "multiple" | "defaultValue" | "value"> {
+	/**
+	 * The group's chrome: one bordered shell with dividers, a panel per section, or none.
+	 * Resolves through the provider when omitted, so `UIProvider` defaults can change it.
+	 * @default "bordered"
+	 */
 	surface?: AccordionSurface
 	/**
 	 * Bounded sections, each rendered as the canonical icon/title/badge/description row.
 	 * Ignored when `children` are supplied.
 	 */
 	items?: AccordionItemData[]
-	/** How leading media is framed. Only meaningful alongside `items`. */
+	/**
+	 * How leading icons are framed. Only meaningful alongside `items`; the column is dropped
+	 * entirely when no item has one. `UIProvider` defaults can change it.
+	 * @default "inline"
+	 */
 	media?: AccordionMedia
 }
 

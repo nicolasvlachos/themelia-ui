@@ -13,11 +13,21 @@ import styles from "./text-inputs.module.css"
 export interface SlugFieldProps
 	extends Omit<InputProps, "value" | "defaultValue" | "onChange" | "readOnly" | "type" | "prefix">,
 		SlugifyOptions {
-	/** The source value. Controlled — the slug is derived, never held. */
+	/**
+	 * The source text; the field shows its slugified form. Controlled — the slug is derived,
+	 * never held.
+	 */
 	value: string | number | null | undefined
-	/** Replaces the built-in derivation entirely. */
+	/**
+	 * Replaces the built-in derivation entirely. The default lower-cases, strips accents,
+	 * keeps letters and numbers in any script, and collapses every other run to a single
+	 * separator.
+	 */
 	transform?: (value: string | number | null | undefined) => string
-	/** Rendered before the slug, inside the field — a domain or a path prefix. */
+	/**
+	 * Rendered before the slug, inside the field — a domain or a path prefix. Not part of the
+	 * value.
+	 */
 	prefix?: React.ReactNode
 }
 

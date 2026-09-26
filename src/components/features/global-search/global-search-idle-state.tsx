@@ -19,6 +19,10 @@ export interface GlobalSearchIdleStateProps {
 	className?: string
 }
 
+/**
+ * What the palette shows before there is anything to search: recent queries and curated
+ * suggestions, both supplied by the consumer — the palette does not remember anything itself.
+ */
 export function GlobalSearchIdleState({
 	sections,
 	fallbackIcons,

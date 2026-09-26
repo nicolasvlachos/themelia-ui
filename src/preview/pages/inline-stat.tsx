@@ -12,14 +12,7 @@ export function InlineStatPage() {
 			/>
 
 			<Example id="inline-stat-api" title="InlineStat API">
-				<PropTable owner="InlineStat"
-					rows={[
-						{ name: "label", type: "ReactNode", required: true, description: "Names the fact. Rendered as a DisplayLabel, which has one style everywhere." },
-						{ name: "value", type: "ReactNode", description: "The fact itself. Absent renders the empty marker rather than collapsing the row to its label — a dash says the fact was looked for." },
-						{ name: "layout", type: '"between" | "inline" | "stacked"', default: '"between"', description: "The three differ only in how the free space between label and value is spent." },
-						{ name: "mono", type: "boolean", default: "false", description: "Tabular figures, for an amount or a counter — what makes a column of these compare down the page instead of jittering with each digit's width." },
-					]}
-				/>
+				<PropTable owner="InlineStat" />
 			</Example>
 		</ComponentPage>
 	)

@@ -70,7 +70,10 @@ function validateOne(file: File, options: FileConstraints): FileRejection | unde
 	return undefined
 }
 
-/** Validates a selection; each file gets its own verdict, so one rejection does not stop the rest. */
+/**
+ * The validation FileUpload runs, as a plain call, so a caller can pre-check. Each file gets
+ * its own verdict, so one rejection does not stop the rest.
+ */
 export function validateFileSelection({
 	incoming,
 	current,

@@ -1,6 +1,9 @@
 export type RoundingMode = "round" | "floor" | "ceil" | "half-even"
 
-/** Accepts a comma as the decimal separator — most of the world types one. */
+/**
+ * The formatting `DecimalInput` applies as the reader types, exported so a caller can match
+ * it. Accepts a comma as the decimal separator — most of the world types one.
+ */
 export function formatDecimal(value: string, decimalPlaces: number, allowNegative: boolean): string {
 	if (!value) return ""
 
@@ -62,6 +65,10 @@ export function normalizePastedNumber(text: string, decimalPlaces: number): stri
 	return `${negative ? "-" : ""}${whole || (fraction !== undefined ? "0" : "")}${fraction !== undefined ? `.${fraction}` : ""}`
 }
 
+/**
+ * The rounding `DecimalInput` applies, exported so a caller can match it: `value` to
+ * `decimals` places under a `RoundingMode`.
+ */
 export function applyRounding(value: number, decimals: number, mode: RoundingMode): number {
 	const factor = 10 ** decimals
 	const shifted = value * factor

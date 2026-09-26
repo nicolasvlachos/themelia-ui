@@ -613,8 +613,7 @@
 					"from": "themelia-ui/base/navigation",
 					"names": [
 						"Pagination",
-						"paginationRange",
-						"type PaginationLinkProps"
+						"paginationRange"
 					]
 				}
 			],

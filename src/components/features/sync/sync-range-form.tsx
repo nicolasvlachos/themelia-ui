@@ -35,6 +35,10 @@ function defaultTransformSubmit(value: SyncRangeFormValues): SyncRangeFormSubmit
 	return { hours, options: [...value.options] }
 }
 
+/**
+ * The body of a "reconcile the last N hours" dialog. It renders no buttons: the overlay's
+ * footer submits it through `formId`, so native validation runs first.
+ */
 export function SyncRangeForm<TSubmit = SyncRangeFormSubmit>({
 	formId,
 	options,

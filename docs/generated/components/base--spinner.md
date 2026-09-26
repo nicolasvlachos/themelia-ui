@@ -43,9 +43,9 @@ Extends: `Omit<React.ComponentProps<"span">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `size` | no | `ComponentScale` |  |
-| `tone` | no | `SemanticTone` |  |
-| `label` | no | `React.ReactNode` | Visible label beside the ring. Also becomes the announced status. |
+| `size` | no | `ComponentScale` | The ring's size: `sm`, `md` or `lg`. The one place a size prop survives: a spinner has<br>no content to scale with. |
+| `tone` | no | `SemanticTone` | Borrows the button tone contract, so a spinner inside or beside an action matches it<br>rather than sitting on it in the primary hue. |
+| `label` | no | `React.ReactNode` | Visible label beside the ring, and the announced status. Without one the spinner is<br>decorative and hidden from assistive technology. |
 
 ## Preview recipes
 

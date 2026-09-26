@@ -50,22 +50,17 @@ export function MentionsPage() {
 			</Example>
 
 			<Example id="mentions-api" title="API">
-				<PropTable owner="useMentions"
-					rows={[
-						{ name: "resources", type: "Partial<Record<Kind, MentionResource>>", description: "The registry. Each kind supplies a label, an icon, a tone, an optional trigger character, and either its own search or a static catalogue." },
-						{ name: "resource.trigger", api: "MentionResource.trigger", type: "string", description: "The character that opens the picker inline. Optional — a kind with no trigger is still reachable from the button, which is right for one that is browsed rather than typed." },
-						{ name: "onResourceSearch", api: "useMentions.onResourceSearch", type: "(needle, kind, ctx) => Suggestion[]", description: "The fallback, for a kind that registers neither search nor suggestions. One endpoint taking a kind is the common shape." },
-						{ name: "handleCaretChange", api: "useMentions().handleCaretChange", type: "() => void", description: "Wire to the editor's caret callback. The trigger must follow start-of-line or whitespace, so an email address does not open the picker at its @." },
-						{ name: "pickSuggestion", api: "useMentions().pickSuggestion", type: "(suggestion) => Mention", description: "Registers the mention and writes the chip in ONE editor operation — deleting the needle and inserting separately leaves a frame where the caret is elsewhere." },
-						{ name: "manualKindOverride", api: "useMentions().manualKindOverride", type: "boolean", description: "Set by the panel when the writer picks a tab. Suspends the auto-jump, because a list that keeps moving under someone who just said where to look is worse than one showing nothing." },
-						{ name: "errorsByKind", api: "useMentions().errorsByKind", type: "Partial<Record<Kind, unknown>>", description: "One kind failing is not the search failing. Three registries answering and a fourth timing out is still a usable panel." },
-						{ name: "MentionContent renderMention", type: "(mention) => ReactNode", description: "Takes over every chip. More specific than resources.<kind>.renderChip, which is more specific than resources.<kind>.tone." },
-						{ name: "MentionContent sanitizer", type: "(html) => string", description: "Replaces the kit's allow-list. There is no way to turn sanitising off — the escape hatch is a different sanitiser, not the absence of one." },
-						{ name: "buildMentionHtml / parseMentionsFromHtml", type: "(mention) => string / (html) => Mention[]", description: "The two directions. Parse returns id, kind, and label only; merge against what you already know to keep href and data, which HTML cannot express." },
-						{ name: "MentionInlineSuggestions.onDismiss", api: "MentionInlineSuggestions.onDismiss", type: "() => void", description: "Closes the completion session on Escape or editor blur. Wire to setPickerOpen(false). Unchanged caret callbacks do not reopen a dismissed query." },
-						{ name: "MentionPicker", type: "component", description: "The popover for the button flow \u2014 the same tabs and rows as the inline panel, plus a search field of its own, because a reader who pressed a button has typed nothing to search with." },
-						{ name: "MentionKindTabs / MentionRows", type: "component", description: "The parts both mention surfaces are built from, so the inline panel and the popover cannot drift into showing the same data two ways." },
-						{ name: "useMentionsSearch", type: "hook", description: "The picker\u2019s suggestion state. Every kind is searched rather than only the active tab, so the tab counts are true the moment the panel opens." },
+				<PropTable
+					owners={["useMentions", "UseMentionsReturn", "MentionResource", "MentionContent", "MentionInlineSuggestions"]}
+				/>
+				<PropTable
+					symbols={[
+						"buildMentionHtml",
+						"parseMentionsFromHtml",
+						"MentionPicker",
+						"MentionKindTabs",
+						"MentionRows",
+						"useMentionsSearch",
 					]}
 				/>
 			</Example>

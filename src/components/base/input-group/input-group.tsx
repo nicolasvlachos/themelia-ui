@@ -3,7 +3,7 @@ import * as React from "react"
 import { Button } from "@/components/base/buttons"
 import { Input } from "@/components/base/text-inputs"
 import { Textarea, type TextareaProps } from "@/components/base/text-inputs"
-import { cvm, type VariantProps } from "@/lib/cvm"
+import { cvm } from "@/lib/cvm"
 import { cx } from "@/lib/cx"
 import { Text } from "@/components/base/typography"
 
@@ -35,6 +35,10 @@ function useFieldWiring<P extends Record<string, unknown>>(props: P): P {
 	}
 }
 
+/**
+ * The shell, with `role="group"`. It owns the border and the focus ring for whatever is
+ * inside, so the control strips its own.
+ */
 function InputGroup({
 	className,
 	id,
@@ -69,11 +73,23 @@ const inputGroupAddonVariants = cvm(styles.addon, {
 	},
 })
 
+export interface InputGroupAddonProps extends React.ComponentProps<"div"> {
+	/**
+	 * Where the addon attaches. The inline edges sit on the control's line; the block edges
+	 * take a row of their own, for a toolbar above a textarea or a hint below one.
+	 */
+	align?: "inline-start" | "inline-end" | "block-start" | "block-end"
+}
+
+/**
+ * Something attached to the field — a unit, a prefix, a submit. Clicking it focuses the
+ * control, as a label does, unless the click lands on a button.
+ */
 function InputGroupAddon({
 	className,
 	align = "inline-start",
 	...props
-}: React.ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>) {
+}: InputGroupAddonProps) {
 	return (
 		<div
 			data-slot="input-group-addon"
@@ -105,6 +121,18 @@ const inputGroupButtonVariants = cvm(styles.button, {
 	},
 })
 
+export interface InputGroupButtonProps extends Omit<React.ComponentProps<typeof Button>, "size" | "type"> {
+	/**
+	 * The sizes that fit inside a field: two text sizes and their icon-only twins. A
+	 * full-height Button would set the field's height rather than fit in it, which is why
+	 * this is the one place the kit keeps a size prop on a control.
+	 */
+	size?: "xs" | "sm" | "icon-xs" | "icon-sm"
+	/** The native button type: `button` unless set, so pressing it never submits the form around the field. */
+	type?: "button" | "submit" | "reset"
+}
+
+/** A quiet Button sized to sit inside the field rather than beside it. */
 function InputGroupButton({
 	className,
 	type = "button",
@@ -112,10 +140,7 @@ function InputGroupButton({
 	buttonStyle = "ghost",
 	size = "xs",
 	...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "type"> &
-	VariantProps<typeof inputGroupButtonVariants> & {
-		type?: "button" | "submit" | "reset"
-	}) {
+}: InputGroupButtonProps) {
 	// Quiet by default, with nested-radius sizes rather than the standard action scale.
 	return (
 		<Button
@@ -129,14 +154,26 @@ function InputGroupButton({
 	)
 }
 
+/**
+ * Secondary text at the group's own size — a unit, a domain suffix, a counter. It inherits
+ * the size, so it cannot drift from the input beside it.
+ */
 function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
 	return <Text tag="span" size="inherit" type="secondary" className={cx("input-group-text--component", styles.text, className)} {...props} />
 }
 
+/**
+ * The kit's Input with its chrome removed, because the group is drawing it. Every other
+ * prop passes through.
+ */
 function InputGroupInput({ className, ...props }: React.ComponentProps<"input">) {
 	return <Input className={cx("input-group-input--component", styles.control, className)} {...useFieldWiring(props)} />
 }
 
+/**
+ * The kit's Textarea with its chrome removed, because the group is drawing it. Every other
+ * prop passes through.
+ */
 function InputGroupTextarea({ className, ...props }: TextareaProps) {
 	return (
 		<Textarea
@@ -157,8 +194,6 @@ export {
 
 /* Named prop types, so wrappers needn't restate which element each part renders. */
 export type InputGroupProps = React.ComponentProps<"div">
-export type InputGroupAddonProps = React.ComponentProps<"div">
 export type InputGroupTextProps = React.ComponentProps<"span">
 export type InputGroupInputProps = React.ComponentProps<"input">
 export type InputGroupTextareaProps = React.ComponentProps<"textarea">
-export type InputGroupButtonProps = React.ComponentProps<typeof Button>

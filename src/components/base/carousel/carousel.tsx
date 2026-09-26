@@ -22,18 +22,41 @@ export type CarouselOrientation = "horizontal" | "vertical"
 export type CarouselControlPlacement = "outside" | "overlay" | "none"
 
 export interface CarouselProps extends Omit<ComponentProps<"div">, "children"> {
+	/** The slides, usually `CarouselSlide`s. */
 	children: ReactNode
+	/** Which axis snaps. */
 	orientation?: CarouselOrientation
+	/**
+	 * Where the previous/next buttons sit: `outside` the track, `overlay` on its edges, or
+	 * `none` when you compose your own with `CarouselControl`.
+	 */
 	controls?: CarouselControlPlacement
 	/** Shows the position indicators, and lets them be clicked. */
 	showDots?: boolean
+	/** `pill` stretches the active indicator instead of only recolouring it. */
 	dotStyle?: "dot" | "pill"
-	/** Overrides this carousel's own copy — the region name and the two controls. */
+	/**
+	 * Overrides this carousel's own copy — the region name, the two icon-only controls, and
+	 * each pagination dot. It travels through the context, so a control placed with
+	 * `CarouselControl` is named by the same override as one the root rendered.
+	 */
 	strings?: Partial<CarouselStrings>
+	/**
+	 * Names the region for assistive technology; unset, `strings.label` does. A carousel with
+	 * no name is an unexplained scroll box, and a page with two needs two names.
+	 */
 	label?: string
+	/**
+	 * Styles the scroll container rather than the outer frame — for a carousel that needs its
+	 * own padding inside the clip.
+	 */
 	viewportClassName?: string
 }
 
+/**
+ * A native scroll-snap track with controls. Script only reports the current slide and
+ * scrolls to a chosen one.
+ */
 export function Carousel({
 	children,
 	orientation = "horizontal",
@@ -214,10 +237,14 @@ export function Carousel({
 }
 
 export interface CarouselControlProps extends ComponentProps<"button"> {
+	/** Which way the control moves the track. */
 	direction: "previous" | "next"
 }
 
-/** A previous/next control placed by the caller rather than by the root. */
+/**
+ * A single previous/next control placed by the caller rather than by the root, for composing
+ * your own layout with `controls="none"`. Must sit inside a `Carousel`.
+ */
 export function CarouselControl({ direction, className, children, ...props }: CarouselControlProps) {
 	const { index, count, atStart, atEnd, scrollToSlide, strings } = useCarousel()
 	const isPrevious = direction === "previous"
@@ -240,10 +267,14 @@ export function CarouselControl({ direction, className, children, ...props }: Ca
 }
 
 export interface CarouselDotsProps extends ComponentProps<"div"> {
+	/** `pill` stretches the active indicator instead of only recolouring it. */
 	dotStyle?: "dot" | "pill"
 }
 
-/** The position indicators, placed by the caller. */
+/**
+ * The position indicators on their own, placed by the caller outside the track. Must sit
+ * inside a `Carousel`.
+ */
 export function CarouselDots({ dotStyle = "dot", className, ...props }: CarouselDotsProps) {
 	const { index, count, scrollToSlide, strings } = useCarousel()
 
@@ -279,6 +310,7 @@ export interface CarouselSlideProps extends ComponentProps<"div"> {
 	size?: string
 }
 
+/** One slide of the track, announced as a slide. */
 export function CarouselSlide({ size = "100%", className, style, ...props }: CarouselSlideProps) {
 	const { strings } = useCarousel()
 

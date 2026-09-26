@@ -9,7 +9,9 @@ import { isValidElement, type ComponentProps, type ReactNode } from "react"
 import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
-import { resolveLayoutLinkRenderer, type LayoutNavigationAdapter } from "../layout.types"
+import { resolveLinkRenderer } from "@/lib/navigation"
+
+import type { LayoutNavigationAdapter } from "../layout.types"
 import { AuthCard } from "./auth-card"
 import { AuthFooterLinks } from "./auth-footer-links"
 import type {
@@ -30,10 +32,16 @@ export interface AuthShellProps
 	 * `contentRender={<div />}` when embedded in a page that owns the main landmark.
 	 */
 	contentRender?: useRender.ComponentProps<"main">["render"]
-	/** A rendered mark, or the parts for the shell to arrange. */
+	/**
+	 * A rendered mark, or the parts — `{ logo, label, description, href }` — for the shell to
+	 * arrange.
+	 */
 	brand?: AuthBrand
+	/** Above the title, in the card's heading block. */
 	eyebrow?: ReactNode
+	/** The card's heading. */
 	title?: ReactNode
+	/** Under the title, in the card's heading block. */
 	description?: ReactNode
 	/** A control at the end of the card's header row — a locale switcher, a step count. */
 	headerEnd?: ReactNode
@@ -47,13 +55,21 @@ export interface AuthShellProps
 	postCard?: ReactNode
 	/** Free content at the very bottom, after every link row. */
 	footer?: ReactNode
-	/** Help, status, contact. Data, so the separators are decided once. */
+	/**
+	 * Help, status, contact: a named row of links that wraps with the available width. Data,
+	 * so the separators are decided once.
+	 */
 	footerLinks?: AuthLink[]
-	/** Terms, privacy, cookies. Rendered as its own row so screen readers can skip it. */
+	/**
+	 * Terms, privacy, cookies: a named row of links that wraps with the available width,
+	 * rendered as its own row so screen readers can skip it.
+	 */
 	policyLinks?: AuthLink[]
+	/** The languages, as a named row of links that wraps with the available width. */
 	languageLinks?: AuthLink[]
 	/** A rendered control, when a link row is not the right shape for it. */
 	languageSwitcher?: ReactNode
+	/** The surface width. */
 	size?: AuthShellSize
 	/**
 	 * `card` (default) puts the content on a raised surface; `bare` does not; `split` puts
@@ -75,7 +91,7 @@ export interface AuthShellProps
 }
 
 function Brand({ brand, renderLink }: { brand: AuthBrand; renderLink: LayoutNavigationAdapter["renderLink"] }) {
-	const link = resolveLayoutLinkRenderer({ renderLink })
+	const link = resolveLinkRenderer(renderLink)
 
 	if (!isBrandConfig(brand)) return <div className={styles.brand}>{brand}</div>
 
@@ -228,9 +244,15 @@ export function AuthShell({
 export interface AuthSplitPanelProps extends ComponentProps<"div"> {
 	/** The sign-in surface. Usually an AuthShell with `variant="bare"`. */
 	form: ReactNode
-	/** Marketing copy, a testimonial, an illustration. Hidden below 56rem of available width. */
+	/**
+	 * Marketing copy, a testimonial, an illustration. Hidden below 56rem of available width
+	 * unless `panelMobile` stacks it; omitting it gives the form the full available width.
+	 */
 	panel?: ReactNode
-	/** Which side the panel is drawn on. The form stays first in the DOM either way. */
+	/**
+	 * Which side the panel is drawn on. The form stays first in the DOM either way, so
+	 * reading and keyboard order remain form first.
+	 */
 	panelPosition?: AuthSplitSide
 	/** What the panel does when this container is narrower than 56rem. */
 	panelMobile?: AuthSplitMobile

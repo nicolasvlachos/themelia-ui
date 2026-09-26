@@ -69,51 +69,22 @@ export function PrimitiveDatePage() {
 			/>
 
 			<Example id="date-api" title="DatePrimitive API">
-				<PropTable owner="DatePrimitive"
-					rows={[
-						{ name: "value", type: "Date | string | number | null", description: "Whatever the API returned. Parsed once, here." },
-						{ name: "pattern", type: "string", description: "A date-fns pattern, when the default is not what this column needs. Falls back to the scope's dateFormat." },
-						{ name: "Time / DateTime", type: "component", description: "The same value at a different granularity. Three components rather than a granularity prop, because a column shows one of them and never switches." },
-						{ name: "parseDateInput()", type: "(input) => Date | null", description: "The single parse every date primitive goes through." },
-						{ name: "UIProvider dates", api: "UIProvider.config.dates", type: "DatesConfig", description: "weekStartsOn, format, locale (the date-fns Locale OBJECT — what actually translates month and weekday names), and formatRelativeTime." },
-						{ name: "Date", type: "component", description: "DatePrimitive, exported under its natural name as well. The alias exists because `Date` collides with the global in a file that also constructs one — import whichever reads better at the call site." },
-					]}
-				/>
+				<PropTable owner="DatePrimitive" />
+				<PropTable symbols={["Date", "Time", "DateTime", "parseDateInput"]} />
+				<PropTable owners={["DatesConfig"]} />
 			</Example>
 
 			<Example id="date-range-api" title="DateRange API">
-				<PropTable owner="DateRange"
-					rows={[
-						{ name: "start / end", type: "Date | string | number | null", description: "Either end may be absent — an open range is a real state, not an error." },
-						{ name: "pattern", type: "string", description: "A date-fns pattern for both ends, when the collapsing is not wanted." },
-						{ name: "separator", type: "string", description: "Between the two ends. An en dash by default." },
-						{ name: "formatDateRange()", type: "(start, end, options) => string", description: "The same collapsing outside React." },
-					]}
-				/>
+				<PropTable owner="DateRange" />
+				<PropTable symbols={["formatDateRange"]} />
 			</Example>
 
 			<Example id="relative-time-api" title="RelativeTime API">
-				<PropTable owner="RelativeTime"
-					rows={[
-						{ name: "value", type: "Date | string | number | null", description: "The moment being described." },
-						{ name: "now", type: "Date | string | number", description: "The comparison point. Supply it for anything rendered on a server or asserted in a test." },
-						{ name: "addSuffix", type: "boolean", default: "true", description: "“7 days ago” rather than “7 days”. A bare duration beside a row of dates reads as a length rather than a moment." },
-						{ name: "includeSeconds", type: "boolean", default: "false", description: "Separates “less than a minute” from something more precise. Only worth it for a feed measured in seconds." },
-						{ name: "formatRelativeTime", type: "(date, now) => string", description: "Replaces the wording for this value. Falls back to the scope's dates.formatRelativeTime, then to date-fns." },
-						{ name: "UIProvider dates.locale", api: "UIProvider.config.dates.locale", type: "Locale", description: "A date-fns locale OBJECT translates the built-in wording. It cannot be derived from a BCP-47 tag — the locales are modules, and importing all of them to look one up would put every language in every bundle." },
-					]}
-				/>
+				<PropTable owner="RelativeTime" />
 			</Example>
 
 			<Example id="duration-api" title="Duration API">
-				<PropTable owner="Duration"
-					rows={[
-						{ name: "value", type: "number | null", description: "The length. Seconds unless from says otherwise." },
-						{ name: "from", type: "DurationUnit", description: "The unit value is given in." },
-						{ name: "maxParts", type: "number", description: "How many units before truncating. “2 hours 14 minutes 3 seconds” is rarely useful — the reader wants the magnitude and the tail is noise." },
-						{ name: "unitDisplay", type: '"long" | "short" | "narrow"', description: "How each unit is written." },
-					]}
-				/>
+				<PropTable owner="Duration" />
 			</Example>
 		</ComponentPage>
 	)

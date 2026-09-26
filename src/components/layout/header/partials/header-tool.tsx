@@ -8,6 +8,11 @@ import { cx } from "@/lib/cx"
 import type { HeaderToolButtonProps, HeaderToolPopoverProps } from "../header.types"
 import styles from "../header.module.css"
 
+/**
+ * An icon control in the right cluster — one shape for all of them, because a row where the
+ * theme toggle is 32px and the help button is 36px reads as a mistake before anyone can
+ * name it.
+ */
 export const HeaderToolButton = forwardRef<HTMLButtonElement, HeaderToolButtonProps>(
 	function HeaderToolButton(
 		{ label, icon: Icon, active = false, disabled = false, badge, onClick, className },
@@ -40,7 +45,10 @@ export const HeaderToolButton = forwardRef<HTMLButtonElement, HeaderToolButtonPr
 	},
 )
 
-/** The same control with a surface hanging off it. */
+/**
+ * The same control with a surface hanging off it, in the same one shape as every icon
+ * control in the right cluster.
+ */
 export function HeaderToolPopover({
 	label,
 	icon,

@@ -16,26 +16,45 @@ import { useFieldValue } from "./use-field-value"
 export type FieldIcon = React.ComponentType<{ className?: string }> | React.ReactNode
 
 export interface InputProps extends Omit<React.ComponentProps<"input">, "size"> {
-	/** Glyph before the value. */
+	/** Glyph before the value, in its own lane so the text never runs under it. */
 	startIcon?: FieldIcon
-	/** Glyph after the value. */
+	/** Glyph after the value, in its own lane so the text never runs under it. */
 	endIcon?: FieldIcon
-	/** Short text before the value — a currency symbol, a protocol, an @. */
+	/**
+	 * Short text attached before the value, outside the text itself — a currency symbol, a
+	 * protocol, an at sign.
+	 */
 	startAddon?: React.ReactNode
-	/** Short text after the value — a unit, a domain. */
+	/** Short text attached after the value, outside the text itself — a unit, a domain. */
 	endAddon?: React.ReactNode
 	/** Shows "12 / 80" in the trailing lane. Requires `maxLength`. */
 	showCharacterCount?: boolean
-	/** Shows a clear control once the field has a value. */
+	/** Character cap, and the limit the count counts against. Input past it is refused. */
+	maxLength?: number
+	/**
+	 * Shows a clear control once the field has a value. Clearing goes through the native
+	 * value setter, so React's value tracker stays in sync.
+	 */
 	clearable?: boolean
 	/** Called after the clear control empties the field. */
 	onClear?: () => void
-	/** Replaces the trailing affordance with a spinner. */
+	/**
+	 * Replaces the trailing affordance with a spinner, which outranks every other trailing
+	 * affordance.
+	 */
 	loading?: boolean
-	/** Applies the invalid treatment. The message stays with FormField. */
+	/**
+	 * Applies the invalid treatment. Pair it with FormField's error for the message, so the
+	 * border and the announcement cannot disagree.
+	 */
 	invalid?: boolean
-	/** Includes string addons in the value reported by `onChange`. Off by default (addons are presentation). */
+	/**
+	 * Includes string addons in the value reported by `onChange`. Off, because an addon is
+	 * presentation: a caller that stores "$" and the number has to strip it again on the way
+	 * out.
+	 */
 	returnValueWithAddons?: boolean
+	/** Overrides this field's own copy — the clear label, the character-count format. */
 	strings?: StringsProp<InputStrings>
 }
 

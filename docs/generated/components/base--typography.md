@@ -87,6 +87,10 @@ Kind: type.
 
 Kind: callable.
 
+Renders stored rich text — the READ half of the rich-text editor — in `Text`'s styles. It
+sanitises on the way in, with no opt-out, so content from a database or an API cannot carry
+script or event handlers into the page.
+
 ```text
 ({ html, children, size, type, align, weight, lineHeight, tag, className, ...props }: RichTextProps) => import("react").JSX.Element | null
 ```
@@ -169,12 +173,12 @@ Extends: `Omit<React.HTMLAttributes<HTMLElement>, "children">`, `Pick<Partial<Re
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `content` | no | `string` | Text as a plain string. Equivalent to passing it as `children`. |
-| `type` | no | `TextType` | Semantic role, which selects the colour token. `main` for primary copy, `secondary`<br>for supporting copy (descriptions, captions, metadata); `inherit` takes the parent's. |
-| `size` | no | `TextSize` | Step on the type scale. Omit it on primary content so the Typography provider<br>default flows; reserve `xs` for support text and metadata. |
+| `type` | no | `TextType` | Semantic role, which selects the colour token. `main` for primary copy, `secondary`<br>for supporting copy (descriptions, captions, metadata). `inherit` selects none and takes<br>the parent's, for text inside a surface that already sets its own — a solid tab, a<br>tooltip, a coloured chip. Without it those places would drop Text and hand-roll a span,<br>which is how a kit ends up with two ways to set type. |
+| `size` | no | `TextSize` | Step on the type scale. Omit it on primary content so the provider default flows;<br>`UIProvider`'s `typography.defaultTextSize` changes it. Reserve `xs` for support text<br>and metadata. `xxs` renders as `xs`; use `xs`. @default "sm" |
 | `align` | no | `TextAlign` | Horizontal alignment. |
-| `lineHeight` | no | `TextLineHeight` | Leading, on the shared tier. `tight` and `none` suit dense rows and single-line<br>values; `relaxed` suits prose. |
+| `lineHeight` | no | `TextLineHeight` | Leading, on the shared tier. Unset, each size step carries the leading paired with it<br>(`--text-<step>--line-height`); a value here overrides that. `tight` and `none` suit<br>dense rows and single-line values; `relaxed` suits prose. @default paired |
 | `numeric` | no | `boolean` | Tabular figures, so digits align in a column. Use for any value in a table. |
-| `truncate` | no | `boolean` | Ellipsises the text at one line. Makes the element a block with `min-width: 0`;<br>every flex box between it and the constrained width also needs `min-width: 0`<br>(`Stack` and `Grid` set it; a hand-rolled flex div does not). |
+| `truncate` | no | `boolean` | Ellipsises the text at one line rather than wrapping. Makes the element a block with<br>`min-width: 0`, for the same reason `align` does; every flex box between it and the<br>constrained width also needs `min-width: 0` (`Stack` and `Grid` set it; a hand-rolled<br>flex div does not). `Heading` and every `primitives` value take it too. |
 | `weight` | no | `TextWeight` | Font weight. |
 | `children` | no | `ReactNode` | Text content. Takes precedence over `content`. |
 | `tag` | no | `"div" \| "p" \| "span" \| "label"` | Element to render: `span` inline, `p` for prose, `div` when it wraps blocks, `label`<br>for a form label. For headings use `Heading`. |

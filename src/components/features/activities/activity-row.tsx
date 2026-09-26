@@ -111,6 +111,11 @@ function MetadataGrid({ metadata }: { metadata: NonNullable<ActivityItem["metada
 	)
 }
 
+/**
+ * One entry on the rail. Density changes the marker size and the row rhythm together —
+ * changing one without the other is what makes a compact feed look mis-aligned rather than
+ * dense.
+ */
 export function ActivityRow<TData = unknown>({
 	activity,
 	density,

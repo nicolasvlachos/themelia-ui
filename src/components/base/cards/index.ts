@@ -7,3 +7,4 @@ export {
 } from "./card-actions"
 export { CardSkeleton, type CardSkeletonProps } from "./card-skeleton"
 export { defaultCardStrings, type CardStrings } from "./card.strings"
+export type { LinkRenderer, LinkRenderProps } from "@/lib/navigation"

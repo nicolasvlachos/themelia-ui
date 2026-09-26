@@ -8,10 +8,11 @@ type SlotProps = {
 } & AnyProps
 
 /**
- * Minimal Slot: merges its props onto the single child element and composes refs. The
- * child's props win, except that classes join, both handlers run (the child's first) and
- * styles merge (the child's over the slot's). Returns null unless given exactly one element.
- * Internal mechanism behind `render` (docs/adr/0005), not a consumer API.
+ * Merges its props onto its single child element and composes refs. The child's props win,
+ * except that classes join, both handlers run (the child's first) and styles merge (the
+ * child's over the slot's). Renders nothing unless given exactly one element. The kit's own
+ * components take `render`, which is built on this merge; `Slot` is for composing components
+ * of your own.
  */
 export const Slot = React.forwardRef<unknown, SlotProps>(({ children, ...props }, forwardedRef) => {
 	if (!React.isValidElement(children)) {

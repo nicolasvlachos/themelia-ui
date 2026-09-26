@@ -42,16 +42,8 @@ const email = useFormFieldBinding<string>({ name: "email", control })`}
 			</Example>
 
 			<Example id="form-binding-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "useFormFieldBinding", type: "({ name, control, disabled }) => FieldBinding", description: "Turns a control and a field name into the exact props a kit control takes — value, onValueChange, onBlur, invalid, error, disabled." },
-						{ name: "useStateFormControl", type: "(initialValues, { errors? }) => FormControl & { values, reset }", description: "A FormControl over plain React state. Also exposes the current values and a reset, which a library-backed control owns itself." },
-						{ name: "rhfFormControl", api: "@/lib/forms-rhf#rhfFormControl", type: "(control: Control) => FormControl", description: "Wraps a react-hook-form control. Imported from themelia-ui/forms-rhf, never from /forms." },
-						{ name: "FormControl", api: "@/lib/forms#FormControl", type: "{ useField<T>(name): FieldState<T> }", description: "The one-method interface a form library satisfies to work with the kit's fields." },
-						{ name: "FieldState", api: "@/lib/forms#FieldState", type: "{ value, setValue, onBlur?, error?, disabled? }", description: "What a control reports for one field. Everything past value and setValue is optional." },
-						{ name: "FieldBinding", api: "@/lib/forms#FieldBinding", type: "{ name, value, onValueChange, onBlur, invalid, error, disabled }", description: "What useFormFieldBinding returns — spreadable onto a control." },
-					]}
-				/>
+				<PropTable symbols={["useFormFieldBinding", "useStateFormControl", "rhfFormControl"]} />
+				<PropTable owners={["FormControl", "FieldState", "FieldBinding"]} />
 			</Example>
 		</ComponentPage>
 	)

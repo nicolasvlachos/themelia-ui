@@ -8,6 +8,7 @@ import { cx } from "@/lib/cx"
 import { defaultDataTableStrings } from "./table.strings"
 import type { ColumnVisibilityToggleProps } from "./table.types"
 
+/** The columns menu, one of the table's own controls: one checkbox per hideable column. */
 export function ColumnVisibilityToggle<TData extends RowData>({
 	table,
 	className,

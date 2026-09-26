@@ -29,18 +29,7 @@ export function ContainersPage() {
 			</Example>
 
 			<Example id="containers-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "PageViewport", type: "component", description: "The single page-scroll owner and the page container-query root. tabIndex defaults to 0, or the region cannot be scrolled by keyboard." },
-						{ name: "Container maxWidth", type: '"sm" | "md" | "lg" | "xl" | "2xl" | "full"', default: '"xl"', description: "The reading measure." },
-						{ name: "Container gutter", type: '"none" | "sm" | "md" | "lg"', default: '"md"', description: "The inline gutter." },
-						{ name: "Section", type: "component", description: "A real <section> with one rhythm token. It does not re-expose the spacing scale — a page whose sections each pick a gap has no rhythm." },
-						{ name: "TwoColumnLayout main / aside", type: "ReactNode", description: "The two work regions. aside is always second in the DOM." },
-						{ name: "TwoColumnLayout asidePosition", type: '"start" | "end"', default: '"end"', description: "Which column the aside occupies. Implemented with grid-column only, so DOM order is untouched." },
-						{ name: "TwoColumnLayout header / footer", type: "ReactNode", description: "Span both columns, before and after." },
-						{ name: "TwoColumnLayout stickyAside", type: "boolean", default: "false", description: "Opt-in, because an aside taller than the viewport must be able to scroll away." },
-					]}
-				/>
+				<PropTable owners={["PageViewport", "Container", "Section", "TwoColumnLayout"]} />
 			</Example>
 		</ComponentPage>
 	)

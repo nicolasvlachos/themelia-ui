@@ -7,7 +7,10 @@ import { useOptionalOverlayContext } from "../overlay-context"
 
 import styles from "../overlay.module.css"
 
-/** The overlay's heading. A bare string is wrapped in `Text`; other nodes pass through. */
+/**
+ * The overlay's heading, wired to the dialog's accessible name — a surface without a title
+ * has none. A bare string is wrapped in `Text`; other nodes pass through.
+ */
 export const OverlayTitle = React.forwardRef<HTMLHeadingElement, React.ComponentProps<"h2">>(
 	function OverlayTitle({ children, className, id, ...props }, ref) {
 		const overlay = useOptionalOverlayContext()

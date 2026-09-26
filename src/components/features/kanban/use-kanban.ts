@@ -19,6 +19,11 @@ export interface UseKanbanResult<T> {
 	move: (input: { itemId: string; toColumnId: string; toIndex?: number }) => void
 }
 
+/**
+ * The move without the drag: `findItem` and `move` over the same `value`, `onValueChange` and
+ * `getItemValue` the board takes — for a keyboard board, a "move to column" menu, or a test
+ * that moves items without simulating a pointer.
+ */
 export function useKanban<T>({
 	value,
 	onValueChange,

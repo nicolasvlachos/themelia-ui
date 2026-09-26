@@ -33,10 +33,17 @@ export interface PluralForms {
 }
 
 export interface QuantityProps extends SharedProps {
+	/** The count. */
 	value?: number | null
-	/** The noun, in the forms the locale may need. A bare string is used for every form. */
+	/**
+	 * The noun, in the forms the locale may need — one, other, and the zero, two, few and
+	 * many some languages select. A bare string is used for every form.
+	 */
 	unit?: PluralForms | string
-	/** Rendered instead when the count is zero ("no items"). Off by default. */
+	/**
+	 * Replaces the whole thing at zero — "no items" rather than "0 items". Off by default: in
+	 * a column the zero is the value being reported.
+	 */
 	zeroLabel?: ReactNode
 }
 
@@ -79,6 +86,7 @@ export function Quantity({ value, unit, zeroLabel, locale, align, ...props }: Qu
 }
 
 export interface MeasureProps extends SharedProps {
+	/** The amount. */
 	value?: number | null
 	/**
 	 * A CSS-style unit identifier — `kilogram`, `meter`, `liter`, `celsius`, `byte`.

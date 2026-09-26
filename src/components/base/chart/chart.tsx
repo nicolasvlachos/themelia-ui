@@ -40,7 +40,15 @@ function useChart() {
 }
 
 export interface ChartContainerProps extends Omit<React.ComponentProps<"div">, "children"> {
+	/**
+	 * Maps each data key to a label, a colour, and an icon. Each colour becomes
+	 * `--color-{key}` on the container.
+	 */
 	config: ChartConfig
+	/**
+	 * One Recharts chart. `label` and `description` become its `<title>` and `<desc>` unless
+	 * it sets its own.
+	 */
 	children: React.ComponentProps<typeof Recharts.ResponsiveContainer>["children"]
 	/**
 	 * What the chart shows, as a sentence a screen reader can speak ("Monthly revenue against
@@ -51,6 +59,11 @@ export interface ChartContainerProps extends Omit<React.ComponentProps<"div">, "
 	description?: string
 }
 
+/**
+ * Recharts on the kit's tokens: Recharts owns geometry, this owns chrome. Each series key
+ * maps to `--color-<key>`, so colours are set once in the config; prefer `var(--chart-1)` …
+ * `var(--chart-5)`, which follow the theme.
+ */
 export function ChartContainer({ config, label, description, className, children, style, ...props }: ChartContainerProps) {
 	/* One `--color-<key>` per series; Recharts takes colour strings, so series use `var(--color-<key>)`. */
 	const colorVars = React.useMemo(() => {
@@ -105,18 +118,31 @@ function seriesFor(config: ChartConfig, item: ChartPayloadItem, nameKey?: string
 }
 
 export interface ChartTooltipContentProps extends Omit<React.ComponentProps<"div">, "color"> {
-	/** Supplied by Recharts. */
+	/**
+	 * Supplied by Recharts. A content component is cloned with it; it never receives it from
+	 * you.
+	 */
 	active?: boolean
+	/**
+	 * The entries under the cursor. Supplied by Recharts, which clones a content component with
+	 * them; it never receives them from you.
+	 */
 	payload?: ChartPayloadItem[]
+	/** The hovered category, supplied by Recharts. `labelKey` and `labelFormatter` change what shows. */
 	label?: React.ReactNode
+	/** Drops the label row. */
 	hideLabel?: boolean
+	/** Drops the swatches. */
 	hideIndicator?: boolean
+	/** Shape of the swatch beside each value. */
 	indicator?: "dot" | "line" | "dashed"
-	/** Key in the payload holding each series name. */
+	/** Key in the payload holding each series name, when it is not the data key. */
 	nameKey?: string
-	/** Key in the payload holding the tooltip label. */
+	/** Key in the payload holding the tooltip label, when it is not the data key. */
 	labelKey?: string
+	/** Formats the tooltip's heading — a date key into a readable date. */
 	labelFormatter?: (label: React.ReactNode, payload: ChartPayloadItem[]) => React.ReactNode
+	/** Formats each value. Without it, numbers get locale grouping. */
 	formatter?: (
 		value: NonNullable<ChartPayloadItem["value"]>,
 		name: NonNullable<ChartPayloadItem["name"]>,
@@ -156,6 +182,10 @@ function domProps<T extends Record<string, unknown>>(props: T): Record<string, u
 	return out
 }
 
+/**
+ * The tooltip body, passed to `ChartTooltip` as its `content`. Names, colours and icons come
+ * from the container's config.
+ */
 export function ChartTooltipContent({
 	active,
 	payload,
@@ -235,10 +265,16 @@ export function ChartTooltipContent({
 export interface ChartLegendContentProps extends React.ComponentProps<"div"> {
 	/** Supplied by Recharts. */
 	payload?: ChartPayloadItem[]
+	/** Drops the swatch, for a legend beside a chart whose colours are already named. */
 	hideIcon?: boolean
+	/** Key in the payload holding each series name, when it is not the data key. */
 	nameKey?: string
 }
 
+/**
+ * The legend body, passed to `ChartLegend` as its `content`. Names, colours and icons come
+ * from the container's config.
+ */
 export function ChartLegendContent({
 	payload,
 	hideIcon = false,

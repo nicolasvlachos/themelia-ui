@@ -12,6 +12,11 @@ import {
 export interface CSPProviderProps
 	extends Pick<BaseCSPProviderProps, "children" | "nonce" | "disableStyleElements"> {}
 
+/**
+ * Passes the request nonce and inline-style policy to every Base UI-backed primitive below
+ * it. Place it once around the React root during SSR; `disableStyleElements` is for
+ * consumers that provide the equivalent positioning CSS themselves.
+ */
 export function CSPProvider(props: CSPProviderProps) {
 	return <BaseCSPProvider {...props} />
 }

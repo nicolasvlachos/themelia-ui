@@ -21,16 +21,28 @@ function hasText(label: ReactNode): boolean {
 }
 
 export interface PillRadioGroupProps extends ChoiceGroupBaseProps {
+	/**
+	 * The choices, in the one shape card, list and pill groups share. A pill shows no
+	 * description — it has no room for one.
+	 */
 	options: PillRadioOption[]
 	/** Controlled value. `null` is the cleared state. */
 	value: string | null | undefined
+	/** Called with the chosen value, or `null` when the selection is cleared. */
 	onValueChange: (value: string | null) => void
-	/** Lets the active pill be clicked again to clear the selection. */
+	/**
+	 * Lets the active pill be clicked again to clear the selection, for a filter whose empty
+	 * state is "all".
+	 */
 	allowClear?: boolean
-	/** Stretches the pills to fill the container. */
+	/** Stretches the pills to fill the container, for a segmented control that owns its row. */
 	fullWidth?: boolean
 }
 
+/**
+ * A compact single-select of connected pills, for two to four short options — a timeframe,
+ * a view mode. A hidden input submits the value.
+ */
 export const PillRadioGroup = forwardRef<HTMLDivElement, PillRadioGroupProps>(
 	function PillRadioGroup(
 		{

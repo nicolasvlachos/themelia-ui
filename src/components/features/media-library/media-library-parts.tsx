@@ -100,7 +100,7 @@ export interface MediaLibraryEmptyStateProps {
 	className?: string
 }
 
-/** The browser's empty state: bordered and inset, since it stands in for a grid. */
+/** The state with no assets: bordered and inset, since it stands in for a grid. */
 export function MediaLibraryEmptyState({
 	title,
 	description,
@@ -142,6 +142,7 @@ export interface MediaLibraryToolbarProps {
 	className?: string
 }
 
+/** Search, filter and view controls. A single type filter draws no control. */
 export function MediaLibraryToolbar({
 	query, onQueryChange, type, onTypeChange, typeFilters, collection, onCollectionChange,
 	collections, sort, onSortChange, view, onViewChange, hasFilters, onClearFilters,
@@ -265,6 +266,7 @@ export interface MediaLibraryCardProps<TItem> {
 	className?: string
 }
 
+/** One asset in the grid, with its preview, name and selection control. */
 export function MediaLibraryCard<TItem>({
 	item, selected = false, density = "comfortable", showMeta = true,
 	accessors, strings, onToggle, onDetails, className,
@@ -337,6 +339,10 @@ export interface MediaLibraryListProps<TItem> {
 	onDetails: (id: string) => void
 }
 
+/**
+ * The composable compact rows. Like the grid and the table, it uses the same accessors and
+ * selection callbacks.
+ */
 export function MediaLibraryList<TItem>({
 	items, selectedSet, accessors, strings, onToggle, onDetails,
 }: MediaLibraryListProps<TItem>) {
@@ -417,6 +423,10 @@ export interface MediaLibraryUploadPanelProps {
 	empty?: ReactNode
 }
 
+/**
+ * The drop target and queue inside the library, so uploading happens where the assets are
+ * rather than behind a second dialog.
+ */
 export function MediaLibraryUploadPanel({
 	stagedFiles, uploading, uploadOptions, collections = [], strings,
 	onAddFiles, onRemoveFile, onClear, onOptionsChange, onStart, onCancel, empty, showActions = true,
@@ -549,8 +559,9 @@ export interface MediaLibraryFooterSummaryProps {
 }
 
 /**
- * The footer line: a selection count while browsing, a staged-file tally while uploading.
- * A live region, so keyboard picks inside the grid are announced.
+ * The footer line: what is chosen — a selection count while browsing, a staged-file tally while
+ * uploading. A live region, so keyboard picks inside the grid are announced. Split from the
+ * actions, so a consumer can keep the count and supply their own verbs.
  */
 export function MediaLibraryFooterSummary({
 	tab,
@@ -621,6 +632,10 @@ export interface MediaLibraryFooterActionsProps<TItem> {
 	className?: string
 }
 
+/**
+ * The footer's verbs: what can be done with the selection, or with the staged files. Split from
+ * the summary, so a consumer can keep the count and supply their own verbs.
+ */
 export function MediaLibraryFooterActions<TItem>({
 	tab,
 	selectedIds,
@@ -681,6 +696,10 @@ export interface MediaLibraryFooterProps<TItem>
 	chrome?: "section" | "bare"
 }
 
+/**
+ * The selection bar: what is chosen, and what can be done with it — the summary and the actions
+ * together.
+ */
 export function MediaLibraryFooter<TItem>({
 	tab,
 	selectedItems,

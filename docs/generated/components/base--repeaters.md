@@ -55,6 +55,9 @@ RepeaterStrings
 
 Kind: callable.
 
+Key/value pairs rather than an object, so a half-typed or blank key keeps its row and its
+value. Convert to an object on submit.
+
 ```text
 ({ value, onValueChange, strings, emptyState, maxItems, sortable, disabled, invalid, flagDuplicateKeys, className, }: KeyValueEditorProps) => import("react").JSX.Element
 ```
@@ -70,10 +73,10 @@ Kind: interface.
 | `strings` | no | `Partial<KeyValueEditorStrings>` | Overrides this editor's own copy — the two placeholders, add, and remove. |
 | `emptyState` | no | `React.ReactNode` |  |
 | `maxItems` | no | `number` |  |
-| `sortable` | no | `boolean` |  |
+| `sortable` | no | `boolean` | Adds the drag handle and arrow-key reordering. |
 | `disabled` | no | `boolean` |  |
 | `invalid` | no | `boolean` |  |
-| `flagDuplicateKeys` | no | `boolean` | Flags a key that is already used elsewhere in the list. |
+| `flagDuplicateKeys` | no | `boolean` | Flags a key that is already used elsewhere in the list. A blank key is not a<br>duplicate — it is an unfinished row. |
 | `className` | no | `string` |  |
 
 ### `KeyValueEditorStrings`
@@ -111,7 +114,9 @@ Kind: interface.
 
 Kind: callable.
 
-Several fields per locale — a title and a body, say — behind one switcher.
+Several fields per locale — a title and a body, say — behind one switcher, with the
+active locale switchable in place. A translation UI built out of plain repeaters loses
+which language a row belongs to the moment rows reorder.
 
 ```text
 ({ locales, fields, value, onValueChange, disabled, invalid, className, }: LocalizedObjectFieldProps) => import("react").JSX.Element
@@ -156,6 +161,10 @@ Record<string, Record<string, string>>
 
 Kind: callable.
 
+One value per locale behind a single field with a locale switcher, so a translated field
+costs one row instead of one row per language. The active locale is view state, not part
+of the value.
+
 ```text
 ({ locales, value, onValueChange, multiline, placeholder, disabled, invalid, requiredLocales, className, "aria-label": ariaLabel, "aria-labelledby": labelledBy, "aria-describedby": describedBy, "aria-invalid": ariaInvalid, }: LocalizedStringFieldProps) => import("react").JSX.Element
 ```
@@ -166,7 +175,7 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `locales` | yes | `(string \| LocaleDescriptor)[]` |  |
+| `locales` | yes | `(string \| LocaleDescriptor)[]` | Which locales the switcher offers, in order. The first is the default. |
 | `value` | no | `LocalizedValue` |  |
 | `onValueChange` | no | `(value: LocalizedValue) => void` |  |
 | `multiline` | no | `boolean` | A textarea per locale rather than an input. |
@@ -183,6 +192,10 @@ Kind: interface.
 ### `LocalizedStringRepeater`
 
 Kind: callable.
+
+An ordered list of localized strings, each row a `LocalizedStringField`: one value per
+language, with the active locale switchable in place. A translation UI built out of plain
+repeaters loses which language a row belongs to the moment rows reorder.
 
 ```text
 ({ locales, value, onValueChange, placeholder, strings, emptyState, maxItems, sortable, multiline, requiredLocales, disabled, invalid, className, "aria-label": ariaLabel, }: LocalizedStringRepeaterProps) => import("react").JSX.Element
@@ -201,7 +214,7 @@ Kind: interface.
 | `strings` | no | `Partial<RepeaterStrings>` | Overrides this list's own copy — the add control and each row's remove. |
 | `emptyState` | no | `React.ReactNode` |  |
 | `maxItems` | no | `number` |  |
-| `sortable` | no | `boolean` |  |
+| `sortable` | no | `boolean` | Adds the drag handle and arrow-key reordering. |
 | `multiline` | no | `boolean` |  |
 | `requiredLocales` | no | `string[]` |  |
 | `disabled` | no | `boolean` |  |
@@ -237,6 +250,10 @@ Kind: interface.
 
 Kind: callable.
 
+A repeating row of several fields, described once as data rather than assembled per row
+— contacts, line items, addresses. It reads and writes the array it is given and imports
+no form library, so any can drive it.
+
 ```text
 ({ value, onValueChange, fields, name, emptyState, maxItems, sortable, disabled, invalid, renderField, strings, className, }: ObjectRepeaterProps) => import("react").JSX.Element
 ```
@@ -260,16 +277,16 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | yes | `ObjectRow[]` |  |
+| `value` | yes | `ObjectRow[]` | The rows, one object per row, keyed by field name. |
 | `onValueChange` | yes | `(value: ObjectRow[]) => void` |  |
-| `fields` | yes | `ObjectFieldDef[]` |  |
+| `fields` | yes | `ObjectFieldDef[]` | The fields every row carries, described once as data rather than assembled per row. |
 | `name` | no | `string` | Prefixes the generated field paths (`items.2.email`) to match a form library. Naming only. |
 | `emptyState` | no | `ReactNode` |  |
 | `maxItems` | no | `number` |  |
-| `sortable` | no | `boolean` |  |
+| `sortable` | no | `boolean` | Adds the drag handle and arrow-key reordering. |
 | `disabled` | no | `boolean` |  |
 | `invalid` | no | `boolean` |  |
-| `renderField` | no | `(field: ObjectFieldDef, context: ObjectRepeaterFieldContext) => ReactNode` | Replaces one field's control, keeping the row and array behaviour. |
+| `renderField` | no | `(field: ObjectFieldDef, context: ObjectRepeaterFieldContext) => ReactNode` | Replaces one field's control, keeping the row and array behaviour — how a caller<br>connects individual fields to a form library. |
 | `strings` | no | `Partial<ObjectRepeaterStrings>` |  |
 | `className` | no | `string` |  |
 
@@ -295,6 +312,10 @@ Record<string, string>
 
 Kind: callable.
 
+The chrome every list-style field shares: rows with an optional drag handle and remove
+control, an empty state, and an add button. It never owns the array — you pass `items`
+and the handlers, which keeps it usable with a form library or with plain state.
+
 ```text
 ({ items, getKey, children, onAdd, onRemove, onMove, rowVariant, strings, emptyState, showAdd, maxItems, disabled, className, }: RepeaterProps<T>) => import("react").JSX.Element
 ```
@@ -305,16 +326,16 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `T[]` |  |
-| `getKey` | yes | `(item: T, index: number) => string` | Stable key for a row. An index is a poor key while rows reorder. |
-| `children` | yes | `(item: T, context: RepeaterRowContext) => ReactNode` |  |
-| `onAdd` | no | `() => void` |  |
-| `onRemove` | no | `(index: number) => void` |  |
-| `onMove` | no | `(from: number, to: number) => void` | Enables reordering. Without it, no handle is rendered. |
+| `items` | yes | `T[]` | The rows. The repeater renders what it is given and nothing else. |
+| `getKey` | yes | `(item: T, index: number) => string` | Stable identity per row. An index alone would re-key every row after a reorder and<br>lose focus. |
+| `children` | yes | `(item: T, context: RepeaterRowContext) => ReactNode` | Renders one row. `context` carries the row's `index` and whether it is `dragging`. |
+| `onAdd` | no | `() => void` | Supplying it renders the add button. |
+| `onRemove` | no | `(index: number) => void` | Supplying it renders each row's remove button. |
+| `onMove` | no | `(from: number, to: number) => void` | Supplying it enables reordering and renders the drag handle; without it, no handle is<br>rendered. The handle is the drag source, not the row. |
 | `rowVariant` | no | `"inline" \| "card"` | `card` wraps each row in a bordered surface, for multi-field rows. |
-| `strings` | no | `Partial<RepeaterStrings>` | Overrides this list's own copy — the add control and each row's remove. |
-| `emptyState` | no | `ReactNode` |  |
-| `showAdd` | no | `boolean` | Hides the add button, for a list with a fixed set of rows. |
+| `strings` | no | `Partial<RepeaterStrings>` | Overrides this list's own copy — the add control and each row's remove. `remove` is a<br>function of the row index: every remove button in a list saying the same thing is a<br>column of controls a screen reader cannot tell apart. |
+| `emptyState` | no | `ReactNode` | Shown in place of the rows when `items` is empty. Replaces `strings.emptyState`. |
+| `showAdd` | no | `boolean` | Hides the add button while keeping the rows — for a list at its cap, a fixed set of<br>rows, or one whose entries come from elsewhere. |
 | `maxItems` | no | `number` | Caps the list. The add button disables at the limit. |
 | `disabled` | no | `boolean` |  |
 | `className` | no | `string` |  |
@@ -344,6 +365,8 @@ Kind: interface.
 
 Kind: callable.
 
+An ordered list of plain strings — alternate names, allowed domains, recipients.
+
 ```text
 ({ value, onValueChange, placeholder, strings, emptyState, maxItems, sortable, disabled, invalid, className, "aria-label": ariaLabel, }: StringRepeaterProps) => import("react").JSX.Element
 ```
@@ -360,7 +383,7 @@ Kind: interface.
 | `strings` | no | `Partial<RepeaterStrings>` | Overrides this list's own copy — the add control and each row's remove. |
 | `emptyState` | no | `React.ReactNode` |  |
 | `maxItems` | no | `number` |  |
-| `sortable` | no | `boolean` |  |
+| `sortable` | no | `boolean` | Adds the drag handle and arrow-key reordering. |
 | `disabled` | no | `boolean` |  |
 | `invalid` | no | `boolean` |  |
 | `className` | no | `string` |  |

@@ -51,14 +51,16 @@ something else owns, render `PopoverMenuPanel`.
 
 Kind: interface.
 
+One choice in a `PopoverMenu` or `PopoverMenuPanel`.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `value` | yes | `string` | Unique identifier. Also the match value when no `searchValue` is given. |
-| `label` | yes | `ReactNode` |  |
+| `label` | yes | `ReactNode` | What the row reads as. |
 | `description` | no | `ReactNode` | Secondary line under the label. |
 | `icon` | no | `ReactNode` | Leading glyph. Takes the accent colour while the row is selected. |
-| `selected` | no | `boolean` |  |
-| `disabled` | no | `boolean` |  |
+| `selected` | no | `boolean` | Marks the row as chosen. The menu shows it; the caller decides it. |
+| `disabled` | no | `boolean` | Shows the row but refuses it. |
 | `searchValue` | no | `string` | Match string, for when `label` is a node rather than plain text. |
 | `data` | no | `T` | Arbitrary payload handed back to `onSelect`. |
 
@@ -67,7 +69,13 @@ Kind: interface.
 Kind: callable.
 
 The body of a `PopoverMenu` (header, search, rows, footer) without the popover, for a
-surface something else owns: one step of a two-step popup, a sheet on a phone.
+surface something else owns: one step of a two-step popup, a sheet on a phone. The panel
+owns no selection and closes nothing — the surface hosting it decides both.
+
+One state shows at a time, in this order of precedence: a query shorter than
+`minSearchLength`, then `loading`, then `error`, then the rows. Enter, the arrows, Home
+and End pressed in a band or on the retry control stay there instead of reaching the
+list.
 
 ```text
 ({ items, onSelect, search, searchValue, onSearchChange, minSearchLength, loading, error, onRetry, header, footer, empty, loadingSlot, strings, renderItem, label, ref, className, }: PopoverMenuPanelProps<T>) => import("react").JSX.Element
@@ -79,24 +87,24 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `items` | yes | `readonly PopoverMenuItem<T>[]` |  |
+| `items` | yes | `readonly PopoverMenuItem<T>[]` | The choices. Each carries a `value`, a `label`, and optional media — an `icon`, a<br>`description`. |
 | `onSelect` | yes | `(item: PopoverMenuItem<T>) => void` | A row was chosen. The panel neither tracks selection nor closes; its host decides both. |
-| `search` | no | `boolean` | Shows the search field above the list. Defaults to true. |
+| `search` | no | `boolean` | Shows the search field above the list. Without it the list is the tab stop — a listbox<br>pointing at the highlighted row — so the arrows and Enter work in a host whose own<br>initial focus lands on the first tabbable element. |
 | `searchValue` | no | `string` | Controlled search value. Supplying `onSearchChange` also hands filtering to the<br>caller: the local matcher turns off. |
-| `onSearchChange` | no | `(value: string) => void` |  |
-| `minSearchLength` | no | `number` | Characters (trimmed) the search needs before rows show. Defaults to 0. An empty field<br>still shows `items`; below the minimum, `strings.formatTypeToSearch` shows instead. |
-| `loading` | no | `boolean` |  |
-| `error` | no | `ReactNode` | The items could not be loaded: `true` shows `strings.error`, any other node is the<br>message. Replaces the rows and the empty state; `loading` takes precedence. |
-| `onRetry` | no | `() => void` | Adds a retry control under the error. |
-| `header` | no | `ReactNode` | Band above the search field. |
-| `footer` | no | `ReactNode` | Band below the list — confirm and clear buttons. |
-| `empty` | no | `ReactNode` | A rendered empty state. For plain copy, use `strings.empty`. |
+| `onSearchChange` | no | `(value: string) => void` | Called with the search text. Supplying it hands filtering to the caller — the local<br>matcher steps aside rather than filtering an already filtered list. |
+| `minSearchLength` | no | `number` | Characters the search needs before rows show, measured on the trimmed text, controlled<br>or not. An empty field still shows `items`; from one character up to the minimum,<br>`strings.formatTypeToSearch(minimum)` shows instead. |
+| `loading` | no | `boolean` | Puts a strip in place of the list while results are in flight — an async picker with no<br>state reads as an empty one. |
+| `error` | no | `ReactNode` | The items could not be loaded: `true` shows `strings.error`, any other node is the<br>message. Replaces the rows and the empty state, and gives way to `loading`. |
+| `onRetry` | no | `() => void` | Wiring this puts a retry control, labelled by `strings.retry`, under the error. |
+| `header` | no | `ReactNode` | Band above the search field, running edge to edge. |
+| `footer` | no | `ReactNode` | Band below the list, running edge to edge — confirm and clear buttons. |
+| `empty` | no | `ReactNode` | Shown when nothing matches, as a rendered node; for plain copy, use `strings.empty`.<br>Required in spirit: a filter that matches nothing has to say so. |
 | `loadingSlot` | no | `ReactNode` | Replaces the default spinner strip. |
 | `strings` | no | `Partial<PopoverMenuStrings>` | Overrides the panel's own copy — the filter placeholder, the loading, empty and error rows. |
-| `renderItem` | no | `(item: PopoverMenuItem<T>) => ReactNode` | Full control over a row. |
-| `label` | no | `string` | Accessible name for the list. Most needed with `search={false}`, where focus lands on the list. |
+| `renderItem` | no | `(item: PopoverMenuItem<T>) => ReactNode` | Replaces a row, for an option carrying an avatar or a colour. |
+| `label` | no | `string` | Names the list, and the search field when there is one. Most needed with<br>`search={false}`, where the list itself is what focus lands on. The filter editors<br>pass the filter's name. |
 | `ref` | no | `Ref<HTMLDivElement>` | The list element. Without a search field it is the tab stop, and what a host's<br>`initialFocus` should target. |
-| `className` | no | `string` |  |
+| `className` | no | `string` | Class for the command root, beside `popover-menu-panel--component`. |
 
 ### `PopoverMenuProps`
 
@@ -105,32 +113,36 @@ Kind: interface.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `trigger` | yes | `ReactElement` | The clickable the popover anchors to. |
-| `items` | yes | `readonly PopoverMenuItem<T>[]` |  |
-| `onSelect` | yes | `(item: PopoverMenuItem<T>) => void` |  |
-| `open` | no | `boolean` |  |
-| `onOpenChange` | no | `(open: boolean) => void` |  |
+| `items` | yes | `readonly PopoverMenuItem<T>[]` | The choices. Each carries a `value`, a `label`, and optional media — an `icon`, a<br>`description`. |
+| `onSelect` | yes | `(item: PopoverMenuItem<T>) => void` | Receives the chosen item. The menu does not own a persistent selection. |
+| `open` | no | `boolean` | Controlled openness, for a menu opened from somewhere other than its trigger. |
+| `onOpenChange` | no | `(open: boolean) => void` | Called with the next open state. Pair with `open`. |
 | `search` | no | `boolean` | Shows the search field above the list. |
-| `searchValue` | no | `string` | Controlled search value. Supplying `onSearchChange` also hands filtering to the<br>caller: the local matcher turns off. |
-| `onSearchChange` | no | `(value: string) => void` |  |
-| `minSearchLength` | no | `number` | Characters (trimmed) the search needs before rows show. Defaults to 0. An empty field<br>still shows `items`; below the minimum, `strings.formatTypeToSearch` shows instead. |
-| `loading` | no | `boolean` |  |
-| `error` | no | `ReactNode` | The items could not be loaded: `true` shows `strings.error`, any other node is the<br>message. Replaces the rows and the empty state; `loading` takes precedence. |
-| `onRetry` | no | `() => void` | Adds a retry control under the error. |
-| `header` | no | `ReactNode` | Band above the search field. |
-| `footer` | no | `ReactNode` | Band below the list — confirm and clear buttons. |
-| `closeOnSelect` | no | `boolean` | Closes the popover after a row is chosen and returns focus to the trigger. Defaults<br>to true unless a `footer` is present (the multi-pick shape). |
-| `empty` | no | `ReactNode` | A rendered empty state. For plain copy, use `strings.empty`. |
+| `searchValue` | no | `string` | Controlled search value. Supplying `onSearchChange` also hands filtering to the<br>caller: the local matcher turns off. `strings.searchPlaceholder` is the field's<br>placeholder. |
+| `onSearchChange` | no | `(value: string) => void` | Called with the search text. Supplying it hands filtering to the caller — the local<br>matcher steps aside rather than filtering an already filtered list. |
+| `minSearchLength` | no | `number` | Characters the search needs before rows show, measured on the trimmed text, controlled<br>or not. An empty field still shows `items`; from one character up to the minimum,<br>`strings.formatTypeToSearch(minimum)` shows instead. |
+| `loading` | no | `boolean` | Puts a strip in place of the list while results are in flight — an async picker with no<br>state reads as an empty one. |
+| `error` | no | `ReactNode` | The items could not be loaded: `true` shows `strings.error`, any other node is the<br>message. Replaces the rows and the empty state, and gives way to `loading`. |
+| `onRetry` | no | `() => void` | Wiring this puts a retry control, labelled by `strings.retry`, under the error. |
+| `header` | no | `ReactNode` | Band above the search field, running edge to edge. |
+| `footer` | no | `ReactNode` | Band below the list, running edge to edge — confirm and clear buttons. |
+| `closeOnSelect` | no | `boolean` | Closes the popover after a row is chosen and returns focus to the trigger. True unless<br>a `footer` is present: a footer holds confirm and clear actions, which is the<br>multi-pick shape. |
+| `empty` | no | `ReactNode` | Shown when nothing matches, as a rendered node; for plain copy, use `strings.empty`.<br>Required in spirit: a filter that matches nothing has to say so. |
 | `loadingSlot` | no | `ReactNode` | Replaces the default spinner strip. |
 | `strings` | no | `Partial<PopoverMenuStrings>` | Overrides this menu's own copy — the filter placeholder, the loading, empty and error rows. |
-| `renderItem` | no | `(item: PopoverMenuItem<T>) => ReactNode` | Full control over a row. |
-| `align` | no | `ComponentProps<typeof PopoverContent>["align"]` |  |
-| `sideOffset` | no | `ComponentProps<typeof PopoverContent>["sideOffset"]` |  |
-| `label` | no | `string` | Accessible name for the list. Most needed with `search={false}`, where focus lands on the list. |
-| `className` | no | `string` |  |
+| `renderItem` | no | `(item: PopoverMenuItem<T>) => ReactNode` | Replaces a row, for an option carrying an avatar or a colour. |
+| `align` | no | `ComponentProps<typeof PopoverContent>["align"]` | How the surface lines up with the trigger. |
+| `sideOffset` | no | `ComponentProps<typeof PopoverContent>["sideOffset"]` | Gap between the trigger and the surface, in pixels. |
+| `label` | no | `string` | Names the list, and the search field when there is one. Most needed with<br>`search={false}`, where the list itself is what focus lands on. |
+| `className` | no | `string` | Class for the popover surface. |
 
 ### `PopoverMenuStrings`
 
 Kind: interface.
+
+The copy of a `PopoverMenu` or `PopoverMenuPanel`. `error`, `retry` and
+`formatTypeToSearch` are optional in the type, so a translation written before them still
+compiles; the defaults fill them.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
@@ -138,7 +150,7 @@ Kind: interface.
 | `searchPlaceholder` | yes | `string` | Placeholder in the filter field. |
 | `empty` | yes | `string` | Shown when the filter matches nothing. |
 | `error` | no | `string` | Shown in place of the rows when `error` is `true`. |
-| `retry` | no | `string` | The control beside the error, when `onRetry` is wired. |
+| `retry` | no | `string` | Labels the retry control under the error, when `onRetry` is wired. |
 | `formatTypeToSearch` | no | `(minimum: number) => string` | Shown in place of the rows while the search is shorter than `minSearchLength`. |
 
 ## Preview recipes

@@ -30,27 +30,12 @@ export function PrimitiveAddressPage() {
 			/>
 
 			<Example id="address-api" title="Address API">
-				<PropTable owner="Address"
-					rows={[
-						{ name: "value", type: "AddressParts | null", description: "line1, line2, city, region, postalCode, country. Anything empty drops out." },
-						{ name: "format", type: '"block" | "inline"', default: '"block"', description: "Block renders an <address> element with a line per row; inline renders a span for a cell or a summary." },
-						{ name: "countryCode", type: "string | null", description: "An ISO code deciding the line order. Read from value.country when that looks like a code. Never inferred from the reader's locale — the locale is a language and the address is a place." },
-						{ name: "order", type: "AddressOrder", description: "Overrides the ordering outright, for a country the kit does not know." },
-						{ name: "formatAddressLines()", type: "(parts, options) => string[]", description: "The same ordering outside React." },
-					]}
-				/>
+				<PropTable owner="Address" />
+				<PropTable symbols={["formatAddressLines"]} />
 			</Example>
 
 			<Example id="coordinates-api" title="Coordinates API">
-				<PropTable owner="Coordinates"
-					rows={[
-						{ name: "latitude / longitude", type: "number | null", description: "Signed decimal degrees. Either one missing renders the empty label — half a coordinate locates nothing." },
-						{ name: "format", type: '"decimal" | "dms"', default: '"decimal"', description: "Decimal is what an API round-trips and what a reader pastes into a map. DMS is still what marine, aviation and survey users read." },
-						{ name: "precision", type: "number", default: "5", description: "Decimal places. Five is about a metre, three about a building." },
-						{ name: "showHemisphere", type: "boolean", default: "false", description: "Adds N/S/E/W to the decimal form. Off by default because a signed pair is the portable form. DMS always shows them — an unsigned DMS value is ambiguous." },
-						{ name: "strings", type: "Partial<CoordinatesStrings>", description: "The four hemisphere letters." },
-					]}
-				/>
+				<PropTable owner="Coordinates" />
 			</Example>
 		</ComponentPage>
 	)

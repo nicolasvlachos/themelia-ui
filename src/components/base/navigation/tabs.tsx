@@ -34,11 +34,15 @@ function useTabs(part: string) {
 }
 
 export interface TabsProps extends Omit<React.ComponentProps<"div">, "onChange"> {
+	/** Controlled selection: the `value` of the selected tab. Pair with `onValueChange`. */
 	value?: string
+	/** The tab selected first, when uncontrolled. */
 	defaultValue?: string
+	/** Called with the `value` of the tab the reader selects. */
 	onValueChange?: (value: string) => void
 }
 
+/** The root: holds which tab is selected, for the list and the panels inside it. */
 export function Tabs({
 	value,
 	defaultValue = "",
@@ -104,19 +108,30 @@ const listVariants = cvm(styles.tabList, {
 
 export interface TabListProps extends React.ComponentProps<"div"> {
 	/**
-	 * Structural presentation: a rule with an indicator, a tinted rail, or — for a row that
-	 * picks what one list shows rather than switching panels — filled chips with no rule.
+	 * Structural presentation: a rule with an indicator, a tinted rail, or filled chips with
+	 * no rule. `pill` is for a row that picks what one list shows rather than switching
+	 * panels — saved views, result types — and is what OverflowTabBar draws.
 	 */
 	variant?: "underline" | "enclosed" | "pill"
 	/** Accessible name for the tab set. */
 	label?: string
-	/** Fade edges with hidden tabs. Defaults to false; follows scroll position and direction. */
+	/**
+	 * Fades only the edges that have hidden tabs beyond them. Updates while scrolling and
+	 * follows the writing direction, so it works in RTL.
+	 */
 	edgeFade?: boolean
-	/** Accessible names for the automatic overflow scroll controls. */
+	/**
+	 * Accessible names for the previous and next scroll controls that appear when the tabs
+	 * overflow.
+	 */
 	strings?: Partial<TabListStrings>
 }
 
-export function TabList({ variant, label, edgeFade = false, strings, className, children, ref, onKeyDown: onKeyDownProp, onScroll, id, ...props }: TabListProps) {
+/**
+ * The row of tabs. It scrolls rather than wrapping, because a second row of tabs reads as a
+ * second level of navigation, which it is not.
+ */
+export function TabList({ variant = "underline", label, edgeFade = false, strings, className, children, ref, onKeyDown: onKeyDownProp, onScroll, id, ...props }: TabListProps) {
 	const listRef = React.useRef<HTMLDivElement>(null)
 	const railRef = React.useRef<HTMLDivElement>(null)
 	const generatedId = React.useId()
@@ -223,9 +238,11 @@ export function TabList({ variant, label, edgeFade = false, strings, className, 
 }
 
 export interface TabProps extends Omit<React.ComponentProps<"button">, "value"> {
+	/** Names the tab: the value `Tabs` selects, and the one its `TabPanel` shares. */
 	value: string
 }
 
+/** One tab. Only the selected tab is in the tab sequence; the arrows move between the rest. */
 export function Tab({ value, className, onClick, ...props }: TabProps) {
 	const { value: current, setValue, id, panels } = useTabs("Tab")
 	const selected = current === value
@@ -254,9 +271,11 @@ export function Tab({ value, className, onClick, ...props }: TabProps) {
 }
 
 export interface TabPanelProps extends React.ComponentProps<"div"> {
+	/** Which tab the panel belongs to: that tab's `value`. */
 	value: string
 }
 
+/** The content for one tab, rendered while that tab is selected. */
 export function TabPanel({ value, className, children, ...props }: TabPanelProps) {
 	const { value: current, id, registerPanel } = useTabs("TabPanel")
 

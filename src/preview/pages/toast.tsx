@@ -37,19 +37,8 @@ export function ToastPage() {
 			</Example>
 
 			<Example id="toast-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "toast(title, options)", api: "toast", type: "(ReactNode, ToastOptions) => string", description: "Raises a toast and returns its id. Also .success/.info/.warning/.error/.loading/.promise/.dismiss." },
-						{ name: "ToastOptions.id", type: "string", description: "Reusing an on-screen id updates that toast in place rather than stacking a second one." },
-						{ name: "ToastOptions.duration", type: "number", description: "Lifetime in ms. Infinity pins it open. Falls back to the Toaster's duration." },
-						{ name: "ToastOptions.action / cancel", api: ["ToastOptions.action", "ToastOptions.cancel"], type: "{ label, onClick }", description: "Buttons on the pill. Both dismiss the toast after running." },
-						{ name: "Toaster position", type: "ToastPosition", default: '"bottom-end"', description: "One of six: top or bottom, crossed with start, center, or end. Bottom stacks grow upward so the newest is nearest the edge." },
-						{ name: "Toaster visibleToasts", type: "number", default: "3", description: "Cap on the render, not the store — a capped toast still runs its timer and onDismiss." },
-						{ name: "createToastStore", type: "() => ToastStore", description: "An independent queue with its own timers and its own bound toast(). With only the module-level queue — one for the whole realm — two Toasters on a page would render the same toasts, and pauseAll would walk a timer map neither owned. The singleton stays the default, because toast(\"Saved\") working with no wiring is the point of it." },
-						{ name: "Toaster store", type: "ToastStore", default: "the singleton", description: "The queue this Toaster renders, dismisses and pauses. Pass a createToastStore() instance to isolate it." },
-						{ name: "Toaster container", type: "HTMLElement | ShadowRoot", description: "Where the region portals. Defaults to the nearest UIPortalHost, then document.body — so toasts raised inside a scoped region are drawn with that region's density and theme." },
-					]}
-				/>
+				<PropTable symbols={["toast", "createToastStore"]} />
+				<PropTable owners={["Toaster", "ToastOptions", "ToastAction"]} />
 			</Example>
 		</ComponentPage>
 	)

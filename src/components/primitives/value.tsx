@@ -18,6 +18,7 @@ export type SpanProps = Omit<ComponentPropsWithoutRef<"span">, "children" | "col
 export type ValueType = Extract<TextProps["type"], "inherit" | "main" | "secondary">
 
 export interface ValueProps extends SpanProps {
+	/** The value. `null`, `undefined` or an empty string renders the empty mark. */
 	children?: ReactNode
 	/** Rendered when the value is absent. */
 	emptyLabel?: ReactNode
@@ -69,17 +70,26 @@ export function Value(props: ValueProps) {
 	return <ValueRoot hook="value" {...props} />
 }
 
-/** A value that supports the primary one — a subtitle, a unit, a qualifier. */
+/**
+ * The same value one step quieter, for one that supports the primary value — a subtitle, a
+ * unit, a qualifier.
+ */
 export function SecondaryValue({ type = "secondary", ...props }: ValueProps) {
 	return <ValueRoot hook="secondary-value" type={type} {...props} />
 }
 
-/** Incidental copy — present, but not something the reader is meant to act on. */
+/**
+ * The same value two steps quieter, for incidental copy — present, but not something the
+ * reader is meant to act on.
+ */
 export function MutedValue({ type = "secondary", size = "xs", ...props }: ValueProps) {
 	return <ValueRoot hook="muted-value" type={type} size={size} {...props} />
 }
 
-/** Identifiers, hashes, SKUs — fixed width so they compare down a column. */
+/**
+ * Tabular figures and a mono face, for identifiers, hashes and SKUs — codes compared by eye,
+ * down a column.
+ */
 export function MonoValue({ className, ...props }: ValueProps) {
 	return <ValueRoot hook="mono-value" numeric className={cx("value--mono", className)} {...props} />
 }

@@ -31,6 +31,10 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+Site navigation with rich panels, in a real `<nav>`. Not Menubar: a menubar commands the
+current view, a navigation menu goes somewhere, and the difference decides whether the
+items are buttons or links.
+
 The bar, and the one panel every entry shares: each `NavigationMenuContent` is drawn into
 its viewport, so moving between entries resizes one panel.
 
@@ -61,8 +65,8 @@ No own members are present in the normalized public snapshot.
 
 Kind: callable.
 
-The caret inside a trigger, turning over while its panel is open. Renders a chevron;
-pass children for another glyph.
+The caret inside a trigger. It tells an entry that opens a panel from a link that goes
+somewhere, and turns over while its panel is open. Renders a chevron; children replace it.
 
 ```text
 ({ className, children, ...props }: NavigationMenuPrimitive.Icon.Props) => import("react").JSX.Element
@@ -72,6 +76,8 @@ pass children for another glyph.
 
 Kind: callable.
 
+One entry: a trigger with its panel content, or a link that goes straight somewhere.
+
 ```text
 ({ ...props }: NavigationMenuPrimitive.Item.Props) => import("react").JSX.Element
 ```
@@ -80,6 +86,9 @@ Kind: callable.
 
 Kind: callable.
 
+A destination inside a panel, or an entry of its own. A real anchor, so middle-click and
+copy-link work and a screen reader announces a link.
+
 ```text
 ({ className, ...props }: NavigationMenuPrimitive.Link.Props) => import("react").JSX.Element
 ```
@@ -87,6 +96,8 @@ Kind: callable.
 ### `NavigationMenuList`
 
 Kind: callable.
+
+The row of entries.
 
 ```text
 ({ className, ...props }: NavigationMenuPrimitive.List.Props) => import("react").JSX.Element
@@ -100,14 +111,16 @@ Extends: `NavigationMenuPrimitive.Root.Props`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `side` | no | `NavigationMenuPrimitive.Positioner.Props["side"]` | Where the panel sits relative to the bar. |
-| `sideOffset` | no | `NavigationMenuPrimitive.Positioner.Props["sideOffset"]` |  |
-| `align` | no | `NavigationMenuPrimitive.Positioner.Props["align"]` | How the panel lines up with the open entry. Defaults to `start`, so the first entry's<br>panel never hangs past the bar's leading edge. |
+| `side` | no | `NavigationMenuPrimitive.Positioner.Props["side"]` | Where the bar's one panel opens relative to the open entry. Set on the bar, because<br>every entry shares the panel: moving between entries resizes it rather than swapping it. |
+| `sideOffset` | no | `NavigationMenuPrimitive.Positioner.Props["sideOffset"]` | The gap between the open entry and the panel, in pixels. |
+| `align` | no | `NavigationMenuPrimitive.Positioner.Props["align"]` | How the panel lines up with the open entry. At `start` it lines up with the entry's<br>start, so a panel under the first entry never hangs past the bar's own edge. |
 | `container` | no | `UIPortalContainer` | Where the panel renders. Defaults to the nearest `UIPortalHost`, else the primitive's own. |
 
 ### `NavigationMenuTrigger`
 
 Kind: callable.
+
+The word that opens an entry's panel.
 
 ```text
 ({ className, ...props }: NavigationMenuPrimitive.Trigger.Props) => import("react").JSX.Element

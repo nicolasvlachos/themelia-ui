@@ -35,6 +35,10 @@ function toSelectOptions(choices: ProductChoice[]) {
 	}))
 }
 
+/**
+ * The variant form. Values stay strings — the consumer parses on submit — so "24.00" is never
+ * rewritten under the cursor.
+ */
 export function ProductVariantEditor({
 	value: valueProp,
 	defaultValue,

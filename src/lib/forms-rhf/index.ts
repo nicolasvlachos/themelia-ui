@@ -12,8 +12,9 @@ import { useController, type Control, type FieldValues, type Path } from "react-
 import type { FieldState, FormControl } from "@/lib/forms"
 
 /**
- * Wraps an RHF `control` in the kit's headless contract. `useField` delegates to
- * `useController`, so registration, validation and dirty tracking keep working.
+ * Wraps a react-hook-form `control` in the kit's headless contract. `useField` delegates to
+ * `useController`, so registration, validation and dirty tracking keep working. Imported
+ * from `themelia-ui/forms-rhf`, never from `themelia-ui/forms`, which stays dependency-free.
  */
 export function rhfFormControl<TValues extends FieldValues>(control: Control<TValues>): FormControl<TValues> {
 	return {

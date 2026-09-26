@@ -31,6 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A person or an entity as a disc: an image, with initials behind it for when there is none.
+
 ```text
 ({ className, size, ...props }: AvatarProps) => React.JSX.Element
 ```
@@ -38,6 +40,8 @@ Kind: callable.
 ### `AvatarBadge`
 
 Kind: callable.
+
+A small status mark on the disc's corner.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"span">) => React.JSX.Element
@@ -47,6 +51,8 @@ Kind: callable.
 
 Kind: callable.
 
+Shown when there is no image. Initials, not a placeholder glyph.
+
 ```text
 ({ className, ...props }: AvatarPrimitive.Fallback.Props) => React.JSX.Element
 ```
@@ -54,6 +60,8 @@ Kind: callable.
 ### `AvatarGroup`
 
 Kind: callable.
+
+A row of overlapping avatars.
 
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -63,6 +71,9 @@ Kind: callable.
 
 Kind: callable.
 
+The "+3" at the end of an `AvatarGroup`. A count rather than another avatar, so a group of
+twelve does not need twelve images to say so.
+
 ```text
 ({ className, ...props }: React.ComponentProps<"div">) => React.JSX.Element
 ```
@@ -71,8 +82,11 @@ Kind: callable.
 
 Kind: callable.
 
+The picture. An empty `alt` is correct beside a visible name; the name already announces
+the person.
+
 ```text
-({ className, ...props }: AvatarPrimitive.Image.Props) => React.JSX.Element
+({ className, ...props }: AvatarPrimitive.Image.Props & Pick<AvatarPrimitive.Image.Props, "src" | "alt">) => React.JSX.Element
 ```
 
 ### `AvatarProps`
@@ -105,6 +119,8 @@ StackedAvatarsStrings
 
 Kind: callable.
 
+People as overlapping avatars, capped with a count of the rest.
+
 ```text
 ({ users, strings, max, showOverflow, overflowFormatter, className, ...props }: StackedAvatarsProps) => import("react").JSX.Element
 ```
@@ -117,11 +133,11 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `users` | yes | `StackedAvatarUser[]` |  |
+| `users` | yes | `StackedAvatarUser[]` | The people in the row, in order. |
 | `strings` | no | `Partial<StackedAvatarsStrings>` | Overrides this group's own copy — its accessible name, and the overflow chip. |
-| `max` | no | `number` | How many faces to show before collapsing the rest into a count. |
-| `showOverflow` | no | `boolean` | Hides the "+N" tile, for a group where the total does not matter. |
-| `overflowFormatter` | no | `(overflow: number) => ReactNode` | Formats the overflow tile — "+12", "+12 more". Defaults to `strings.overflow`. |
+| `max` | no | `number` | How many faces to show. Beyond it, the remainder becomes a count. |
+| `showOverflow` | no | `boolean` | Shows the "+N" tile. Turn it off for a group where the total does not matter. |
+| `overflowFormatter` | no | `(overflow: number) => ReactNode` | How the remainder reads on the overflow tile — "+12", "+12 more". Defaults to<br>`strings.overflow`, which reads "+N". |
 
 ### `StackedAvatarsStrings`
 

@@ -84,27 +84,35 @@ export interface TextProps
 	content?: string
 	/**
 	 * Semantic role, which selects the colour token. `main` for primary copy, `secondary`
-	 * for supporting copy (descriptions, captions, metadata); `inherit` takes the parent's.
+	 * for supporting copy (descriptions, captions, metadata). `inherit` selects none and takes
+	 * the parent's, for text inside a surface that already sets its own — a solid tab, a
+	 * tooltip, a coloured chip. Without it those places would drop Text and hand-roll a span,
+	 * which is how a kit ends up with two ways to set type.
 	 */
 	type?: TextType
 	/**
-	 * Step on the type scale. Omit it on primary content so the Typography provider
-	 * default flows; reserve `xs` for support text and metadata.
+	 * Step on the type scale. Omit it on primary content so the provider default flows;
+	 * `UIProvider`'s `typography.defaultTextSize` changes it. Reserve `xs` for support text
+	 * and metadata. `xxs` renders as `xs`; use `xs`.
+	 * @default "sm"
 	 */
 	size?: TextSize
 	/** Horizontal alignment. */
 	align?: TextAlign
 	/**
-	 * Leading, on the shared tier. `tight` and `none` suit dense rows and single-line
-	 * values; `relaxed` suits prose.
+	 * Leading, on the shared tier. Unset, each size step carries the leading paired with it
+	 * (`--text-<step>--line-height`); a value here overrides that. `tight` and `none` suit
+	 * dense rows and single-line values; `relaxed` suits prose.
+	 * @default paired
 	 */
 	lineHeight?: TextLineHeight
 	/** Tabular figures, so digits align in a column. Use for any value in a table. */
 	numeric?: boolean
 	/**
-	 * Ellipsises the text at one line. Makes the element a block with `min-width: 0`;
-	 * every flex box between it and the constrained width also needs `min-width: 0`
-	 * (`Stack` and `Grid` set it; a hand-rolled flex div does not).
+	 * Ellipsises the text at one line rather than wrapping. Makes the element a block with
+	 * `min-width: 0`, for the same reason `align` does; every flex box between it and the
+	 * constrained width also needs `min-width: 0` (`Stack` and `Grid` set it; a hand-rolled
+	 * flex div does not). `Heading` and every `primitives` value take it too.
 	 */
 	truncate?: boolean
 	/** Font weight. */

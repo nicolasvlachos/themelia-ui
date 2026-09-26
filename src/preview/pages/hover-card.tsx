@@ -21,13 +21,7 @@ export function HoverCardPage() {
 			</Example>
 
 			<Example id="hover-card-api" title="API">
-				<PropTable
-					rows={[
-						{ name: "HoverCardTrigger delay / closeDelay", type: "number", default: "400 / 200", description: "The delays live on the TRIGGER. closeDelay is the load-bearing one: without it the card closes as the pointer leaves the trigger, and the gap between the two is where the pointer has to travel." },
-						{ name: "HoverCardTrigger / HoverCardContent", type: "component", description: "What opens the card and what it shows. Hover AND focus open it, because a card reachable only by pointer is unreachable to a keyboard." },
-						{ name: "HoverCardContent side / align / sideOffset", api: ["HoverCardContent.side", "HoverCardContent.align", "HoverCardContent.sideOffset"], type: '"top" | "right" | "bottom" | "left" / "start" | "center" | "end" / number', default: '"bottom" / "center" / 8', description: "Where the card opens relative to its trigger, and the gap between them." },
-					]}
-				/>
+				<PropTable owners={["HoverCardTrigger", "HoverCardContent"]} />
 			</Example>
 		</ComponentPage>
 	)

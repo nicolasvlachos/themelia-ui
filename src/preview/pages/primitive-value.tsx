@@ -34,26 +34,12 @@ export function PrimitiveValuePage() {
 			/>
 
 			<Example id="value-api" title="Value API">
-				<PropTable owner="Value"
-					rows={[
-						{ name: "children", type: "ReactNode", description: "The value. null or undefined renders the empty mark." },
-						{ name: "SecondaryValue / MutedValue", type: "component", description: "The same value, one and two steps quieter." },
-						{ name: "MonoValue", type: "component", description: "Tabular figures and a mono face, for ids and codes that are compared by eye." },
-						{ name: "EmptyValue", type: "component", description: "The empty mark on its own." },
-					]}
-				/>
+				<PropTable owner="Value" />
+				<PropTable symbols={["SecondaryValue", "MutedValue", "MonoValue", "EmptyValue"]} />
 			</Example>
 
 			<Example id="inline-list-api" title="InlineList API">
-				<PropTable owner="InlineList"
-					rows={[
-						{ name: "items", type: "readonly string[] | null", description: "Strings, not nodes: Intl.ListFormat formats text, and falling back to a hand join for nodes would quietly lose the locale rules. A row of badges is a Stack with a gap." },
-						{ name: "join", type: '"and" | "or" | "none"', default: '"and"', description: "Not called type — every other primitive spends that word on the text tone. \"none\" is for lists that are not prose, where a trailing \"and\" reads as a claim the data is not making." },
-						{ name: "joinStyle", type: '"long" | "short" | "narrow"', default: '"long"', description: "Not called style, which is the DOM attribute and would have shadowed it." },
-						{ name: "max", type: "number", description: "Shows at most this many, then a count of the rest. The overflow goes INSIDE the list so the conjunction still lands correctly — \"Alice, Bob and 3 more\"." },
-						{ name: "strings", type: "Partial<InlineListStrings>", description: "more(count), which names the truncated remainder." },
-					]}
-				/>
+				<PropTable owner="InlineList" />
 			</Example>
 		</ComponentPage>
 	)

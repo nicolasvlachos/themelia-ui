@@ -21,15 +21,26 @@ export interface CurrencyOption {
 export interface CurrencyInputProps extends Omit<DecimalInputProps, "prefix"> {
 	/** Controlled currency code, e.g. "EUR". */
 	currency?: string
+	/** The starting currency code, for an uncontrolled field. */
 	defaultCurrency?: string
+	/** Called with the new currency code: a separate channel from the amount. */
 	onCurrencyChange?: (currency: string) => void
-	/** Codes are looked up in CURRENCY_SYMBOLS; anything else takes a full option. */
+	/**
+	 * Which codes the picker offers. Codes are looked up in `CURRENCY_SYMBOLS`; anything else
+	 * takes a full option.
+	 */
 	currencies?: (string | CurrencyOption)[]
 	/** Which side the selector sits on. */
 	currencyPosition?: "start" | "end"
+	/** Drops the currency selector, for an amount whose currency is decided elsewhere in the form. */
 	disableCurrencySelector?: boolean
-	/** Overrides this field's own copy — the currency selector's name. */
+	/**
+	 * Overrides this field's own copy. It extends the decimal strings, which extend the input
+	 * strings — a currency field is one of each, so it owns the selector's name, the two
+	 * steppers, and the clear action alike.
+	 */
 	strings?: Partial<CurrencyInputStrings>
+	/** The error surface. The message stays on the `FormField`. */
 	invalid?: boolean
 }
 
@@ -41,6 +52,12 @@ function normalizeCurrencies(currencies: (string | CurrencyOption)[]): CurrencyO
 	})
 }
 
+/**
+ * An amount and its currency in separate channels: "€1,234.50" in one string would need a
+ * locale-dependent parse downstream. The amount is `value`, a string — read
+ * `event.target.value` in `onChange`; the currency code travels through `currency` and
+ * `onCurrencyChange`.
+ */
 export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(function CurrencyInput(
 	{
 		currency,

@@ -27,17 +27,8 @@ export function SkeletonPage() {
 			</Example>
 
 			<Example id="skeleton-api" title="API">
-				<PropTable owner="TableSkeleton"
-					rows={[
-						{ name: "Skeleton", type: "component", description: "The primitive box. Size it with style or a class." },
-						{ name: "ContentSkeleton lines / showTitle", type: "number / boolean", description: "A paragraph of prose, optionally under a title bar." },
-						{ name: "TableSkeleton rows / columns / showHeader", type: "number / number / boolean", description: "A table's geometry before the data lands: the real row and head heights, a wide first column, a right-aligned last one." },
-						{ name: "TableSkeleton framed", type: "boolean", default: "true", description: "The table's edge and corner. Off when it stands in for a table inside a card that already draws one." },
-						{ name: "PageSkeleton blocks / showHeader", type: "number / boolean", description: "PageHeader's row — title, description, actions — over card-shaped panels." },
-						{ name: "TwoColumnPageSkeleton", type: "component", description: "A detail page: the record's panel, and beside it its owner and facts." },
-						{ name: "label", type: "string", description: "Announced while loading. Every composed skeleton takes one." },
-					]}
-				/>
+				<PropTable owners={["TableSkeleton", "ContentSkeleton", "PageSkeleton"]} />
+				<PropTable symbols={["Skeleton", "TwoColumnPageSkeleton"]} />
 			</Example>
 		</ComponentPage>
 	)

@@ -23,6 +23,10 @@ export interface GlobalSearchDialogProps<TGroup extends string = string>
 	contentClassName?: string
 }
 
+/**
+ * The palette presentation over ActionDialog: focus trap, portal, scroll lock, and a dialog
+ * role — none of which a hand-rolled fixed backdrop has.
+ */
 export function GlobalSearchDialog<TGroup extends string = string>({
 	open,
 	onOpenChange,

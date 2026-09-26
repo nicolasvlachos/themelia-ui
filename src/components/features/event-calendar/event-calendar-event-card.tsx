@@ -20,6 +20,11 @@ export interface EventCalendarEventCardPropsWithStrings extends EventCalendarEve
 	className?: string
 }
 
+/**
+ * One event in full, for an agenda row or a popover. The card reads its metadata by name —
+ * `customerName`, `guestCount`, `serviceName` — so a consumer's own fields appear without a
+ * mapping step.
+ */
 export function EventCalendarEventCard({
 	event,
 	category,

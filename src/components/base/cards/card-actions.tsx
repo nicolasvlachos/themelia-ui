@@ -4,21 +4,30 @@
  */
 import { isValidElement, type ComponentProps, type ComponentType, type ReactElement, type ReactNode } from "react"
 
-import type { ActionDefinition, ActionLinkRenderer } from "@/components/base/action-menu"
+import type { ActionDefinition } from "@/components/base/action-menu"
 import { Button, type ButtonStyle } from "@/components/base/buttons"
 import { cx } from "@/lib/cx"
+import type { LinkRenderer } from "@/lib/navigation"
 
 import styles from "./cards.module.css"
 
 export interface CardActionStripProps extends Omit<ComponentProps<"div">, "children"> {
+	/**
+	 * The commands, as the overflow menu takes them. The first is the primary action; the rest
+	 * follow in outline unless an entry sets its own `buttonStyle`.
+	 */
 	actions: ActionDefinition[]
-	/** A rule above the strip, for a card whose content runs right into it. */
+	/** A rule above the strip, ruling it off from content that runs right into it. */
 	separator?: boolean
+	/** Where the buttons sit along the strip. */
 	align?: "start" | "end" | "between"
-	/** Stretches the first action, for a narrow card where two buttons will not fit. */
+	/**
+	 * Stretches the first action, for a card whose action is the point, or a narrow card where
+	 * two buttons will not fit.
+	 */
 	fullWidthPrimary?: boolean
 	/** Routes `href` actions through the app's router. */
-	renderLink?: ActionLinkRenderer
+	renderLink?: LinkRenderer
 }
 
 function renderIcon(icon: ActionDefinition["icon"]): ReactNode {
@@ -31,6 +40,10 @@ function renderIcon(icon: ActionDefinition["icon"]): ReactNode {
 	return icon as ReactNode
 }
 
+/**
+ * A card's commands as buttons. One array decides which action is primary and how the rest
+ * follow, so a page of cards cannot disagree about it.
+ */
 export function CardActionStrip({
 	actions,
 	separator = false,
@@ -103,14 +116,18 @@ export function CardActionStrip({
 	)
 }
 
-export interface CardPrimaryActionProps extends ComponentProps<"a"> {
-	/** Names the target. The card's own title is not enough — many cards share one. */
+export interface CardPrimaryActionProps extends ComponentProps<"a">, Pick<ComponentProps<"a">, "href"> {
+	/**
+	 * The link's accessible name. The visible title is not necessarily the destination, and
+	 * many cards share one.
+	 */
 	label: string
 }
 
 /**
- * Makes a whole card one target with a covering link (wrapping the card would nest its
- * controls inside an anchor). Interactive children are lifted above it in CSS.
+ * Stretches an anchor across the whole card, so the card is one tab stop rather than a grid
+ * of them (wrapping the card would nest its controls inside an anchor). Interactive children
+ * are lifted above it in CSS.
  */
 export function CardPrimaryAction({ label, className, ...props }: CardPrimaryActionProps) {
 	return (

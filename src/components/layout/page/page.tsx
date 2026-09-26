@@ -13,7 +13,9 @@ import styles from "./page.module.css"
 export interface PageProps extends Omit<React.ComponentProps<"div">, "title"> {
 	/** The title block, as `PageHeader` props. Omit for a page that supplies its own header. */
 	header?: PageHeaderProps
+	/** The reading measure, handed to the Container underneath. */
 	maxWidth?: ContainerMaxWidth
+	/** The inline gutter, handed to the Container underneath. */
 	gutter?: ContainerGutter
 	/** Attributes for the body region, for a page that needs to address it. */
 	bodyProps?: React.ComponentProps<"div">

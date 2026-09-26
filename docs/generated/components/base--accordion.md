@@ -98,13 +98,13 @@ group reserves it on every row so titles align.
 
 Kind: interface.
 
-Extends: `AccordionPrimitive.Root.Props<string>`.
+Extends: `AccordionPrimitive.Root.Props<string>`, `Pick<AccordionPrimitive.Root.Props<string>, "multiple" | "defaultValue" | "value">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `surface` | no | `AccordionSurface` | Outer chrome. Resolves through the provider when omitted. |
+| `surface` | no | `AccordionSurface` | The group's chrome: one bordered shell with dividers, a panel per section, or none.<br>Resolves through the provider when omitted, so `UIProvider` defaults can change it. @default "bordered" |
 | `items` | no | `AccordionItemData[]` | Bounded sections, each rendered as the canonical icon/title/badge/description row.<br>Ignored when `children` are supplied. |
-| `media` | no | `AccordionMedia` | How leading media is framed. Only meaningful alongside `items`. |
+| `media` | no | `AccordionMedia` | How leading icons are framed. Only meaningful alongside `items`; the column is dropped<br>entirely when no item has one. `UIProvider` defaults can change it. @default "inline" |
 
 ### `AccordionSurface`
 

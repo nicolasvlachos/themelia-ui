@@ -16,19 +16,33 @@ import { defaultPhoneInputStrings, type PhoneInputStrings } from "./value-inputs
 import styles from "./value-inputs.module.css"
 
 export interface PhoneInputProps extends Omit<InputProps, "type" | "prefix"> {
-	/** Applies the invalid treatment to both the picker and the number field. */
+	/**
+	 * Applies the invalid treatment to both the picker and the number field. The message
+	 * stays on the FormField.
+	 */
 	invalid?: boolean
-	/** Controlled dial code, e.g. "+1", or an ISO code that is resolved to one. */
+	/**
+	 * Controlled dial code, e.g. "+1", or an ISO code that is resolved to one — the dial code
+	 * as its own channel, apart from the number.
+	 */
 	prefix?: string
+	/** The dial code the field starts with, when uncontrolled. */
 	defaultPrefix?: string
+	/** Called with the dial code the reader picks. */
 	onPrefixChange?: (prefix: string) => void
-	/** The list offered. ISO codes are looked up; unknown countries take a full object. */
+	/**
+	 * Which dial codes the picker offers. ISO codes are looked up; unknown countries take a
+	 * full object. `DEFAULT_COUNTRY_PREFIXES` is the built-in set.
+	 */
 	prefixes?: CountryPrefixInput[]
-	/** Hides the picker, for a form that captures the country elsewhere. */
+	/**
+	 * Hides the picker, so the code cannot be changed — a form scoped to one country should
+	 * not offer the list, and one that captures the country elsewhere need not.
+	 */
 	disablePrefixSelector?: boolean
-	/** Overrides this field's own copy — the dial-code lane. */
+	/** Overrides this field's own copy — the dial-code lane's placeholder and its accessible name. */
 	strings?: Partial<PhoneInputStrings>
-	/** Tidies the number when the field loses focus. */
+	/** Tidies the number when focus leaves, rather than fighting the reader mid-entry. */
 	normalizeOnBlur?: boolean
 	/** Shows the country name beside the dial code in the list. */
 	showCountryName?: boolean
@@ -78,6 +92,11 @@ function toIso(prefix: string | undefined, options: CountryPrefixOption[]): stri
 	return prefix.startsWith("+") ? undefined : findByIso(prefix, options)?.iso
 }
 
+/**
+ * A dial-code picker and a national number, kept apart so the prefix is always known and
+ * the number always national. `value` is the national number, without the prefix; read
+ * `event.target.value` in `onChange`.
+ */
 export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(function PhoneInput(
 	{
 		prefix,

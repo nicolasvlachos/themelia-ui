@@ -20,6 +20,10 @@ export interface FullscreenToggleProps {
 	render?: ReactElement
 }
 
+/**
+ * The full-screen toggle, one of the table's own controls, on its own for a consumer building
+ * their own toolbar.
+ */
 export function FullscreenToggle({
 	fullscreen,
 	onFullscreenChange,

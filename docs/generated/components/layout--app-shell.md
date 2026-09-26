@@ -47,13 +47,13 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 | `children` | yes | `ReactNode` |  |
 | `toolbar` | no | `ReactNode \| false` | The row above the content. `false` removes it, for a shell with no chrome at all. |
 | `toolbarEnd` | no | `ReactNode` | Rendered at the toolbar's trailing edge — a search field, an account menu. |
-| `showTrigger` | no | `boolean` | Shows the panel toggle in the toolbar. On mobile it is the only way to open it. |
-| `boundContent` | no | `boolean` | Caps the content measure so a wide monitor does not stretch prose across the page. |
-| `contained` | no | `boolean` | Bounds the shell to its parent instead of the viewport. See SidebarProvider. |
+| `showTrigger` | no | `boolean` | Shows the panel toggle, the toolbar's collapse control. On mobile it is the only way to<br>open the panel; turn it off for a shell whose navigation is opened from somewhere else. |
+| `boundContent` | no | `boolean` | Caps the content at a reading measure instead of letting it run the shell's full width,<br>so a wide monitor does not stretch prose across the page. |
+| `contained` | no | `boolean` | Bounds the shell to its parent instead of the viewport. The panel is fixed by default,<br>which is right for a shell that owns the screen and wrong everywhere else. |
 | `defaultOpen` | no | `boolean` |  |
-| `sidebarProviderProps` | no | `Pick<SidebarProviderProps, "open" \| "onOpenChange" \| "persist" \| "keyboardShortcut" \| "strings">` | Configure controlled state, persistence, shortcuts and translated sidebar controls. |
-| `toolbarClassName` | no | `string` |  |
-| `contentClassName` | no | `string` |  |
+| `sidebarProviderProps` | no | `Pick<SidebarProviderProps, "open" \| "onOpenChange" \| "persist" \| "keyboardShortcut" \| "strings">` | Passes `open`/`onOpenChange`, `persist`, `keyboardShortcut` and `strings` to the<br>shell's provider: controlled state, persistence, shortcuts and translated sidebar<br>controls. Disable persistence and shortcuts in independent embedded examples. |
+| `toolbarClassName` | no | `string` | Styles the toolbar without wrapping it. The shell owns the grid, so a wrapper around a<br>region would break the sticky rows. |
+| `contentClassName` | no | `string` | Styles the content region without wrapping it. The shell owns the grid, so a wrapper<br>around a region would break the sticky rows. |
 | `contentRender` | no | `useRender.ComponentProps<"main">["render"]` | Replaces the element the content region is drawn as (`<main>` by default). Pass<br>`contentRender={<div />}` when embedded in a page that owns the main landmark. |
 | `ruledToolbar` | no | `boolean` | `false` when the content below sits on its own plane — an inset sidebar. |
 
@@ -76,15 +76,20 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 | `header` | no | `ReactNode` | The header row — a mark, navigation, an account menu. |
 | `headerEnd` | no | `ReactNode` |  |
 | `contained` | no | `boolean` | Fit a parent with a definite height and scroll the content below the header. |
-| `boundContent` | no | `boolean` | Set false for tables or composed workspaces that use the full content width. |
+| `boundContent` | no | `boolean` | Caps the reading width. Set false for wide tables and composed workspaces that use the<br>full content width. |
 | `children` | yes | `ReactNode` |  |
-| `headerClassName` | no | `string` |  |
+| `headerClassName` | no | `string` | Styles the header row without wrapping it. The shell owns the grid, so a wrapper around<br>a region would break the sticky rows. |
 | `contentClassName` | no | `string` |  |
 | `contentRender` | no | `useRender.ComponentProps<"main">["render"]` | Replaces the element the content region is drawn as (`<main>` by default). Pass<br>`contentRender={<div />}` when embedded in a page that owns the main landmark. |
 
 ### `TopbarSidebarLayout`
 
 Kind: callable.
+
+The header-first admin shell. The header spans the full width and owns the brand, the
+search and the account; the sidebar and the content share the height below it. The only
+difference from SidebarInsetLayout is where the LOGO lives — and that decides the whole
+frame, which is why it is two components rather than a boolean.
 
 ```text
 ({ children, sidebarSide, mobileSidebarMode, headerHeight, sidebarWidth, sidebarTrigger, logo, headerActions, sidebar, slots, contentRender, defaultOpen, contained, sidebarProviderProps, className, headerClassName, bodyClassName, sidebarClassName, contentClassName, style, ...props }: TopbarSidebarLayoutProps) => import("react").JSX.Element
@@ -99,19 +104,19 @@ Extends: `Omit<ComponentProps<"div">, "children" | "title">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `children` | no | `ReactNode` |  |
-| `sidebarSide` | no | `TopbarSidebarSide` |  |
-| `mobileSidebarMode` | no | `TopbarSidebarMobileMode` |  |
+| `sidebarSide` | no | `TopbarSidebarSide` | Which side the rail sits on. Match the Sidebar's own `side` to it. |
+| `mobileSidebarMode` | no | `TopbarSidebarMobileMode` | `drawer` hides the sidebar column below md and uses the Sidebar's mobile sheet, which<br>the trigger opens. `inline` stacks static navigation above the content; pair it with<br>`collapsible="none"` and `sidebarTrigger={false}`. |
 | `headerHeight` | no | `string` | Any CSS length. Falls back to the shell's own token. |
 | `sidebarWidth` | no | `string` |  |
 | `sidebarTrigger` | no | `ReactNode` | Shorthands for the matching `slots` entry, for a shell with only a few regions. |
 | `logo` | no | `ReactNode` |  |
 | `headerActions` | no | `ReactNode` |  |
-| `sidebar` | no | `ReactNode` |  |
+| `sidebar` | no | `ReactNode` | The rail: a Sidebar or AppSidebar with `icon` or `offcanvas` collapse, which becomes<br>the mobile drawer. Omit it for a full-width body. |
 | `slots` | no | `TopbarSidebarLayoutSlots` |  |
 | `contentRender` | no | `useRender.ComponentProps<"main">["render"]` | Replaces the content column's element (`<main>` by default). Pass<br>`contentRender={<div />}` when embedded in a page that owns the main landmark. |
 | `defaultOpen` | no | `boolean` | The sidebar's initial uncontrolled open state. |
-| `contained` | no | `boolean` | Fit the height of a parent instead of owning the viewport. |
-| `sidebarProviderProps` | no | `Pick<SidebarProviderProps, "open" \| "onOpenChange" \| "persist" \| "keyboardShortcut" \| "strings">` | Configure controlled state, persistence, shortcuts and translated sidebar controls. |
+| `contained` | no | `boolean` | Fits a parent with a definite height instead of owning the viewport. Either way the<br>sidebar and content scroll below the header. |
+| `sidebarProviderProps` | no | `Pick<SidebarProviderProps, "open" \| "onOpenChange" \| "persist" \| "keyboardShortcut" \| "strings">` | Passes `open`/`onOpenChange`, `persist`, `keyboardShortcut` and `strings` to the<br>shell's provider: controlled state, persistence, shortcuts and translated sidebar<br>controls. Disable persistence and shortcuts in independent embedded examples. |
 | `headerClassName` | no | `string` |  |
 | `bodyClassName` | no | `string` |  |
 | `sidebarClassName` | no | `string` |  |

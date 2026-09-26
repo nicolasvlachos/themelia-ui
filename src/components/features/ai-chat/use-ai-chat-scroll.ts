@@ -22,6 +22,12 @@ export interface UseAiChatScrollResult {
 	scrollToBottom: (behavior?: ScrollBehavior) => void
 }
 
+/**
+ * The stick-to-bottom behaviour without the layout, for a consumer building their own
+ * transcript: new content scrolls it only while the reader is at the bottom. Returns the
+ * `containerRef` for the scroll viewport, the `endRef` sentinel for the end of the content,
+ * `isAtBottom`, and `scrollToBottom`.
+ */
 export function useAiChatScroll({
 	threshold = 80,
 	dependency,

@@ -178,6 +178,11 @@ function JsonControl({
 	)
 }
 
+/**
+ * One field, resolved from its schema entry to a control, with FormField owning the label, hint
+ * and message. Reach for it when a form is mostly generated but one field needs to be placed by
+ * hand.
+ */
 export function SchemaFormFieldRenderer({
 	field, value, values, error, disabled, required, fieldId, onValueChange, onError,
 	strings, className,

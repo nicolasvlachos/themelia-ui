@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react"
 
 import {
 	ActionButtons, ActionMenu, splitActions,
-	type ActionDefinition, type ActionLinkRenderer, type ActionPlacement,
+	type ActionDefinition, type ActionPlacement,
 } from "@/components/base/action-menu"
 import { cx } from "@/lib/cx"
 import { BREAKPOINT_MIN_WIDTH } from "@/lib/responsive"
@@ -27,13 +27,17 @@ export interface PageAction extends ActionDefinition {
 }
 
 export interface PageActionsProps extends LayoutNavigationAdapter {
+	/** The entries: `ActionDefinition` data plus a `placement`. */
 	actions?: readonly PageAction[]
 	/**
 	 * `auto` watches the width and collapses everything into a menu below `breakpoint`;
 	 * `inline` and `menu` are the two fixed ends.
 	 */
 	display?: PageActionsDisplay
-	/** Viewport width, in px, below which `auto` collapses to a menu. Defaults to the `lg` breakpoint. */
+	/**
+	 * Viewport width, in px, below which `auto` collapses to a menu. Defaults to the `lg`
+	 * breakpoint, 1024px.
+	 */
 	breakpoint?: number
 	/** How many entries render as buttons before the rest overflow. */
 	maxInlineActions?: number
@@ -52,10 +56,6 @@ export function PageActions({
 }: PageActionsProps) {
 	const copy = { ...defaultPageActionsStrings, ...strings }
 
-	/* Adapts the layout link renderer (children required) to the action one (optional). */
-	const link: ActionLinkRenderer | undefined = renderLink
-		? (props) => renderLink({ ...props, children: props.children ?? null }) as ReturnType<ActionLinkRenderer>
-		: undefined
 
 	const visible = useMemo(
 		() => (actions ?? []).filter((action) => action.visible !== false),
@@ -83,7 +83,7 @@ export function PageActions({
 					strings={{ trigger: copy.menuLabel }}
 					align="end"
 					preserveOrder
-					renderLink={link}
+					renderLink={renderLink}
 				/>
 			</div>
 		)
@@ -94,14 +94,14 @@ export function PageActions({
 
 	return (
 		<div className={cx("page-actions--component", styles.actions, className)}>
-			<ActionButtons actions={inline} renderLink={link} />
+			<ActionButtons actions={inline} renderLink={renderLink} />
 			{overflow.length > 0 && (
 				<ActionMenu
 					actions={overflow}
 					strings={{ trigger: copy.menuLabel }}
 					align="end"
 					preserveOrder
-					renderLink={link}
+					renderLink={renderLink}
 				/>
 			)}
 		</div>

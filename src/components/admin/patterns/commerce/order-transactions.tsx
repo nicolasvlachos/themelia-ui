@@ -50,6 +50,10 @@ export interface Transaction {
 
 export interface OrderTransactionsProps
 	extends Omit<ComponentProps<typeof ContentBlock>, "children"> {
+	/**
+	 * `kind` drives the sign; a failed attempt stays in the list, because an order showing
+	 * only what worked cannot answer why it was never captured.
+	 */
 	transactions: Transaction[]
 	strings?: Partial<TransactionStrings>
 }

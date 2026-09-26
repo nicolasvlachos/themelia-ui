@@ -1,11 +1,11 @@
 /**
- * Navigation primitives every layer may use: path matching and the link-rendering seam.
- * In `lib` so base families can reach them; `layout` re-exports them. Not a router
- * matcher: the kit never imports a router.
+ * Navigation primitives every tier may use: path matching and the link-rendering seam. In
+ * `lib` so base modules can reach them. Not a router matcher: the kit never imports a router.
  */
-import type { MouseEvent, ReactNode } from "react"
+import type { AriaAttributes, MouseEvent, ReactElement, ReactNode } from "react"
 
-export interface LayoutLinkRenderProps {
+/** What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element. */
+export interface LinkRenderProps {
 	/** Destination. When absent, render non-interactive content. */
 	href?: string
 	children: ReactNode
@@ -14,22 +14,53 @@ export interface LayoutLinkRenderProps {
 	rel?: string
 	onClick?: (event: MouseEvent<HTMLAnchorElement>) => void
 	"aria-label"?: string
-	/** Hint for active styling. A renderer may ignore it — the shell styles the row itself. */
+	/** Set on the link to the current page or step. */
+	"aria-current"?: AriaAttributes["aria-current"]
+	/** Set on an entry that is disabled; it styles and announces the state. */
+	"aria-disabled"?: AriaAttributes["aria-disabled"]
+	/** Hint for active styling. A renderer may ignore it — the component styles the row itself. */
 	active?: boolean
+	/** The entry goes nowhere: render non-interactive content. */
 	disabled?: boolean
+	/** Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. */
 	external?: boolean
 }
 
 /**
- * The navigation seam.
+ * How a component renders a link: through the application's router. Every component that
+ * navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+ * element: the component may merge its own props into it, such as a menu item's role or a
+ * button's styling.
  *
  * ```tsx
- * <AppSidebar renderLink={({ href, children, ...rest }) => (
- *   <Link to={href ?? "#"} {...rest}>{children}</Link>
- * )} />
+ * const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+ *   disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
  * ```
  */
-export type LayoutLinkRenderer = (props: LayoutLinkRenderProps) => ReactNode
+export type LinkRenderer = (props: LinkRenderProps) => ReactElement
+
+/** A native anchor, and non-interactive content for a disabled or hrefless entry. */
+export const defaultRenderLink: LinkRenderer = ({ href, children, active, disabled, external, rel, target, ...props }) => {
+	// The component styles the active row; a plain anchor has nothing to do with the hint.
+	void active
+
+	if (!href || disabled) return <span {...props}>{children}</span>
+
+	return (
+		<a
+			href={href}
+			target={target ?? (external ? "_blank" : undefined)}
+			// Without `noopener` the opened page can reach back through `window.opener`.
+			rel={rel ?? (external ? "noopener noreferrer" : undefined)}
+			{...props}
+		>
+			{children}
+		</a>
+	)
+}
+
+/** The caller's renderer, or the native anchor. */
+export const resolveLinkRenderer = (renderLink?: LinkRenderer): LinkRenderer => renderLink ?? defaultRenderLink
 
 /** Reduces an href to a comparable path. Handles hash routing, queries, and fragments. */
 export function toPath(href: string): string {

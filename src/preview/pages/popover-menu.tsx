@@ -63,39 +63,8 @@ export function PopoverMenuPage() {
 			</Example>
 
 			<Example id="popover-menu-api" title="API">
-				<PropTable owner="PopoverMenu"
-					rows={[
-						{ name: "items", type: "PopoverMenuItem[]", description: "The choices. Each carries a value, a label, and optional media." },
-						{ name: "trigger", type: "ReactElement", description: "The clickable the popover anchors to." },
-						{ name: "onSearchChange", type: "(value: string) => void", description: "Supplying this hands filtering to the caller — the local matcher steps aside." },
-						{ name: "header / footer", type: "ReactNode", description: "Bands above the search and below the list, running edge to edge." },
-						{ name: "open / onOpenChange", type: "boolean / (open) => void", description: "Controlled openness, for a menu opened from somewhere other than its trigger." },
-						{ name: "searchValue", type: "string", description: "Controlled search text. Supplying onSearchChange hands filtering to the caller; `strings.searchPlaceholder` is the field's placeholder." },
-						{ name: "loading / loadingSlot / strings", type: "boolean / ReactNode / Partial<PopoverMenuStrings>", description: "A strip in place of the list while results are in flight — an async picker with no state reads as an empty one. `strings` carries the loading row, the empty row, and the filter placeholder." },
-						{ name: "empty", type: "ReactNode", description: "Shown when nothing matches. Required in spirit: a filter that matches nothing has to say so." },
-						{ name: "renderItem", type: "(item) => ReactNode", description: "Replaces a row, for an option carrying an avatar or a colour." },
-						{ name: "sideOffset", type: "number", description: "Gap between the trigger and the surface." },
-						{ name: "label", type: "string", description: "Names the list, and the search field when there is one. Most needed with search={false}, where the list itself is what focus lands on." },
-						{ name: "onSelect", type: "(item: PopoverMenuItem) => void", description: "Receives the chosen item. The menu does not own a persistent selection." },
-						{ name: "closeOnSelect", type: "boolean", description: "Closes after a pick and returns focus to the trigger. True unless a footer is present: a footer holds confirm and clear actions, which is the multi-pick shape." },
-						{ name: "error", type: "ReactNode", description: "The items could not be loaded. `true` shows `strings.error`; any other node is the message. Replaces the rows and the empty state, and gives way to `loading`." },
-						{ name: "onRetry", type: "() => void", description: "Wiring this puts a retry control, labelled by `strings.retry`, under the error." },
-						{ name: "minSearchLength", type: "number", default: "0", description: "Characters the search needs before rows are shown. An empty field still shows the items; one character up to the minimum shows `strings.formatTypeToSearch(minimum)`. Measured on the trimmed text, controlled or not." },
-						{ name: "strings.error / retry / formatTypeToSearch", api: ["PopoverMenuStrings.error", "PopoverMenuStrings.retry", "PopoverMenuStrings.formatTypeToSearch"], type: "string / string / (minimum) => string", description: "Copy for the error, its retry control, and the too-short hint. Optional in the type so a translation written before them still compiles; the defaults fill them." },
-					]}
-				/>
-				<PropTable owner="PopoverMenuPanel"
-					rows={[
-						{ name: "items / onSelect", type: "PopoverMenuItem[] / (item) => void", required: true, description: "As on PopoverMenu. The panel owns no selection and closes nothing — the surface hosting it decides both." },
-						{ name: "search", type: "boolean", default: "true", description: "Shows the search field. Without it the list is the tab stop — a listbox pointing at the highlighted row — so the arrows and Enter work in a host whose own initial focus lands on the first tabbable element." },
-						{ name: "label", api: "PopoverMenuPanel.label", type: "string", description: "As on PopoverMenu. The filter editors pass the filter's name." },
-						{ name: "searchValue / onSearchChange / minSearchLength", type: "string / (value) => void / number", description: "As on PopoverMenu: supplying onSearchChange hands filtering to the caller." },
-						{ name: "loading / error / onRetry", type: "boolean / ReactNode / () => void", description: "As on PopoverMenu, in the same order of precedence: a short query, then loading, then the error, then the rows." },
-						{ name: "header / footer / empty / loadingSlot / strings / renderItem", type: "ReactNode / … / Partial<PopoverMenuStrings> / (item) => ReactNode", description: "As on PopoverMenu. Enter, the arrows, Home and End pressed in a band or on the retry control stay there instead of reaching the list." },
-						{ name: "ref", type: "Ref<HTMLDivElement>", description: "The list — what a host's initialFocus should name when there is no search field." },
-						{ name: "className", type: "string", description: "On the command root, beside `popover-menu-panel--component`." },
-					]}
-				/>
+				<PropTable owners={["PopoverMenu", "PopoverMenuItem", "PopoverMenuStrings"]} />
+				<PropTable owners={["PopoverMenuPanel"]} />
 			</Example>
 		</ComponentPage>
 	)

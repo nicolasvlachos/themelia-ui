@@ -22,6 +22,10 @@ export interface GlobalSearchInputProps {
 	className?: string
 }
 
+/**
+ * The search row. Thin on purpose — base Input already owns the leading icon, the clear and the
+ * sizing, so this only wires the palette's key handling to it.
+ */
 export const GlobalSearchInput = forwardRef<HTMLInputElement, GlobalSearchInputProps>(
 	function GlobalSearchInput(
 		{ value, onValueChange, onKeyDown, placeholder, clearLabel, loading = false, autoFocus = false, className },

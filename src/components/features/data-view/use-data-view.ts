@@ -8,6 +8,12 @@ import { applyDataViewFilters } from "./data-view-filtering"
 import type { UseDataViewOptions, UseDataViewResult } from "./data-view.types"
 import { useLatest } from "@/hooks/use-latest"
 
+/**
+ * The rows after filtering, plus `failed` and the `error` for a custom surface. If a matcher
+ * throws, the unfiltered rows come back with `failed` set and `onError` called, rather than a
+ * misleading empty list; DataView shows a warning for this fallback, which `strings.filterError`
+ * customizes.
+ */
 export function useDataView<TData extends object>({
 	data,
 	filtering,

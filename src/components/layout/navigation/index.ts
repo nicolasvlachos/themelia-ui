@@ -18,3 +18,4 @@ export {
 	type BreadcrumbProgressStep,
 } from "./breadcrumb-progress"
 export { defaultBreadcrumbProgressStrings, defaultSectionNavStrings, defaultSideNavStrings, type BreadcrumbProgressStrings, type SectionNavStrings, type SideNavStrings } from "./navigation.strings"
+export type { LinkRenderer, LinkRenderProps } from "@/lib/navigation"

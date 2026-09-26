@@ -156,6 +156,10 @@ function keywordScore(input: SeoScoreInput): number | null {
 	return haystack.includes(keyword) ? 1 : 0.35
 }
 
+/**
+ * Plain function, no React. Returns the total, a status, and a per-check breakdown with the
+ * measured lengths.
+ */
 export function calculateSeoScore(input: SeoScoreInput): SeoScore {
 	const limits: SeoLimits = { ...DEFAULT_SEO_LIMITS, ...input.limits }
 	const title = input.title?.trim() ?? ""

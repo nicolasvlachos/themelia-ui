@@ -22,6 +22,11 @@ export interface SparklineProps extends Omit<React.ComponentProps<"div">, "child
 	label?: string
 }
 
+/**
+ * A trend line with no axes, no grid and no tooltip — the shape of a series beside the figure
+ * it belongs to. Not a small `ChartContainer`: it draws no chrome, so it can sit inside a table
+ * cell or a metric tile.
+ */
 export function Sparkline({
 	data,
 	tone = "neutral",

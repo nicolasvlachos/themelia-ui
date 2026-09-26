@@ -13,10 +13,18 @@ import { defaultPasswordInputStrings, type PasswordInputStrings } from "./passwo
 import styles from "./text-inputs.module.css"
 
 export interface PasswordInputProps extends Omit<InputProps, "type"> {
-	/** Overrides this field's own copy — the reveal control's name in each state. */
+	/**
+	 * Overrides this field's own copy — the reveal control's name in each state, which is its
+	 * state for a screen reader — and Input's own strings.
+	 */
 	strings?: Partial<PasswordInputStrings>
 }
 
+/**
+ * A password field with a reveal control. It takes Input's props, `value` and
+ * `defaultValue` included, which behave as Input's. The reveal control's name alone carries
+ * its state — "Show password", "Hide password" — with no `aria-pressed` to contradict it.
+ */
 export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
 	function PasswordInput({ strings, className, ...props }, ref) {
 		const copy = { ...defaultPasswordInputStrings, ...strings }

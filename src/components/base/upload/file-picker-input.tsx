@@ -29,6 +29,11 @@ export interface FilePickerInputProps
 	strings?: StringsProp<FilePickerStrings>
 }
 
+/**
+ * A file field shaped like an Input, showing the chosen file's name, for a form row. The
+ * file input covers the whole control, so any part of it opens the dialog, and the `accept`
+ * wiring and the re-validation come with it. `FileUpload` is the drop-zone alternative.
+ */
 export function FilePickerInput({
 	value,
 	onValueChange,

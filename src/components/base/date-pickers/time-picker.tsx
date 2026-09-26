@@ -11,6 +11,7 @@ import { cx } from "@/lib/cx"
 import { defaultTimePickerStrings, type TimePickerStrings } from "./time-picker.strings"
 import styles from "./calendar.module.css"
 
+/** A time of day: `{ hours, minutes }`, not a `Date`, because a time of day has no date. */
 export interface TimeValue {
 	hours: number
 	minutes: number
@@ -23,13 +24,19 @@ export interface TimePickerProps {
 	 * its own part name.
 	 */
 	id?: string
+	/** The time: `{ hours, minutes }`, not a `Date`, because a time of day has no date. */
 	value?: TimeValue
+	/** Called with the new time. */
 	onValueChange?: (value: TimeValue) => void
-	/** Adds a seconds segment. */
+	/**
+	 * Adds a third segment, for seconds. Most times of day do not have one, and an empty
+	 * seconds box invites a value nobody wanted.
+	 */
 	withSeconds?: boolean
-	/** Minutes snap to this. 15 gives a quarter-hour picker. */
+	/** The minute increment: minutes snap to it. 15 gives a quarter-hour picker. */
 	minuteStep?: number
 	disabled?: boolean
+	/** The error surface. The message stays on the `FormField`. */
 	invalid?: boolean
 	className?: string
 	/** Overrides this picker's own copy — the group and the three segments. */

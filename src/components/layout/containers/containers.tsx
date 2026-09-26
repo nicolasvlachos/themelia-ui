@@ -17,8 +17,8 @@ import styles from "./containers.module.css"
 export interface PageViewportProps extends React.ComponentProps<"div"> {}
 
 /**
- * The single page-scroll owner. Focusable by default (`tabIndex={0}`) so it can be
- * scrolled by keyboard.
+ * The single page-scroll owner and the page container-query root. Focusable by default
+ * (`tabIndex={0}`), or the region cannot be scrolled by keyboard.
  */
 export const PageViewport = React.forwardRef<HTMLDivElement, PageViewportProps>(
 	function PageViewport({ className, tabIndex = 0, ...props }, ref) {
@@ -89,7 +89,8 @@ export interface SectionProps extends React.ComponentProps<"section"> {}
 
 /**
  * A semantic `<section>` and the vertical rhythm between its children. The gap is one
- * fixed rhythm step, not a per-section prop.
+ * fixed rhythm token, not a per-section prop: it does not re-expose the spacing scale, since
+ * a page whose sections each pick a gap has no rhythm.
  */
 export const Section = React.forwardRef<HTMLElement, SectionProps>(function Section(
 	{ className, ...props },
@@ -110,9 +111,9 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(function Sect
 export interface TwoColumnLayoutProps extends Omit<React.ComponentProps<"div">, "children"> {
 	/** Spans both columns, before the work regions. */
 	header?: React.ReactNode
-	/** Primary detail, form, or index content. */
+	/** The primary work region: detail, form, or index content. */
 	main: React.ReactNode
-	/** Secondary summary, support, or action rail. */
+	/** The secondary work region: summary, support, or action rail. Always second in the DOM. */
 	aside: React.ReactNode
 	/** Spans both columns, after the work regions. */
 	footer?: React.ReactNode

@@ -32,6 +32,11 @@ export interface FilterPillProps {
 	className?: string
 }
 
+/**
+ * One applied filter, as three segments in a group rather than one button. “Status · is ·
+ * Confirmed ✕” is three separate decisions with three separate targets, and a single button
+ * makes two of them unreachable.
+ */
 export function FilterPill({
 	filter,
 	value,

@@ -12,7 +12,10 @@ import { Button, type ButtonProps } from "./button"
 import { defaultButtonLoadingStrings, type ButtonLoadingStrings } from "./button.strings"
 
 export interface LoaderButtonProps extends Omit<ButtonProps, "onClick"> {
-	/** Controlled pending state. Omit to let the button manage it from `onClick`. */
+	/**
+	 * Controlled pending state. Omit it and the button holds the state itself, from the
+	 * promise `onClick` returns.
+	 */
 	loading?: boolean
 	/**
 	 * Accepted so call sites that pass it keep compiling; inert. Choosing `LoaderButton` is
@@ -21,9 +24,14 @@ export interface LoaderButtonProps extends Omit<ButtonProps, "onClick"> {
 	handlesLoading?: boolean
 	/** May return a promise; the button then stays pending until it settles. */
 	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void | Promise<unknown>
+	/** Overrides the button's own copy: what it announces while it works. */
 	strings?: StringsProp<ButtonLoadingStrings>
 }
 
+/**
+ * A `Button` that can run its handler and hold the pending state itself. It also announces
+ * the wait, which `Button`'s own `loading` prop does not.
+ */
 export const LoaderButton = React.forwardRef<HTMLButtonElement, LoaderButtonProps>(
 	function LoaderButton({ loading, handlesLoading: _handlesLoading, onClick, strings, children, ...props }, ref) {
 		const copy = { ...defaultButtonLoadingStrings, ...strings }

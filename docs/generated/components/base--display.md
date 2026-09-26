@@ -31,6 +31,8 @@ outside the package and arrives through the public props, callbacks, slots, or a
 
 Kind: callable.
 
+A yes/no state as a dot and a word. The word is required, since colour alone fails.
+
 ```text
 ({ value, strings, className, ...props }: BooleanIndicatorProps) => React.JSX.Element
 ```
@@ -43,8 +45,8 @@ Extends: `Omit<React.ComponentProps<"span">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `value` | no | `boolean \| null` |  |
-| `strings` | no | `Partial<BooleanIndicatorStrings>` | Overrides what each state is called. Yes/No, Enabled/Disabled, Paid/Unpaid. |
+| `value` | no | `boolean \| null` | The state, drawn as a dot and a word so it does not rely on colour alone. |
+| `strings` | no | `Partial<BooleanIndicatorStrings>` | Overrides what each state is called: `strings.true` and `strings.false`, the two words.<br>Yes/No, Enabled/Disabled, Paid/Unpaid — "Active"/"Paused" beats "true"/"false". |
 
 ### `BooleanIndicatorStrings`
 
@@ -59,6 +61,8 @@ Kind: interface.
 
 Kind: callable.
 
+A disclosure that animates to its content's natural height, in CSS alone.
+
 ```text
 ({ open, defaultOpen, onOpenChange, className, children, ...props }: CollapsibleProps) => React.JSX.Element
 ```
@@ -66,6 +70,9 @@ Kind: callable.
 ### `CollapsibleContent`
 
 Kind: callable.
+
+The disclosed region. It stays mounted while collapsed, to animate, and is inert then, so
+its controls leave the tab order.
 
 ```text
 ({ className, children, ...props }: React.ComponentProps<"div">) => React.JSX.Element
@@ -79,13 +86,15 @@ Extends: `Omit<React.ComponentProps<"div">, "onToggle">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `open` | no | `boolean` |  |
-| `defaultOpen` | no | `boolean` |  |
-| `onOpenChange` | no | `(open: boolean) => void` |  |
+| `open` | no | `boolean` | Whether the content is shown, for controlled state. |
+| `defaultOpen` | no | `boolean` | Whether the content starts shown, for uncontrolled state. |
+| `onOpenChange` | no | `(open: boolean) => void` | Fires on every toggle, from the pointer or the keyboard. |
 
 ### `CollapsibleTrigger`
 
 Kind: callable.
+
+The control. Carries `aria-expanded` and points at the content.
 
 ```text
 ({ className, children, onClick, ...props }: React.ComponentProps<"button">) => React.JSX.Element
@@ -94,6 +103,8 @@ Kind: callable.
 ### `ContentBlock`
 
 Kind: callable.
+
+A titled region inside a panel, not a panel itself: use it instead of nesting Cards.
 
 **Use when:** A titled section within a page or existing surface.
 
@@ -117,13 +128,13 @@ Extends: `Omit<ComponentProps<"div">, "title">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `title` | no | `ReactNode` |  |
-| `description` | no | `ReactNode` |  |
-| `icon` | no | `ReactNode` | Glyph on the title line. |
+| `title` | no | `ReactNode` | The heading. Either it or `description` renders the header; neither, and the block is a<br>bare surface. |
+| `description` | no | `ReactNode` | Supporting copy on its own row, so a long one wraps under the whole header. |
+| `icon` | no | `ReactNode` | Leading glyph on the title line. |
 | `titleSuffix` | no | `ReactNode` | Content immediately after the title — a badge, a count. |
 | `headerEnd` | no | `ReactNode` | Controls at the end of the title line. |
-| `surface` | no | `ContentBlockSurface` |  |
-| `flush` | no | `boolean` | Drops the surface's inset and clips to its radius, for content that runs to the edge<br>(divided cells, ruled rows); children pay their own inset. Only meaningful on a surface. |
+| `surface` | no | `ContentBlockSurface` | Outer chrome. What separates `bordered` from `card` is the ground: a bordered block is a<br>ruled region and the page shows through it; a card block lifts off it. |
+| `flush` | no | `boolean` | Drops the surface's inset and clips to its radius, for content that runs to the edge<br>(divided cells, ruled rows); children pay their own inset. Only meaningful on a surface<br>that has an inset to drop. |
 | `children` | no | `ReactNode` |  |
 
 ### `ContentBlockSurface`
@@ -140,6 +151,9 @@ through. `muted`: a tinted region. `card`: `bordered` on the card ground.
 ### `DateBlock`
 
 Kind: callable.
+
+A date as a calendar leaf, rendered as `<time>` with a machine-readable `dateTime`, so the
+stacked fragments stay one parseable value.
 
 ```text
 ({ date, time, dateTime, layout, boxed, showWeekday, showMonth, showYear, weekdayFormat, dayFormat, monthFormat, yearFormat, className, ...props }: DateBlockProps) => import("react").JSX.Element | null
@@ -161,18 +175,18 @@ Extends: `Omit<ComponentProps<"time">, "children" | "dateTime">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `date` | no | `Date \| string \| number \| null` | A Date, an ISO string, or a timestamp. |
-| `time` | no | `ReactNode` | Already-formatted time or range — "09:00 – 10:30". |
-| `dateTime` | no | `string` | Overrides the machine-readable value. |
-| `layout` | no | `DateBlockLayout` |  |
-| `boxed` | no | `boolean` | A bounded surface. Defaults on for stacked, off for inline. |
-| `showWeekday` | no | `boolean` |  |
-| `showMonth` | no | `boolean` |  |
+| `date` | no | `Date \| string \| number \| null` | A Date, an ISO string, or a timestamp. Nothing parseable renders nothing — an empty leaf<br>would be a claim. |
+| `time` | no | `ReactNode` | An already-formatted time or range — "09:00 – 10:30" — under the weekday in the stacked<br>layout. |
+| `dateTime` | no | `string` | Overrides the machine-readable value, which is otherwise the date's ISO string. |
+| `layout` | no | `DateBlockLayout` | A calendar leaf, or a phrase at the size of the line it sits in. |
+| `boxed` | no | `boolean` | The leaf's box and month band: a bounded surface. Defaults on for stacked and off for<br>inline; turn it off for a surface that already frames the leaf. @default true |
+| `showWeekday` | no | `boolean` | Shows the weekday. |
+| `showMonth` | no | `boolean` | Shows the month. Without it there is no band. |
 | `showYear` | no | `boolean` | Adds the year under the month, for a date outside the current one. |
-| `weekdayFormat` | no | `string` | date-fns patterns for the fragments. Names come from the scope's date-fns locale, so<br>these are patterns, not strings. |
-| `dayFormat` | no | `string` |  |
-| `monthFormat` | no | `string` |  |
-| `yearFormat` | no | `string` |  |
+| `weekdayFormat` | no | `string` | date-fns pattern for the weekday. Names come from the `UIProvider`'s date-fns locale, so<br>these are patterns, not strings: a Greek scope reads "Κυρ" without a strings object. |
+| `dayFormat` | no | `string` | date-fns pattern for the day. |
+| `monthFormat` | no | `string` | date-fns pattern for the month, named in the scope's locale. |
+| `yearFormat` | no | `string` | date-fns pattern for the year. |
 
 ### `defaultBooleanIndicatorStrings`
 
@@ -194,6 +208,9 @@ MetadataListStrings
 
 Kind: callable.
 
+A glyph in a tinted medallion. Its size comes from `--icon-badge-size`, so a caller
+needing a smaller mark re-points the token instead of redrawing the badge.
+
 ```text
 ({ icon, children, tone, shape, solid, bordered, className, ...props }: IconBadgeProps) => import("react").JSX.Element
 ```
@@ -206,10 +223,10 @@ Extends: `Omit<ComponentProps<"span">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `icon` | no | `ComponentType<{ className?: string; }> \| ReactNode` | A component or a rendered node. |
+| `icon` | no | `ComponentType<{ className?: string; }> \| ReactNode` | A component or a rendered node. A component is called with `aria-hidden`, because the<br>badge is a mark beside a name that already says it. |
 | `children` | no | `ReactNode` |  |
-| `tone` | no | `IconBadgeTone` |  |
-| `shape` | no | `IconBadgeShape` |  |
+| `tone` | no | `IconBadgeTone` | Sets the fill and the glyph together, so the two cannot come from different tones. |
+| `shape` | no | `IconBadgeShape` | A rounded square, or a circle. |
 | `solid` | no | `boolean` | Fills with the tone and inverts the glyph — for the one badge that must stand out. |
 | `bordered` | no | `boolean` | A hairline outline, for a badge on a surface it would otherwise blend into. |
 
@@ -256,14 +273,18 @@ Extends: `Omit<ComponentProps<"div">, "children">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `label` | yes | `ReactNode` | Names the fact. |
-| `value` | no | `ReactNode` | The fact itself. Absent renders the empty marker. |
-| `layout` | no | `InlineStatLayout` |  |
-| `mono` | no | `boolean` | Tabular figures, for amounts and counters, so a column of these compares cleanly. |
+| `label` | yes | `ReactNode` | Names the fact. Rendered as a `DisplayLabel`, which has one style everywhere. |
+| `value` | no | `ReactNode` | The fact itself. Absent renders the empty marker rather than collapsing the row to its<br>label — a dash says the fact was looked for. |
+| `layout` | no | `InlineStatLayout` | How the free space between label and value is spent — the only thing the three change. |
+| `mono` | no | `boolean` | Tabular figures, for an amount or a counter — what makes a column of these compare down<br>the page instead of jittering with each digit's width. |
 
 ### `Kbd`
 
 Kind: callable.
+
+One key, or one chord pressed together written as a single string — "⌘K", not three caps,
+because nested `Kbd`s are announced element by element. A native `<kbd>`: every native
+attribute passes through.
 
 ```text
 ({ className, ...props }: ComponentProps<"kbd">) => import("react").JSX.Element
@@ -273,7 +294,9 @@ Kind: callable.
 
 Kind: callable.
 
-Several caps as a sequence ("⌘ then K"); the gap between caps marks it as a sequence, not a chord.
+Several `Kbd` in a row, for a sequence pressed one after another — "G then I". The caps sit
+further apart than the characters inside one, and that gap is what tells a reader the keys
+are pressed in turn rather than together.
 
 ```text
 ({ className, ...props }: ComponentProps<"span">) => import("react").JSX.Element
@@ -367,6 +390,9 @@ DescriptorBase & ValueFallback & DisplayOverride & { kind: "link"; href: string;
 
 Kind: callable.
 
+Label/value facts about one thing, in three layouts over the same data. Returns `null`
+when the list is empty, so a caller can render it unconditionally.
+
 **Use when:** Read-only metadata and label/value facts about one record.
 
 **Avoid when:** Editing values or rendering a list of actionable records.
@@ -385,15 +411,17 @@ Kind: callable.
 
 Kind: interface.
 
+One fact: a label and a value, and optionally a description, a tooltip and an icon.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | no | `string` | Stable identity. Without one the label and index stand in. |
-| `label` | yes | `ReactNode` |  |
+| `label` | yes | `ReactNode` | Names the fact. |
 | `value` | no | `ReactNode \| MetadataValueDescriptor \| null` | A node, or a descriptor that names the fact's kind. |
 | `description` | no | `ReactNode \| null` | Supporting copy under the value. |
-| `tooltip` | no | `ReactNode` | Shown from an info trigger beside the label — for a fact that needs explaining. |
-| `icon` | no | `ComponentType<{ className?: string; }>` |  |
-| `emptyLabel` | no | `ReactNode` |  |
+| `tooltip` | no | `ReactNode` | Shown from an info trigger beside the label — for a fact that needs explaining. The<br>trigger is named after the label through `strings.formatInfoLabel` ("Amount info"), a<br>function rather than a suffix because word order differs by language. |
+| `icon` | no | `ComponentType<{ className?: string; }>` | A glyph before the label. |
+| `emptyLabel` | no | `ReactNode` | Shown when this fact's value is absent, in place of the list's `emptyLabel`. |
 | `render` | no | `(item: MetadataListItem) => ReactNode` | Takes over the value entirely, for one fact that none of the kinds cover. |
 
 ### `MetadataListProps`
@@ -485,6 +513,10 @@ MetadataValueDescriptor
 
 Kind: callable.
 
+Diagonal hatching for a region with nothing in it yet — a chart with no data, a slot
+awaiting an upload. It reads as deliberately empty; a blank box reads as broken. Not a
+Skeleton, which says "loading".
+
 ```text
 ({ className, ...props }: PlaceholderPatternProps) => import("react").JSX.Element
 ```
@@ -500,6 +532,9 @@ ComponentProps<"div">
 ### `ScrollArea`
 
 Kind: callable.
+
+A scroll container with the kit's scrollbar treatment, contained so reaching the end
+doesn't scroll the page behind. Give it a max height; it does not impose one.
 
 **Use when:** A constrained scrollable region that needs consistent scrollbars.
 
@@ -519,6 +554,10 @@ Kind: callable.
 
 Kind: callable.
 
+A rule between content, horizontal or vertical; a vertical separator needs a height from
+its container. An unlabelled separator exposes separator semantics: set `aria-hidden` to
+hide a decorative rule from assistive technology.
+
 ```text
 ({ className, orientation, variant, thickness, label, style, ...props }: SeparatorProps) => React.JSX.Element
 ```
@@ -527,13 +566,13 @@ Kind: callable.
 
 Kind: interface.
 
-Extends: `SeparatorPrimitive.Props`.
+Extends: `SeparatorPrimitive.Props`, `Pick<SeparatorPrimitive.Props, "aria-hidden">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `variant` | no | `SeparatorVariant` |  |
+| `variant` | no | `SeparatorVariant` | How the rule is drawn. Structural, not semantic — a dashed rule is the same divider,<br>drawn as provisional. |
 | `thickness` | no | `string \| number` | The rule's thickness: a CSS length, or a number in pixels. Overrides<br>`--separator-thickness` for this rule, e.g. a seam between panels. |
-| `label` | no | `React.ReactNode` | Text set into a gap in the rule — "OR", "More options". Horizontal only. |
+| `label` | no | `React.ReactNode` | Text set into a gap in the rule — "OR", "More options". Horizontal only. It drops the<br>separator role, because the rule is then decoration around real text. |
 
 ### `SeparatorVariant`
 
@@ -548,6 +587,9 @@ How the rule is drawn — structural, so a `variant`. Dashed and dotted read as 
 ### `VisuallyHidden`
 
 Kind: callable.
+
+Present to assistive technology, absent on screen. Not `display: none`, which removes it
+from both.
 
 ```text
 ({ className, render, ...props }: VisuallyHiddenProps) => React.JSX.Element
@@ -773,13 +815,17 @@ export default function DirectionSlot() {
 	return (
 		<Stack gap="lg">
 			<DirectionProvider direction="rtl">
-				<ContentBlock surface="card" title="اتجاه من اليمين إلى اليسار">
-					<Text size="xs" type="secondary">
-						Every inset, gap and border in this block is a logical property, so the whole
-						region mirrors from one prop rather than from a stylesheet per direction.
-					</Text>
-				</ContentBlock>
+				<div dir="rtl">
+					<ContentBlock surface="card" title="اتجاه من اليمين إلى اليسار">
+						<Text size="xs" type="secondary">كل هامش وفجوة وحد هنا خاصية منطقية.</Text>
+					</ContentBlock>
+				</div>
 			</DirectionProvider>
+			<Text size="xs" type="secondary">
+				Every inset, gap and border in the block above is a logical property, so <code>dir</code> on
+				the region mirrors it without a stylesheet per direction. The provider tells the menus and
+				popovers inside it the same thing.
+			</Text>
 			<Slot className={undefined}>
 				<Text size="xs" type="secondary">
 					Slot renders its child, merged. There is nothing of its own on the page.

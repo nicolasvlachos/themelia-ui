@@ -22,6 +22,11 @@ import { defaultCommentsStrings } from "./comments.strings"
 import type { CommentUser, CommentsProps } from "./comments.types"
 import styles from "./comments.module.css"
 
+/**
+ * The composer and the timeline, wired together. A control appears only when its callback is
+ * supplied (`onDelete`, `onUpdate`, …); `canComment`, `canModerate` and `allowReplies` cover
+ * viewer permission and thread shape.
+ */
 export function Comments<
 	TUser extends CommentUser = CommentUser,
 	TMeta = unknown,

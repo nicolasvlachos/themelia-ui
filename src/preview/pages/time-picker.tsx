@@ -12,15 +12,8 @@ export function TimePickerPage() {
 			/>
 
 			<Example id="time-picker-api" title="API">
-				<PropTable owner="TimePicker"
-					rows={[
-						{ name: "value / onValueChange", type: "TimeValue", description: "{ hours, minutes } — not a Date, because a time of day has no date." },
-						{ name: "minuteStep", type: "number", description: "Minute increment." },
-						{ name: "DateTimeInput", type: "component", description: "A date and a time in one field, storing an ISO string." },
-						{ name: "withSeconds", type: "boolean", default: "false", description: "Adds a third segment. Most times of day do not have one, and an empty seconds box invites a value nobody wanted." },
-						{ name: "invalid", type: "boolean", description: "The error surface. The message stays on the FormField." },
-					]}
-				/>
+				<PropTable owner="TimePicker" />
+				<PropTable symbols={["DateTimeInput"]} />
 			</Example>
 		</ComponentPage>
 	)

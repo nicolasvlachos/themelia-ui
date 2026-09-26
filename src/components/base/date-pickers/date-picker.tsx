@@ -26,28 +26,51 @@ export interface DatePickerProps extends CalendarConstraints {
 	 * so the field's label must reach it.
 	 */
 	id?: string
+	/** What a click selects: one date, a range, or several dates. */
 	mode?: DateSelectionMode
+	/** The chosen value. Its shape follows `mode`: a `Date`, a `{ from, to }`, or an array. */
 	value?: Date | Date[] | DateRangeValue
+	/** Called with the new value, in the shape `mode` gives it. */
 	onValueChange?: (value: Date | Date[] | DateRangeValue | undefined) => void
-	/** How the chosen value is written in the trigger. */
+	/** How the chosen value is written in the trigger: a date-fns pattern. The popup is unaffected. */
 	displayFormat?: string
 	placeholder?: string
 	disabled?: boolean
+	/** The error surface. The message stays on the `FormField`. */
 	invalid?: boolean
-	/** Adds a clear control to the trigger once something is chosen. */
+	/**
+	 * Adds a clear control to the trigger once something is chosen: a real button beside the
+	 * calendar glyph, named through `strings` — not an icon with a click handler.
+	 */
 	clearable?: boolean
-	/** Overrides this picker's own copy — the clear control and the calendar's captions. */
+	/**
+	 * Overrides this picker's own copy — the clear control and the calendar's captions. The
+	 * same object reaches the calendar inside the popup, so one override names the month
+	 * controls too.
+	 */
 	strings?: Partial<DatePickerStrings>
-	/** Shortcuts down the side — "Last 30 days", "This month". */
+	/**
+	 * Shortcuts down the side — "Last 30 days", "This month": the rail beside a range
+	 * calendar. `createRangePresets({ strings, weekStartsOn })` builds the built-in set in your
+	 * language and week.
+	 */
 	presets?: DatePreset[]
+	/**
+	 * How many months are shown side by side: two for a range, one otherwise. The header
+	 * becomes a range when more than one.
+	 */
 	numberOfMonths?: number
-	/** Closes the popup as soon as a complete value is chosen. */
+	/**
+	 * Closes the popup as soon as a complete value is chosen. On by default for a single date
+	 * and off for a range, because a range is not chosen until both ends are.
+	 */
 	closeOnSelect?: boolean
 	/** A band above the calendar — a title, a mode switch. Use `DatePickerHeader`. */
 	header?: ReactNode
 	/** A band below it — a summary, Clear and Apply. Use `DatePickerFooter`. */
 	footer?: ReactNode
 	className?: string
+	/** Styles the popup surface. `className` stays on the trigger. */
 	contentClassName?: string
 	"aria-label"?: string
 	"aria-labelledby"?: string

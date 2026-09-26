@@ -43,22 +43,24 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `actions` | yes | `readonly ActionDefinition[]` | The same definitions, side by side rather than collapsed into a menu. |
+| `actions` | yes | `readonly ActionDefinition[]` | The same definitions `ActionMenu` takes, side by side rather than collapsed into a menu:<br>that is the point of the shape. Each entry's `tone` and `buttonStyle` carry through to<br>its button. |
 | `max` | no | `number` | How many render as buttons before the rest collapse into an overflow menu built from<br>the same array. Unset, every definition is a button. |
-| `strings` | no | `Partial<ActionMenuStrings>` | Overrides this toolbar's own copy — the overflow trigger's name. |
+| `strings` | no | `Partial<ActionMenuStrings>` | Overrides this toolbar's own copy: `strings.overflow` names the overflow menu's trigger. |
 | `className` | no | `string` |  |
-| `renderLink` | no | `ActionLinkRenderer` |  |
+| `renderLink` | no | `LinkRenderer` | Routes `href` actions through the app's router, as `ActionMenu`'s `renderLink` does. |
 
 ### `ActionDefinition`
 
 Kind: interface.
 
+One command, in the shape `ActionMenu`, `ActionButtons` and a card's `actions` all take.
+
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `id` | no | `string` | Stable key. Falls back to a string `label`, then the index. |
-| `label` | yes | `ReactNode` |  |
+| `label` | yes | `ReactNode` | What the entry says. The only part of the row that gives way: a long label truncates<br>instead of pushing the shortcut or trailing content off. |
 | `icon` | no | `ActionIcon` |  |
-| `type` | no | `"item" \| "checkbox"` | `checkbox` renders a toggle driven by `checked` / `onCheckedChange`. |
+| `type` | no | `"item" \| "checkbox"` | `checkbox` renders a toggle driven by `checked` / `onCheckedChange`. @default "item" |
 | `href` | no | `string` | Renders the entry as a link. A native `<a href>` by default, which is a full page<br>navigation — pass `renderLink` to route it through the app's router instead. |
 | `target` | no | `string` |  |
 | `rel` | no | `string` |  |
@@ -72,7 +74,7 @@ Kind: interface.
 | `group` | no | `string \| true` | Starts a new group, ruling off above this entry. A string also captions it; `true`<br>rules off without a heading (e.g. to set apart a sign-out or delete). |
 | `tone` | no | `ButtonTone` | Semantic intent. `destructive` also moves the entry last and separates it. |
 | `buttonStyle` | no | `ButtonStyle \| "link"` | Treatment when the action renders as a button. `link` is a ghost that underlines. |
-| `visible` | no | `boolean` | `false` omits the action entirely. |
+| `visible` | no | `boolean` | `false` omits the action entirely. @default true |
 | `disabled` | no | `boolean` |  |
 | `closeOnSelect` | no | `boolean` | Overrides the menu's `closeOnSelect` for this entry. |
 | `className` | no | `string` |  |
@@ -87,27 +89,6 @@ A Lucide icon, any component taking a className, or an already-rendered node.
 ```text
 ComponentType<{ className?: string; }> | ReactNode
 ```
-
-### `ActionLinkRenderer`
-
-Kind: type.
-
-```text
-(props: ActionLinkRenderProps) => ReactElement
-```
-
-### `ActionLinkRenderProps`
-
-Kind: interface.
-
-| member | required | type | description / documented default |
-| --- | :-: | --- | --- |
-| `href` | yes | `string` |  |
-| `children` | no | `ReactNode` |  |
-| `target` | no | `string` |  |
-| `rel` | no | `string` |  |
-| `external` | no | `boolean` |  |
-| `disabled` | no | `boolean` |  |
 
 ### `ActionMenu`
 
@@ -134,22 +115,22 @@ Kind: interface.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `actions` | yes | `readonly ActionDefinition[]` | Commands to offer. Destructive entries move last unless `preserveOrder` is set. |
+| `actions` | yes | `readonly ActionDefinition[]` | Commands to offer; `visible: false` omits one entirely. Destructive entries move last<br>unless `preserveOrder` is set. |
 | `label` | no | `string` | Trigger text. Omit for an icon-only trigger — `strings.trigger` names it then. |
 | `icon` | no | `ActionIcon` | Trigger glyph. Defaults to the vertical ellipsis. |
-| `strings` | no | `Partial<ActionMenuStrings>` | Overrides this menu's own copy. |
-| `buttonProps` | no | `Omit<ComponentProps<typeof Button>, "children">` |  |
-| `align` | no | `"start" \| "center" \| "end"` |  |
-| `side` | no | `"top" \| "right" \| "bottom" \| "left"` |  |
-| `contentClassName` | no | `string` |  |
-| `width` | no | `string \| number \| "trigger"` | Fixed surface width, any CSS length, or `"trigger"` to match the trigger. Left<br>unset the menu sizes to its widest row. |
-| `minWidth` | no | `string \| number` |  |
-| `maxWidth` | no | `string \| number` | Ceiling for the content-sized default: a reading measure, so one long label doesn't widen every row. |
-| `closeOnSelect` | no | `boolean` |  |
-| `labelVisibility` | no | `ActionMenuLabelVisibility` |  |
-| `preserveOrder` | no | `boolean` | Keeps the incoming order instead of moving destructive entries last. |
-| `renderLink` | no | `ActionLinkRenderer` | Routes `href` actions through the app's router, keeping this framework-agnostic. |
-| `renderTrigger` | no | `ComponentProps<typeof DropdownMenuTrigger>["render"]` | Replaces the trigger entirely — an account block, a sidebar row, a tab. For different<br>words on a plain button, use `label` and `icon`. |
+| `strings` | no | `Partial<ActionMenuStrings>` | Overrides this menu's own copy: `trigger` names an icon-only trigger, which without a<br>visible label has no other name. |
+| `buttonProps` | no | `Omit<ComponentProps<typeof Button>, "children">` | Props for the default trigger button. Ignored when `renderTrigger` replaces it. |
+| `align` | no | `"start" \| "center" \| "end"` | How the surface lines up with the trigger along the side it opens on.<br>`UIProvider` defaults can change it. @default "end" |
+| `side` | no | `"top" \| "right" \| "bottom" \| "left"` | Where the surface opens relative to the trigger. |
+| `contentClassName` | no | `string` | Class for the menu surface itself: the escape hatch for styling it. |
+| `width` | no | `string \| number \| "trigger"` | Fixed surface width: any CSS length, or `"trigger"` to match the trigger, for a menu that<br>reads as the field's own list. Left unset the menu sizes to its widest row. |
+| `minWidth` | no | `string \| number` | A floor under the content-sized width. |
+| `maxWidth` | no | `string \| number` | Ceiling for the content-sized default: a reading measure rather than the viewport, so one<br>long label doesn't widen every row. Unset, the surface also stops at the space available. @default "20rem" |
+| `closeOnSelect` | no | `boolean` | Closes the menu when an entry is chosen. Turn it off for a menu of checkbox rows, where<br>the reader is setting several things at once; an entry's own `closeOnSelect` overrides<br>it. `UIProvider` defaults can change it. @default true |
+| `labelVisibility` | no | `ActionMenuLabelVisibility` | Where the trigger's `label` shows. `responsive` hides it below `sm`, leaving the glyph,<br>for a toolbar that has to survive a phone; `hidden` hides it at every width.<br>`UIProvider` defaults can change it. @default "visible" |
+| `preserveOrder` | no | `boolean` | Keeps the declared order instead of moving destructive entries last. |
+| `renderLink` | no | `LinkRenderer` | Routes `href` actions through the app's router, keeping this framework-agnostic. Return<br>an element, not a function that spreads props: the menu merges its own props onto the<br>element, so the row keeps its menu item role. |
+| `renderTrigger` | no | `ComponentProps<typeof DropdownMenuTrigger>["render"]` | Replaces the trigger entirely, for a menu hanging off something that is not a button:<br>an account block, a sidebar row, a tab. For different words on a plain button, use<br>`label` and `icon`. |
 
 ### `ActionMenuStrings`
 
@@ -192,10 +173,10 @@ Extends: `Omit<ActionDefinition, "onClick" | "visible" | "disabled">`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `onClick` | no | `(context: TContext) => void` |  |
-| `visible` | no | `ActionPredicate<TContext>` | `false`, or a predicate returning false, omits the action for that subject. |
-| `disabled` | no | `ActionPredicate<TContext>` |  |
-| `placement` | no | `ActionPlacement` | Forces this entry to one side when the set is split between buttons and a menu: `menu`<br>keeps it out of the button row, `inline` pins it there, `auto` lets the renderer decide. |
+| `onClick` | no | `(context: TContext) => void` | Receives the subject the set was resolved against. |
+| `visible` | no | `ActionPredicate<TContext>` | `false`, or a predicate returning false, omits the action for that subject. @default true |
+| `disabled` | no | `ActionPredicate<TContext>` | Worked out per subject, so a locked row shows the action greyed rather than missing. @default false |
+| `placement` | no | `ActionPlacement` | Forces this entry to one side when the set is split between buttons and a menu:<br>`inline` stays a button whatever `max` is, `menu` always overflows, and `auto` fills<br>the buttons in order up to `max`. @default "auto" |
 
 ### `ContextActionSource`
 
@@ -214,6 +195,45 @@ Kind: const.
 ```text
 ActionMenuStrings
 ```
+
+### `LinkRenderer`
+
+Kind: type.
+
+How a component renders a link: through the application's router. Every component that
+navigates takes one as `renderLink`, and without one renders a plain anchor. Return one
+element: the component may merge its own props into it, such as a menu item's role or a
+button's styling.
+
+```tsx fragment — declaration JSDoc excerpt
+const renderLink: LinkRenderer = ({ href, children, active, disabled, external, ...rest }) =>
+  disabled || !href ? <span {...rest}>{children}</span> : <Link to={href} {...rest}>{children}</Link>
+```
+
+```text
+(props: LinkRenderProps) => ReactElement
+```
+
+### `LinkRenderProps`
+
+Kind: interface.
+
+What a component hands its link renderer. Spread everything but `active`, `disabled` and `external` onto the element.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `href` | no | `string` | Destination. When absent, render non-interactive content. |
+| `children` | yes | `ReactNode` |  |
+| `className` | no | `string` |  |
+| `target` | no | `string` |  |
+| `rel` | no | `string` |  |
+| `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
+| `"aria-label"` | no | `string` |  |
+| `"aria-current"` | no | `AriaAttributes["aria-current"]` |  |
+| `"aria-disabled"` | no | `AriaAttributes["aria-disabled"]` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the component styles the row itself. |
+| `disabled` | no | `boolean` | The entry goes nowhere: render non-interactive content. |
+| `external` | no | `boolean` | Opens elsewhere: the default renderer adds `target="_blank"` and `rel="noopener noreferrer"`. |
 
 ### `resolveContextActions`
 

@@ -40,14 +40,16 @@ export interface OrderEvent {
 
 export interface OrderStatusCardProps extends Omit<ComponentProps<typeof ContentBlock>, "children"> {
 	orderNumber: string
+	/** Drives the chip's tone. There is no tone override. */
 	status: OrderStatus
 	/** Oldest first, so "latest complete" and "next" are found by position. */
 	events: OrderEvent[]
 	/** Already formatted. */
 	eta?: string
 	/**
-	 * Opens the full event list on first render. Closed by default: the panel above
-	 * already summarises it.
+	 * Opens the full event list on first render. Closed by default: the panel above already
+	 * says what just happened, what is next and when it lands, and the list repeats two of
+	 * the three.
 	 */
 	defaultHistoryOpen?: boolean
 	strings?: Partial<OrderStatusStrings>
@@ -129,6 +131,10 @@ export interface OrderTimelineProps extends Omit<ComponentProps<typeof ContentBl
 	events: OrderTimelineEvent[]
 }
 
+/**
+ * An order’s events on the shared rail, for a surface that wants the history without
+ * OrderStatusCard’s facts panel around it.
+ */
 export function OrderTimeline({ events, className, ...props }: OrderTimelineProps) {
 	const items: TimelineItem[] = events.map((event) => ({
 		id: event.id,

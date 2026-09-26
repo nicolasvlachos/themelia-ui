@@ -18,15 +18,7 @@ export function SeparatorPage() {
 			/>
 
 			<Example id="separator-api" title="API">
-				<PropTable owner="Separator"
-					rows={[
-						{ name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Which way the rule runs. A vertical separator needs a height from its container." },
-						{ name: "variant", type: '"solid" | "dashed" | "dotted"', default: '"solid"', description: "How the rule is drawn. Structural, not semantic — a dashed rule is the same divider, drawn as provisional." },
-						{ name: "thickness", type: "string | number", description: "Per-rule override of `--separator-thickness`. A number is read as pixels." },
-						{ name: "label", type: "ReactNode", description: "Text set into a gap in the rule. Drops the separator role, because the rule is then decoration around real text." },
-						{ name: "aria-hidden", type: "boolean", description: "Set true to hide a decorative rule from assistive technology. Unlabelled separators otherwise expose separator semantics." },
-					]}
-				/>
+				<PropTable owners={["Separator"]} />
 			</Example>
 		</ComponentPage>
 	)

@@ -23,17 +23,7 @@ export function PhoneInputPage() {
 			</Example>
 
 			<Example id="phone-input-api" title="API">
-				<PropTable owner="PhoneInput"
-					rows={[
-						{ name: "value / onChange", type: "string / ChangeEventHandler<HTMLInputElement>", description: "Read event.target.value in onChange. The national number, without the prefix." },
-						{ name: "prefix / onPrefixChange", type: "string", description: "The dial code, as its own channel." },
-						{ name: "prefixes", type: "CountryPrefixOption[]", description: "Which dial codes the column offers. DEFAULT_COUNTRY_PREFIXES is the built-in set." },
-						{ name: "defaultPrefix / disablePrefixSelector", type: "string / boolean", description: "Which code starts, and whether it can be changed — a form scoped to one country should not offer the list." },
-						{ name: "showCountryName / strings", type: "boolean / Partial<PhoneInputStrings>", description: "Whether the trigger names the country beside the code. `strings` carries the dial-code lane's placeholder and its accessible name." },
-						{ name: "normalizeOnBlur", type: "boolean", description: "Tidies spacing when focus leaves, rather than fighting the reader mid-entry." },
-						{ name: "invalid", type: "boolean", description: "The error surface. The message stays on the FormField." },
-					]}
-				/>
+				<PropTable owners={["PhoneInput"]} />
 			</Example>
 		</ComponentPage>
 	)
