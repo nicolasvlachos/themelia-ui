@@ -53,49 +53,63 @@ function classify(was, now) {
     return { level: 'BREAKING', what: `${was.kind} → ${now.kind}` }
   }
 
-  if (JSON.stringify(was.extends ?? []) !== JSON.stringify(now.extends ?? [])) {
-    return {
-      level: 'BREAKING',
-      what: `inherited contract: ${(was.extends ?? []).join(', ') || 'none'} → ${(now.extends ?? []).join(', ') || 'none'}`,
-    }
+  const wasExtends = was.extends ?? []
+  const nowExtends = now.extends ?? []
+  if (JSON.stringify(wasExtends) !== JSON.stringify(nowExtends)) {
+    const what = `inherited contract: ${wasExtends.join(', ') || 'none'} → ${nowExtends.join(', ') || 'none'}`
+    if (!wasExtends.every((entry) => nowExtends.includes(entry))) return { level: 'BREAKING', what }
+    /*
+     * Every entry kept, one or more gained: an interface cannot extend a type that conflicts
+     * with what it already inherits, so it gained members or restated them. Which one takes
+     * a person; the type's own members are still checked for breaks.
+     */
+    const members = classifyMembers(was, now)
+    return members?.level === 'BREAKING' ? members : { level: 'review', what }
   }
 
-  /* Compare members only when both records have them: no members is missing detail, not {}. */
-  if (was.members && now.members) {
-    const wasMembers = was.members
-    const nowMembers = now.members
-    const broken = []
-    const additive = []
-
-    for (const [name, member] of Object.entries(wasMembers)) {
-      const next = nowMembers[name]
-      if (!next) {
-        broken.push(`${name} removed`)
-        continue
-      }
-      /* Optional → required breaks everyone who omitted it. The reverse breaks nobody. */
-      if (!member.optional && next.optional) additive.push(`${name} became optional`)
-      else if (member.optional && !next.optional) broken.push(`${name} became required`)
-      if (member.type !== next.type) broken.push(`${name}: ${member.type} → ${next.type}`)
-    }
-
-    for (const [name, member] of Object.entries(nowMembers)) {
-      if (wasMembers[name]) continue
-      /* A new REQUIRED member is a break for anyone constructing the object themselves. */
-      if (member.optional) additive.push(`${name} added`)
-      else broken.push(`${name} added as required`)
-    }
-
-    if (broken.length > 0) return { level: 'BREAKING', what: broken.slice(0, 3).join('; ') }
-    if (additive.length > 0) return { level: 'additive', what: additive.slice(0, 3).join('; ') }
-    return null
-  }
+  const members = classifyMembers(was, now)
+  if (members !== undefined) return members
 
   if (was.signature !== now.signature) {
     /* Widening a parameter or returning a supertype is compatible; telling which needs a person. */
     return { level: 'review', what: `${was.signature ?? '?'} → ${now.signature ?? '?'}` }
   }
 
+  return null
+}
+
+/**
+ * Member-level changes, or `undefined` when a record has no members to compare: no members is
+ * missing detail, not an empty type.
+ */
+function classifyMembers(was, now) {
+  if (!was.members || !now.members) return undefined
+  const wasMembers = was.members
+  const nowMembers = now.members
+  const broken = []
+  const additive = []
+
+  for (const [name, member] of Object.entries(wasMembers)) {
+    const next = nowMembers[name]
+    if (!next) {
+      broken.push(`${name} removed`)
+      continue
+    }
+    /* Optional → required breaks everyone who omitted it. The reverse breaks nobody. */
+    if (!member.optional && next.optional) additive.push(`${name} became optional`)
+    else if (member.optional && !next.optional) broken.push(`${name} became required`)
+    if (member.type !== next.type) broken.push(`${name}: ${member.type} → ${next.type}`)
+  }
+
+  for (const [name, member] of Object.entries(nowMembers)) {
+    if (wasMembers[name]) continue
+    /* A new REQUIRED member is a break for anyone constructing the object themselves. */
+    if (member.optional) additive.push(`${name} added`)
+    else broken.push(`${name} added as required`)
+  }
+
+  if (broken.length > 0) return { level: 'BREAKING', what: broken.slice(0, 3).join('; ') }
+  if (additive.length > 0) return { level: 'additive', what: additive.slice(0, 3).join('; ') }
   return null
 }
 

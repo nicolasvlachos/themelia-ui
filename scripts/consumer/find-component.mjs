@@ -72,11 +72,15 @@ const termHits = (queryTerms, corpus) => {
   ).length
 }
 
-/* Words in nearly every guidance sentence; a length cut-off would also drop `row`, `tab`, `nav`. */
+/*
+ * Words in nearly every guidance sentence or doc comment, and `component`, which names every
+ * entry in a component catalogue. A length cut-off would also drop `row`, `tab`, `nav`.
+ */
 const STOPWORDS = new Set([
   'the', 'and', 'for', 'not', 'but', 'its', 'with', 'that', 'this', 'from', 'into', 'when',
   'where', 'which', 'what', 'you', 'your', 'are', 'was', 'has', 'have', 'one', 'two', 'use',
   'used', 'using', 'than', 'then', 'them', 'they', 'there', 'their', 'each', 'any', 'all',
+  'such', 'component', 'components',
 ])
 
 /**

@@ -111,3 +111,22 @@ test("an added optional member is additive, not breaking", (t) => {
 	// Match a finding's suffix: the help footer mentions BREAKING on every failed run.
 	assert.doesNotMatch(result.out, /— BREAKING/)
 })
+
+test("an inherited contract that keeps every entry and gains one is reviewed, not breaking", (t) => {
+	const result = changedDeclarations(t,
+		"interface Base { label?: string } export interface Props extends Base { tone?: string }",
+		'interface Base { label?: string } export interface Props extends Base, Pick<Base, "label"> { tone?: string }',
+	)
+	assert.equal(result.status, 1, "the gate still stops so the change is reviewed")
+	assert.match(result.out, /Props: inherited contract: .* — review/)
+	assert.doesNotMatch(result.out, /— BREAKING/)
+})
+
+test("an inherited contract that drops an entry is BREAKING", (t) => {
+	const result = changedDeclarations(t,
+		"interface Base { label?: string } interface Extra { tone?: string } export interface Props extends Base, Extra {}",
+		"interface Base { label?: string } interface Extra { tone?: string } export interface Props extends Base {}",
+	)
+	assert.equal(result.status, 1, result.out)
+	assert.match(result.out, /Props: inherited contract: Base, Extra → Base — BREAKING/)
+})
