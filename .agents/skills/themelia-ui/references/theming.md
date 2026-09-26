@@ -256,8 +256,9 @@ from shadcn, so custom-property names collide: `--radius-sm`, `--text-xs` throug
 `--text-2xl`, `--shadow-*`, `--font-sans/serif/mono`, `--leading-*`, `--tracking-*`,
 `--ease-*` and `--animate-*`. Tailwind emits its defaults onto `:root` inside `@layer theme`,
 and when the kit's layers are declared first, that layer sits **above** the kit's `tokens`
-layer. The kit's JavaScript imports `core.css` too, so which comes first depends on your
-bundler. Without the bridge, Tailwind can win every shared name, among them:
+layer. Every module stylesheet imports `core.css` too, so which comes first depends on the
+order your application imports its CSS. Without the bridge, Tailwind can win every shared
+name, among them:
 
 | what | kit | Tailwind takes it to |
 | --- | --- | --- |

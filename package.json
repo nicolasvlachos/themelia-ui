@@ -28,8 +28,7 @@
     "node": ">=20.19.0"
   },
   "sideEffects": [
-    "**/*.css",
-    "./dist/styles.js"
+    "**/*.css"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -435,10 +434,6 @@
     "./primitives": {
       "types": "./dist/components/primitives/index.d.ts",
       "default": "./dist/primitives.js"
-    },
-    "./styles": {
-      "types": "./dist/styles.d.ts",
-      "default": "./dist/styles.js"
     },
     "./theming": {
       "types": "./dist/lib/theming/index.d.ts",

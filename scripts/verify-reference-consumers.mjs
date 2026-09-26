@@ -69,8 +69,8 @@ function policyProblems(dir) {
 }
 
 /*
- * Built for the server with Vite, then run. Not vite-node: it externalises node_modules, so
- * Node's loader meets the kit's `.css` imports and throws.
+ * Built for the server with Vite, then run. The kit stays external, so Node loads it from
+ * node_modules as a server does; the application's own stylesheet imports are Vite's.
  */
 const SSR_CONFIG = `
 import { defineConfig } from "vite"
@@ -78,7 +78,6 @@ import react from "@vitejs/plugin-react"
 
 export default defineConfig({
   plugins: [react()],
-  ssr: { noExternal: ["themelia-ui"] },
   build: { ssr: "ssr-probe.tsx", outDir: "dist-ssr", emptyOutDir: true },
 })
 `
@@ -162,10 +161,7 @@ for (const example of EXAMPLES) {
    * ssr-surface.test.tsx covers each family alone.
    */
   writeFileSync(join(project, 'ssr-probe.tsx'), SSR_PROBE)
-  /*
-   * Into the copy only: `ssr.noExternal` (without it Node throws on the kit's `.css`
-   * imports) belongs to the consumer's framework, not to an example a reader would copy.
-   */
+  /* Into the copy only: a server build belongs to the consumer's framework, not to the example. */
   writeFileSync(join(project, 'vite.ssr.config.ts'), SSR_CONFIG)
   try {
     run('npx', ['vite', 'build', '--config', 'vite.ssr.config.ts', '--logLevel', 'error'])

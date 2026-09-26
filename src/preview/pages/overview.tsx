@@ -91,13 +91,13 @@ export function OverviewPage() {
 						Installation
 					</Heading>
 					<Text type="secondary">
-						One stylesheet import at the application root. Everything after that is plain CSS —
-						no build step, no PostCSS plugin required to read it.
+						One stylesheet import at the application root, or one per module you use. Everything
+						after that is plain CSS — no build step, no PostCSS plugin required to read it.
 					</Text>
 				</div>
 				<CodeBlock
-					code={`import "themelia-ui/styles"
-import { UIProvider } from "themelia-ui"
+					code={`import "themelia-ui/style.css"
+import { UIProvider } from "themelia-ui/ui-provider"
 
 export function App({ children }) {
   return (

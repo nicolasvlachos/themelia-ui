@@ -40369,7 +40369,6 @@
         "signature": "Extract<TextProps[\"type\"], \"inherit\" | \"main\" | \"secondary\">"
       }
     },
-    "./styles": {},
     "./theming": {
       "deriveThemeElevation": {
         "kind": "callable",

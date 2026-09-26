@@ -1,15 +1,14 @@
 /*
  * Runs consumers against the `npm pack` tarball (in a tmpdir) — what type-checking cannot see.
- * Fixtures: peer-leak (general subpaths load with no optional peers), admin, ssr, two-roots,
- * vite (bundled CSS layering, narrow and deduplicated), tailwind (layer order), tiptap (with
- * peers, in a separate unpacked copy so its links cannot reach the absent-peer fixtures).
- * The Node fixtures preload scripts/lib/stub-css.mjs, standing in for the framework that loads
- * each entry's stylesheets. Fails if any fixture fails.
+ * Fixtures: peer-leak (general subpaths load with no optional peers), require (the admin
+ * profile from CommonJS), ssr, two-roots, vite (bundled CSS layering, narrow and
+ * deduplicated), tailwind (layer order), tiptap (with peers, in a separate unpacked copy so
+ * its links cannot reach the absent-peer fixtures). The Node fixtures run the package
+ * unbundled, as a server render does. Fails if any fixture fails.
  */
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
 
 const ANSI = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g')
 import { tmpdir } from 'node:os'
@@ -51,13 +50,13 @@ const clean = manifest.families.filter(
 const admin = manifest.families.filter((family) => family.profile === 'admin')
 
 const failures = []
-const stubCss = pathToFileURL(resolve('scripts/lib/stub-css.mjs')).href
 
-function run(label, source, directory = root) {
-  const file = `${directory}/${label}.mjs`
+/* `extension` is `cjs` for a CommonJS consumer; every other fixture is an ES module. */
+function run(label, source, directory = root, extension = 'mjs') {
+  const file = `${directory}/${label}.${extension}`
   writeFileSync(file, source)
   try {
-    const out = execFileSync('node', ['--import', stubCss, file], { encoding: 'utf8', cwd: directory })
+    const out = execFileSync('node', [file], { encoding: 'utf8', cwd: directory })
     return out.trim()
   } catch (error) {
     /* The useful line: Node's stack starts with `throw err;` and a caret. */
@@ -81,13 +80,15 @@ run(
     'console.log(subpaths.length)\n',
 )
 
-/* 2 — the admin profile loads too. */
+/* 2 — the admin profile loads too, from CommonJS: Node 20.19, the `engines` floor, requires ESM. */
 run(
-  'admin',
+  'require',
   `const subpaths = ${JSON.stringify(admin.map((f) => `${name}${f.export.slice(1)}`))}\n` +
-    'for (const subpath of subpaths) await import(subpath)\n' +
-    `await import(${JSON.stringify(name)})\n` +
+    'for (const subpath of subpaths) require(subpath)\n' +
+    `require(${JSON.stringify(name)})\n` +
     'console.log("ok")\n',
+  root,
+  'cjs',
 )
 
 /* 3 — server rendering, through the provider and a component that draws. */
@@ -141,35 +142,14 @@ function layerOrder(css) {
   }
   return seen
 }
-function assertLayerOrder(css, what, required = ['tokens', 'theming', 'base', 'components']) {
+function assertLayerOrder(css, what) {
   const order = layerOrder(css)
-  const missing = required.filter((layer) => !order.includes(layer))
+  const missing = ['tokens', 'theming', 'base', 'components'].filter((layer) => !order.includes(layer))
   if (missing.length) throw new Error(`${what}: the bundle has no ${missing.join(', ')} layer — core.css was dropped`)
   const expected = LAYERS.filter((layer) => order.includes(layer))
   if (order.join() !== expected.join()) {
     throw new Error(`${what}: the bundle declares its layers as ${order.join(' < ')}, not ${expected.join(' < ')}`)
   }
-}
-
-/* A one-file Vite app over the packed package, built; returns the emitted CSS. */
-function buildViteApp(dir, main) {
-  mkdirSync(`${root}/${dir}/src`, { recursive: true })
-  writeFileSync(
-    `${root}/${dir}/index.html`,
-    '<!doctype html><html><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>',
-  )
-  writeFileSync(`${root}/${dir}/src/main.tsx`, main.join('\n'))
-  writeFileSync(
-    `${root}/${dir}/vite.config.mjs`,
-    'import react from "@vitejs/plugin-react"\nexport default { plugins: [react()], logLevel: "error" }\n',
-  )
-  execFileSync('node', [resolve('node_modules/vite/bin/vite.js'), 'build'], {
-    cwd: `${root}/${dir}`,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-  })
-  const css = readdirSync(`${root}/${dir}/dist/assets`).filter((file) => file.endsWith('.css'))
-  return css.map((file) => readFileSync(`${root}/${dir}/dist/assets/${file}`, 'utf8')).join('')
 }
 
 /*
@@ -239,7 +219,7 @@ try {
   const js = assets.find((file) => file.endsWith('.js'))
   const css = assets.find((file) => file.endsWith('.css'))
   if (!js) throw new Error('no JS emitted')
-  if (!css) throw new Error('no CSS emitted — the entry did not carry its stylesheet')
+  if (!css) throw new Error('no CSS emitted — the module stylesheets did not reach the bundle')
   const bundledCss = readFileSync(`${root}/app/dist/assets/${css}`, 'utf8')
   assertLayerOrder(bundledCss, 'family sheets')
   /*
@@ -310,45 +290,6 @@ try {
     lines.find((line) => /^\w*Error/.test(line)) ??
     lines[0]
   failures.push(`vite          ${useful.slice(0, 160)}`)
-}
-
-/*
- * 5b — the setups a tree-shaking bundler breaks when a re-export module holds the only
- * `import "../core.css"`: `sideEffects: ["**\/*.css"]` lets Vite 8, Rspack and webpack 5
- * drop it, core and all. A JS-only import, the README's order (components first, then
- * `style.css`) and the `themelia-ui/styles` entry, which is nothing but a stylesheet import,
- * must each still ship the tokens, a typeface and the layers in order.
- */
-for (const [dir, what, main, required] of [
-  ['app-js-only', 'JS only', [
-    `import { createRoot } from "react-dom/client"`,
-    `import { Button } from "${name}/base/buttons"`,
-    'createRoot(document.getElementById("root")!).render(<Button>Save</Button>)',
-    '',
-  ]],
-  ['app-js-first', 'JS, then style.css', [
-    `import { createRoot } from "react-dom/client"`,
-    `import { Button } from "${name}/base/buttons"`,
-    `import { UIProvider } from "${name}/ui-provider"`,
-    `import "${name}/style.css"`,
-    'createRoot(document.getElementById("root")!).render(<UIProvider><Button>Save</Button></UIProvider>)',
-    '',
-  ]],
-  ['app-styles-entry', 'the styles entry', [
-    `import "${name}/styles"`,
-    'document.body.dataset.ready = "1"',
-    '',
-  ], ['tokens', 'theming', 'base']],
-]) {
-  try {
-    const css = buildViteApp(dir, main)
-    assertLayerOrder(css, what, required)
-    if (!/--primary\s*:/.test(css)) throw new Error(`${what}: the bundle defines no tokens`)
-    if (!css.includes('@font-face')) throw new Error(`${what}: the bundle loads no typeface`)
-  } catch (error) {
-    const raw = `${error.stdout ?? ''}${error.stderr ?? ''}${error.message ?? ''}`.replace(ANSI, '').trim()
-    failures.push(`vite          ${raw.split('\n').find((line) => line.includes(what)) ?? raw.split('\n')[0]}`.slice(0, 200))
-  }
 }
 
 /*
@@ -558,7 +499,7 @@ if (failures.length) {
 }
 console.log(
   `PASS verify consumer-fixtures — ${generalList.length} peer-free general subpaths and ` +
-    `${admin.length} admin subpaths load from a packed tarball without optional peers; ` +
+    `${admin.length} admin subpaths load from a packed tarball without optional peers, the latter through require(); ` +
     `SSR, two independent roots and a Vite build all succeed; Tailwind: ${tailwind}; ` +
     'the separate TipTap consumer loads four subpaths, server-renders three editor surfaces and bundles their JS and CSS.',
 )

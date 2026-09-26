@@ -155,6 +155,9 @@ import { Button } from "themelia-ui/base/buttons"
 import "themelia-ui/base/buttons.css"
 ```
 
+**The JavaScript imports no CSS.** A component whose module stylesheet is not imported
+renders unstyled.
+
 **The stylesheet is split per module.** 90 of 97 modules ship one; a module whose components draw nothing has none. Each module stylesheet imports
 `core.css` itself, so the tokens, themes, and cascade layer order arrive automatically.
 Import `core.css` on its own only when application CSS needs the token contract before

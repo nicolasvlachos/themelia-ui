@@ -49,6 +49,13 @@
       "to": "themelia-ui/features/combobox",
       "mechanical": true,
       "why": "The entry point only re-exported SuggestionsCombobox, useSuggestions, defaultSuggestionsStrings and their types (MaybePromise, SuggestionsComboboxProps, SuggestionsErrorContext, SuggestionsFetchContext, SuggestionsStrings, UseSuggestionsConfig, UseSuggestionsResult) from features/combobox, where they live. Every name is published there unchanged, so this is a pure specifier rewrite; themelia-ui/features/suggestions.css goes too, and themelia-ui/features/combobox.css styles the picker."
+    },
+    {
+      "kind": "subpath",
+      "from": "themelia-ui/styles",
+      "to": "themelia-ui/core.css",
+      "mechanical": true,
+      "why": "The JavaScript imports no CSS, so the entry that only imported the core stylesheet is gone; import the stylesheet itself."
     }
   ],
   "provider": [
@@ -714,10 +721,18 @@
     {
       "kind": "behaviour",
       "from": "A CommonJS build behind the require condition, carrying no stylesheet imports",
-      "to": "ES modules only; every entry imports its own CSS",
+      "to": "ES modules only",
       "mechanical": false,
-      "why": "The CommonJS build doubled every entry and declaration file to serve code that runs outside a bundler; bundlers, frameworks and test runners all load ES modules.",
-      "action": "Import the package from ES modules, or through a bundler that loads it for CommonJS code. Where Node runs it unbundled, let the tool process it: `ssr.noExternal` in Vite, `test.server.deps.inline` in Vitest; in Jest, exempt it in `transformIgnorePatterns` and map `\\.css$` to a stub."
+      "why": "The CommonJS build doubled every entry and declaration file. With no stylesheet imports in the JavaScript, Node loads the ES modules as they are.",
+      "action": "Import the package from ES modules; CommonJS code on Node 20.19 or later can `require()` it. In Jest, exempt it in `transformIgnorePatterns`."
+    },
+    {
+      "kind": "behaviour",
+      "from": "JavaScript entries that imported their own stylesheets",
+      "to": "JavaScript that imports no CSS, with each module's stylesheet imported beside it",
+      "mechanical": false,
+      "why": "One way to load the styles. A bundler could drop a stylesheet together with an unused re-export module, and Node could not run an entry that imported one.",
+      "action": "Import each module's stylesheet beside its JavaScript, as in `import \"themelia-ui/base/buttons.css\"`, or `themelia-ui/style.css` once; a component whose stylesheet is not imported renders unstyled. `ssr.noExternal` and `test.server.deps.inline` entries added for the kit can go."
     }
   ],
   "data": [

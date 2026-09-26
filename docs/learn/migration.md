@@ -3,14 +3,43 @@
 What changes between versions, what to do when you upgrade, and which changes a stable major
 allows.
 
-## Upgrading to 2.0.2
+## Upgrading to 3.0
 
-A fix release with no API change. `themelia-ui/primitives.css` builds under Tailwind v4's
-resolver (`@tailwindcss/cli`, `@tailwindcss/postcss`, `@tailwindcss/vite` before 4.3), and a
-Vite 8, Rspack or webpack 5 production build keeps the core tokens and the cascade-layer
-order when components are imported before, or without, a stylesheet, and keeps
-`import "themelia-ui/styles"`. If you switched to `themelia-ui/style.css` to work around
-either, you can switch back.
+3.0 changes how the package loads, and gives a few props one shape.
+
+**Stylesheets are imported, never implied.** The package is ES modules only, and its
+JavaScript imports no CSS. Import each module's stylesheet beside its JavaScript, or
+`themelia-ui/style.css` once; a component whose stylesheet is not imported renders unstyled.
+`themelia-ui/styles` is gone: import `themelia-ui/core.css` instead. In exchange, Node loads
+the package as it is. Server rendering and test runners need no configuration for it, so
+`ssr.noExternal` and `test.server.deps.inline` entries added for the kit can go, and
+CommonJS code on Node 20.19 or later can `require()` it. Jest still needs the package
+exempted in `transformIgnorePatterns`.
+
+TypeScript flags the rest:
+
+- `Scope` takes `render` instead of `as`: `<Scope vars={vars} render={<section />}>`.
+- `Badge`, `Alert`, `Item`, `ItemMedia`, `InputGroupAddon` and `InputGroupButton` no longer
+  accept `null` for a variant prop; leave the prop out for the default.
+- Every `renderLink` is a `LinkRenderer`: it receives `LinkRenderProps` and returns one
+  element. `ActionLinkRenderer`, `ActionLinkRenderProps` and `ResourceCellLinkProps` are
+  gone. `Pagination` builds its addresses with `pageHref={(page) => …}`, and its
+  `renderLink` receives the href already built.
+
+A tool that reads the published catalogue (`docs/generated/component-index.json`,
+`recipes.json`, the profile records) reads `modules`, `tier` and `dependsOn` where it read
+`families`, `layer` and `dependsOnFamilies`, and passes `--module=` and `--tier=` to
+`find-component.mjs`.
+
+Run the codemod from your project, dry first. It rewrites `themelia-ui/styles`:
+
+```sh
+node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/
+node node_modules/themelia-ui/scripts/consumer/codemod.mjs src/
+```
+
+Every change with its replacement is listed in the
+[migration reference](../generated/migration.md).
 
 ## Upgrading to 2.0.1
 

@@ -47,38 +47,19 @@ The package ships three kinds of stylesheet:
 [`imports.md`](imports.md) gives each module's stylesheet path. A module whose
 components draw nothing has no stylesheet.
 
-### With a bundler
+### Import the stylesheets
 
-The package is ES modules, and its entries import their own CSS: every entry imports
-`core.css`, and every chunk imports the stylesheets of the components it holds. In Vite,
-webpack, Rspack, Next.js and other bundlers that handle CSS imports, importing a component is
-enough to style it.
+The JavaScript imports no CSS. Import each module's stylesheet beside its JavaScript, as the
+examples in these docs do, or `style.css` once. Vite, webpack, Rspack, Next.js and other
+bundlers that handle CSS imports include each file once, however many modules import it. A
+component whose stylesheet is not imported renders unstyled.
 
-The examples in these docs also import the module stylesheet beside the component. It names
-the same files, which the bundler includes once, and it keeps the CSS a page loads visible in
-application source.
+### In Node
 
-### Where Node runs the package
-
-Node cannot load a stylesheet: run unbundled, an entry's first `.css` import throws
-`ERR_UNKNOWN_FILE_EXTENSION`. Let the tool that runs the code process the package instead.
-
-- **Server rendering.** Let the framework bundle the package for the server (in Vite,
-  `ssr: { noExternal: ["themelia-ui"] }`). The stylesheets still have to reach the document,
-  so import them where your framework collects global CSS, such as its root layout.
-- **Test runners.** Vitest leaves dependencies in `node_modules` to Node. Inline the package
-  so Vite transforms it; Vitest then replaces its CSS with empty modules:
-
-  ```ts fragment — vitest.config.ts, merged into your existing config
-  import { defineConfig } from "vitest/config"
-
-  export default defineConfig({
-    test: { server: { deps: { inline: ["themelia-ui"] } } },
-  })
-  ```
-
-  Jest transforms nothing in `node_modules` by default. Exempt the package in
-  `transformIgnorePatterns`, and map `\.css$` to a stub in `moduleNameMapper`.
+The package is ES modules, and its JavaScript imports no CSS, so Node loads it as it is:
+server rendering and test runners need no configuration for it, and CommonJS code on Node
+20.19 or later can `require()` it. Jest is the exception, because it transforms nothing in
+`node_modules` by default: exempt the package in `transformIgnorePatterns`.
 
 ### `core.css` on its own
 
@@ -86,7 +67,6 @@ Every module stylesheet begins by importing `core.css`, so a component never nee
 separate core import to render correctly. Import `core.css` on its own when application CSS
 uses the tokens on a page without kit components, or to place the kit's layers next to
 another layered stylesheet, as in the [Tailwind setup](theming.md#tailwind-css-v4).
-`import "themelia-ui/styles"` loads the same stylesheet from JavaScript.
 
 ### Overriding the kit
 

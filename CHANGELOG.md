@@ -4,11 +4,14 @@
 
 ### Breaking
 
-- The package is ES modules only. The CommonJS build and its `.cjs` and `.d.cts` files are
-  gone, each export has one JavaScript target, and the package is about 2 MB smaller. Every
-  entry imports its own CSS, so where Node runs the package unbundled, let the tool that runs
-  it process the package: `ssr.noExternal` in Vite, `test.server.deps.inline` in Vitest; in
-  Jest, exempt it in `transformIgnorePatterns` and map `\.css$` to a stub.
+- The package is ES modules only, and its JavaScript imports no CSS. Import each module's
+  stylesheet beside its JavaScript, or `style.css` once: a component whose stylesheet is not
+  imported renders unstyled. `themelia-ui/styles` is gone; import `themelia-ui/core.css`. The
+  CommonJS build and its `.cjs` and `.d.cts` files are gone too, each export has one
+  JavaScript target, and the package is about 2 MB smaller. In exchange, Node loads the
+  package as it is: server rendering and test runners need no configuration for it, and
+  CommonJS code on Node 20.19 or later can `require()` it. Jest still needs the package
+  exempted in `transformIgnorePatterns`.
 - `Scope` takes `render` instead of `as`, like every component that can become a different
   element: `<Scope vars={vars} as="section">` becomes
   `<Scope vars={vars} render={<section />}>`. It also passes the element's own props through
@@ -41,6 +44,13 @@
   `features/table`, and `layout/auth`, `header`, `navigation`, `page`, `settings`, `sidebar`
   and `workspace`.
 
+### Changed
+
+- The packaged skill is about 110 KB instead of 2.4 MB. It no longer copies the per-module
+  API references and the component index, which ship under `docs/generated`; it names them
+  there, and `find-component.mjs` reads the index from there. Re-run the skill installer to
+  replace an installed copy.
+
 ### Fixed
 
 - `Time`, `DateTime` and comment timestamps follow the provider's `dates.timeFormat`; they
@@ -49,32 +59,13 @@
   tooltip text.
 - A disabled `SideNav` entry renders without a destination; the keyboard could still reach
   and follow it.
-
-## 2.0.2 — 2026-09-26
-
-Fixes two packaging defects present since 1.0.3 and one scoping defect, and ships a smaller
-skill. No API changes.
-
 - `themelia-ui/primitives.css` compiles under Tailwind v4. It imported its neighbours by bare
   file name, which `@tailwindcss/cli`, `@tailwindcss/postcss` and `@tailwindcss/vite` before
   4.3 resolve as package names ("Can't resolve 'core.css'"). Its imports are now relative.
-- Core styles load with every component in bundlers that drop unused re-export modules:
-  Vite 8, Rspack (Rsbuild) and webpack 5 production builds. In those builds a component
-  imported without a stylesheet had no tokens or typefaces, and one imported before
-  `style.css` or its module stylesheet lost every rule to the base reset (a Button rendered
-  with no padding, border or fill). Every chunk that carries component styles now imports
-  `core.css` itself, and `import "themelia-ui/styles"` is marked as a side effect.
 - A nested `UIScope` keeps what an enclosing provider or scope set through `config`:
   `theme.colors`, `theme.vars`, type sizes and fonts. Semantic colours are declared again at
   every scope boundary, so the nested scope painted the kit's defaults while `useUIConfig()`
   reported the merged values. Each scope now writes the merged overrides on its element.
-- The packaged skill is 136 KB instead of 2.4 MB. It no longer copies the per-module API
-  references and the component index, which ship under `docs/generated`; it names them there,
-  and `find-component.mjs` reads the index from there with unchanged output. Re-run the skill
-  installer to replace an installed copy.
-
-If you switched to `themelia-ui/style.css` to work around either packaging defect, you can
-switch back.
 
 ## 2.0.1 — 2026-09-25
 

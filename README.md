@@ -87,16 +87,11 @@ Three kinds of stylesheet are published:
 A module whose components draw nothing has no stylesheet. The
 [import table](https://unpkg.com/themelia-ui/docs/generated/imports.md) lists the JavaScript and CSS path of every module.
 
-### In a browser bundle
+### Import the stylesheets
 
-The package is ES modules, and its entries import their own CSS: each module entry that has
-styles imports `core.css`, and the code it loads imports the stylesheets it uses. In a bundler
-that handles CSS imports, such as Vite, webpack or Rspack, importing a component brings its
-styles with it.
-
-Import the stylesheets explicitly as well: `style.css` once, or each module's sheet beside
-its import. It names the same files, which the bundler includes once, and it keeps the CSS a
-page loads visible in your source:
+The JavaScript imports no CSS. Import `style.css` once, or each module's stylesheet beside its
+import; a bundler that handles CSS imports, such as Vite, webpack or Rspack, includes each file
+once however many modules import it:
 
 ```tsx
 import { Button } from "themelia-ui/base/buttons"
@@ -105,26 +100,15 @@ import { Page } from "themelia-ui/layout/page"
 import "themelia-ui/layout/page.css"
 ```
 
-Import `core.css` on its own only when your own CSS needs the theme variables before any
-module stylesheet loads.
+A component whose stylesheet is not imported renders unstyled. Import `core.css` on its own
+only when your own CSS needs the theme variables before any module stylesheet loads.
 
 ### On the server and in tests
 
-Node cannot load a stylesheet: run by Node directly, the package's stylesheet imports fail
-with `ERR_UNKNOWN_FILE_EXTENSION`. Have the tool that runs your server or tests process the
-package instead:
-
-```ts
-// vite.config.ts: server rendering with Vite, or a framework built on it
-export default defineConfig({ ssr: { noExternal: ["themelia-ui"] } })
-
-// vitest.config.ts
-export default defineConfig({ test: { server: { deps: { inline: ["themelia-ui"] } } } })
-```
-
-Jest transforms nothing in `node_modules` by default: exempt the package in
-`transformIgnorePatterns` and map `\.css$` to a stub in `moduleNameMapper`. The server needs
-only the modules to load; the styles still reach the page through the client bundle.
+The package is ES modules, and because its JavaScript imports no CSS, Node loads it as it is.
+Server rendering and Vitest need no configuration for it, and CommonJS code on Node 20.19 or
+later can `require()` it. Jest transforms nothing in `node_modules` by default: exempt the
+package in `transformIgnorePatterns`.
 
 ## Imports and tiers
 

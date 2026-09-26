@@ -69,9 +69,8 @@ const importLines = [
   'siblings do not exist, because one specifier would pull an entire tier and every optional',
   'peer inside it. The root carries the provider and the display primitives, both peer-free.',
   '',
-  'Import the stylesheet column beside the exact JavaScript subpath. A bundler also finds',
-  "each module's rules through the import graph; the explicit form names the same files and",
-  'makes the selected CSS visible in application source.',
+  'Import the stylesheet column beside the exact JavaScript subpath, or `style.css` once. The',
+  'JavaScript imports no CSS, so a module without its stylesheet renders unstyled.',
   '',
 ]
 for (const profile of ['general', 'admin']) {

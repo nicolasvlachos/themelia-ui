@@ -6,9 +6,8 @@ Every module has one subpath. There are no tier barrels: `themelia-ui/base` and 
 siblings do not exist, because one specifier would pull an entire tier and every optional
 peer inside it. The root carries the provider and the display primitives, both peer-free.
 
-Import the stylesheet column beside the exact JavaScript subpath. A bundler also finds
-each module's rules through the import graph; the explicit form names the same files and
-makes the selected CSS visible in application source.
+Import the stylesheet column beside the exact JavaScript subpath, or `style.css` once. The
+JavaScript imports no CSS, so a module without its stylesheet renders unstyled.
 
 ## general profile — 95 modules
 

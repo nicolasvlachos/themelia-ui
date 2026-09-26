@@ -18,10 +18,9 @@ if (!existsSync(DIST)) {
 
 /**
  * Where vite-plugin-dts put an entry's declaration. It mirrors src/ while the bundle is flat,
- * so derive it from the manifest's `source`. `styles` is not a family and stays named.
+ * so derive it from the manifest's `source`.
  */
 function typesFor(entry) {
-  if (entry === 'styles') return existsSync('dist/styles.d.ts') ? 'dist/styles.d.ts' : null
   const source = manifest.families.find((family) => family.id === entry)?.source
   if (!source) return null
   const candidate = source.replace(/^src\//, `${DIST}/`).replace(/\.tsx?$/, '.d.ts')
@@ -32,7 +31,7 @@ function typesFor(entry) {
  * Families only, from the manifest rather than a dist/ walk (entries can sit at any depth).
  * Layer barrels are not published: one specifier would reach every optional peer in a layer.
  */
-const entries = ['styles', ...manifest.families.map((family) => family.id)]
+const entries = manifest.families.map((family) => family.id)
 
 const exportsMap = {}
 const missing = []
@@ -57,8 +56,8 @@ for (const entry of [...new Set(entries)].sort()) {
 exportsMap['./style.css'] = './dist/style.css'
 exportsMap['./styles/*'] = './dist/styles/*'
 /*
- * Exact module stylesheets for SSR frameworks and explicit imports (the JavaScript entries
- * already import their CSS). Each is an @import index over css/, so the bytes exist once.
+ * Each module's stylesheet, imported beside its JavaScript, which imports no CSS. Each is an
+ * @import index over css/, so the bytes exist once.
  */
 let cssTargets = 0
 for (const entry of [...new Set(entries)].sort()) {

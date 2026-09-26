@@ -2,9 +2,8 @@
 
 ## A component is unstyled
 
-Through a bundler, importing a component loads its CSS. If the styles still do not reach the
-page, import the module's stylesheet beside the JavaScript subpath, or `themelia-ui/style.css`
-once. `core.css` alone supplies tokens but no component rules. See
+The JavaScript imports no CSS. Import the module's stylesheet beside the JavaScript subpath,
+or `themelia-ui/style.css` once. `core.css` alone supplies tokens but no component rules. See
 [Loading the CSS](installation.md#loading-the-css).
 
 Overrides need no `!important` or selector escalation: the kit's rules are layered, and
@@ -12,15 +11,15 @@ unlayered application CSS beats them.
 
 ## Node throws on a `.css` import
 
-`ERR_UNKNOWN_FILE_EXTENSION` for a `.css` file means Node is running the package unbundled,
-usually during server rendering or in Vitest. Let the bundler process the package
-(`ssr.noExternal` in Vite, `test.server.deps.inline` in Vitest). See
-[Where Node runs the package](installation.md#where-node-runs-the-package).
+`ERR_UNKNOWN_FILE_EXTENSION` for a `.css` file means Node is running one of your own modules
+that imports a stylesheet, without a bundler. The kit's JavaScript imports none. Import the
+stylesheets where your bundler or framework processes CSS, or map `\.css$` to a stub in a
+test runner that runs your modules directly.
 
 ## Jest: `Cannot use import statement outside a module`
 
 The package is ES modules, and Jest transforms nothing in `node_modules` by default. Exempt
-the package in `transformIgnorePatterns`, and map `\.css$` to a stub in `moduleNameMapper`.
+the package in `transformIgnorePatterns`. See [In Node](installation.md#in-node).
 
 ## A subpath does not resolve
 

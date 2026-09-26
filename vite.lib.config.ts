@@ -47,8 +47,10 @@ function discoverEntries(): Record<string, string> {
 	) as { families: { id: string; source: string }[] }
 
 	const entries: Record<string, string> = {
-		// Imported for its side effect: the processed global stylesheet is emitted from here.
-		// It is not a family, so the manifest records it under `nonFamilyExports`.
+		/*
+		 * Builds the token and theming stylesheet that becomes `core.css`. Not published: its
+		 * JavaScript is empty, and `shipStyleSources` removes it.
+		 */
 		styles: resolve(root, "src/styles.ts"),
 	}
 	for (const family of manifest.families) {
@@ -90,13 +92,12 @@ function discoverEntries(): Record<string, string> {
  */
 function shipStyleSources(): Plugin {
 	/*
-	 * Chunk → the CSS it owns, collected while the bundle still knows. Rollup's own metadata
+	 * Entry → the CSS it reaches, collected while the bundle still knows. Rollup's own metadata
 	 * is the only reliable mapping: matching emitted filenames to entry names by hand breaks
 	 * the first time two families share a basename, and breaks silently — a component gets
 	 * someone else's stylesheet and nothing errors.
 	 */
 	const cssByEntry = new Map<string, string[]>()
-	const cssByChunk = new Map<string, string[]>()
 
 	return {
 		name: "ship-style-sources",
@@ -117,16 +118,11 @@ function shipStyleSources(): Plugin {
 				return [...own, ...chunk.imports.flatMap((next) => cssOf(next, seen))]
 			}
 
+			/* Per entry: what a family's published stylesheet must cover. */
 			for (const chunk of Object.values(bundle)) {
-				if (chunk.type !== "chunk") continue
-				/* Direct CSS, per chunk — what gets injected, so the bytes exist once. */
-				const own = [...((chunk as { viteMetadata?: { importedCss?: Set<string> } }).viteMetadata?.importedCss ?? [])]
-				if (own.length) cssByChunk.set(chunk.fileName, own)
-				/* Transitive CSS, per entry — what a family's published stylesheet must cover. */
-				if (chunk.isEntry) {
-					const css = [...new Set(cssOf(chunk.fileName))]
-					if (css.length) cssByEntry.set(chunk.name, css)
-				}
+				if (chunk.type !== "chunk" || !chunk.isEntry) continue
+				const css = [...new Set(cssOf(chunk.fileName))]
+				if (css.length) cssByEntry.set(chunk.name, css)
 			}
 		},
 
@@ -150,7 +146,7 @@ function shipStyleSources(): Plugin {
 			 * that is not a happy accident but an impossibility: a consumer importing two families
 			 * fixes the order by whichever they imported first. So `core.css` declares it, and
 			 * every family sheet contains only `@layer components { … }` — which is why core
-			 * must be imported before any of them, and why every entry imports it.
+			 * must be imported before any of them, and why every family sheet imports it first.
 			 */
 			const source = readFileSync(resolve(root, "src/styles/index.css"), "utf8")
 			const order = source.match(/@layer\s+([a-z,\s]+);/)?.[0]?.replace(/\s+/g, " ")
@@ -254,90 +250,13 @@ function shipStyleSources(): Plugin {
 			const bytes = (file: string) => statSync(resolve(root, "dist", file)).size
 
 			/*
-			 * Entries import their own CSS: a bundler resolves the import, and a consumer gets the
-			 * styles for exactly what they used.
+			 * The JavaScript imports no CSS: a consumer imports each module's stylesheet, or
+			 * `style.css`, so the entries run in Node as they are. The `styles` entry existed only
+			 * to build `core.css`, and its JavaScript is empty.
 			 */
-			/*
-			 * Core first, on every entry that has any CSS at all — including the ones whose own
-			 * chunk carries none.
-			 *
-			 * `base/buttons.js` is a thin facade; its rules live in a shared chunk. Injecting
-			 * only where a chunk has DIRECT css would leave the entry with no `core.css` import,
-			 * and the layer order would be fixed by whichever sheet a consumer's bundler happens
-			 * to place first — so the entry states it.
-			 */
-			let linked = 0
-			for (const entry of cssByEntry.keys()) {
-				if (entry === "styles") continue
-				const js = resolve(root, "dist", `${entry}.js`)
-				if (!existsSync(js)) continue
-				const up = entry.includes("/") ? "../".repeat(entry.split("/").length - 1) : "./"
-				const header = `import "${up}core.css";\n`
-				const body = readFileSync(js, "utf8")
-				if (!body.startsWith(header)) writeFileSync(js, header + body)
-			}
-
-			for (const [chunkFile, files] of cssByChunk) {
-				const js = resolve(root, "dist", chunkFile)
-				if (!existsSync(js)) continue
-				const depth = chunkFile.split("/").length - 1
-				const up = depth ? "../".repeat(depth) : "./"
-				/*
-				 * Core first, on the chunk itself. The entry's `import "../core.css"` is not enough:
-				 * an entry is a re-export module, `sideEffects: ["**\/*.css"]` marks it pure, and
-				 * Vite 8, Rspack and webpack 5 drop it, import and all. A JS-only consumer would then
-				 * get no tokens, and one who imports components before `style.css` or their own
-				 * family sheet would get `components` declared first, so the base reset would beat
-				 * every component rule. The chunk survives because its code is used.
-				 *
-				 * The core sheet itself is never imported twice: a chunk whose CSS is that sheet
-				 * (the `styles` entry) imports `core.css`, which carries it with the layer order
-				 * statement and the typefaces.
-				 */
-				const core = `import "${up}core.css";`
-				const own = files
-					.filter((file) => !coreFiles.includes(file))
-					.map((file) => `import "${up}css/${assetName(file)}";`)
-				const body = readFileSync(js, "utf8")
-				const missing = [core, ...own].filter((line) => !body.includes(line))
-				if (missing.length) {
-					/* The entry loop above may already have put core.css on the first line. */
-					const [first, ...rest] = body.split("\n")
-					writeFileSync(
-						js,
-						first?.includes("core.css")
-							? [first, ...missing, ...rest].join("\n")
-							: `${missing.join("\n")}\n${body}`,
-					)
-				}
-				linked++
-			}
-
-			/*
-			 * Hoist `"use client"` back to the top, once, after every CSS injection.
-			 *
-			 * It is a directive PROLOGUE: it counts only while it is the first statement in the
-			 * module. Two separate loops above prepend stylesheet imports, and each one pushes
-			 * the banner down into an ordinary string expression — present in the file, visible
-			 * to a grep, and meaningless to every RSC bundler.
-			 *
-			 * One pass at the end rather than a fix at each injection site, because the next
-			 * loop to prepend something would reintroduce it. `verify rsc` asserts the position
-			 * rather than the presence, for the same reason.
-			 */
-			for (const entry of CLIENT_ENTRIES) {
-				const js = resolve(root, "dist", `${entry}.js`)
-				if (!existsSync(js)) continue
-				const body = readFileSync(js, "utf8")
-				const lines = body.split("\n")
-				const at = lines.findIndex((line) => line.trim() === '"use client";')
-				if (at <= 0) continue
-				lines.splice(at, 1)
-				writeFileSync(js, `"use client";\n${lines.join("\n")}`)
-			}
-
+			rmSync(resolve(root, "dist/styles.js"), { force: true })
 			rmSync(resolve(root, "dist/assets"), { recursive: true, force: true })
-			console.log(`stylesheets: core.css + ${emitted.length} family indexes over ${new Set([...cssByEntry.values()].flat()).size} sheets, ${linked} chunks linked, style.css ${Math.round(bytes("style.css") / 1024)}KB`)
+			console.log(`stylesheets: core.css + ${emitted.length} family indexes over ${new Set([...cssByEntry.values()].flat()).size} sheets, style.css ${Math.round(bytes("style.css") / 1024)}KB`)
 		},
 	}
 }
@@ -365,6 +284,8 @@ export default defineConfig({
 				"src/services/**",
 				"src/App.tsx",
 				"src/main.tsx",
+				/* The `core.css` build entry, which publishes no JavaScript. */
+				"src/styles.ts",
 				/* Tests are not a published surface. Every test suffix is listed: a declaration
 				 * emitted here ships. */
 				"**/*.spec.ts",
@@ -384,13 +305,10 @@ export default defineConfig({
 		emptyOutDir: true,
 		cssTarget: browserFloor,
 		/*
-		 * Per-chunk CSS, linked back by `shipStyleSources`.
-		 *
-		 * Library mode emits per-chunk CSS but does NOT put the `import "./x.css"` back into
-		 * the JS, so on their own the fragments are orphans: a consumer would get the token
-		 * layer and no component rules. `shipStyleSources` puts the imports back into the ESM
-		 * output and writes a stylesheet per family plus the complete `style.css`, so a
-		 * consumer loads the CSS for what they import, or the whole catalogue at once.
+		 * Per-chunk CSS, which `shipStyleSources` turns into a stylesheet per family plus the
+		 * complete `style.css`. Library mode leaves no `import "./x.css"` in the JavaScript,
+		 * and nothing adds one back: a consumer imports the stylesheets for what they use, or
+		 * the whole catalogue at once.
 		 */
 		cssCodeSplit: true,
 		/*
@@ -404,7 +322,7 @@ export default defineConfig({
 		sourcemap: false,
 		lib: {
 			entry: discoverEntries(),
-			/* ESM only: an entry imports its own stylesheets, which only a module-aware tool loads. */
+			/* ES modules only: Node 20.19, the floor in `engines`, can also `require()` them. */
 			formats: ["es"],
 			fileName: (_format, entry) => `${entry}.js`,
 		},

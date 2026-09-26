@@ -161,7 +161,7 @@ Every check runs locally.
 | `npm run verify` | The library build with its typecheck, unit tests, oxlint, the CSS checks, strings, docs coverage, the architecture manifest, migrations and the consumer scripts; then, on the build, the API snapshot, the CSS budget and docs freshness | Before every commit |
 | `npm test` | Playwright in Chromium, and the Tailwind CSS v4 fixture | Before every commit |
 | `npm run test:engines` | The keyboard, focus, popup and editing specs in Firefox and WebKit | After changing focus, keyboard, popups or editing |
-| `npm run verify:consumer` | The packed package: `"use client"` boundaries, the design-token export, exports and CSS, every documented import, publint and arethetypeswrong, consumer fixtures (no optional peers, SSR, Vite, Tailwind), and the code blocks in the guides | After changing exports, peers, CSS output or a shipped document |
+| `npm run verify:consumer` | The packed package: `"use client"` boundaries, the design-token export, exports and CSS, every documented import, publint and arethetypeswrong, consumer fixtures (no optional peers, `require()`, SSR, Vite, Tailwind), and the code blocks in the guides | After changing exports, peers, CSS output or a shipped document |
 | `npm run verify:gates` | The checkers' self-tests: each proves its checker fails on the defect it names | After changing a check |
 | `npm run verify:release` | All of the above, the reference applications, then every browser engine | Before publishing; see [Releasing](#releasing) |
 
@@ -314,7 +314,7 @@ to the six tiers the docs and the component index use (`typography` is part of B
 
 Version `2.0.2` contains 97 modules across 6 tiers — Foundations 4, Primitives 1, Base 54, Layout 9, Features 24, Blocks 5.
 
-The package publishes 99 exact JavaScript entrypoints and 93 exact CSS entrypoints. There are no broad aggregate barrels: a consumer imports the module it uses.
+The package publishes 98 exact JavaScript entrypoints and 93 exact CSS entrypoints. There are no broad aggregate barrels: a consumer imports the module it uses.
 
 Modules per profile: admin 2, general 95. A profile is a dependency ceiling, not a product taxonomy. Every module is stable.
 

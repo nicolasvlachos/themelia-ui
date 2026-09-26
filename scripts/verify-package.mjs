@@ -141,11 +141,9 @@ for (const file of bundles) {
 /* ── loads ──────────────────────────────────────────────────────────────────────── */
 
 /*
- * Sample entries execute in Node, with stylesheets stubbed where a framework would load them.
- * Only a stylesheet that resolved reaches the stub, so one an entry names but the build did
- * not emit fails here: in a consumer's bundle it is a component rendered unstyled.
+ * Sample entries execute in Node as they are, as a server render or a test runner loads them.
+ * The JavaScript imports no CSS, so a stylesheet import here fails, as it would there.
  */
-const { loaded: stylesheets } = await import('./lib/stub-css.mjs')
 const sample = ['index', 'primitives', 'base/buttons', 'base/cards', 'features/table', 'ui-provider']
 for (const entry of sample) {
   try {
@@ -285,7 +283,7 @@ if (failures.length) {
 }
 console.log(
   `PASS verify package — ${Object.keys(pkg.exports).length} subpaths, ${targets} targets present, ` +
-    `${bundles.length} bundles clean, ${sample.length} entries execute in Node with ${stylesheets.size} stylesheets resolved, ` +
+    `${bundles.length} bundles clean, ${sample.length} entries execute in Node, ` +
     `${optionalPeers.length} optional peers contained across ${checked} checks, ` +
     'every bare import declared, ' +
     `stylesheet complete and layer-ordered, ${cssSpecifiers.sheets} sheets import only relative files, ` +
