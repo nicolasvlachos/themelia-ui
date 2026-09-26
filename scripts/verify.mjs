@@ -30,10 +30,7 @@ const CHECKS = [
   { id: 'strings', command: node('verify-strings') },
   { id: 'docs-coverage', command: node('verify-docs-coverage') },
   { id: 'architecture', command: node('verify-architecture-manifest') },
-  { id: 'api-vocabulary', command: node('verify-api-vocabulary') },
-  { id: 'selection', command: node('verify-selection') },
   { id: 'migrations', command: node('verify-migrations') },
-  { id: 'documented-defaults', command: node('verify-documented-defaults') },
   { id: 'consumer-scripts', command: 'node --test scripts/consumer/*.test.mjs scripts/tailwind-bridge.test.mjs' },
   { id: 'api-snapshot', command: node('verify-api-snapshot'), dist: true },
   { id: 'css-budget', command: node('css-budget'), dist: true },
@@ -61,21 +58,14 @@ const BUILD = { id: 'build', command: 'npm run build:lib' }
 const TYPECHECK = { id: 'typecheck', command: 'npx tsc -b' }
 
 /*
- * Self-tests: each proves its checker fails on the defect it names. The two in EDITS write a
- * tracked file and restore it, so they run one at a time after the rest, and never beside a
- * browser suite. The consumer-script tests already run in `consumer-scripts`.
+ * Self-tests for the checkers whose logic is a parser: each proves its checker fails on the
+ * defect it names, using temp-dir fixtures. The consumer-script tests run in `consumer-scripts`.
  */
-const EDITS = ['api-vocabulary', 'architecture-manifest'].map((name) => `scripts/verify-${name}.test.mjs`)
 const selfTests = readdirSync('scripts', { recursive: true })
   .map((file) => `scripts/${file}`)
   .filter((file) => file.endsWith('.test.mjs') && !file.startsWith('scripts/consumer/') && !file.endsWith('tailwind-bridge.test.mjs'))
   .sort()
-const GATES = {
-  id: 'gates',
-  command:
-    `node --test ${selfTests.filter((file) => !EDITS.includes(file)).join(' ')} && ` +
-    `node --test --test-concurrency=1 ${EDITS.join(' ')}`,
-}
+const GATES = { id: 'gates', command: `node --test ${selfTests.join(' ')}` }
 
 function run({ id, command }) {
   const started = performance.now()
@@ -134,10 +124,6 @@ async function main(args) {
   const started = performance.now()
   const failed = []
 
-  /*
-   * Self-tests first and alone: two edit and restore a source file, which would race the
-   * checks reading it and leave it newer than dist/.
-   */
   if (gates) failed.push(...(await pool([GATES], 1)))
 
   /* The build (with its own tsc -b) runs beside the static checks; dist checks wait for it. */

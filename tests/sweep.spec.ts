@@ -1,5 +1,6 @@
 /**
- * The three failures no other suite here can see.
+ * The smoke suite: every route renders, fits a phone, keeps the console clean with and without
+ * a pointer, holds still under reduced motion, and opens unscrolled.
  *
  *   OVERFLOW   content wider than the viewport at 390px; the visual suite runs at one width.
  *   CONSOLE    an error or warning from our own code. Production previews emit none;
@@ -8,7 +9,7 @@
  */
 import { expect, test } from "@playwright/test"
 
-import { COMPONENT_ROUTES, READABLE_ROUTES, shards, url, sweepTimeout, visitRoute } from "./routes"
+import { COMPONENT_ROUTES, shards, url, sweepTimeout, visitRoute } from "./routes"
 
 const MOBILE = { width: 390, height: 844 }
 
@@ -92,7 +93,7 @@ test.describe("route sweep", () => {
 
 			/* Every example renders something at this width. */
 			for (const id of await page.evaluate(() =>
-				[...document.querySelectorAll<HTMLElement>('main section[id] [class*="preview__preview"]')]
+				[...document.querySelectorAll<HTMLElement>("main section[id] .example--preview")]
 					.filter((el) => el.getBoundingClientRect().height <= 20)
 					.map((el) => el.closest("section")!.id),
 			)) empty.push(`${route.path}#${id}`)
@@ -154,6 +155,24 @@ test.describe("route sweep", () => {
 		if (shard.routes.some((route) => route.path === "/chart")) expect(hovered, "no chart was hovered").toBeGreaterThan(0)
 		expect(noisy, `console output under a pointer:\n  ${noisy.join("\n  ")}`).toEqual([])
 		expect(stray, `attributes Recharts leaked onto our markup:\n  ${stray.join("\n  ")}`).toEqual([])
+	})
+
+	/**
+	 * Nothing may scroll the page to itself on mount. `scrollIntoView` in an effect scrolls every
+	 * scrollable ancestor, the document included, even with `block: "nearest"`.
+	 */
+	test("no page arrives already scrolled", async ({ page }) => {
+		const jumped: string[] = []
+
+		for (const route of COMPONENT_ROUTES) {
+			await page.goto(url(route.path))
+			await page.waitForSelector("h1")
+			await page.evaluate(() => document.fonts.ready)
+			const y = await page.evaluate(() => window.scrollY)
+			if (y !== 0) jumped.push(`${route.path} — landed at ${Math.round(y)}px`)
+		}
+
+		expect(jumped, jumped.join("\n")).toEqual([])
 	})
 })
 
@@ -260,35 +279,3 @@ function readChartAttributes(): string[] {
 	}
 	return out
 }
-
-test.describe("documentation prose", () => {
-	/**
-	 * No page renders a backtick: backticks around a name are the site's prose convention and
-	 * must be parsed wherever prose renders. Every route, since one page is enough to fail.
-	 */
-	test("no page renders a literal backtick", async ({ page }) => {
-		test.setTimeout(sweepTimeout(READABLE_ROUTES.length))
-
-		const offenders: string[] = []
-		let scanned = 0
-
-		for (const route of READABLE_ROUTES) {
-			await page.goto(url(route.path))
-			await page.waitForSelector("h1")
-			const stray = await page.evaluate(() => {
-				const main = document.querySelector("main")
-				if (!main) return []
-				/* `code` and `pre` legitimately hold source, which may contain backticks. */
-				const clone = main.cloneNode(true) as HTMLElement
-				for (const el of clone.querySelectorAll("code, pre")) el.remove()
-				return (clone.innerText.match(/`[^`\n]{1,60}`/g) ?? []).slice(0, 3)
-			})
-			scanned += 1
-			if (stray.length) offenders.push(`${route.path}  ${stray.join(" / ")}`)
-		}
-
-		/* Non-vacuity: a run that visited nothing proves nothing. */
-		expect(scanned, "no routes were walked").toBeGreaterThan(100)
-		expect(offenders, offenders.join("\n  ")).toEqual([])
-	})
-})

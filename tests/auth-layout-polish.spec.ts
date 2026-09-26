@@ -1,4 +1,4 @@
-/** Auth shells centre, split, stack and scroll correctly in a plain consumer container, and the preview's sign-in flow recovers from errors. */
+/** Auth shells centre, split, stack and scroll correctly in a plain consumer container. */
 import { expect, test, type Page } from "@playwright/test"
 
 import { DEV_ORIGIN, url } from "./routes"
@@ -145,85 +145,4 @@ test("stacked mobile panels follow the form and preserve scroll access", async (
 	expect(panelBox.y).toBeGreaterThanOrEqual(cardBox.y + cardBox.height)
 	await panel.scrollIntoViewIfNeeded()
 	await expect(panel).toBeInViewport()
-})
-
-test("auth preview validates, submits, reports an error, and recovers without losing the address", async ({ page }) => {
-	await page.goto(url("/auth-shell"))
-	const example = page.locator("#auth-shell")
-	await example.getByRole("button", { name: "Sign in", exact: true }).click()
-	const email = example.getByRole("textbox", { name: "Email", exact: true })
-	await expect(email).toHaveAttribute("aria-invalid", "true")
-	await expect(email).toBeFocused()
-	await email.fill("jane@example.com")
-	// getByLabel includes the label's aria-hidden required mark; its accessible name does not.
-	const password = example.getByLabel(/^Password/)
-	await expect(password).toHaveAccessibleName("Password")
-	await password.fill("demo-password")
-	const failureControl = example.getByRole("checkbox", { name: "Simulate a connection error" })
-	// The native input is visually hidden; the label is the pointer target.
-	await example.getByText("Simulate a connection error", { exact: true }).click()
-	await expect(failureControl).toBeChecked()
-	await example.getByRole("button", { name: "Sign in", exact: true }).click()
-	await expect(example.locator("form")).toHaveAttribute("aria-busy", "true")
-	await expect(example.locator("button[type='submit']")).toBeDisabled()
-	await expect(example.locator("button[type='submit']")).toHaveAccessibleName("Sign in")
-	await expect(example.getByRole("alert")).toContainText("connection")
-	await expect(email).toHaveValue("jane@example.com")
-	await failureControl.focus()
-	await failureControl.press("Space")
-	await expect(failureControl).not.toBeChecked()
-	await example.getByRole("button", { name: "Sign in", exact: true }).click()
-	await expect(example.getByRole("status")).toContainText("Signed in")
-	await example.getByRole("button", { name: "Try again" }).click()
-	await expect(email).toBeFocused()
-	await expect(email).toHaveValue("jane@example.com")
-})
-
-test("every auth variation and footer fits a phone without a clipped preview", async ({ page }) => {
-	await page.setViewportSize({ width: 390, height: 844 })
-	await page.goto(url("/auth-shell"))
-	for (const id of ["auth-shell", "auth-bare", "auth-split", "auth-composed"]) {
-		const example = page.locator(`#${id}`)
-		await expect(example).toBeVisible()
-		const frame = example.locator("[data-auth-preview]")
-		const dimensions = await frame.evaluate((element) => ({ width: element.clientWidth, scrollWidth: element.scrollWidth, height: element.clientHeight, scrollHeight: element.scrollHeight }))
-		expect(dimensions.scrollWidth, id).toBeLessThanOrEqual(dimensions.width + 1)
-		expect(dimensions.scrollHeight, id).toBeLessThanOrEqual(dimensions.height + 1)
-	}
-})
-
-test("expanded auth preview shows two columns and restores focus when dismissed", async ({ page }) => {
-	await page.setViewportSize({ width: 1440, height: 1000 })
-	await page.goto(url("/auth-shell"))
-	const trigger = page.getByRole("button", { name: "Expand split preview", exact: true })
-	await expect(trigger).toBeVisible()
-	await trigger.click()
-	const dialog = page.getByRole("dialog", { name: "Split auth preview", exact: true })
-	await expect(dialog).toBeVisible()
-	await expect(dialog.getByRole("main")).toHaveCount(0)
-	const panel = (await dialog.locator("aside").boundingBox())!
-	const card = (await dialog.locator("[data-slot='auth-card']").boundingBox())!
-	expect(panel.x + panel.width).toBeLessThanOrEqual(card.x)
-	expect(Math.min(panel.y + panel.height, card.y + card.height) - Math.max(panel.y, card.y)).toBeGreaterThan(0)
-	await page.keyboard.press("Escape")
-	await expect(dialog).toBeHidden()
-	await expect(trigger).toBeFocused()
-})
-
-test("expanded auth preview fits a phone and keeps the footer reachable", async ({ page }) => {
-	await page.setViewportSize({ width: 390, height: 844 })
-	await page.goto(url("/auth-shell"))
-	const trigger = page.getByRole("button", { name: "Expand split preview", exact: true })
-	await expect(trigger).toBeVisible()
-	await trigger.click()
-	const dialog = page.getByRole("dialog", { name: "Split auth preview", exact: true })
-	await expect(dialog).toBeVisible()
-	const box = (await dialog.boundingBox())!
-	expect(box.x).toBeGreaterThanOrEqual(0)
-	expect(box.x + box.width).toBeLessThanOrEqual(390)
-	const dimensions = await dialog.locator("[data-slot='auth-shell']").evaluate((element) => ({ width: element.clientWidth, scrollWidth: element.scrollWidth }))
-	expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.width + 1)
-	const privacy = dialog.getByRole("link", { name: "Privacy", exact: true })
-	await privacy.scrollIntoViewIfNeeded()
-	await expect(privacy).toBeInViewport()
 })

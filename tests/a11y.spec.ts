@@ -4,10 +4,12 @@
  * Axe with WCAG 2.1 A/AA and best-practice rules, scoped to `main` (the docs shell is the
  * site's own app). Colour contrast is disabled here because `contrast.spec.ts` measures it
  * more strictly. No violation is allowed. Each sweep runs as slices of the routes, in parallel.
+ * A selected calendar range, a state no page renders at rest, has its contrast measured here.
  */
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
 
+import { auditTextContrast } from "./helpers/contrast"
 import { READABLE_ROUTES, shards, sweepTimeout, url, visitRoute } from "./routes"
 
 const RULES = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"]
@@ -89,3 +91,32 @@ test.describe("labels and ids", () => {
 		})
 	}
 })
+
+/* Both themes: the range band is a tint of the primary, painted behind the day buttons. */
+for (const theme of ["light", "dark"] as const) {
+	test.describe(`calendar range in ${theme}`, () => {
+		test.use({ colorScheme: theme })
+
+		test("a selected calendar range retains contrast and follows the primary color", async ({ page }) => {
+			await page.clock.setFixedTime(new Date("2026-06-17T10:30:00Z"))
+			await page.goto(url("/calendar"))
+			const calendar = page.locator("main .calendar--component").first()
+			await calendar.getByRole("button", { name: "10 June 2026", exact: true }).click()
+			await calendar.getByRole("button", { name: "15 June 2026", exact: true }).click()
+			await page.mouse.move(0, 0)
+			await page.addStyleTag({ content: "*, *::before, *::after { transition: none !important; }" })
+			await expect(calendar.locator("[data-in-range]")).toHaveCount(6)
+			await expect(calendar.locator("button[data-selected]")).toHaveCount(2)
+			const contrast = await page.evaluate(auditTextContrast, {
+				rootSelector: "main .calendar--component",
+				// The calendar's range band is explicitly painted behind its day buttons.
+				backgroundPseudoSelector: "[role=gridcell][data-in-range]",
+			})
+			expect(contrast).toEqual([])
+			const cell = calendar.locator("[data-in-range]:not([data-range-start]):not([data-range-end])").first()
+			const before = await cell.evaluate(el => getComputedStyle(el, "::before").backgroundColor)
+			await page.addStyleTag({ content: ":root, [data-ui-scope], [data-theme], .light, .dark { --primary: oklch(0.6 0.2 300); }" })
+			await expect.poll(() => cell.evaluate(el => getComputedStyle(el, "::before").backgroundColor)).not.toBe(before)
+		})
+	})
+}

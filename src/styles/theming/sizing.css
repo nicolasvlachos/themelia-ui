@@ -92,7 +92,7 @@
 	/*
 	 * Menu rows: one rhythm for the dropdown menu, popover menu, command list and select
 	 * list, so menus seen side by side match. The inline inset is --row-px.
-	 * 4px block inset, not 5: verify token-budget holds lengths to a 2px grid.
+	 * A 4px block inset, on the 2px grid.
 	 */
 	--menu-row-py: round(calc(0.25rem * var(--density-scale, var(--scale))), 1px);
 	/*

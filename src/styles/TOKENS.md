@@ -10,10 +10,8 @@ either derived from it or a measurement a rebrand has no opinion about.
 **A component's variables live with the component**: in its own module when one component
 reads them, in `styles/theming/` only when many do.
 
-The package's token checks fail on a dead token, a PASS-THROUGH (a second name for another
-token that does no arithmetic and is never re-pointed), an override nothing reads, a runtime
-token no stylesheet declares, a colour literal outside `tokens/`, and a length off the 2px
-grid.
+The package's token checks fail on a `var()` nothing defines, a token JavaScript reads but no
+stylesheet declares, and a literal colour, radius, spacing or hairline in a component module.
 
 ## What earns a component token
 

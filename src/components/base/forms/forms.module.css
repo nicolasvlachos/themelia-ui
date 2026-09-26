@@ -154,7 +154,7 @@
 	line-height: var(--text-xs--line-height);
 }
 
-/* Separate entries so lines don't weld together (layout-faults.spec.ts, WELDED). */
+/* Separate entries so lines don't weld together (audit/layout-heuristics.spec.ts, WELDED). */
 .summaryList > li + li {
 	margin-block-start: var(--space-2xs);
 }

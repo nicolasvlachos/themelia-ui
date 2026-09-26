@@ -149,29 +149,27 @@ test("mixed activity log preserves an unfinished comment across loading and erro
 	await expect(editor).toHaveText("Keep this unfinished note")
 })
 
-for (const theme of ["light", "dark"] as const) {
-	test(`feature loading and failure states remain accessible in ${theme} mode`, async ({ page }) => {
-		await page.setViewportSize({ width: 390, height: 844 })
-		await page.emulateMedia({ colorScheme: theme })
-		const audit = async (selector: string) => {
-			const { violations } = await new AxeBuilder({ page })
-				.include(selector)
-				.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"])
-				.disableRules(["color-contrast"])
-				.analyze()
-			expect(violations).toEqual([])
-		}
+/* One theme: with colour contrast disabled, axe checks names, roles and structure, which a theme does not change. */
+test("feature loading and failure states remain accessible", async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 })
+	const audit = async (selector: string) => {
+		const { violations } = await new AxeBuilder({ page })
+			.include(selector)
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"])
+			.disableRules(["color-contrast"])
+			.analyze()
+		expect(violations).toEqual([])
+	}
 
-		await visitRoute(page, "/filters")
-		await page.getByRole("button", { name: "Show pending state", exact: true }).click()
-		await audit("#filters")
-		await visitRoute(page, "/data-view")
-		await choose(page.getByRole("combobox", { name: "Result state", exact: true }), "Failed")
-		await audit("#data-view-states")
-		await visitRoute(page, "/activities")
-		for (const state of ["Refreshing", "Refresh failed", "Initial load failed"]) {
-			await choose(page.getByRole("combobox", { name: "Feed state", exact: true }), state)
-			await audit("#activity-feed")
-		}
-	})
-}
+	await visitRoute(page, "/filters")
+	await page.getByRole("button", { name: "Show pending state", exact: true }).click()
+	await audit("#filters")
+	await visitRoute(page, "/data-view")
+	await choose(page.getByRole("combobox", { name: "Result state", exact: true }), "Failed")
+	await audit("#data-view-states")
+	await visitRoute(page, "/activities")
+	for (const state of ["Refreshing", "Refresh failed", "Initial load failed"]) {
+		await choose(page.getByRole("combobox", { name: "Feed state", exact: true }), state)
+		await audit("#activity-feed")
+	}
+})

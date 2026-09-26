@@ -13,7 +13,7 @@ import { writeIfChanged } from './lib/write-if-changed.mjs'
 import { readManifest } from './lib/read-architecture-manifest.mjs'
 import { publicComponents, publicSymbols } from './lib/public-symbols.mjs'
 
-/* Hand-authored judgement; verify selection keeps it in step with the manifest. */
+/* Hand-authored selection guidance, one entry per family. */
 const selection = JSON.parse(readFileSync('architecture/selection.json', 'utf8')).families
 
 const manifest = readManifest()

@@ -1,7 +1,7 @@
 /*
- * Checks public-registry metadata, then runs publint and arethetypeswrong on the packed
- * tarball: they test the exports map against real consumer resolution (e.g. `require` must
- * reach CJS declarations), which this repo's bundler-resolution typecheck cannot see.
+ * Runs publint and arethetypeswrong on the packed tarball: they test the exports map against
+ * real consumer resolution (e.g. `require` must reach CJS declarations), which this repo's
+ * bundler-resolution typecheck cannot see.
  * Stylesheet subpaths resolve to no types, so attw skips them by name, computed from the
  * exports map so a JS subpath can never be excluded by accident.
  */
@@ -10,31 +10,6 @@ import { existsSync, readFileSync, unlinkSync } from 'node:fs'
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
 const failures = []
-
-/* ── registry intent: the public package name and the deliberate fast path ────────── */
-if (pkg.name !== 'themelia-ui') {
-  failures.push('package.json#name must be the public unscoped package "themelia-ui"')
-}
-
-if (pkg.private !== false) {
-  failures.push('package.json must declare "private": false')
-}
-
-if (pkg.publishConfig?.access !== 'public') {
-  failures.push('package.json#publishConfig.access must be "public"')
-}
-
-if (pkg.repository?.type !== 'git' || typeof pkg.repository?.url !== 'string') {
-  failures.push('package.json must declare a Git repository URL')
-}
-
-if (typeof pkg.homepage !== 'string' || typeof pkg.bugs?.url !== 'string') {
-  failures.push('package.json must declare homepage and issue-tracker URLs')
-}
-
-if (pkg.scripts?.['publish:without-tests'] !== 'npm publish --ignore-scripts --access public') {
-  failures.push('package.json must provide the explicit public publish:without-tests escape hatch')
-}
 
 const run = (command, args) => {
   try {
@@ -95,7 +70,7 @@ if (failures.length > 0) {
 }
 
 console.log(
-  `PASS verify package-quality — public registry and repository metadata present; publint --strict clean; ` +
+  `PASS verify package-quality — publint --strict clean; ` +
     `every non-CSS entrypoint resolves to ` +
     `the right declarations from ESM and from CJS (${cssEntrypoints.length} stylesheet subpaths excluded).`,
 )

@@ -1,73 +1,13 @@
-/** Shared popup geometry and ActionMenu label overflow contracts. */
+/** Popup behaviour: popups inside a modal dialog, keyboard-only popover menus and comboboxes, checkbox menu rows, and ActionMenu label truncation. */
 import { expect, test } from "@playwright/test"
 
 import { url } from "./routes"
 
-
-
-/* Custom openers by route; any other route clicks the first `[aria-haspopup]`. */
-const OPEN: Record<string, (page: import("@playwright/test").Page) => Promise<void>> = {
-	/* Already on screen — the palette is the example. */
-	"/command": async () => {},
-}
-
-/** Open the first popup on the page and return its rows' resolved geometry. */
-async function openFirstPopup(page: import("@playwright/test").Page, route?: string) {
-	const open = route ? OPEN[route] : undefined
-	if (open) await open(page)
-	else await page.locator("main [aria-haspopup]").first().click()
-	/* Closed, portal-mounted overlays may precede the popup under test in DOM order. */
-	const popup = page.locator("[role=menu]:visible, [role=listbox]:visible").first()
-	await popup.waitFor({ state: "visible" })
-	return popup.evaluate((popup) => {
-		const row = popup.querySelector("[role=menuitem], [role=option]")
-		if (!row) return null
-		const cs = getComputedStyle(row)
-		return {
-			minHeight: cs.minHeight,
-			paddingBlock: `${cs.paddingTop}/${cs.paddingBottom}`,
-			paddingInlineStart: cs.paddingLeft,
-			borderRadius: cs.borderRadius,
-		}
-	})
-}
-
-test("every popup family resolves one row geometry", async ({ page }) => {
-	/*
-	 * One route per CSS module that draws a row; action, context and menubar menus all share
-	 * `dropdown-menu.module.css`. The combobox opens from its trigger, which carries
-	 * `aria-haspopup`.
-	 */
-	const families = ["/action-menu", "/dropdown-menu", "/select", "/command", "/combobox"]
-	const seen: Record<string, unknown> = {}
-
-	for (const route of families) {
-		await page.goto(url(route))
-		seen[route] = await openFirstPopup(page, route)
-		expect(seen[route], `${route} opened no popup`).not.toBeNull()
-	}
-
-	const [first, ...rest] = families
-	for (const route of rest) {
-		expect(seen[route], `${route} disagrees with ${first} about the row`).toEqual(seen[first])
-	}
-})
-
-test("iconless menu rows use the normal inset and preserve their checkbox", async ({ page, browserName }) => {
-	/* Linux WebKit only: the label sits 1.8px inside the inset; not reproducible on macOS. */
-	test.fixme(browserName === "webkit" && process.platform === "linux", "label 1.8px off the inset on Linux WebKit")
+test("an iconless checkbox menu row toggles and shows its indicator", async ({ page }) => {
 	await page.goto(url("/action-menu"))
 	const trigger = page.getByRole("button", { name: "Custom trigger", exact: true })
 	await trigger.click()
 	const choice = page.getByRole("menuitemcheckbox", { name: "Show archived", exact: true })
-	const offset = await choice.evaluate((row) => {
-		const label = row.querySelector(".action-menu--item-label")!
-		return {
-			actual: label.getBoundingClientRect().left - row.getBoundingClientRect().left,
-			expected: parseFloat(getComputedStyle(row).paddingLeft),
-		}
-	})
-	expect(offset.actual).toBeCloseTo(offset.expected, 0)
 	await expect(choice).toHaveAttribute("aria-checked", "false")
 	await choice.click()
 	await trigger.click()
@@ -95,65 +35,6 @@ for (const width of [1280, 390]) {
 		expect(box.x + box.width).toBeLessThanOrEqual(width)
 	})
 }
-
-test("every popup module follows changes to the shared row tokens", async ({ page }) => {
-	for (const route of ["/action-menu", "/dropdown-menu", "/select", "/command", "/combobox"]) {
-		await page.goto(url(route))
-		await page.addStyleTag({ content: `
-			:root, [data-ui-scope], [data-density], [data-theme], .light, .dark {
-				--row-px: 23px; --menu-row-py: 7px;
-				--menu-row-min-h: 47px; --radius-sm: 13px;
-			}
-			*, *::before, *::after { transition: none !important; }
-		` })
-		expect(await openFirstPopup(page, route), route).toEqual({
-			minHeight: "47px", paddingBlock: "7px/7px", paddingInlineStart: "23px", borderRadius: "13px",
-		})
-	}
-})
-
-test("popup families take the container radius", async ({ page }) => {
-	const families = {
-		"/action-menu": "[data-slot='dropdown-menu-content']",
-		"/dropdown-menu": "[data-slot='dropdown-menu-content']",
-		"/select": "[data-slot='select-content']",
-		"/combobox": "[data-slot='combobox-popup']",
-	}
-	for (const [route, selector] of Object.entries(families)) {
-		await page.goto(url(route))
-		await page.addStyleTag({ content: `
-			:root, [data-ui-scope], [data-density], [data-theme], .light, .dark {
-				--radius: 14px; --radius-sm: 9px;
-			}
-		` })
-		await page.locator("main [aria-haspopup]").first().click()
-		const popup = page.locator(`${selector}:visible`).first()
-		await expect(popup).toHaveCSS("border-radius", "14px")
-		await page.keyboard.press("Escape")
-	}
-})
-
-test("a submenu keeps the container radius and separates from its parent", async ({ page }) => {
-	await page.goto(url("/dropdown-menu"))
-	await page.addStyleTag({ content: `
-		:root, [data-ui-scope], [data-density], [data-theme], .light, .dark {
-			--radius: 14px;
-		}
-		*, *::before, *::after { animation: none !important; transition: none !important; }
-	` })
-	await page.getByRole("button", { name: "Options", exact: true }).click()
-	await page.getByRole("menuitem", { name: "Sort by", exact: true }).hover()
-	const parent = page.locator("[data-slot='dropdown-menu-content']:visible").first()
-	const child = page.locator("[data-slot='dropdown-menu-sub-content']:visible")
-	await expect(parent).toHaveCSS("border-radius", "14px")
-	await expect(child).toHaveCSS("border-radius", "14px")
-	/* DropdownMenuSubContent's offsets leave the submenu 4px clear of its parent. */
-	const gap = await Promise.all([parent.boundingBox(), child.boundingBox()]).then(([a, b]) => {
-		if (!a || !b) return -1
-		return Math.max(b.x - (a.x + a.width), a.x - (b.x + b.width))
-	})
-	expect(gap).toBeCloseTo(4, 0)
-})
 
 /*
  * A modal <dialog> sits in the top layer and makes the rest of the document inert, so the

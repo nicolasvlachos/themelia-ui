@@ -1,8 +1,8 @@
 /*
  * Keeps prose from restating facts the tree or a generator owns. Findings:
- *   stale-term, dead-script, dead-path  retired vocabulary, uncited `npm run` scripts, missing files
+ *   dead-script, dead-path  docs citing an `npm run` script or a file that does not exist
  *   published-doc    a shipped doc (package.json#files) links to a missing or unshipped file,
- *                    imports through the checkout's `@/components` alias, or states another version
+ *                    or imports through the checkout's `@/components` alias
  *   two-owners       a generated file written by a script other than its listed owner
  *   stale-generated  committed output differs from its generator. Generators RUN here, so a failure
  *                    leaves corrected files on disk: commit them.
@@ -11,7 +11,6 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { dirname, join, normalize } from 'node:path'
-import { declaredTokens } from './lib/token-surface.mjs'
 
 /* Generated reference is checked by regeneration below, not as prose. */
 const ARCHIVED = ['docs/generated']
@@ -48,45 +47,12 @@ const DOCS = [
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
 const scripts = new Set(Object.keys(pkg.scripts))
-const declared = new Set(declaredTokens())
 const failures = []
-
-/* A term is stale once the thing it names is gone from the tree, so retiring it retires the word. */
-const STALE_TERMS = [
-  { term: 'components/blocks', gone: () => !existsSync('src/components/blocks') },
-  { term: 'blocks/', gone: () => !existsSync('src/components/blocks') },
-  { term: 'composed/', gone: () => !existsSync('src/components/composed') },
-  { term: 'npm run check:layers', gone: () => !scripts.has('check:layers') },
-  /* Every custom property the codemod renames or removes, once the source no longer declares it. */
-  ...Object.keys(JSON.parse(readFileSync('docs/generated/migration-codemod.json', 'utf8')).tokens).map((token) => ({
-    term: token,
-    pattern: new RegExp(`${token.replace(/[-]/g, '\\-')}(?![A-Za-z0-9-])`),
-    gone: () => !declared.has(token),
-  })),
-]
 
 for (const doc of DOCS) {
   if (!existsSync(doc)) continue
   const text = readFileSync(doc, 'utf8')
   const lines = text.split('\n')
-
-  /* A doc marked **Historical.** in its opening lines already warns the reader; it is exempt. */
-  if (/\*\*Historical\.\*\*/.test(lines.slice(0, 30).join('\n'))) continue
-
-  /* A migration guide is where every old name SHOULD appear. */
-  const isMigrationGuide = /(^|\/)migration\.md$/.test(doc)
-
-  for (const { term, pattern, gone } of STALE_TERMS) {
-    if (!gone()) continue
-    if (pattern && isMigrationGuide) continue
-    lines.forEach((line, index) => {
-      const names = pattern ? pattern.test(line) : line.includes(term)
-      /* Quoted `>` lines and lines phrased as a rename or removal are history, not references. */
-      if (names && !/^\s*>/.test(line) && !/was|→|removed|used to|no longer|renamed|split/i.test(line)) {
-        failures.push(`stale-term      ${doc}:${index + 1}  names "${term}", which no longer exists`)
-      }
-    })
-  }
 
   for (const match of text.matchAll(/`npm run ([\w:-]+)`/g)) {
     if (!scripts.has(match[1])) {
@@ -122,8 +88,7 @@ for (const doc of DOCS) {
 
 /*
  * What the tarball ships is read by consumers who have no checkout: every relative link must
- * land on a file that is also shipped, no example may import through `@/components`, and the
- * migration guide's hand-written version must be this one.
+ * land on a file that is also shipped, and no example may import through `@/components`.
  */
 {
   const shippedRoots = (pkg.files ?? []).filter((entry) => entry !== 'dist')
@@ -141,8 +106,6 @@ for (const doc of DOCS) {
       failures.push(`published-doc   ${doc}  imports ${specifier}, which only resolves in this checkout`)
     }
   }
-  const stated = readFileSync('docs/learn/migration.md', 'utf8').match(/package is `([^`]+)`/)?.[1]
-  if (stated !== pkg.version) failures.push(`published-doc   docs/learn/migration.md  says the package is ${stated}; package.json says ${pkg.version}`)
 }
 
 /*

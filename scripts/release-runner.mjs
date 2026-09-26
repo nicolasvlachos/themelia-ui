@@ -1,6 +1,7 @@
 /*
- * `npm run verify:release`: every check, then every browser suite, on a clean tree, on macOS.
- * Stops at the first failure. A PASS is about the commit it prints and no other.
+ * `npm run verify:release`: every check, then the browser suites in every engine, on a clean
+ * tree. Stops at the first failure. A PASS is about the commit it prints and no other.
+ * Screenshots and the audit sweeps are local tools and not part of it.
  *
  * This is the release gate. `npm publish` runs it through `prepublishOnly` with `--publish`,
  * which first refuses a version npm already has or the CHANGELOG does not name. A stray
@@ -17,8 +18,6 @@ const fail = (message) => {
 const changed = () => execSync('git status --porcelain', { encoding: 'utf8' }).trim()
 
 if (changed()) fail('the working tree is dirty; commit first, so what passes is what ships')
-/* The pixel baselines are Chromium on Darwin; elsewhere playwright.config.ts skips them. */
-if (process.platform !== 'darwin') fail(`run it on macOS; on ${process.platform} the visual baselines are skipped`)
 
 if (process.argv.includes('--publish')) {
   const { name, version } = JSON.parse(readFileSync('package.json', 'utf8'))
@@ -69,7 +68,8 @@ function step(command) {
   })
 }
 
-for (const command of ['node scripts/verify.mjs --all', 'npx playwright test --forbid-only']) {
+const BROWSERS = 'npx playwright test --forbid-only --project=chromium --project=tailwind --project=firefox --project=webkit'
+for (const command of ['node scripts/verify.mjs --all', BROWSERS]) {
   console.log(`\n▸ ${command}`)
   const { code, signal, timedOut } = await step(command)
   if (code === 0) continue

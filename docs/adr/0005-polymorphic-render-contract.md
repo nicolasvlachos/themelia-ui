@@ -26,8 +26,7 @@ consumer has to remember which family chose which.
 - **It is Base UI's contract**, which the wrapped primitives already speak. Keeping a second
   spelling means translating at every wrapper.
 
-`verify api-vocabulary` holds the vocabulary to one spelling across 695 files, so a new
-component cannot introduce a third — and now fails on `asChild` as well as on `as`.
+New components take `render`; review holds the vocabulary to that one spelling.
 
 ## Consequences
 

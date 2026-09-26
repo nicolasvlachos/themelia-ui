@@ -7,7 +7,6 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { writeIfChanged } from './lib/write-if-changed.mjs'
 
-const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
 const config = readFileSync('playwright.config.ts', 'utf8')
 
 const projects = [...config.matchAll(/name:\s*["']([\w-]+)["']/g)].map((match) => match[1])
@@ -35,9 +34,8 @@ const suites = specs
   .map((file) => {
     const text = readFileSync(`tests/${file}`, 'utf8')
     const name = file.replace(/\.(spec|test)\.ts$/, '')
-    const script = Object.entries(pkg.scripts).find(
-      ([key, value]) => key.startsWith('test:') && !key.includes('update') && value === `playwright test ${name}`,
-    )?.[0]
+    /* The local tools have their own scripts; everything else runs under `npm test`. */
+    const script = file.startsWith('audit/') ? 'audit' : name === 'visual' ? 'screenshots' : undefined
     return {
       file,
       name,

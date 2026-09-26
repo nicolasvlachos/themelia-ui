@@ -6,7 +6,7 @@
 :root {
 	/*
 	 * One height for every control, so a button beside a field matches it. A whole-pixel
-	 * value (34px): a fractional height centres circles on half pixels (tests/geometry.spec.ts).
+	 * value (34px): a fractional height centres circles on half pixels (tests/audit/geometry.spec.ts).
 	 */
 	--height-control: 2.125rem; /* Default height for buttons, inputs, selects and triggers. */
 	--control-x: 0.75rem; /* Default inline padding for buttons and field controls. */

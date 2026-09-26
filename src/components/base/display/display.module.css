@@ -380,7 +380,7 @@
 /*
  * Markup keeps the spoken order ("Sun 16 Aug"); stacked layouts lift the month with
  * `order` so screen readers don't hear a reordered date. The gap is load-bearing: three
- * tight lines with none weld together (layout-faults.spec.ts, WELDED).
+ * tight lines with none weld together (audit/layout-heuristics.spec.ts, WELDED).
  */
 .dateBlock {
 	display: inline-grid;

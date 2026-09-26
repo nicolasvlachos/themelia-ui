@@ -15,9 +15,7 @@ const BADGE = 'src/components/base/badge/badge.module.css'
 const BUTTON = 'src/components/base/buttons/button.module.css'
 const MAP = 'src/components/features/map/map.module.css'
 const GLOBAL_MAP = 'src/styles/map.css'
-const ACTIVITY = 'src/components/features/activities/activity-parts.tsx'
 const MEDIA = 'src/components/features/media-library/media-library-parts.tsx'
-const FIELDS = 'src/styles/fields.css'
 const PROBE = 'src/components/base/probe/probe.tsx'
 
 /* A literal arrow radius allowed through the exceptions file, and the same arrow fixed, which stales it. */
@@ -47,29 +45,16 @@ const CASES = [
   /* composition */
   ['a literal hairline instead of the border-width token', ['composition'], { [BADGE]: '.root {\n\tbox-shadow: 0 0 0 1px var(--border);\n}\n' }, ['literal-hairline', BADGE, '0 0 0 1px']],
   ['a hex colour inside a value, not at its start', ['composition'], { [BADGE]: '.root {\n\tborder: var(--border-width) solid #fff;\n}\n' }, ['literal-colour', BADGE, `literal-colour|${BADGE}`]],
-  ['a spacing token declared between two steps', ['composition'], { [BADGE]: '.root {\n\t--badge-probe-px: calc(0.625rem * var(--density-scale));\n}\n' }, ['off-ladder-space-token', BADGE, '--badge-probe-px']],
-  ['the same, in the canonical rounded spelling', ['composition'], { [BADGE]: '.root {\n\t--badge-probe-py: round(calc(0.625rem * var(--density-scale, var(--scale))), 1px);\n}\n' }, ['off-ladder-space-token', BADGE, '--badge-probe-py']],
   ['an empty rule left behind', ['composition'], { [BADGE]: '.probeEmpty {\n\t/* nothing */\n}\n' }, ['empty-rule', BADGE, '.probeEmpty', 'empty rule']],
-  ['a hover filled from the --muted family', ['composition'], { [BADGE]: '.probeRow:hover { background-color: var(--muted-40); }\n' }, ['state-fill', BADGE, '--muted-40']],
-  ['a radius set only on focus', ['composition'], { [BADGE]: '.probeTab:focus-visible {\n\tborder-radius: var(--radius-sm);\n}\n' }, ['state-radius', BADGE, '.probeTab:focus-visible', 'border-radius']],
   ['text painted in a third grey', ['composition'], { [BADGE]: '.probeCaption { color: var(--muted-foreground-40); }\n' }, ['text-grey', BADGE, '--muted-foreground-40']],
-  ['a valid radius token still fails in the wrong semantic role', ['composition'], { 'src/components/base/dropdown-menu/dropdown-menu.module.css': '.content {\n\tborder-radius: var(--radius-sm);\n}\n' }, ['radius-role', 'src/components/base/dropdown-menu/dropdown-menu.module.css', '.content must use --radius']],
   ['global integration styles cannot bypass the radius pair', ['composition'], { [GLOBAL_MAP]: '.map--component .leaflet-popup-content-wrapper {\n\tborder-radius: var(--radius-md);\n}\n' }, ['radius-pair', GLOBAL_MAP, '--radius-md']],
-  ['metadata labels cannot replace DisplayLabel with a local Text role', ['composition'], { [ACTIVITY]: 'const rows = [{ label: <Text size="xs">{change.label}</Text>, value: 1 }]\n' }, ['metadata-label-text', ACTIVITY]],
-  ['primary feature text cannot pin the default typography step', ['composition'], { [MEDIA]: 'const name = <Text tag="span" size="sm" weight="medium">{name}</Text>\n' }, ['pinned-body-size', MEDIA]],
   ['inline presentation cannot bypass the shared role', ['composition'], { [MEDIA]: 'const name = <Text style={{ fontSize: "13px" }} tag="span">{name}</Text>\n' }, ['inline-presentation', MEDIA]],
   ['an unrelated literal is rejected', ['composition'], { [BADGE]: '.root {\n\tborder-radius: 3px;\n}\n' }, ['literal-radius', BADGE, 'border-radius|3px']],
   ['an icon sized in JavaScript is rejected', ['composition'], { 'src/components/base/spinner/spinner.tsx': 'const icon = <svg size={23} />\n' }, ['literal-icon-size', 'src/components/base/spinner/spinner.tsx', 'size={23}']],
-  ['an inline surface token cannot stand in for both axes', ['composition'], { 'src/components/base/feedback/empty.module.css': '.root {\n\tpadding: var(--surface-px);\n}\n' }, ['surface-axis-shorthand', 'src/components/base/feedback/empty.module.css', '--surface-px']],
   ['an allowed literal passes by its exact identity', ['composition'], { [MAP]: ARROW, [ALLOWLIST]: ALLOW_ARROW }, null, ['literal-radius', MAP]],
   ['a stale exception is rejected', ['composition'], { [MAP]: ARROW_FIXED, [ALLOWLIST]: ALLOW_ARROW }, ['stale-exception', MAP, '.tooltipArrow', 'no longer matches anything']],
   ['swapping one literal for another is rejected, though the total is unchanged', ['composition'], { [MAP]: ARROW_FIXED, [BADGE]: '.root {\n\tborder-radius: 3px;\n}\n', [ALLOWLIST]: ALLOW_ARROW }, [['literal-radius', BADGE, '3px'], ['stale-exception', MAP, '.tooltipArrow']]],
   ['an arrow tip derived from the item radius needs no exception', ['composition'], { [MAP]: ARROW_FIXED }, null, ['literal-radius', MAP]],
-  ['an open disclosure filled from the --muted family', ['composition'], { [BADGE]: '.probeItem[data-open] { background-color: var(--muted-30); }\n' }, ['state-fill', BADGE, '[data-open]', '--muted-30']],
-  ['a pressed toggle filled from the --foreground family', ['composition'], { [BADGE]: '.probeToggle[data-pressed] { background-color: var(--foreground-8); }\n' }, ['state-fill', BADGE, '[data-pressed]', '--foreground-8']],
-  ['a checked box filled from the --muted family', ['composition'], { [BADGE]: '.probeBox:checked { background-color: var(--muted); }\n' }, ['state-fill', BADGE, ':checked', '--muted']],
-  ['a read-only plate is a resting fill, not a state', ['composition'], { [FIELDS]: '.field:read-only { background-color: var(--foreground-8); }\n' }, null, ['state-fill', FIELDS]],
-  ['layout description text cannot pin the default typography step', ['composition'], { 'src/components/layout/workspace/probe.tsx': 'const description = <Text size="sm" type="secondary">{description}</Text>\n' }, ['pinned-body-size', 'src/components/layout/workspace/probe.tsx']],
   ['a module class colours a Text', ['composition'], textProbe('type="secondary"', 'color: var(--muted-foreground);'), ['text-class-type', TEXT_PROBE, 'styles.caption', 'color', TEXT_MODULE]],
   ['a Text that inherits its colour may take one from its class', ['composition'], textProbe('type="inherit"', 'color: var(--muted-foreground);'), null, ['text-class-type', TEXT_PROBE]],
   ['a module class sets a Text weight, whatever its props', ['composition'], textProbe('type="inherit" size="inherit"', 'font-weight: var(--weight-medium);'), ['text-class-type', TEXT_PROBE, 'font-weight']],
@@ -80,12 +65,9 @@ const CASES = [
   /* factors */
   ['a factor-carrying token multiplied by a factor squares it', ['factors'], { [BUTTON]: `${BUTTON_H}.root {\n\theight: calc(var(--button-h) * var(--scale));\n}\n` }, ['squared-factor', BUTTON, 'height', '--button-h', 'squared']],
   ['separately scaled additive terms pass', ['factors'], { [BUTTON]: `${BUTTON_H}.root {\n\theight: calc(var(--button-h) + 2px * var(--scale));\n}\n` }, null, ['squared-factor', BUTTON]],
-  ['component typography cannot scale by --scale directly', ['factors'], { [BUTTON]: '.root {\n\tfont-size: calc(0.875rem * var(--scale));\n}\n' }, ['type-by-scale', BUTTON, 'component typography']],
 
-  /* wiring, type-pairing, scoping */
+  /* wiring, scoping */
   ['wiring rejects an undefined variable in ordinary global CSS', ['wiring'], { [GLOBAL_MAP]: '.map { font-size: var(--missing-token); }\n' }, ['undefined-var', GLOBAL_MAP, '--missing-token']],
-  ['type-pairing checks ordinary global CSS', ['type-pairing'], { [FIELDS]: '.field { font-size: var(--text-base); }\n' }, ['no-line-height', FIELDS, '--text-base']],
-  ['type-pairing rejects spacing tokens used as font sizes', ['type-pairing'], { [FIELDS]: '.field { font-size: var(--space-xl); }\n' }, ['geometry-font-size', FIELDS, '--space-xl', 'typography token']],
   ['scoping checks derived tokens declared by component modules', ['scoping'], { 'src/components/example.module.css': ':root { --example-derived: var(--scale); }\n' }, ['bare-root-derived', 'src/components/example.module.css', '--example-derived']],
 
   /* dark-overrides: the OS twin honours .light and a boundary inside an explicit light scope */

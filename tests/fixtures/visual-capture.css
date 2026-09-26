@@ -1,6 +1,6 @@
 /*
  * Applied only while tests/visual.spec.ts captures (`stylePath`). The floating theme launcher
- * has its own light and dark baselines in theme-tweaker-live.
+ * is the docs site's own control, not a component page.
  */
 [data-app-theme-launcher] {
 	visibility: hidden !important;

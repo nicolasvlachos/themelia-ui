@@ -11,7 +11,7 @@ export type PropRow = {
 	 * Exact source target(s) for abbreviated labels or another owner. Examples:
 	 * "Button.tone", "useThing().result", "useThing[1].option", "ItemType.label",
 	 * "@/lib/forms#FormControl", or "css:--control-h". Bare symbols validate exports.
-	 * This metadata is consumed by verify documented-defaults, never rendered.
+	 * Not rendered.
 	 */
 	api?: string | string[]
 	type: string

@@ -1,5 +1,5 @@
 {
-  "note": "Hand-authored consumer selection guidance. One entry per family in architecture/manifest.json; verify selection keeps them in step. Alternatives name family ids, never symbols.",
+  "note": "Hand-authored consumer selection guidance, one entry per family in architecture/manifest.json. Alternatives name family ids, never symbols.",
   "families": {
     "admin/patterns/access": {
       "chooseWhen": "Admin screens present credentials, role permissions and destructive confirmations.",

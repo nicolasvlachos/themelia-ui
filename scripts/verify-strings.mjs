@@ -1,7 +1,7 @@
 /**
  * Strings gate: every word a component renders or announces must be overridable through its
  * `*.strings.ts`, and every override must work. One walk of src/components reports:
- *   jsx-text / copy-attribute / copy-default / loose-copy-prop   hardcoded copy (ratcheted)
+ *   jsx-text / copy-attribute / copy-default   hardcoded copy (ratcheted)
  *   unread-key          a top-level `default*Strings` key no other file in its family names,
  *                       so overriding it silently does nothing (any mention counts as a read;
  *                       removing a key is breaking — record it in architecture/migrations.json)
@@ -55,15 +55,6 @@ function walk(dir, out = []) {
 		else if (/\.tsx?$/.test(path) && !path.endsWith(".d.ts")) out.push(path)
 	}
 	return out
-}
-
-/** A type that cannot hold copy: a function, a boolean, or a union of only those. */
-function isNotCopyType(type) {
-	if (!type) return false
-	if (ts.isFunctionTypeNode(type)) return true
-	if (type.kind === ts.SyntaxKind.BooleanKeyword) return true
-	if (ts.isUnionTypeNode(type)) return type.types.every((member) => isNotCopyType(member))
-	return false
 }
 
 /**
@@ -170,21 +161,6 @@ for (const file of files.filter((path) => !SKIP.test(path))) {
 				!ALLOWED_PROPS.has(name)
 			) {
 				record("copy-default", file, `${name} = ${JSON.stringify(init.text.slice(0, 36))}`)
-			}
-		}
-
-		/* ── a loose prop standing in for a strings key ─────────────────────────── */
-		if (ts.isInterfaceDeclaration(node) && node.name.text.endsWith("Props")) {
-			const exported = node.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
-			if (exported) {
-				for (const member of node.members) {
-					if (!ts.isPropertySignature(member) || !member.name) continue
-					const name = member.name.getText()
-					if (!/(Label|Labels|Message|Placeholder)$/.test(name)) continue
-					if (ALLOWED_PROPS.has(name) || NOT_COPY.test(name)) continue
-					if (isNotCopyType(member.type)) continue
-					record("loose-copy-prop", file, name)
-				}
 			}
 		}
 

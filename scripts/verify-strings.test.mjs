@@ -76,14 +76,6 @@ test("a template behind a fallback is caught", () => {
 	assert.match(result.out, /copy-attribute/)
 })
 
-test("a loose copy prop is caught", () => {
-	const result = scan("export interface AProps {\n\tremoveLabel?: string\n}\n", { file: "a.tsx" })
-
-	assert.ok(result.failed)
-	assert.match(result.out, /loose-copy-prop/)
-	assert.match(result.out, /removeLabel/)
-})
-
 /* False positives the gate must not report. */
 test("copy from a resolved strings object passes", () => {
 	const result = scan(

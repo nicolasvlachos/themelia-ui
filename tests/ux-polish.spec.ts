@@ -65,32 +65,30 @@ test("reset cancels a search that has not reached its debounce deadline", async 
 	await expect(demo).toContainText("1–3 of 6 bookings")
 })
 
-for (const theme of ["light", "dark"] as const) {
-	test(`touch upload affordances and keyboard focus in ${theme}`, async ({ browser }) => {
-		const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, colorScheme: theme })
-		const page = await context.newPage()
-		try {
-			await page.goto(url("/file-upload"))
-			await page.addStyleTag({ content: "* { transition-duration: 0s !important; }" })
-			const picker = page.locator("#media-upload .image-upload--component").last()
-			const overlay = picker.getByText("Change image", { exact: true })
-			await expect(overlay.locator("..")).toHaveCSS("opacity", "1")
-			const chooser = page.waitForEvent("filechooser")
-			await picker.locator("input").tap()
-			await (await chooser).setFiles([])
-			await picker.getByRole("button", { name: "Remove image" }).click()
-			await expect(picker.getByRole("button", { name: "Remove image" })).toHaveCount(0)
-			await expect(picker.locator("input")).toBeFocused()
-			// Named by its field first, then by what it does — not by the action alone.
-			await expect(picker.locator("input")).toHaveAccessibleName("Cover image Drop an image here, or browse")
-			const keyboardChooser = page.waitForEvent("filechooser")
-			await page.keyboard.press("Enter")
-			await (await keyboardChooser).setFiles([])
-		} finally {
-			await context.close()
-		}
-	})
-}
+test("touch upload affordances and keyboard focus", async ({ browser }) => {
+	const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true })
+	const page = await context.newPage()
+	try {
+		await page.goto(url("/file-upload"))
+		await page.addStyleTag({ content: "* { transition-duration: 0s !important; }" })
+		const picker = page.locator("#media-upload .image-upload--component").last()
+		const overlay = picker.getByText("Change image", { exact: true })
+		await expect(overlay.locator("..")).toHaveCSS("opacity", "1")
+		const chooser = page.waitForEvent("filechooser")
+		await picker.locator("input").tap()
+		await (await chooser).setFiles([])
+		await picker.getByRole("button", { name: "Remove image" }).click()
+		await expect(picker.getByRole("button", { name: "Remove image" })).toHaveCount(0)
+		await expect(picker.locator("input")).toBeFocused()
+		// Named by its field first, then by what it does — not by the action alone.
+		await expect(picker.locator("input")).toHaveAccessibleName("Cover image Drop an image here, or browse")
+		const keyboardChooser = page.waitForEvent("filechooser")
+		await page.keyboard.press("Enter")
+		await (await keyboardChooser).setFiles([])
+	} finally {
+		await context.close()
+	}
+})
 
 test("booking pages, sorting, filtering, and empty recovery share the same records", async ({ page }) => {
 	await page.goto(url("/data-view"))

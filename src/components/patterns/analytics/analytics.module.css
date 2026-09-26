@@ -147,7 +147,7 @@
 	min-width: 0;
 }
 
-/* The gap keeps the label's descenders off the figure's cap height (`layout-faults`). */
+/* The gap keeps the label's descenders off the figure's cap height (`audit/layout-heuristics`). */
 .metricCompactBody {
 	display: flex;
 	flex-direction: column;

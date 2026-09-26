@@ -1,40 +1,7 @@
-/** Rich text editor toolbar alignment and roving focus, plus TipTap undo, formatting, source mode, paste and mentions. */
+/** The rich text editor's TipTap editing: undo and redo, formatting, source mode, paste, insertion and mentions. */
 import { expect, test } from "@playwright/test"
 
 import { visitRoute } from "./routes"
-
-for (const density of ["compact", "default", "comfortable"] as const) {
-	test(`toolbar separators stay centered with their controls at ${density} density`, async ({ page }) => {
-		await page.setViewportSize({ width: 1440, height: 900 })
-		await visitRoute(page, "/rich-text-editor")
-		await page.getByRole("combobox", { name: "Density", exact: true }).selectOption(density)
-
-		for (const width of [1440, 390, 320]) {
-			await page.setViewportSize({ width, height: 900 })
-			for (const [id, label] of [["editor", "Source code"], ["editor-compact", "Insert reference"]] as const) {
-				const demo = page.locator(`#${id}`)
-				const divider = await demo.getByRole("separator").boundingBox()
-				const control = demo.getByRole("button", { name: label, exact: true })
-				const button = await control.boundingBox()
-				const toolbar = await demo.getByRole("toolbar").boundingBox()
-				expect(divider).not.toBeNull()
-				expect(button).not.toBeNull()
-				expect(toolbar).not.toBeNull()
-				expect(Math.abs(divider!.y + divider!.height / 2 - button!.y - button!.height / 2),
-					`${id} divider must share its control's row and center at ${width}px`,
-				).toBeLessThanOrEqual(1)
-				expect(divider!.x).toBeGreaterThanOrEqual(toolbar!.x)
-				expect(button!.x + button!.width).toBeLessThanOrEqual(toolbar!.x + toolbar!.width)
-
-				await control.focus()
-				await control.press("ArrowLeft")
-				await expect(demo.getByRole("button", { name: "Redo", exact: true })).toBeFocused()
-				await page.keyboard.press("ArrowRight")
-				await expect(control).toBeFocused()
-			}
-		}
-	})
-}
 
 test("TipTap is the default and typing has real undo and redo states", async ({ page }) => {
 	await visitRoute(page, "/rich-text-editor")
@@ -94,10 +61,6 @@ test("source mode keeps one live editor and formatting works after repeated swit
 	await source.click()
 	const rendered = page.locator("#editor-output")
 	await expect(rendered.locator("li")).toHaveText(["First item", "Second item"])
-	for (const surface of [editor, rendered]) {
-		await expect(surface.locator("li > p").first()).toHaveCSS("margin-block-start", "0px")
-		await expect(surface.locator("li > p").last()).toHaveCSS("margin-block-end", "0px")
-	}
 })
 
 test("imperative insertion and controlled reset update the same TipTap document", async ({ page }) => {

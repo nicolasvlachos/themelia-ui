@@ -43,16 +43,31 @@ There is no vendored UI layer and no broad layer import barrel.
 | API or behavior | Focused unit/type tests for the real boundary and failure cases; `npm run typecheck` |
 | Layout, styling or interaction | Browser inspection at narrow and wide sizes, both themes, relevant density and keyboard/focus states |
 | Exports, peers or published examples | `npm run verify:consumer` |
-| Composition or tokens | `npm run verify composition`, `npm run verify architecture`, applicable token checks |
-| A token or public path removed or renamed | A mapping in `architecture/migrations.json`, then `npm run gen:architecture` and `npm run verify migrations` |
-| Guidance, finder or generators | `npm run verify:gates`, `npm run verify consumer-scripts` and `npm run verify docs-freshness` |
-| A verifier script itself | `npm run verify:gates` — each gate's self-test proves it fails on its defect |
-| Whole change, before a commit | `npm run verify` (under a minute: checks in parallel beside one build; docs-freshness rewrites stale generated files for you to commit) and `npm test` (Chromium, functional and screenshots) |
-| Before a release | `npm run verify:release` on a clean tree: `verify --all` (the above plus the self-tests, the packed-package checks and the reference apps, on one build), then `npm run test:all` (Firefox and WebKit too) |
+| Composition or tokens | `npm run verify css` and `npm run verify architecture` |
+| A theme token or public path removed or renamed | A mapping in `architecture/migrations.json`, then `npm run gen:architecture` and `npm run verify migrations` |
+| Guidance, finder or generators | `npm run verify consumer-scripts` and `npm run verify docs-freshness` |
+| A verifier script itself | `npm run verify:gates` — the checkers built on a parser prove, on temp-dir fixtures, that they fail on their defect |
+| Whole change, before a commit | `npm run verify` (checks in parallel beside one build; docs-freshness rewrites stale generated files for you to commit) and `npm test` (Chromium and the Tailwind fixture) |
+| Before a release | `npm run verify:release` on a clean tree: `verify --all` (the above plus the self-tests, the packed-package checks and the reference apps, on one build), then the browser suites in Chromium, Firefox and WebKit |
 
 `npm run verify -- --list` names every check; `npm run verify composition bem` runs just those.
-`verify:gates` mutates real source files and restores them, so never run it beside a live
-preview or browser suite. A static pass is not evidence that spacing or focus looks right.
+A static pass is not evidence that spacing or focus looks right.
+
+Screenshots are a local tool: `npm run screenshots` records a baseline per page the first
+time and compares against it after that; baselines are never committed. `npm run audit`
+runs on-demand sweeps (radius geometry, near-circles, welded or near-miss spacing, literal
+values on every page). Run it before accepting a broad visual change; it is not a gate.
+
+## Rules that hold
+
+- A check or test exists because it prevents a failure a user would see: a broken import,
+  missing CSS, a type error, an accessibility violation or broken keyboard behaviour.
+  Preferences go in the docs.
+- Adding a rule means retiring one. Tests assert behaviour and the public contract, never
+  computed pixel arithmetic or CSS-module class names.
+- Never change a design value to make a check pass; fix the check.
+- Two of each: two radii, two paddings and two gaps. Do not add a third step to a scale.
+- Text goes through Text and Heading.
 
 ## Keep documentation fresh
 

@@ -115,7 +115,7 @@ One idea had two spellings. `render` takes the element as a value, so it can be 
 
 **Becomes** `contentRender` — mechanical, the codemod does it.
 
-One idea in two vocabularies. Every other polymorphic seam in the kit is `render`, and this one shipped as `contentAs` — a string union naming an element rather than an element to render. `verify api-vocabulary` exists to catch exactly this and its regex only matched `as?: ElementType`, so the single instance of the drift outlived the rule against it.
+One idea in two vocabularies. Every other polymorphic seam in the kit is `render`, and this one shipped as `contentAs` — a string union naming an element rather than an element to render.
 
 `contentAs="div"` becomes `contentRender={<div />}`. Mechanical: the value goes from an element NAME to an element, so `"section"` becomes `<section />`.
 

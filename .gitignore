@@ -26,6 +26,8 @@ dist-ssr
 # Playwright
 /test-results/
 /playwright-report/
+# Screenshot baselines are local: `npm run screenshots` records them on first run.
+tests/**/*-snapshots/
 .scratch/
 dist-docs
 # `npm pack` output (a manual pack, or a packed-package check mid-run); never committed.

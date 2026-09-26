@@ -5,10 +5,11 @@
  * menu that must close on Escape, arrow keys that must move a selection. Kept few and
  * specific; the a11y suite already runs axe over every page.
  */
+import AxeBuilder from "@axe-core/playwright"
 import { PNG } from "pngjs"
 import { expect, test } from "@playwright/test"
 
-import { COMPONENT_ROUTES, ROUTES, shards, sweepTimeout, url, visitRoute } from "./routes"
+import { COMPONENT_ROUTES, shards, sweepTimeout, url, visitRoute } from "./routes"
 
 /*
  * Helpers for the focus-paint sweep. Named functions because `page.evaluate` serialises
@@ -166,126 +167,6 @@ test.describe("keyboard and focus", () => {
 			await first.press("ArrowRight")
 			await expect(second, `${probe.path} must move focus with ArrowRight`).toBeFocused()
 		}
-	})
-
-	test("mobile docs keep theme and layer filtering on screen", async ({ page }) => {
-		await page.setViewportSize({ width: 390, height: 844 })
-		await page.goto(url("/components"))
-		await page.waitForSelector("h1")
-
-		await expect(page.getByRole("button", { name: /Switch to (dark|light) theme/ })).toBeVisible()
-		const search = page.getByRole("button", { name: "Search components" })
-		await expect(search).toBeVisible()
-		await expect(search.locator("kbd")).toBeHidden()
-		const searchLabel = search.getByText("Search components…", { exact: true })
-		expect(
-			await searchLabel.evaluate((element) => element.scrollWidth <= element.clientWidth + 1),
-			"the mobile header must show the search label without ellipsis",
-		).toBe(true)
-		const layer = page.getByRole("combobox", { name: "Filter by layer" })
-		await expect(layer).toBeVisible()
-		const count = page.locator("main [aria-live='polite']").first()
-		const allText = await count.textContent()
-		await layer.selectOption("features")
-		await expect(count).toBeVisible()
-		const filteredText = await count.textContent()
-		expect(filteredText).not.toBe(allText)
-		const numbers = filteredText?.match(/(\d+) of (\d+)/)?.slice(1).map(Number)
-		expect(numbers?.[0]).toBeLessThan(numbers?.[1] ?? 0)
-		await expect(page.getByRole("radiogroup", { name: "Filter by layer" })).toBeHidden()
-
-		await page.getByRole("button", { name: "Search components" }).click()
-		const box = await page.getByRole("dialog", { name: "Search components" }).boundingBox()
-		expect(box).not.toBeNull()
-		/* Inside the 390px viewport with at least a 12px gutter each side. */
-		expect(box!.x).toBeGreaterThanOrEqual(12)
-		expect(box!.x + box!.width).toBeLessThanOrEqual(378)
-	})
-
-	test("the theme toggle reflects the effective system theme", async ({ page }) => {
-		await page.emulateMedia({ colorScheme: "dark" })
-		await page.goto(url("/badge"))
-		await page.waitForSelector("h1")
-
-		const toggle = page.getByRole("button", { name: "Switch to light theme" })
-		await expect(toggle).toBeVisible()
-		await toggle.click()
-		await expect(page.getByRole("button", { name: "Switch to dark theme" })).toBeVisible()
-		await expect(page.locator("[data-ui-scope]").first()).toHaveAttribute("data-theme", "light")
-	})
-
-	test("documentation navigation exposes twelve task-shaped groups, sectioned where long", async ({ page }) => {
-		await page.goto(url("/badge"))
-		await page.waitForSelector("h1")
-
-		const nav = page.getByRole("navigation", { name: "Documentation" })
-		const groups = nav.getByRole("button")
-		await expect(groups).toHaveCount(12)
-		/* Named by the group alone: the page count beside it is a visual cue, hidden from the name. */
-		const names = [
-			"GET STARTED",
-			"FOUNDATIONS",
-			"APP LAYOUT",
-			"NAVIGATION",
-			"ACTIONS",
-			"FORMS",
-			"DATA DISPLAY",
-			"OVERLAYS & MENUS",
-			"FEEDBACK & STATUS",
-			"VALUES & FORMATTING",
-			"FEATURES",
-			"BLOCKS",
-		]
-		for (const [index, name] of names.entries()) {
-			await expect(groups.nth(index)).toHaveAccessibleName(name)
-		}
-		await expect(nav.getByRole("link", { name: "Review (internal)" })).toHaveCount(0)
-		const links = nav.locator("a[href]")
-		await expect(links).toHaveCount(ROUTES.filter((route) => route.path !== "/review").length)
-		const hrefs = await links.evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href")))
-		expect(new Set(hrefs).size).toBe(hrefs.length)
-		/* The group holding the current page opens itself, with its sections labelled. */
-		await expect(nav.getByRole("button", { name: "DATA DISPLAY" })).toHaveAttribute("aria-expanded", "true")
-		await expect(nav.getByText("Content", { exact: true })).toBeVisible()
-	})
-
-	test("site search is one command dialog for click and keyboard use", async ({ page }) => {
-		await page.goto(url("/badge"))
-		await page.waitForSelector("h1")
-
-		const trigger = page.getByRole("button", { name: "Search components" })
-		await trigger.click()
-
-		const dialog = page.getByRole("dialog", { name: "Search components" })
-		await expect(dialog).toBeVisible()
-		const box = await dialog.boundingBox()
-		expect(box).not.toBeNull()
-		/* Centred in the 1280px-wide viewport. */
-		expect(Math.abs((box!.x + box!.width / 2) - 640)).toBeLessThanOrEqual(1)
-		const input = dialog.getByPlaceholder("Search components…")
-		await expect(input).toBeFocused()
-		await input.fill("toolbar")
-		await page.keyboard.press("Enter")
-		await expect(page).toHaveURL(/#\/toolbar$/)
-		await expect(dialog).toBeHidden()
-
-		await page.keyboard.press("Control+k")
-		await input.fill("button")
-		await expect(dialog.getByText("Button", { exact: true })).toBeVisible()
-		await expect(dialog.getByText("Breadcrumbs", { exact: true })).toBeHidden()
-
-		await page.keyboard.press("Escape")
-		await expect(dialog).toBeHidden()
-		await expect(trigger).toBeFocused()
-
-		await page.keyboard.press("Control+k")
-		await expect(dialog).toBeVisible()
-		// Terms may match separate metadata fields ("dark mode" + "palette").
-		await input.fill("dark palette")
-		await expect(dialog.getByText("Tokens & theming", { exact: true })).toBeVisible()
-		await page.keyboard.press("Enter")
-		await expect(page).toHaveURL(/#\/tokens$/)
-		await expect(dialog).toBeHidden()
 	})
 
 	test("a menu opens with the keyboard, moves with arrows, and closes with Escape", async ({ page }) => {
@@ -496,7 +377,7 @@ test.describe("progress presentation", () => {
 		expect(rtl[1]).not.toBeNull()
 		expect(Math.abs(rtl[1]!.x + rtl[1]!.width - (rtl[0]!.x + rtl[0]!.width))).toBeLessThanOrEqual(1)
 
-		const indeterminate = bars.filter({ has: page.locator('[class*="indeterminate"]') }).first()
+		const indeterminate = page.getByRole("progressbar", { name: "no value — indeterminate", exact: true })
 		await expect(indeterminate).not.toHaveAttribute("aria-valuenow")
 		await expect(indeterminate).not.toHaveAttribute("aria-valuemax")
 
@@ -576,7 +457,7 @@ test.describe("affordances", () => {
 			const links = Array.from(document.querySelectorAll<HTMLElement>("main .card-primary-action--component"))
 			let controls = 0
 			for (const link of links) {
-				const card = link.closest("[class*='cards__root']") as HTMLElement | null
+				const card = link.closest("[data-slot='card']") as HTMLElement | null
 				if (!card) {
 					faults.push("a primary action is not inside a card root")
 					continue
@@ -661,6 +542,24 @@ test.describe("selection and overlays", () => {
 		await expect(listbox).toBeHidden()
 		await expect(trigger).toBeFocused()
 		expect(await trigger.textContent(), "Escape committed the highlighted option").toBe(before)
+	})
+
+	/* Decorative command separators preserve listbox semantics and keyboard navigation. */
+	test("command separators do not become options or invalidate the result list", async ({ page }) => {
+		await page.goto(url("/command"))
+		const list = page.locator("main [role=listbox]").first()
+		await expect(list.getByRole("option")).toHaveCount(4)
+		const results = await new AxeBuilder({ page }).include("main").withRules(["aria-required-children"]).analyze()
+		expect(results.violations).toEqual([])
+
+		const input = page.getByPlaceholder("Type a command or search…").first()
+		await input.focus()
+		await input.press("ArrowDown")
+		await input.press("ArrowDown")
+		const active = await input.getAttribute("aria-activedescendant")
+		expect(active).toBeTruthy()
+		await expect(page.locator(`[id="${active}"]`)).toHaveAttribute("role", "option")
+		await expect(page.locator(`[id="${active}"]`)).toContainText("Profile")
 	})
 
 	test("a dialog contains focus and gives it back", async ({ page }) => {
@@ -750,11 +649,11 @@ test.describe("selection and overlays", () => {
 
 		const rows = () =>
 			page.evaluate(() =>
-				Array.from(document.querySelectorAll<HTMLElement>("main [class*='repeater__row']"))
+				Array.from(document.querySelectorAll<HTMLElement>("main .repeater--component > ul > li"))
 					.slice(0, 3)
 					.map((row) => (row.querySelector("input") as HTMLInputElement | null)?.value ?? ""),
 			)
-		const handle = page.locator("main [class*='repeater__handle']").first()
+		const handle = page.locator("main [data-repeater-handle]").first()
 		expect(await handle.getAttribute("aria-label"), "the handle does not promise arrow keys").toMatch(/arrow keys/i)
 
 		const beforeRows = await rows()
@@ -798,7 +697,12 @@ test.describe("selection and overlays", () => {
 		await expect(triggers).toHaveCount(2)
 
 		const read = async (index: number) => {
-			await triggers.nth(index).click()
+			const trigger = triggers.nth(index)
+			/* The trigger sits inside the compact scope: its value is what a hosted popup inherits. */
+			const scope = await trigger.evaluate((node) =>
+				getComputedStyle(node).getPropertyValue("--density-scale").trim(),
+			)
+			await trigger.click()
 			const popup = page.locator("[data-slot='dropdown-menu-content']").first()
 			await expect(popup).toBeVisible()
 			const scale = await popup.evaluate((node) =>
@@ -806,16 +710,17 @@ test.describe("selection and overlays", () => {
 			)
 			await page.keyboard.press("Escape")
 			await expect(popup).toBeHidden()
-			return scale
+			return { scope, popup: scale }
 		}
 
 		const withoutHost = await read(0)
 		const withHost = await read(1)
 
 		/* Unset at the root: the lengths fall back to --scale. */
-		expect(withoutHost, "the unhosted menu should sit at the root's density").toBe("")
-		/* Numeric: the built stylesheet writes the preset with fewer digits (`.941177`). */
-		expect(Number(withHost), "the hosted menu should inherit the compact scope").toBeCloseTo(0.9411764706, 5)
+		expect(withoutHost.popup, "the unhosted menu should sit at the root's density").toBe("")
+		expect(withHost.scope, "the example's scope should set a density").not.toBe("")
+		/* Numeric: the same factor can be written with different digits. */
+		expect(Number(withHost.popup), "the hosted menu should inherit the compact scope").toBeCloseTo(Number(withHost.scope), 5)
 	})
 })
 

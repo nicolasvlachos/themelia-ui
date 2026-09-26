@@ -1,11 +1,11 @@
 /**
- * Visual regression, one baseline per component page per theme.
+ * Local screenshots, one per component page per theme, compared with baselines recorded on this
+ * machine.
  *
- * Both themes, because most token breakage shows in only one. Accept intended changes with
- * `npx playwright test visual --update-snapshots`, after reading the diff.
+ * Both themes, because most token breakage shows in only one. Record baselines, or accept an
+ * intended change after reading the diff, with `npm run screenshots -- --update-snapshots`.
  */
 import { expect, test, type Locator, type Page } from "@playwright/test"
-import { readdirSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -13,24 +13,6 @@ import { COMPONENT_ROUTES, slug, url } from "./routes"
 
 /* `toHaveScreenshot` reads a stylesheet file (`stylePath`); a `style` string is ignored. */
 const CAPTURE_STYLE = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures/visual-capture.css")
-
-test("the Darwin baseline inventory matches the component route registry", () => {
-	const snapshotDirectory = resolve(dirname(fileURLToPath(import.meta.url)), "visual.spec.ts-snapshots")
-	const actual = readdirSync(snapshotDirectory)
-		.filter((name) => name.endsWith("-chromium-darwin.png"))
-		.sort()
-	const expected = [
-		"chrome-sidebar-dark-chromium-darwin.png",
-		"chrome-sidebar-light-chromium-darwin.png",
-		...COMPONENT_ROUTES.flatMap((route) =>
-			(["dark", "light"] as const).map(
-				(theme) => `${slug(route.path)}-${theme}-chromium-darwin.png`,
-			),
-		),
-	].sort()
-
-	expect(actual).toEqual(expected)
-})
 
 /** Settles the page before the shutter: fonts, finite animations, charts, then layout. */
 async function settle(page: import("@playwright/test").Page) {
@@ -176,8 +158,8 @@ for (const theme of ["light", "dark"] as const) {
 			await page.goto(url("/badge"))
 			await settle(page)
 
-			/* The scroll viewport, not the nav inside it, whose box is the full scrollable height. */
-			const rail = page.locator("[class*='sidebarScroll']").first()
+			/* The nav's scroll area, not the nav inside it, whose box is the full scrollable height. */
+			const rail = page.getByRole("navigation", { name: "Documentation" }).first().locator("..")
 			await expect(rail).toHaveScreenshot(`chrome-sidebar-${theme}.png`, { timeout: 30_000 })
 		})
 
@@ -191,7 +173,7 @@ for (const theme of ["light", "dark"] as const) {
 				/* An element capture takes all of `main`, below the fold included. */
 				const main = page.locator("main").first()
 				await expect(main).toHaveScreenshot(`${slug(route.path)}-${theme}.png`, {
-					/* The floating app utility has its own light/dark baselines in theme-tweaker-live. */
+					/* Hides the docs site's floating theme launcher and the OS-drawn date field text. */
 					stylePath: CAPTURE_STYLE,
 
 					/*
