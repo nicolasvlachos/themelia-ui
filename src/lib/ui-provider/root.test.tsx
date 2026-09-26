@@ -204,6 +204,21 @@ describe("UIScope", () => {
 		expect(inner?.getAttribute("data-theme")).toBe("dark")
 	})
 
+	it("keeps an enclosing scope's colours across a nested boundary", () => {
+		/* Semantic colours are declared again at every boundary, so inheriting them is not enough. */
+		const { container } = render(
+			<UIScope config={{ theme: { colors: { primary: "red", secondary: "green" } } }} transparent={false}>
+				<UIScope config={{ density: "compact", theme: { colors: { primary: "blue" } } }} transparent={false}>
+					<span>x</span>
+				</UIScope>
+			</UIScope>,
+		)
+
+		const inner = container.querySelector<HTMLElement>('[data-density="compact"]')
+		expect(inner?.style.getPropertyValue("--primary")).toBe("blue")
+		expect(inner?.style.getPropertyValue("--secondary")).toBe("green")
+	})
+
 	it("never touches the document", () => {
 		render(
 			<UIScope config={{ colorScheme: "dark" }}>

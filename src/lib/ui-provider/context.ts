@@ -12,6 +12,13 @@ export const UIConfigContext = createContext<ResolvedUIConfig>(DEFAULT_UI_CONFIG
 export const UINestedContext = createContext(false)
 
 /**
+ * The custom properties enclosing scopes wrote from their config. Semantic colours and type
+ * sizes are declared again at every `[data-ui-scope]`, so a nested scope restates these
+ * before its own; inheritance alone would lose them. Internal: not exported from the entry.
+ */
+export const UIScopeVarsContext = createContext<Record<string, string>>({})
+
+/**
  * Where a popup should render so it keeps its scope. Theme and density inherit down the
  * DOM, so popups portal into an element inside the scope rather than `document.body`.
  */
