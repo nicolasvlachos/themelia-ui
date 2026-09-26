@@ -10,14 +10,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function MentionsPage() {
 	return (
-		<ComponentPage
-			title="Mentions"
-			summary="Inline references to domain records, embedded in rich text. A trigger character per kind opens the picker; picking one writes an atomic chip into the body and registers the reference alongside it. Comments and activities are both built on this."
-			importPath="@/components/features/mentions"
-			exports={["useMentions", "MentionContent", "MentionChip", "MentionInlineSuggestions",
-				"MentionPicker", "MentionKindTabs", "MentionRows", "useMentionsSearch",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="mentions/mention-inline"
 				title="Typing a mention"

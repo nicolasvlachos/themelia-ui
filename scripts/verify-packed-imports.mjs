@@ -11,7 +11,7 @@ import { dirname, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 
 const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
-const records = Object.values(index.families)
+const records = Object.values(index.modules)
 const name = index.package ?? 'themelia-ui'
 
 const root = resolve(tmpdir(), 'themelia-ui-packed-check')

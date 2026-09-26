@@ -8,10 +8,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ScalePage() {
 	return (
-		<ComponentPage
-			title="Scale & density"
-			summary="One master factor keeps geometry and typography in proportion. Scoped spacing, density, and type overrides handle the few cases that need to disagree without adding per-component sizes."
-		>
+		<ComponentPage>
 			<Example
 				example="scale/the-factor"
 				title="The factor"

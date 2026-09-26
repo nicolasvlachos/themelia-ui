@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CurrencyInputPage() {
 	return (
-		<ComponentPage
-			title="Currency input"
-			summary="An amount and its currency, kept in separate channels so neither has to be parsed back out of a formatted string."
-			importPath="@/components/base/forms-numeric"
-			exports={["CurrencyInput", "CURRENCY_SYMBOLS", "MoneyInput"]}
-		>
+		<ComponentPage>
 			<Example
 				example="currency-input/currency"
 				title="CurrencyInput"

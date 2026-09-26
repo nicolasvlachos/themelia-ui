@@ -7,12 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function MetadataPage() {
 	return (
-		<ComponentPage
-			title="Metadata list"
-			summary="Label/value facts about one thing, in three layouts. A fact is data with a kind, not a node — writing { kind: 'money', value: 48200, currency: 'USD' } hands the amount to the primitive that knows the currency's exponent and the locale's separators. A single pair inside another surface is an InlineStat."
-			importPath="@/components/base/display"
-			exports={["MetadataList", "MetadataValue"]}
-		>
+		<ComponentPage>
 			<Example
 				example="metadata/metadata-grid"
 				title="grid"

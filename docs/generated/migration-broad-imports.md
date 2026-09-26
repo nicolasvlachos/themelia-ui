@@ -35,7 +35,7 @@ own worse stepper instead.
 | `themelia-ui/blocks/commerce` | `themelia-ui/admin/patterns/commerce` |
 | `themelia-ui/blocks/admin` | `themelia-ui/admin/patterns/access` |
 
-## Where each symbol went (2136)
+## Where each symbol went (2138)
 
 | symbol | import from |
 | --- | --- |
@@ -1133,6 +1133,8 @@ own worse stepper instead.
 | `LanguageSwitcher` | `themelia-ui/base/navigation` |
 | `LanguageSwitcherProps` | `themelia-ui/base/navigation` |
 | `LanguageSwitcherVariant` | `themelia-ui/base/navigation` |
+| `LayoutLinkRenderer` | `themelia-ui/base/navigation` |
+| `LayoutLinkRenderProps` | `themelia-ui/base/navigation` |
 | `LeafletDrawModule` | `themelia-ui/features/map` |
 | `LeafletModule` | `themelia-ui/features/map` |
 | `ListRadioGroup` | `themelia-ui/base/choice-inputs` |
@@ -2185,3 +2187,5 @@ the broad barrel used to decide for you — silently, by tier order.
 - `ActionPlacement` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`
 - `ActionPredicate` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`
 - `ResolvedAction` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`
+- `LayoutLinkRenderer` — `themelia-ui/base/navigation`, `themelia-ui/layout/auth`, `themelia-ui/layout/header`, `themelia-ui/layout/page`, `themelia-ui/layout/sidebar`, `themelia-ui/layout/workspace`
+- `LayoutLinkRenderProps` — `themelia-ui/base/navigation`, `themelia-ui/layout/auth`, `themelia-ui/layout/header`, `themelia-ui/layout/page`, `themelia-ui/layout/sidebar`, `themelia-ui/layout/workspace`

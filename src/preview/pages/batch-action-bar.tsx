@@ -7,12 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function BatchActionBarPage() {
 	return (
-		<ComponentPage
-			title="Batch action bar"
-			summary="The bar that appears once a selection exists. A count, the bulk actions, and a way out — shared by every surface that can select more than one thing."
-			importPath="@/components/base/batch-action-bar"
-			exports={["BatchActionBar", "defaultBatchActionBarStrings"]}
-		>
+		<ComponentPage>
 			<Example
 				example="batch-action-bar/floating"
 				title="Floating"

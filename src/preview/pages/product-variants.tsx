@@ -5,15 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ProductVariantsPage() {
 	return (
-		<ComponentPage
-			title="Options & variants"
-			summary="The options a customer chooses between, and the sellable combinations they generate. Two surfaces that belong together: adding a value changes the variant grid, and a reader who cannot see both while doing it is guessing at what they just made. Everything on this page is live — add an option, name it, give it values, then generate."
-			importPath="@/components/features/products"
-			exports={[
-				"ProductVariantsManager", "ProductOptionsMatrix", "ProductOptionsSummary",
-				"ProductVariantsBulkTable", "ProductVariantsTable", "ProductVariantEditor",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="product-variants/manager"
 				title="Options and variants together"

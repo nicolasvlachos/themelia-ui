@@ -5,46 +5,30 @@
 import index from "../../../docs/generated/component-index.json"
 
 export interface TierSummary {
+	/** The tier id the component index uses, e.g. `blocks`. */
 	id: string
+	label: string
 	modules: number
 	/** What lives there, in the kit's own words. */
 	holds: string
 }
 
-/* The index names each module's folder; the tier is what a reader navigates by. */
-const TIER_OF_LAYER: Record<string, string> = {
-	foundation: "Foundations",
-	primitives: "Primitives",
-	typography: "Base",
-	base: "Base",
-	layout: "Layout",
-	features: "Features",
-	patterns: "Blocks",
-	admin: "Blocks",
-}
-
 /** Bottom to top: each tier may build on the ones before it, and never the reverse. */
-const HOLDS: Record<string, string> = {
-	Foundations: "the theme, the provider and scopes, the form contract",
-	Primitives: "one formatted value, no interaction — Money, Date, Address",
-	Base: "one generic control or concept — text, controls, rows, passive structure",
-	Layout: "page and application shells",
-	Features: "an owned interaction lifecycle — a context, a hook, a state machine",
-	Blocks: "a subject-shaped composition of the tiers below",
-}
-
-const ORDER = ["Foundations", "Primitives", "Base", "Layout", "Features", "Blocks"]
+const TIER_TEXT: { id: string; label: string; holds: string }[] = [
+	{ id: "foundations", label: "Foundations", holds: "the theme, the provider and scopes, the form contract" },
+	{ id: "primitives", label: "Primitives", holds: "one formatted value, no interaction — Money, Date, Address" },
+	{ id: "base", label: "Base", holds: "one generic control or concept — text, controls, rows, passive structure" },
+	{ id: "layout", label: "Layout", holds: "page and application shells" },
+	{ id: "features", label: "Features", holds: "an owned interaction lifecycle — a context, a hook, a state machine" },
+	{ id: "blocks", label: "Blocks", holds: "a subject-shaped composition of the tiers below" },
+]
 
 const counts = new Map<string, number>()
-for (const family of index.families) {
-	const tier = TIER_OF_LAYER[family.layer]
-	if (tier) counts.set(tier, (counts.get(tier) ?? 0) + 1)
-}
+for (const entry of index.modules) counts.set(entry.tier, (counts.get(entry.tier) ?? 0) + 1)
 
-export const TIERS: TierSummary[] = ORDER.filter((id) => counts.has(id)).map((id) => ({
-	id,
-	modules: counts.get(id) ?? 0,
-	holds: HOLDS[id] ?? "",
+export const TIERS: TierSummary[] = TIER_TEXT.filter((tier) => counts.has(tier.id)).map((tier) => ({
+	...tier,
+	modules: counts.get(tier.id) ?? 0,
 }))
 
 export const MODULE_COUNT = [...counts.values()].reduce((sum, count) => sum + count, 0)

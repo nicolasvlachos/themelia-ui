@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CommentsPage() {
 	return (
-		<ComponentPage
-			title="Comments"
-			summary="A thread attached to any record. The composer, the timeline, and the states between them — replying, editing, submitting, failed. It owns none of the fetching: every control appears because there is a callback for it, so a button that does nothing cannot exist."
-			importPath="@/components/features/comments"
-			exports={["Comments", "CommentTimeline", "CommentComposer", "useComments",
-				"CommentItem", "CommentContent", "CommentAttachmentChip", "useAttachmentUpload",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="comments/comments"
 				title="A thread"

@@ -73,9 +73,11 @@ Each module is documented on a page of the documentation site. A page in
 `src/preview/pages` renders its examples by key, and each example is one file in
 `src/preview/examples/<page>/<id>.tsx` whose source is also the page's code tab. Examples
 import the published subpaths, such as `themelia-ui/base/buttons`, which `vite.config.ts`
-and `tsconfig.app.json` resolve to `src/`. Each page has a row in `src/preview/routes.json`,
-and its `module` places it in a tier. `npm run verify docs-coverage` fails when a public
-component appears on no page.
+and `tsconfig.app.json` resolve to `src/`. Each page has a row in `src/preview/routes.json`:
+its name (`label`, used for the sidebar, breadcrumb and heading), `summary`, the import lines
+it shows (`imports`), and a `module` that places it in a tier. The page itself holds only its
+examples. `npm run verify docs-coverage` fails when a public component is in no page's
+`imports`.
 
 ## Making a change
 
@@ -194,14 +196,15 @@ gate.
 A generated file names its generator in its first lines. Regenerate it; never edit it by hand.
 
 `npm run docs:sync-skill` rebuilds the documentation in dependency order. It builds the
-package and checks the API snapshot, then regenerates the consumer reference, the
-composition ladder, the packaged skill, `tests/README.md` and the status block at the end of
-this file. It stops when the API has changed: accept the change first, as described in
+package and checks the API snapshot, then regenerates the consumer reference, the API
+tables of the documentation site, the composition ladder, the packaged skill,
+`tests/README.md` and the status block at the end of this file. It stops when the API has changed: accept the change first, as described in
 [API compatibility](#api-compatibility).
 
 | Output | Generator | Source |
 | --- | --- | --- |
 | `docs/generated`: imports, public API, profiles, the component index and pages, recipes; and `docs/build/recipes.md` | `gen-consumer-docs.mjs` | The manifest, the built declarations and their JSDoc, `architecture/selection.json`, `architecture/component-guidance.json` and the preview examples |
+| `src/preview/generated/api-tables.json`, the documentation site's API tables | `gen-api-tables.mjs` | The TypeScript source: props, members, doc comments and destructuring defaults, for the keys the pages' `PropTable`s name |
 | `docs/generated/composition-ladder.md` | `gen-composition-ladder.mjs` | The declarations and the recipes |
 | The migration pages in `docs/generated` | `gen-migration-map.mjs`, run by `npm run gen:architecture` | `architecture/migrations.json` and the module barrels |
 | `.agents/skills/themelia-ui`, which ships in the package | `gen-agent-skill.mjs` | The component index and `docs/learn` |
@@ -211,8 +214,12 @@ this file. It stops when the API has changed: accept the change first, as descri
 | `src/styles/themes/default.css` and `src/lib/ui-provider/tokens.generated.ts` | `gen-theme.mjs` and `gen-token-names.mjs`, run by `npm run tokens:theme` | `scripts/theme-manifest.mjs` |
 | `package.json` exports, CSS Module types and barrels | `gen-exports.mjs`, `gen-css-types.mjs` and `gen-barrels.mjs`, run by `npm run build:lib` | The build and the module barrels |
 
-Descriptions and documented defaults in the reference come from JSDoc on the public
-declarations. When writing documents by hand:
+Descriptions and defaults in the reference and in the site's API tables come from the
+declarations: a doc comment on each prop, member and part, and the default from the
+component's destructuring (or an `@default` tag where the default is applied elsewhere). A
+page names what to document with `<PropTable owner>`, `owners` or `symbols` and never types a
+row, except for a CSS custom property, which has no declaration. When writing documents by
+hand:
 
 - The guides in `docs/learn` ship in the package, so they link only to files the package
   ships.
@@ -294,8 +301,9 @@ so use it only when that exact build is the one to publish.
 
 ## Status
 
-The counts use the manifest's `layer` names, which split the tiers more finely: `typography`
-is the Base module `base/typography`, and `patterns` and `admin` together make up Blocks.
+The architecture manifest records a finer `layer` per module; `scripts/lib/tiers.mjs` maps it
+to the six tiers the docs and the component index use (`typography` is part of Base, and
+`patterns` and `admin` together are Blocks).
 
 <!-- GENERATED:status by scripts/gen-status-docs.mjs — do not edit. -->
 

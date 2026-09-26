@@ -5,14 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function LayoutHeaderPage() {
 	return (
-		<ComponentPage
-			title="Header"
-			summary="The shell's top bar. Slot-driven for its contents and fixed in its arrangement — which is the half every hand-built header gets wrong the first time a search field and an account menu share a row."
-			importPath="@/components/layout/header"
-			exports={["Header",
-				"HeaderBreadcrumbs", "HeaderSearch", "HeaderGlobalSearchTrigger", "HeaderToolButton", "HeaderToolPopover", "HeaderNotifications", "HeaderUserMenu",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="layout-header/header"
 				title="Header"

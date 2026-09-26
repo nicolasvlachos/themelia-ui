@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function PaginationPage() {
 	return (
-		<ComponentPage
-			title="Pagination"
-			summary="Page numbers with ellipses. The range is computed by paginationRange, which is exported so a custom control can use the same arithmetic."
-			importPath="@/components/base/navigation"
-			exports={["Pagination", "paginationRange", "type PaginationLinkProps"]}
-		>
+		<ComponentPage>
 			<Example
 				example="pagination/pagination"
 				title="Pagination"

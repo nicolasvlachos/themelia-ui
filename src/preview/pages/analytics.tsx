@@ -5,14 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AnalyticsPage() {
 	return (
-		<ComponentPage
-			title="Analytics"
-			summary="Every metric surface in the kit, on one data shape. A figure written as MetricData renders in a strip, a grid, a hero card or a comparison without being remapped — so the formatting, the trend inference and the empty case are decided once instead of at each call site."
-			importPath="@/components/patterns/analytics"
-			exports={["Metric", "MetricBar", "MetricGrid", "MetricComparison", "ActivityHeatmap", "ChartCard", "TimeRuler",
-				"MetricMicroGrid", "MetricGradient", "MetricTrendChip", "MetricSkeleton",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="analytics/analytics-bar"
 				title="Metric bar"

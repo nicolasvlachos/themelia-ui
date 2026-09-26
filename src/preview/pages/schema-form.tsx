@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SchemaFormPage() {
 	return (
-		<ComponentPage
-			title="Schema form"
-			summary="A form described as data: fields with a type, a label, and the rules that govern them. Every control is already a kit component, so what this owns is the mapping — which control a type gets, how sections bucket fields, and when a message appears."
-			importPath="@/components/features/schema-form"
-			exports={["SchemaForm", "useSchemaForm",
-				"SchemaFormActions", "SchemaFormFieldRenderer",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="schema-form/form-layout"
 				title="One surface"

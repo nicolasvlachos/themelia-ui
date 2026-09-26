@@ -1171,265 +1171,754 @@ export default function AddressPartial() {
 ### Coordinates
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Coordinates latitude={48.85837} longitude={2.29448} />
-<Coordinates latitude={48.85837} longitude={2.29448} format="dms" />
+import { MetadataList } from "themelia-ui/base/display"
+import { Coordinates } from "themelia-ui/primitives"
+
+export default function CoordinatesExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Default", value: <Coordinates latitude={48.85837} longitude={2.29448} /> },
+				{ label: "With hemispheres", value: <Coordinates latitude={48.85837} longitude={2.29448} showHemisphere /> },
+				{ label: "Degrees, minutes, seconds", value: <Coordinates latitude={48.85837} longitude={2.29448} format="dms" /> },
+				{ label: "Southern hemisphere", value: <Coordinates latitude={-33.8688} longitude={151.2093} format="dms" /> },
+				{ label: "Three decimals", value: <Coordinates latitude={48.85837} longitude={2.29448} precision={3} /> },
+				{ label: "No decimals", value: <Coordinates latitude={48.85837} longitude={2.29448} precision={0} /> },
+				{ label: "No coordinates", value: <Coordinates latitude={null} longitude={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Email
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Email value="jane@northwind.example" />
-<Email value="raj@northwind.example" display="Raj Patel" />
-<Email value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Email } from "themelia-ui/primitives"
+
+export default function EmailExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Default", value: <Email value="jane@northwind.example" /> },
+				{ label: "Display name", value: <Email value="raj@northwind.example" display="Raj Patel" /> },
+				{ label: "No address", value: <Email value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Phone
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Phone value="+31 6 1234 5678" />
-<Phone value="+1 (555) 010-4417" />
-<Phone value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Phone } from "themelia-ui/primitives"
+
+export default function PhoneExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Grouped with spaces", value: <Phone value="+31 6 1234 5678" /> },
+				{ label: "Brackets and dashes", value: <Phone value="+1 (555) 010-4417" /> },
+				{ label: "No number", value: <Phone value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### URL
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Url value="https://northwind.example/invoices/4417" />
-<Url value="https://northwind.example/invoices/4417" external />
-<Url value="https://northwind.example" display="Northwind" />
-<Url value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Url } from "themelia-ui/primitives"
+
+export default function UrlExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Default", value: <Url value="https://northwind.example/invoices/4417" /> },
+				{ label: "Opens in a new tab", value: <Url value="https://northwind.example/invoices/4417" external /> },
+				{ label: "Display text", value: <Url value="https://northwind.example" display="Northwind" /> },
+				{ label: "No address", value: <Url value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Dates and times
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DatePrimitive value={WHEN} />
-<Time value={WHEN} />
-<DateTime value={WHEN} />
-<DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" />
-<DatePrimitive value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { DatePrimitive, DateTime, Time } from "themelia-ui/primitives"
+
+import { WHEN } from "./data"
+
+export default function DateExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Date", value: <DatePrimitive value={WHEN} /> },
+				{ label: "Time", value: <Time value={WHEN} /> },
+				{ label: "Date and time", value: <DateTime value={WHEN} /> },
+				{ label: "Custom pattern", value: <DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" /> },
+				{ label: "No date", value: <DatePrimitive value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Localised names
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-import { de } from "date-fns/locale"
+import { de, ja } from "date-fns/locale"
 
-<UIProvider config={{ formatting: { locale: "de-DE" }, dates: { locale: de } }}>
-  <DatePrimitive value={when} pattern="EEEE d MMMM yyyy" />
-</UIProvider>
+import { MetadataList } from "themelia-ui/base/display"
+import { DatePrimitive } from "themelia-ui/primitives"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+import { WHEN } from "./data"
+
+export default function DateLocale() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Default", value: <DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" /> },
+				{
+					label: "German names",
+					value: (
+						<UIProvider config={{ dates: { locale: de } }}>
+							<DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" />
+						</UIProvider>
+					),
+				},
+				{
+					label: "Japanese names",
+					value: (
+						<UIProvider config={{ dates: { locale: ja } }}>
+							<DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" />
+						</UIProvider>
+					),
+				},
+			]}
+		/>
+	)
+}
 ```
 
 ### DateRange
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DateRange start={MARCH_3} end={MARCH_7} />
-<DateRange start={MARCH_3} end={APRIL_2} />
-<DateRange start={MARCH_3} end={NEXT_JAN} />
-<DateRange start={MARCH_3} end={APRIL_2} separator=" to " />
-<DateRange start={MARCH_3} end={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { DateRange } from "themelia-ui/primitives"
+
+import { APRIL_2, MARCH_3, MARCH_7, NEXT_JAN } from "./data"
+
+export default function DateRangeExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Same month", value: <DateRange start={MARCH_3} end={MARCH_7} /> },
+				{ label: "Same year", value: <DateRange start={MARCH_3} end={APRIL_2} /> },
+				{ label: "Across years", value: <DateRange start={MARCH_3} end={NEXT_JAN} /> },
+				{ label: "Custom separator", value: <DateRange start={MARCH_3} end={APRIL_2} separator=" to " /> },
+				{ label: "No end date", value: <DateRange start={MARCH_3} end={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### RelativeTime
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<RelativeTime value={HOURS_AGO} now={NOW} />
-<RelativeTime value={DAYS_AGO} now={NOW} />
-<RelativeTime value={MONTHS_AGO} now={NOW} />
-<RelativeTime value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { RelativeTime } from "themelia-ui/primitives"
+
+import { DAYS_AGO, HOURS_AGO, MONTHS_AGO, NOW } from "./data"
+
+export default function RelativeTimeExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Hours ago", value: <RelativeTime value={HOURS_AGO} now={NOW} /> },
+				{ label: "Days ago", value: <RelativeTime value={DAYS_AGO} now={NOW} /> },
+				{ label: "Months ago", value: <RelativeTime value={MONTHS_AGO} now={NOW} /> },
+				{ label: "No date", value: <RelativeTime value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Suffix and precision
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<RelativeTime value={date} now={now} addSuffix={false} />
-<RelativeTime value={date} now={now} includeSeconds />
+import { MetadataList } from "themelia-ui/base/display"
+import { RelativeTime } from "themelia-ui/primitives"
+
+import { DAYS_AGO, NOW, SECONDS_AGO } from "./data"
+
+export default function RelativeTimeShape() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "With suffix", value: <RelativeTime value={DAYS_AGO} now={NOW} /> },
+				{ label: "No suffix", value: <RelativeTime value={DAYS_AGO} now={NOW} addSuffix={false} /> },
+				{ label: "With seconds", value: <RelativeTime value={SECONDS_AGO} now={NOW} includeSeconds /> },
+				{ label: "Without seconds", value: <RelativeTime value={SECONDS_AGO} now={NOW} /> },
+			]}
+		/>
+	)
+}
+```
+
+### In another language
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { de } from "date-fns/locale"
+
+import { MetadataList } from "themelia-ui/base/display"
+import { RelativeTime } from "themelia-ui/primitives"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+import { DAYS_AGO, NOW } from "./data"
+
+export default function RelativeTimeLocale() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Default", value: <RelativeTime value={DAYS_AGO} now={NOW} /> },
+				{
+					label: "German wording",
+					value: (
+						<UIProvider config={{ dates: { locale: de } }}>
+							<RelativeTime value={DAYS_AGO} now={NOW} />
+						</UIProvider>
+					),
+				},
+				{
+					label: "Custom wording",
+					value: (
+						<UIProvider
+							config={{
+								dates: {
+									formatRelativeTime: (date, now) =>
+										`${Math.round((now.getTime() - date.getTime()) / 86_400_000)}d`,
+								},
+							}}
+						>
+							<RelativeTime value={DAYS_AGO} now={NOW} />
+						</UIProvider>
+					),
+				},
+			]}
+		/>
+	)
+}
 ```
 
 ### Duration
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Duration value={45} />
-<Duration value={4520} />
-<Duration value={90} from="minutes" />
-<Duration value={4520} maxParts={1} />
-<Duration value={4520} unitDisplay="short" />
-<Duration value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Duration } from "themelia-ui/primitives"
+
+export default function DurationExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Seconds", value: <Duration value={45} /> },
+				{ label: "Hours, minutes, seconds", value: <Duration value={4520} /> },
+				{ label: "Given in minutes", value: <Duration value={90} from="minutes" /> },
+				{ label: "Largest unit only", value: <Duration value={4520} maxParts={1} /> },
+				{ label: "Short units", value: <Duration value={4520} unitDisplay="short" /> },
+				{ label: "No duration", value: <Duration value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Money
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Money amount={1299.5} currency="EUR" />
-<Money amount={1299.5} currency="USD" />
-<Money amount={-42} currency="GBP" />
-<Money amount={0} currency="JPY" />
-<Money amount={null} currency="EUR" />
+import { MetadataList } from "themelia-ui/base/display"
+import { Money } from "themelia-ui/primitives"
+
+export default function MoneyExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Euros", value: <Money amount={1299.5} currency="EUR" /> },
+				{ label: "US dollars", value: <Money amount={1299.5} currency="USD" /> },
+				{ label: "Negative pounds", value: <Money amount={-42} currency="GBP" /> },
+				{ label: "Yen, no decimals", value: <Money amount={0} currency="JPY" /> },
+				{ label: "No amount", value: <Money amount={null} currency="EUR" /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Minor units
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Money amount={129950} currency="EUR" unit="minor" />
-<Money amount={1299} currency="JPY" unit="minor" minorUnitScale={1} />
-<Money amount={129950} currency="KWD" unit="minor" minorUnitScale={1000} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Money } from "themelia-ui/primitives"
+
+export default function MoneyUnitExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Euros from cents", value: <Money amount={129950} currency="EUR" unit="minor" /> },
+				{ label: "Yen, no minor unit", value: <Money amount={1299} currency="JPY" unit="minor" minorUnitScale={1} /> },
+				{ label: "Dinars from fils", value: <Money amount={129950} currency="KWD" unit="minor" minorUnitScale={1000} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### How the amount is written
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Money amount={1299.5} currency="EUR" formatMode="with-symbol" />
-<Money amount={1299.5} currency="EUR" formatMode="with-code" />
-<Money amount={1299.5} currency="EUR" formatMode="decimal" />
+import { MetadataList } from "themelia-ui/base/display"
+import { Money } from "themelia-ui/primitives"
+
+export default function MoneyFormat() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "With symbol", value: <Money amount={1299.5} currency="EUR" formatMode="with-symbol" /> },
+				{ label: "With code", value: <Money amount={1299.5} currency="EUR" formatMode="with-code" /> },
+				{ label: "Number only", value: <Money amount={1299.5} currency="EUR" formatMode="decimal" /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Two currencies
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Money
-  amount={1299.5}
-  currency="EUR"
-  secondary={{ amount: 1416.2, currency: "USD" }}
-/>
+import { MetadataList } from "themelia-ui/base/display"
+import { Money } from "themelia-ui/primitives"
+
+export default function MoneyDual() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{
+					label: "Discrete",
+					value: <Money amount={1299.5} currency="EUR" secondary={{ amount: 1416.2, currency: "USD" }} />,
+				},
+				{
+					label: "Muted",
+					value: <Money amount={1299.5} currency="EUR" secondary={{ amount: 1416.2, currency: "USD" }} secondaryEmphasis="muted" />,
+				},
+				{
+					label: "Matching",
+					value: <Money amount={1299.5} currency="EUR" secondary={{ amount: 1416.2, currency: "USD" }} secondaryEmphasis="match" />,
+				},
+				{
+					label: "Arrow separator",
+					value: <Money amount={1299.5} currency="EUR" secondary={{ amount: 1416.2, currency: "USD" }} separator="→" />,
+				},
+				{
+					label: "Stacked",
+					value: <Money amount={1299.5} currency="EUR" secondary={{ amount: 1416.2, currency: "USD" }} layout="stacked" />,
+				},
+				{
+					label: "Hidden",
+					value: <Money amount={1299.5} currency="EUR" secondary={{ amount: 1416.2, currency: "USD" }} secondaryEmphasis="hidden" />,
+				},
+			]}
+		/>
+	)
+}
 ```
 
 ### Decided once, not per amount
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider
-  config={{
-    formatting: { locale: "de-DE" },
-    money: {
-      defaultCurrency: "EUR",
-      displayCurrency: "USD",
-      dualPricingEnabled: true,
-      displayMode: "dynamic",
-      layout: "stacked",
-    },
-  }}
->
-  <Money amount={1299.5} secondary={{ amount: 1416.2 }} />
-</UIProvider>
+import { MetadataList } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { Money } from "themelia-ui/primitives"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function MoneyProviderExample() {
+	return (
+		<Stack gap="lg">
+			<UIProvider
+				config={{
+					formatting: { locale: "de-DE" },
+					money: {
+						defaultCurrency: "EUR",
+						displayCurrency: "USD",
+						dualPricingEnabled: true,
+						displayMode: "dynamic",
+						layout: "stacked",
+					},
+				}}
+			>
+				<MetadataList
+					layout="rows"
+					items={[
+						{ label: "With a conversion", value: <Money amount={1299.5} secondary={{ amount: 1416.2 }} /> },
+						{ label: "No conversion", value: <Money amount={1299.5} /> },
+						{ label: "Same currency", value: <Money amount={1299.5} secondary={{ amount: 1299.5, currency: "EUR" }} /> },
+					]}
+				/>
+			</UIProvider>
+			<Text size="xs" type="secondary">
+				German locale, so the group separator is a dot and the symbol trails the number.
+				The third row is <code>dynamic</code> at work: both codes are EUR, so the pair
+				would say the same thing twice and only one value renders.
+			</Text>
+		</Stack>
+	)
+}
 ```
 
 ### Name
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Name value="Jane McDonald" />
-<Name value="  jane   mcdonald " />
-<Name value="JANE MCDONALD" force />
-<Name value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Name } from "themelia-ui/primitives"
+
+export default function NameExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Deliberate casing", value: <Name value="Jane McDonald" /> },
+				{ label: "Lower case, extra spaces", value: <Name value="  jane   mcdonald " /> },
+				{ label: "All capitals, forced", value: <Name value="JANE MCDONALD" force /> },
+				{ label: "No name", value: <Name value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Initials
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Initials value="Jane McDonald" />
-<Initials value="Mei Chen" />
-<Initials value="Jane McDonald" maxCharacters={1} />
-<Initials value="Ana Sofia Reyes" strategy="first-words" />
-<Initials value="Ana Sofia Reyes" maxCharacters={3} />
-<Initials value="—" fallback="?" />
-<Initials value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Initials } from "themelia-ui/primitives"
+
+export default function InitialsExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "First and last", value: <Initials value="Jane McDonald" /> },
+				{ label: "Short name", value: <Initials value="Mei Chen" /> },
+				{ label: "One character", value: <Initials value="Jane McDonald" maxCharacters={1} /> },
+				{ label: "First two words", value: <Initials value="Ana Sofia Reyes" strategy="first-words" /> },
+				{ label: "Three characters", value: <Initials value="Ana Sofia Reyes" maxCharacters={3} /> },
+				{ label: "No letters, with fallback", value: <Initials value="—" fallback="?" /> },
+				{ label: "No name", value: <Initials value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Number and percent
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Number value={1234567.891} />
-<Number value={-42} />
-<Percent value={0.214} />
-<Percent value={1} />
-<Percent value={21.4} scaled />
-<Number value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Number, Percent } from "themelia-ui/primitives"
+
+export default function NumberExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Grouped digits", value: <Number value={1234567.891} /> },
+				{ label: "Negative", value: <Number value={-42} /> },
+				{ label: "Fraction as percent", value: <Percent value={0.214} /> },
+				{ label: "One as percent", value: <Percent value={1} /> },
+				{ label: "Already scaled", value: <Percent value={21.4} scaled /> },
+				{ label: "No number", value: <Number value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Range
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Range from={10} to={50} />
-<Range from={10} to={50} currency="GBP" />
-<Range from={2} to={5} unit="day" />
+import { MetadataList } from "themelia-ui/base/display"
+import { Range } from "themelia-ui/primitives"
+
+export default function RangeExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Plain numbers", value: <Range from={10} to={50} /> },
+				{ label: "Pounds", value: <Range from={10} to={50} currency="GBP" /> },
+				{ label: "Euros", value: <Range from={10} to={50} currency="EUR" /> },
+				{ label: "Days", value: <Range from={2} to={5} unit="day" /> },
+				{ label: "Equal ends", value: <Range from={10} to={10} currency="GBP" /> },
+				{ label: "One end only", value: <Range from={10} currency="GBP" /> },
+				{ label: "Neither end", value: <Range from={null} to={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Ratio
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Ratio value={3} total={10} />
-<Ratio value={3} total={10} format="fraction" />
-<Ratio value={3} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Ratio } from "themelia-ui/primitives"
+
+export default function RatioExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "In words", value: <Ratio value={3} total={10} /> },
+				{ label: "Complete", value: <Ratio value={7} total={7} /> },
+				{ label: "Fraction", value: <Ratio value={3} total={10} format="fraction" /> },
+				{ label: "Large numbers", value: <Ratio value={1240} total={10000} /> },
+				{ label: "No total", value: <Ratio value={3} /> },
+				{ label: "No count", value: <Ratio value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Rating
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Rating value={4.5} />
-<Rating value={4} hideMax />
+import { MetadataList } from "themelia-ui/base/display"
+import { Rating } from "themelia-ui/primitives"
+
+export default function RatingExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Decimal score", value: <Rating value={4.5} /> },
+				{ label: "Whole score", value: <Rating value={4} /> },
+				{ label: "Out of ten", value: <Rating value={8.5} max={10} /> },
+				{ label: "Scale hidden", value: <Rating value={4.5} hideMax /> },
+				{ label: "No rating", value: <Rating value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Quantity
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Quantity value={1} unit={{ one: "item", other: "items" }} />
-<Quantity value={0} unit={ITEM} zeroLabel="no items" />
+import { MetadataList } from "themelia-ui/base/display"
+import { Quantity } from "themelia-ui/primitives"
+
+import { ITEM, PERSON } from "./data"
+
+export default function QuantityExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "One", value: <Quantity value={1} unit={ITEM} /> },
+				{ label: "Several", value: <Quantity value={3} unit={ITEM} /> },
+				{ label: "Fraction", value: <Quantity value={1.5} unit={ITEM} /> },
+				{ label: "One person", value: <Quantity value={1} unit={PERSON} /> },
+				{ label: "Several people", value: <Quantity value={4} unit={PERSON} /> },
+				{ label: "Zero in words", value: <Quantity value={0} unit={ITEM} zeroLabel="no items" /> },
+				{ label: "No count", value: <Quantity value={null} unit={ITEM} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Measure
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Measure value={2.5} unit="kilogram" />
-<Measure value={2.5} unit="kilogram" unitDisplay="long" />
+import { MetadataList } from "themelia-ui/base/display"
+import { Measure } from "themelia-ui/primitives"
+
+export default function MeasureExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Kilograms", value: <Measure value={2.5} unit="kilogram" /> },
+				{ label: "Narrow", value: <Measure value={2.5} unit="kilogram" unitDisplay="narrow" /> },
+				{ label: "Long", value: <Measure value={2.5} unit="kilogram" unitDisplay="long" /> },
+				{ label: "Metres", value: <Measure value={180} unit="meter" /> },
+				{ label: "Celsius", value: <Measure value={21.5} unit="celsius" /> },
+				{ label: "Days", value: <Measure value={14} unit="day" /> },
+				{ label: "Unknown unit", value: <Measure value={2.5} unit="bananas" /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Dimensions
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Dimensions width={30} height={20} unit="cm" />
-<Dimensions width={30} height={20} depth={12} unit="cm" />
-<Dimensions width={1920} height={1080} unit="px" />
-<Dimensions width={null} height={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { Dimensions } from "themelia-ui/primitives"
+
+export default function DimensionsExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Width and height", value: <Dimensions width={30} height={20} unit="cm" /> },
+				{ label: "With depth", value: <Dimensions width={30} height={20} depth={12} unit="cm" /> },
+				{ label: "Pixels", value: <Dimensions width={1920} height={1080} unit="px" /> },
+				{ label: "No dimensions", value: <Dimensions width={null} height={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### File size
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FileSize value={512} />
-<FileSize value={1_100_000} />
-<FileSize value={85_800_000} />
-<FileSize value={4_100_000_000} />
-<FileSize value={null} />
+import { MetadataList } from "themelia-ui/base/display"
+import { FileSize } from "themelia-ui/primitives"
+
+export default function FileSizeExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Bytes", value: <FileSize value={512} /> },
+				{ label: "About a megabyte", value: <FileSize value={1_100_000} /> },
+				{ label: "Tens of megabytes", value: <FileSize value={85_800_000} /> },
+				{ label: "Gigabytes", value: <FileSize value={4_100_000_000} /> },
+				{ label: "No size", value: <FileSize value={null} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Which megabyte
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FileSize value={1_100_000} />                    {/* 1 MB */}
-<FileSize value={1_100_000} base="decimal" />    {/* 1.1 MB */}
-<FileSize value={1_100_000} base="iec" />        {/* 1 MiB */}
+import { MetadataList } from "themelia-ui/base/display"
+import { FileSize } from "themelia-ui/primitives"
+
+export default function FileSizeBaseExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Binary", value: <FileSize value={85_800_000} /> },
+				{ label: "Decimal", value: <FileSize value={85_800_000} base="decimal" /> },
+				{ label: "IEC", value: <FileSize value={85_800_000} base="iec" /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Value
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Value>Northwind Traders</Value>
-<SecondaryValue>Supporting detail</SecondaryValue>
-<MutedValue>Quieter still</MutedValue>
-<MonoValue>req_8f21c440</MonoValue>
-<EmptyValue />
+import { MetadataList } from "themelia-ui/base/display"
+import { EmptyValue, MonoValue, MutedValue, SecondaryValue, Value } from "themelia-ui/primitives"
+
+export default function ValueExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Default", value: <Value>Northwind Traders</Value> },
+				{ label: "Secondary", value: <SecondaryValue>Supporting detail</SecondaryValue> },
+				{ label: "Muted", value: <MutedValue>Quieter still</MutedValue> },
+				{ label: "Monospaced", value: <MonoValue>req_8f21c440</MonoValue> },
+				{ label: "Empty", value: <EmptyValue /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### Inline list
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InlineList items={["Alice", "Bob", "Carol"]} />
-<InlineList items={["red", "green", "blue"]} join="or" />
-<InlineList items={items} max={2} />
+import { MetadataList } from "themelia-ui/base/display"
+import { InlineList } from "themelia-ui/primitives"
+
+import { THREE } from "./data"
+
+export default function InlineListExample() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "Default", value: <InlineList items={THREE} /> },
+				{ label: "Alternatives", value: <InlineList items={["red", "green", "blue"]} join="or" /> },
+				{ label: "No conjunction", value: <InlineList items={THREE} join="none" /> },
+				{ label: "At most two", value: <InlineList items={["a", "b", "c", "d"]} max={2} /> },
+				{ label: "Two items", value: <InlineList items={["Alice", "Bob"]} /> },
+				{ label: "One item", value: <InlineList items={["Alice"]} /> },
+				{ label: "No items", value: <InlineList items={[]} /> },
+			]}
+		/>
+	)
+}
 ```
 
 ### The same list, three locales
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InlineList items={names} locale="en-GB" />
-<InlineList items={names} locale="es-ES" />
-<InlineList items={names} locale="ja-JP" />
+import { MetadataList } from "themelia-ui/base/display"
+import { InlineList } from "themelia-ui/primitives"
+
+import { THREE } from "./data"
+
+export default function InlineListLocale() {
+	return (
+		<MetadataList
+			layout="rows"
+			items={[
+				{ label: "British English", value: <InlineList items={THREE} locale="en-GB" /> },
+				{ label: "American English", value: <InlineList items={THREE} locale="en-US" /> },
+				{ label: "Spanish", value: <InlineList items={THREE} locale="es-ES" /> },
+				{ label: "German", value: <InlineList items={THREE} locale="de-DE" /> },
+				{ label: "Japanese", value: <InlineList items={THREE} locale="ja-JP" /> },
+			]}
+		/>
+	)
+}
 ```

@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ProgressPage() {
 	return (
-		<ComponentPage
-			title="Progress"
-			summary="A determinate bar when the total is known, and a travelling band when it is not. The indeterminate form drops its ARIA value attributes rather than reporting a number it does not have. ProgressCircle is the same measurement drawn as a ring, for the places where the reading has to sit inside the mark."
-			importPath="@/components/base/feedback"
-			exports={["Progress", "ProgressCircle"]}
-		>
+		<ComponentPage>
 			<Example
 				example="progress/progress"
 				title="Progress"

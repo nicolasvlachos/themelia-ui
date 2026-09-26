@@ -43,10 +43,12 @@ Extends: `React.ComponentProps<"span">`, `VariantProps<typeof badgeVariants>`.
 
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
-| `render` | no | `React.ReactElement` | The element this becomes — an anchor, a router link, a label (docs/adr/0005).<br>`children` stays the content. |
+| `tone` | no | `BadgeTone` | Semantic colour: what the badge means. `variant` decides how much of it is applied. |
+| `variant` | no | `BadgeVariant` | How much of the tone is applied. Structural, not semantic. |
 | `dot` | no | `boolean` | A leading status dot in the badge's own tone. |
-| `pending` | no | `boolean` | Draws the dot hollow, for a state that hasn't happened yet ("queued", not "failed"). |
+| `pending` | no | `boolean` | Draws the dot hollow, for a state that has not happened yet: "queued", not "failed". |
 | `pulse` | no | `boolean` | Animates the dot, for a state that is actively changing. |
+| `render` | no | `React.ReactElement` | The element the badge becomes — an anchor or a router link, for a badge that links.<br>The dot and `children` go inside it. |
 
 ### `BadgeTone`
 

@@ -5,16 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ProductsPage() {
 	return (
-		<ComponentPage
-			title="Product surfaces"
-			summary="What a product page is assembled from: what is ready to publish, what the product is made of, what it is sold under, and the price it adds up to. Every value is a ReactNode, because a price, a stock level and an SKU are already formatted by the app that owns them — this module arranges them and never tries to format money."
-			importPath="@/components/features/products"
-			exports={[
-				"ProductOverview", "ProductReadinessCard", "ProductStructureCard",
-				"ProductOperationsCard", "ProductContractOverview", "ProductQuotePreviewCard",
-				"ProductDetailsCard", "ProductPoliciesCard", "ProductVariantDetails", "ProductVariantActionMenu", "ProductOptionActionMenu", "ProductRowActions", "ProductSummaryRow", "ProductReadinessRow", "ProductOperationRow", "ProductStructureMetricRow", "ProductVariantCell", "ProductThumbnail", "ProductToneDot", "ProductEmptyState",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="products/overview"
 				title="Overview and quote"

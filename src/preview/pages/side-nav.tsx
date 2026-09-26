@@ -5,17 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SideNavPage() {
 	return (
-		<ComponentPage
-			title="Side nav, section nav & settings shell"
-			summary="The two navigations that sit beside content rather than above it — the rail between the pages of one section, and the table of contents within one page — and AsideNavShell, which is the rail composed beside a column of content, as a settings area is."
-			importPath="@/components/layout/navigation"
-			exports={["SideNav", "SectionNav",
-				"CategoryNav", "BreadcrumbProgress",
-			]}
-			alsoImports={[
-				{ importPath: "@/components/layout/settings", title: "Settings shell", exports: ["AsideNavShell"] },
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="side-nav/side-nav"
 				title="SideNav"

@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ContainersPage() {
 	return (
-		<ComponentPage
-			title="Containers"
-			summary="The four blocks a page is assembled from. One responsibility each — scroll, measure, rhythm, columns — so a page never grows two scroll containers or two content widths."
-			importPath="@/components/layout/containers"
-			exports={["PageViewport", "Container", "Section", "TwoColumnLayout"]}
-		>
+		<ComponentPage>
 			<Example
 				example="containers/blocks"
 				title="The four blocks"

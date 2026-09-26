@@ -5,15 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ActionMenuPage() {
 	return (
-		<ComponentPage
-			title="Action menu & buttons"
-			summary="Commands as data. One ActionDefinition array collapses behind a trigger (ActionMenu), spreads out as buttons (ActionButtons), or both at once — the first few as buttons and the rest in an overflow menu — so a toolbar and its overflow can never offer different things."
-			importPath="@/components/base/action-menu"
-			exports={[
-				"ActionMenu", "ActionButtons", "resolveContextActions", "splitActions",
-				"type ActionDefinition", "type ContextAction",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="action-menu/action-menu"
 				title="ActionMenu"

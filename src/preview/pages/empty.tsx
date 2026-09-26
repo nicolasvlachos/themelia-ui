@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function EmptyPage() {
 	return (
-		<ComponentPage
-			title="Empty state"
-			summary="What to show when there is nothing to show. It names the absence and offers the next step — an empty state that only explains is a dead end."
-			importPath="@/components/base/feedback"
-			exports={["Empty", "StackedCardsIllustration", "SearchGlassIllustration", "DocumentStackIllustration", "InboxCleanIllustration", "UsersCircleIllustration"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="empty/empty"
 				title="Empty"

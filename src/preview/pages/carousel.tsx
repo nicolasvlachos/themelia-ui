@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CarouselPage() {
 	return (
-		<ComponentPage
-			title="Carousel"
-			summary="A horizontal or vertical track the reader pages through. It is native CSS scroll-snap with controls on top, not a JS-driven slider."
-			importPath="@/components/base/carousel"
-			exports={["Carousel", "CarouselSlide", "CarouselControl", "CarouselDots", "useCarousel"]}
-		>
+		<ComponentPage>
 			<Example
 				example="carousel/carousel"
 				title="Carousel"

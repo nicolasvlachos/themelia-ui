@@ -1,7 +1,7 @@
 /*
  * Writes src/preview/generated/gallery.json: one card per preview page, joining the page's
- * `summary` with its family's `chooseWhen`/`avoidWhen`. Family guidance appears only on the
- * family's canonical documentation route, not on supplemental pages.
+ * `summary` with its module's `chooseWhen`/`avoidWhen`. Module guidance appears only on the
+ * module's canonical documentation route, not on supplemental pages.
  * Reads component-index.json: run gen-consumer-docs first. The gallery takes each card's tier
  * from the route table at runtime.
  */
@@ -12,23 +12,22 @@ import { previewPages } from './lib/preview-pages.mjs'
 
 const OUT = 'src/preview/generated/gallery.json'
 
-const pkgName = JSON.parse(readFileSync('package.json', 'utf8')).name
 const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
 
-/** published subpath → the family record that owns it */
-const families = new Map()
-for (const family of index.families) {
-  if (family.import) families.set(family.import, family)
+/** published subpath → the module record that owns it */
+const modules = new Map()
+for (const record of index.modules) {
+  if (record.import) modules.set(record.import, record)
 }
 
 const cards = []
-for (const page of previewPages(pkgName)) {
-  /* Exact subpath, else the longest published family path the page's import starts with. */
-  let owner = families.get(page.subpath) ?? null
+for (const page of previewPages()) {
+  /* Exact subpath, else the longest published module path the page's import starts with. */
+  let owner = modules.get(page.subpath) ?? null
   if (!owner) {
-    for (const [subpath, family] of families) {
+    for (const [subpath, record] of modules) {
       if (!page.subpath.startsWith(`${subpath}/`)) continue
-      if (!owner || subpath.length > owner.import.length) owner = family
+      if (!owner || subpath.length > owner.import.length) owner = record
     }
   }
 
@@ -39,7 +38,7 @@ for (const page of previewPages(pkgName)) {
     import: page.subpath,
     exports: page.exports,
     keywords: page.keywords,
-    family: owner?.id ?? null,
+    module: owner?.id ?? null,
     chooseWhen: owner?.documentation?.endsWith(`(${page.preview})`) ? owner.chooseWhen ?? null : null,
     avoidWhen: owner?.documentation?.endsWith(`(${page.preview})`) ? owner.avoidWhen ?? null : null,
   })

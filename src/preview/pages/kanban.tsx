@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function KanbanPage() {
 	return (
-		<ComponentPage
-			title="Kanban & sync"
-			summary="A drag-and-drop board over dnd-kit, and the dialog body for a “reconcile the last N hours” run. The board translates dnd-kit's “id A was dropped over id B” into “this item moved from column X position 2 to column Y position 0” — which is the part every board has to write."
-			importPath="@/components/features/kanban"
-			exports={["Kanban", "KanbanBoard", "KanbanColumn", "useKanban", "SyncRangeForm",
-				"KanbanColumnContent", "KanbanItem", "KanbanItemHandle", "KanbanItemActions", "KanbanOverlay", "useKanbanContext", "useKanbanItemContext",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="kanban/kanban"
 				title="The board"

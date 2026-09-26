@@ -36,8 +36,6 @@ New components take `render`.
   `children` alone it cannot tell the element to become from the content.
 - `PopoverTrigger` infers Base UI's `nativeButton` from the element passed to `render`, so
   `render={<a href="/x" />}` renders a link, not an anchor with `type="button"`.
-- `Scope` is the one exception: it still takes `as`. It moves to `render` in the next major
-  version, since removing `as` breaks callers.
 - `Slot` stays, because merging props onto a caller-supplied element is how `render` is
   implemented. It is published at `themelia-ui/base/slot`, but it is not the polymorphic
   contract: a component takes `render`.

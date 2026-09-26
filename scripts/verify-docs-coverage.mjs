@@ -1,14 +1,16 @@
 /*
- * Every public component (PascalCase or `use*` runtime export) is listed in some preview page's
- * `exports={[…]}` or `alsoImports`, and every page's import path is a published subpath.
+ * Every public component (PascalCase or `use*` runtime export) is named in some preview page's
+ * `imports` in src/preview/routes.json, and every page's import path is a published subpath.
  * A coverage rule as much as a docs rule: the visual and fault suites only walk preview pages.
  * The fix for a miss is a prop-table row, not just a name. Type-only exports and lowercase
  * helpers are exempt.
  */
-import { readFileSync, readdirSync, existsSync } from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
+
+import { previewPages, runtimeNames } from './lib/preview-pages.mjs'
+import { starTargets } from './lib/public-symbols.mjs'
 
 const MANIFEST = JSON.parse(readFileSync('architecture/manifest.json', 'utf8'))
-import { starTargets } from './lib/public-symbols.mjs'
 
 /* Manifest layer names, not directories: `typography` lives at src/components/base/typography. */
 const LAYERS = ['base', 'features', 'layout', 'patterns', 'admin', 'primitives', 'typography']
@@ -17,20 +19,9 @@ const LAYERS = ['base', 'features', 'layout', 'patterns', 'admin', 'primitives',
  * re-exports the other families and would count every component twice. */
 const FOUNDATION = ['src/lib/forms/index.ts', 'src/lib/forms-rhf/index.ts', 'src/lib/ui-provider/index.ts']
 
-/* Every name any page claims to document. */
-const documented = new Set()
-for (const file of readdirSync('src/preview/pages')) {
-  const text = readFileSync(`src/preview/pages/${file}`, 'utf8')
-  for (const block of text.matchAll(/exports=\{\[([\s\S]*?)\]\}/g)) {
-    for (const name of block[1].matchAll(/"([A-Za-z0-9]+)"/g)) documented.add(name[1])
-  }
-  /* A merged page's further import lines — `alsoImports={[{ …, exports: [ … ] }]}`. */
-  for (const block of text.matchAll(/alsoImports=\{\[[\s\S]*?\]\}\n/g)) {
-    for (const list of block[0].matchAll(/exports:\s*\[([\s\S]*?)\]/g)) {
-      for (const name of list[1].matchAll(/"([A-Za-z0-9]+)"/g)) documented.add(name[1])
-    }
-  }
-}
+/* Every name any page's import lines document. */
+const pages = previewPages()
+const documented = new Set(pages.flatMap((page) => runtimeNames(page.exports)))
 
 /*
  * Components and hooks from an index's `export { … }` blocks, following `export *` to its
@@ -87,7 +78,7 @@ if (missing.length) {
   console.error(`FAIL verify docs-coverage — ${missing.length} public component(s) on no preview page\n`)
   for (const line of missing.sort()) console.error(`  ${line}`)
   console.error(
-    '\n  Add the name to that family\'s page `exports={[…]}` AND a row describing it.' +
+    '\n  Add the name to its page\'s `imports` in src/preview/routes.json AND a row describing it.' +
       '\n  A component with no page is a component the visual and fault suites never walk.',
   )
   process.exit(1)
@@ -95,12 +86,11 @@ if (missing.length) {
 
 /* Every documented import path is a published subpath: it is what a consumer copies. */
 {
-  const { previewPages } = await import('./lib/preview-pages.mjs')
   const exportsMap = JSON.parse(readFileSync('package.json', 'utf8')).exports
   const name = JSON.parse(readFileSync('package.json', 'utf8')).name
   const unpublished = []
 
-  for (const page of previewPages(name)) {
+  for (const page of pages) {
     const subpath = page.subpath.replace(name, '.')
     if (subpath in exportsMap) continue
     unpublished.push(

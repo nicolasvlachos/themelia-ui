@@ -4,19 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ToolbarPage() {
 	return (
-		<ComponentPage
-			title="Toolbar"
-			summary="A named set of related controls with one tab stop. Tab enters or leaves the set; arrow keys move within it according to orientation."
-			importPath="@/components/base/toolbar"
-			exports={[
-				"Toolbar",
-				"ToolbarGroup",
-				"ToolbarButton",
-				"ToolbarLink",
-				"ToolbarInput",
-				"ToolbarSeparator",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="toolbar/toolbar"
 				title="Formatting controls"

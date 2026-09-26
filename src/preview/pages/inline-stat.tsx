@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function InlineStatPage() {
 	return (
-		<ComponentPage
-			title="Inline stat"
-			summary="One label and one value — the pair that sits inside another surface's chrome: a card footer, a header strip, a row of totals. A set of facts about one thing is a MetadataList instead."
-			importPath="@/components/base/display"
-			exports={["InlineStat"]}
-		>
+		<ComponentPage>
 			<Example
 				example="inline-stat/inline-stat"
 				title="Three layouts for one fact"

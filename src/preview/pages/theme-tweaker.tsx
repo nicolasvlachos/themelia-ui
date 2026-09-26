@@ -11,11 +11,7 @@ import { Example } from "../partials/example"
 
 export function ThemeTweakerPage() {
 	return (
-		<ComponentPage
-			title="Theme tweaker"
-			summary="Edit this app's theme live. Colors, typography, spacing, and provider settings apply throughout the app, including menus and dialogs."
-			exports={["ThemeTweaker", "ThemeScope", "UIConfigSettings", "useAppliedTheme"]}
-		>
+		<ComponentPage>
 			<Stack gap="lg">
 				<Text type="secondary">Changes stay active as you navigate and are remembered in this browser. Use the floating palette button to edit alongside any page. Reset app theme restores the app defaults.</Text>
 				<Text>Currency format: <Money amount={1234.56} /></Text>

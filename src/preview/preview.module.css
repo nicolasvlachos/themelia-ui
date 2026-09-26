@@ -757,56 +757,6 @@
 	gap: var(--space-lg);
 }
 
-/* Specimen list, the primitives' demo shape: each call beside the value it renders. */
-.specimens {
-	display: grid;
-	align-items: baseline;
-	grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
-	column-gap: var(--space-2xl);
-	row-gap: var(--space-sm);
-	width: 100%;
-}
-
-.specimenCode {
-	overflow-wrap: anywhere;
-	color: var(--muted-foreground);
-	font-family: var(--font-mono);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-}
-
-.specimenValue {
-	min-width: 0;
-}
-
-/*
- * A narrow numeric column so decimals line up. Alignment belongs to the container, not
- * the primitive, which is as often a span in running text.
- */
-.specimensNumeric {
-	grid-template-columns: minmax(0, 20rem) minmax(0, 8rem);
-}
-
-.specimensNumeric .specimenValue {
-	text-align: end;
-}
-
-/* Stacked below sm: two columns of 20rem do not fit, and the code column wins the squeeze. */
-@media (--bp-max-sm) {
-	.specimens {
-		grid-template-columns: minmax(0, 1fr);
-		row-gap: var(--space-xs);
-	}
-
-	.specimensNumeric {
-		grid-template-columns: minmax(0, 12rem);
-	}
-
-	.specimenValue {
-		margin-block-end: var(--space-sm);
-	}
-}
-
 /* ── Mentions page ────────────────────────────────────────────────────────────── */
 
 /* Stored markup shown as markup — wrapped, because a body is longer than a line. */

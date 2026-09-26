@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CopyablePage() {
 	return (
-		<ComponentPage
-			title="Copyable"
-			summary="A value with a copy button. It confirms in place and raises a toast, because a copy that gives no feedback is indistinguishable from one that failed."
-			importPath="@/components/base/copyable"
-			exports={["Copyable", "useCopyToClipboard"]}
-		>
+		<ComponentPage>
 			<Example
 				example="copyable/copyable"
 				title="Copyable"

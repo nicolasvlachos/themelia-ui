@@ -16,14 +16,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function MapPage() {
 	return (
-		<ComponentPage
-			title="Map"
-			summary="A Leaflet surface composed the way the rest of the kit is: layers, markers, and controls are components, and the ones that belong to a control register themselves with it. Leaflet and its plugins are optional peers, loaded only when a map actually mounts."
-			importPath="@/components/features/map"
-			exports={["Map", "MapMarker", "MapZoomControl", "PlaceAutocomplete",
-				"MapTileLayer", "MapLayers", "MapLayerGroup", "MapFeatureGroup", "MapLayersControl", "MapMarkerClusterGroup", "MapCircle", "MapCircleMarker", "MapPolyline", "MapPolygon", "MapRectangle", "MapPopup", "MapTooltip", "MapControlContainer", "MapFullscreenControl", "MapLocateControl", "MapSearchControl", "MapDrawControl", "MapDrawMarker", "MapDrawPolyline", "MapDrawPolygon", "MapDrawRectangle", "MapDrawCircle", "MapDrawEdit", "MapDrawDelete", "MapDrawUndo", "useLeaflet", "usePlaceSearch",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="map/map"
 				title="A map with controls"

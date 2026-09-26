@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function OtpInputPage() {
 	return (
-		<ComponentPage
-			title="One-time code input"
-			summary="The field for a short code sent by text message or email, drawn one box per character so the reader can check it against the message at a glance. It stays a single input underneath, which is what lets paste and SMS autofill fill every box at once."
-			importPath="@/components/base/otp-input"
-			exports={["OtpInput"]}
-		>
+		<ComponentPage>
 			<Example
 				example="otp-input/otp-input"
 				title="OtpInput"

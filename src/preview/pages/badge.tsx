@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function BadgePage() {
 	return (
-		<ComponentPage
-			title="Badge"
-			summary="A short status mark. It takes a tone, like everything else that carries colour in the kit, and can draw its own status dot so meaning does not rest on hue alone."
-			importPath="@/components/base/badge"
-			exports={["Badge", "type BadgeTone"]}
-		>
+		<ComponentPage>
 			<Example
 				example="badge/badge-tones"
 				title="Tones"
@@ -33,16 +28,7 @@ export function BadgePage() {
 			</Example>
 
 			<Example id="badge-api" title="API">
-				<PropTable owner="Badge"
-					rows={[
-						{ name: "tone", type: "BadgeTone", default: '"neutral"', description: "neutral | primary | secondary | success | info | warning | destructive." },
-						{ name: "variant", type: '"soft" | "solid" | "outline"', default: '"soft"', description: "How much of the tone is applied. Structural, not semantic." },
-						{ name: "dot", type: "boolean", default: "false", description: "A leading status dot in the badge's own tone." },
-						{ name: "pending", type: "boolean", default: "false", description: "Draws the dot hollow, for a state that has not happened yet." },
-						{ name: "pulse", type: "boolean", default: "false", description: "Animates the dot, for a state that is actively changing." },
-						{ name: "render", type: "ReactElement", description: "The element the badge becomes — an anchor, for a badge that links. The dot and the label go inside it." },
-					]}
-				/>
+				<PropTable owner="Badge" />
 			</Example>
 		</ComponentPage>
 	)

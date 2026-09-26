@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function BlocksCommercePage() {
 	return (
-		<ComponentPage
-			title="Commerce"
-			summary="Reusable blocks for checkout, fulfillment, billing, and customer accounts. Each adapts to its container and keeps application actions in consumer callbacks."
-			importPath="@/components/admin/patterns/commerce"
-			exports={["CartSummary", "TaxBreakdown", "DiscountStack", "CodeEntry", "InvoiceHeader", "InvoiceLineItems", "InvoiceMini", "OrderStatusCard", "ShipmentTracking", "RefundStatus", "AddressCard", "PaymentMethodCard", "PaymentTimeline", "SubscriptionSummary", "InventoryLevel", "UpcomingBookings", "LoyaltyPoints"]}
-		>
+		<ComponentPage>
 			<Example
 				example="blocks-commerce/cart-summary"
 				title="CartSummary"

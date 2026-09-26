@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function BreadcrumbsPage() {
 	return (
-		<ComponentPage
-			title="Breadcrumbs"
-			summary="The trail to the current page. Separators are aria-hidden, so it is not announced as “Home slash Orders slash”."
-			importPath="@/components/base/navigation"
-			exports={["Breadcrumbs"]}
-		>
+		<ComponentPage>
 			<Example
 				example="breadcrumbs/breadcrumbs"
 				title="Breadcrumbs"

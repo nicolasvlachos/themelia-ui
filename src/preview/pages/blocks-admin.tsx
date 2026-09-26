@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function BlocksAdminPage() {
 	return (
-		<ComponentPage
-			title="Timelines, onboarding & admin"
-			summary="Domain presentation assembled from the tiers below it. The three timeline surfaces map a vocabulary onto base/timeline rather than redrawing the rail, and nothing here fetches, navigates, or confirms a destructive action — every one takes callbacks and slots."
-			importPath="@/components/patterns/timelines"
-			exports={["ChangelogTimeline", "MilestonesTimeline", "Steps", "StepsBar", "Checklist", "CredentialList", "RolePermissions", "SensitiveAction"]}
-		>
+		<ComponentPage>
 			<Example
 				example="blocks-admin/blocks-changelog"
 				title="Changelog"

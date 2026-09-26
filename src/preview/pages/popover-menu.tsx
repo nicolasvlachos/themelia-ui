@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function PopoverMenuPage() {
 	return (
-		<ComponentPage
-			title="Popover menu"
-			summary="A Popover holding a Command: trigger → header band → search → list → footer band. It picks a VALUE from a searchable list hung off any button — who owns this, which project, what status — where ActionMenu behind the same kind of trigger runs commands instead. It is not a form control: no field surface, no name, no form value. For those, the field IS the control — see Select and Combobox."
-			importPath="@/components/base/popover-menu"
-			exports={["PopoverMenu", "PopoverMenuPanel", "type PopoverMenuItem"]}
-		>
+		<ComponentPage>
 			<Example
 				example="popover-menu/popover-menu"
 				title="PopoverMenu"

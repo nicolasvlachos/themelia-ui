@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function RichTextEditorPage() {
 	return (
-		<ComponentPage
-			title="Rich text editor"
-			summary="A TipTap editor with formatting, undo and redo, HTML source mode, and composition slots. The imperative handle supports inserting content and replacing mention triggers at the caret."
-			importPath="@/components/features/rich-text-editor"
-			exports={["RichTextEditor", "RichTextEditorHandle", "RichText", "RichTextEditorToolbar", "EditorCounts"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="rich-text-editor/editor"
 				title="The editor and what comes out"

@@ -13,6 +13,8 @@ import ts from 'typescript'
 import { writeIfChanged } from './lib/write-if-changed.mjs'
 import { readManifest } from './lib/read-architecture-manifest.mjs'
 import { publicComponents, publicSymbols } from './lib/public-symbols.mjs'
+import { runtimeNames } from './lib/preview-pages.mjs'
+import { tierLabel, tierOfLayer } from './lib/tiers.mjs'
 
 /* Hand-authored selection guidance, one entry per family. */
 const selection = JSON.parse(readFileSync('architecture/selection.json', 'utf8')).families
@@ -38,12 +40,12 @@ const records = manifest.families
     return {
       id: family.id,
       profile: family.profile,
-      layer: family.layer,
+      tier: tierOfLayer(family.layer),
       entrypoint: family.export,
       import: `${name}${family.export.slice(1)}`,
       css: family.cssExport ? `${name}${family.cssExport.slice(1)}` : null,
       optionalPeers: family.optionalPeers,
-      dependsOnFamilies: family.dependsOnFamilies,
+      dependsOn: family.dependsOnFamilies,
       documentation: family.documentationRoute
         ? `${family.documentationRoute.label} (${family.documentationRoute.path})`
         : null,
@@ -175,14 +177,10 @@ const profileLines = [
   '',
   '## Modules',
   '',
-  'The `layer` column uses the manifest\'s `layer` names, which split the tiers more finely:',
-  '`typography` is the Base module `base/typography`, and `patterns` and `admin` together make',
-  'up Blocks.',
-  '',
-  '| module | profile | `layer` | depends on |',
+  '| module | profile | tier | depends on |',
   '| --- | --- | --- | --- |',
   ...records.map(
-    (r) => `| \`${r.id}\` | ${r.profile} | ${r.layer} | ${r.dependsOnFamilies.length || '—'} |`,
+    (r) => `| \`${r.id}\` | ${r.profile} | ${tierLabel(r.tier)} | ${r.dependsOn.length || '—'} |`,
   ),
   '',
 ]
@@ -195,9 +193,12 @@ writeIfChanged(`${OUT}/profiles.md`, profileLines.join('\n'))
  * they use, so a shared page cannot assign an example to every family on it.
  */
 
-/* page file → its route, from the preview's route table */
+/* page file → its route and the names its import lines document, from the preview's page table */
 const routeOfPage = new Map(
-  JSON.parse(readFileSync('src/preview/routes.json', 'utf8')).routes.map((row) => [`${row.page}.tsx`, { path: row.path, label: row.label }]),
+  JSON.parse(readFileSync('src/preview/routes.json', 'utf8')).routes.map((row) => [
+    `${row.page}.tsx`,
+    { path: row.path, label: row.label, claimed: runtimeNames((row.imports ?? []).flatMap((entry) => entry.names)) },
+  ]),
 )
 
 /** The page's `<Example>` elements, parsed rather than matched: `title`, `id`, `example` and `code`. */
@@ -236,9 +237,7 @@ for (const file of readdirSync('src/preview/pages').sort()) {
     const title = entry.title
     if (!id || !title || !code) continue
     const usedFamilies = recipeFamilies(code, text, records)
-    /* The page's own exports, and a merged page's further families (`alsoImports`). */
-    const claimed = [...text.matchAll(/exports=\{\[([\s\S]*?)\]\}|exports:\s*\[([\s\S]*?)\]/g)].flatMap((match) => [...(match[1] ?? match[2]).matchAll(/"([A-Za-z0-9]+)"/g)].map((symbol) => symbol[1]))
-    const documented = records.filter((record) => claimed.some((symbol) => record.symbols.includes(symbol)))
+    const documented = records.filter((record) => route.claimed.some((symbol) => record.symbols.includes(symbol)))
     const owners = usedFamilies.filter((id) => documented.some((record) => record.id === id))
     const families = owners.length ? owners : usedFamilies
     const family = records.find((record) => families.includes(record.id) && record.documentation?.includes(`(${route.path})`))
@@ -248,9 +247,9 @@ for (const file of readdirSync('src/preview/pages').sort()) {
       title,
       route: route.path,
       page: route.label,
-      family: family?.id ?? null,
-      families,
-      supportingFamilies: usedFamilies.filter((id) => !families.includes(id)),
+      module: family?.id ?? null,
+      modules: families,
+      supportingModules: usedFamilies.filter((id) => !families.includes(id)),
       import: family?.import ?? null,
       css: family?.css ?? null,
       code,
@@ -263,7 +262,7 @@ for (const file of readdirSync('src/preview/pages').sort()) {
  * `documentationRoute`: the finder searches all of them.
  */
 const enrichedRecords = records.map((record) => {
-  const familyRecipes = recipes.filter((recipe) => recipe.families.includes(record.id))
+  const familyRecipes = recipes.filter((recipe) => recipe.modules.includes(record.id))
   const previews = [
     ...new Map(
       familyRecipes.map((recipe) => [
@@ -280,7 +279,7 @@ const enrichedRecords = records.map((record) => {
       cssImport: record.css,
       apiDoc: `${record.apiDoc}#${symbol.toLowerCase()}`,
       description: documentedAPI[record.entrypoint]?.[symbol]?.documentation?.description ?? '',
-      guidanceSource: guidance[record.id]?.[symbol] ? 'component' : 'family',
+      guidanceSource: guidance[record.id]?.[symbol] ? 'component' : 'module',
       chooseWhen: record.chooseWhen,
       avoidWhen: record.avoidWhen,
       capabilities: [],
@@ -302,11 +301,11 @@ writeIfChanged(
         'Generated by scripts/gen-consumer-docs.mjs. The machine surface: agent skills and ' +
         'component finders read this, not the prose. Every attributed live preview and recipe ' +
         'is indexed under its module.',
-      schemaVersion: 2,
+      schemaVersion: 3,
       packageVersion: pkg.version,
       package: name,
       profiles: ['general', 'admin'],
-      families: enrichedRecords,
+      modules: enrichedRecords,
     },
     null,
     2,
@@ -323,21 +322,18 @@ const componentLines = [
   '',
   'Open one module at a time. Each reference is generated from the public declaration',
   'snapshot, the architecture manifest, selection guidance, and the live preview recipes.',
-  'The `layer` column uses the manifest\'s `layer` names, which split the tiers more finely:',
-  '`typography` is the Base module `base/typography`, and `patterns` and `admin` together make',
-  'up Blocks.',
   '',
-  '| module | `layer` | profile | reference |',
+  '| module | tier | profile | reference |',
   '| --- | --- | --- | --- |',
 ]
 
 for (const record of records) {
   componentLines.push(
-    `| \`${record.id}\` | ${record.layer} | ${record.profile} | [API](./${apiSlug(record.id)}.md) |`,
+    `| \`${record.id}\` | ${tierLabel(record.tier)} | ${record.profile} | [API](./${apiSlug(record.id)}.md) |`,
   )
 
   const declarations = documentedAPI[record.entrypoint] ?? {}
-  const applicableRecipes = recipes.filter((recipe) => recipe.families.includes(record.id))
+  const applicableRecipes = recipes.filter((recipe) => recipe.modules.includes(record.id))
   const lines = [
     HEADER('gen-consumer-docs.mjs') + `# \`${record.id}\``,
     '',
@@ -386,8 +382,8 @@ for (const record of records) {
   lines.push(
     '## Composition',
     '',
-    record.dependsOnFamilies.length
-      ? `This module composes ${record.dependsOnFamilies.map((id) => `\`${id}\``).join(', ')}.`
+    record.dependsOn.length
+      ? `This module composes ${record.dependsOn.map((id) => `\`${id}\``).join(', ')}.`
       : 'This module depends on no other module.',
     ...(record.composeWith?.length
       ? ['', `It is used together with ${record.composeWith.map((id) => `\`${id}\``).join(', ')}: import that module and its stylesheet too.`]
@@ -475,7 +471,7 @@ writeIfChanged(
 /* ── build/recipes.md — the Build audience's human surface ───────────────────────── */
 const byFamily = new Map()
 for (const recipe of recipes) {
-  const key = recipe.family ?? '(no module)'
+  const key = recipe.module ?? '(no module)'
   if (!byFamily.has(key)) byFamily.set(key, [])
   byFamily.get(key).push(recipe)
 }

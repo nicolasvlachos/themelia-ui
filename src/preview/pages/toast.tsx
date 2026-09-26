@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ToastPage() {
 	return (
-		<ComponentPage
-			title="Toast"
-			summary="A transient notice raised from anywhere, including outside React. The queue lives in a module store, not in a provider, so a fetch handler can raise one without a hook."
-			importPath="@/components/base/toaster"
-			exports={["toast", "Toaster", "createToastStore"]}
-		>
+		<ComponentPage>
 			<Example
 				example="toast/toast-statuses"
 				title="Statuses"

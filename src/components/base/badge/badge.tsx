@@ -27,23 +27,27 @@ export type BadgeVariant = "soft" | "solid" | "outline"
 export interface BadgeProps
 	extends React.ComponentProps<"span">,
 		VariantProps<typeof badgeVariants> {
-	/**
-	 * The element this becomes — an anchor, a router link, a label (docs/adr/0005).
-	 * `children` stays the content.
-	 */
-	render?: React.ReactElement
+	/** Semantic colour: what the badge means. `variant` decides how much of it is applied. */
+	tone?: BadgeTone
+	/** How much of the tone is applied. Structural, not semantic. */
+	variant?: BadgeVariant
 	/** A leading status dot in the badge's own tone. */
 	dot?: boolean
-	/** Draws the dot hollow, for a state that hasn't happened yet ("queued", not "failed"). */
+	/** Draws the dot hollow, for a state that has not happened yet: "queued", not "failed". */
 	pending?: boolean
 	/** Animates the dot, for a state that is actively changing. */
 	pulse?: boolean
+	/**
+	 * The element the badge becomes — an anchor or a router link, for a badge that links.
+	 * The dot and `children` go inside it.
+	 */
+	render?: React.ReactElement
 }
 
 function Badge({
 	className,
-	tone,
-	variant,
+	tone = "neutral",
+	variant = "soft",
 	render,
 	dot = false,
 	pending = false,
@@ -69,7 +73,7 @@ function Badge({
 	return (
 		<Comp
 			data-slot="badge"
-			data-tone={tone ?? "neutral"}
+			data-tone={tone}
 			className={cx("badge--component", badgeVariants({ tone, variant, className }))}
 			{...props}
 		>

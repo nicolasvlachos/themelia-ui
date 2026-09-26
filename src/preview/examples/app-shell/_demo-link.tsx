@@ -1,8 +1,6 @@
-import type { AppSidebarProps } from "themelia-ui/layout/sidebar"
+import type { LayoutLinkRenderer } from "themelia-ui/layout/sidebar"
 
-type LinkRenderer = NonNullable<AppSidebarProps["renderLink"]>
-
-export function demoLink(onNavigate: (url: string) => void): LinkRenderer {
+export function demoLink(onNavigate: (url: string) => void): LayoutLinkRenderer {
 	return ({ href, children, active, disabled, external, ...rest }) => {
 		void active
 		void external

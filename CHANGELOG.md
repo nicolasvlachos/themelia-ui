@@ -1,5 +1,32 @@
 # Changelog
 
+## Unreleased
+
+### Breaking
+
+- `Scope` takes `render` instead of `as`, like every component that can become a different
+  element: `<Scope vars={vars} as="section">` becomes
+  `<Scope vars={vars} render={<section />}>`. It also passes the element's own props through
+  (`id`, `aria-*`, `ref`), as `UIScope` does, and its props are exported as `ScopeProps`.
+- The published catalogue uses the documentation's words, modules and tiers:
+  - `docs/generated/component-index.json` is schema 3. `modules` replaces `families`; each
+    entry's `tier` (`foundations`, `primitives`, `base`, `layout`, `features` or `blocks`)
+    replaces `layer`, and `dependsOn` replaces `dependsOnFamilies`. Component guidance that
+    falls back to its module's text has `guidanceSource: "module"`.
+  - `docs/generated/recipes.json`: `module`, `modules` and `supportingModules` replace
+    `family`, `families` and `supportingFamilies`.
+  - `themelia-ui/profiles/general.json` and `admin.json`: `modules` replaces `families`.
+  - `find-component.mjs` takes `--module=` and `--tier=` instead of `--family=` and
+    `--layer=`, and its `--json` records carry `module`, `tier` and `dependsOn`.
+- `Badge`'s `tone` and `variant`, and a metadata value's `badgeTone` and `badgeVariant`, no
+  longer accept `null`: leave the prop out for the default.
+
+### Added
+
+- `LayoutLinkRenderer` and `LayoutLinkRenderProps`, the type of `renderLink`, are exported
+  from `themelia-ui/layout/sidebar`, `layout/header`, `layout/page`, `layout/auth`,
+  `layout/workspace` and `base/navigation`.
+
 ## 2.0.2 — 2026-09-26
 
 Fixes two packaging defects present since 1.0.3 and one scoping defect, and ships a smaller

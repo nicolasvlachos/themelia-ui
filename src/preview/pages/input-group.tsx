@@ -5,15 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function InputGroupPage() {
 	return (
-		<ComponentPage
-			title="Input group"
-			summary="A bordered shell that owns the focus ring on behalf of whichever control sits inside it, so the control is stripped of its own chrome and the two never draw a box each. For a field that needs something attached to it — a unit, a prefix, an action — rather than beside it."
-			importPath="@/components/base/input-group"
-			exports={[
-				"InputGroup", "InputGroupAddon", "InputGroupButton", "InputGroupText",
-				"InputGroupInput", "InputGroupTextarea",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="input-group/input-group-inline"
 				title="Attached along the line"

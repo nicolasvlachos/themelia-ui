@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CheckboxPage() {
 	return (
-		<ComponentPage
-			title="Checkbox"
-			summary="A box that is checked, unchecked, or indeterminate. The check and the dash are Lucide icons, not hand-drawn paths — a bespoke polyline is a second icon vocabulary in a kit that already has one."
-			importPath="@/components/base/choice-inputs"
-			exports={["Checkbox"]}
-		>
+		<ComponentPage>
 			<Example
 				example="checkbox/checkbox"
 				title="Checkbox"

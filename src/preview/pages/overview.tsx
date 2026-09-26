@@ -71,7 +71,7 @@ export function OverviewPage() {
 					{/* Read from the generated index, so it cannot go stale. */}
 					{TIERS.map((tier) => (
 						<Text key={tier.id}>
-							<strong>{tier.id}</strong> — {tier.holds}{" "}
+							<strong>{tier.label}</strong> — {tier.holds}{" "}
 							<Text tag="span" type="secondary" size="xs">
 								({tier.modules})
 							</Text>

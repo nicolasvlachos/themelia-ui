@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function DateBlockPage() {
 	return (
-		<ComponentPage
-			title="Date block"
-			summary="A date set as a date: a leaf with the month across its top and the day as its subject, for a row whose subject is WHEN something happens — an agenda, a booking, an event. Everywhere else a date is a value, and the date primitives format it inline."
-			importPath="@/components/base/display"
-			exports={["DateBlock"]}
-		>
+		<ComponentPage>
 			<Example
 				example="date-block/date-block"
 				title="DateBlock"

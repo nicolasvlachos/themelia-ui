@@ -142,14 +142,14 @@ test('the packed component index keeps one navigable API link per module', () =>
   const body = readFileSync('docs/generated/components/INDEX.md', 'utf8')
   const links = [...body.matchAll(/\[API\]\((\.\/[^)]+\.md)\)/g)]
   const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
-  assert.equal(links.length, Object.keys(index.families).length)
+  assert.equal(links.length, Object.keys(index.modules).length)
 })
 
 test('the skill optional-peer table agrees with the component index', () => {
   const skill = readFileSync(join(SOURCE, 'SKILL.md'), 'utf8')
   const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
   const byPeer = new Map()
-  for (const entry of Object.values(index.families)) {
+  for (const entry of Object.values(index.modules)) {
     for (const peer of entry.optionalPeers) {
       if (!byPeer.has(peer)) byPeer.set(peer, [])
       byPeer.get(peer).push(entry.id)

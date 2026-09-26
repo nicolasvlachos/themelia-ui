@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AccordionPage() {
 	return (
-		<ComponentPage
-			title="Accordion"
-			summary="Bounded sections that open one at a time, or several. Height is transitioned rather than keyframed, so an interrupted open reverses from where it actually is."
-			importPath="@/components/base/accordion"
-			exports={["Accordion", "AccordionItem", "AccordionTrigger", "AccordionContent"]}
-		>
+		<ComponentPage>
 			<Example
 				example="accordion/accordion"
 				title="Accordion"

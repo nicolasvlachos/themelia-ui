@@ -5,14 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AppShellPage() {
 	return (
-		<ComponentPage
-			title="App shell"
-			summary="The outermost layout a signed-in product lives in: a collapsing navigation column with the page in the inset beside it, or a stacked shell with the navigation across the top."
-			importPath="@/components/layout/app-shell"
-			exports={["SidebarInsetLayout", "StackedLayout", "AppSidebar", "useActivePath", "isPathMatch",
-				"SidebarLogo", "SidebarWorkspace", "SidebarUser", "SidebarIcon", "TopbarSidebarLayout"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="app-shell/sidebar-shell"
 				title="The shell"

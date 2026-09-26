@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SeparatorPage() {
 	return (
-		<ComponentPage
-			title="Separator"
-			summary="A rule between regions. Decorative by default, so assistive technology does not announce a line that carries no meaning."
-			importPath="@/components/base/display"
-			exports={["Separator"]}
-		>
+		<ComponentPage>
 			<Example
 				example="separator/separator"
 				title="Separator"

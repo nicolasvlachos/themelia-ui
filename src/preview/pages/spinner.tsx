@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SpinnerPage() {
 	return (
-		<ComponentPage
-			title="Spinner"
-			summary="Indeterminate activity, as a ring with one transparent quarter. One element rather than an SVG, and it reads as motion at any size."
-			importPath="@/components/base/spinner"
-			exports={["Spinner"]}
-		>
+		<ComponentPage>
 			<Example
 				example="spinner/spinner"
 				title="Spinner"

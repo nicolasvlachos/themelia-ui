@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SkeletonPage() {
 	return (
-		<ComponentPage
-			title="Skeleton"
-			summary="A placeholder in the shape of what is loading. The composed skeletons mirror the layouts the kit already ships, so a loading page is the same geometry as the loaded one."
-			importPath="@/components/base/skeleton"
-			exports={["Skeleton", "ContentSkeleton", "PageSkeleton", "TableSkeleton", "TwoColumnPageSkeleton"]}
-		>
+		<ComponentPage>
 			<Example
 				example="skeleton/skeleton"
 				title="Skeleton"

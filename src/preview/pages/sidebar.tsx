@@ -5,19 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SidebarPage() {
 	return (
-		<ComponentPage
-			title="Sidebar"
-			summary="The navigation panel and the page beside it. A provider holds the open state so a trigger anywhere on the page can reach it, the panel collapses to icons or off-canvas, and the inset is the document's main landmark. base/sidebar is the primitive; layout/app-shell assembles it into a shell."
-			importPath="@/components/base/sidebar"
-			exports={[
-				"SidebarProvider", "Sidebar", "SidebarTrigger", "SidebarRail", "SidebarInset",
-				"SidebarHeader", "SidebarContent", "SidebarFooter", "SidebarSeparator",
-				"SidebarInput", "SidebarGroup", "SidebarGroupLabel", "SidebarGroupAction",
-				"SidebarGroupContent", "SidebarMenu", "SidebarMenuItem", "SidebarMenuButton",
-				"SidebarMenuAction", "SidebarMenuBadge", "SidebarMenuSkeleton", "SidebarMenuSub",
-				"SidebarMenuSubItem", "SidebarMenuSubButton", "useSidebar", "useOptionalSidebar"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="sidebar/sidebar-anatomy"
 				title="Anatomy"

@@ -4,13 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AvatarPage() {
 	return (
-		<ComponentPage
-			title="Avatar"
-			summary="A person or an entity, as an image with an initials fallback. StackedAvatars is the overlapping row with an overflow count."
-			importPath="@/components/base/avatar"
-			exports={["Avatar", "AvatarImage", "AvatarFallback", "AvatarGroup", "AvatarBadge", "StackedAvatars", "AvatarGroupCount"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="avatar/avatar"
 				title="Avatar"

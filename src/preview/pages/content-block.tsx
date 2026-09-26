@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ContentBlockPage() {
 	return (
-		<ComponentPage
-			title="Content block & icon badge"
-			summary="ContentBlock is a titled region that is NOT a Card — a labelled group inside one — and it owns the four surfaces a region can take. IconBadge is the kit's glyph-in-a-medallion, the mark that sits at the head of one. DateBlock has a page of its own."
-			importPath="@/components/base/display"
-			exports={["ContentBlock", "IconBadge", "PlaceholderPattern", "DirectionProvider", "Slot"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="content-block/content-block-surfaces"
 				title="Four surfaces"

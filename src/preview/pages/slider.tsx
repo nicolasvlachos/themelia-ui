@@ -4,13 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SliderPage() {
 	return (
-		<ComponentPage
-			title="Slider"
-			summary="A value picked along a track, for a quantity the reader adjusts by feel rather than types."
-			importPath="@/components/base/value-inputs"
-			exports={["SliderField", "Slider"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="slider/slider"
 				title="SliderField"

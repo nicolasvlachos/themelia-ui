@@ -5,14 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AsyncPreviewPage() {
 	return (
-		<ComponentPage
-			title="Async preview"
-			summary="A popover that fetches when it opens. The kit owns the surface, the trigger, the four states, and the three things that make hover-fetching hard to get right — aborting, racing, and refetching what it already has. The consumer owns the request and what a record looks like."
-			importPath="@/components/features/async-preview"
-			exports={["AsyncPreview", "PreviewTriggerCell", "useAsyncPreview", "createAsyncPreview",
-				"AsyncPreviewRoot", "AsyncPreviewTrigger", "AsyncPreviewContent", "AsyncPreviewBody", "AsyncPreviewLoading", "AsyncPreviewError", "AsyncPreviewEmpty", "AsyncPreviewState", "useAsyncPreviewContext",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="async-preview/async-preview-basic"
 				title="Fetching on open"

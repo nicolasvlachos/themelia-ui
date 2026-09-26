@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function LabelPage() {
 	return (
-		<ComponentPage
-			title="Label"
-			summary="The text that names a control. Usually reached through FormField rather than directly — but it is here for a control the kit does not ship."
-			importPath="@/components/base/label"
-			exports={["Label"]}
-		>
+		<ComponentPage>
 			<Example
 				example="label/label"
 				title="Label"

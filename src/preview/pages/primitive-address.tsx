@@ -1,18 +1,10 @@
-import { Coordinates } from "@/components/primitives"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-import { SpecimenList } from "../partials/specimen-list"
 
 export function PrimitiveAddressPage() {
 	return (
-		<ComponentPage
-			title="Places: address & coordinates"
-			summary="A location, in the two forms a product stores one: a postal address and a latitude–longitude pair. Each is shaped by the place rather than the reader — an address takes its country’s line order, not the reader’s language, and a coordinate keeps only the decimals that still mean a distance."
-			importPath="@/components/primitives"
-			exports={["Address", "formatAddress", "formatAddressLines", "Coordinates"]}
-		>
+		<ComponentPage>
 			<Example
 				example="primitive-address/address"
 				title="Ordered by country"
@@ -32,25 +24,10 @@ export function PrimitiveAddressPage() {
 			/>
 
 			<Example
-				id="coordinates"
+				example="primitive-address/coordinates"
 				title="Coordinates"
 				description="A decimal degree is about 111km, so the decimals carry all the meaning. Five is the default because that is where the number stops being a neighbourhood and starts being a place — and because storing more than five and showing all of it is how 48.858370000000004 ends up on a page."
-				code={`<Coordinates latitude={48.85837} longitude={2.29448} />
-<Coordinates latitude={48.85837} longitude={2.29448} format="dms" />`}
-			>
-				<SpecimenList
-					numeric
-					items={[
-						{ code: `decimal`, value: <Coordinates latitude={48.85837} longitude={2.29448} /> },
-						{ code: `showHemisphere`, value: <Coordinates latitude={48.85837} longitude={2.29448} showHemisphere /> },
-						{ code: `format="dms"`, value: <Coordinates latitude={48.85837} longitude={2.29448} format="dms" /> },
-						{ code: `southern / western`, value: <Coordinates latitude={-33.8688} longitude={151.2093} format="dms" /> },
-						{ code: `precision={3}`, value: <Coordinates latitude={48.85837} longitude={2.29448} precision={3} /> },
-						{ code: `precision={0}`, value: <Coordinates latitude={48.85837} longitude={2.29448} precision={0} /> },
-						{ code: `null`, value: <Coordinates latitude={null} longitude={null} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example id="address-api" title="Address API">
 				<PropTable owner="Address"

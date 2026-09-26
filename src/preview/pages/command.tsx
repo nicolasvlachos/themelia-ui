@@ -4,13 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CommandPage() {
 	return (
-		<ComponentPage
-			title="Command"
-			summary="The command palette. A filtered list over an input, either inline or in a dialog bound to a shortcut."
-			importPath="@/components/base/command"
-			exports={["Command", "CommandDialog", "CommandInput", "CommandList", "CommandEmpty", "CommandGroup", "CommandItem", "CommandShortcut", "CommandSeparator"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="command/command"
 				title="Command"

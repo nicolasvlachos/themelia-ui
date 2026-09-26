@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function BlocksCataloguePage() {
 	return (
-		<ComponentPage
-			title="Catalogue & partners"
-			summary="Product search appearance, stock management, supplier profiles, and booking details. Structured for everyday catalogue operations."
-			importPath="themelia-ui/admin/patterns/commerce"
-			exports={["SeoListing", "calculateSeoScore", "InventorySection", "VendorProfile", "BookingCard"]}
-		>
+		<ComponentPage>
 			<Example
 				example="blocks-catalogue/catalogue-seo"
 				title="SeoListing"

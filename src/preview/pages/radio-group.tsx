@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function RadioGroupPage() {
 	return (
-		<ComponentPage
-			title="Radio groups"
-			summary="One choice from a visible set, in four shapes: plain radios, cards for a choice the reader is weighing, a list for options whose second line is the decision, and pills for a compact switch. Every one is a radio group — one tab stop, arrows move between options."
-			importPath="@/components/base/choice-inputs"
-			exports={["RadioGroup", "Radio", "CardRadioGroup", "CardCheckboxGroup", "ListRadioGroup", "PillRadioGroup"]}
-		>
+		<ComponentPage>
 			<Example
 				example="radio-group/radio-group"
 				title="Radio group"

@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TextareaPage() {
 	return (
-		<ComponentPage
-			title="Textarea"
-			summary="Multi-line text on the same field surface as Input, with the same invalid and disabled treatment."
-			importPath="@/components/base/text-inputs"
-			exports={["Textarea"]}
-		>
+		<ComponentPage>
 			<Example
 				example="textarea/textarea"
 				title="Textarea"

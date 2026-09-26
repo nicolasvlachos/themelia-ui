@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TogglePage() {
 	return (
-		<ComponentPage
-			title="Toggle"
-			summary="A button that stays pressed. Not a switch and not a checkbox — it reports aria-pressed, which is the distinction spelled out in the accessibility tree."
-			importPath="@/components/base/toggle"
-			exports={["Toggle", "ToggleGroup"]}
-		>
+		<ComponentPage>
 			<Example
 				example="toggle/toggle"
 				title="Toggle"

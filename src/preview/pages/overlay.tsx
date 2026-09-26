@@ -7,21 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function OverlayPage() {
 	return (
-		<ComponentPage
-			title="Overlay"
-			summary="The one modal surface in the kit, and the only page about it. Dialog, alert dialog and sheet are not separate components: each is this surface with some of its settings filled in and a name that says why. DialogContent is OverlayContent with placement=“center”. AlertDialogContent is a centred surface that nothing dismisses but an answer, given with AlertDialogAction or AlertDialogCancel. SheetContent is OverlayContent at an edge. Those are the parts that set something; the root, trigger, close, body, title and description around them are always Overlay's own. Learn the settings once here; use a preset when its name says what you mean, and configure OverlayContent for a combination no preset names."
-			importPath="@/components/base/overlay"
-			exports={[
-				"Overlay", "OverlayTrigger", "OverlayContent", "OverlayClose", "OverlayHeader",
-				"OverlayBody", "OverlayFooter", "OverlayTitle", "OverlayDescription",
-				"OverlayDismissArea",
-			]}
-			alsoImports={[
-				{ importPath: "@/components/base/dialog", title: "Dialog", exports: ["DialogContent"] },
-				{ importPath: "@/components/base/alert-dialog", title: "Alert dialog", exports: ["AlertDialogContent", "AlertDialogAction", "AlertDialogCancel", "AlertDialogMedia"] },
-				{ importPath: "@/components/base/sheet", title: "Sheet", exports: ["SheetContent"] },
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="overlay/overlay-placement"
 				title="placement"

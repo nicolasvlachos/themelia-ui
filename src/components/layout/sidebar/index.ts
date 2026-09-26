@@ -12,4 +12,6 @@ export type {
 	SidebarFlatNavItem, SidebarItemContext, SidebarNavItem,
 } from "./nav.types"
 /* Path matching lives in `@/lib/navigation`; re-exported under its published names. */
-export { isPathMatch, resolveActiveHref, toPath } from "@/lib/navigation"
+export {
+	isPathMatch, resolveActiveHref, toPath, type LayoutLinkRenderer, type LayoutLinkRenderProps,
+} from "@/lib/navigation"

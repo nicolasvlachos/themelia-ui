@@ -58,7 +58,7 @@ function audit(family) {
     headless: symbols.some((symbol) => /^use[A-Z]/.test(symbol)),
     partials: symbols.filter((symbol) => /^[A-Z]/.test(symbol)).length > 1,
     recipe: recipes.some((recipe) =>
-      recipe.family === family.id || recipe.families?.includes(family.id),
+      recipe.module === family.id || recipe.modules?.includes(family.id),
     ),
   }
   return { rungs, symbols }

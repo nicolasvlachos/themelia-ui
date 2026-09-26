@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function MenubarPage() {
 	return (
-		<ComponentPage
-			title="Menubar"
-			summary="The menu bar of a desktop application, for an editor or a workspace with more commands than a toolbar can show. The bar and its triggers come from here; the menus themselves are the dropdown menu's, imported from base/dropdown-menu beside it."
-			importPath="@/components/base/menubar"
-			exports={["Menubar", "MenubarTrigger"]}
-		>
+		<ComponentPage>
 			<Example
 				example="menubar/menubar"
 				title="Menubar"

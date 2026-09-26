@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ScrollAreaPage() {
 	return (
-		<ComponentPage
-			title="Scroll area"
-			summary="A bounded scroll region, plus the two small primitives that keep meaning available without showing it: BooleanIndicator and VisuallyHidden."
-			importPath="@/components/base/display"
-			exports={["ScrollArea", "BooleanIndicator", "VisuallyHidden"]}
-		>
+		<ComponentPage>
 			<Example
 				example="scroll-area/scroll-area"
 				title="ScrollArea"

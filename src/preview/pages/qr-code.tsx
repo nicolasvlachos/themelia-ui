@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function QRCodePage() {
 	return (
-		<ComponentPage
-			title="QR code"
-			summary="A scannable symbol drawn in the theme's own colours, as SVG so it scales and prints without blurring."
-			importPath="@/components/base/qr-code"
-			exports={["QRCode"]}
-		>
+		<ComponentPage>
 			<Example
 				example="qr-code/qr-code"
 				title="QRCode"

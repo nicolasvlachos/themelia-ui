@@ -5,14 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function BlocksOrderPage() {
 	return (
-		<ComponentPage
-			title="Order"
-			summary="An order is not one list of goods with one status. It splits into fulfillment groups, each with its own state and location, and its money moves on an axis of its own — which is why an order can be Refunded and Unfulfilled at the same time."
-			importPath="@/components/admin/patterns/commerce"
-			exports={["OrderHeader", "FulfillmentGroup", "OrderLineItem", "OrderSummary", "OrderTransactions", "OrderCustomer",
-				"OrderTimeline", "SummaryPanel", "AmountRow",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="blocks-order/order-status-axes"
 				title="Two statuses, not one"

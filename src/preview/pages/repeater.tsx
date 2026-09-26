@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function RepeaterPage() {
 	return (
-		<ComponentPage
-			title="Repeater"
-			summary="A list the reader edits row by row — add, remove, reorder. The generic Repeater renders any row you give it; the three specialised ones cover the shapes that come up constantly."
-			importPath="@/components/base/repeaters"
-			exports={["Repeater", "StringRepeater", "KeyValueEditor", "LocalizedStringField", "ObjectRepeater", "LocalizedStringRepeater", "LocalizedObjectField"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="repeater/repeater"
 				title="Repeater"

@@ -4,15 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function NavigationMenuPage() {
 	return (
-		<ComponentPage
-			title="Navigation menu"
-			summary="A horizontal bar whose entries open a panel of links — the mega-menu of a marketing header, a product switcher, a section whose children are worth previewing. It does not know which route is current, so an application's own navigation belongs in SideNav, NavigationTabs or AppSidebar."
-			importPath="@/components/base/navigation-menu"
-			exports={[
-				"NavigationMenu", "NavigationMenuList", "NavigationMenuItem", "NavigationMenuTrigger",
-				"NavigationMenuContent", "NavigationMenuLink", "NavigationMenuIndicator",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="navigation-menu/navigation-menu"
 				title="Navigation menu"

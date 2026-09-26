@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function UnitInputsPage() {
 	return (
-		<ComponentPage
-			title="Unit inputs"
-			summary="Weight, dimensions, and coordinates: three fields whose value is a number plus a unit or a second number. Each keeps its parts in separate channels."
-			importPath="@/components/base/forms-numeric"
-			exports={["WeightInput", "DimensionsInput", "CoordinatesInput"]}
-		>
+		<ComponentPage>
 			<Example
 				example="unit-inputs/units"
 				title="Weight, dimensions, coordinates"

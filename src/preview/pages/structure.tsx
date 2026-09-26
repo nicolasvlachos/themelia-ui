@@ -6,12 +6,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function StructurePage() {
 	return (
-		<ComponentPage
-			title="Stack & Grid"
-			summary="Stack, Grid, GridCell, AdaptiveGrid, Split, and Bleed. Every prop takes a value or a per-breakpoint object, so a layout that changes shape does not need two rendered trees."
-			importPath="@/components/base/structure"
-			exports={["Stack", "Grid", "GridCell", "AdaptiveGrid", "Split", "Bleed"]}
-		>
+		<ComponentPage>
 			<Example
 				example="structure/stack"
 				title="Stack"

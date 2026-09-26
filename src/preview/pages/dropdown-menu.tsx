@@ -5,16 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function DropdownMenuPage() {
 	return (
-		<ComponentPage
-			title="Dropdown & context menu"
-			summary="The composable menu underneath ActionMenu, opened from a trigger or by right-click. Reach for it when the definition-driven ActionMenu cannot express the menu you need — a submenu, a radio group, a custom row. The context menu reuses these rows wholesale, so it lives here."
-			importPath="@/components/base/dropdown-menu"
-			exports={["DropdownMenu", "DropdownMenuTrigger", "DropdownMenuContent", "DropdownMenuItem", "DropdownMenuCheckboxItem", "DropdownMenuRadioGroup", "DropdownMenuSub", "DropdownMenuGroup", "DropdownMenuLabel", "DropdownMenuSeparator", "DropdownMenuShortcut", "DropdownMenuRadioItem", "DropdownMenuSubTrigger", "DropdownMenuSubContent", "DropdownMenuPortal", "DropdownMenuLinkItem"
-			]}
-			alsoImports={[
-				{ importPath: "@/components/base/context-menu", title: "Context menu", exports: ["ContextMenu", "ContextMenuTrigger", "ContextMenuContent", "ContextMenuItem", "ContextMenuGroup", "ContextMenuLabel", "ContextMenuSeparator", "ContextMenuShortcut", "ContextMenuCheckboxItem", "ContextMenuRadioGroup", "ContextMenuRadioItem", "ContextMenuSub", "ContextMenuSubTrigger", "ContextMenuSubContent", "ContextMenuPortal"] },
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="dropdown-menu/dropdown-menu"
 				title="Dropdown menu"

@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ColorInputPage() {
 	return (
-		<ComponentPage
-			title="Color input"
-			summary="A colour value with a swatch. It accepts any CSS colour, including a token that resolves to one, and hands the picker’s choice back in whichever notation your tokens are written in — oklch, hex, rgb or hsl."
-			importPath="@/components/base/value-inputs"
-			exports={["ColorInput"]}
-		>
+		<ComponentPage>
 			<Example
 				example="color-input/color"
 				title="ColorInput"

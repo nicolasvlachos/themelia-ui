@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function FormBindingPage() {
 	return (
-		<ComponentPage
-			title="Form binding"
-			summary="The headless contract between a form library and the kit's fields. One small interface — useField — that plain React state, react-hook-form, or anything else can satisfy."
-			importPath="themelia-ui/forms"
-			exports={["useFormFieldBinding", "useStateFormControl"]}
-		>
+		<ComponentPage>
 			<Example
 				example="form-binding/form-binding-state"
 				title="useStateFormControl"

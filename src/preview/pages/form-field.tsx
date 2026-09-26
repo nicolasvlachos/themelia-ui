@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function FormFieldPage() {
 	return (
-		<ComponentPage
-			title="Form field"
-			summary="The label, the supporting line, and the error, wired to whatever control sits inside. One supporting line, not three stacked hints."
-			importPath="@/components/base/forms"
-			exports={["FormField", "FieldGroup"]}
-		>
+		<ComponentPage>
 			<Example
 				example="form-field/form-field"
 				title="FormField"

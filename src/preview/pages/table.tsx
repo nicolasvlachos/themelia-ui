@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TablePage() {
 	return (
-		<ComponentPage
-			title="Table"
-			summary="Rows and columns, as plain table elements. The scroll container is the only wrapper — everything else is the semantics the browser already gives you."
-			importPath="@/components/base/table"
-			exports={["Table", "TableHeader", "TableBody", "TableFooter", "TableRow", "TableHead", "TableCell", "TableCaption", "TableEmpty"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="table/table"
 				title="Table"

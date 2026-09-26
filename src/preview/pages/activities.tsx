@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ActivitiesPage() {
 	return (
-		<ComponentPage
-			title="Activities"
-			summary="What happened to a record, and who did it. ActivityFeed is the timeline of events; ActivityLog is the mixed one — events and comments on the same rail, with a composer. A headline is typed segments rather than a sentence, so the actor, the field, and the status each render as themselves."
-			importPath="@/components/features/activities"
-			exports={["ActivityFeed", "ActivityLog", "useActivityFeed", "createActivityEventAdapter",
-				"ActivityRow", "ActivityHeadline", "ActivityMarker", "ActivityDateLabel", "ActivityChanges", "ActivityResourceTag", "ActivityActionsMenu", "ActivityExpandToggle", "ActivityEmptyState", "useActivityResources",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="activities/activity-feed"
 				title="ActivityFeed"

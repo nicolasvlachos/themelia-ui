@@ -45,6 +45,18 @@
 		{
 			"path": "/theme-tweaker",
 			"label": "Theme tweaker",
+			"summary": "Edit this app's theme live. Colors, typography, spacing, and provider settings apply throughout the app, including menus and dialogs.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/theme-tweaker",
+					"names": [
+						"ThemeTweaker",
+						"ThemeScope",
+						"UIConfigSettings",
+						"useAppliedTheme"
+					]
+				}
+			],
 			"page": "theme-tweaker",
 			"component": "ThemeTweakerPage",
 			"module": "features/theme-tweaker",
@@ -64,6 +76,7 @@
 		{
 			"path": "/tokens",
 			"label": "Tokens & theming",
+			"summary": "Three levels: the palette carries no meaning, semantic tokens carry no value, and the theming layer computes everything else from them.",
 			"page": "tokens",
 			"component": "TokensPage",
 			"tier": "Foundations",
@@ -80,6 +93,7 @@
 		{
 			"path": "/scale",
 			"label": "Scale & density",
+			"summary": "One master factor keeps geometry and typography in proportion. Scoped spacing, density, and type overrides handle the few cases that need to disagree without adding per-component sizes.",
 			"page": "scale",
 			"component": "ScalePage",
 			"tier": "Foundations",
@@ -95,6 +109,18 @@
 		{
 			"path": "/typography",
 			"label": "Typography",
+			"summary": "Text, Heading, DisplayLabel, and TextLink. Every library-owned string reaches the DOM through one of these, so a raw element never carries type styling.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/typography",
+					"names": [
+						"Text",
+						"Heading",
+						"DisplayLabel",
+						"TextLink"
+					]
+				}
+			],
 			"page": "typography",
 			"component": "TypographyPage",
 			"module": "base/typography",
@@ -111,6 +137,32 @@
 		{
 			"path": "/ui-root-scope",
 			"label": "UIRoot & UIScope",
+			"summary": "Two components, because the two jobs have different contracts. At the top of an application UIRoot owns the DOCUMENT — <body> sits above anything it renders, and a page canvas that stays light while its contents go dark is not a theme. Nested, UIScope owns a REGION and has no business touching the document. Naming the job beats inferring it from whether a provider happens to be above you.",
+			"imports": [
+				{
+					"from": "themelia-ui/ui-provider",
+					"names": [
+						"CSPProvider",
+						"UIRoot",
+						"UIScope",
+						"UIProvider",
+						"Scope",
+						"useUIConfig",
+						"useFormatting",
+						"useMoneyConfig",
+						"useDatesConfig",
+						"useOverlayConfig",
+						"useTypographyConfig",
+						"useDensity",
+						"useScale",
+						"useDefaults",
+						"UIPortalHost",
+						"useUIPortalContainer",
+						"UIConfigContext",
+						"UINestedContext"
+					]
+				}
+			],
 			"page": "ui-root-scope",
 			"component": "UIRootScopePage",
 			"module": "ui-provider",
@@ -130,6 +182,20 @@
 		{
 			"path": "/structure",
 			"label": "Stack & grid",
+			"summary": "Stack, Grid, GridCell, AdaptiveGrid, Split, and Bleed. Every prop takes a value or a per-breakpoint object, so a layout that changes shape does not need two rendered trees.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/structure",
+					"names": [
+						"Stack",
+						"Grid",
+						"GridCell",
+						"AdaptiveGrid",
+						"Split",
+						"Bleed"
+					]
+				}
+			],
 			"page": "structure",
 			"component": "StructurePage",
 			"module": "base/structure",
@@ -146,6 +212,17 @@
 		{
 			"path": "/scroll-area",
 			"label": "Scroll area",
+			"summary": "A bounded scroll region, plus the two small primitives that keep meaning available without showing it: BooleanIndicator and VisuallyHidden.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/display",
+					"names": [
+						"ScrollArea",
+						"BooleanIndicator",
+						"VisuallyHidden"
+					]
+				}
+			],
 			"page": "scroll-area",
 			"component": "ScrollAreaPage",
 			"module": "base/display",
@@ -159,6 +236,17 @@
 		{
 			"path": "/resizable",
 			"label": "Resizable panels",
+			"summary": "Split panes the reader drags apart — a document beside its inspector, a list beside its detail. Reach for it when the reader, not the layout, knows how much room each side deserves; a split nobody needs to move is a Grid.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/resizable",
+					"names": [
+						"ResizablePanelGroup",
+						"ResizablePanel",
+						"ResizableHandle"
+					]
+				}
+			],
 			"page": "resizable",
 			"component": "ResizablePage",
 			"module": "base/resizable",
@@ -175,6 +263,15 @@
 		{
 			"path": "/aspect-ratio",
 			"label": "Aspect ratio",
+			"summary": "A frame that keeps its proportion as its width changes — a cover image, a video, a map tile. Reach for it whenever media has to hold its shape before it loads, so the page does not jump when it arrives.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/aspect-ratio",
+					"names": [
+						"AspectRatio"
+					]
+				}
+			],
 			"page": "aspect-ratio",
 			"component": "AspectRatioPage",
 			"module": "base/aspect-ratio",
@@ -191,6 +288,24 @@
 		{
 			"path": "/app-shell",
 			"label": "App shell",
+			"summary": "The outermost layout a signed-in product lives in: a collapsing navigation column with the page in the inset beside it, or a stacked shell with the navigation across the top.",
+			"imports": [
+				{
+					"from": "themelia-ui/layout/app-shell",
+					"names": [
+						"SidebarInsetLayout",
+						"StackedLayout",
+						"AppSidebar",
+						"useActivePath",
+						"isPathMatch",
+						"SidebarLogo",
+						"SidebarWorkspace",
+						"SidebarUser",
+						"SidebarIcon",
+						"TopbarSidebarLayout"
+					]
+				}
+			],
 			"page": "app-shell",
 			"component": "AppShellPage",
 			"module": "layout/app-shell",
@@ -209,6 +324,22 @@
 		{
 			"path": "/header",
 			"label": "Header",
+			"summary": "The shell's top bar. Slot-driven for its contents and fixed in its arrangement — which is the half every hand-built header gets wrong the first time a search field and an account menu share a row.",
+			"imports": [
+				{
+					"from": "themelia-ui/layout/header",
+					"names": [
+						"Header",
+						"HeaderBreadcrumbs",
+						"HeaderSearch",
+						"HeaderGlobalSearchTrigger",
+						"HeaderToolButton",
+						"HeaderToolPopover",
+						"HeaderNotifications",
+						"HeaderUserMenu"
+					]
+				}
+			],
 			"page": "layout-header",
 			"component": "LayoutHeaderPage",
 			"module": "layout/header",
@@ -224,6 +355,39 @@
 		{
 			"path": "/sidebar",
 			"label": "Sidebar",
+			"summary": "The navigation panel and the page beside it. A provider holds the open state so a trigger anywhere on the page can reach it, the panel collapses to icons or off-canvas, and the inset is the document's main landmark. base/sidebar is the primitive; layout/app-shell assembles it into a shell.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/sidebar",
+					"names": [
+						"SidebarProvider",
+						"Sidebar",
+						"SidebarTrigger",
+						"SidebarRail",
+						"SidebarInset",
+						"SidebarHeader",
+						"SidebarContent",
+						"SidebarFooter",
+						"SidebarSeparator",
+						"SidebarInput",
+						"SidebarGroup",
+						"SidebarGroupLabel",
+						"SidebarGroupAction",
+						"SidebarGroupContent",
+						"SidebarMenu",
+						"SidebarMenuItem",
+						"SidebarMenuButton",
+						"SidebarMenuAction",
+						"SidebarMenuBadge",
+						"SidebarMenuSkeleton",
+						"SidebarMenuSub",
+						"SidebarMenuSubItem",
+						"SidebarMenuSubButton",
+						"useSidebar",
+						"useOptionalSidebar"
+					]
+				}
+			],
 			"page": "sidebar",
 			"component": "SidebarPage",
 			"module": "base/sidebar",
@@ -242,6 +406,18 @@
 		{
 			"path": "/page",
 			"label": "Page & page header",
+			"summary": "The block every screen opens with, the routed version of it, and the actions beside it. Three components because a heading is also used on its own — inside a drawer, above a step, at the top of a card — and because how many actions become buttons is a decision, not a rendering.",
+			"imports": [
+				{
+					"from": "themelia-ui/layout/page",
+					"names": [
+						"Page",
+						"PageHeader",
+						"PageActions",
+						"PageHeading"
+					]
+				}
+			],
 			"page": "page-layout",
 			"component": "PageLayoutPage",
 			"module": "layout/page",
@@ -260,6 +436,18 @@
 		{
 			"path": "/containers",
 			"label": "Containers",
+			"summary": "The four blocks a page is assembled from. One responsibility each — scroll, measure, rhythm, columns — so a page never grows two scroll containers or two content widths.",
+			"imports": [
+				{
+					"from": "themelia-ui/layout/containers",
+					"names": [
+						"PageViewport",
+						"Container",
+						"Section",
+						"TwoColumnLayout"
+					]
+				}
+			],
 			"page": "containers",
 			"component": "ContainersPage",
 			"module": "layout/containers",
@@ -277,6 +465,25 @@
 		{
 			"path": "/side-nav",
 			"label": "Side nav & section nav",
+			"summary": "The two navigations that sit beside content rather than above it — the rail between the pages of one section, and the table of contents within one page — and AsideNavShell, which is the rail composed beside a column of content, as a settings area is.",
+			"imports": [
+				{
+					"from": "themelia-ui/layout/navigation",
+					"names": [
+						"SideNav",
+						"SectionNav",
+						"CategoryNav",
+						"BreadcrumbProgress"
+					]
+				},
+				{
+					"from": "themelia-ui/layout/settings",
+					"title": "Settings shell",
+					"names": [
+						"AsideNavShell"
+					]
+				}
+			],
 			"page": "side-nav",
 			"component": "SideNavPage",
 			"module": "layout/navigation",
@@ -297,6 +504,18 @@
 		{
 			"path": "/workspace-header",
 			"label": "Workspace record header",
+			"summary": "The header of a record you are working ON — an invoice, a customer, a deployment. Built on PageHeading for the title row, but not a page title: a page heading names a screen, and this identifies a thing and carries the apparatus that comes with one — media, a status, metadata.",
+			"imports": [
+				{
+					"from": "themelia-ui/layout/workspace",
+					"names": [
+						"WorkspaceRecordHeader",
+						"WorkspaceLayout",
+						"WorkspaceNav",
+						"WorkspaceLocaleStrip"
+					]
+				}
+			],
 			"page": "workspace-header",
 			"component": "WorkspaceHeaderPage",
 			"module": "layout/workspace",
@@ -311,6 +530,18 @@
 		{
 			"path": "/auth-shell",
 			"label": "Auth shells",
+			"summary": "A welcoming entry to your application: a brand, a focused form, useful links, and an optional story alongside it. Compose the page with AuthShell, or arrange your own AuthCard and AuthSplitPanel. Your application owns the form and its flow.",
+			"imports": [
+				{
+					"from": "themelia-ui/layout/auth",
+					"names": [
+						"AuthShell",
+						"AuthCard",
+						"AuthFooterLinks",
+						"AuthSplitPanel"
+					]
+				}
+			],
 			"page": "auth-shell",
 			"component": "AuthShellPage",
 			"module": "layout/auth",
@@ -326,6 +557,21 @@
 		{
 			"path": "/tabs",
 			"label": "Tabs",
+			"summary": "A tab set following the WAI-ARIA pattern: arrows move between tabs, Home and End jump to the ends, and only the selected tab is in the tab sequence.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/navigation",
+					"names": [
+						"Tabs",
+						"TabList",
+						"Tab",
+						"TabPanel",
+						"OverflowTabBar",
+						"NavigationTabs",
+						"LanguageSwitcher"
+					]
+				}
+			],
 			"page": "tabs",
 			"component": "TabsPage",
 			"module": "base/navigation",
@@ -339,6 +585,15 @@
 		{
 			"path": "/breadcrumbs",
 			"label": "Breadcrumbs",
+			"summary": "The trail to the current page. Separators are aria-hidden, so it is not announced as “Home slash Orders slash”.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/navigation",
+					"names": [
+						"Breadcrumbs"
+					]
+				}
+			],
 			"page": "breadcrumbs",
 			"component": "BreadcrumbsPage",
 			"module": "base/navigation",
@@ -352,6 +607,17 @@
 		{
 			"path": "/pagination",
 			"label": "Pagination",
+			"summary": "Page numbers with ellipses. The range is computed by paginationRange, which is exported so a custom control can use the same arithmetic.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/navigation",
+					"names": [
+						"Pagination",
+						"paginationRange",
+						"type PaginationLinkProps"
+					]
+				}
+			],
 			"page": "pagination",
 			"component": "PaginationPage",
 			"module": "base/navigation",
@@ -365,6 +631,21 @@
 		{
 			"path": "/navigation-menu",
 			"label": "Navigation menu",
+			"summary": "A horizontal bar whose entries open a panel of links — the mega-menu of a marketing header, a product switcher, a section whose children are worth previewing. It does not know which route is current, so an application's own navigation belongs in SideNav, NavigationTabs or AppSidebar.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/navigation-menu",
+					"names": [
+						"NavigationMenu",
+						"NavigationMenuList",
+						"NavigationMenuItem",
+						"NavigationMenuTrigger",
+						"NavigationMenuContent",
+						"NavigationMenuLink",
+						"NavigationMenuIndicator"
+					]
+				}
+			],
 			"page": "navigation-menu",
 			"component": "NavigationMenuPage",
 			"module": "base/navigation-menu",
@@ -380,6 +661,21 @@
 		{
 			"path": "/button",
 			"label": "Button",
+			"summary": "The action primitive. Presentation splits along two independent axes: tone is semantic colour intent, buttonStyle is fill treatment.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/buttons",
+					"names": [
+						"Button",
+						"ButtonGroup",
+						"ButtonGroupSeparator",
+						"ButtonGroupText",
+						"TextButton",
+						"LoaderButton",
+						"TooltipButton"
+					]
+				}
+			],
 			"page": "button",
 			"component": "ButtonPage",
 			"module": "base/buttons",
@@ -395,6 +691,20 @@
 		{
 			"path": "/toolbar",
 			"label": "Toolbar",
+			"summary": "A named set of related controls with one tab stop. Tab enters or leaves the set; arrow keys move within it according to orientation.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/toolbar",
+					"names": [
+						"Toolbar",
+						"ToolbarGroup",
+						"ToolbarButton",
+						"ToolbarLink",
+						"ToolbarInput",
+						"ToolbarSeparator"
+					]
+				}
+			],
 			"page": "toolbar",
 			"component": "ToolbarPage",
 			"module": "base/toolbar",
@@ -410,6 +720,20 @@
 		{
 			"path": "/action-menu",
 			"label": "Action menu & buttons",
+			"summary": "Commands as data. One ActionDefinition array collapses behind a trigger (ActionMenu), spreads out as buttons (ActionButtons), or both at once — the first few as buttons and the rest in an overflow menu — so a toolbar and its overflow can never offer different things.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/action-menu",
+					"names": [
+						"ActionMenu",
+						"ActionButtons",
+						"resolveContextActions",
+						"splitActions",
+						"type ActionDefinition",
+						"type ContextAction"
+					]
+				}
+			],
 			"page": "action-menu",
 			"component": "ActionMenuPage",
 			"module": "base/action-menu",
@@ -429,6 +753,16 @@
 		{
 			"path": "/batch-action-bar",
 			"label": "Batch action bar",
+			"summary": "The bar that appears once a selection exists. A count, the bulk actions, and a way out — shared by every surface that can select more than one thing.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/batch-action-bar",
+					"names": [
+						"BatchActionBar",
+						"defaultBatchActionBarStrings"
+					]
+				}
+			],
 			"page": "batch-action-bar",
 			"component": "BatchActionBarPage",
 			"module": "base/batch-action-bar",
@@ -444,6 +778,16 @@
 		{
 			"path": "/copyable",
 			"label": "Copyable",
+			"summary": "A value with a copy button. It confirms in place and raises a toast, because a copy that gives no feedback is indistinguishable from one that failed.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/copyable",
+					"names": [
+						"Copyable",
+						"useCopyToClipboard"
+					]
+				}
+			],
 			"page": "copyable",
 			"component": "CopyablePage",
 			"module": "base/copyable",
@@ -456,6 +800,27 @@
 		{
 			"path": "/actions",
 			"label": "Action definitions",
+			"summary": "One typed action definition, rendered by every surface that shows actions — a page toolbar, a card menu, a table row, the command palette — with the confirm, the loading state, and the errors owned in one place.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/actions",
+					"names": [
+						"ActionProvider",
+						"ActionOverlayOutlet",
+						"ActionScope",
+						"ActionHttpError",
+						"defineAction",
+						"useRegisterActions",
+						"useActionSurface",
+						"useAction",
+						"useLocalAction",
+						"useActiveAction",
+						"useActionScope",
+						"useActionSnapshot",
+						"useActionStore"
+					]
+				}
+			],
 			"page": "actions",
 			"component": "ActionsPage",
 			"module": "features/actions",
@@ -472,6 +837,16 @@
 		{
 			"path": "/form-field",
 			"label": "Form field",
+			"summary": "The label, the supporting line, and the error, wired to whatever control sits inside. One supporting line, not three stacked hints.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/forms",
+					"names": [
+						"FormField",
+						"FieldGroup"
+					]
+				}
+			],
 			"page": "form-field",
 			"component": "FormFieldPage",
 			"module": "base/forms",
@@ -488,6 +863,15 @@
 		{
 			"path": "/label",
 			"label": "Label",
+			"summary": "The text that names a control. Usually reached through FormField rather than directly — but it is here for a control the kit does not ship.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/label",
+					"names": [
+						"Label"
+					]
+				}
+			],
 			"page": "label",
 			"component": "LabelPage",
 			"module": "base/label",
@@ -501,6 +885,21 @@
 		{
 			"path": "/form-workflow",
 			"label": "Form workflow",
+			"summary": "The parts a form needs around its fields: a titled section, the action bar at its foot, the summary that appears when submission fails, the banner that appears when it has unsaved work, and the submit button that says what it is doing. Beside them, the two states a region shows instead of content — loading and failed.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/forms",
+					"names": [
+						"FormSection",
+						"FormActionsBar",
+						"ErrorSummary",
+						"DirtyStateBanner",
+						"SubmitStateButton",
+						"LoadingState",
+						"ErrorState"
+					]
+				}
+			],
 			"page": "form-workflow",
 			"component": "FormWorkflowPage",
 			"module": "base/forms",
@@ -520,6 +919,16 @@
 		{
 			"path": "/form-binding",
 			"label": "Form binding",
+			"summary": "The headless contract between a form library and the kit's fields. One small interface — useField — that plain React state, react-hook-form, or anything else can satisfy.",
+			"imports": [
+				{
+					"from": "themelia-ui/forms",
+					"names": [
+						"useFormFieldBinding",
+						"useStateFormControl"
+					]
+				}
+			],
 			"page": "form-binding",
 			"component": "FormBindingPage",
 			"module": "forms",
@@ -537,6 +946,21 @@
 		{
 			"path": "/repeater",
 			"label": "Repeater",
+			"summary": "A list the reader edits row by row — add, remove, reorder. The generic Repeater renders any row you give it; the three specialised ones cover the shapes that come up constantly.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/repeaters",
+					"names": [
+						"Repeater",
+						"StringRepeater",
+						"KeyValueEditor",
+						"LocalizedStringField",
+						"ObjectRepeater",
+						"LocalizedStringRepeater",
+						"LocalizedObjectField"
+					]
+				}
+			],
 			"page": "repeater",
 			"component": "RepeaterPage",
 			"module": "base/repeaters",
@@ -552,6 +976,20 @@
 		{
 			"path": "/input",
 			"label": "Input",
+			"summary": "The text field, and the shared surface every control in the kit wears — same height, border, focus ring, invalid state, and disabled treatment. SearchInput and PasswordInput are this field with an affordance pre-wired, so they live here too.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/text-inputs",
+					"names": [
+						"Input",
+						"SearchInput",
+						"PasswordInput",
+						"FieldShell",
+						"NativeSelect",
+						"useFieldValue"
+					]
+				}
+			],
 			"page": "input",
 			"component": "InputPage",
 			"module": "base/text-inputs",
@@ -572,6 +1010,15 @@
 		{
 			"path": "/textarea",
 			"label": "Textarea",
+			"summary": "Multi-line text on the same field surface as Input, with the same invalid and disabled treatment.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/text-inputs",
+					"names": [
+						"Textarea"
+					]
+				}
+			],
 			"page": "textarea",
 			"component": "TextareaPage",
 			"module": "base/text-inputs",
@@ -585,6 +1032,20 @@
 		{
 			"path": "/input-group",
 			"label": "Input group",
+			"summary": "A bordered shell that owns the focus ring on behalf of whichever control sits inside it, so the control is stripped of its own chrome and the two never draw a box each. For a field that needs something attached to it — a unit, a prefix, an action — rather than beside it.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/input-group",
+					"names": [
+						"InputGroup",
+						"InputGroupAddon",
+						"InputGroupButton",
+						"InputGroupText",
+						"InputGroupInput",
+						"InputGroupTextarea"
+					]
+				}
+			],
 			"page": "input-group",
 			"component": "InputGroupPage",
 			"module": "base/input-group",
@@ -603,6 +1064,15 @@
 		{
 			"path": "/slug-field",
 			"label": "Slug field",
+			"summary": "A URL slug derived from another field. Accents fold, punctuation collapses, and the prefix is chrome rather than part of the value.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/text-inputs",
+					"names": [
+						"SlugField"
+					]
+				}
+			],
 			"page": "slug-field",
 			"component": "SlugFieldPage",
 			"module": "base/text-inputs",
@@ -616,6 +1086,16 @@
 		{
 			"path": "/phone-input",
 			"label": "Phone input",
+			"summary": "A dial code and a number, in two channels, so the country prefix is never parsed back out of the digits.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/value-inputs",
+					"names": [
+						"PhoneInput",
+						"DEFAULT_COUNTRY_PREFIXES"
+					]
+				}
+			],
 			"page": "phone-input",
 			"component": "PhoneInputPage",
 			"module": "base/value-inputs",
@@ -629,6 +1109,15 @@
 		{
 			"path": "/tags-input",
 			"label": "Tags input",
+			"summary": "A list of short strings entered inline as chips. Enter commits, Backspace on an empty field removes the last one.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/value-inputs",
+					"names": [
+						"TagsInput"
+					]
+				}
+			],
 			"page": "tags-input",
 			"component": "TagsInputPage",
 			"module": "base/value-inputs",
@@ -642,6 +1131,15 @@
 		{
 			"path": "/otp-input",
 			"label": "One-time code input",
+			"summary": "The field for a short code sent by text message or email, drawn one box per character so the reader can check it against the message at a glance. It stays a single input underneath, which is what lets paste and SMS autofill fill every box at once.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/otp-input",
+					"names": [
+						"OtpInput"
+					]
+				}
+			],
 			"page": "otp-input",
 			"component": "OtpInputPage",
 			"module": "base/otp-input",
@@ -658,6 +1156,25 @@
 		{
 			"path": "/select",
 			"label": "Select",
+			"summary": "A single choice from a list too long to show at once. Its rows use the shared menu row, so it matches every other menu surface in the kit.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/choice-inputs",
+					"names": [
+						"Select",
+						"type SelectOption",
+						"SelectRoot",
+						"SelectTriggerPrimitive",
+						"SelectValuePrimitive",
+						"SelectIconPrimitive",
+						"SelectPopupContent",
+						"SelectPopupGroup",
+						"SelectPopupItem",
+						"SelectPopupLabel",
+						"SelectPopupSeparator"
+					]
+				}
+			],
 			"page": "select",
 			"component": "SelectPage",
 			"module": "base/choice-inputs",
@@ -672,6 +1189,53 @@
 		{
 			"path": "/combobox",
 			"label": "Combobox",
+			"summary": "One combobox at two levels. The pickers are what most fields want — ResourceCombobox and SuggestionsCombobox fetch for you, AsyncCombobox and AsyncMultiCombobox take results you already hold — and all four run on one engine: a debounced query, a minimum length, a status row, grouping, an inline create, scroll pagination and an apply footer. Underneath is the Base UI anatomy with the kit's field surface applied; drop to the parts when no picker fits.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/combobox",
+					"names": [
+						"ComboboxRoot",
+						"ComboboxInputTrigger",
+						"ComboboxPopup",
+						"ComboboxPopupInput",
+						"ComboboxItem",
+						"ComboboxTrigger",
+						"ComboboxValue",
+						"ComboboxList",
+						"ComboboxEmpty",
+						"ComboboxGroup",
+						"ComboboxGroupLabel",
+						"ComboboxChips",
+						"ComboboxChip",
+						"ComboboxChipsInput",
+						"ComboboxPortal",
+						"ComboboxPositioner",
+						"ComboboxArrow",
+						"ComboboxBackdrop",
+						"ComboboxClear",
+						"ComboboxCollection",
+						"ComboboxInput",
+						"ComboboxItemIndicator",
+						"ComboboxSeparator",
+						"ComboboxStatus",
+						"useComboboxFilter"
+					]
+				},
+				{
+					"from": "themelia-ui/features/combobox",
+					"title": "Async combobox",
+					"names": [
+						"ResourceCombobox",
+						"SuggestionsCombobox",
+						"AsyncCombobox",
+						"AsyncMultiCombobox",
+						"ComboboxDropdown",
+						"HighlightedText",
+						"useComboboxCore",
+						"useSuggestions"
+					]
+				}
+			],
 			"page": "combobox",
 			"component": "ComboboxPage",
 			"module": "base/combobox",
@@ -692,6 +1256,15 @@
 		{
 			"path": "/checkbox",
 			"label": "Checkbox",
+			"summary": "A box that is checked, unchecked, or indeterminate. The check and the dash are Lucide icons, not hand-drawn paths — a bespoke polyline is a second icon vocabulary in a kit that already has one.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/choice-inputs",
+					"names": [
+						"Checkbox"
+					]
+				}
+			],
 			"page": "checkbox",
 			"component": "CheckboxPage",
 			"module": "base/choice-inputs",
@@ -705,6 +1278,20 @@
 		{
 			"path": "/radio-group",
 			"label": "Radio groups",
+			"summary": "One choice from a visible set, in four shapes: plain radios, cards for a choice the reader is weighing, a list for options whose second line is the decision, and pills for a compact switch. Every one is a radio group — one tab stop, arrows move between options.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/choice-inputs",
+					"names": [
+						"RadioGroup",
+						"Radio",
+						"CardRadioGroup",
+						"CardCheckboxGroup",
+						"ListRadioGroup",
+						"PillRadioGroup"
+					]
+				}
+			],
 			"page": "radio-group",
 			"component": "RadioGroupPage",
 			"module": "base/choice-inputs",
@@ -727,6 +1314,17 @@
 		{
 			"path": "/switch",
 			"label": "Switch & toggle field",
+			"summary": "An immediate on/off state — it takes effect when flipped, with no save step — on its own, as a settings row (ToggleField), and as a feature card (SwitchCard). The row and the card are one component at two weights.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/choice-inputs",
+					"names": [
+						"Switch",
+						"ToggleField",
+						"SwitchCard"
+					]
+				}
+			],
 			"page": "switch",
 			"component": "SwitchPage",
 			"module": "base/choice-inputs",
@@ -743,6 +1341,16 @@
 		{
 			"path": "/toggle",
 			"label": "Toggle",
+			"summary": "A button that stays pressed. Not a switch and not a checkbox — it reports aria-pressed, which is the distinction spelled out in the accessibility tree.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/toggle",
+					"names": [
+						"Toggle",
+						"ToggleGroup"
+					]
+				}
+			],
 			"page": "toggle",
 			"component": "TogglePage",
 			"module": "base/toggle",
@@ -759,6 +1367,18 @@
 		{
 			"path": "/decimal-input",
 			"label": "Decimal input",
+			"summary": "A number with a fixed number of decimal places. A text input, not type=number — see the note below.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/forms-numeric",
+					"names": [
+						"DecimalInput",
+						"RoundingModeSelect",
+						"applyRounding",
+						"formatDecimal"
+					]
+				}
+			],
 			"page": "decimal-input",
 			"component": "DecimalInputPage",
 			"module": "base/forms-numeric",
@@ -772,6 +1392,17 @@
 		{
 			"path": "/currency-input",
 			"label": "Currency input",
+			"summary": "An amount and its currency, kept in separate channels so neither has to be parsed back out of a formatted string.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/forms-numeric",
+					"names": [
+						"CurrencyInput",
+						"CURRENCY_SYMBOLS",
+						"MoneyInput"
+					]
+				}
+			],
 			"page": "currency-input",
 			"component": "CurrencyInputPage",
 			"module": "base/forms-numeric",
@@ -785,6 +1416,15 @@
 		{
 			"path": "/percentage-input",
 			"label": "Percentage input",
+			"summary": "A percentage, with the sign as a suffix on the field rather than a character in the value.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/forms-numeric",
+					"names": [
+						"PercentageInput"
+					]
+				}
+			],
 			"page": "percentage-input",
 			"component": "PercentageInputPage",
 			"module": "base/forms-numeric",
@@ -798,6 +1438,17 @@
 		{
 			"path": "/unit-inputs",
 			"label": "Unit inputs",
+			"summary": "Weight, dimensions, and coordinates: three fields whose value is a number plus a unit or a second number. Each keeps its parts in separate channels.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/forms-numeric",
+					"names": [
+						"WeightInput",
+						"DimensionsInput",
+						"CoordinatesInput"
+					]
+				}
+			],
 			"page": "unit-inputs",
 			"component": "UnitInputsPage",
 			"module": "base/forms-numeric",
@@ -812,6 +1463,16 @@
 		{
 			"path": "/slider",
 			"label": "Slider",
+			"summary": "A value picked along a track, for a quantity the reader adjusts by feel rather than types.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/value-inputs",
+					"names": [
+						"SliderField",
+						"Slider"
+					]
+				}
+			],
 			"page": "slider",
 			"component": "SliderPage",
 			"module": "base/value-inputs",
@@ -825,6 +1486,22 @@
 		{
 			"path": "/date-picker",
 			"label": "Date picker",
+			"summary": "A day, a range, or several days, behind a field that wears the same surface as every other control.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/date-pickers",
+					"names": [
+						"DatePicker",
+						"createRangePresets",
+						"SingleDatePicker",
+						"RangeDatePicker",
+						"MultipleDatePicker",
+						"MonthYearPicker",
+						"DatePickerHeader",
+						"DatePickerFooter"
+					]
+				}
+			],
 			"page": "date-picker",
 			"component": "DatePickerPage",
 			"module": "base/date-pickers",
@@ -839,6 +1516,15 @@
 		{
 			"path": "/calendar",
 			"label": "Calendar",
+			"summary": "The grid on its own, for a page that shows a month rather than asking for a date. Built on date-fns, not a calendar library.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/date-pickers",
+					"names": [
+						"Calendar"
+					]
+				}
+			],
 			"page": "calendar",
 			"component": "CalendarPage",
 			"module": "base/date-pickers",
@@ -853,6 +1539,16 @@
 		{
 			"path": "/time-picker",
 			"label": "Time picker",
+			"summary": "A time of day, and the combined date-and-time field built from it.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/date-pickers",
+					"names": [
+						"TimePicker",
+						"DateTimeInput"
+					]
+				}
+			],
 			"page": "time-picker",
 			"component": "TimePickerPage",
 			"module": "base/date-pickers",
@@ -866,6 +1562,15 @@
 		{
 			"path": "/color-input",
 			"label": "Color input",
+			"summary": "A colour value with a swatch. It accepts any CSS colour, including a token that resolves to one, and hands the picker’s choice back in whichever notation your tokens are written in — oklch, hex, rgb or hsl.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/value-inputs",
+					"names": [
+						"ColorInput"
+					]
+				}
+			],
 			"page": "color-input",
 			"component": "ColorInputPage",
 			"module": "base/value-inputs",
@@ -880,6 +1585,25 @@
 		{
 			"path": "/file-upload",
 			"label": "File upload",
+			"summary": "Choosing files, one image, and files on their way — one module. A dropzone and a picker, an image picker that previews in its final shape, and progress for transfers the caller runs. Nothing here transfers anything: the value is File objects, and sending them is the caller's business.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/upload",
+					"names": [
+						"FileUpload",
+						"Dropzone",
+						"FilePickerInput",
+						"PreviewImage",
+						"ImageUpload",
+						"AvatarUpload",
+						"UploadProgressList",
+						"UploadTray",
+						"MediaGallery",
+						"useFileDropTarget",
+						"validateFileSelection"
+					]
+				}
+			],
 			"page": "file-upload",
 			"component": "FileUploadPage",
 			"module": "base/upload",
@@ -902,6 +1626,23 @@
 		{
 			"path": "/table",
 			"label": "Table",
+			"summary": "Rows and columns, as plain table elements. The scroll container is the only wrapper — everything else is the semantics the browser already gives you.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/table",
+					"names": [
+						"Table",
+						"TableHeader",
+						"TableBody",
+						"TableFooter",
+						"TableRow",
+						"TableHead",
+						"TableCell",
+						"TableCaption",
+						"TableEmpty"
+					]
+				}
+			],
 			"page": "table",
 			"component": "TablePage",
 			"module": "base/table",
@@ -917,6 +1658,24 @@
 		{
 			"path": "/item",
 			"label": "Item",
+			"summary": "The row primitive that lists, menus, and tables compose. Media, content, and actions, with the media aligning to the first line whenever a description is present.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/item",
+					"names": [
+						"Item",
+						"ItemGroup",
+						"ItemMedia",
+						"ItemContent",
+						"ItemTitle",
+						"ItemDescription",
+						"ItemActions",
+						"ItemHeader",
+						"ItemFooter",
+						"ItemSeparator"
+					]
+				}
+			],
 			"page": "item",
 			"component": "ItemPage",
 			"module": "base/item",
@@ -931,6 +1690,21 @@
 		{
 			"path": "/card",
 			"label": "Card",
+			"summary": "The single surface primitive. Every framed region in the kit is one — if Card does not expose the chrome you need, extend it rather than introducing a second card.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/cards",
+					"names": [
+						"Card",
+						"CardHeader",
+						"CardContent",
+						"CardFooter",
+						"CardActionStrip",
+						"CardPrimaryAction",
+						"CardSkeleton"
+					]
+				}
+			],
 			"page": "card",
 			"component": "CardPage",
 			"module": "base/cards",
@@ -945,6 +1719,16 @@
 		{
 			"path": "/metadata",
 			"label": "Metadata list",
+			"summary": "Label/value facts about one thing, in three layouts. A fact is data with a kind, not a node — writing { kind: 'money', value: 48200, currency: 'USD' } hands the amount to the primitive that knows the currency's exponent and the locale's separators. A single pair inside another surface is an InlineStat.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/display",
+					"names": [
+						"MetadataList",
+						"MetadataValue"
+					]
+				}
+			],
 			"page": "metadata",
 			"component": "MetadataPage",
 			"module": "base/display",
@@ -963,6 +1747,15 @@
 		{
 			"path": "/inline-stat",
 			"label": "Inline stat",
+			"summary": "One label and one value — the pair that sits inside another surface's chrome: a card footer, a header strip, a row of totals. A set of facts about one thing is a MetadataList instead.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/display",
+					"names": [
+						"InlineStat"
+					]
+				}
+			],
 			"page": "inline-stat",
 			"component": "InlineStatPage",
 			"module": "base/display",
@@ -980,6 +1773,20 @@
 		{
 			"path": "/chart",
 			"label": "Chart",
+			"summary": "Recharts with the kit's tooltip, legend, and colour wiring. The container maps each data key to a token, so a chart follows the theme with no per-theme configuration.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/chart",
+					"names": [
+						"ChartContainer",
+						"ChartTooltip",
+						"ChartTooltipContent",
+						"ChartLegend",
+						"ChartLegendContent",
+						"Sparkline"
+					]
+				}
+			],
 			"page": "chart",
 			"component": "ChartPage",
 			"module": "base/chart",
@@ -996,6 +1803,16 @@
 		{
 			"path": "/timeline",
 			"label": "Timeline",
+			"summary": "An ordered run of events on one rail. The shared geometry under every dated list in the kit — a changelog, a set of milestones, an order's progress — so the dot, the connector and the title block are decided once rather than redrawn per caller.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/timeline",
+					"names": [
+						"Timeline",
+						"Stepper"
+					]
+				}
+			],
 			"page": "timeline",
 			"component": "TimelinePage",
 			"module": "base/timeline",
@@ -1015,6 +1832,15 @@
 		{
 			"path": "/qr-code",
 			"label": "QR code",
+			"summary": "A scannable symbol drawn in the theme's own colours, as SVG so it scales and prints without blurring.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/qr-code",
+					"names": [
+						"QRCode"
+					]
+				}
+			],
 			"page": "qr-code",
 			"component": "QRCodePage",
 			"module": "base/qr-code",
@@ -1029,6 +1855,21 @@
 		{
 			"path": "/avatar",
 			"label": "Avatar",
+			"summary": "A person or an entity, as an image with an initials fallback. StackedAvatars is the overlapping row with an overflow count.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/avatar",
+					"names": [
+						"Avatar",
+						"AvatarImage",
+						"AvatarFallback",
+						"AvatarGroup",
+						"AvatarBadge",
+						"StackedAvatars",
+						"AvatarGroupCount"
+					]
+				}
+			],
 			"page": "avatar",
 			"component": "AvatarPage",
 			"module": "base/avatar",
@@ -1044,6 +1885,16 @@
 		{
 			"path": "/badge",
 			"label": "Badge",
+			"summary": "A short status mark. It takes a tone, like everything else that carries colour in the kit, and can draw its own status dot so meaning does not rest on hue alone.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/badge",
+					"names": [
+						"Badge",
+						"type BadgeTone"
+					]
+				}
+			],
 			"page": "badge",
 			"component": "BadgePage",
 			"module": "base/badge",
@@ -1060,6 +1911,19 @@
 		{
 			"path": "/content-block",
 			"label": "Content block",
+			"summary": "ContentBlock is a titled region that is NOT a Card — a labelled group inside one — and it owns the four surfaces a region can take. IconBadge is the kit's glyph-in-a-medallion, the mark that sits at the head of one. DateBlock has a page of its own.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/display",
+					"names": [
+						"ContentBlock",
+						"IconBadge",
+						"PlaceholderPattern",
+						"DirectionProvider",
+						"Slot"
+					]
+				}
+			],
 			"page": "content-block",
 			"component": "ContentBlockPage",
 			"module": "base/display",
@@ -1078,6 +1942,15 @@
 		{
 			"path": "/date-block",
 			"label": "Date block",
+			"summary": "A date set as a date: a leaf with the month across its top and the day as its subject, for a row whose subject is WHEN something happens — an agenda, a booking, an event. Everywhere else a date is a value, and the date primitives format it inline.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/display",
+					"names": [
+						"DateBlock"
+					]
+				}
+			],
 			"page": "date-block",
 			"component": "DateBlockPage",
 			"module": "base/display",
@@ -1096,6 +1969,15 @@
 		{
 			"path": "/separator",
 			"label": "Separator",
+			"summary": "A rule between regions. Decorative by default, so assistive technology does not announce a line that carries no meaning.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/display",
+					"names": [
+						"Separator"
+					]
+				}
+			],
 			"page": "separator",
 			"component": "SeparatorPage",
 			"module": "base/display",
@@ -1110,6 +1992,16 @@
 		{
 			"path": "/kbd",
 			"label": "Keyboard key",
+			"summary": "A key cap for a shortcut written into the interface — a palette hint, a menu accelerator, a line of help. It is the browser's own kbd element underneath, so the meaning survives for a screen reader and in plain text without the styling.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/display",
+					"names": [
+						"Kbd",
+						"KbdGroup"
+					]
+				}
+			],
 			"page": "kbd",
 			"component": "KbdPage",
 			"module": "base/display",
@@ -1126,6 +2018,18 @@
 		{
 			"path": "/accordion",
 			"label": "Accordion",
+			"summary": "Bounded sections that open one at a time, or several. Height is transitioned rather than keyframed, so an interrupted open reverses from where it actually is.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/accordion",
+					"names": [
+						"Accordion",
+						"AccordionItem",
+						"AccordionTrigger",
+						"AccordionContent"
+					]
+				}
+			],
 			"page": "accordion",
 			"component": "AccordionPage",
 			"module": "base/accordion",
@@ -1140,6 +2044,17 @@
 		{
 			"path": "/collapsible",
 			"label": "Collapsible",
+			"summary": "One region that opens and closes. Where Accordion manages a set of sections, Collapsible is a single disclosure with no siblings to coordinate.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/display",
+					"names": [
+						"Collapsible",
+						"CollapsibleTrigger",
+						"CollapsibleContent"
+					]
+				}
+			],
 			"page": "collapsible",
 			"component": "CollapsiblePage",
 			"module": "base/display",
@@ -1153,6 +2068,19 @@
 		{
 			"path": "/carousel",
 			"label": "Carousel",
+			"summary": "A horizontal or vertical track the reader pages through. It is native CSS scroll-snap with controls on top, not a JS-driven slider.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/carousel",
+					"names": [
+						"Carousel",
+						"CarouselSlide",
+						"CarouselControl",
+						"CarouselDots",
+						"useCarousel"
+					]
+				}
+			],
 			"page": "carousel",
 			"component": "CarouselPage",
 			"module": "base/carousel",
@@ -1167,6 +2095,48 @@
 		{
 			"path": "/overlay",
 			"label": "Overlay, dialog & sheet",
+			"summary": "The one modal surface in the kit, and the only page about it. Dialog, alert dialog and sheet are not separate components: each is this surface with some of its settings filled in and a name that says why. DialogContent is OverlayContent with placement=“center”. AlertDialogContent is a centred surface that nothing dismisses but an answer, given with AlertDialogAction or AlertDialogCancel. SheetContent is OverlayContent at an edge. Those are the parts that set something; the root, trigger, close, body, title and description around them are always Overlay's own. Learn the settings once here; use a preset when its name says what you mean, and configure OverlayContent for a combination no preset names.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/overlay",
+					"names": [
+						"Overlay",
+						"OverlayTrigger",
+						"OverlayContent",
+						"OverlayClose",
+						"OverlayHeader",
+						"OverlayBody",
+						"OverlayFooter",
+						"OverlayTitle",
+						"OverlayDescription",
+						"OverlayDismissArea"
+					]
+				},
+				{
+					"from": "themelia-ui/base/dialog",
+					"title": "Dialog",
+					"names": [
+						"DialogContent"
+					]
+				},
+				{
+					"from": "themelia-ui/base/alert-dialog",
+					"title": "Alert dialog",
+					"names": [
+						"AlertDialogContent",
+						"AlertDialogAction",
+						"AlertDialogCancel",
+						"AlertDialogMedia"
+					]
+				},
+				{
+					"from": "themelia-ui/base/sheet",
+					"title": "Sheet",
+					"names": [
+						"SheetContent"
+					]
+				}
+			],
 			"page": "overlay",
 			"component": "OverlayPage",
 			"module": "base/overlay",
@@ -1194,6 +2164,22 @@
 		{
 			"path": "/popover",
 			"label": "Popover",
+			"summary": "A panel anchored to a trigger. Not a modal: the page stays live behind it, focus is not trapped, and dismissing it costs a click outside. For a decision the reader must answer, that is a dialog; for a name on hover, that is a tooltip. This is the one in between — a filter, a settings pane, a definition worth reading.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/popover",
+					"names": [
+						"Popover",
+						"PopoverTrigger",
+						"PopoverAnchor",
+						"PopoverContent",
+						"PopoverHeader",
+						"PopoverTitle",
+						"PopoverDescription",
+						"PopoverFooter"
+					]
+				}
+			],
 			"page": "popover",
 			"component": "PopoverPage",
 			"module": "base/popover",
@@ -1212,6 +2198,17 @@
 		{
 			"path": "/hover-card",
 			"label": "Hover card",
+			"summary": "A preview that opens while the pointer rests on a name or a link — a person, an order, a page — so a reader can glance at it without leaving where they are. It is an accelerator, never a route: everything in it has to be one click away as well, because hover does not exist on touch.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/hover-card",
+					"names": [
+						"HoverCard",
+						"HoverCardTrigger",
+						"HoverCardContent"
+					]
+				}
+			],
 			"page": "hover-card",
 			"component": "HoverCardPage",
 			"module": "base/hover-card",
@@ -1227,6 +2224,18 @@
 		{
 			"path": "/tooltip",
 			"label": "Tooltip",
+			"summary": "A short explanation on hover and on focus. It is never the only place a piece of information lives — a tooltip is unreachable on touch and gone the moment the pointer moves.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/tooltip",
+					"names": [
+						"Tooltip",
+						"TooltipTrigger",
+						"TooltipContent",
+						"TooltipProvider"
+					]
+				}
+			],
 			"page": "tooltip",
 			"component": "TooltipPage",
 			"module": "base/tooltip",
@@ -1241,6 +2250,51 @@
 		{
 			"path": "/dropdown-menu",
 			"label": "Dropdown & context menu",
+			"summary": "The composable menu underneath ActionMenu, opened from a trigger or by right-click. Reach for it when the definition-driven ActionMenu cannot express the menu you need — a submenu, a radio group, a custom row. The context menu reuses these rows wholesale, so it lives here.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/dropdown-menu",
+					"names": [
+						"DropdownMenu",
+						"DropdownMenuTrigger",
+						"DropdownMenuContent",
+						"DropdownMenuItem",
+						"DropdownMenuCheckboxItem",
+						"DropdownMenuRadioGroup",
+						"DropdownMenuSub",
+						"DropdownMenuGroup",
+						"DropdownMenuLabel",
+						"DropdownMenuSeparator",
+						"DropdownMenuShortcut",
+						"DropdownMenuRadioItem",
+						"DropdownMenuSubTrigger",
+						"DropdownMenuSubContent",
+						"DropdownMenuPortal",
+						"DropdownMenuLinkItem"
+					]
+				},
+				{
+					"from": "themelia-ui/base/context-menu",
+					"title": "Context menu",
+					"names": [
+						"ContextMenu",
+						"ContextMenuTrigger",
+						"ContextMenuContent",
+						"ContextMenuItem",
+						"ContextMenuGroup",
+						"ContextMenuLabel",
+						"ContextMenuSeparator",
+						"ContextMenuShortcut",
+						"ContextMenuCheckboxItem",
+						"ContextMenuRadioGroup",
+						"ContextMenuRadioItem",
+						"ContextMenuSub",
+						"ContextMenuSubTrigger",
+						"ContextMenuSubContent",
+						"ContextMenuPortal"
+					]
+				}
+			],
 			"page": "dropdown-menu",
 			"component": "DropdownMenuPage",
 			"module": "base/dropdown-menu",
@@ -1260,6 +2314,17 @@
 		{
 			"path": "/popover-menu",
 			"label": "Popover menu",
+			"summary": "A Popover holding a Command: trigger → header band → search → list → footer band. It picks a VALUE from a searchable list hung off any button — who owns this, which project, what status — where ActionMenu behind the same kind of trigger runs commands instead. It is not a form control: no field surface, no name, no form value. For those, the field IS the control — see Select and Combobox.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/popover-menu",
+					"names": [
+						"PopoverMenu",
+						"PopoverMenuPanel",
+						"type PopoverMenuItem"
+					]
+				}
+			],
 			"page": "popover-menu",
 			"component": "PopoverMenuPage",
 			"module": "base/popover-menu",
@@ -1273,6 +2338,16 @@
 		{
 			"path": "/menubar",
 			"label": "Menubar",
+			"summary": "The menu bar of a desktop application, for an editor or a workspace with more commands than a toolbar can show. The bar and its triggers come from here; the menus themselves are the dropdown menu's, imported from base/dropdown-menu beside it.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/menubar",
+					"names": [
+						"Menubar",
+						"MenubarTrigger"
+					]
+				}
+			],
 			"page": "menubar",
 			"component": "MenubarPage",
 			"module": "base/menubar",
@@ -1288,6 +2363,23 @@
 		{
 			"path": "/command",
 			"label": "Command palette",
+			"summary": "The command palette. A filtered list over an input, either inline or in a dialog bound to a shortcut.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/command",
+					"names": [
+						"Command",
+						"CommandDialog",
+						"CommandInput",
+						"CommandList",
+						"CommandEmpty",
+						"CommandGroup",
+						"CommandItem",
+						"CommandShortcut",
+						"CommandSeparator"
+					]
+				}
+			],
 			"page": "command",
 			"component": "CommandPage",
 			"module": "base/command",
@@ -1303,6 +2395,19 @@
 		{
 			"path": "/alert",
 			"label": "Alert",
+			"summary": "A message about something that just happened. The tint and the border carry the tone; only the icon is coloured, so the text stays legible in both themes.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/feedback",
+					"names": [
+						"Alert",
+						"AlertTitle",
+						"AlertDescription",
+						"AlertAction",
+						"AlertMetadata"
+					]
+				}
+			],
 			"page": "alert",
 			"component": "AlertPage",
 			"module": "base/feedback",
@@ -1317,6 +2422,17 @@
 		{
 			"path": "/toast",
 			"label": "Toast",
+			"summary": "A transient notice raised from anywhere, including outside React. The queue lives in a module store, not in a provider, so a fetch handler can raise one without a hook.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/toaster",
+					"names": [
+						"toast",
+						"Toaster",
+						"createToastStore"
+					]
+				}
+			],
 			"page": "toast",
 			"component": "ToastPage",
 			"module": "base/toaster",
@@ -1331,6 +2447,16 @@
 		{
 			"path": "/progress",
 			"label": "Progress",
+			"summary": "A determinate bar when the total is known, and a travelling band when it is not. The indeterminate form drops its ARIA value attributes rather than reporting a number it does not have. ProgressCircle is the same measurement drawn as a ring, for the places where the reading has to sit inside the mark.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/feedback",
+					"names": [
+						"Progress",
+						"ProgressCircle"
+					]
+				}
+			],
 			"page": "progress",
 			"component": "ProgressPage",
 			"module": "base/feedback",
@@ -1344,6 +2470,15 @@
 		{
 			"path": "/spinner",
 			"label": "Spinner",
+			"summary": "Indeterminate activity, as a ring with one transparent quarter. One element rather than an SVG, and it reads as motion at any size.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/spinner",
+					"names": [
+						"Spinner"
+					]
+				}
+			],
 			"page": "spinner",
 			"component": "SpinnerPage",
 			"module": "base/spinner",
@@ -1357,6 +2492,19 @@
 		{
 			"path": "/skeleton",
 			"label": "Skeleton",
+			"summary": "A placeholder in the shape of what is loading. The composed skeletons mirror the layouts the kit already ships, so a loading page is the same geometry as the loaded one.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/skeleton",
+					"names": [
+						"Skeleton",
+						"ContentSkeleton",
+						"PageSkeleton",
+						"TableSkeleton",
+						"TwoColumnPageSkeleton"
+					]
+				}
+			],
 			"page": "skeleton",
 			"component": "SkeletonPage",
 			"module": "base/skeleton",
@@ -1371,6 +2519,20 @@
 		{
 			"path": "/empty",
 			"label": "Empty state",
+			"summary": "What to show when there is nothing to show. It names the absence and offers the next step — an empty state that only explains is a dead end.",
+			"imports": [
+				{
+					"from": "themelia-ui/base/feedback",
+					"names": [
+						"Empty",
+						"StackedCardsIllustration",
+						"SearchGlassIllustration",
+						"DocumentStackIllustration",
+						"InboxCleanIllustration",
+						"UsersCircleIllustration"
+					]
+				}
+			],
 			"page": "empty",
 			"component": "EmptyPage",
 			"module": "base/feedback",
@@ -1386,6 +2548,20 @@
 		{
 			"path": "/primitive-value",
 			"label": "Values & lists",
+			"summary": "The two primitives for plain text rather than a typed value. Value renders one string and knows what an absent one looks like; InlineList joins several into one phrase, with the conjunction and commas the locale decides.",
+			"imports": [
+				{
+					"from": "themelia-ui/primitives",
+					"names": [
+						"Value",
+						"SecondaryValue",
+						"MutedValue",
+						"MonoValue",
+						"EmptyValue",
+						"InlineList"
+					]
+				}
+			],
 			"page": "primitive-value",
 			"component": "PrimitiveValuePage",
 			"module": "primitives",
@@ -1408,6 +2584,18 @@
 		{
 			"path": "/primitive-name",
 			"label": "Names & initials",
+			"summary": "A person’s name, normalised for display, and the initials derived from it. They share a page because they read the same value: Initials is computed from the name rather than stored beside it, so an avatar and the label next to it cannot disagree.",
+			"imports": [
+				{
+					"from": "themelia-ui/primitives",
+					"names": [
+						"Name",
+						"formatName",
+						"Initials",
+						"formatInitials"
+					]
+				}
+			],
 			"page": "primitive-name",
 			"component": "PrimitiveNamePage",
 			"module": "primitives",
@@ -1426,6 +2614,18 @@
 		{
 			"path": "/primitive-contact",
 			"label": "Contact details",
+			"summary": "A contact detail as the anchor that acts on it — mailto for an email, tel for a phone number, href for a URL. All three are built on Link and share one rule: the text can be shortened or regrouped for a reader, and the target is always built from the full value, never from the text.",
+			"imports": [
+				{
+					"from": "themelia-ui/primitives",
+					"names": [
+						"Email",
+						"Phone",
+						"Url",
+						"Link"
+					]
+				}
+			],
 			"page": "primitive-contact",
 			"component": "PrimitiveContactPage",
 			"module": "primitives",
@@ -1449,6 +2649,18 @@
 		{
 			"path": "/primitive-address",
 			"label": "Addresses & places",
+			"summary": "A location, in the two forms a product stores one: a postal address and a latitude–longitude pair. Each is shaped by the place rather than the reader — an address takes its country’s line order, not the reader’s language, and a coordinate keeps only the decimals that still mean a distance.",
+			"imports": [
+				{
+					"from": "themelia-ui/primitives",
+					"names": [
+						"Address",
+						"formatAddress",
+						"formatAddressLines",
+						"Coordinates"
+					]
+				}
+			],
 			"page": "primitive-address",
 			"component": "PrimitiveAddressPage",
 			"module": "primitives",
@@ -1471,6 +2683,15 @@
 		{
 			"path": "/primitive-money",
 			"label": "Money",
+			"summary": "An amount and its currency, formatted for a locale — and optionally beside a converted second value. Never a number formatted by hand: a currency has a position, a separator, and a decimal count that all differ by locale.",
+			"imports": [
+				{
+					"from": "themelia-ui/primitives",
+					"names": [
+						"Money"
+					]
+				}
+			],
 			"page": "primitive-money",
 			"component": "PrimitiveMoneyPage",
 			"module": "primitives",
@@ -1486,6 +2707,19 @@
 		{
 			"path": "/primitive-number",
 			"label": "Numbers, ranges & ratios",
+			"summary": "A number on its own, a span between two, and a value against the total it is measured out of. All five render tabular figures, so they can share a column and still align; they stay separate components because each carries something a bare number drops — the range’s locale dash, the ratio’s total, the rating’s scale.",
+			"imports": [
+				{
+					"from": "themelia-ui/primitives",
+					"names": [
+						"Number",
+						"Percent",
+						"Range",
+						"Ratio",
+						"Rating"
+					]
+				}
+			],
 			"page": "primitive-number",
 			"component": "PrimitiveNumberPage",
 			"module": "primitives",
@@ -1513,6 +2747,20 @@
 		{
 			"path": "/primitive-quantity",
 			"label": "Measures & file sizes",
+			"summary": "A number and the unit it is counted or measured in: a quantity of things, a physical measure, a size in two or three dimensions, a size in bytes. Each keeps the number apart from the unit until render, so the part that goes wrong by hand — the plural, the unit’s abbreviation, the multiplication sign, which megabyte — is decided in one place.",
+			"imports": [
+				{
+					"from": "themelia-ui/primitives",
+					"names": [
+						"Quantity",
+						"Measure",
+						"Dimensions",
+						"formatDimensions",
+						"FileSize",
+						"formatFileSize"
+					]
+				}
+			],
 			"page": "primitive-quantity",
 			"component": "PrimitiveQuantityPage",
 			"module": "primitives",
@@ -1539,6 +2787,22 @@
 		{
 			"path": "/primitive-date",
 			"label": "Dates & times",
+			"summary": "A moment, the span between two, how long ago one was, and how long something took. Every date primitive goes through one parse and takes its date-fns locale from the provider’s dates config, so one setting translates all of them. Duration sits beside them as a length rather than a moment — no calendar, no timezone, no daylight saving — which is why it is a separate component.",
+			"imports": [
+				{
+					"from": "themelia-ui/primitives",
+					"names": [
+						"DatePrimitive",
+						"Time",
+						"DateTime",
+						"Date",
+						"DateRange",
+						"formatDateRange",
+						"RelativeTime",
+						"Duration"
+					]
+				}
+			],
 			"page": "primitive-date",
 			"component": "PrimitiveDatePage",
 			"module": "primitives",
@@ -1569,6 +2833,46 @@
 		{
 			"path": "/data-view",
 			"label": "Data view & data table",
+			"summary": "One table at two levels. DataView is the complete resource index — search, saved views, filters, table controls and result navigation in one surface — and it is what most index screens want. DataTable is the engine it renders: a TanStack table where TanStack owns the row model and this owns the toolbar, sticky panes, full screen, selection bar, pager and empty state. Reach for DataTable directly when there is nothing to search or filter.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/data-view",
+					"names": [
+						"DataView",
+						"useDataView",
+						"DataViewShell",
+						"DataViewPagination",
+						"DataViewToolbar",
+						"DataViewTableFrame",
+						"SavedViewTabs"
+					]
+				},
+				{
+					"from": "themelia-ui/features/table",
+					"title": "Data table",
+					"names": [
+						"DataTable",
+						"ResourceCell",
+						"StatusCell",
+						"CellStack",
+						"DataTableHeader",
+						"DataTableBody",
+						"DataTableToolbar",
+						"DataTableActions",
+						"ColumnVisibilityToggle",
+						"FullscreenToggle",
+						"CellValue",
+						"AvatarCell",
+						"CurrencyCell",
+						"DateCell",
+						"DateMetaCell",
+						"StatusClusterCell",
+						"useDataTableSize",
+						"useDataTableScrollState",
+						"useFullscreenTableModality"
+					]
+				}
+			],
 			"page": "data-view",
 			"component": "DataViewPage",
 			"module": "features/data-view",
@@ -1595,6 +2899,38 @@
 		{
 			"path": "/filters",
 			"label": "Filters",
+			"summary": "A controlled filter bar. Every value is a string array, because a filter's real home is the URL and a URL has only strings — one shape means one serialiser, one parser, and a filter set that survives a shared link.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/filters",
+					"names": [
+						"FilterProvider",
+						"FilterLayout",
+						"useFilters",
+						"serializeFiltersToQuery",
+						"FilterPill",
+						"FiltersButton",
+						"FilterTabs",
+						"SearchFilter",
+						"SearchFilters",
+						"FilterValueDisplay",
+						"FilterOperatorSelect",
+						"FilterEditor",
+						"SelectFilterEditor",
+						"DateFilterEditor",
+						"RangeFilterEditor",
+						"TagsFilterEditor",
+						"AsyncFilterEditor",
+						"FilterErrorBoundary",
+						"useFilterGroups",
+						"useAsyncOptions",
+						"createFilterCache",
+						"useFilterCache",
+						"FilterOperator",
+						"FilterType"
+					]
+				}
+			],
 			"page": "filters",
 			"component": "FiltersPage",
 			"module": "features/filters",
@@ -1615,6 +2951,23 @@
 		{
 			"path": "/global-search",
 			"label": "Global search",
+			"summary": "The command palette: one list across people, bookings, invoices, and files, walked with the arrow keys. It does not search — the query is controlled and the results are given, because debounce, endpoint, ranking, and permissions all belong to the app. What it owns is the part every palette shares.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/global-search",
+					"names": [
+						"GlobalSearch",
+						"GlobalSearchDialog",
+						"useGlobalSearch",
+						"GlobalSearchInput",
+						"GlobalSearchTabs",
+						"GlobalSearchResultRow",
+						"GlobalSearchIdleState",
+						"GlobalSearchEmptyState",
+						"GlobalSearchFooter"
+					]
+				}
+			],
 			"page": "global-search",
 			"component": "GlobalSearchPage",
 			"module": "features/global-search",
@@ -1635,6 +2988,21 @@
 		{
 			"path": "/resource",
 			"label": "Resource shells",
+			"summary": "The skeleton every list and detail screen shares: a header identifying the thing, a toolbar, a body, sometimes an aside, and the three states that replace the body while it waits, fails, or comes back empty. The shells own that; the table, the form, and the fetch stay the screen's.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/resource",
+					"names": [
+						"ResourceIndexShell",
+						"ResourceShowShell",
+						"TabbedResourceShell",
+						"ResourceDetailsSection",
+						"ResourceHeader",
+						"ResourceActionBar",
+						"ResourceEmptyState"
+					]
+				}
+			],
 			"page": "resource",
 			"component": "ResourcePage",
 			"module": "features/resource",
@@ -1657,6 +3025,18 @@
 		{
 			"path": "/resource-assignment",
 			"label": "Resource assignment",
+			"summary": "The “this record has a venue assigned; here it is, and here is how to change it” panel. The card owns the shape — a panel, a dialog, a pending choice, and a confirm that waits for the write. The picker inside the dialog is yours, because every assignment is a different search.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/resource-assignment",
+					"names": [
+						"SharedResourceCard",
+						"useSharedResourceCard",
+						"DefaultDialogContent",
+						"DefaultDialogSummary"
+					]
+				}
+			],
 			"page": "resource-assignment",
 			"component": "ResourceAssignmentPage",
 			"module": "features/resource-assignment",
@@ -1677,6 +3057,27 @@
 		{
 			"path": "/async-preview",
 			"label": "Async preview",
+			"summary": "A popover that fetches when it opens. The kit owns the surface, the trigger, the four states, and the three things that make hover-fetching hard to get right — aborting, racing, and refetching what it already has. The consumer owns the request and what a record looks like.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/async-preview",
+					"names": [
+						"AsyncPreview",
+						"PreviewTriggerCell",
+						"useAsyncPreview",
+						"createAsyncPreview",
+						"AsyncPreviewRoot",
+						"AsyncPreviewTrigger",
+						"AsyncPreviewContent",
+						"AsyncPreviewBody",
+						"AsyncPreviewLoading",
+						"AsyncPreviewError",
+						"AsyncPreviewEmpty",
+						"AsyncPreviewState",
+						"useAsyncPreviewContext"
+					]
+				}
+			],
 			"page": "async-preview",
 			"component": "AsyncPreviewPage",
 			"module": "features/async-preview",
@@ -1697,6 +3098,22 @@
 		{
 			"path": "/comments",
 			"label": "Comments",
+			"summary": "A thread attached to any record. The composer, the timeline, and the states between them — replying, editing, submitting, failed. It owns none of the fetching: every control appears because there is a callback for it, so a button that does nothing cannot exist.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/comments",
+					"names": [
+						"Comments",
+						"CommentTimeline",
+						"CommentComposer",
+						"useComments",
+						"CommentItem",
+						"CommentContent",
+						"CommentAttachmentChip",
+						"useAttachmentUpload"
+					]
+				}
+			],
 			"page": "comments",
 			"component": "CommentsPage",
 			"module": "features/comments",
@@ -1716,6 +3133,28 @@
 		{
 			"path": "/activities",
 			"label": "Activities",
+			"summary": "What happened to a record, and who did it. ActivityFeed is the timeline of events; ActivityLog is the mixed one — events and comments on the same rail, with a composer. A headline is typed segments rather than a sentence, so the actor, the field, and the status each render as themselves.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/activities",
+					"names": [
+						"ActivityFeed",
+						"ActivityLog",
+						"useActivityFeed",
+						"createActivityEventAdapter",
+						"ActivityRow",
+						"ActivityHeadline",
+						"ActivityMarker",
+						"ActivityDateLabel",
+						"ActivityChanges",
+						"ActivityResourceTag",
+						"ActivityActionsMenu",
+						"ActivityExpandToggle",
+						"ActivityEmptyState",
+						"useActivityResources"
+					]
+				}
+			],
 			"page": "activities",
 			"component": "ActivitiesPage",
 			"module": "features/activities",
@@ -1735,6 +3174,22 @@
 		{
 			"path": "/mentions",
 			"label": "Mentions",
+			"summary": "Inline references to domain records, embedded in rich text. A trigger character per kind opens the picker; picking one writes an atomic chip into the body and registers the reference alongside it. Comments and activities are both built on this.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/mentions",
+					"names": [
+						"useMentions",
+						"MentionContent",
+						"MentionChip",
+						"MentionInlineSuggestions",
+						"MentionPicker",
+						"MentionKindTabs",
+						"MentionRows",
+						"useMentionsSearch"
+					]
+				}
+			],
 			"page": "mentions",
 			"component": "MentionsPage",
 			"module": "features/mentions",
@@ -1754,6 +3209,19 @@
 		{
 			"path": "/rich-text-editor",
 			"label": "Rich text editor",
+			"summary": "A TipTap editor with formatting, undo and redo, HTML source mode, and composition slots. The imperative handle supports inserting content and replacing mention triggers at the caret.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/rich-text-editor",
+					"names": [
+						"RichTextEditor",
+						"RichTextEditorHandle",
+						"RichText",
+						"RichTextEditorToolbar",
+						"EditorCounts"
+					]
+				}
+			],
 			"page": "rich-text-editor",
 			"component": "RichTextEditorPage",
 			"module": "features/rich-text-editor",
@@ -1773,6 +3241,35 @@
 		{
 			"path": "/ai-chat",
 			"label": "AI chat",
+			"summary": "A transcript and the twelve surfaces it is built from. There is no fetcher, no router and no streaming client here: messages, the input, the queue and the staged files are all props, and submitting is a callback — because every provider streams differently and every app stores a conversation differently.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/ai-chat",
+					"names": [
+						"AiChat",
+						"AiChatMessage",
+						"AiMessageBubble",
+						"AiToolCall",
+						"AiReasoning",
+						"useAiChatScroll",
+						"AiChatConversation",
+						"AiChatPromptInput",
+						"AiChatQueue",
+						"AiChatSuggestionsRow",
+						"AiChatAttachmentsStrip",
+						"AiChatEmptyState",
+						"AiShimmer",
+						"AiChainOfThought",
+						"AiTask",
+						"AiAgent",
+						"AiConfirmation",
+						"AiCodeBlock",
+						"AiArtifact",
+						"AiSources",
+						"AiAttachment"
+					]
+				}
+			],
 			"page": "ai-chat",
 			"component": "AiChatPage",
 			"module": "features/ai-chat",
@@ -1795,6 +3292,31 @@
 		{
 			"path": "/media-library",
 			"label": "Media library",
+			"summary": "The asset browser: search, filter, sort, select, edit, upload. Every field is read through an accessor, because nobody's asset records look like ours — they come from S3, Cloudinary, a media collection, a CMS, each with its own field names.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/media-library",
+					"names": [
+						"MediaLibrary",
+						"MediaLibraryDialog",
+						"MediaResourceGallery",
+						"useMediaLibrary",
+						"MediaLibraryCard",
+						"MediaLibraryGrid",
+						"MediaLibraryTable",
+						"MediaLibrarySelectionBar",
+						"MediaLibraryList",
+						"MediaLibraryToolbar",
+						"MediaLibraryDetailPanel",
+						"MediaLibraryUploadPanel",
+						"MediaLibraryFooter",
+						"MediaLibraryFooterSummary",
+						"MediaLibraryFooterActions",
+						"MediaLibraryEmptyState",
+						"MediaPreview"
+					]
+				}
+			],
 			"page": "media-library",
 			"component": "MediaLibraryPage",
 			"module": "features/media-library",
@@ -1814,6 +3336,22 @@
 		{
 			"path": "/event-calendar",
 			"label": "Event calendar",
+			"summary": "A month grid, a week strip, or an agenda over one list of events. The view decides only the range of days and how they are laid out — placing events onto days is the same code every time, so switching view can never move an event.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/event-calendar",
+					"names": [
+						"EventCalendar",
+						"useEventCalendar",
+						"useEventCalendarData",
+						"EventCalendarHeader",
+						"EventCalendarDayCell",
+						"EventCalendarEventBadge",
+						"EventCalendarEventCard",
+						"EventCalendarLegend"
+					]
+				}
+			],
 			"page": "event-calendar",
 			"component": "EventCalendarPage",
 			"module": "features/event-calendar",
@@ -1834,6 +3372,26 @@
 		{
 			"path": "/kanban",
 			"label": "Kanban & sync",
+			"summary": "A drag-and-drop board over dnd-kit, and the dialog body for a “reconcile the last N hours” run. The board translates dnd-kit's “id A was dropped over id B” into “this item moved from column X position 2 to column Y position 0” — which is the part every board has to write.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/kanban",
+					"names": [
+						"Kanban",
+						"KanbanBoard",
+						"KanbanColumn",
+						"useKanban",
+						"SyncRangeForm",
+						"KanbanColumnContent",
+						"KanbanItem",
+						"KanbanItemHandle",
+						"KanbanItemActions",
+						"KanbanOverlay",
+						"useKanbanContext",
+						"useKanbanItemContext"
+					]
+				}
+			],
 			"page": "kanban",
 			"component": "KanbanPage",
 			"module": "features/kanban",
@@ -1853,6 +3411,46 @@
 		{
 			"path": "/map",
 			"label": "Map",
+			"summary": "A Leaflet surface composed the way the rest of the kit is: layers, markers, and controls are components, and the ones that belong to a control register themselves with it. Leaflet and its plugins are optional peers, loaded only when a map actually mounts.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/map",
+					"names": [
+						"Map",
+						"MapMarker",
+						"MapZoomControl",
+						"PlaceAutocomplete",
+						"MapTileLayer",
+						"MapLayers",
+						"MapLayerGroup",
+						"MapFeatureGroup",
+						"MapLayersControl",
+						"MapMarkerClusterGroup",
+						"MapCircle",
+						"MapCircleMarker",
+						"MapPolyline",
+						"MapPolygon",
+						"MapRectangle",
+						"MapPopup",
+						"MapTooltip",
+						"MapControlContainer",
+						"MapFullscreenControl",
+						"MapLocateControl",
+						"MapSearchControl",
+						"MapDrawControl",
+						"MapDrawMarker",
+						"MapDrawPolyline",
+						"MapDrawPolygon",
+						"MapDrawRectangle",
+						"MapDrawCircle",
+						"MapDrawEdit",
+						"MapDrawDelete",
+						"MapDrawUndo",
+						"useLeaflet",
+						"usePlaceSearch"
+					]
+				}
+			],
 			"page": "map",
 			"component": "MapPage",
 			"module": "features/map",
@@ -1874,6 +3472,18 @@
 		{
 			"path": "/schema-form",
 			"label": "Schema form",
+			"summary": "A form described as data: fields with a type, a label, and the rules that govern them. Every control is already a kit component, so what this owns is the mapping — which control a type gets, how sections bucket fields, and when a message appears.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/schema-form",
+					"names": [
+						"SchemaForm",
+						"useSchemaForm",
+						"SchemaFormActions",
+						"SchemaFormFieldRenderer"
+					]
+				}
+			],
 			"page": "schema-form",
 			"component": "SchemaFormPage",
 			"module": "features/schema-form",
@@ -1893,6 +3503,20 @@
 		{
 			"path": "/action-overlays",
 			"label": "Action overlays",
+			"summary": "A dialog, a sheet, and a confirmation with their footers generated. The primitives own the surface; these own the part every screen otherwise rebuilds — two buttons in a fixed order, and a confirm that knows about async work and forms.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/overlays",
+					"names": [
+						"ActionDialog",
+						"ActionSheet",
+						"ConfirmDialog",
+						"useOverlayVisibility",
+						"useOverlayVisibilityGroup",
+						"useOverlayActions"
+					]
+				}
+			],
 			"page": "action-overlays",
 			"component": "ActionOverlaysPage",
 			"module": "features/overlays",
@@ -1911,6 +3535,23 @@
 		{
 			"path": "/blocks-order",
 			"label": "Order",
+			"summary": "An order is not one list of goods with one status. It splits into fulfillment groups, each with its own state and location, and its money moves on an axis of its own — which is why an order can be Refunded and Unfulfilled at the same time.",
+			"imports": [
+				{
+					"from": "themelia-ui/admin/patterns/commerce",
+					"names": [
+						"OrderHeader",
+						"FulfillmentGroup",
+						"OrderLineItem",
+						"OrderSummary",
+						"OrderTransactions",
+						"OrderCustomer",
+						"OrderTimeline",
+						"SummaryPanel",
+						"AmountRow"
+					]
+				}
+			],
 			"page": "blocks-order",
 			"component": "BlocksOrderPage",
 			"module": "admin/patterns/commerce",
@@ -1937,6 +3578,31 @@
 		{
 			"path": "/blocks-commerce",
 			"label": "Cart, checkout & billing",
+			"summary": "Reusable blocks for checkout, fulfillment, billing, and customer accounts. Each adapts to its container and keeps application actions in consumer callbacks.",
+			"imports": [
+				{
+					"from": "themelia-ui/admin/patterns/commerce",
+					"names": [
+						"CartSummary",
+						"TaxBreakdown",
+						"DiscountStack",
+						"CodeEntry",
+						"InvoiceHeader",
+						"InvoiceLineItems",
+						"InvoiceMini",
+						"OrderStatusCard",
+						"ShipmentTracking",
+						"RefundStatus",
+						"AddressCard",
+						"PaymentMethodCard",
+						"PaymentTimeline",
+						"SubscriptionSummary",
+						"InventoryLevel",
+						"UpcomingBookings",
+						"LoyaltyPoints"
+					]
+				}
+			],
 			"page": "blocks-commerce",
 			"component": "BlocksCommercePage",
 			"module": "admin/patterns/commerce",
@@ -1965,6 +3631,19 @@
 		{
 			"path": "/blocks-catalogue",
 			"label": "Catalogue & partners",
+			"summary": "Product search appearance, stock management, supplier profiles, and booking details. Structured for everyday catalogue operations.",
+			"imports": [
+				{
+					"from": "themelia-ui/admin/patterns/commerce",
+					"names": [
+						"SeoListing",
+						"calculateSeoScore",
+						"InventorySection",
+						"VendorProfile",
+						"BookingCard"
+					]
+				}
+			],
 			"page": "blocks-catalogue",
 			"component": "BlocksCataloguePage",
 			"module": "admin/patterns/commerce",
@@ -1989,6 +3668,34 @@
 		{
 			"path": "/products",
 			"label": "Product surfaces",
+			"summary": "What a product page is assembled from: what is ready to publish, what the product is made of, what it is sold under, and the price it adds up to. Every value is a ReactNode, because a price, a stock level and an SKU are already formatted by the app that owns them — this module arranges them and never tries to format money.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/products",
+					"names": [
+						"ProductOverview",
+						"ProductReadinessCard",
+						"ProductStructureCard",
+						"ProductOperationsCard",
+						"ProductContractOverview",
+						"ProductQuotePreviewCard",
+						"ProductDetailsCard",
+						"ProductPoliciesCard",
+						"ProductVariantDetails",
+						"ProductVariantActionMenu",
+						"ProductOptionActionMenu",
+						"ProductRowActions",
+						"ProductSummaryRow",
+						"ProductReadinessRow",
+						"ProductOperationRow",
+						"ProductStructureMetricRow",
+						"ProductVariantCell",
+						"ProductThumbnail",
+						"ProductToneDot",
+						"ProductEmptyState"
+					]
+				}
+			],
 			"page": "products",
 			"component": "ProductsPage",
 			"module": "features/products",
@@ -2009,6 +3716,20 @@
 		{
 			"path": "/product-variants",
 			"label": "Options & variants",
+			"summary": "The options a customer chooses between, and the sellable combinations they generate. Two surfaces that belong together: adding a value changes the variant grid, and a reader who cannot see both while doing it is guessing at what they just made. Everything on this page is live — add an option, name it, give it values, then generate.",
+			"imports": [
+				{
+					"from": "themelia-ui/features/products",
+					"names": [
+						"ProductVariantsManager",
+						"ProductOptionsMatrix",
+						"ProductOptionsSummary",
+						"ProductVariantsBulkTable",
+						"ProductVariantsTable",
+						"ProductVariantEditor"
+					]
+				}
+			],
 			"page": "product-variants",
 			"component": "ProductVariantsPage",
 			"module": "features/products",
@@ -2030,6 +3751,25 @@
 		{
 			"path": "/analytics",
 			"label": "Analytics",
+			"summary": "Every metric surface in the kit, on one data shape. A figure written as MetricData renders in a strip, a grid, a hero card or a comparison without being remapped — so the formatting, the trend inference and the empty case are decided once instead of at each call site.",
+			"imports": [
+				{
+					"from": "themelia-ui/patterns/analytics",
+					"names": [
+						"Metric",
+						"MetricBar",
+						"MetricGrid",
+						"MetricComparison",
+						"ActivityHeatmap",
+						"ChartCard",
+						"TimeRuler",
+						"MetricMicroGrid",
+						"MetricGradient",
+						"MetricTrendChip",
+						"MetricSkeleton"
+					]
+				}
+			],
 			"page": "analytics",
 			"component": "AnalyticsPage",
 			"module": "patterns/analytics",
@@ -2051,6 +3791,22 @@
 		{
 			"path": "/blocks-admin",
 			"label": "Timelines, onboarding & admin",
+			"summary": "Domain presentation assembled from the tiers below it. The three timeline surfaces map a vocabulary onto base/timeline rather than redrawing the rail, and nothing here fetches, navigates, or confirms a destructive action — every one takes callbacks and slots.",
+			"imports": [
+				{
+					"from": "themelia-ui/patterns/timelines",
+					"names": [
+						"ChangelogTimeline",
+						"MilestonesTimeline",
+						"Steps",
+						"StepsBar",
+						"Checklist",
+						"CredentialList",
+						"RolePermissions",
+						"SensitiveAction"
+					]
+				}
+			],
 			"page": "blocks-admin",
 			"component": "BlocksAdminPage",
 			"module": "patterns/timelines",

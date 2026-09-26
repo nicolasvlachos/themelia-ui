@@ -2,9 +2,17 @@ import type { ComponentType } from "react"
 
 import data from "./routes.json"
 
+/** One import line a page shows: `import { names } from "from"`. `title` names a merged page's further module. */
+export type RouteImport = { from: string; names: string[]; title?: string }
+
 export type Route = {
 	path: string
+	/** The page's one name: sidebar entry, breadcrumb and heading. */
 	label: string
+	/** One or two sentences under the heading. */
+	summary?: string
+	/** The import lines the page shows; absent on a page about a concept. */
+	imports?: RouteImport[]
 	component: ComponentType
 	/** The tier the page's module sits in: the sidebar group. */
 	group: string
@@ -26,6 +34,8 @@ export type RouteGroup = { label: string; sections: RouteSection[]; routes: Rout
 type RouteData = {
 	path: string
 	label: string
+	summary?: string
+	imports?: RouteImport[]
 	page: string
 	component: string
 	module?: string
@@ -64,6 +74,8 @@ function toRoute(entry: RouteData, group: string, section?: string): Route {
 	return {
 		path: entry.path,
 		label: entry.label,
+		summary: entry.summary,
+		imports: entry.imports,
 		component: componentOf(entry),
 		group,
 		section,

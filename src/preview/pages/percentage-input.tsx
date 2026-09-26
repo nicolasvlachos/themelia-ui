@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function PercentageInputPage() {
 	return (
-		<ComponentPage
-			title="Percentage input"
-			summary="A percentage, with the sign as a suffix on the field rather than a character in the value."
-			importPath="@/components/base/forms-numeric"
-			exports={["PercentageInput"]}
-		>
+		<ComponentPage>
 			<Example
 				example="percentage-input/percentage"
 				title="PercentageInput"

@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ChartPage() {
 	return (
-		<ComponentPage
-			title="Chart"
-			summary="Recharts with the kit's tooltip, legend, and colour wiring. The container maps each data key to a token, so a chart follows the theme with no per-theme configuration."
-			importPath="@/components/base/chart"
-			exports={["ChartContainer", "ChartTooltip", "ChartTooltipContent", "ChartLegend", "ChartLegendContent", "Sparkline"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="chart/chart"
 				title="Chart"

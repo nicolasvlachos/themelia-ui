@@ -1,7 +1,7 @@
 # Tests
 
 <!-- GENERATED:suites by scripts/gen-test-docs.mjs — do not edit between these markers. -->
-35 Playwright suites over the docs site, and 137 unit test files beside the
+35 Playwright suites over the docs site, and 138 unit test files beside the
 code they cover.
 
 | suite | covers | script |
@@ -183,6 +183,7 @@ portals, and hook behaviour across prop changes.
 - `src/lib/ui-provider/portals.test.tsx`
 - `src/lib/ui-provider/root.test.tsx`
 - `src/lib/ui-provider/runtime-config.test.tsx`
+- `src/lib/ui-provider/scope.test.tsx`
 - `src/lib/ui-provider/ssr.test.tsx`
 - `src/lib/ui-provider/typography-default.test.tsx`
 <!-- /GENERATED:suites -->

@@ -5,14 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ResourcePage() {
 	return (
-		<ComponentPage
-			title="Resource shells"
-			summary="The skeleton every list and detail screen shares: a header identifying the thing, a toolbar, a body, sometimes an aside, and the three states that replace the body while it waits, fails, or comes back empty. The shells own that; the table, the form, and the fetch stay the screen's."
-			importPath="@/components/features/resource"
-			exports={["ResourceIndexShell", "ResourceShowShell", "TabbedResourceShell", "ResourceDetailsSection",
-				"ResourceHeader", "ResourceActionBar", "ResourceEmptyState",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="resource/resource-index"
 				title="ResourceIndexShell"

@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TimelinePage() {
 	return (
-		<ComponentPage
-			title="Timeline"
-			summary="An ordered run of events on one rail. The shared geometry under every dated list in the kit — a changelog, a set of milestones, an order's progress — so the dot, the connector and the title block are decided once rather than redrawn per caller."
-			importPath="@/components/base/timeline"
-			exports={["Timeline", "Stepper"]}
-		>
+		<ComponentPage>
 			<Example
 				example="timeline/timeline-default"
 				title="An order's progress"

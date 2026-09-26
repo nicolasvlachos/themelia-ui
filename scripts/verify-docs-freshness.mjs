@@ -120,6 +120,7 @@ const GENERATED = [
   { file: 'docs/generated/profiles.md', by: 'scripts/gen-consumer-docs.mjs' },
   { file: 'docs/generated/component-index.json', by: 'scripts/gen-consumer-docs.mjs' },
   { file: 'src/preview/generated/gallery.json', by: 'scripts/gen-gallery.mjs' },
+  { file: 'src/preview/generated/api-tables.json', by: 'scripts/gen-api-tables.mjs' },
   { file: 'docs/generated/components/INDEX.md', by: 'scripts/gen-consumer-docs.mjs' },
   { file: 'docs/generated/migration-broad-imports.md', by: 'scripts/gen-migration-map.mjs' },
   { file: 'docs/generated/migration.md', by: 'scripts/gen-migration-map.mjs' },

@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AspectRatioPage() {
 	return (
-		<ComponentPage
-			title="Aspect ratio"
-			summary="A frame that keeps its proportion as its width changes — a cover image, a video, a map tile. Reach for it whenever media has to hold its shape before it loads, so the page does not jump when it arrives."
-			importPath="@/components/base/aspect-ratio"
-			exports={["AspectRatio"]}
-		>
+		<ComponentPage>
 			<Example
 				example="aspect-ratio/aspect-ratio"
 				title="AspectRatio"

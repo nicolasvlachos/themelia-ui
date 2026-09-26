@@ -18,3 +18,4 @@ export {
 	defaultNavigationTabsStrings, defaultOverflowTabBarStrings,
 	type NavigationTabsStrings, type OverflowTabBarStrings,
 } from "./navigation-tabs.strings"
+export type { LayoutLinkRenderer, LayoutLinkRenderProps } from "@/lib/navigation"

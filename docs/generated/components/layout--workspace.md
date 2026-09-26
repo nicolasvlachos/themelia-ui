@@ -51,6 +51,39 @@ Kind: const.
 WorkspaceRecordHeaderStrings
 ```
 
+### `LayoutLinkRenderer`
+
+Kind: type.
+
+The navigation seam.
+
+```tsx fragment — declaration JSDoc excerpt
+<AppSidebar renderLink={({ href, children, ...rest }) => (
+  <Link to={href ?? "#"} {...rest}>{children}</Link>
+)} />
+```
+
+```text
+(props: LayoutLinkRenderProps) => ReactNode
+```
+
+### `LayoutLinkRenderProps`
+
+Kind: interface.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `href` | no | `string` | Destination. When absent, render non-interactive content. |
+| `children` | yes | `ReactNode` |  |
+| `className` | no | `string` |  |
+| `target` | no | `string` |  |
+| `rel` | no | `string` |  |
+| `onClick` | no | `(event: MouseEvent<HTMLAnchorElement>) => void` |  |
+| `"aria-label"` | no | `string` |  |
+| `active` | no | `boolean` | Hint for active styling. A renderer may ignore it — the shell styles the row itself. |
+| `disabled` | no | `boolean` |  |
+| `external` | no | `boolean` |  |
+
 ### `WorkspaceContentWidth`
 
 Kind: type.

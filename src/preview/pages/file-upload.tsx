@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function FileUploadPage() {
 	return (
-		<ComponentPage
-			title="Upload"
-			summary="Choosing files, one image, and files on their way — one module. A dropzone and a picker, an image picker that previews in its final shape, and progress for transfers the caller runs. Nothing here transfers anything: the value is File objects, and sending them is the caller's business."
-			importPath="@/components/base/upload"
-			exports={["FileUpload", "Dropzone", "FilePickerInput", "PreviewImage", "ImageUpload", "AvatarUpload", "UploadProgressList", "UploadTray", "MediaGallery", "useFileDropTarget", "validateFileSelection"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="file-upload/file-upload"
 				title="FileUpload"

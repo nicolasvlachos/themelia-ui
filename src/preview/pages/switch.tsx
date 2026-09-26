@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SwitchPage() {
 	return (
-		<ComponentPage
-			title="Switch & toggle field"
-			summary="An immediate on/off state — it takes effect when flipped, with no save step — on its own, as a settings row (ToggleField), and as a feature card (SwitchCard). The row and the card are one component at two weights."
-			importPath="@/components/base/choice-inputs"
-			exports={["Switch", "ToggleField", "SwitchCard"]}
-		>
+		<ComponentPage>
 			<Example
 				example="switch/switch"
 				title="Switch"

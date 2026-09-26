@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SlugFieldPage() {
 	return (
-		<ComponentPage
-			title="Slug field"
-			summary="A URL slug derived from another field. Accents fold, punctuation collapses, and the prefix is chrome rather than part of the value."
-			importPath="@/components/base/text-inputs"
-			exports={["SlugField"]}
-		>
+		<ComponentPage>
 			<Example
 				example="slug-field/slug-field"
 				title="SlugField"

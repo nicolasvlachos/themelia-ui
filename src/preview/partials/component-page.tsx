@@ -9,38 +9,18 @@ import styles from "../preview.module.css"
 import { CodeBlock } from "./code-block"
 import { Pager } from "./pager"
 
-/** The page frame every component doc shares: import line, examples, props table. */
-/** The import a consumer writes: the published subpath, not this repository's `@/` alias. */
-const published = (path: string) => path.replace(/^@\/components\//, "themelia-ui/").replace(/^@\/lib\//, "themelia-ui/")
-
-export function ComponentPage({
-	title,
-	summary,
-	importPath,
-	exports,
-	alsoImports,
-	children,
-}: {
-	title: string
-	summary: string
-	/** Subpath consumers import from. Omitted on conceptual pages. */
-	importPath?: string
-	/** Named exports, used to build the import line. */
-	exports?: string[]
-	/**
-	 * Further import lines for a page documenting more than one family; each becomes its
-	 * own gallery card and search hit. Keep the `{ importPath, title, exports }` order, one
-	 * entry each: `scripts/lib/preview-pages.mjs` parses the source.
-	 */
-	alsoImports?: { importPath: string; title?: string; exports: string[] }[]
-	children: ReactNode
-}) {
-	/* The breadcrumb's group is read from the route table, never passed in. */
+/**
+ * The page frame every doc page shares: breadcrumb, heading, summary and import lines, then
+ * the page's examples. Everything but the examples comes from the page's routes.json entry.
+ */
+export function ComponentPage({ children }: { children: ReactNode }) {
 	const { pathname } = useLocation()
 	const route = ROUTES.find((entry) => entry.path === pathname)
+	const title = route?.label ?? ""
+	/* The breadcrumb's group, and the labelled run inside it where there is one ("Forms › Text › Input"). */
 	const group = route?.group ?? ""
-	/* The labelled run inside the group, where it has one — "Forms › Text › Input". */
 	const section = route?.section
+	const imports = route?.imports ?? []
 
 	return (
 		<>
@@ -71,18 +51,15 @@ export function ComponentPage({
 						{title}
 					</Heading>
 				</div>
-				<Text type="secondary" size="base">
-					{summary}
-				</Text>
+				{!!route?.summary && (
+					<Text type="secondary" size="base">
+						{route.summary}
+					</Text>
+				)}
 
-				{!!importPath && !!exports?.length && (
+				{imports.length > 0 && (
 					<div className={styles.importLine}>
-						<CodeBlock
-							code={[
-								`import { ${exports.join(", ")} } from "${published(importPath)}"`,
-								...(alsoImports ?? []).map((entry) => `import { ${entry.exports.join(", ")} } from "${published(entry.importPath)}"`),
-							].join("\n")}
-						/>
+						<CodeBlock code={imports.map(({ from, names }) => `import { ${names.join(", ")} } from "${from}"`).join("\n")} />
 					</div>
 				)}
 			</header>

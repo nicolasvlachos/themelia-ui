@@ -6,3 +6,4 @@ export type {
 	AuthShellVariant, AuthShellSize, AuthSplitSide, AuthSplitMobile,
 } from "./auth.types"
 export { defaultAuthShellStrings, type AuthShellStrings } from "./auth.strings"
+export type { LayoutLinkRenderer, LayoutLinkRenderProps } from "@/lib/navigation"

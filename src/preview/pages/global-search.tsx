@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function GlobalSearchPage() {
 	return (
-		<ComponentPage
-			title="Global search"
-			summary="The command palette: one list across people, bookings, invoices, and files, walked with the arrow keys. It does not search — the query is controlled and the results are given, because debounce, endpoint, ranking, and permissions all belong to the app. What it owns is the part every palette shares."
-			importPath="@/components/features/global-search"
-			exports={["GlobalSearch", "GlobalSearchDialog", "useGlobalSearch",
-				"GlobalSearchInput", "GlobalSearchTabs", "GlobalSearchResultRow", "GlobalSearchIdleState", "GlobalSearchEmptyState", "GlobalSearchFooter",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="global-search/panel"
 				title="The panel"

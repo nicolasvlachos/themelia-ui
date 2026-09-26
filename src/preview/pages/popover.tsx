@@ -5,15 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function PopoverPage() {
 	return (
-		<ComponentPage
-			title="Popover"
-			summary="A panel anchored to a trigger. Not a modal: the page stays live behind it, focus is not trapped, and dismissing it costs a click outside. For a decision the reader must answer, that is a dialog; for a name on hover, that is a tooltip. This is the one in between — a filter, a settings pane, a definition worth reading."
-			importPath="@/components/base/popover"
-			exports={[
-				"Popover", "PopoverTrigger", "PopoverAnchor", "PopoverContent", "PopoverHeader",
-				"PopoverTitle", "PopoverDescription", "PopoverFooter",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="popover/popover"
 				title="Anatomy"

@@ -9,6 +9,8 @@ import { gzipSync } from 'node:zlib'
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
+import { TIERS, tierOfLayer } from './tiers.mjs'
+
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'))
 
 const countBy = (items, key) => {
@@ -85,17 +87,13 @@ const measured = (value, singular, plural = `${singular}s`) =>
  * from `dist/`: the block is committed and compared against a fresh generation, so a
  * build-only figure would make the gate depend on a build.
  */
-/* The tiers the docs group modules by, from the folder layer each module sits in. */
-const TIER_OF_LAYER = { foundation: 'Foundations', primitives: 'Primitives', typography: 'Base', base: 'Base', layout: 'Layout', features: 'Features', patterns: 'Blocks', admin: 'Blocks' }
-const TIER_ORDER = ['Foundations', 'Primitives', 'Base', 'Layout', 'Features', 'Blocks']
-
 export function renderStatusMarkdown(facts) {
   const byTier = new Map()
   for (const [layer, n] of Object.entries(facts.layers)) {
-    const tier = TIER_OF_LAYER[layer] ?? layer
+    const tier = tierOfLayer(layer)
     byTier.set(tier, (byTier.get(tier) ?? 0) + n)
   }
-  const tiers = TIER_ORDER.filter((tier) => byTier.has(tier)).map((tier) => `${tier} ${byTier.get(tier)}`).join(', ')
+  const tiers = TIERS.filter((tier) => byTier.has(tier.id)).map((tier) => `${tier.label} ${byTier.get(tier.id)}`).join(', ')
   const profiles = Object.entries(facts.profiles).map(([profile, n]) => `${profile} ${n}`).join(', ')
   const experimental = facts.statuses.experimental ?? 0
 

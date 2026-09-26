@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TagsInputPage() {
 	return (
-		<ComponentPage
-			title="Tags input"
-			summary="A list of short strings entered inline as chips. Enter commits, Backspace on an empty field removes the last one."
-			importPath="@/components/base/value-inputs"
-			exports={["TagsInput"]}
-		>
+		<ComponentPage>
 			<Example
 				example="tags-input/tags"
 				title="TagsInput"

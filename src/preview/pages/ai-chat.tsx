@@ -5,14 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AiChatPage() {
 	return (
-		<ComponentPage
-			title="AI chat"
-			summary="A transcript and the twelve surfaces it is built from. There is no fetcher, no router and no streaming client here: messages, the input, the queue and the staged files are all props, and submitting is a callback — because every provider streams differently and every app stores a conversation differently."
-			importPath="@/components/features/ai-chat"
-			exports={["AiChat", "AiChatMessage", "AiMessageBubble", "AiToolCall", "AiReasoning", "useAiChatScroll",
-				"AiChatConversation", "AiChatPromptInput", "AiChatQueue", "AiChatSuggestionsRow", "AiChatAttachmentsStrip", "AiChatEmptyState", "AiShimmer", "AiChainOfThought", "AiTask", "AiAgent", "AiConfirmation", "AiCodeBlock", "AiArtifact", "AiSources", "AiAttachment",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="ai-chat/chat"
 				title="The chat"

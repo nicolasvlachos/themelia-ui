@@ -7,17 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function DataViewPage() {
 	return (
-		<ComponentPage
-			title="Data view & data table"
-			summary="One table at two levels. DataView is the complete resource index — search, saved views, filters, table controls and result navigation in one surface — and it is what most index screens want. DataTable is the engine it renders: a TanStack table where TanStack owns the row model and this owns the toolbar, sticky panes, full screen, selection bar, pager and empty state. Reach for DataTable directly when there is nothing to search or filter."
-			importPath="@/components/features/data-view"
-			exports={["DataView", "useDataView", "DataViewShell", "DataViewPagination",
-				"DataViewToolbar", "DataViewTableFrame", "SavedViewTabs",
-			]}
-			alsoImports={[
-				{ importPath: "@/components/features/table", title: "Data table", exports: ["DataTable", "ResourceCell", "StatusCell", "CellStack", "DataTableHeader", "DataTableBody", "DataTableToolbar", "DataTableActions", "ColumnVisibilityToggle", "FullscreenToggle", "CellValue", "AvatarCell", "CurrencyCell", "DateCell", "DateMetaCell", "StatusClusterCell", "useDataTableSize", "useDataTableScrollState", "useFullscreenTableModality"] },
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="data-view/data-view"
 				title="An index"

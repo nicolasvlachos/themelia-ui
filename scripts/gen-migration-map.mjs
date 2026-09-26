@@ -140,6 +140,7 @@ const SECTIONS = [
   ['props', 'Prop changes', 'One idea that had two spellings.'],
   ['css', 'CSS imports and tokens', 'One stylesheet became one per module, and the token surface lost every name that restated another. Each token table below is applied by the codemod; a name marked removed is reported, never guessed at.'],
   ['behaviour', 'Behaviour changes', 'Same name, same signature, a different answer — the kind of change a type checker cannot warn you about.'],
+  ['data', 'Data files and the component finder', 'The machine-readable files the package ships, and the flags of the finder that reads them.'],
 ]
 
 const migration = [
@@ -209,7 +210,7 @@ writeIfChanged(
   )}\n`,
 )
 
-const recordedCount = ['moves', 'provider', 'props', 'css', 'behaviour'].reduce(
+const recordedCount = ['moves', 'provider', 'props', 'css', 'behaviour', 'data'].reduce(
   (n, key) => n + (recorded[key]?.length ?? 0),
   0,
 )

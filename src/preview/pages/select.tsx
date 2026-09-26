@@ -4,13 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function SelectPage() {
 	return (
-		<ComponentPage
-			title="Select"
-			summary="A single choice from a list too long to show at once. Its rows use the shared menu row, so it matches every other menu surface in the kit."
-			importPath="@/components/base/choice-inputs"
-			exports={["Select", "type SelectOption", "SelectRoot", "SelectTriggerPrimitive", "SelectValuePrimitive", "SelectIconPrimitive", "SelectPopupContent", "SelectPopupGroup", "SelectPopupItem", "SelectPopupLabel", "SelectPopupSeparator"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="select/select"
 				title="Select"

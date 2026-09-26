@@ -1,41 +1,16 @@
-import { EmptyValue, InlineList, MonoValue, MutedValue, SecondaryValue, Value } from "@/components/primitives"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-import { SpecimenList } from "../partials/specimen-list"
-
-const THREE = ["Alice", "Bob", "Carol"]
 
 export function PrimitiveValuePage() {
 	return (
-		<ComponentPage
-			title="Value & lists"
-			summary="The two primitives for plain text rather than a typed value. Value renders one string and knows what an absent one looks like; InlineList joins several into one phrase, with the conjunction and commas the locale decides."
-			importPath="@/components/primitives"
-			exports={["Value", "SecondaryValue", "MutedValue", "MonoValue", "EmptyValue", "InlineList"]}
-		>
+		<ComponentPage>
 			<Example
-				id="value"
+				example="primitive-value/value"
 				title="Value"
 				description="Every primitive below is a Value underneath, which is why they all agree on what an empty value looks like."
-				code={`<Value>Northwind Traders</Value>
-<SecondaryValue>Supporting detail</SecondaryValue>
-<MutedValue>Quieter still</MutedValue>
-<MonoValue>req_8f21c440</MonoValue>
-<EmptyValue />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `<Value>Northwind Traders</Value>`, value: <Value>Northwind Traders</Value> },
-						{ code: `<SecondaryValue>Supporting detail</SecondaryValue>`, value: <SecondaryValue>Supporting detail</SecondaryValue> },
-						{ code: `<MutedValue>Quieter still</MutedValue>`, value: <MutedValue>Quieter still</MutedValue> },
-						{ code: `<MonoValue>req_8f21c440</MonoValue>`, value: <MonoValue>req_8f21c440</MonoValue> },
-						{ code: `<EmptyValue />`, value: <EmptyValue /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example id="value-rule" title="Absent is a state">
 				<Callout label="Rule">
@@ -47,44 +22,16 @@ export function PrimitiveValuePage() {
 			</Example>
 
 			<Example
-				id="inline-list"
+				example="primitive-value/inline-list"
 				title="Inline list"
 				description="Intl.ListFormat knows where the conjunction goes and whether a comma precedes it. Spanish switches y to e before an /i/ sound; Japanese uses a particle. Three places in this kit joined user-visible lists with .join(', '), which is correct in no locale including English."
-				code={`<InlineList items={["Alice", "Bob", "Carol"]} />
-<InlineList items={["red", "green", "blue"]} join="or" />
-<InlineList items={items} max={2} />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `join="and"`, value: <InlineList items={THREE} /> },
-						{ code: `join="or"`, value: <InlineList items={["red", "green", "blue"]} join="or" /> },
-						{ code: `join="none"`, value: <InlineList items={THREE} join="none" /> },
-						{ code: `max={2}`, value: <InlineList items={["a", "b", "c", "d"]} max={2} /> },
-						{ code: `two items`, value: <InlineList items={["Alice", "Bob"]} /> },
-						{ code: `one item`, value: <InlineList items={["Alice"]} /> },
-						{ code: `<InlineList items={[]} />`, value: <InlineList items={[]} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example
-				id="inline-list-locale"
+				example="primitive-value/inline-list-locale"
 				title="The same list, three locales"
 				description="Nothing about the component changes between these — the separator, the conjunction and the serial comma are all the locale's decision."
-				code={`<InlineList items={names} locale="en-GB" />
-<InlineList items={names} locale="es-ES" />
-<InlineList items={names} locale="ja-JP" />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `en-GB`, value: <InlineList items={THREE} locale="en-GB" /> },
-						{ code: `en-US`, value: <InlineList items={THREE} locale="en-US" /> },
-						{ code: `es-ES`, value: <InlineList items={THREE} locale="es-ES" /> },
-						{ code: `de-DE`, value: <InlineList items={THREE} locale="de-DE" /> },
-						{ code: `ja-JP`, value: <InlineList items={THREE} locale="ja-JP" /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example id="value-api" title="Value API">
 				<PropTable owner="Value"

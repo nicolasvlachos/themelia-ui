@@ -4,13 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function InputPage() {
 	return (
-		<ComponentPage
-			title="Input"
-			summary="The text field, and the shared surface every control in the kit wears — same height, border, focus ring, invalid state, and disabled treatment. SearchInput and PasswordInput are this field with an affordance pre-wired, so they live here too."
-			importPath="@/components/base/text-inputs"
-			exports={["Input", "SearchInput", "PasswordInput", "FieldShell", "NativeSelect", "useFieldValue"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="input/shared-surface"
 				title="One shared surface"

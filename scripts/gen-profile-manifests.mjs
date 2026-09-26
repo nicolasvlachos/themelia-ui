@@ -27,15 +27,15 @@ function withDependencies(ids) {
 const records = {}
 for (const id of Object.keys(manifest.profileDefinition ?? {}).sort()) {
   const own = manifest.families.filter((family) => family.profile === id).map((family) => family.id)
-  /* `general` is just its own families; `admin` also carries the general families it reaches. */
-  const families = [...(id === 'general' ? new Set(own) : withDependencies(own))].sort()
+  /* `general` is just its own modules; `admin` also carries the general modules it reaches. */
+  const modules = [...(id === 'general' ? new Set(own) : withDependencies(own))].sort()
   records[id] = {
     id,
     definition: manifest.profileDefinition[id],
-    families,
-    javascriptSubpaths: families.map((f) => byId.get(f)?.export).filter(Boolean).sort(),
-    cssSubpaths: families.map((f) => byId.get(f)?.cssExport).filter(Boolean).sort(),
-    optionalPeers: [...new Set(families.flatMap((f) => byId.get(f)?.optionalPeers ?? []))].sort(),
+    modules,
+    javascriptSubpaths: modules.map((m) => byId.get(m)?.export).filter(Boolean).sort(),
+    cssSubpaths: modules.map((m) => byId.get(m)?.cssExport).filter(Boolean).sort(),
+    optionalPeers: [...new Set(modules.flatMap((m) => byId.get(m)?.optionalPeers ?? []))].sort(),
   }
 }
 
@@ -56,6 +56,6 @@ for (const [id, record] of Object.entries(records)) {
 
 console.log(
   `profile metadata: ${Object.entries(records)
-    .map(([id, r]) => `${id} ${r.families.length} modules / ${r.javascriptSubpaths.length} subpaths`)
+    .map(([id, r]) => `${id} ${r.modules.length} modules / ${r.javascriptSubpaths.length} subpaths`)
     .join(', ')}`,
 )

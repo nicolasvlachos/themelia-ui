@@ -1,91 +1,22 @@
-import { de, ja } from "date-fns/locale"
-
-import { DatePrimitive, DateRange, DateTime, Duration, RelativeTime, Time } from "@/components/primitives"
-import { UIProvider } from "@/lib/ui-provider"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-import { SpecimenList } from "../partials/specimen-list"
-
-const WHEN = new Date("2026-03-12T09:30:00")
-
-const MARCH_3 = new Date("2026-03-03T00:00:00")
-const MARCH_7 = new Date("2026-03-07T00:00:00")
-const APRIL_2 = new Date("2026-04-02T00:00:00")
-const NEXT_JAN = new Date("2027-01-09T00:00:00")
-
-const NOW = new Date("2026-03-12T09:30:00")
-const HOURS_AGO = new Date("2026-03-12T06:05:00")
-const DAYS_AGO = new Date("2026-03-05T09:30:00")
-const MONTHS_AGO = new Date("2025-11-02T09:30:00")
-const SECONDS_AGO = new Date("2026-03-12T09:29:38")
 
 export function PrimitiveDatePage() {
 	return (
-		<ComponentPage
-			title="Dates & times"
-			summary="A moment, the span between two, how long ago one was, and how long something took. Every date primitive goes through one parse and takes its date-fns locale from the provider’s dates config, so one setting translates all of them. Duration sits beside them as a length rather than a moment — no calendar, no timezone, no daylight saving — which is why it is a separate component."
-			importPath="@/components/primitives"
-			exports={["DatePrimitive", "Time", "DateTime", "Date", "DateRange", "formatDateRange", "RelativeTime", "Duration"]}
-		>
+		<ComponentPage>
 			<Example
-				id="date"
+				example="primitive-date/date"
 				title="Dates and times"
 				description="Each renders a <time dateTime> so the value is machine-readable regardless of how it is displayed — which is what makes a formatted date still sortable, copyable, and parseable."
-				code={`<DatePrimitive value={WHEN} />
-<Time value={WHEN} />
-<DateTime value={WHEN} />
-<DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" />
-<DatePrimitive value={null} />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `<DatePrimitive value={WHEN} />`, value: <DatePrimitive value={WHEN} /> },
-						{ code: `<Time value={WHEN} />`, value: <Time value={WHEN} /> },
-						{ code: `<DateTime value={WHEN} />`, value: <DateTime value={WHEN} /> },
-						{ code: `<DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" />`, value: <DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" /> },
-						{ code: `<DatePrimitive value={null} />`, value: <DatePrimitive value={null} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example
-				id="date-locale"
+				example="primitive-date/date-locale"
 				title="Localised names"
 				description="date-fns translates month and weekday names from a LOCALE OBJECT, not from a BCP-47 tag. It cannot be derived from `formatting.locale`, because the locales are modules and importing all of them to look one up by tag would put every language in every bundle — so the consumer imports the one it needs and puts it on the provider. NAMES is the whole of it: the pattern owns the order and the punctuation, so `EEEE d MMMM yyyy` under `de` gives “Donnerstag 12 März 2026” where German writes “Donnerstag, 12. März 2026”, and under `ja` it gives day-month-year where Japanese writes year-month-day. That is the intended trade — one date shape across a product is usually what an admin app wants, and `dates.format` is where it lives — but a product that follows each reader’s conventions sets the pattern per locale as well as the locale."
-				code={`import { de } from "date-fns/locale"
-
-<UIProvider config={{ formatting: { locale: "de-DE" }, dates: { locale: de } }}>
-  <DatePrimitive value={when} pattern="EEEE d MMMM yyyy" />
-</UIProvider>`}
-			>
-				<SpecimenList
-					items={[
-						{
-							code: `{/* no dates.locale */}`,
-							value: <DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" />,
-						},
-						{
-							code: `dates: {{ locale: de }}`,
-							value: (
-								<UIProvider config={{ dates: { locale: de } }}>
-									<DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" />
-								</UIProvider>
-							),
-						},
-						{
-							code: `dates: {{ locale: ja }}`,
-							value: (
-								<UIProvider config={{ dates: { locale: ja } }}>
-									<DatePrimitive value={WHEN} pattern="EEEE d MMMM yyyy" />
-								</UIProvider>
-							),
-						},
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example id="date-rule" title="date-fns, not hand-rolled Date">
 				<Callout label="Rule">
@@ -98,107 +29,28 @@ export function PrimitiveDatePage() {
 			</Example>
 
 			<Example
-				id="date-range"
+				example="primitive-date/date-range"
 				title="DateRange"
 				description="Same month collapses to 3–7 March; same year keeps both months; across years keeps everything. A format string cannot express that, because which parts are redundant depends on the two values."
-				code={`<DateRange start={MARCH_3} end={MARCH_7} />
-<DateRange start={MARCH_3} end={APRIL_2} />
-<DateRange start={MARCH_3} end={NEXT_JAN} />
-<DateRange start={MARCH_3} end={APRIL_2} separator=" to " />
-<DateRange start={MARCH_3} end={null} />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `<DateRange start={MARCH_3} end={MARCH_7} />`, value: <DateRange start={MARCH_3} end={MARCH_7} /> },
-						{ code: `<DateRange start={MARCH_3} end={APRIL_2} />`, value: <DateRange start={MARCH_3} end={APRIL_2} /> },
-						{ code: `<DateRange start={MARCH_3} end={NEXT_JAN} />`, value: <DateRange start={MARCH_3} end={NEXT_JAN} /> },
-						{ code: `<DateRange start={MARCH_3} end={APRIL_2} separator=" to " />`, value: <DateRange start={MARCH_3} end={APRIL_2} separator=" to " /> },
-						{ code: `<DateRange start={MARCH_3} end={null} />`, value: <DateRange start={MARCH_3} end={null} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example
-				id="relative-time"
+				example="primitive-date/relative-time"
 				title="RelativeTime"
 				description="A relative label answers “is this recent?” at a glance and answers nothing else — so the exact timestamp stays in the time element's dateTime rather than being thrown away for it."
-				code={`<RelativeTime value={HOURS_AGO} now={NOW} />
-<RelativeTime value={DAYS_AGO} now={NOW} />
-<RelativeTime value={MONTHS_AGO} now={NOW} />
-<RelativeTime value={null} />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `<RelativeTime value={HOURS_AGO} now={NOW} />`, value: <RelativeTime value={HOURS_AGO} now={NOW} /> },
-						{ code: `<RelativeTime value={DAYS_AGO} now={NOW} />`, value: <RelativeTime value={DAYS_AGO} now={NOW} /> },
-						{ code: `<RelativeTime value={MONTHS_AGO} now={NOW} />`, value: <RelativeTime value={MONTHS_AGO} now={NOW} /> },
-						{ code: `<RelativeTime value={null} />`, value: <RelativeTime value={null} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example
-				id="relative-time-shape"
+				example="primitive-date/relative-time-shape"
 				title="Suffix and precision"
 				description="The suffix is on by default: a bare duration beside a row of dates reads as a length rather than a moment. includeSeconds separates “less than a minute” from something more precise, which only matters for a feed measured in seconds."
-				code={`<RelativeTime value={date} now={now} addSuffix={false} />
-<RelativeTime value={date} now={now} includeSeconds />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `addSuffix  (default)`, value: <RelativeTime value={DAYS_AGO} now={NOW} /> },
-						{ code: `addSuffix={false}`, value: <RelativeTime value={DAYS_AGO} now={NOW} addSuffix={false} /> },
-						{ code: `includeSeconds`, value: <RelativeTime value={SECONDS_AGO} now={NOW} includeSeconds /> },
-						{ code: `{/* without includeSeconds */}`, value: <RelativeTime value={SECONDS_AGO} now={NOW} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example
-				id="relative-time-locale"
+				example="primitive-date/relative-time-locale"
 				title="In another language"
 				description="Two levels. A date-fns locale on the provider translates the wording date-fns already knows; formatRelativeTime replaces it entirely, for a product whose own catalogue already has these strings — relative time is not a format string in any language, since it pluralises and several languages inflect the unit by the number."
-				code={`import { de } from "date-fns/locale"
-
-<UIProvider config={{ dates: { locale: de } }}>…</UIProvider>
-
-{/* or hand the wording over completely */}
-<UIProvider
-  config={{ dates: { formatRelativeTime: (date, now) => t.relative(date, now) } }}
-/>`}
-			>
-				<SpecimenList
-					items={[
-						{
-							code: `{/* built-in */}`,
-							value: <RelativeTime value={DAYS_AGO} now={NOW} />,
-						},
-						{
-							code: `dates: {{ locale: de }}`,
-							value: (
-								<UIProvider config={{ dates: { locale: de } }}>
-									<RelativeTime value={DAYS_AGO} now={NOW} />
-								</UIProvider>
-							),
-						},
-						{
-							code: `dates: {{ formatRelativeTime }}`,
-							value: (
-								<UIProvider
-									config={{
-										dates: {
-											formatRelativeTime: (date, now) =>
-												`${Math.round((now.getTime() - date.getTime()) / 86_400_000)}d`,
-										},
-									}}
-								>
-									<RelativeTime value={DAYS_AGO} now={NOW} />
-								</UIProvider>
-							),
-						},
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example id="relative-time-rule" title="Pass the clock in">
 				<Callout label="Rule">
@@ -211,27 +63,10 @@ export function PrimitiveDatePage() {
 			</Example>
 
 			<Example
-				id="duration"
+				example="primitive-date/duration"
 				title="Duration"
 				description="Separate from the date primitives on purpose: a duration has no timezone, no calendar, and no daylight saving, and the moment it is modelled as a Date it acquires all three."
-				code={`<Duration value={45} />
-<Duration value={4520} />
-<Duration value={90} from="minutes" />
-<Duration value={4520} maxParts={1} />
-<Duration value={4520} unitDisplay="short" />
-<Duration value={null} />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `<Duration value={45} />`, value: <Duration value={45} /> },
-						{ code: `<Duration value={4520} />`, value: <Duration value={4520} /> },
-						{ code: `<Duration value={90} from="minutes" />`, value: <Duration value={90} from="minutes" /> },
-						{ code: `<Duration value={4520} maxParts={1} />`, value: <Duration value={4520} maxParts={1} /> },
-						{ code: `<Duration value={4520} unitDisplay="short" />`, value: <Duration value={4520} unitDisplay="short" /> },
-						{ code: `<Duration value={null} />`, value: <Duration value={null} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example id="date-api" title="DatePrimitive API">
 				<PropTable owner="DatePrimitive"

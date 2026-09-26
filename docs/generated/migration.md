@@ -279,6 +279,14 @@ The provider wrote --duration-slow, which no stylesheet declares or reads, so th
 
 Remove durations.slow from your provider config.
 
+### `Scope as`
+
+**Becomes** `Scope render` — by hand.
+
+Every component that can become a different element takes `render`; `Scope` took `as`. See docs/adr/0005-polymorphic-render-contract.md.
+
+`<Scope vars={vars} as="section">` becomes `<Scope vars={vars} render={<section />}>`. `Scope` also passes the element's own props through (`id`, `aria-*`, `ref`), as `UIScope` does, and its props are exported as `ScopeProps`.
+
 ## CSS imports and tokens
 
 One stylesheet became one per module, and the token surface lost every name that restated another. Each token table below is applied by the codemod; a name marked removed is reported, never guessed at.
@@ -657,3 +665,15 @@ Remove any --row-y-sm or --row-y-lg you set; size the rows with size or density.
 The carousel scrolled to a slide's offsetLeft, which RTL clamps to 0, so next did nothing; the index compared offsets that only increase in LTR.
 
 Nothing; RTL carousels now navigate.
+
+## Data files and the component finder
+
+The machine-readable files the package ships, and the flags of the finder that reads them.
+
+### `component-index.json schema 2: families, layer, dependsOnFamilies`
+
+**Becomes** `component-index.json schema 3: modules, tier, dependsOn` — by hand.
+
+The published catalogue uses the documentation's words: modules, grouped in six tiers.
+
+Read `modules` instead of `families`, `tier` instead of `layer` (foundations, primitives, base, layout, features or blocks) and `dependsOn` instead of `dependsOnFamilies`. In recipes.json read `module`, `modules` and `supportingModules`; in the profile records read `modules`. Pass `--module=` and `--tier=` to find-component.mjs.

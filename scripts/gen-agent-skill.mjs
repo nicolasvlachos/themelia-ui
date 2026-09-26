@@ -9,6 +9,8 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
 
+import { TIERS } from './lib/tiers.mjs'
+
 /* The skill ships in the package; `install-skill` copies it into a consumer's project. */
 const SKILL = '.agents/skills/themelia-ui'
 
@@ -19,44 +21,32 @@ const writeSkill = (relative, text) => {
 }
 const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
-const records = Object.values(index.families)
+const records = Object.values(index.modules)
 const name = index.package ?? 'themelia-ui'
 const skillName = name.replace(/^@/, '').replaceAll('/', '-')
 
-/* One row per layer, counted from the records rather than from memory. */
-const ORDER = ['typography', 'primitives', 'base', 'layout', 'features', 'patterns', 'admin', 'foundation']
+/* One row per tier, counted from the records rather than from memory. */
 const BLURB = {
-  typography: 'text in a role — Text, Heading, Label, TextLink',
+  foundations: 'the provider, the form contract and the theming helpers',
   primitives: 'one formatted value, no interaction — Money, Date, Email',
-  base: 'one generic concept: controls, rows, passive structure',
+  base: 'one generic concept: text roles, controls, rows, passive structure',
   layout: 'page and application shells',
   features: 'an owned interaction lifecycle — a context, a hook, a state machine',
-  patterns: 'an arrangement rendering a subject',
-  admin: 'the admin profile, built only on general modules',
-  foundation: 'the provider, the form contract, the root export',
+  blocks: 'an arrangement rendering a subject; the admin blocks make up the admin profile',
 }
 
-const byLayer = new Map()
-for (const record of records) {
-  if (!byLayer.has(record.layer)) byLayer.set(record.layer, [])
-  byLayer.get(record.layer).push(record)
-}
-
-const layers = ['| `layer` | modules | what lives there | example import |', '| --- | --- | --- | --- |']
-for (const layer of ORDER) {
-  const list = byLayer.get(layer)
-  if (!list?.length) continue
+const tiers = ['| tier | modules | what lives there | example import |', '| --- | --- | --- | --- |']
+for (const tier of TIERS) {
+  const list = records.filter((record) => record.tier === tier.id)
+  if (!list.length) continue
   const example = list.find((r) => r.components?.length) ?? list[0]
-  layers.push(`| \`${layer}\` | ${list.length} | ${BLURB[layer] ?? ''} | \`${example.import}\` |`)
+  tiers.push(`| ${tier.label} (\`${tier.id}\`) | ${list.length} | ${BLURB[tier.id]} | \`${example.import}\` |`)
 }
 const totalComponents = records.reduce((n, r) => n + (r.components?.length ?? 0), 0)
-layers.push(
+tiers.push(
   '',
   `${records.length} modules, ${totalComponents} public components, ` +
     `${records.reduce((n, r) => n + r.symbols.length, 0)} exported symbols in total.`,
-  '',
-  'The `layer` names split the tiers more finely: `typography` is the Base module',
-  '`base/typography`, and `patterns` and `admin` together make up Blocks.',
 )
 
 const withCss = records.filter((r) => r.css).length
@@ -116,9 +106,9 @@ const search = [
   '',
   '```bash',
   `node node_modules/${name}/scripts/consumer/find-component.mjs "key value facts"`,
-  `node node_modules/${name}/scripts/consumer/find-component.mjs --layer=primitives --json`,
-  `node node_modules/${name}/scripts/consumer/find-component.mjs --layer=base --limit=20`,
-  `node node_modules/${name}/scripts/consumer/find-component.mjs --family=features/data-view`,
+  `node node_modules/${name}/scripts/consumer/find-component.mjs --tier=primitives --json`,
+  `node node_modules/${name}/scripts/consumer/find-component.mjs --tier=base --limit=20`,
+  `node node_modules/${name}/scripts/consumer/find-component.mjs --module=features/data-view`,
   `node node_modules/${name}/scripts/consumer/find-component.mjs --peer=@tanstack/react-table`,
   `node node_modules/${name}/scripts/consumer/find-component.mjs --help`,
   '```',
@@ -164,7 +154,7 @@ const indexRow = [
 /* Rewrite only what sits between the markers. */
 let skill = readFileSync(`${SKILL}/SKILL.md`, 'utf8')
 skill = skill.replace(/^name:.*$/m, `name: ${skillName}`)
-for (const [marker, body] of [['layers', layers], ['delivery', delivery], ['peers', peers], ['search', search], ['root', root], ['index-row', indexRow]]) {
+for (const [marker, body] of [['tiers', tiers], ['delivery', delivery], ['peers', peers], ['search', search], ['root', root], ['index-row', indexRow]]) {
   const open = `<!-- GENERATED:${marker} by scripts/gen-agent-skill.mjs — do not edit between these markers. -->`
   const close = `<!-- /GENERATED:${marker} -->`
   const from = skill.indexOf(open)

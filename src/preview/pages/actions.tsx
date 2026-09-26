@@ -5,26 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ActionsPage() {
 	return (
-		<ComponentPage
-			title="Actions"
-			summary="One typed action definition, rendered by every surface that shows actions — a page toolbar, a card menu, a table row, the command palette — with the confirm, the loading state, and the errors owned in one place."
-			importPath="themelia-ui/features/actions"
-			exports={[
-				"ActionProvider",
-				"ActionOverlayOutlet",
-				"ActionScope",
-				"ActionHttpError",
-				"defineAction",
-				"useRegisterActions",
-				"useActionSurface",
-				"useAction",
-				"useLocalAction",
-				"useActiveAction",
-				"useActionScope",
-				"useActionSnapshot",
-				"useActionStore",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="actions/actions"
 				title="One definition, many surfaces"

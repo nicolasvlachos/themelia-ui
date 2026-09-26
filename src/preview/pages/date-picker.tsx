@@ -4,13 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function DatePickerPage() {
 	return (
-		<ComponentPage
-			title="Date picker"
-			summary="A day, a range, or several days, behind a field that wears the same surface as every other control."
-			importPath="@/components/base/date-pickers"
-			exports={["DatePicker", "createRangePresets", "SingleDatePicker", "RangeDatePicker", "MultipleDatePicker", "MonthYearPicker", "DatePickerHeader", "DatePickerFooter"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="date-picker/date-picker"
 				title="DatePicker"

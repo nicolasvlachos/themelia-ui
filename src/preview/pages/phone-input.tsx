@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function PhoneInputPage() {
 	return (
-		<ComponentPage
-			title="Phone input"
-			summary="A dial code and a number, in two channels, so the country prefix is never parsed back out of the digits."
-			importPath="@/components/base/value-inputs"
-			exports={["PhoneInput", "DEFAULT_COUNTRY_PREFIXES"]}
-		>
+		<ComponentPage>
 			<Example
 				example="phone-input/phone"
 				title="PhoneInput"

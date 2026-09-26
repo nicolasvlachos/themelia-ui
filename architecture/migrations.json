@@ -277,6 +277,14 @@
       "mechanical": false,
       "why": "The provider wrote --duration-slow, which no stylesheet declares or reads, so the setting did nothing.",
       "action": "Remove durations.slow from your provider config."
+    },
+    {
+      "kind": "prop",
+      "from": "Scope as",
+      "to": "Scope render",
+      "mechanical": false,
+      "why": "Every component that can become a different element takes `render`; `Scope` took `as`. See docs/adr/0005-polymorphic-render-contract.md.",
+      "action": "`<Scope vars={vars} as=\"section\">` becomes `<Scope vars={vars} render={<section />}>`. `Scope` also passes the element's own props through (`id`, `aria-*`, `ref`), as `UIScope` does, and its props are exported as `ScopeProps`."
     }
   ],
   "css": [
@@ -670,6 +678,16 @@
       "mechanical": false,
       "why": "The carousel scrolled to a slide's offsetLeft, which RTL clamps to 0, so next did nothing; the index compared offsets that only increase in LTR.",
       "action": "Nothing; RTL carousels now navigate."
+    }
+  ],
+  "data": [
+    {
+      "kind": "data",
+      "from": "component-index.json schema 2: families, layer, dependsOnFamilies",
+      "to": "component-index.json schema 3: modules, tier, dependsOn",
+      "mechanical": false,
+      "why": "The published catalogue uses the documentation's words: modules, grouped in six tiers.",
+      "action": "Read `modules` instead of `families`, `tier` instead of `layer` (foundations, primitives, base, layout, features or blocks) and `dependsOn` instead of `dependsOnFamilies`. In recipes.json read `module`, `modules` and `supportingModules`; in the profile records read `modules`. Pass `--module=` and `--tier=` to find-component.mjs."
     }
   ]
 }

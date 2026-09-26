@@ -4,15 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ButtonPage() {
 	return (
-		<ComponentPage
-			title="Button"
-			summary="The action primitive. Presentation splits along two independent axes: tone is semantic colour intent, buttonStyle is fill treatment."
-			importPath="@/components/base/buttons"
-			exports={[
-				"Button", "ButtonGroup", "ButtonGroupSeparator", "ButtonGroupText",
-				"TextButton", "LoaderButton", "TooltipButton",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="button/tone-style"
 				title="Tone × style"

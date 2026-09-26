@@ -7,15 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function FiltersPage() {
 	return (
-		<ComponentPage
-			title="Filters"
-			summary="A controlled filter bar. Every value is a string array, because a filter's real home is the URL and a URL has only strings — one shape means one serialiser, one parser, and a filter set that survives a shared link."
-			importPath="@/components/features/filters"
-			exports={["FilterProvider", "FilterLayout", "useFilters", "serializeFiltersToQuery",
-				"FilterPill", "FiltersButton", "FilterTabs", "SearchFilter", "SearchFilters", "FilterValueDisplay", "FilterOperatorSelect", "FilterEditor", "SelectFilterEditor", "DateFilterEditor", "RangeFilterEditor", "TagsFilterEditor", "AsyncFilterEditor", "FilterErrorBoundary", "useFilterGroups", "useAsyncOptions", "createFilterCache", "useFilterCache",
-				"FilterOperator", "FilterType",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="filters/filters"
 				title="The bar"

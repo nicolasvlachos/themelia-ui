@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TabsPage() {
 	return (
-		<ComponentPage
-			title="Tabs"
-			summary="A tab set following the WAI-ARIA pattern: arrows move between tabs, Home and End jump to the ends, and only the selected tab is in the tab sequence."
-			importPath="@/components/base/navigation"
-			exports={["Tabs", "TabList", "Tab", "TabPanel", "OverflowTabBar", "NavigationTabs", "LanguageSwitcher"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="tabs/tabs"
 				title="Tabs"

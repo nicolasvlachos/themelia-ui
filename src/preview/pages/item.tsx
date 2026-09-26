@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ItemPage() {
 	return (
-		<ComponentPage
-			title="Item"
-			summary="The row primitive that lists, menus, and tables compose. Media, content, and actions, with the media aligning to the first line whenever a description is present."
-			importPath="@/components/base/item"
-			exports={["Item", "ItemGroup", "ItemMedia", "ItemContent", "ItemTitle", "ItemDescription", "ItemActions", "ItemHeader", "ItemFooter", "ItemSeparator"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="item/item"
 				title="Item"

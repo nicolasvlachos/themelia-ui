@@ -3,7 +3,7 @@
  * Finds which themelia-ui component to use, with its exact JS and CSS imports, from the
  * catalogue shipped in this package (offline). `--help` lists the filters.
  *   node node_modules/themelia-ui/scripts/consumer/find-component.mjs "bulk selection"
- *   node node_modules/themelia-ui/scripts/consumer/find-component.mjs --layer=base --json
+ *   node node_modules/themelia-ui/scripts/consumer/find-component.mjs --tier=base --json
  */
 import { existsSync, readFileSync, realpathSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -14,8 +14,8 @@ export const INDEX_PATH = resolve(HERE, '..', '..', 'docs/generated/component-in
 
 /** One catalogue entry in the shape the finder searches and `--json` prints. */
 const toRecord = (entry) => ({
-  family: entry.id,
-  layer: entry.layer,
+  module: entry.id,
+  tier: entry.tier,
   profile: entry.profile,
   status: entry.status,
   publicImport: entry.import,
@@ -30,14 +30,14 @@ const toRecord = (entry) => ({
   alternatives: entry.alternatives ?? [],
   composeWith: entry.composeWith ?? [],
   optionalPeers: entry.optionalPeers,
-  dependsOnFamilies: entry.dependsOnFamilies,
+  dependsOn: entry.dependsOn,
   previews: entry.previews ?? [],
   recipes: entry.recipes ?? [],
 })
 
 export function loadIndex(path = INDEX_PATH) {
   if (!existsSync(path)) throw new Error(`the packaged component index is missing at ${path}`)
-  return Object.values(JSON.parse(readFileSync(path, 'utf8')).families).map(toRecord)
+  return Object.values(JSON.parse(readFileSync(path, 'utf8')).modules).map(toRecord)
 }
 
 const text = (value) => (Array.isArray(value) ? value.join(' ') : String(value ?? ''))
@@ -80,29 +80,29 @@ const STOPWORDS = new Set([
 ])
 
 /**
- * Families matching a query and filters, ranked: an exact public symbol beats a family id,
+ * Modules matching a query and filters, ranked: an exact public symbol beats a module id,
  * which beats positive guidance and recipes. `avoidWhen` text never counts as a match.
  */
-export function findComponents(families, query, filters = {}) {
+export function findComponents(modules, query, filters = {}) {
   const needle = query.trim().toLowerCase()
-  const hasFilter = ['layer', 'profile', 'status', 'family', 'peer', 'route', 'symbol']
+  const hasFilter = ['tier', 'profile', 'status', 'module', 'peer', 'route', 'symbol']
     .some((name) => Boolean(filters[name]))
   if (!needle && !hasFilter) return []
 
   const scored = []
-  for (const family of families) {
-    if (filters.layer && family.layer !== filters.layer) continue
-    if (filters.profile && family.profile !== filters.profile) continue
-    if (filters.status && family.status !== filters.status) continue
-    if (filters.family && family.family !== filters.family) continue
-    if (filters.peer && !(family.optionalPeers ?? []).includes(filters.peer)) continue
-    if (filters.route && !(family.previews ?? []).some((preview) => preview.route === filters.route)) continue
+  for (const record of modules) {
+    if (filters.tier && record.tier !== filters.tier) continue
+    if (filters.profile && record.profile !== filters.profile) continue
+    if (filters.status && record.status !== filters.status) continue
+    if (filters.module && record.module !== filters.module) continue
+    if (filters.peer && !(record.optionalPeers ?? []).includes(filters.peer)) continue
+    if (filters.route && !(record.previews ?? []).some((preview) => preview.route === filters.route)) continue
 
-    const symbols = (family.publicSymbols ?? []).map((s) => String(s).toLowerCase())
+    const symbols = (record.publicSymbols ?? []).map((s) => String(s).toLowerCase())
     if (filters.symbol && !symbols.includes(filters.symbol.toLowerCase())) continue
 
     if (!needle) {
-      scored.push({ family, score: 0 })
+      scored.push({ record, score: 0 })
       continue
     }
 
@@ -110,43 +110,43 @@ export function findComponents(families, query, filters = {}) {
     const componentMatches = []
     const queryTerms = meaningfulTerms(query)
     const phrase = normalizedWords(query).join(' ')
-    const normalizedSymbols = (family.publicSymbols ?? []).map((symbol) => normalizedWords(symbol).join(' '))
-    const normalizedFamily = normalizedWords(family.family).join(' ')
-    const identityItems = [family.family, ...(family.publicSymbols ?? []), ...(family.components ?? [])]
+    const normalizedSymbols = (record.publicSymbols ?? []).map((symbol) => normalizedWords(symbol).join(' '))
+    const normalizedModule = normalizedWords(record.module).join(' ')
+    const identityItems = [record.module, ...(record.publicSymbols ?? []), ...(record.components ?? [])]
     const identity = identityItems.map(text).join(' ')
     const identityHits = termHits(queryTerms, identity)
     const identityWholeMatch = identityItems.some(
       (item) => termHits(queryTerms, item) === queryTerms.length,
     )
     if (normalizedSymbols.includes(phrase)) score = 100
-    else if (normalizedFamily === phrase) score = 90
+    else if (normalizedModule === phrase) score = 90
     else if (normalizedSymbols.some((symbol) => symbol.includes(phrase))) score = 75
-    else if (normalizedFamily.includes(phrase)) score = 70
+    else if (normalizedModule.includes(phrase)) score = 70
     else if (queryTerms.length > 1 && identityWholeMatch) score = 65
     else {
       const positive = [
-        family.chooseWhen,
-        family.doc,
-        family.components,
-        ...(family.componentGuidance ?? []).flatMap((entry) => [entry.description, entry.chooseWhen, entry.capabilities]),
-        ...(family.previews ?? []).flatMap((preview) => [preview.page, preview.route]),
-        ...(family.recipes ?? []).flatMap((recipe) => [recipe.id, recipe.title, recipe.page, recipe.route]),
+        record.chooseWhen,
+        record.doc,
+        record.components,
+        ...(record.componentGuidance ?? []).flatMap((entry) => [entry.description, entry.chooseWhen, entry.capabilities]),
+        ...(record.previews ?? []).flatMap((preview) => [preview.page, preview.route]),
+        ...(record.recipes ?? []).flatMap((recipe) => [recipe.id, recipe.title, recipe.page, recipe.route]),
       ].map(text).join(' ').toLowerCase()
       if (positive.includes(needle)) score = 40
       else {
         /*
          * By term, not phrase ("key value facts" must find "label/value facts"). At least
-         * half the terms must hit, so one common word does not drag in every family.
+         * half the terms must hit, so one common word does not drag in every module.
          */
         const terms = queryTerms
         const hits = termHits(terms, positive)
         if (terms.length > 0 && hits * 2 >= terms.length) {
-          const chooseHits = termHits(terms, family.chooseWhen)
+          const chooseHits = termHits(terms, record.chooseWhen)
           score = 10 + Math.round((20 * hits) / terms.length) + chooseHits * 4 + identityHits * 2
         }
       }
     }
-    for (const entry of family.componentGuidance ?? []) {
+    for (const entry of record.componentGuidance ?? []) {
       const curated = entry.guidanceSource === 'component'
       const corpus = [entry.symbol, entry.description, curated ? entry.chooseWhen : '', ...(entry.capabilities ?? [])].join(' ')
       const hits = termHits(queryTerms, corpus)
@@ -157,12 +157,12 @@ export function findComponents(families, query, filters = {}) {
         score = Math.max(score, componentScore)
       }
     }
-    if (score > 0) scored.push({ family: filters.explain ? { ...family, match: { score, components: componentMatches.sort((a, b) => b.score - a.score), reason: componentMatches.length ? 'Public component name, description or positive usage guidance' : 'Module identity, positive guidance or attributed recipe' } } : family, score })
+    if (score > 0) scored.push({ record: filters.explain ? { ...record, match: { score, components: componentMatches.sort((a, b) => b.score - a.score), reason: componentMatches.length ? 'Public component name, description or positive usage guidance' : 'Module identity, positive guidance or attributed recipe' } } : record, score })
   }
 
   return scored
-    .sort((a, b) => b.score - a.score || String(a.family.family).localeCompare(String(b.family.family)))
-    .map((entry) => entry.family)
+    .sort((a, b) => b.score - a.score || String(a.record.module).localeCompare(String(b.record.module)))
+    .map((entry) => entry.record)
 }
 
 export const FINDER_USAGE = `usage: find-component.mjs [query] [options]
@@ -170,10 +170,10 @@ export const FINDER_USAGE = `usage: find-component.mjs [query] [options]
 Search, or list a filtered part of, the packaged component catalogue.
 
 Options:
-  --layer=<layer>       typography, primitives, base, layout, features, patterns, admin, foundation
+  --tier=<tier>         foundations, primitives, base, layout, features or blocks
   --profile=<profile>   general or admin
   --status=<status>     exact stability status from the catalogue
-  --family=<id>         exact module id, for example base/buttons
+  --module=<id>         exact module id, for example base/buttons
   --symbol=<Name>       exact public export name
   --peer=<package>      modules that require this optional peer
   --route=</path>       modules represented on this live preview route
@@ -184,7 +184,7 @@ Options:
 
 A text query is optional when at least one catalogue filter is present.`
 
-const VALUE_FLAGS = new Set(['layer', 'profile', 'status', 'family', 'symbol', 'peer', 'route', 'limit'])
+const VALUE_FLAGS = new Set(['tier', 'profile', 'status', 'module', 'symbol', 'peer', 'route', 'limit'])
 const BOOLEAN_FLAGS = new Set(['json', 'help', 'explain'])
 
 export function parseFinderArgs(args) {
@@ -226,7 +226,7 @@ export function runFinderCli(args = process.argv.slice(2), io = console) {
     return 0
   }
   const filters = Object.fromEntries(
-    ['layer', 'profile', 'status', 'family', 'symbol', 'peer', 'route']
+    ['tier', 'profile', 'status', 'module', 'symbol', 'peer', 'route']
       .filter((name) => parsed.options[name])
       .map((name) => [name, parsed.options[name]]),
   )
@@ -248,20 +248,20 @@ export function runFinderCli(args = process.argv.slice(2), io = console) {
   return 0
 }
 
-export function renderMatch(family) {
+export function renderMatch(record) {
   const lines = [
-    `${family.family}  (${family.layer} · ${family.profile}${family.status ? ` · ${family.status}` : ''})`,
-    `  import   ${family.publicImport}`,
+    `${record.module}  (${record.tier} · ${record.profile}${record.status ? ` · ${record.status}` : ''})`,
+    `  import   ${record.publicImport}`,
   ]
-  if (family.cssImport ?? family.css) lines.push(`  css      ${family.cssImport ?? family.css}`)
-  if (family.apiDoc) lines.push(`  api      node_modules/themelia-ui/docs/generated/${family.apiDoc}`)
-  if (family.chooseWhen) lines.push(`  choose   ${text(family.chooseWhen)}`)
-  if (family.avoidWhen) lines.push(`  avoid    ${text(family.avoidWhen)}`)
-  if (family.composeWith?.length) lines.push(`  with     ${text(family.composeWith)} — import its JS and CSS too`)
-  if (family.alternatives?.length) lines.push(`  instead  ${text(family.alternatives)}`)
-  if (family.match) {
-    lines.push(`  match    ${family.match.reason}`)
-    for (const entry of family.match.components.slice(0, 3)) {
+  if (record.cssImport ?? record.css) lines.push(`  css      ${record.cssImport ?? record.css}`)
+  if (record.apiDoc) lines.push(`  api      node_modules/themelia-ui/docs/generated/${record.apiDoc}`)
+  if (record.chooseWhen) lines.push(`  choose   ${text(record.chooseWhen)}`)
+  if (record.avoidWhen) lines.push(`  avoid    ${text(record.avoidWhen)}`)
+  if (record.composeWith?.length) lines.push(`  with     ${text(record.composeWith)} — import its JS and CSS too`)
+  if (record.alternatives?.length) lines.push(`  instead  ${text(record.alternatives)}`)
+  if (record.match) {
+    lines.push(`  match    ${record.match.reason}`)
+    for (const entry of record.match.components.slice(0, 3)) {
       lines.push(`  ${entry.symbol} — ${entry.chooseWhen}`, `    api    ${entry.apiDoc}`, `    compose ${entry.composition}`)
     }
   }

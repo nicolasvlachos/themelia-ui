@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ActionOverlaysPage() {
 	return (
-		<ComponentPage
-			title="Action overlays"
-			summary="A dialog, a sheet, and a confirmation with their footers generated. The primitives own the surface; these own the part every screen otherwise rebuilds — two buttons in a fixed order, and a confirm that knows about async work and forms."
-			importPath="@/components/features/overlays"
-			exports={["ActionDialog", "ActionSheet", "ConfirmDialog", "useOverlayVisibility",
-				"useOverlayVisibilityGroup", "useOverlayActions",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="action-overlays/action-dialog"
 				title="ActionDialog"

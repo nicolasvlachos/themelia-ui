@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CalendarPage() {
 	return (
-		<ComponentPage
-			title="Calendar"
-			summary="The grid on its own, for a page that shows a month rather than asking for a date. Built on date-fns, not a calendar library."
-			importPath="@/components/base/date-pickers"
-			exports={["Calendar"]}
-		>
+		<ComponentPage>
 			<Example
 				example="calendar/calendar"
 				title="Calendar"

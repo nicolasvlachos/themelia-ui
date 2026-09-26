@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CollapsiblePage() {
 	return (
-		<ComponentPage
-			title="Collapsible"
-			summary="One region that opens and closes. Where Accordion manages a set of sections, Collapsible is a single disclosure with no siblings to coordinate."
-			importPath="@/components/base/display"
-			exports={["Collapsible", "CollapsibleTrigger", "CollapsibleContent"]}
-		>
+		<ComponentPage>
 			<Example
 				example="collapsible/collapsible"
 				title="Collapsible"

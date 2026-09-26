@@ -87,6 +87,9 @@ Overriding a factor requires a **scope boundary**, not just any element:
 </Scope>
 ```
 
+`Scope` renders a `div` without layout. `render` picks another element, as on every
+component (`render={<section />}`), and `transparent={false}` gives it a box.
+
 Derived tokens are declared at `:root, [data-ui-scope], [data-density], [data-theme], .light,
 .dark` (see [`src/styles/SCOPES.md`](../../src/styles/SCOPES.md)). A plain
 `<div style={{ "--density-scale": 0.8 }}>` sets the variable and nothing reads it: the

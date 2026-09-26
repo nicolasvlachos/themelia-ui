@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ResizablePage() {
 	return (
-		<ComponentPage
-			title="Resizable panels"
-			summary="Split panes the reader drags apart — a document beside its inspector, a list beside its detail. Reach for it when the reader, not the layout, knows how much room each side deserves; a split nobody needs to move is a Grid."
-			importPath="@/components/base/resizable"
-			exports={["ResizablePanelGroup", "ResizablePanel", "ResizableHandle"]}
-		>
+		<ComponentPage>
 			<Example
 				example="resizable/resizable"
 				title="Resizable"

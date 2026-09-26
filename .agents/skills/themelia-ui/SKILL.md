@@ -60,9 +60,9 @@ came to mind. Ask:
 
 ```bash
 node node_modules/themelia-ui/scripts/consumer/find-component.mjs "key value facts"
-node node_modules/themelia-ui/scripts/consumer/find-component.mjs --layer=primitives --json
-node node_modules/themelia-ui/scripts/consumer/find-component.mjs --layer=base --limit=20
-node node_modules/themelia-ui/scripts/consumer/find-component.mjs --family=features/data-view
+node node_modules/themelia-ui/scripts/consumer/find-component.mjs --tier=primitives --json
+node node_modules/themelia-ui/scripts/consumer/find-component.mjs --tier=base --limit=20
+node node_modules/themelia-ui/scripts/consumer/find-component.mjs --module=features/data-view
 node node_modules/themelia-ui/scripts/consumer/find-component.mjs --peer=@tanstack/react-table
 node node_modules/themelia-ui/scripts/consumer/find-component.mjs --help
 ```
@@ -94,23 +94,18 @@ Selection rules:
 
 ## Tiers and composition
 
-<!-- GENERATED:layers by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
-| `layer` | modules | what lives there | example import |
+<!-- GENERATED:tiers by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
+| tier | modules | what lives there | example import |
 | --- | --- | --- | --- |
-| `typography` | 1 | text in a role — Text, Heading, Label, TextLink | `themelia-ui/base/typography` |
-| `primitives` | 1 | one formatted value, no interaction — Money, Date, Email | `themelia-ui/primitives` |
-| `base` | 53 | one generic concept: controls, rows, passive structure | `themelia-ui/base/accordion` |
-| `layout` | 9 | page and application shells | `themelia-ui/layout/app-shell` |
-| `features` | 24 | an owned interaction lifecycle — a context, a hook, a state machine | `themelia-ui/features/actions` |
-| `patterns` | 3 | an arrangement rendering a subject | `themelia-ui/patterns/analytics` |
-| `admin` | 2 | the admin profile, built only on general modules | `themelia-ui/admin/patterns/access` |
-| `foundation` | 4 | the provider, the form contract, the root export | `themelia-ui/forms` |
+| Foundations (`foundations`) | 4 | the provider, the form contract and the theming helpers | `themelia-ui/forms` |
+| Primitives (`primitives`) | 1 | one formatted value, no interaction — Money, Date, Email | `themelia-ui/primitives` |
+| Base (`base`) | 54 | one generic concept: text roles, controls, rows, passive structure | `themelia-ui/base/accordion` |
+| Layout (`layout`) | 9 | page and application shells | `themelia-ui/layout/app-shell` |
+| Features (`features`) | 24 | an owned interaction lifecycle — a context, a hook, a state machine | `themelia-ui/features/actions` |
+| Blocks (`blocks`) | 5 | an arrangement rendering a subject; the admin blocks make up the admin profile | `themelia-ui/admin/patterns/access` |
 
 97 modules, 752 public components, 1070 exported symbols in total.
-
-The `layer` names split the tiers more finely: `typography` is the Base module
-`base/typography`, and `patterns` and `admin` together make up Blocks.
-<!-- /GENERATED:layers -->
+<!-- /GENERATED:tiers -->
 
 Dependencies flow downward:
 

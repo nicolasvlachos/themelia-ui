@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AlertPage() {
 	return (
-		<ComponentPage
-			title="Alert"
-			summary="A message about something that just happened. The tint and the border carry the tone; only the icon is coloured, so the text stays legible in both themes."
-			importPath="@/components/base/feedback"
-			exports={["Alert", "AlertTitle", "AlertDescription", "AlertAction", "AlertMetadata"]}
-		>
+		<ComponentPage>
 			<Example
 				example="alert/alert"
 				title="Alert"

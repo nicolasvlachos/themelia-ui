@@ -7,16 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ComboboxPage() {
 	return (
-		<ComponentPage
-			title="Combobox"
-			summary="One combobox at two levels. The pickers are what most fields want — ResourceCombobox and SuggestionsCombobox fetch for you, AsyncCombobox and AsyncMultiCombobox take results you already hold — and all four run on one engine: a debounced query, a minimum length, a status row, grouping, an inline create, scroll pagination and an apply footer. Underneath is the Base UI anatomy with the kit's field surface applied; drop to the parts when no picker fits."
-			importPath="@/components/base/combobox"
-			exports={["ComboboxRoot", "ComboboxInputTrigger", "ComboboxPopup", "ComboboxPopupInput", "ComboboxItem", "ComboboxTrigger", "ComboboxValue", "ComboboxList", "ComboboxEmpty", "ComboboxGroup", "ComboboxGroupLabel", "ComboboxChips", "ComboboxChip", "ComboboxChipsInput", "ComboboxPortal", "ComboboxPositioner", "ComboboxArrow", "ComboboxBackdrop", "ComboboxClear", "ComboboxCollection", "ComboboxInput", "ComboboxItemIndicator", "ComboboxSeparator", "ComboboxStatus", "useComboboxFilter"
-			]}
-			alsoImports={[
-				{ importPath: "@/components/features/combobox", title: "Async combobox", exports: ["ResourceCombobox", "SuggestionsCombobox", "AsyncCombobox", "AsyncMultiCombobox", "ComboboxDropdown", "HighlightedText", "useComboboxCore", "useSuggestions"] },
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="combobox/combobox-picker"
 				title="A picker that fetches"

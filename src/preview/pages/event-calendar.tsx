@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function EventCalendarPage() {
 	return (
-		<ComponentPage
-			title="Event calendar"
-			summary="A month grid, a week strip, or an agenda over one list of events. The view decides only the range of days and how they are laid out — placing events onto days is the same code every time, so switching view can never move an event."
-			importPath="@/components/features/event-calendar"
-			exports={["EventCalendar", "useEventCalendar", "useEventCalendarData",
-				"EventCalendarHeader", "EventCalendarDayCell", "EventCalendarEventBadge", "EventCalendarEventCard", "EventCalendarLegend",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="event-calendar/month"
 				title="The grid"

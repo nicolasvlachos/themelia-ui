@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TooltipPage() {
 	return (
-		<ComponentPage
-			title="Tooltip"
-			summary="A short explanation on hover and on focus. It is never the only place a piece of information lives — a tooltip is unreachable on touch and gone the moment the pointer moves."
-			importPath="@/components/base/tooltip"
-			exports={["Tooltip", "TooltipTrigger", "TooltipContent", "TooltipProvider"]}
-		>
+		<ComponentPage>
 			<Example
 				example="tooltip/tooltip"
 				title="Tooltip"

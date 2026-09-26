@@ -29,10 +29,7 @@ function Swatch({ token }: { token: string }) {
 
 export function TokensPage() {
 	return (
-		<ComponentPage
-			title="Tokens & theming"
-			summary="Three levels: the palette carries no meaning, semantic tokens carry no value, and the theming layer computes everything else from them."
-		>
+		<ComponentPage>
 			<Example
 				id="semantic-tokens"
 				title="Semantic tokens"

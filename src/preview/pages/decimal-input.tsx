@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function DecimalInputPage() {
 	return (
-		<ComponentPage
-			title="Decimal input"
-			summary="A number with a fixed number of decimal places. A text input, not type=number — see the note below."
-			importPath="@/components/base/forms-numeric"
-			exports={["DecimalInput", "RoundingModeSelect", "applyRounding", "formatDecimal"]}
-		>
+		<ComponentPage>
 			<Example
 				example="decimal-input/decimal"
 				title="DecimalInput"

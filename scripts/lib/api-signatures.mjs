@@ -6,7 +6,7 @@
 import ts from 'typescript'
 
 /** Comments out, whitespace collapsed: what the type says, not how it was typed. */
-const normalise = (text) =>
+export const normalise = (text) =>
   text
     .replace(/\/\*[\s\S]*?\*\//g, ' ')
     .replace(/\/\/[^\n]*/g, ' ')

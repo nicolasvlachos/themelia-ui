@@ -5,31 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function UIRootScopePage() {
 	return (
-		<ComponentPage
-			title="UIRoot & UIScope"
-			summary="Two components, because the two jobs have different contracts. At the top of an application UIRoot owns the DOCUMENT — <body> sits above anything it renders, and a page canvas that stays light while its contents go dark is not a theme. Nested, UIScope owns a REGION and has no business touching the document. Naming the job beats inferring it from whether a provider happens to be above you."
-			importPath="@/lib/ui-provider"
-			exports={[
-				"CSPProvider",
-				"UIRoot",
-				"UIScope",
-				"UIProvider",
-				"Scope",
-				"useUIConfig",
-				"useFormatting",
-				"useMoneyConfig",
-				"useDatesConfig",
-				"useOverlayConfig",
-				"useTypographyConfig",
-				"useDensity",
-				"useScale",
-				"useDefaults",
-				"UIPortalHost",
-				"useUIPortalContainer",
-				"UIConfigContext",
-				"UINestedContext",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="ui-root-scope/ui-scope-density"
 				title="A scope is a region"

@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function PageLayoutPage() {
 	return (
-		<ComponentPage
-			title="Page, page header, page actions"
-			summary="The block every screen opens with, the routed version of it, and the actions beside it. Three components because a heading is also used on its own — inside a drawer, above a step, at the top of a card — and because how many actions become buttons is a decision, not a rendering."
-			importPath="@/components/layout/page"
-			exports={["Page", "PageHeader", "PageActions", "PageHeading"]}
-		>
+		<ComponentPage>
 			<Example
 				example="page-layout/page-heading"
 				title="PageHeading"

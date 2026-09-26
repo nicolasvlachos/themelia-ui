@@ -64,10 +64,6 @@ declare const styles: {
 	readonly sidebar: string
 	readonly sidebarScroll: string
 	readonly sidebarSticky: string
-	readonly specimenCode: string
-	readonly specimenValue: string
-	readonly specimens: string
-	readonly specimensNumeric: string
 	readonly swatch: string
 	readonly swatchChip: string
 	readonly swatchGrid: string

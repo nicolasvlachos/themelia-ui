@@ -1169,7 +1169,7 @@
     "tokens:tailwind": "node scripts/gen-tailwind-bridge.mjs",
     "tokens:surface": "node scripts/lib/token-surface.mjs --write",
     "gen:architecture": "node scripts/gen-architecture-manifest.mjs && node scripts/gen-migration-map.mjs",
-    "docs:sync-skill": "npm run build:lib && node scripts/verify-api-snapshot.mjs && node scripts/gen-consumer-docs.mjs && node scripts/gen-composition-ladder.mjs && node scripts/gen-agent-skill.mjs && node scripts/gen-test-docs.mjs && node scripts/gen-status-docs.mjs"
+    "docs:sync-skill": "npm run build:lib && node scripts/verify-api-snapshot.mjs && node scripts/gen-consumer-docs.mjs && node scripts/gen-api-tables.mjs && node scripts/gen-composition-ladder.mjs && node scripts/gen-agent-skill.mjs && node scripts/gen-test-docs.mjs && node scripts/gen-status-docs.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

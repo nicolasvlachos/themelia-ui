@@ -1112,6 +1112,8 @@
     "LanguageSwitcher": "themelia-ui/base/navigation",
     "LanguageSwitcherProps": "themelia-ui/base/navigation",
     "LanguageSwitcherVariant": "themelia-ui/base/navigation",
+    "LayoutLinkRenderer": "themelia-ui/base/navigation",
+    "LayoutLinkRenderProps": "themelia-ui/base/navigation",
     "LeafletDrawModule": "themelia-ui/features/map",
     "LeafletModule": "themelia-ui/features/map",
     "ListRadioGroup": "themelia-ui/base/choice-inputs",
@@ -2171,6 +2173,22 @@
     "ResolvedAction": [
       "./base/action-menu",
       "./features/actions"
+    ],
+    "LayoutLinkRenderer": [
+      "./base/navigation",
+      "./layout/auth",
+      "./layout/header",
+      "./layout/page",
+      "./layout/sidebar",
+      "./layout/workspace"
+    ],
+    "LayoutLinkRenderProps": [
+      "./base/navigation",
+      "./layout/auth",
+      "./layout/header",
+      "./layout/page",
+      "./layout/sidebar",
+      "./layout/workspace"
     ]
   }
 }

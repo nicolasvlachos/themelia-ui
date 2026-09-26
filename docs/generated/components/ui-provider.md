@@ -270,14 +270,26 @@ Kind: callable.
 `<Scope>` — a token boundary without the config machinery. Derived tokens re-compute
 only at a scope boundary (styles/SCOPES.md), so a factor set on a plain `div` changes
 nothing; this renders `data-ui-scope`. Use `<UIProvider>` when JavaScript config changes too.
+`render` picks the element, e.g. `render={<section />}`.
 
   <Scope vars={{ "--density-scale": 0.8 }}>
     <Toolbar />
   </Scope>
 
 ```text
-({ vars, as: Tag, transparent, className, style, children, }: { vars: Record<string, string | number>; as?: ElementType; transparent?: boolean; className?: string; style?: CSSProperties; children: ReactNode; }) => import("react").JSX.Element
+({ vars, transparent, render, className, style, ...props }: ScopeProps) => import('react').ReactElement<unknown, string | import('react').JSXElementConstructor<any>>
 ```
+
+### `ScopeProps`
+
+Kind: interface.
+
+Extends: `useRender.ComponentProps<"div">`.
+
+| member | required | type | description / documented default |
+| --- | :-: | --- | --- |
+| `vars` | yes | `Record<string, string \| number>` | Custom properties to set. Keys include the leading `--`. |
+| `transparent` | no | `boolean` | Removes the element from layout with `display: contents`; custom properties still inherit. |
 
 ### `SemanticToken`
 
@@ -614,19 +626,6 @@ export default function FormsScale() {
 		</Stack>
 	)
 }
-```
-
-### In another language
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-import { de } from "date-fns/locale"
-
-<UIProvider config={{ dates: { locale: de } }}>…</UIProvider>
-
-{/* or hand the wording over completely */}
-<UIProvider
-  config={{ dates: { formatRelativeTime: (date, now) => t.relative(date, now) } }}
-/>
 ```
 
 ### The factor

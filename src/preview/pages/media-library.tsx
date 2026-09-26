@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function MediaLibraryPage() {
 	return (
-		<ComponentPage
-			title="Media library"
-			summary="The asset browser: search, filter, sort, select, edit, upload. Every field is read through an accessor, because nobody's asset records look like ours — they come from S3, Cloudinary, a media collection, a CMS, each with its own field names."
-			importPath="@/components/features/media-library"
-			exports={["MediaLibrary", "MediaLibraryDialog", "MediaResourceGallery", "useMediaLibrary",
-				"MediaLibraryCard", "MediaLibraryGrid", "MediaLibraryTable", "MediaLibrarySelectionBar", "MediaLibraryList", "MediaLibraryToolbar", "MediaLibraryDetailPanel", "MediaLibraryUploadPanel", "MediaLibraryFooter", "MediaLibraryFooterSummary", "MediaLibraryFooterActions", "MediaLibraryEmptyState", "MediaPreview",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="media-library/library"
 				title="Asset manager"

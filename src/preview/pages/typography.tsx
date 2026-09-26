@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TypographyPage() {
 	return (
-		<ComponentPage
-			title="Typography"
-			summary="Text, Heading, DisplayLabel, and TextLink. Every library-owned string reaches the DOM through one of these, so a raw element never carries type styling."
-			importPath="@/components/base/typography"
-			exports={["Text", "Heading", "DisplayLabel", "TextLink"]}
-		>
+		<ComponentPage>
 			<Example
 				example="typography/text-roles"
 				title="Text roles"

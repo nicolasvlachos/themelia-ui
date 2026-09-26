@@ -8,3 +8,4 @@ export {
 } from "./page-actions"
 export { defaultPageHeaderStrings, type PageHeaderStrings } from "./page-header.strings"
 export { defaultPageActionsStrings, type PageActionsStrings } from "./page-actions.strings"
+export type { LayoutLinkRenderer, LayoutLinkRenderProps } from "@/lib/navigation"

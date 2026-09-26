@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function AuthShellPage() {
 	return (
-		<ComponentPage
-			title="Auth shells"
-			summary="A welcoming entry to your application: a brand, a focused form, useful links, and an optional story alongside it. Compose the page with AuthShell, or arrange your own AuthCard and AuthSplitPanel. Your application owns the form and its flow."
-			importPath="@/components/layout/auth"
-			exports={["AuthShell", "AuthCard", "AuthFooterLinks", "AuthSplitPanel"]}
-		>
+		<ComponentPage>
 			<Example
 				example="auth-shell/auth-shell"
 				title="Card · a complete sign-in page"

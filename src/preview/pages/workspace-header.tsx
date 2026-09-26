@@ -5,14 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function WorkspaceHeaderPage() {
 	return (
-		<ComponentPage
-			title="Workspace record header"
-			summary="The header of a record you are working ON — an invoice, a customer, a deployment. Built on PageHeading for the title row, but not a page title: a page heading names a screen, and this identifies a thing and carries the apparatus that comes with one — media, a status, metadata."
-			importPath="@/components/layout/workspace"
-			exports={["WorkspaceRecordHeader",
-				"WorkspaceLayout", "WorkspaceNav", "WorkspaceLocaleStrip",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="workspace-header/record-header"
 				title="WorkspaceRecordHeader"

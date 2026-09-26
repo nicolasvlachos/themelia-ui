@@ -1,61 +1,21 @@
-import { Initials, Name } from "@/components/primitives"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-import { SpecimenList } from "../partials/specimen-list"
 
 export function PrimitiveNamePage() {
 	return (
-		<ComponentPage
-			title="Names & initials"
-			summary="A person’s name, normalised for display, and the initials derived from it. They share a page because they read the same value: Initials is computed from the name rather than stored beside it, so an avatar and the label next to it cannot disagree."
-			importPath="@/components/primitives"
-			exports={["Name", "formatName", "Initials", "formatInitials"]}
-		>
+		<ComponentPage>
 			<Example
-				id="name"
+				example="primitive-name/name"
 				title="Name"
 				description="Whitespace is collapsed and the parts are ordered by the format asked for. The stored value is never rewritten — this is a rendering, not a migration."
-				code={`<Name value="Jane McDonald" />
-<Name value="  jane   mcdonald " />
-<Name value="JANE MCDONALD" force />
-<Name value={null} />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `<Name value="Jane McDonald" />`, value: <Name value="Jane McDonald" /> },
-						{ code: `<Name value="  jane   mcdonald " />`, value: <Name value="  jane   mcdonald " /> },
-						{ code: `<Name value="JANE MCDONALD" force />`, value: <Name value="JANE MCDONALD" force /> },
-						{ code: `<Name value={null} />`, value: <Name value={null} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example
-				id="initials"
+				example="primitive-name/initials"
 				title="Initials"
 				description="The strategy decides which characters are taken — first and last, the first two words, the first letter alone. Deriving rather than storing is the whole point: a name that is corrected corrects its initials with it."
-				code={`<Initials value="Jane McDonald" />
-<Initials value="Mei Chen" />
-<Initials value="Jane McDonald" maxCharacters={1} />
-<Initials value="Ana Sofia Reyes" strategy="first-words" />
-<Initials value="Ana Sofia Reyes" maxCharacters={3} />
-<Initials value="—" fallback="?" />
-<Initials value={null} />`}
-			>
-				<SpecimenList
-					items={[
-						{ code: `<Initials value="Jane McDonald" />`, value: <Initials value="Jane McDonald" /> },
-						{ code: `<Initials value="Mei Chen" />`, value: <Initials value="Mei Chen" /> },
-						{ code: `<Initials value="Jane McDonald" maxCharacters={1} />`, value: <Initials value="Jane McDonald" maxCharacters={1} /> },
-						{ code: `<Initials value="Ana Sofia Reyes" strategy="first-words" />`, value: <Initials value="Ana Sofia Reyes" strategy="first-words" /> },
-						{ code: `<Initials value="Ana Sofia Reyes" maxCharacters={3} />`, value: <Initials value="Ana Sofia Reyes" maxCharacters={3} /> },
-						{ code: `<Initials value="—" fallback="?" />`, value: <Initials value="—" fallback="?" /> },
-						{ code: `<Initials value={null} />`, value: <Initials value={null} /> },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example id="name-api" title="Name API">
 				<PropTable owner="Name"

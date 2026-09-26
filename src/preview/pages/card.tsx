@@ -5,13 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function CardPage() {
 	return (
-		<ComponentPage
-			title="Card"
-			summary="The single surface primitive. Every framed region in the kit is one — if Card does not expose the chrome you need, extend it rather than introducing a second card."
-			importPath="@/components/base/cards"
-			exports={["Card", "CardHeader", "CardContent", "CardFooter", "CardActionStrip", "CardPrimaryAction", "CardSkeleton"
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="card/card-surfaces"
 				title="Surfaces"

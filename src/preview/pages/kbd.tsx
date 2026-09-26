@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function KbdPage() {
 	return (
-		<ComponentPage
-			title="Keyboard key"
-			summary="A key cap for a shortcut written into the interface — a palette hint, a menu accelerator, a line of help. It is the browser's own kbd element underneath, so the meaning survives for a screen reader and in plain text without the styling."
-			importPath="@/components/base/display"
-			exports={["Kbd", "KbdGroup"]}
-		>
+		<ComponentPage>
 			<Example
 				example="kbd/kbd"
 				title="Kbd"

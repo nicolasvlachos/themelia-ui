@@ -4,12 +4,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function TimePickerPage() {
 	return (
-		<ComponentPage
-			title="Time picker"
-			summary="A time of day, and the combined date-and-time field built from it."
-			importPath="@/components/base/date-pickers"
-			exports={["TimePicker", "DateTimeInput"]}
-		>
+		<ComponentPage>
 			<Example
 				example="time-picker/time"
 				title="TimePicker and DateTimeInput"

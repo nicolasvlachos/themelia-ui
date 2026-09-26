@@ -5,15 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function FormWorkflowPage() {
 	return (
-		<ComponentPage
-			title="Form workflow"
-			summary="The parts a form needs around its fields: a titled section, the action bar at its foot, the summary that appears when submission fails, the banner that appears when it has unsaved work, and the submit button that says what it is doing. Beside them, the two states a region shows instead of content — loading and failed."
-			importPath="@/components/base/forms"
-			exports={[
-				"FormSection", "FormActionsBar", "ErrorSummary", "DirtyStateBanner",
-				"SubmitStateButton", "LoadingState", "ErrorState",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="form-workflow/form-section"
 				title="FormSection"

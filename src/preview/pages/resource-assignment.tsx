@@ -7,14 +7,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function ResourceAssignmentPage() {
 	return (
-		<ComponentPage
-			title="Resource assignment"
-			summary="The “this record has a venue assigned; here it is, and here is how to change it” panel. The card owns the shape — a panel, a dialog, a pending choice, and a confirm that waits for the write. The picker inside the dialog is yours, because every assignment is a different search."
-			importPath="@/components/features/resource-assignment"
-			exports={["SharedResourceCard", "useSharedResourceCard",
-				"DefaultDialogContent", "DefaultDialogSummary",
-			]}
-		>
+		<ComponentPage>
 			<Example
 				example="resource-assignment/assigned"
 				title="With a resource"

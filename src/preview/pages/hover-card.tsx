@@ -5,12 +5,7 @@ import { PropTable } from "../partials/prop-table"
 
 export function HoverCardPage() {
 	return (
-		<ComponentPage
-			title="Hover card"
-			summary="A preview that opens while the pointer rests on a name or a link — a person, an order, a page — so a reader can glance at it without leaving where they are. It is an accelerator, never a route: everything in it has to be one click away as well, because hover does not exist on touch."
-			importPath="@/components/base/hover-card"
-			exports={["HoverCard", "HoverCardTrigger", "HoverCardContent"]}
-		>
+		<ComponentPage>
 			<Example
 				example="hover-card/hover-card"
 				title="HoverCard"
