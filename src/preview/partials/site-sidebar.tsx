@@ -7,21 +7,7 @@ import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { ROUTE_GROUPS, type Route } from "../routes"
-import routeLayers from "../generated/route-layers.json"
 import styles from "../preview.module.css"
-
-const LAYERS: Record<string, string> = routeLayers.layers
-
-/** A group's most common layer; a row shows its layer only when it differs. */
-function dominantLayer(paths: string[]): string | null {
-	const counts = new Map<string, number>()
-	for (const path of paths) {
-		const layer = LAYERS[path]
-		if (layer) counts.set(layer, (counts.get(layer) ?? 0) + 1)
-	}
-	if (counts.size === 0) return null
-	return [...counts].sort((a, b) => b[1] - a[1])[0]![0]
-}
 
 /**
  * The groups the reader has opened. Groups start closed; the one holding the current page
@@ -60,8 +46,7 @@ export function SiteSidebar({ onNavigate }: { onNavigate?: () => void }) {
 		})
 	}, [])
 
-	const renderRoute = (route: Route, groupLayer: string | null) => {
-		const layer = LAYERS[route.path]
+	const renderRoute = (route: Route) => {
 		return (
 			<NavLink
 				key={route.path}
@@ -80,12 +65,6 @@ export function SiteSidebar({ onNavigate }: { onNavigate?: () => void }) {
 						{route.badge}
 					</Text>
 				)}
-				{/* Only when it differs from the group's layer. */}
-				{!route.badge && !!layer && layer !== groupLayer && (
-					<Text tag="span" size="xs" type="secondary" className={styles.navLayer}>
-						{layer}
-					</Text>
-				)}
 			</NavLink>
 		)
 	}
@@ -96,10 +75,7 @@ export function SiteSidebar({ onNavigate }: { onNavigate?: () => void }) {
 			<ScrollArea className={styles.sidebarScroll}>
 				<nav className={styles.sidebar} aria-label="Documentation">
 				{ROUTE_GROUPS.map((group) => {
-					/* Route-table order, which ranks by significance; deliberately not alphabetical. */
 					const routes = group.routes
-
-					const groupLayer = dominantLayer(routes.map((route) => route.path))
 					/* A collapsed group holding the current page opens anyway. */
 					const holdsCurrent = routes.some((route) => route.path === pathname)
 					const open = holdsCurrent || opened.has(group.label)
@@ -131,7 +107,7 @@ export function SiteSidebar({ onNavigate }: { onNavigate?: () => void }) {
 							</button>
 
 							<div id={region} hidden={!open}>
-								{/* Optional labelled runs inside long groups; the label is text, not a control. */}
+								{/* A module with several pages is a labelled run; the label is text, not a control. */}
 								{group.sections.map((section, index) => (
 									<div key={section.label ?? index} className={styles.navSection}>
 										{section.label && (
@@ -139,7 +115,7 @@ export function SiteSidebar({ onNavigate }: { onNavigate?: () => void }) {
 												{section.label}
 											</Text>
 										)}
-										{section.routes.map((route) => renderRoute(route, groupLayer))}
+										{section.routes.map(renderRoute)}
 									</div>
 								))}
 							</div>

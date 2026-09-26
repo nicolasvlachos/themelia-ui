@@ -50,7 +50,6 @@ declare const styles: {
 	readonly navGroupCount: string
 	readonly navGroupLabel: string
 	readonly navGroupToggle: string
-	readonly navLayer: string
 	readonly navLink: string
 	readonly navLinkActive: string
 	readonly navSection: string

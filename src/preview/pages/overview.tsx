@@ -7,7 +7,7 @@ import { Heading, Text } from "@/components/base/typography"
 
 import { CodeBlock } from "../partials/code-block"
 import { Callout } from "../partials/callout"
-import { LAYERS, LAYER_COUNT, FAMILY_COUNT } from "../partials/layer-summary"
+import { MODULE_COUNT, TIERS } from "../partials/tier-summary"
 import { Pager } from "../partials/pager"
 import styles from "../preview.module.css"
 
@@ -57,23 +57,23 @@ export function OverviewPage() {
 				</div>
 			</section>
 
-			<section id="layers" className={styles.section}>
+			<section id="tiers" className={styles.section}>
 				<div className={styles.sectionHeader}>
 					<Heading level={2} size="base">
-						Layers
+						Tiers
 					</Heading>
 					<Text type="secondary">
-						{LAYER_COUNT}, across {FAMILY_COUNT} families, and the dependency direction only
+						{TIERS.length} tiers across {MODULE_COUNT} modules, and the dependency direction only
 						ever points down.
 					</Text>
 				</div>
 				<Stack gap="md">
 					{/* Read from the generated index, so it cannot go stale. */}
-					{LAYERS.map((layer) => (
-						<Text key={layer.id}>
-							<strong>{layer.id}/</strong> — {layer.holds}{" "}
+					{TIERS.map((tier) => (
+						<Text key={tier.id}>
+							<strong>{tier.id}</strong> — {tier.holds}{" "}
 							<Text tag="span" type="secondary" size="xs">
-								({layer.families})
+								({tier.modules})
 							</Text>
 						</Text>
 					))}

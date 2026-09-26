@@ -1,0 +1,2120 @@
+{
+	"modules": {
+		"base/display": "Display",
+		"base/navigation": "Navigation",
+		"base/forms": "Forms",
+		"base/text-inputs": "Text inputs",
+		"base/value-inputs": "Value inputs",
+		"base/choice-inputs": "Choice inputs",
+		"base/forms-numeric": "Numeric inputs",
+		"base/date-pickers": "Date pickers",
+		"base/feedback": "Feedback",
+		"admin/patterns/commerce": "Commerce",
+		"features/products": "Products"
+	},
+	"routes": [
+		{
+			"path": "/",
+			"label": "Introduction",
+			"page": "overview",
+			"component": "OverviewPage",
+			"tier": "Get started",
+			"topic": "Get started",
+			"keywords": [
+				"overview",
+				"install",
+				"start",
+				"getting started"
+			]
+		},
+		{
+			"path": "/components",
+			"label": "All components",
+			"page": "gallery",
+			"component": "GalleryPage",
+			"tier": "Get started",
+			"topic": "Get started",
+			"keywords": [
+				"gallery",
+				"browse",
+				"index",
+				"catalogue",
+				"all"
+			]
+		},
+		{
+			"path": "/theme-tweaker",
+			"label": "Theme tweaker",
+			"page": "theme-tweaker",
+			"component": "ThemeTweakerPage",
+			"module": "features/theme-tweaker",
+			"topic": "Get started",
+			"keywords": [
+				"theme",
+				"tweaker",
+				"tokens",
+				"variables",
+				"customise",
+				"editor",
+				"palette",
+				"export",
+				"css"
+			]
+		},
+		{
+			"path": "/tokens",
+			"label": "Tokens & theming",
+			"page": "tokens",
+			"component": "TokensPage",
+			"tier": "Foundations",
+			"topic": "Foundations",
+			"keywords": [
+				"theme",
+				"colour",
+				"color",
+				"palette",
+				"dark mode",
+				"semantic"
+			]
+		},
+		{
+			"path": "/scale",
+			"label": "Scale & density",
+			"page": "scale",
+			"component": "ScalePage",
+			"tier": "Foundations",
+			"topic": "Foundations",
+			"keywords": [
+				"size",
+				"density",
+				"compact",
+				"spacing",
+				"factor"
+			]
+		},
+		{
+			"path": "/typography",
+			"label": "Typography",
+			"page": "typography",
+			"component": "TypographyPage",
+			"module": "base/typography",
+			"topic": "Foundations",
+			"keywords": [
+				"text",
+				"heading",
+				"label",
+				"link",
+				"prose",
+				"font"
+			]
+		},
+		{
+			"path": "/ui-root-scope",
+			"label": "UIRoot & UIScope",
+			"page": "ui-root-scope",
+			"component": "UIRootScopePage",
+			"module": "ui-provider",
+			"topic": "Foundations",
+			"keywords": [
+				"provider",
+				"uiroot",
+				"uiscope",
+				"scope",
+				"density",
+				"theme",
+				"nesting",
+				"document",
+				"config"
+			]
+		},
+		{
+			"path": "/structure",
+			"label": "Stack & grid",
+			"page": "structure",
+			"component": "StructurePage",
+			"module": "base/structure",
+			"topic": "Foundations",
+			"keywords": [
+				"stack",
+				"grid",
+				"layout",
+				"flex",
+				"responsive",
+				"gap"
+			]
+		},
+		{
+			"path": "/scroll-area",
+			"label": "Scroll area",
+			"page": "scroll-area",
+			"component": "ScrollAreaPage",
+			"module": "base/display",
+			"topic": "Foundations",
+			"keywords": [
+				"scroll",
+				"overflow",
+				"visually hidden"
+			]
+		},
+		{
+			"path": "/resizable",
+			"label": "Resizable panels",
+			"page": "resizable",
+			"component": "ResizablePage",
+			"module": "base/resizable",
+			"topic": "Foundations",
+			"keywords": [
+				"resizable",
+				"split",
+				"panes",
+				"panels",
+				"splitter",
+				"inspector"
+			]
+		},
+		{
+			"path": "/aspect-ratio",
+			"label": "Aspect ratio",
+			"page": "aspect-ratio",
+			"component": "AspectRatioPage",
+			"module": "base/aspect-ratio",
+			"topic": "Foundations",
+			"keywords": [
+				"aspect ratio",
+				"ratio",
+				"16:9",
+				"frame",
+				"media",
+				"embed"
+			]
+		},
+		{
+			"path": "/app-shell",
+			"label": "App shell",
+			"page": "app-shell",
+			"component": "AppShellPage",
+			"module": "layout/app-shell",
+			"topic": "App layout",
+			"keywords": [
+				"sidebar",
+				"admin layout",
+				"shell",
+				"rail",
+				"collapse",
+				"stacked",
+				"inset",
+				"navigation"
+			]
+		},
+		{
+			"path": "/header",
+			"label": "Header",
+			"page": "layout-header",
+			"component": "LayoutHeaderPage",
+			"module": "layout/header",
+			"topic": "App layout",
+			"keywords": [
+				"header",
+				"top bar",
+				"topbar",
+				"breadcrumbs",
+				"toolbar"
+			]
+		},
+		{
+			"path": "/sidebar",
+			"label": "Sidebar",
+			"page": "sidebar",
+			"component": "SidebarPage",
+			"module": "base/sidebar",
+			"topic": "App layout",
+			"keywords": [
+				"sidebar",
+				"navigation panel",
+				"rail",
+				"collapsible",
+				"offcanvas",
+				"inset",
+				"menu",
+				"shell"
+			]
+		},
+		{
+			"path": "/page",
+			"label": "Page & page header",
+			"page": "page-layout",
+			"component": "PageLayoutPage",
+			"module": "layout/page",
+			"topic": "App layout",
+			"keywords": [
+				"page",
+				"page header",
+				"page heading",
+				"page actions",
+				"title",
+				"eyebrow",
+				"back",
+				"actions"
+			]
+		},
+		{
+			"path": "/containers",
+			"label": "Containers",
+			"page": "containers",
+			"component": "ContainersPage",
+			"module": "layout/containers",
+			"topic": "App layout",
+			"keywords": [
+				"container",
+				"viewport",
+				"section",
+				"two column",
+				"measure",
+				"gutter",
+				"aside"
+			]
+		},
+		{
+			"path": "/side-nav",
+			"label": "Side nav & section nav",
+			"page": "side-nav",
+			"component": "SideNavPage",
+			"module": "layout/navigation",
+			"topic": "App layout",
+			"keywords": [
+				"side nav",
+				"section nav",
+				"rail",
+				"toc",
+				"table of contents",
+				"settings shell",
+				"settings",
+				"aside nav",
+				"account",
+				"section"
+			]
+		},
+		{
+			"path": "/workspace-header",
+			"label": "Workspace record header",
+			"page": "workspace-header",
+			"component": "WorkspaceHeaderPage",
+			"module": "layout/workspace",
+			"topic": "App layout",
+			"keywords": [
+				"record",
+				"workspace",
+				"detail header",
+				"metadata"
+			]
+		},
+		{
+			"path": "/auth-shell",
+			"label": "Auth shells",
+			"page": "auth-shell",
+			"component": "AuthShellPage",
+			"module": "layout/auth",
+			"topic": "App layout",
+			"keywords": [
+				"auth",
+				"sign in",
+				"login",
+				"split panel",
+				"register"
+			]
+		},
+		{
+			"path": "/tabs",
+			"label": "Tabs",
+			"page": "tabs",
+			"component": "TabsPage",
+			"module": "base/navigation",
+			"topic": "Navigation",
+			"keywords": [
+				"tabs",
+				"tablist",
+				"panel"
+			]
+		},
+		{
+			"path": "/breadcrumbs",
+			"label": "Breadcrumbs",
+			"page": "breadcrumbs",
+			"component": "BreadcrumbsPage",
+			"module": "base/navigation",
+			"topic": "Navigation",
+			"keywords": [
+				"breadcrumb",
+				"trail",
+				"path"
+			]
+		},
+		{
+			"path": "/pagination",
+			"label": "Pagination",
+			"page": "pagination",
+			"component": "PaginationPage",
+			"module": "base/navigation",
+			"topic": "Navigation",
+			"keywords": [
+				"pagination",
+				"pages",
+				"pager"
+			]
+		},
+		{
+			"path": "/navigation-menu",
+			"label": "Navigation menu",
+			"page": "navigation-menu",
+			"component": "NavigationMenuPage",
+			"module": "base/navigation-menu",
+			"topic": "Navigation",
+			"keywords": [
+				"navigation menu",
+				"mega menu",
+				"header nav",
+				"site navigation",
+				"dropdown nav"
+			]
+		},
+		{
+			"path": "/button",
+			"label": "Button",
+			"page": "button",
+			"component": "ButtonPage",
+			"module": "base/buttons",
+			"topic": "Actions",
+			"keywords": [
+				"action",
+				"tone",
+				"cta",
+				"group",
+				"submit"
+			]
+		},
+		{
+			"path": "/toolbar",
+			"label": "Toolbar",
+			"page": "toolbar",
+			"component": "ToolbarPage",
+			"module": "base/toolbar",
+			"topic": "Actions",
+			"keywords": [
+				"toolbar",
+				"roving focus",
+				"formatting",
+				"controls",
+				"arrow keys"
+			]
+		},
+		{
+			"path": "/action-menu",
+			"label": "Action menu & buttons",
+			"page": "action-menu",
+			"component": "ActionMenuPage",
+			"module": "base/action-menu",
+			"topic": "Actions",
+			"keywords": [
+				"menu",
+				"dropdown",
+				"overflow",
+				"kebab",
+				"commands",
+				"action buttons",
+				"actions",
+				"toolbar",
+				"buttons"
+			]
+		},
+		{
+			"path": "/batch-action-bar",
+			"label": "Batch action bar",
+			"page": "batch-action-bar",
+			"component": "BatchActionBarPage",
+			"module": "base/batch-action-bar",
+			"topic": "Actions",
+			"keywords": [
+				"batch",
+				"bulk",
+				"selection",
+				"actions",
+				"dock"
+			]
+		},
+		{
+			"path": "/copyable",
+			"label": "Copyable",
+			"page": "copyable",
+			"component": "CopyablePage",
+			"module": "base/copyable",
+			"topic": "Actions",
+			"keywords": [
+				"copy",
+				"clipboard"
+			]
+		},
+		{
+			"path": "/actions",
+			"label": "Action definitions",
+			"page": "actions",
+			"component": "ActionsPage",
+			"module": "features/actions",
+			"topic": "Actions",
+			"keywords": [
+				"action",
+				"command",
+				"runtime",
+				"registry",
+				"confirm",
+				"modality"
+			]
+		},
+		{
+			"path": "/form-field",
+			"label": "Form field",
+			"page": "form-field",
+			"component": "FormFieldPage",
+			"module": "base/forms",
+			"topic": "Forms",
+			"keywords": [
+				"form",
+				"field",
+				"label",
+				"helper",
+				"error",
+				"validation"
+			]
+		},
+		{
+			"path": "/label",
+			"label": "Label",
+			"page": "label",
+			"component": "LabelPage",
+			"module": "base/label",
+			"topic": "Forms",
+			"keywords": [
+				"label",
+				"caption",
+				"htmlfor"
+			]
+		},
+		{
+			"path": "/form-workflow",
+			"label": "Form workflow",
+			"page": "form-workflow",
+			"component": "FormWorkflowPage",
+			"module": "base/forms",
+			"topic": "Forms",
+			"keywords": [
+				"form section",
+				"actions bar",
+				"error summary",
+				"dirty state",
+				"unsaved",
+				"submit",
+				"loading state",
+				"error state",
+				"workflow"
+			]
+		},
+		{
+			"path": "/form-binding",
+			"label": "Form binding",
+			"page": "form-binding",
+			"component": "FormBindingPage",
+			"module": "forms",
+			"topic": "Forms",
+			"keywords": [
+				"binding",
+				"headless",
+				"form control",
+				"react-hook-form",
+				"rhf",
+				"useField",
+				"state"
+			]
+		},
+		{
+			"path": "/repeater",
+			"label": "Repeater",
+			"page": "repeater",
+			"component": "RepeaterPage",
+			"module": "base/repeaters",
+			"topic": "Forms",
+			"keywords": [
+				"repeater",
+				"rows",
+				"reorder",
+				"key value",
+				"localized"
+			]
+		},
+		{
+			"path": "/input",
+			"label": "Input",
+			"page": "input",
+			"component": "InputPage",
+			"module": "base/text-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"input",
+				"text",
+				"field",
+				"addon",
+				"icon",
+				"clearable",
+				"search",
+				"password",
+				"reveal",
+				"secret"
+			]
+		},
+		{
+			"path": "/textarea",
+			"label": "Textarea",
+			"page": "textarea",
+			"component": "TextareaPage",
+			"module": "base/text-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"textarea",
+				"multiline",
+				"notes"
+			]
+		},
+		{
+			"path": "/input-group",
+			"label": "Input group",
+			"page": "input-group",
+			"component": "InputGroupPage",
+			"module": "base/input-group",
+			"topic": "Forms",
+			"keywords": [
+				"input group",
+				"addon",
+				"prefix",
+				"suffix",
+				"unit",
+				"attached",
+				"affix",
+				"field shell"
+			]
+		},
+		{
+			"path": "/slug-field",
+			"label": "Slug field",
+			"page": "slug-field",
+			"component": "SlugFieldPage",
+			"module": "base/text-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"slug",
+				"url",
+				"permalink"
+			]
+		},
+		{
+			"path": "/phone-input",
+			"label": "Phone input",
+			"page": "phone-input",
+			"component": "PhoneInputPage",
+			"module": "base/value-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"phone",
+				"tel",
+				"dial code"
+			]
+		},
+		{
+			"path": "/tags-input",
+			"label": "Tags input",
+			"page": "tags-input",
+			"component": "TagsInputPage",
+			"module": "base/value-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"tags",
+				"chips",
+				"keywords"
+			]
+		},
+		{
+			"path": "/otp-input",
+			"label": "One-time code input",
+			"page": "otp-input",
+			"component": "OtpInputPage",
+			"module": "base/otp-input",
+			"topic": "Forms",
+			"keywords": [
+				"otp",
+				"one time code",
+				"verification code",
+				"2fa",
+				"sms code",
+				"pin"
+			]
+		},
+		{
+			"path": "/select",
+			"label": "Select",
+			"page": "select",
+			"component": "SelectPage",
+			"module": "base/choice-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"select",
+				"dropdown",
+				"options",
+				"native select"
+			]
+		},
+		{
+			"path": "/combobox",
+			"label": "Combobox",
+			"page": "combobox",
+			"component": "ComboboxPage",
+			"module": "base/combobox",
+			"topic": "Forms",
+			"keywords": [
+				"combobox",
+				"autocomplete",
+				"typeahead",
+				"multi select",
+				"search",
+				"suggestions",
+				"async",
+				"creatable",
+				"multi",
+				"resource"
+			]
+		},
+		{
+			"path": "/checkbox",
+			"label": "Checkbox",
+			"page": "checkbox",
+			"component": "CheckboxPage",
+			"module": "base/choice-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"checkbox",
+				"check",
+				"indeterminate"
+			]
+		},
+		{
+			"path": "/radio-group",
+			"label": "Radio groups",
+			"page": "radio-group",
+			"component": "RadioGroupPage",
+			"module": "base/choice-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"radio",
+				"options",
+				"one of",
+				"card radio",
+				"plan picker",
+				"tiles",
+				"list radio",
+				"rows",
+				"pill",
+				"segmented",
+				"view switch",
+				"checkbox cards"
+			]
+		},
+		{
+			"path": "/switch",
+			"label": "Switch & toggle field",
+			"page": "switch",
+			"component": "SwitchPage",
+			"module": "base/choice-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"switch",
+				"toggle",
+				"on off",
+				"toggle field",
+				"settings row",
+				"switch card"
+			]
+		},
+		{
+			"path": "/toggle",
+			"label": "Toggle",
+			"page": "toggle",
+			"component": "TogglePage",
+			"module": "base/toggle",
+			"topic": "Forms",
+			"keywords": [
+				"toggle",
+				"toggle group",
+				"pressed",
+				"segmented",
+				"editor",
+				"bold"
+			]
+		},
+		{
+			"path": "/decimal-input",
+			"label": "Decimal input",
+			"page": "decimal-input",
+			"component": "DecimalInputPage",
+			"module": "base/forms-numeric",
+			"topic": "Forms",
+			"keywords": [
+				"decimal",
+				"number",
+				"rounding"
+			]
+		},
+		{
+			"path": "/currency-input",
+			"label": "Currency input",
+			"page": "currency-input",
+			"component": "CurrencyInputPage",
+			"module": "base/forms-numeric",
+			"topic": "Forms",
+			"keywords": [
+				"currency",
+				"money",
+				"amount"
+			]
+		},
+		{
+			"path": "/percentage-input",
+			"label": "Percentage input",
+			"page": "percentage-input",
+			"component": "PercentageInputPage",
+			"module": "base/forms-numeric",
+			"topic": "Forms",
+			"keywords": [
+				"percentage",
+				"percent",
+				"rate"
+			]
+		},
+		{
+			"path": "/unit-inputs",
+			"label": "Unit inputs",
+			"page": "unit-inputs",
+			"component": "UnitInputsPage",
+			"module": "base/forms-numeric",
+			"topic": "Forms",
+			"keywords": [
+				"weight",
+				"dimensions",
+				"coordinates",
+				"unit"
+			]
+		},
+		{
+			"path": "/slider",
+			"label": "Slider",
+			"page": "slider",
+			"component": "SliderPage",
+			"module": "base/value-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"slider",
+				"range",
+				"track"
+			]
+		},
+		{
+			"path": "/date-picker",
+			"label": "Date picker",
+			"page": "date-picker",
+			"component": "DatePickerPage",
+			"module": "base/date-pickers",
+			"topic": "Forms",
+			"keywords": [
+				"date",
+				"picker",
+				"range",
+				"presets"
+			]
+		},
+		{
+			"path": "/calendar",
+			"label": "Calendar",
+			"page": "calendar",
+			"component": "CalendarPage",
+			"module": "base/date-pickers",
+			"topic": "Forms",
+			"keywords": [
+				"calendar",
+				"month",
+				"grid",
+				"days"
+			]
+		},
+		{
+			"path": "/time-picker",
+			"label": "Time picker",
+			"page": "time-picker",
+			"component": "TimePickerPage",
+			"module": "base/date-pickers",
+			"topic": "Forms",
+			"keywords": [
+				"time",
+				"clock",
+				"datetime"
+			]
+		},
+		{
+			"path": "/color-input",
+			"label": "Color input",
+			"page": "color-input",
+			"component": "ColorInputPage",
+			"module": "base/value-inputs",
+			"topic": "Forms",
+			"keywords": [
+				"color",
+				"colour",
+				"swatch",
+				"picker"
+			]
+		},
+		{
+			"path": "/file-upload",
+			"label": "File upload",
+			"page": "file-upload",
+			"component": "FileUploadPage",
+			"module": "base/upload",
+			"topic": "Forms",
+			"keywords": [
+				"upload",
+				"file",
+				"dropzone",
+				"drag drop",
+				"image",
+				"avatar",
+				"cover",
+				"picture",
+				"upload progress",
+				"queue",
+				"tray",
+				"gallery"
+			]
+		},
+		{
+			"path": "/table",
+			"label": "Table",
+			"page": "table",
+			"component": "TablePage",
+			"module": "base/table",
+			"topic": "Data display",
+			"keywords": [
+				"table",
+				"grid",
+				"rows",
+				"columns",
+				"data"
+			]
+		},
+		{
+			"path": "/item",
+			"label": "Item",
+			"page": "item",
+			"component": "ItemPage",
+			"module": "base/item",
+			"topic": "Data display",
+			"keywords": [
+				"item",
+				"row",
+				"list",
+				"media"
+			]
+		},
+		{
+			"path": "/card",
+			"label": "Card",
+			"page": "card",
+			"component": "CardPage",
+			"module": "base/cards",
+			"topic": "Data display",
+			"keywords": [
+				"card",
+				"panel",
+				"surface",
+				"tile"
+			]
+		},
+		{
+			"path": "/metadata",
+			"label": "Metadata list",
+			"page": "metadata",
+			"component": "MetadataPage",
+			"module": "base/display",
+			"topic": "Data display",
+			"keywords": [
+				"metadata",
+				"metadata list",
+				"facts",
+				"label value",
+				"definition list",
+				"details",
+				"key value",
+				"fact"
+			]
+		},
+		{
+			"path": "/inline-stat",
+			"label": "Inline stat",
+			"page": "inline-stat",
+			"component": "InlineStatPage",
+			"module": "base/display",
+			"topic": "Data display",
+			"keywords": [
+				"inline stat",
+				"stat",
+				"label value",
+				"total",
+				"figure",
+				"pair",
+				"summary row"
+			]
+		},
+		{
+			"path": "/chart",
+			"label": "Chart",
+			"page": "chart",
+			"component": "ChartPage",
+			"module": "base/chart",
+			"topic": "Data display",
+			"keywords": [
+				"chart",
+				"graph",
+				"bar",
+				"line",
+				"area",
+				"recharts"
+			]
+		},
+		{
+			"path": "/timeline",
+			"label": "Timeline",
+			"page": "timeline",
+			"component": "TimelinePage",
+			"module": "base/timeline",
+			"topic": "Data display",
+			"keywords": [
+				"timeline",
+				"rail",
+				"events",
+				"history",
+				"steps",
+				"stepper",
+				"changelog",
+				"milestones",
+				"progress"
+			]
+		},
+		{
+			"path": "/qr-code",
+			"label": "QR code",
+			"page": "qr-code",
+			"component": "QRCodePage",
+			"module": "base/qr-code",
+			"topic": "Data display",
+			"keywords": [
+				"qr",
+				"qr code",
+				"barcode",
+				"scan"
+			]
+		},
+		{
+			"path": "/avatar",
+			"label": "Avatar",
+			"page": "avatar",
+			"component": "AvatarPage",
+			"module": "base/avatar",
+			"topic": "Data display",
+			"keywords": [
+				"avatar",
+				"profile",
+				"initials",
+				"photo",
+				"stacked"
+			]
+		},
+		{
+			"path": "/badge",
+			"label": "Badge",
+			"page": "badge",
+			"component": "BadgePage",
+			"module": "base/badge",
+			"topic": "Data display",
+			"keywords": [
+				"badge",
+				"status",
+				"tag",
+				"chip",
+				"pill",
+				"dot"
+			]
+		},
+		{
+			"path": "/content-block",
+			"label": "Content block",
+			"page": "content-block",
+			"component": "ContentBlockPage",
+			"module": "base/display",
+			"topic": "Data display",
+			"keywords": [
+				"content block",
+				"surface",
+				"card",
+				"flush",
+				"region",
+				"icon badge",
+				"medallion",
+				"panel"
+			]
+		},
+		{
+			"path": "/date-block",
+			"label": "Date block",
+			"page": "date-block",
+			"component": "DateBlockPage",
+			"module": "base/display",
+			"topic": "Data display",
+			"keywords": [
+				"date block",
+				"calendar",
+				"leaf",
+				"agenda",
+				"event date",
+				"booking",
+				"day",
+				"month"
+			]
+		},
+		{
+			"path": "/separator",
+			"label": "Separator",
+			"page": "separator",
+			"component": "SeparatorPage",
+			"module": "base/display",
+			"topic": "Data display",
+			"keywords": [
+				"separator",
+				"divider",
+				"rule",
+				"hr"
+			]
+		},
+		{
+			"path": "/kbd",
+			"label": "Keyboard key",
+			"page": "kbd",
+			"component": "KbdPage",
+			"module": "base/display",
+			"topic": "Data display",
+			"keywords": [
+				"kbd",
+				"keyboard",
+				"shortcut",
+				"key",
+				"hotkey",
+				"chord"
+			]
+		},
+		{
+			"path": "/accordion",
+			"label": "Accordion",
+			"page": "accordion",
+			"component": "AccordionPage",
+			"module": "base/accordion",
+			"topic": "Data display",
+			"keywords": [
+				"accordion",
+				"collapse",
+				"disclosure",
+				"sections"
+			]
+		},
+		{
+			"path": "/collapsible",
+			"label": "Collapsible",
+			"page": "collapsible",
+			"component": "CollapsiblePage",
+			"module": "base/display",
+			"topic": "Data display",
+			"keywords": [
+				"collapsible",
+				"disclosure",
+				"expand"
+			]
+		},
+		{
+			"path": "/carousel",
+			"label": "Carousel",
+			"page": "carousel",
+			"component": "CarouselPage",
+			"module": "base/carousel",
+			"topic": "Data display",
+			"keywords": [
+				"carousel",
+				"slider",
+				"slides",
+				"scroll snap"
+			]
+		},
+		{
+			"path": "/overlay",
+			"label": "Overlay, dialog & sheet",
+			"page": "overlay",
+			"component": "OverlayPage",
+			"module": "base/overlay",
+			"topic": "Overlays & menus",
+			"keywords": [
+				"overlay",
+				"modal",
+				"dialog",
+				"sheet",
+				"drawer",
+				"panel",
+				"placement",
+				"modality",
+				"dismissal",
+				"native dialog",
+				"alert dialog",
+				"confirm",
+				"destructive",
+				"are you sure",
+				"popup",
+				"inspector",
+				"side"
+			]
+		},
+		{
+			"path": "/popover",
+			"label": "Popover",
+			"page": "popover",
+			"component": "PopoverPage",
+			"module": "base/popover",
+			"topic": "Overlays & menus",
+			"keywords": [
+				"popover",
+				"panel",
+				"anchored",
+				"filters",
+				"flyout",
+				"side",
+				"align",
+				"anchor"
+			]
+		},
+		{
+			"path": "/hover-card",
+			"label": "Hover card",
+			"page": "hover-card",
+			"component": "HoverCardPage",
+			"module": "base/hover-card",
+			"topic": "Overlays & menus",
+			"keywords": [
+				"hover card",
+				"preview",
+				"profile preview",
+				"peek",
+				"hover"
+			]
+		},
+		{
+			"path": "/tooltip",
+			"label": "Tooltip",
+			"page": "tooltip",
+			"component": "TooltipPage",
+			"module": "base/tooltip",
+			"topic": "Overlays & menus",
+			"keywords": [
+				"tooltip",
+				"hint",
+				"popup",
+				"hover"
+			]
+		},
+		{
+			"path": "/dropdown-menu",
+			"label": "Dropdown & context menu",
+			"page": "dropdown-menu",
+			"component": "DropdownMenuPage",
+			"module": "base/dropdown-menu",
+			"topic": "Overlays & menus",
+			"keywords": [
+				"dropdown",
+				"menu",
+				"submenu",
+				"checkbox item",
+				"radio item",
+				"right click",
+				"context",
+				"menu",
+				"accelerator"
+			]
+		},
+		{
+			"path": "/popover-menu",
+			"label": "Popover menu",
+			"page": "popover-menu",
+			"component": "PopoverMenuPage",
+			"module": "base/popover-menu",
+			"topic": "Overlays & menus",
+			"keywords": [
+				"popover menu",
+				"picker",
+				"searchable"
+			]
+		},
+		{
+			"path": "/menubar",
+			"label": "Menubar",
+			"page": "menubar",
+			"component": "MenubarPage",
+			"module": "base/menubar",
+			"topic": "Overlays & menus",
+			"keywords": [
+				"menubar",
+				"menu bar",
+				"file edit view",
+				"editor",
+				"menu"
+			]
+		},
+		{
+			"path": "/command",
+			"label": "Command palette",
+			"page": "command",
+			"component": "CommandPage",
+			"module": "base/command",
+			"topic": "Overlays & menus",
+			"keywords": [
+				"command",
+				"palette",
+				"cmdk",
+				"search",
+				"shortcut"
+			]
+		},
+		{
+			"path": "/alert",
+			"label": "Alert",
+			"page": "alert",
+			"component": "AlertPage",
+			"module": "base/feedback",
+			"topic": "Feedback & status",
+			"keywords": [
+				"alert",
+				"banner",
+				"callout",
+				"tone"
+			]
+		},
+		{
+			"path": "/toast",
+			"label": "Toast",
+			"page": "toast",
+			"component": "ToastPage",
+			"module": "base/toaster",
+			"topic": "Feedback & status",
+			"keywords": [
+				"toast",
+				"notification",
+				"snackbar",
+				"undo"
+			]
+		},
+		{
+			"path": "/progress",
+			"label": "Progress",
+			"page": "progress",
+			"component": "ProgressPage",
+			"module": "base/feedback",
+			"topic": "Feedback & status",
+			"keywords": [
+				"progress",
+				"bar",
+				"loading"
+			]
+		},
+		{
+			"path": "/spinner",
+			"label": "Spinner",
+			"page": "spinner",
+			"component": "SpinnerPage",
+			"module": "base/spinner",
+			"topic": "Feedback & status",
+			"keywords": [
+				"spinner",
+				"loader",
+				"busy"
+			]
+		},
+		{
+			"path": "/skeleton",
+			"label": "Skeleton",
+			"page": "skeleton",
+			"component": "SkeletonPage",
+			"module": "base/skeleton",
+			"topic": "Feedback & status",
+			"keywords": [
+				"skeleton",
+				"loading",
+				"placeholder",
+				"shimmer"
+			]
+		},
+		{
+			"path": "/empty",
+			"label": "Empty state",
+			"page": "empty",
+			"component": "EmptyPage",
+			"module": "base/feedback",
+			"topic": "Feedback & status",
+			"keywords": [
+				"empty",
+				"placeholder",
+				"no results",
+				"illustration",
+				"zero data"
+			]
+		},
+		{
+			"path": "/primitive-value",
+			"label": "Values & lists",
+			"page": "primitive-value",
+			"component": "PrimitiveValuePage",
+			"module": "primitives",
+			"topic": "Values & formatting",
+			"keywords": [
+				"value",
+				"empty",
+				"mono",
+				"secondary",
+				"muted",
+				"dash",
+				"list",
+				"join",
+				"conjunction",
+				"and",
+				"or",
+				"comma"
+			]
+		},
+		{
+			"path": "/primitive-name",
+			"label": "Names & initials",
+			"page": "primitive-name",
+			"component": "PrimitiveNamePage",
+			"module": "primitives",
+			"topic": "Values & formatting",
+			"keywords": [
+				"name",
+				"person",
+				"first",
+				"last",
+				"full name",
+				"initials",
+				"avatar",
+				"monogram"
+			]
+		},
+		{
+			"path": "/primitive-contact",
+			"label": "Contact details",
+			"page": "primitive-contact",
+			"component": "PrimitiveContactPage",
+			"module": "primitives",
+			"topic": "Values & formatting",
+			"keywords": [
+				"email",
+				"mailto",
+				"address",
+				"contact",
+				"phone",
+				"tel",
+				"telephone",
+				"mobile",
+				"url",
+				"link",
+				"href",
+				"external",
+				"website"
+			]
+		},
+		{
+			"path": "/primitive-address",
+			"label": "Addresses & places",
+			"page": "primitive-address",
+			"component": "PrimitiveAddressPage",
+			"module": "primitives",
+			"topic": "Values & formatting",
+			"keywords": [
+				"address",
+				"postal",
+				"street",
+				"city",
+				"postcode",
+				"zip",
+				"coordinates",
+				"latitude",
+				"longitude",
+				"gps",
+				"dms",
+				"location"
+			]
+		},
+		{
+			"path": "/primitive-money",
+			"label": "Money",
+			"page": "primitive-money",
+			"component": "PrimitiveMoneyPage",
+			"module": "primitives",
+			"topic": "Values & formatting",
+			"keywords": [
+				"money",
+				"currency",
+				"amount",
+				"price",
+				"total"
+			]
+		},
+		{
+			"path": "/primitive-number",
+			"label": "Numbers, ranges & ratios",
+			"page": "primitive-number",
+			"component": "PrimitiveNumberPage",
+			"module": "primitives",
+			"topic": "Values & formatting",
+			"keywords": [
+				"number",
+				"percent",
+				"percentage",
+				"rate",
+				"count",
+				"range",
+				"span",
+				"between",
+				"from",
+				"to",
+				"min",
+				"max",
+				"ratio",
+				"rating",
+				"out of",
+				"score",
+				"fraction"
+			]
+		},
+		{
+			"path": "/primitive-quantity",
+			"label": "Measures & file sizes",
+			"page": "primitive-quantity",
+			"component": "PrimitiveQuantityPage",
+			"module": "primitives",
+			"topic": "Values & formatting",
+			"keywords": [
+				"quantity",
+				"plural",
+				"count",
+				"unit",
+				"measure",
+				"kg",
+				"dimensions",
+				"width",
+				"height",
+				"depth",
+				"size",
+				"file size",
+				"bytes",
+				"kb",
+				"mb",
+				"gb"
+			]
+		},
+		{
+			"path": "/primitive-date",
+			"label": "Dates & times",
+			"page": "primitive-date",
+			"component": "PrimitiveDatePage",
+			"module": "primitives",
+			"topic": "Values & formatting",
+			"keywords": [
+				"date",
+				"time",
+				"datetime",
+				"date-fns",
+				"format",
+				"range",
+				"between",
+				"start",
+				"end",
+				"period",
+				"relative",
+				"ago",
+				"timeago",
+				"recent",
+				"updated",
+				"duration",
+				"elapsed",
+				"length",
+				"minutes",
+				"seconds"
+			]
+		},
+		{
+			"path": "/data-view",
+			"label": "Data view & data table",
+			"page": "data-view",
+			"component": "DataViewPage",
+			"module": "features/data-view",
+			"topic": "Features",
+			"keywords": [
+				"data view",
+				"index",
+				"list",
+				"filters",
+				"table",
+				"toolbar",
+				"saved views",
+				"pagination",
+				"feature",
+				"data table",
+				"tanstack",
+				"sort",
+				"select",
+				"columns",
+				"rows",
+				"cells"
+			]
+		},
+		{
+			"path": "/filters",
+			"label": "Filters",
+			"page": "filters",
+			"component": "FiltersPage",
+			"module": "features/filters",
+			"topic": "Features",
+			"keywords": [
+				"filter",
+				"filters",
+				"facet",
+				"query",
+				"chips",
+				"pills",
+				"search",
+				"saved views",
+				"url",
+				"feature"
+			]
+		},
+		{
+			"path": "/global-search",
+			"label": "Global search",
+			"page": "global-search",
+			"component": "GlobalSearchPage",
+			"module": "features/global-search",
+			"topic": "Features",
+			"keywords": [
+				"search",
+				"command",
+				"palette",
+				"cmdk",
+				"spotlight",
+				"quick",
+				"omnibox",
+				"results",
+				"groups",
+				"feature"
+			]
+		},
+		{
+			"path": "/resource",
+			"label": "Resource shells",
+			"page": "resource",
+			"component": "ResourcePage",
+			"module": "features/resource",
+			"topic": "Features",
+			"keywords": [
+				"resource",
+				"index",
+				"show",
+				"detail",
+				"shell",
+				"workspace",
+				"tabs",
+				"aside",
+				"loading",
+				"empty",
+				"error",
+				"feature"
+			]
+		},
+		{
+			"path": "/resource-assignment",
+			"label": "Resource assignment",
+			"page": "resource-assignment",
+			"component": "ResourceAssignmentPage",
+			"module": "features/resource-assignment",
+			"topic": "Features",
+			"keywords": [
+				"assignment",
+				"assign",
+				"shared resource",
+				"picker",
+				"venue",
+				"selector",
+				"confirm",
+				"dialog",
+				"card",
+				"feature"
+			]
+		},
+		{
+			"path": "/async-preview",
+			"label": "Async preview",
+			"page": "async-preview",
+			"component": "AsyncPreviewPage",
+			"module": "features/async-preview",
+			"topic": "Features",
+			"keywords": [
+				"preview",
+				"hover card",
+				"fetch",
+				"popover",
+				"abort",
+				"cache",
+				"race",
+				"prefetch",
+				"trigger cell",
+				"feature"
+			]
+		},
+		{
+			"path": "/comments",
+			"label": "Comments",
+			"page": "comments",
+			"component": "CommentsPage",
+			"module": "features/comments",
+			"topic": "Features",
+			"keywords": [
+				"comment",
+				"thread",
+				"discussion",
+				"reply",
+				"composer",
+				"timeline",
+				"attachment",
+				"reaction",
+				"feature"
+			]
+		},
+		{
+			"path": "/activities",
+			"label": "Activities",
+			"page": "activities",
+			"component": "ActivitiesPage",
+			"module": "features/activities",
+			"topic": "Features",
+			"keywords": [
+				"activity",
+				"feed",
+				"timeline",
+				"audit",
+				"log",
+				"event",
+				"history",
+				"changes",
+				"feature"
+			]
+		},
+		{
+			"path": "/mentions",
+			"label": "Mentions",
+			"page": "mentions",
+			"component": "MentionsPage",
+			"module": "features/mentions",
+			"topic": "Features",
+			"keywords": [
+				"mention",
+				"reference",
+				"at",
+				"hashtag",
+				"chip",
+				"picker",
+				"trigger",
+				"rich text",
+				"feature"
+			]
+		},
+		{
+			"path": "/rich-text-editor",
+			"label": "Rich text editor",
+			"page": "rich-text-editor",
+			"component": "RichTextEditorPage",
+			"module": "features/rich-text-editor",
+			"topic": "Features",
+			"keywords": [
+				"editor",
+				"rich text",
+				"wysiwyg",
+				"contenteditable",
+				"toolbar",
+				"bold",
+				"italic",
+				"html",
+				"feature"
+			]
+		},
+		{
+			"path": "/ai-chat",
+			"label": "AI chat",
+			"page": "ai-chat",
+			"component": "AiChatPage",
+			"module": "features/ai-chat",
+			"topic": "Features",
+			"keywords": [
+				"ai",
+				"chat",
+				"assistant",
+				"agent",
+				"llm",
+				"message",
+				"prompt",
+				"tool",
+				"reasoning",
+				"streaming",
+				"transcript",
+				"feature"
+			]
+		},
+		{
+			"path": "/media-library",
+			"label": "Media library",
+			"page": "media-library",
+			"component": "MediaLibraryPage",
+			"module": "features/media-library",
+			"topic": "Features",
+			"keywords": [
+				"media",
+				"library",
+				"assets",
+				"images",
+				"gallery",
+				"upload",
+				"picker",
+				"files",
+				"feature"
+			]
+		},
+		{
+			"path": "/event-calendar",
+			"label": "Event calendar",
+			"page": "event-calendar",
+			"component": "EventCalendarPage",
+			"module": "features/event-calendar",
+			"topic": "Features",
+			"keywords": [
+				"calendar",
+				"event",
+				"month",
+				"week",
+				"agenda",
+				"schedule",
+				"booking",
+				"day",
+				"grid",
+				"feature"
+			]
+		},
+		{
+			"path": "/kanban",
+			"label": "Kanban & sync",
+			"page": "kanban",
+			"component": "KanbanPage",
+			"module": "features/kanban",
+			"topic": "Features",
+			"keywords": [
+				"kanban",
+				"board",
+				"drag",
+				"drop",
+				"sortable",
+				"columns",
+				"dnd",
+				"sync",
+				"feature"
+			]
+		},
+		{
+			"path": "/map",
+			"label": "Map",
+			"page": "map",
+			"component": "MapPage",
+			"module": "features/map",
+			"topic": "Features",
+			"keywords": [
+				"map",
+				"leaflet",
+				"geo",
+				"location",
+				"marker",
+				"geocode",
+				"place",
+				"autocomplete",
+				"draw",
+				"tiles",
+				"feature"
+			]
+		},
+		{
+			"path": "/schema-form",
+			"label": "Schema form",
+			"page": "schema-form",
+			"component": "SchemaFormPage",
+			"module": "features/schema-form",
+			"topic": "Features",
+			"keywords": [
+				"schema",
+				"form",
+				"json",
+				"generated",
+				"fields",
+				"validation",
+				"sections",
+				"dynamic",
+				"feature"
+			]
+		},
+		{
+			"path": "/action-overlays",
+			"label": "Action overlays",
+			"page": "action-overlays",
+			"component": "ActionOverlaysPage",
+			"module": "features/overlays",
+			"topic": "Features",
+			"keywords": [
+				"dialog",
+				"drawer",
+				"sheet",
+				"confirm",
+				"action dialog",
+				"async confirm",
+				"footer",
+				"feature"
+			]
+		},
+		{
+			"path": "/blocks-order",
+			"label": "Order",
+			"page": "blocks-order",
+			"component": "BlocksOrderPage",
+			"module": "admin/patterns/commerce",
+			"topic": "Blocks",
+			"keywords": [
+				"order",
+				"fulfillment",
+				"fulfilment",
+				"line item",
+				"sku",
+				"transaction",
+				"payment",
+				"refund",
+				"capture",
+				"authorization",
+				"customer",
+				"shipping address",
+				"billing",
+				"totals",
+				"balance",
+				"block"
+			]
+		},
+		{
+			"path": "/blocks-commerce",
+			"label": "Cart, checkout & billing",
+			"page": "blocks-commerce",
+			"component": "BlocksCommercePage",
+			"module": "admin/patterns/commerce",
+			"topic": "Blocks",
+			"keywords": [
+				"cart",
+				"checkout",
+				"invoice",
+				"order",
+				"refund",
+				"shipment",
+				"tracking",
+				"tax",
+				"vat",
+				"discount",
+				"coupon",
+				"address",
+				"payment",
+				"card",
+				"subscription",
+				"inventory",
+				"stock",
+				"block"
+			]
+		},
+		{
+			"path": "/blocks-catalogue",
+			"label": "Catalogue & partners",
+			"page": "blocks-catalogue",
+			"component": "BlocksCataloguePage",
+			"module": "admin/patterns/commerce",
+			"topic": "Blocks",
+			"keywords": [
+				"seo",
+				"search appearance",
+				"permalink",
+				"slug",
+				"listing",
+				"score",
+				"inventory",
+				"sku",
+				"barcode",
+				"stock",
+				"vendor",
+				"supplier",
+				"booking",
+				"block"
+			]
+		},
+		{
+			"path": "/products",
+			"label": "Product surfaces",
+			"page": "products",
+			"component": "ProductsPage",
+			"module": "features/products",
+			"topic": "Blocks",
+			"keywords": [
+				"product",
+				"catalogue",
+				"catalog",
+				"overview",
+				"readiness",
+				"contract",
+				"policies",
+				"quote",
+				"pricing",
+				"commerce"
+			]
+		},
+		{
+			"path": "/product-variants",
+			"label": "Options & variants",
+			"page": "product-variants",
+			"component": "ProductVariantsPage",
+			"module": "features/products",
+			"topic": "Blocks",
+			"keywords": [
+				"variant",
+				"variants",
+				"option",
+				"options",
+				"sku",
+				"inventory",
+				"stock",
+				"matrix",
+				"bulk",
+				"editor",
+				"commerce"
+			]
+		},
+		{
+			"path": "/analytics",
+			"label": "Analytics",
+			"page": "analytics",
+			"component": "AnalyticsPage",
+			"module": "patterns/analytics",
+			"topic": "Blocks",
+			"keywords": [
+				"metric",
+				"kpi",
+				"analytics",
+				"dashboard",
+				"stat",
+				"sparkline",
+				"trend",
+				"heatmap",
+				"chart card",
+				"comparison",
+				"block"
+			]
+		},
+		{
+			"path": "/blocks-admin",
+			"label": "Timelines, onboarding & admin",
+			"page": "blocks-admin",
+			"component": "BlocksAdminPage",
+			"module": "patterns/timelines",
+			"topic": "Blocks",
+			"keywords": [
+				"changelog",
+				"milestones",
+				"steps",
+				"stepper",
+				"checklist",
+				"onboarding",
+				"api key",
+				"credential",
+				"secret",
+				"role",
+				"permission",
+				"danger zone",
+				"block"
+			]
+		}
+	],
+	"internal": [
+		{
+			"path": "/review",
+			"label": "Review (internal)",
+			"page": "review",
+			"component": "ReviewPage",
+			"tier": "Get started",
+			"keywords": [
+				"review",
+				"kitchen sink",
+				"all"
+			]
+		}
+	],
+	"moved": {
+		"/search-input": "/input",
+		"/password-input": "/input",
+		"/toggle-field": "/switch",
+		"/card-radio-group": "/radio-group",
+		"/list-radio-group": "/radio-group",
+		"/pill-radio-group": "/radio-group",
+		"/context-menu": "/dropdown-menu",
+		"/alert-dialog": "/overlay",
+		"/dialog": "/overlay",
+		"/sheet": "/overlay",
+		"/data-table": "/data-view",
+		"/async-combobox": "/combobox",
+		"/action-buttons": "/action-menu",
+		"/settings-shell": "/side-nav",
+		"/image-upload": "/file-upload",
+		"/upload-queue": "/file-upload",
+		"/primitive-inline-list": "/primitive-value",
+		"/primitive-initials": "/primitive-name",
+		"/primitive-email": "/primitive-contact",
+		"/primitive-phone": "/primitive-contact",
+		"/primitive-url": "/primitive-contact",
+		"/primitive-coordinates": "/primitive-address",
+		"/primitive-range": "/primitive-number",
+		"/primitive-ratio": "/primitive-number",
+		"/primitive-dimensions": "/primitive-quantity",
+		"/primitive-file-size": "/primitive-quantity",
+		"/primitive-date-range": "/primitive-date",
+		"/primitive-relative-time": "/primitive-date",
+		"/primitive-duration": "/primitive-date"
+	}
+}

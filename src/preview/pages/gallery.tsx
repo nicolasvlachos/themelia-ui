@@ -9,6 +9,7 @@ import { NativeSelect, SearchInput } from "@/components/base/text-inputs"
 import { Heading, Text } from "@/components/base/typography"
 
 import gallery from "../generated/gallery.json"
+import { ROUTE_GROUPS, ROUTES } from "../routes"
 import styles from "../preview.module.css"
 
 /**
@@ -17,26 +18,23 @@ import styles from "../preview.module.css"
  */
 type Card = (typeof gallery.cards)[number]
 
-/* Bottom to top; `foundation` (provider, form contract) last, beside the stack. */
-const LAYER_ORDER = [
-	"typography",
-	"primitives",
-	"base",
-	"layout",
-	"features",
-	"patterns",
-	"admin",
-	"foundation",
-]
+/*
+ * A card's tier is its page's sidebar group, so the filter and the rail agree. Read on first
+ * use: routes.ts loads this page, so the table is not ready while this module evaluates.
+ */
+let tierByPath: Map<string, string> | undefined
+const tierOf = (card: Card) => (tierByPath ??= new Map(ROUTES.map((route) => [route.path, route.group]))).get(card.route) ?? null
 
-const LAYERS = LAYER_ORDER.filter((layer) => gallery.cards.some((card) => card.layer === layer))
-const LAYER_OPTIONS = [
-	{ value: "all", label: `All (${gallery.cards.length})` },
-	...LAYERS.map((id) => ({
-		value: id,
-		label: `${id} (${gallery.cards.filter((card) => card.layer === id).length})`,
-	})),
-]
+function tierOptions() {
+	const tiers = ROUTE_GROUPS.map((group) => group.label).filter((tier) => gallery.cards.some((card) => tierOf(card) === tier))
+	return [
+		{ value: "all", label: `All (${gallery.cards.length})` },
+		...tiers.map((tier) => ({
+			value: tier,
+			label: `${tier} (${gallery.cards.filter((card) => tierOf(card) === tier).length})`,
+		})),
+	]
+}
 
 /*
  * Words that match everything and therefore mean nothing here.
@@ -55,7 +53,8 @@ const STOPWORDS = new Set([
 
 export function GalleryPage() {
 	const [query, setQuery] = useState("")
-	const [layer, setLayer] = useState("all")
+	const [tier, setTier] = useState("all")
+	const options = useMemo(() => tierOptions(), [])
 
 	/*
 	 * Deferred, so typing stays responsive while the card set re-filters. The input keeps its
@@ -69,8 +68,8 @@ export function GalleryPage() {
 			.split(/\s+/)
 			.filter((term) => term.length > 1 && !STOPWORDS.has(term))
 
-		const inLayer = gallery.cards.filter((card) => layer === "all" || card.layer === layer)
-		if (terms.length === 0) return inLayer
+		const inTier = gallery.cards.filter((card) => tier === "all" || tierOf(card) === tier)
+		if (terms.length === 0) return inTier
 
 		/*
 		 * Scored, not filtered on every term.
@@ -86,7 +85,7 @@ export function GalleryPage() {
 		 */
 		const norm = (value: string) => value.toLowerCase().replace(/[-_]/g, " ")
 
-		const scored = inLayer
+		const scored = inTier
 			.map((card) => {
 				let score = 0
 				for (const term of terms) {
@@ -106,7 +105,7 @@ export function GalleryPage() {
 
 		scored.sort((a, b) => b.score - a.score || a.card.title.localeCompare(b.card.title))
 		return scored.map((entry) => entry.card)
-	}, [deferred, layer])
+	}, [deferred, tier])
 
 	return (
 		<>
@@ -134,20 +133,20 @@ export function GalleryPage() {
 
 					<div className={styles.galleryLayerPills}>
 						<PillRadioGroup
-							value={layer}
+							value={tier}
 							/* The group can clear to null; the gallery's cleared state is "all". */
-							onValueChange={(next) => setLayer(next ?? "all")}
-							aria-label="Filter by layer"
-							options={LAYER_OPTIONS}
+							onValueChange={(next) => setTier(next ?? "all")}
+							aria-label="Filter by tier"
+							options={options}
 						/>
 					</div>
 					<NativeSelect
-						value={layer}
-						onChange={(event) => setLayer(event.target.value)}
-						aria-label="Filter by layer"
+						value={tier}
+						onChange={(event) => setTier(event.target.value)}
+						aria-label="Filter by tier"
 						className={styles.galleryLayerSelect}
 					>
-						{LAYER_OPTIONS.map((option) => (
+						{options.map((option) => (
 							<option key={option.value} value={option.value}>
 								{option.label}
 							</option>
@@ -197,9 +196,9 @@ function GalleryCard({ card }: { card: Card }) {
 					<Heading level={2} size="sm">
 						{card.title}
 					</Heading>
-					{!!card.layer && (
+					{!!tierOf(card) && (
 						<Badge tone="neutral">
-							{card.layer}
+							{tierOf(card)}
 						</Badge>
 					)}
 				</div>

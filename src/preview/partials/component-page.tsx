@@ -10,6 +10,9 @@ import { CodeBlock } from "./code-block"
 import { Pager } from "./pager"
 
 /** The page frame every component doc shares: import line, examples, props table. */
+/** The import a consumer writes: the published subpath, not this repository's `@/` alias. */
+const published = (path: string) => path.replace(/^@\/components\//, "themelia-ui/").replace(/^@\/lib\//, "themelia-ui/")
+
 export function ComponentPage({
 	title,
 	summary,
@@ -76,8 +79,8 @@ export function ComponentPage({
 					<div className={styles.importLine}>
 						<CodeBlock
 							code={[
-								`import { ${exports.join(", ")} } from "${importPath}"`,
-								...(alsoImports ?? []).map((entry) => `import { ${entry.exports.join(", ")} } from "${entry.importPath}"`),
+								`import { ${exports.join(", ")} } from "${published(importPath)}"`,
+								...(alsoImports ?? []).map((entry) => `import { ${entry.exports.join(", ")} } from "${published(entry.importPath)}"`),
 							].join("\n")}
 						/>
 					</div>

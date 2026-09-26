@@ -1,7 +1,7 @@
 /*
  * Reads each preview page's `<ComponentPage>` props (title, summary, importPath, exports,
- * alsoImports) and its route, shared by `find-component` and `gen-gallery`.
- * Parses routes.ts and the page tags by regex: keep their formats (see the patterns below).
+ * alsoImports) and its route from src/preview/routes.json, shared by `find-component` and
+ * `gen-gallery`. The page tags are matched by regex: keep their format (see the patterns below).
  */
 import { readFileSync, readdirSync } from 'node:fs'
 
@@ -14,18 +14,10 @@ const list = (raw) => [...raw.matchAll(/"([^"]+)"/g)].map((match) => match[1])
  * `overview.tsx` serves `/`). Prose pages without an `importPath` are left out.
  */
 export function previewPages(packageName) {
-  const routeSource = readFileSync('src/preview/routes.ts', 'utf8')
-
-  const keywordsByPath = new Map()
-  for (const row of routeSource.matchAll(/\{\s*path:\s*"([^"]+)",[^}]*?keywords:\s*\[([^\]]*)\]/g)) {
-    keywordsByPath.set(row[1], list(row[2]))
-  }
-
+  const { routes } = JSON.parse(readFileSync('src/preview/routes.json', 'utf8'))
+  const keywordsByPath = new Map(routes.map((row) => [row.path, row.keywords ?? []]))
   /* component name → the path it is routed at */
-  const pathByComponent = new Map()
-  for (const row of routeSource.matchAll(/\{\s*path:\s*"([^"]+)"[^}]*?component:\s*(\w+)/g)) {
-    pathByComponent.set(row[2], row[1])
-  }
+  const pathByComponent = new Map(routes.map((row) => [row.component, row.path]))
 
   const pages = []
   for (const file of readdirSync(PAGES)) {

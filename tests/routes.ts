@@ -1,6 +1,6 @@
 /**
- * The pages under test, parsed as text from the app's route table (`src/preview/routes.ts`).
- * Importing it would pull in every CSS module, which Playwright's Node loader cannot parse.
+ * The pages under test, from the app's route table (`src/preview/routes.json`). The JSON is
+ * read rather than `routes.ts` imported, which would pull in every page and CSS module.
  */
 import { readFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
@@ -9,31 +9,18 @@ import { fileURLToPath } from "node:url"
 import { expect, type Page } from "@playwright/test"
 
 const here = dirname(fileURLToPath(import.meta.url))
-const source = readFileSync(resolve(here, "../src/preview/routes.ts"), "utf8")
-
-export type TestRoute = { path: string; label: string; group: string }
-
-function parseRoutes(): TestRoute[] {
-	const routes: TestRoute[] = []
-	let group = "unknown"
-
-	for (const line of source.split("\n")) {
-		const groupMatch = line.match(/^\tgroup\("([^"]+)"/)
-		if (groupMatch) {
-			group = groupMatch[1]
-			continue
-		}
-		const routeMatch = line.match(/path: "([^"]+)", label: "([^"]+)"/)
-		if (routeMatch) routes.push({ path: routeMatch[1], label: routeMatch[2], group })
-	}
-	return routes
+const table = JSON.parse(readFileSync(resolve(here, "../src/preview/routes.json"), "utf8")) as {
+	routes: { path: string; label: string }[]
+	internal: { path: string; label: string }[]
 }
 
-export const ROUTES = parseRoutes()
+export type TestRoute = { path: string; label: string }
+
+export const ROUTES: TestRoute[] = [...table.routes, ...table.internal].map(({ path, label }) => ({ path, label }))
 
 if (ROUTES.length === 0) {
 	// A silent empty list would turn every suite below into a no-op that reports green.
-	throw new Error("tests/routes.ts parsed no routes out of src/preview/routes.ts")
+	throw new Error("tests/routes.ts read no routes from src/preview/routes.json")
 }
 
 /**

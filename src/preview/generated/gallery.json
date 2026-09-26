@@ -18,7 +18,6 @@
         "disclosure",
         "sections"
       ],
-      "layer": "base",
       "family": "base/accordion",
       "chooseWhen": "Several titled sections share one column and the reader opens them one at a time.",
       "avoidWhen": "Only one section can collapse, or the panel is a disclosure attached to a control."
@@ -47,7 +46,6 @@
         "toolbar",
         "buttons"
       ],
-      "layer": "base",
       "family": "base/action-menu",
       "chooseWhen": "A row, card or header offers the same set of actions repeatedly and the overflow must collapse consistently.",
       "avoidWhen": "You are building a bespoke menu anatomy, or the trigger is a right-click."
@@ -75,7 +73,6 @@
         "footer",
         "feature"
       ],
-      "layer": "features",
       "family": "features/overlays",
       "chooseWhen": "Any application modal — dialog, sheet or confirmation — including its async confirm lifecycle.",
       "avoidWhen": "The panel is non-modal and anchored to its trigger."
@@ -108,7 +105,6 @@
         "confirm",
         "modality"
       ],
-      "layer": "features",
       "family": "features/actions",
       "chooseWhen": "The same operation runs from a table row, a card menu and the command palette, and all three must get one confirm, one loading state and one error path.",
       "avoidWhen": "One surface owns the action and nothing else invokes it — a registry then adds indirection for a single caller."
@@ -145,7 +141,6 @@
         "changes",
         "feature"
       ],
-      "layer": "features",
       "family": "features/activities",
       "chooseWhen": "An audit or activity log renders actor, change and time, grouped by day.",
       "avoidWhen": "The entries are milestones or a changelog, or the thread is a discussion."
@@ -192,7 +187,6 @@
         "transcript",
         "feature"
       ],
-      "layer": "features",
       "family": "features/ai-chat",
       "chooseWhen": "A conversational surface streams assistant messages, tool calls, artifacts and attachments.",
       "avoidWhen": "The thread is human discussion on a record, or the input is a single prompt field."
@@ -215,7 +209,6 @@
         "callout",
         "tone"
       ],
-      "layer": "base",
       "family": "base/feedback",
       "chooseWhen": "A region reports its own state — informational alert, empty, loading, error, or progress.",
       "avoidWhen": "The placeholder should mimic the eventual layout, or the message is transient."
@@ -250,7 +243,6 @@
         "inspector",
         "side"
       ],
-      "layer": "base",
       "family": "base/alert-dialog",
       "chooseWhen": "Documenting or extending the alert-dialog anatomy itself inside base.",
       "avoidWhen": "You are confirming a destructive action in an app — that lifecycle, focus trap and async state belong to ConfirmDialog."
@@ -286,7 +278,6 @@
         "comparison",
         "block"
       ],
-      "layer": "patterns",
       "family": "patterns/analytics",
       "chooseWhen": "Figures are summarised — metric tiles, trends, comparisons, a heatmap or a titled chart card.",
       "avoidWhen": "You are rendering the chart itself with no framing."
@@ -318,7 +309,6 @@
         "inset",
         "navigation"
       ],
-      "layer": "layout",
       "family": "layout/app-shell",
       "chooseWhen": "The application needs its outermost frame — a sidebar with an inset, a stacked header over content, or a topbar with a collapsible rail beneath it.",
       "avoidWhen": "You are inside a shell already and want a region of the page: a titled section, a width constraint, or a two-column split."
@@ -339,7 +329,6 @@
         "media",
         "embed"
       ],
-      "layer": "base",
       "family": "base/aspect-ratio",
       "chooseWhen": "A media box must hold a fixed ratio while its width is decided by the layout.",
       "avoidWhen": "The element already has intrinsic dimensions, or you want a square avatar."
@@ -371,7 +360,6 @@
         "multi",
         "resource"
       ],
-      "layer": "features",
       "family": "features/combobox",
       "chooseWhen": "Options arrive from a fetch, the field selects application resources, or it proposes completions as the user types.",
       "avoidWhen": "The options are a small in-memory list, you are composing a bespoke anatomy, or a trigger character inserts entities into text."
@@ -408,7 +396,6 @@
         "trigger cell",
         "feature"
       ],
-      "layer": "features",
       "family": "features/async-preview",
       "chooseWhen": "A trigger fetches its content when it opens, and needs loading, empty and error states.",
       "avoidWhen": "The content is already loaded, or the surface is modal."
@@ -431,7 +418,6 @@
         "split panel",
         "register"
       ],
-      "layer": "layout",
       "family": "layout/auth",
       "chooseWhen": "Sign-in, registration and recovery pages share a centred card and optional split panel.",
       "avoidWhen": "The page sits inside the authenticated shell."
@@ -457,7 +443,6 @@
         "photo",
         "stacked"
       ],
-      "layer": "base",
       "family": "base/avatar",
       "chooseWhen": "Showing a person or entity as an image with an initials fallback, alone or stacked.",
       "avoidWhen": "The image is content rather than identity, or you need an upload affordance."
@@ -479,7 +464,6 @@
         "pill",
         "dot"
       ],
-      "layer": "base",
       "family": "base/badge",
       "chooseWhen": "A short status or count sits beside the thing it describes and carries a semantic tone.",
       "avoidWhen": "The text is a full sentence, or the tone is decoration rather than state."
@@ -500,7 +484,6 @@
         "actions",
         "dock"
       ],
-      "layer": "base",
       "family": "base/batch-action-bar",
       "chooseWhen": "A multi-select produces a selection whose actions must appear without shifting the list.",
       "avoidWhen": "Actions apply to one row, or the surface is a page-level form."
@@ -518,7 +501,6 @@
         "trail",
         "path"
       ],
-      "layer": "base",
       "family": "base/navigation",
       "chooseWhen": "Moving between sibling views or pages — tabs, breadcrumbs, pagination, page heading.",
       "avoidWhen": "The destinations are application shell regions, or the tabs are saved data views."
@@ -544,7 +526,6 @@
         "group",
         "submit"
       ],
-      "layer": "base",
       "family": "base/buttons",
       "chooseWhen": "Any activation control — including one that carries a loading state, a tooltip, or sits in a group.",
       "avoidWhen": "The control navigates and should be an anchor, or it toggles a persistent state."
@@ -563,7 +544,6 @@
         "grid",
         "days"
       ],
-      "layer": "base",
       "family": "base/date-pickers",
       "chooseWhen": "The user picks a date, range, month or time from a calendar surface.",
       "avoidWhen": "The date is typed as text, or you are only displaying a date."
@@ -588,7 +568,6 @@
         "surface",
         "tile"
       ],
-      "layer": "base",
       "family": "base/cards",
       "chooseWhen": "A surface needs visible chrome — border, padding, header and footer regions.",
       "avoidWhen": "You are framing reusable content that the call site should frame instead, or the rows are a list."
@@ -611,7 +590,6 @@
         "slides",
         "scroll snap"
       ],
-      "layer": "base",
       "family": "base/carousel",
       "chooseWhen": "Peer items exceed the width and horizontal paging is the intended reading order.",
       "avoidWhen": "All items should be visible at once, or the overflow is a tab strip."
@@ -644,7 +622,6 @@
         "booking",
         "block"
       ],
-      "layer": "admin",
       "family": "admin/patterns/commerce",
       "chooseWhen": null,
       "avoidWhen": null
@@ -670,7 +647,6 @@
         "area",
         "recharts"
       ],
-      "layer": "base",
       "family": "base/chart",
       "chooseWhen": "Rendering a Recharts chart that must inherit the kit's tokens, legend and tooltip chrome.",
       "avoidWhen": "The number is a single figure with a trend, or the chart needs a titled card frame."
@@ -688,7 +664,6 @@
         "check",
         "indeterminate"
       ],
-      "layer": "base",
       "family": "base/choice-inputs",
       "chooseWhen": null,
       "avoidWhen": null
@@ -708,7 +683,6 @@
         "disclosure",
         "expand"
       ],
-      "layer": "base",
       "family": "base/display",
       "chooseWhen": null,
       "avoidWhen": null
@@ -727,7 +701,6 @@
         "swatch",
         "picker"
       ],
-      "layer": "base",
       "family": "base/value-inputs",
       "chooseWhen": "A single typed value needs a specialised editor — colour, datetime, phone, slider or tags.",
       "avoidWhen": "The value is plain text or a number with a unit."
@@ -776,7 +749,6 @@
         "multi",
         "resource"
       ],
-      "layer": "base",
       "family": "base/combobox",
       "chooseWhen": "Composing a filtered single- or multi-select from its parts, with options already in memory.",
       "avoidWhen": "Options arrive from a fetch, or you want the assembled control rather than the anatomy."
@@ -804,7 +776,6 @@
         "search",
         "shortcut"
       ],
-      "layer": "base",
       "family": "base/command",
       "chooseWhen": "A keyboard-first palette lists commands across groups, usually behind a shortcut.",
       "avoidWhen": "The palette searches application records rather than commands."
@@ -835,7 +806,6 @@
         "reaction",
         "feature"
       ],
-      "layer": "features",
       "family": "features/comments",
       "chooseWhen": "People discuss a record in a thread, with a composer and attachments.",
       "avoidWhen": "The entries are system-generated, or the conversation is with an assistant."
@@ -884,7 +854,6 @@
         "stock",
         "block"
       ],
-      "layer": "admin",
       "family": "admin/patterns/commerce",
       "chooseWhen": "Admin screens present orders, invoices, carts, fulfilment and loyalty.",
       "avoidWhen": "The record is a catalogue product, whose options and readiness live in features/products."
@@ -915,7 +884,6 @@
         "external",
         "website"
       ],
-      "layer": "primitives",
       "family": "primitives",
       "chooseWhen": null,
       "avoidWhen": null
@@ -940,7 +908,6 @@
         "gutter",
         "aside"
       ],
-      "layer": "layout",
       "family": "layout/containers",
       "chooseWhen": "A page region needs width constraint, a titled section, or a two-column split.",
       "avoidWhen": "The children are peers needing only spacing, or the region is the app shell."
@@ -967,7 +934,6 @@
         "medallion",
         "panel"
       ],
-      "layer": "base",
       "family": "base/display",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1005,7 +971,6 @@
         "menu",
         "accelerator"
       ],
-      "layer": "base",
       "family": "base/context-menu",
       "chooseWhen": "The trigger is a right-click on a region that has its own actions.",
       "avoidWhen": "The trigger is a visible button, or the actions repeat across rows."
@@ -1023,7 +988,6 @@
         "copy",
         "clipboard"
       ],
-      "layer": "base",
       "family": "base/copyable",
       "chooseWhen": "A value exists to be copied — an id, key, or reference — and needs copy feedback.",
       "avoidWhen": "The value is prose, or the copy affordance belongs to a whole block."
@@ -1043,7 +1007,6 @@
         "money",
         "amount"
       ],
-      "layer": "base",
       "family": "base/forms-numeric",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1092,7 +1055,6 @@
         "rows",
         "cells"
       ],
-      "layer": "features",
       "family": "features/table",
       "chooseWhen": "A table needs columns, sorting, selection, cell renderers and a toolbar.",
       "avoidWhen": "The dataset needs several saved views, or you are writing table markup directly."
@@ -1129,7 +1091,6 @@
         "rows",
         "cells"
       ],
-      "layer": "features",
       "family": "features/data-view",
       "chooseWhen": "One dataset is presented through switchable views with saved tabs, a toolbar and pagination.",
       "avoidWhen": "There is one table and no view switching, or you need the table body alone."
@@ -1152,7 +1113,6 @@
         "day",
         "month"
       ],
-      "layer": "base",
       "family": "base/display",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1178,7 +1138,6 @@
         "range",
         "presets"
       ],
-      "layer": "base",
       "family": "base/date-pickers",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1220,7 +1179,6 @@
         "minutes",
         "seconds"
       ],
-      "layer": "primitives",
       "family": "primitives",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1241,7 +1199,6 @@
         "number",
         "rounding"
       ],
-      "layer": "base",
       "family": "base/forms-numeric",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1273,7 +1230,6 @@
         "inspector",
         "side"
       ],
-      "layer": "base",
       "family": "base/dialog",
       "chooseWhen": "Documenting or extending the dialog anatomy itself inside base.",
       "avoidWhen": "You are presenting a modal in an app — the portal, focus trap, scroll lock and async confirm lifecycle belong to features/overlays."
@@ -1312,7 +1268,6 @@
         "menu",
         "accelerator"
       ],
-      "layer": "base",
       "family": "base/dropdown-menu",
       "chooseWhen": "Composing a menu anatomy — submenus, radio and checkbox items — from its parts.",
       "avoidWhen": "You want the assembled row-actions control, or the trigger is a right-click."
@@ -1337,7 +1292,6 @@
         "illustration",
         "zero data"
       ],
-      "layer": "base",
       "family": "base/feedback",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1369,7 +1323,6 @@
         "grid",
         "feature"
       ],
-      "layer": "features",
       "family": "features/event-calendar",
       "chooseWhen": "Events are placed on a calendar the user navigates by period.",
       "avoidWhen": "The user is picking a date, or the sequence is chronological rather than spatial."
@@ -1417,7 +1370,6 @@
         "url",
         "feature"
       ],
-      "layer": "features",
       "family": "features/filters",
       "chooseWhen": "Users build predicates over fields, with operators, editors and pills.",
       "avoidWhen": "Filtering is one search box, or the choices are fixed tabs."
@@ -1440,7 +1392,6 @@
         "useField",
         "state"
       ],
-      "layer": "foundation",
       "family": "forms",
       "chooseWhen": "Binding a field to state you already own, without a form library.",
       "avoidWhen": "React Hook Form owns the state, or the fields come from a schema."
@@ -1462,7 +1413,6 @@
         "error",
         "validation"
       ],
-      "layer": "base",
       "family": "base/forms",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1492,7 +1442,6 @@
         "error state",
         "workflow"
       ],
-      "layer": "base",
       "family": "base/forms",
       "chooseWhen": "Assembling a form's visible structure — label, control, support text, sections and an actions bar.",
       "avoidWhen": "The fields come from a schema, or you only need the binding hooks."
@@ -1525,7 +1474,6 @@
         "groups",
         "feature"
       ],
-      "layer": "features",
       "family": "features/global-search",
       "chooseWhen": "One search surface spans record types, with tabs, idle and empty states.",
       "avoidWhen": "The palette lists commands, or the search scopes one collection."
@@ -1552,7 +1500,6 @@
         "breadcrumbs",
         "toolbar"
       ],
-      "layer": "layout",
       "family": "layout/header",
       "chooseWhen": "The application header carries breadcrumbs, search, notifications and the user menu.",
       "avoidWhen": "The heading names a page rather than the application."
@@ -1574,7 +1521,6 @@
         "peek",
         "hover"
       ],
-      "layer": "base",
       "family": "base/hover-card",
       "chooseWhen": "Hovering a reference reveals a preview the reader does not have to act on.",
       "avoidWhen": "The content is essential, interactive, or must be reachable by keyboard alone."
@@ -1596,7 +1542,6 @@
         "pair",
         "summary row"
       ],
-      "layer": "base",
       "family": "base/display",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1626,7 +1571,6 @@
         "reveal",
         "secret"
       ],
-      "layer": "base",
       "family": "base/text-inputs",
       "chooseWhen": "Free text is typed — plain, multiline, password, search or slug.",
       "avoidWhen": "The value is numeric with a unit, or picked from a set."
@@ -1654,7 +1598,6 @@
         "affix",
         "field shell"
       ],
-      "layer": "base",
       "family": "base/input-group",
       "chooseWhen": "A control needs an affix inside its border — an icon, unit, prefix button or counter.",
       "avoidWhen": "The affix is a separate field, or the label belongs above the control."
@@ -1682,7 +1625,6 @@
         "list",
         "media"
       ],
-      "layer": "base",
       "family": "base/item",
       "chooseWhen": "A row carries identity — media, title, description and trailing actions — in a list or a menu.",
       "avoidWhen": "The row is tabular data with aligned columns, or the surface needs card chrome."
@@ -1717,7 +1659,6 @@
         "sync",
         "feature"
       ],
-      "layer": "features",
       "family": "features/kanban",
       "chooseWhen": "Records move between columns by dragging, and the board owns that state.",
       "avoidWhen": "The columns are read-only, or ordering is a table sort."
@@ -1739,7 +1680,6 @@
         "hotkey",
         "chord"
       ],
-      "layer": "base",
       "family": "base/display",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1757,7 +1697,6 @@
         "caption",
         "htmlfor"
       ],
-      "layer": "base",
       "family": "base/label",
       "chooseWhen": "Naming a form control so the label and control are associated.",
       "avoidWhen": "The text is a heading, a static field name, or a value's caption."
@@ -1814,7 +1753,6 @@
         "tiles",
         "feature"
       ],
-      "layer": "features",
       "family": "features/map",
       "chooseWhen": "Geographic data is displayed or drawn, including markers, shapes and draw controls.",
       "avoidWhen": "The location is a single coordinate value to read or type."
@@ -1850,7 +1788,6 @@
         "mb",
         "gb"
       ],
-      "layer": "primitives",
       "family": "primitives",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1890,7 +1827,6 @@
         "files",
         "feature"
       ],
-      "layer": "features",
       "family": "features/media-library",
       "chooseWhen": "Existing assets are browsed, previewed, searched and picked.",
       "avoidWhen": "The user is contributing new files, or one image is being replaced."
@@ -1921,7 +1857,6 @@
         "rich text",
         "feature"
       ],
-      "layer": "features",
       "family": "features/mentions",
       "chooseWhen": "Typing a trigger character suggests entities and inserts them as chips.",
       "avoidWhen": "The field selects one resource up front, or the suggestions are commands."
@@ -1942,7 +1877,6 @@
         "editor",
         "menu"
       ],
-      "layer": "base",
       "family": "base/menubar",
       "chooseWhen": "An application-style menu bar sits persistently across the top of a workspace.",
       "avoidWhen": "The menu hangs off a single button, or the bar is site navigation."
@@ -1966,7 +1900,6 @@
         "key value",
         "fact"
       ],
-      "layer": "base",
       "family": "base/display",
       "chooseWhen": null,
       "avoidWhen": null
@@ -1986,7 +1919,6 @@
         "price",
         "total"
       ],
-      "layer": "primitives",
       "family": "primitives",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2012,7 +1944,6 @@
         "avatar",
         "monogram"
       ],
-      "layer": "primitives",
       "family": "primitives",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2038,7 +1969,6 @@
         "site navigation",
         "dropdown nav"
       ],
-      "layer": "base",
       "family": "base/navigation-menu",
       "chooseWhen": "Site navigation needs grouped panels of links under top-level triggers.",
       "avoidWhen": "The items are commands rather than destinations, or the shell owns the navigation."
@@ -2074,7 +2004,6 @@
         "score",
         "fraction"
       ],
-      "layer": "primitives",
       "family": "primitives",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2095,7 +2024,6 @@
         "sms code",
         "pin"
       ],
-      "layer": "base",
       "family": "base/otp-input",
       "chooseWhen": "A one-time code is entered as separate character cells.",
       "avoidWhen": "The code is pasted as one string into an ordinary field."
@@ -2126,7 +2054,6 @@
         "editor",
         "commerce"
       ],
-      "layer": "features",
       "family": "features/products",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2165,7 +2092,6 @@
         "balance",
         "block"
       ],
-      "layer": "admin",
       "family": "admin/patterns/commerce",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2206,7 +2132,6 @@
         "inspector",
         "side"
       ],
-      "layer": "base",
       "family": "base/overlay",
       "chooseWhen": "Building a new modal surface inside the kit that must share the dialog/sheet anatomy.",
       "avoidWhen": "You are consuming the kit — application modals come from features/overlays."
@@ -2232,7 +2157,6 @@
         "back",
         "actions"
       ],
-      "layer": "layout",
       "family": "layout/page",
       "chooseWhen": "A page needs its title, description and primary actions in the standard arrangement.",
       "avoidWhen": "The page is a record's index or show view with a fuller shell."
@@ -2252,7 +2176,6 @@
         "pages",
         "pager"
       ],
-      "layer": "base",
       "family": "base/navigation",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2270,7 +2193,6 @@
         "percent",
         "rate"
       ],
-      "layer": "base",
       "family": "base/forms-numeric",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2289,7 +2211,6 @@
         "tel",
         "dial code"
       ],
-      "layer": "base",
       "family": "base/value-inputs",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2319,7 +2240,6 @@
         "dms",
         "location"
       ],
-      "layer": "primitives",
       "family": "primitives",
       "chooseWhen": "Displaying or formatting exactly one read-only value — currency/money, date, email, file size, initials — with no interaction.",
       "avoidWhen": "The value is editable, or the text is prose in a typographic role."
@@ -2349,7 +2269,6 @@
         "align",
         "anchor"
       ],
-      "layer": "base",
       "family": "base/popover",
       "chooseWhen": "A non-modal panel is anchored to a trigger and may hold interactive content.",
       "avoidWhen": "The panel is a list of actions, or it must trap focus and block the page."
@@ -2369,7 +2288,6 @@
         "picker",
         "searchable"
       ],
-      "layer": "base",
       "family": "base/popover-menu",
       "chooseWhen": "A popover's content is a simple list of actions and does not need the full menu anatomy.",
       "avoidWhen": "Items need submenus, checkboxes or radios, or the actions repeat across rows."
@@ -2413,7 +2331,6 @@
         "pricing",
         "commerce"
       ],
-      "layer": "features",
       "family": "features/products",
       "chooseWhen": "Presenting catalogue records — options, readiness, policies and quotes — in the admin profile.",
       "avoidWhen": "The record is an order, invoice or shipment."
@@ -2432,7 +2349,6 @@
         "bar",
         "loading"
       ],
-      "layer": "base",
       "family": "base/feedback",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2451,7 +2367,6 @@
         "barcode",
         "scan"
       ],
-      "layer": "base",
       "family": "base/qr-code",
       "chooseWhen": "A value must be scannable on screen or in print.",
       "avoidWhen": "The value only needs copying to the clipboard rather than scanning off the screen."
@@ -2483,7 +2398,6 @@
         "view switch",
         "checkbox cards"
       ],
-      "layer": "base",
       "family": "base/choice-inputs",
       "chooseWhen": "The user picks from a known, closed set — checkbox, radio, switch or select.",
       "avoidWhen": "The set is large enough to need filtering, or the values are free text."
@@ -2509,7 +2423,6 @@
         "key value",
         "localized"
       ],
-      "layer": "base",
       "family": "base/repeaters",
       "chooseWhen": "A field holds a variable-length list the user adds to, reorders or removes from.",
       "avoidWhen": "The list length is fixed, or the shape comes from a schema."
@@ -2532,7 +2445,6 @@
         "splitter",
         "inspector"
       ],
-      "layer": "base",
       "family": "base/resizable",
       "chooseWhen": "The user sets the split between panes and the size should persist.",
       "avoidWhen": "The split is fixed by the layout, or the region is a page shell."
@@ -2560,7 +2472,6 @@
         "card",
         "feature"
       ],
-      "layer": "features",
       "family": "features/resource-assignment",
       "chooseWhen": "A resource is shared with or assigned to principals through a dialog.",
       "avoidWhen": "You are displaying permissions rather than changing them."
@@ -2593,7 +2504,6 @@
         "error",
         "feature"
       ],
-      "layer": "features",
       "family": "features/resource",
       "chooseWhen": "A record's index or show page needs its standard shell — header, actions bar and sections.",
       "avoidWhen": "The page is a workspace shell, or the content is one table."
@@ -2621,7 +2531,6 @@
         "html",
         "feature"
       ],
-      "layer": "features",
       "family": "features/rich-text-editor",
       "chooseWhen": "Users author formatted content with a toolbar and counts.",
       "avoidWhen": "The input is plain multiline text, or the content is only displayed."
@@ -2648,7 +2557,6 @@
         "dynamic",
         "feature"
       ],
-      "layer": "features",
       "family": "features/schema-form",
       "chooseWhen": "Fields are generated from a schema at runtime rather than written by hand.",
       "avoidWhen": "The form is known at build time, or you only need field structure."
@@ -2668,7 +2576,6 @@
         "overflow",
         "visually hidden"
       ],
-      "layer": "base",
       "family": "base/display",
       "chooseWhen": "Presenting label/key and value facts, a collapsible region, a keyboard hint or a scrollable pane.",
       "avoidWhen": "The pair is an editable field, or the row carries identity and actions."
@@ -2697,7 +2604,6 @@
         "options",
         "native select"
       ],
-      "layer": "base",
       "family": "base/choice-inputs",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2716,7 +2622,6 @@
         "rule",
         "hr"
       ],
-      "layer": "base",
       "family": "base/display",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2741,7 +2646,6 @@
         "account",
         "section"
       ],
-      "layer": "layout",
       "family": "layout/settings",
       "chooseWhen": "Settings pages share an aside navigation beside their content.",
       "avoidWhen": "The navigation is the application sidebar, or the sections are tabs."
@@ -2773,7 +2677,6 @@
         "inspector",
         "side"
       ],
-      "layer": "base",
       "family": "base/sheet",
       "chooseWhen": "Documenting the sheet anatomy, or inside base where features/overlays cannot be imported.",
       "avoidWhen": "You are presenting an edge-anchored modal in an app."
@@ -2801,7 +2704,6 @@
         "account",
         "section"
       ],
-      "layer": "layout",
       "family": "layout/navigation",
       "chooseWhen": "The shell's own navigation — side, section or category — positions destinations.",
       "avoidWhen": "The user moves between sibling views inside one page."
@@ -2848,7 +2750,6 @@
         "menu",
         "shell"
       ],
-      "layer": "base",
       "family": "base/sidebar",
       "chooseWhen": "Composing a collapsible sidebar from its parts, including the mobile presentation.",
       "avoidWhen": "You want the assembled application sidebar with logo, user and workspace slots."
@@ -2871,7 +2772,6 @@
         "placeholder",
         "shimmer"
       ],
-      "layer": "base",
       "family": "base/skeleton",
       "chooseWhen": "A placeholder should hold the eventual layout's shape while data loads.",
       "avoidWhen": "The wait is indeterminate and unstructured, or the region failed."
@@ -2890,7 +2790,6 @@
         "range",
         "track"
       ],
-      "layer": "base",
       "family": "base/value-inputs",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2908,7 +2807,6 @@
         "url",
         "permalink"
       ],
-      "layer": "base",
       "family": "base/text-inputs",
       "chooseWhen": null,
       "avoidWhen": null
@@ -2926,7 +2824,6 @@
         "loader",
         "busy"
       ],
-      "layer": "base",
       "family": "base/spinner",
       "chooseWhen": "A wait is short and has no layout to preview.",
       "avoidWhen": "The eventual shape is known, or the wait blocks a whole region."
@@ -2952,7 +2849,6 @@
         "responsive",
         "gap"
       ],
-      "layer": "base",
       "family": "base/structure",
       "chooseWhen": "Passive siblings need consistent spacing, a grid, or a stack — with no semantics of their own.",
       "avoidWhen": "The children form a titled page region, or the arrangement carries meaning."
@@ -2975,7 +2871,6 @@
         "settings row",
         "switch card"
       ],
-      "layer": "base",
       "family": "base/choice-inputs",
       "chooseWhen": null,
       "avoidWhen": null
@@ -3003,7 +2898,6 @@
         "columns",
         "data"
       ],
-      "layer": "base",
       "family": "base/table",
       "chooseWhen": "Writing table markup directly, with rows you control and no sorting or selection.",
       "avoidWhen": "The table needs columns, sorting, selection or a toolbar."
@@ -3027,7 +2921,6 @@
         "tablist",
         "panel"
       ],
-      "layer": "base",
       "family": "base/navigation",
       "chooseWhen": null,
       "avoidWhen": null
@@ -3045,7 +2938,6 @@
         "chips",
         "keywords"
       ],
-      "layer": "base",
       "family": "base/value-inputs",
       "chooseWhen": null,
       "avoidWhen": null
@@ -3063,7 +2955,6 @@
         "multiline",
         "notes"
       ],
-      "layer": "base",
       "family": "base/text-inputs",
       "chooseWhen": null,
       "avoidWhen": null
@@ -3082,7 +2973,6 @@
         "clock",
         "datetime"
       ],
-      "layer": "base",
       "family": "base/date-pickers",
       "chooseWhen": null,
       "avoidWhen": null
@@ -3107,7 +2997,6 @@
         "milestones",
         "progress"
       ],
-      "layer": "base",
       "family": "base/timeline",
       "chooseWhen": "Composing a generic vertical sequence of dated entries.",
       "avoidWhen": "The sequence is a changelog, milestones or a step tracker."
@@ -3142,7 +3031,6 @@
         "danger zone",
         "block"
       ],
-      "layer": "patterns",
       "family": "patterns/timelines",
       "chooseWhen": "A sequence is presented as changelog entries, milestones, or a step tracker.",
       "avoidWhen": "The entries are a system audit log, or the sequence is a calendar."
@@ -3163,7 +3051,6 @@
         "snackbar",
         "undo"
       ],
-      "layer": "base",
       "family": "base/toaster",
       "chooseWhen": "A message is transient, non-blocking, and reports the outcome of an action.",
       "avoidWhen": "The message belongs to a region, or the user must act on it."
@@ -3185,7 +3072,6 @@
         "editor",
         "bold"
       ],
-      "layer": "base",
       "family": "base/toggle",
       "chooseWhen": "A control holds a pressed state, alone or as one of a mutually exclusive group.",
       "avoidWhen": "The state is a form value that submits, or the control performs an action."
@@ -3210,7 +3096,6 @@
         "controls",
         "arrow keys"
       ],
-      "layer": "base",
       "family": "base/toolbar",
       "chooseWhen": "A persistent group of related actions or controls needs one tab stop and arrow-key navigation.",
       "avoidWhen": "The actions open from a trigger, select one value, or navigate between pages."
@@ -3232,7 +3117,6 @@
         "popup",
         "hover"
       ],
-      "layer": "base",
       "family": "base/tooltip",
       "chooseWhen": "A short, non-essential hint labels a control on hover or focus.",
       "avoidWhen": "The content is interactive, long, or required to understand the control."
@@ -3256,7 +3140,6 @@
         "prose",
         "font"
       ],
-      "layer": "typography",
       "family": "base/typography",
       "chooseWhen": "Rendering library-owned copy in a role — heading, body, label, link or sanitized rich text.",
       "avoidWhen": "The text is a formatted data value rather than prose."
@@ -3297,7 +3180,6 @@
         "document",
         "config"
       ],
-      "layer": "foundation",
       "family": "ui-provider",
       "chooseWhen": "Setting display defaults, theme, density and scale for the app or a subtree.",
       "avoidWhen": "The value is per-feature policy or domain data, which stays a prop."
@@ -3318,7 +3200,6 @@
         "coordinates",
         "unit"
       ],
-      "layer": "base",
       "family": "base/forms-numeric",
       "chooseWhen": "A numeric field carries a unit, currency or precision the input itself must enforce.",
       "avoidWhen": "The number is plain, or it is being displayed rather than edited."
@@ -3355,7 +3236,6 @@
         "tray",
         "gallery"
       ],
-      "layer": "base",
       "family": "base/upload",
       "chooseWhen": "The user contributes files — dropzone, avatar, image, or a tray with progress.",
       "avoidWhen": "Existing assets are being browsed and picked rather than added."
@@ -3387,7 +3267,6 @@
         "or",
         "comma"
       ],
-      "layer": "primitives",
       "family": "primitives",
       "chooseWhen": null,
       "avoidWhen": null
@@ -3409,7 +3288,6 @@
         "detail header",
         "metadata"
       ],
-      "layer": "layout",
       "family": "layout/workspace",
       "chooseWhen": "The whole authenticated shell — sidebar, header and content — is assembled at once.",
       "avoidWhen": "You are placing one region, or the page is unauthenticated."

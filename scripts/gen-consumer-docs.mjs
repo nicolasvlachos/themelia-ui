@@ -190,22 +190,12 @@ writeIfChanged(`${OUT}/profiles.md`, profileLines.join('\n'))
  * Recipes are the preview pages' examples — an `<Example example="page/id">` reads its file in
  * src/preview/examples, an `<Example code={…}>` its string — attributed by the public symbols
  * they use, so a shared page cannot assign an example to every family on it.
- * `routeOfPage` parses routes.ts by regex like lib/preview-routes.mjs — keep the formats.
  */
 
-const routeOfPage = (() => {
-  const routes = readFileSync('src/preview/routes.ts', 'utf8')
-  const fileOf = new Map()
-  for (const m of routes.matchAll(/import\s*\{\s*(\w+)\s*\}\s*from\s*"\.\/pages\/([\w-]+)"/g)) {
-    fileOf.set(m[1], `${m[2]}.tsx`)
-  }
-  const out = new Map()
-  for (const m of routes.matchAll(/path:\s*"(\/[\w-]*)",\s*label:\s*"([^"]*)",\s*component:\s*(\w+)/g)) {
-    const file = fileOf.get(m[3])
-    if (file && !out.has(file)) out.set(file, { path: m[1], label: m[2] })
-  }
-  return out
-})()
+/* page file → its route, from the preview's route table */
+const routeOfPage = new Map(
+  JSON.parse(readFileSync('src/preview/routes.json', 'utf8')).routes.map((row) => [`${row.page}.tsx`, { path: row.path, label: row.label }]),
+)
 
 /** The page's `<Example>` elements, parsed rather than matched: `title`, `id`, `example` and `code`. */
 function examplesIn(file, text) {

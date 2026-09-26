@@ -2,8 +2,8 @@
  * Writes src/preview/generated/gallery.json: one card per preview page, joining the page's
  * `summary` with its family's `chooseWhen`/`avoidWhen`. Family guidance appears only on the
  * family's canonical documentation route, not on supplemental pages.
- * Reads component-index.json and route-layers.json: run gen-consumer-docs and
- * gen-route-layers first.
+ * Reads component-index.json: run gen-consumer-docs first. The gallery takes each card's tier
+ * from the route table at runtime.
  */
 import { readFileSync, mkdirSync } from 'node:fs'
 import { writeIfChanged } from './lib/write-if-changed.mjs'
@@ -14,7 +14,6 @@ const OUT = 'src/preview/generated/gallery.json'
 
 const pkgName = JSON.parse(readFileSync('package.json', 'utf8')).name
 const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
-const layers = JSON.parse(readFileSync('src/preview/generated/route-layers.json', 'utf8')).layers
 
 /** published subpath → the family record that owns it */
 const families = new Map()
@@ -40,8 +39,6 @@ for (const page of previewPages(pkgName)) {
     import: page.subpath,
     exports: page.exports,
     keywords: page.keywords,
-    /* The family's declared layer wins; the route map is the fallback. */
-    layer: owner?.layer ?? layers[page.preview] ?? null,
     family: owner?.id ?? null,
     chooseWhen: owner?.documentation?.endsWith(`(${page.preview})`) ? owner.chooseWhen ?? null : null,
     avoidWhen: owner?.documentation?.endsWith(`(${page.preview})`) ? owner.avoidWhen ?? null : null,
@@ -68,6 +65,5 @@ writeIfChanged(
 
 const guided = cards.filter((card) => card.chooseWhen).length
 console.log(
-  `gen:gallery — ${cards.length} cards, ${guided} carrying selection guidance, ` +
-    `${cards.filter((c) => c.layer).length} with a layer`,
+  `gen:gallery — ${cards.length} cards, ${guided} carrying selection guidance`,
 )
