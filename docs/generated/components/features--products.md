@@ -20,7 +20,7 @@ import "themelia-ui/features/products.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install @tanstack/react-table
@@ -28,7 +28,7 @@ npm install @tanstack/react-table
 
 ## Composition
 
-This family composes `base/action-menu`, `base/badge`, `base/batch-action-bar`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/feedback`, `base/forms`, `base/item`, `base/repeaters`, `base/structure`, `base/table`, `base/text-inputs`, `base/typography`, `base/upload`, `features/overlays`, `features/table`.
+This module composes `base/action-menu`, `base/badge`, `base/batch-action-bar`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/feedback`, `base/forms`, `base/item`, `base/repeaters`, `base/structure`, `base/table`, `base/text-inputs`, `base/typography`, `base/upload`, `features/overlays`, `features/table`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -1386,107 +1386,404 @@ Preview route: Options & variants — `/product-variants`
 ### Options and variants together
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProductVariantsManager
-  optionGroups={options}
-  variants={variants}
-  groupByOptionId="size"
-  cellDisplay="field"
-  onCreateOption={createOption}
-  onSaveEditingOption={(option, draft) => save(option.id, draft)}
-  onAddValue={addValue}
-  onGenerateVariants={generate}
-  onVariantFieldBlur={(variant, field, value) => patch(variant.id, field, value)}
-/>
-```
+import { useState } from "react"
 
-### The two option surfaces
+import { PillRadioGroup } from "themelia-ui/base/choice-inputs"
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import {
+	ProductOptionsMatrix, ProductOptionsSummary, ProductVariantsBulkTable, ProductVariantsManager,
+	ProductVariantsTable,
+} from "themelia-ui/features/products"
 
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProductOptionsSummary options={summary} onManageOptions={openMatrix} />
+import { OPTION_GROUPS, OPTION_SUMMARY, VARIANTS } from "./data"
+import { useCatalogue } from "./use-catalogue"
 
-<ProductOptionsMatrix
-  optionGroups={groups}
-  onSaveEditingOption={(option, draft) => save(option.id, draft)}
-  onAddValue={addValue}
-  onDeleteOption={remove}
-  confirmDelete            // on by default — removing an option removes its variants
-/>
-```
+export default function Manager() {
+	const [log, setLog] = useState<string[]>([])
+	const [groupBy, setGroupBy] = useState<string | null>("size")
+	const catalogue = useCatalogue(OPTION_GROUPS, VARIANTS)
 
-### Variants
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
 
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProductVariantsBulkTable
-  variants={variants}
-  optionGroups={groups}
-  groupByOptionId="size"
-  cellDisplay={{ sku: "field", price: "field", inventory: "text" }}
-  onVariantFieldBlur={(variant, field, value) => api.patch(variant.id, { [field]: value })}
-  onBulkDelete={(rows) => api.removeMany(rows.map((row) => row.id))}
-/>
+	/* Every option and variant callback, wired to the same store — so the manager, the
+	 * matrix and the bulk table below it are all editing one catalogue. */
+	const optionHandlers = {
+		optionGroups: catalogue.options,
+		editingOptionId: catalogue.editingOptionId,
+		onEditingOptionIdChange: catalogue.setEditingOptionId,
+		onCreateOption: catalogue.createOption,
+		onDeleteOption: catalogue.deleteOption,
+		onAddValue: catalogue.addValue,
+		onDeleteValue: catalogue.deleteValue,
+		onSaveEditingOption: catalogue.saveOption,
+		onCancelEditingOption: () => catalogue.setEditingOptionId(null),
+		onReorderOptions: catalogue.reorderOptions,
+	}
+
+	const variantHandlers = {
+		variants: catalogue.variants,
+		onGenerateVariants: catalogue.generateVariants,
+		onVariantFieldBlur: (variant: { id: string }, field: "sku" | "price" | "inventory", value: string) =>
+			catalogue.setVariantField(variant.id, field, value),
+		onBulkDelete: (rows: readonly { id: string }[]) =>
+			catalogue.deleteVariants(rows.map((row) => row.id)),
+		onSetVariantImage: (variant: { id: string }) => note(`choose a picture for ${variant.id}`),
+	}
+
+	return (
+		<>
+			<ProductVariantsManager
+				{...optionHandlers}
+				{...variantHandlers}
+				defaultGroupByOptionId={catalogue.options[0]?.id ?? null}
+				visibleColumns={["variant", "sku", "price", "inventory"]}
+				cellDisplay="field"
+				confirmDelete={false}
+				onEditVariant={(variant) => note(`edit ${variant.id}`)}
+			/>
+			<Text size="xs" type="secondary">
+				{catalogue.options.length} options describe {catalogue.variantCount} combinations ·{" "}
+				{catalogue.variants.length} rows exist
+			</Text>
+
+			<Grid gap="lg">
+				<ProductOptionsSummary
+					options={OPTION_SUMMARY}
+					onManageOptions={() => note("manage options")}
+					onSelectOption={(option) => note(`open ${option.id}`)}
+				/>
+				<ProductOptionsMatrix {...optionHandlers} confirmDelete={false} />
+			</Grid>
+
+			<ProductVariantsTable
+				variants={catalogue.variants.slice(0, 3).map((variant) => ({
+					...variant,
+					options: [variant.optionValues?.size, variant.optionValues?.build],
+				}))}
+				onCreateVariant={() => note("create variant")}
+				onEditVariant={(variant) => note(`edit ${variant.id}`)}
+				onDeleteVariant={(variant) => note(`delete ${variant.id}`)}
+			/>
+
+			<Stack direction="horizontal" gap="md" align="center">
+				<Text size="sm" type="secondary">Group by</Text>
+				<PillRadioGroup
+					value={groupBy}
+					onValueChange={setGroupBy}
+					allowClear
+					options={[
+						{ value: "size", label: "Frame size" },
+						{ value: "build", label: "Build kit" },
+					]}
+				/>
+			</Stack>
+
+			<ProductVariantsBulkTable
+				{...variantHandlers}
+				optionGroups={catalogue.options}
+				groupByOptionId={groupBy}
+				cellDisplay={{ sku: "field", price: "field" }}
+				onEditVariant={(variant) => note(`edit ${variant.id}`)}
+				onBulkEdit={(rows) => note(`bulk edit ${rows.length}`)}
+			/>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### One variant, read and edited
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProductVariantDetails
-  variant={selected}
-  optionItems={options}
-  onBack={() => setSelected(null)}
-  onEditVariant={(variant) => setEditing(variant)}
-/>
+import { useState } from "react"
 
-<ProductVariantEditor
-  defaultValue={{ name: "M · Trail", sku: "TRL-29-M-TR", price: "€1,850" }}
-  optionFields={[{ id: "size", label: "Frame size", choices: sizes }]}
-  statusOptions={statuses}
-  onSubmit={(values) => api.save(values)}
-  onDelete={(values) => api.remove(values)}
-/>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ProductVariantDetails, ProductVariantEditor } from "themelia-ui/features/products"
+
+import { OPTION_SUMMARY } from "./data"
+
+export default function VariantDetail() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			{/* Stacked, not two-up: both of these switch layout on their OWN width, and a
+			    half-column here is narrower than either ever gets in a real rail. */}
+			<Stack gap="lg">
+				<ProductVariantDetails
+					variant={{
+						id: "m-trail",
+						name: "M · Trail",
+						description: "Medium frame, Trail build kit.",
+						options: ["M", "Trail"],
+						sku: "TRL-29-M-TR",
+						price: "€1,850",
+						inventory: "31",
+						channels: "Online store, POS",
+						updatedAt: "yesterday",
+						status: "Live",
+						statusTone: "success",
+					}}
+					optionItems={OPTION_SUMMARY}
+					onBack={() => note("back to the list")}
+					onEditVariant={(variant) => note(`edit ${variant.id}`)}
+					onDeleteVariant={(variant) => note(`delete ${variant.id}`)}
+					onSelectOption={(option) => note(`open option ${option.id}`)}
+				/>
+
+				<ProductVariantEditor
+					defaultValue={{
+						name: "M · Trail",
+						sku: "TRL-29-M-TR",
+						price: "€1,850",
+						inventory: "31",
+						status: "live",
+						channels: "Online store, POS",
+						options: { size: "m", build: "trail" },
+					}}
+					statusOptions={[
+						{ value: "live", label: "Live" },
+						{ value: "draft", label: "Draft" },
+						{ value: "archived", label: "Archived" },
+					]}
+					optionFields={[
+						{
+							id: "size",
+							label: "Frame size",
+							choices: [
+								{ value: "s", label: "S" },
+								{ value: "m", label: "M" },
+								{ value: "l", label: "L" },
+							],
+						},
+						{
+							id: "build",
+							label: "Build kit",
+							choices: [
+								{ value: "trail", label: "Trail" },
+								{ value: "expedition", label: "Expedition" },
+							],
+						},
+					]}
+					onSubmit={(values) => note(`saved ${values.name ?? "the variant"}`)}
+					onCancel={() => note("cancelled")}
+					onDelete={(values) => note(`delete ${values.sku ?? "the variant"}`)}
+				/>
+			</Stack>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Nothing yet
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProductVariantsBulkTable
-  variants={[]}
-  onGenerateVariants={() => api.generate(productId)}
-/>
+import { useState } from "react"
+
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ProductOptionsMatrix, ProductVariantsBulkTable } from "themelia-ui/features/products"
+
+export default function Empty() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Grid gap="lg">
+				<ProductVariantsBulkTable
+					variants={[]}
+					onGenerateVariants={() => note("generate the combinations")}
+				/>
+				<ProductOptionsMatrix
+					optionGroups={[]}
+					onCreateOption={() => note("create the first option")}
+				/>
+			</Grid>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Overview and quote
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProductOverview
-  title="Trailhead 29er"
-  status="Live"
-  statusTone="success"
-  metrics={[{ id: "variants", label: "Variants", value: "18" }]}
-/>
+import { useState } from "react"
 
-<ProductQuotePreviewCard
-  lines={[…, { id: "total", label: "Total", value: "€2,268", emphasis: true }]}
-  onRecalculate={() => api.quote(id)}
-/>
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ProductOverview, ProductQuotePreviewCard } from "themelia-ui/features/products"
+
+import { CONTRACT_METRICS, QUOTE } from "./data"
+
+export default function Overview() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Grid gap="lg">
+				<ProductOverview
+					title="Trailhead 29er"
+					description="Aluminium trail hardtail, sold as a frameset or a complete build."
+					status="Live"
+					statusTone="success"
+					metrics={CONTRACT_METRICS}
+				/>
+				<ProductQuotePreviewCard
+					lines={QUOTE}
+					note="Carrier is an estimate until an oversize profile is chosen."
+					onRecalculate={() => note("recalculated the quote")}
+				/>
+			</Grid>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Readiness, structure, operations
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProductReadinessCard
-  score={72}
-  items={[{ id: "price", label: "Pricing", tone: "warning", value: "1 missing" }]}
-  onSelectReadinessItem={(item) => open(item.id)}
-/>
+import { useState } from "react"
+import { BoxIcon, LayersIcon, WarehouseIcon } from "lucide-react"
+
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import {
+	ProductOperationsCard, ProductReadinessCard, ProductStructureCard,
+} from "themelia-ui/features/products"
+
+import { OPERATIONS, READINESS } from "./data"
+
+const STRUCTURE = [
+	{ id: "variants", label: "Variants", value: "18", description: "3 sizes × 3 colours × 2 builds", icon: <LayersIcon /> },
+	{ id: "skus", label: "Live SKUs", value: "14", description: "4 held back for launch", tone: "primary" as const, icon: <BoxIcon /> },
+	{ id: "stock", label: "On hand", value: "212", description: "Across two warehouses", icon: <WarehouseIcon /> },
+]
+
+export default function Rows() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Grid gap="lg">
+				<ProductReadinessCard
+					score={72}
+					items={READINESS}
+					summary="Two checks left before this can be published."
+					onSelectReadinessItem={(item) => note(`readiness: ${item.id}`)}
+				/>
+				<Stack gap="lg">
+					<ProductStructureCard
+						metrics={STRUCTURE}
+						onSelectMetric={(metric) => note(`structure: ${metric.id}`)}
+					/>
+					<ProductOperationsCard
+						items={OPERATIONS}
+						onSelectOperation={(item) => note(`operations: ${item.id}`)}
+					/>
+				</Stack>
+			</Grid>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Details, contract, policies
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProductContractOverview
-  metrics={metrics}
-  terms={terms}          // MetadataListItem[]
-  rules={rules}
-  onCreateRule={() => …}
-/>
+import { useState } from "react"
+
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import {
+	ProductContractOverview, ProductDetailsCard, ProductPoliciesCard,
+} from "themelia-ui/features/products"
+
+import { CONTRACT_METRICS, CONTRACT_TERMS, DETAILS, POLICIES, RULES } from "./data"
+
+export default function Contract() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Grid gap="lg">
+				<Stack gap="lg">
+					<ProductDetailsCard
+						metadata={DETAILS}
+						onEditDetails={() => note("edit details")}
+					/>
+					<ProductPoliciesCard
+						policies={POLICIES}
+						onSelectPolicy={(policy) => note(`policy: ${policy.id}`)}
+					/>
+				</Stack>
+				<ProductContractOverview
+					metrics={CONTRACT_METRICS}
+					terms={CONTRACT_TERMS}
+					rules={RULES}
+					onOpenContract={() => note("open contract")}
+					onCreateRule={() => note("create rule")}
+				/>
+			</Grid>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```

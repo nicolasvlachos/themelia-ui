@@ -20,7 +20,7 @@ import "themelia-ui/admin/patterns/commerce.css"
 
 ## Composition
 
-This family composes `base/action-menu`, `base/avatar`, `base/badge`, `base/buttons`, `base/choice-inputs`, `base/copyable`, `base/display`, `base/feedback`, `base/forms`, `base/item`, `base/navigation`, `base/structure`, `base/table`, `base/text-inputs`, `base/timeline`, `base/typography`, `base/value-inputs`, `patterns/timelines`.
+This module composes `base/action-menu`, `base/avatar`, `base/badge`, `base/buttons`, `base/choice-inputs`, `base/copyable`, `base/display`, `base/feedback`, `base/forms`, `base/item`, `base/navigation`, `base/structure`, `base/table`, `base/text-inputs`, `base/timeline`, `base/typography`, `base/value-inputs`, `patterns/timelines`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -228,10 +228,10 @@ Kind: type.
 
 CodeEntry — a discount code or a gift card.
 
-These were two components, and they were the same component twice: a title, a field, a
-button, and an applied state. The only real difference is that a gift card holds a
-BALANCE — money that may outlast this order — where a discount either applies or does
-not. That is one optional prop, not a second component.
+One component for both: a title, a field, a button, and an applied state. The only real
+difference is that a gift card holds a BALANCE — money that may outlast this order —
+where a discount either applies or does not. That is one optional prop, not a second
+component.
 
 `kind` picks the preset: the icon, the default copy, and whether the code is upper-cased
 on submit. Gift card codes are printed in capitals and nobody types them that way.
@@ -478,7 +478,7 @@ Kind: interface.
 | --- | :-: | --- | --- |
 | `id` | no | `string` |  |
 | `label` | yes | `string` |  |
-| `kind` | no | `ReactNode` | What kind of discount it is — "Code", "Automatic", "Volume".<br><br>Rendered as a quiet qualifier beside the label, not as a chip. A Badge here was the<br>first thing tried and it failed contrast at 3.45:1 in the dark theme: a chip is drawn<br>to sit on a card, and the ledger it lands in has its own tinted ground under it. |
+| `kind` | no | `ReactNode` | What kind of discount it is — "Code", "Automatic", "Volume".<br><br>Rendered as a quiet qualifier beside the label, not as a chip. A chip is drawn to sit on<br>a card, and the ledger it would land in has its own tinted ground: a Badge here fails<br>contrast in the dark theme (3.45:1). |
 | `amount` | yes | `string` |  |
 
 ### `DiscountStack`
@@ -1206,8 +1206,8 @@ Record<PaymentStatus, BadgeTone>
 
 Kind: type.
 
-Card networks and wallets. The brand is named, never painted: trademark colours would
-need literals `verify composition` forbids. Pass a logo as `icon`.
+Card networks and wallets. The brand is named, never painted: the kit draws no trademark
+colours. Pass a logo as `icon`.
 
 ```text
 "visa" | "mastercard" | "amex" | "paypal" | "applePay" | "googlePay" | "unknown"

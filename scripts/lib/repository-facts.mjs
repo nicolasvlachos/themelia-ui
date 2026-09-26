@@ -1,6 +1,6 @@
 /*
  * The single source for status facts about the repository (version, entrypoints, families,
- * verify chain), so documents stop deriving and drifting separately. Costly measurements
+ * verify chain), so no document derives them separately and drifts. Costly measurements
  * (lint, browser results) are `null` unless supplied; renderers must say "not measured"
  * rather than reuse an old number.
  */
@@ -81,24 +81,33 @@ const measured = (value, singular, plural = `${singular}s`) =>
   value === null || value === undefined ? 'not measured' : `${value} ${value === 1 ? singular : plural}`
 
 /**
- * The README status block, rendered from facts alone. States no release verdict and nothing
+ * The CONTRIBUTING.md status block, rendered from facts alone. States no release verdict and nothing
  * from `dist/`: the block is committed and compared against a fresh generation, so a
  * build-only figure would make the gate depend on a build.
  */
+/* The tiers the docs group modules by, from the folder layer each module sits in. */
+const TIER_OF_LAYER = { foundation: 'Foundations', primitives: 'Primitives', typography: 'Base', base: 'Base', layout: 'Layout', features: 'Features', patterns: 'Blocks', admin: 'Blocks' }
+const TIER_ORDER = ['Foundations', 'Primitives', 'Base', 'Layout', 'Features', 'Blocks']
+
 export function renderStatusMarkdown(facts) {
-  const layers = Object.entries(facts.layers).map(([layer, n]) => `${layer} ${n}`).join(', ')
+  const byTier = new Map()
+  for (const [layer, n] of Object.entries(facts.layers)) {
+    const tier = TIER_OF_LAYER[layer] ?? layer
+    byTier.set(tier, (byTier.get(tier) ?? 0) + n)
+  }
+  const tiers = TIER_ORDER.filter((tier) => byTier.has(tier)).map((tier) => `${tier} ${byTier.get(tier)}`).join(', ')
   const profiles = Object.entries(facts.profiles).map(([profile, n]) => `${profile} ${n}`).join(', ')
   const experimental = facts.statuses.experimental ?? 0
 
   return [
-    `Version \`${facts.packageVersion}\` contains ${facts.families} component families across ${Object.keys(facts.layers).length} layers — ${layers}.`,
+    `Version \`${facts.packageVersion}\` contains ${facts.families} modules across ${byTier.size} tiers — ${tiers}.`,
     '',
-    `The package publishes ${facts.jsEntrypoints} exact JavaScript entrypoints and ${facts.cssEntrypoints} exact CSS entrypoints. There are no broad aggregate barrels: a consumer imports the family it uses.`,
+    `The package publishes ${facts.jsEntrypoints} exact JavaScript entrypoints and ${facts.cssEntrypoints} exact CSS entrypoints. There are no broad aggregate barrels: a consumer imports the module it uses.`,
     '',
-    `Families per profile: ${profiles}. A profile is a dependency ceiling, not a product taxonomy. ` +
+    `Modules per profile: ${profiles}. A profile is a dependency ceiling, not a product taxonomy. ` +
       (experimental === 0
-        ? 'Every family is stable.'
-        : `${experimental} ${experimental === 1 ? 'family is' : 'families are'} marked experimental.`),
+        ? 'Every module is stable.'
+        : `${experimental} ${experimental === 1 ? 'module is' : 'modules are'} marked experimental.`),
     '',
     `Oxlint: ${measured(facts.lintWarnings, 'warning')}.`,
     '',

@@ -70,18 +70,18 @@ const lines = [
   '# The composition ladder',
   '',
   'The [composition model](../learn/composition.md) lists eight rungs, from ordinary props to a',
-  'documentation recipe. A family offers the *smallest sufficient* seam — not all eight, and',
+  'documentation recipe. A module offers the *smallest sufficient* seam — not all eight, and',
   'not a headless hook where a prop would do.',
   '',
   'The rungs are ordinary props; controlled state and callbacks when state exists; accessors;',
   'named slots; render props; exported parts; headless hooks; and complete recipes. Passive',
-  'families may stop at the first rung. Interaction features normally expose several.',
+  'modules may stop at the first rung. Interaction features normally expose several.',
   '',
-  'This table is derived from what each family declares, so it cannot describe a seam that',
-  'was removed or miss one that was added. The table focuses on feature families, where the',
+  'This table is derived from what each module declares, so it cannot describe a seam that',
+  'was removed or miss one that was added. The table focuses on feature modules, where the',
   'higher rungs are meaningful; the columns start at accessors.',
   '',
-  '| family | accessors | slots | render props | headless hook | partials | recipe |',
+  '| module | accessors | slots | render props | headless hook | partials | recipe |',
   '| --- | :-: | :-: | :-: | :-: | :-: | :-: |',
 ]
 
@@ -124,7 +124,7 @@ for (const id of FOCUS) {
       ? `**Region-customized** — ${components.length} exported parts, so a region can be replaced ` +
         `without copying the whole: ${parts.slice(0, 5).map((c) => `\`${c}\``).join(', ')}` +
         (parts.length > 5 ? `, and ${parts.length - 5} more.` : '.')
-      : '**Region-customized** — no exported parts; this family is used whole.',
+      : '**Region-customized** — no exported parts; this module is used whole.',
     '',
     hooks.length
       ? `**Headless** — ${hooks.map((h) => `\`${h}\``).join(', ')}, for presentation the parts cannot express.`
@@ -137,6 +137,6 @@ writeIfChanged('docs/generated/composition-ladder.md', lines.join('\n'))
 
 const complete = audited.filter((row) => FOCUS.includes(row.family.id) && row.rungs.headless && row.rungs.partials)
 console.log(
-  `composition ladder: ${audited.length} feature families audited; ` +
-    `${complete.length}/${FOCUS.length} demonstration families offer parts AND a headless hook`,
+  `composition ladder: ${audited.length} feature modules audited; ` +
+    `${complete.length}/${FOCUS.length} demonstration modules offer parts AND a headless hook`,
 )

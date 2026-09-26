@@ -20,7 +20,7 @@ import "themelia-ui/base/dialog.css"
 
 ## Composition
 
-This family composes `base/overlay`.
+This module composes `base/overlay`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -57,34 +57,37 @@ import {
 	Overlay, OverlayBody, OverlayClose, OverlayDescription, OverlayFooter, OverlayHeader,
 	OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Input } from "themelia-ui/base/text-inputs"
 
 export default function Dialog() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Open dialog
-			</OverlayTrigger>
-			<DialogContent>
-				<OverlayHeader>
-					<OverlayTitle>Rename project</OverlayTitle>
-					<OverlayDescription>The new name shows everywhere the project is listed.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<FormField label="Project name">
-						<Input defaultValue="Spring launch" />
-					</FormField>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</OverlayClose>
-					<OverlayClose render={<Button />}>
-						Save
-					</OverlayClose>
-				</OverlayFooter>
-			</DialogContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Open dialog
+				</OverlayTrigger>
+				<DialogContent>
+					<OverlayHeader>
+						<OverlayTitle>Rename project</OverlayTitle>
+						<OverlayDescription>The new name shows everywhere the project is listed.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<FormField label="Project name">
+							<Input defaultValue="Spring launch" />
+						</FormField>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</OverlayClose>
+						<OverlayClose render={<Button />}>
+							Save
+						</OverlayClose>
+					</OverlayFooter>
+				</DialogContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -97,11 +100,12 @@ import { DialogContent } from "themelia-ui/base/dialog"
 import {
 	Overlay, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function OverlayBackdrop() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Default scrim
@@ -127,7 +131,7 @@ export default function OverlayBackdrop() {
 					</DialogContent>
 				</Overlay>
 			</UIProvider>
-		</>
+		</Stack>
 	)
 }
 ```

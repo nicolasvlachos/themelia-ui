@@ -20,7 +20,7 @@ import "themelia-ui/base/chart.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install recharts
@@ -28,7 +28,7 @@ npm install recharts
 
 ## Composition
 
-This family has no component-family dependencies.
+This module depends on no other module.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

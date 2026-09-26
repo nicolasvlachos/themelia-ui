@@ -20,7 +20,7 @@ import "themelia-ui/base/repeaters.css"
 
 ## Composition
 
-This family composes `base/buttons`, `base/choice-inputs`, `base/display`, `base/forms`, `base/structure`, `base/text-inputs`.
+This module composes `base/buttons`, `base/choice-inputs`, `base/display`, `base/forms`, `base/structure`, `base/text-inputs`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

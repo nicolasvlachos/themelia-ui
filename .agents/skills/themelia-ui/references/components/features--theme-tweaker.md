@@ -20,7 +20,7 @@ import "themelia-ui/features/theme-tweaker.css"
 
 ## Composition
 
-This family composes `base/accordion`, `base/badge`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/feedback`, `base/forms`, `base/forms-numeric`, `base/item`, `base/navigation`, `base/overlay`, `base/structure`, `base/text-inputs`, `base/typography`, `base/value-inputs`, `features/overlays`.
+This module composes `base/accordion`, `base/badge`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/feedback`, `base/forms`, `base/forms-numeric`, `base/item`, `base/navigation`, `base/overlay`, `base/structure`, `base/text-inputs`, `base/typography`, `base/value-inputs`, `features/overlays`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -582,13 +582,32 @@ Preview route: Theme tweaker — `/theme-tweaker`
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 import { Button } from "themelia-ui/base/buttons"
+import { Card } from "themelia-ui/base/cards"
+import { Grid } from "themelia-ui/base/structure"
 import { ThemeScope, createTheme } from "themelia-ui/features/theme-tweaker"
+
+/*
+ * Both radii: a container reads --radius and the controls inside it read --radius-sm, so a
+ * scope that set only one would leave half the corners as they were.
+ */
+const SQUARE_CORNERS = createTheme({ shared: { "--radius": "0.25rem", "--radius-sm": "0.125rem" } })
 
 export default function IsolatedThemeScope() {
 	return (
-		<ThemeScope theme={createTheme({ shared: { "--radius": "0.875rem" } })}>
-			<Button>Scoped radius</Button>
-		</ThemeScope>
+		<Grid gap="lg">
+			<Card
+				title="App theme"
+				description="The corners every other region uses."
+				footerSlot={<Button>Unscoped</Button>}
+			/>
+			<ThemeScope theme={SQUARE_CORNERS}>
+				<Card
+					title="Scoped theme"
+					description="Squarer corners, in this region only."
+					footerSlot={<Button>Scoped radius</Button>}
+				/>
+			</ThemeScope>
+		</Grid>
 	)
 }
 ```

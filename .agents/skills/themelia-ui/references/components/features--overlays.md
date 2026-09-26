@@ -20,7 +20,7 @@ import "themelia-ui/features/overlays.css"
 
 ## Composition
 
-This family composes `base/alert-dialog`, `base/buttons`, `base/dialog`, `base/display`, `base/feedback`, `base/overlay`, `base/sheet`.
+This module composes `base/alert-dialog`, `base/buttons`, `base/dialog`, `base/display`, `base/feedback`, `base/overlay`, `base/sheet`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -353,8 +353,8 @@ import { useState } from "react"
 
 import { Button } from "themelia-ui/base/buttons"
 import { FormField } from "themelia-ui/base/forms"
-import { Input } from "themelia-ui/base/text-inputs"
 import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
 import { Text } from "themelia-ui/base/typography"
 import { ActionDialog } from "themelia-ui/features/overlays"
 
@@ -365,7 +365,7 @@ export default function ActionDialogExample() {
 	const [failure, setFailure] = useState<string | null>(null)
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Stack direction="horizontal" gap="lg" wrap>
 				<ActionDialog
 					title="Rename workspace"
@@ -418,7 +418,7 @@ export default function ActionDialogExample() {
 					last result: {saved}
 				</Text>
 			)}
-		</>
+		</Stack>
 	)
 }
 ```

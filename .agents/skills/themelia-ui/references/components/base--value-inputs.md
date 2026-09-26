@@ -20,7 +20,7 @@ import "themelia-ui/base/value-inputs.css"
 
 ## Composition
 
-This family composes `base/choice-inputs`, `base/date-pickers`, `base/display`, `base/structure`, `base/text-inputs`, `base/typography`.
+This module composes `base/choice-inputs`, `base/date-pickers`, `base/display`, `base/structure`, `base/text-inputs`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

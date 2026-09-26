@@ -20,7 +20,7 @@ import "themelia-ui/features/event-calendar.css"
 
 ## Composition
 
-This family composes `base/action-menu`, `base/buttons`, `base/choice-inputs`, `base/date-pickers`, `base/display`, `base/feedback`, `base/popover`, `base/typography`.
+This module composes `base/action-menu`, `base/buttons`, `base/choice-inputs`, `base/date-pickers`, `base/display`, `base/feedback`, `base/popover`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -455,28 +455,103 @@ Preview route: Event calendar — `/event-calendar`
 ### The grid
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<EventCalendar
-  events={events}
-  categories={categories}
-  enableCategoryFilter
-  onEventClick={(event) => open(event.id)}
-  onDayClick={(date, events) => setDay({ date, events })}
-/>
+import { useState } from "react"
+import { PlusIcon } from "lucide-react"
+
+import { Text } from "themelia-ui/base/typography"
+import { EventCalendar, type CalendarViewMode } from "themelia-ui/features/event-calendar"
+
+import { CATEGORIES } from "./_shared"
+import { EVENTS, MONTH } from "./data"
+
+export default function Month() {
+	const [view, setView] = useState<CalendarViewMode>("month")
+	const [picked, setPicked] = useState<string | null>(null)
+	const [visible, setVisible] = useState<string[]>([])
+
+	return (
+		<>
+			<EventCalendar
+				events={EVENTS}
+				categories={CATEGORIES}
+				defaultDate={MONTH}
+				viewMode={view}
+				onViewModeChange={setView}
+				enableCategoryFilter
+				visibleCategories={visible}
+				onVisibleCategoriesChange={setVisible}
+				maxEventsPerDay={2}
+				actions={[{ id: "new", label: "New booking", icon: PlusIcon, onClick: () => setPicked("new booking") }]}
+				onEventClick={(event) => setPicked(event.title)}
+				onDayClick={(date, events) =>
+					setPicked(`${date.toDateString()} — ${events.length} event${events.length === 1 ? "" : "s"}`)
+				}
+			/>
+			{!!picked && <Text size="sm" type="secondary">picked: {picked}</Text>}
+		</>
+	)
+}
 ```
 
 ### The agenda
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<EventCalendar viewMode="agenda" events={events} categories={categories} />
+import { useState } from "react"
+
+import { Text } from "themelia-ui/base/typography"
+import { EventCalendar } from "themelia-ui/features/event-calendar"
+
+import { CATEGORIES } from "./_shared"
+import { EVENTS, MONTH } from "./data"
+
+export default function Agenda() {
+	const [picked, setPicked] = useState<string | null>(null)
+
+	return (
+		<>
+			<EventCalendar
+				events={EVENTS}
+				categories={CATEGORIES}
+				defaultDate={MONTH}
+				viewMode="agenda"
+				showLegend={false}
+				onEventClick={(event) => setPicked(event.title)}
+			/>
+			{!!picked && <Text size="sm" type="secondary">picked: {picked}</Text>}
+		</>
+	)
+}
 ```
 
 ### A week, and a range
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<EventCalendar
-  viewMode="week"
-  minDate={new Date(2026, 8, 1)}
-  maxDate={new Date(2026, 8, 30)}
-  disabledDates={(date) => date.getDay() === 0}
-/>
+import { useState } from "react"
+
+import { Text } from "themelia-ui/base/typography"
+import { EventCalendar } from "themelia-ui/features/event-calendar"
+
+import { CATEGORIES } from "./_shared"
+import { EVENTS } from "./data"
+
+export default function Week() {
+	const [picked, setPicked] = useState<string | null>(null)
+
+	return (
+		<>
+			<EventCalendar
+				events={EVENTS}
+				categories={CATEGORIES}
+				defaultDate={new Date(2026, 8, 14)}
+				viewMode="week"
+				showLegend={false}
+				minDate={new Date(2026, 8, 1)}
+				maxDate={new Date(2026, 8, 30)}
+				disabledDates={(date) => date.getDay() === 0}
+				onEventClick={(event) => setPicked(event.title)}
+			/>
+			{!!picked && <Text size="sm" type="secondary">picked: {picked}</Text>}
+		</>
+	)
+}
 ```

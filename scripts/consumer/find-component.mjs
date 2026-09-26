@@ -134,7 +134,7 @@ export function findComponents(families, query, filters = {}) {
         score = Math.max(score, componentScore)
       }
     }
-    if (score > 0) scored.push({ family: filters.explain ? { ...family, match: { score, components: componentMatches.sort((a, b) => b.score - a.score), reason: componentMatches.length ? 'Public component name, description or positive usage guidance' : 'Family identity, positive guidance or attributed recipe' } } : family, score })
+    if (score > 0) scored.push({ family: filters.explain ? { ...family, match: { score, components: componentMatches.sort((a, b) => b.score - a.score), reason: componentMatches.length ? 'Public component name, description or positive usage guidance' : 'Module identity, positive guidance or attributed recipe' } } : family, score })
   }
 
   return scored
@@ -150,10 +150,10 @@ Options:
   --layer=<layer>       typography, primitives, base, layout, features, patterns, admin, foundation
   --profile=<profile>   general or admin
   --status=<status>     exact stability status from the catalogue
-  --family=<id>         exact family id, for example base/buttons
+  --family=<id>         exact module id, for example base/buttons
   --symbol=<Name>       exact public export name
-  --peer=<package>      families that require this optional peer
-  --route=</path>       families represented on this live preview route
+  --peer=<package>      modules that require this optional peer
+  --route=</path>       modules represented on this live preview route
   --limit=<N>           return at most N matches (default 8)
   --explain             include matched components, reasons and API anchors
   --json                emit complete machine-readable records

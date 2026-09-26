@@ -20,7 +20,7 @@ import "themelia-ui/base/typography.css"
 
 ## Composition
 
-This family has no component-family dependencies.
+This module depends on no other module.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -228,6 +228,48 @@ export default function MenusInContext() {
 }
 ```
 
+### The editor and what comes out
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { useState } from "react"
+
+import { Stack } from "themelia-ui/base/structure"
+import { DisplayLabel, RichText, Text } from "themelia-ui/base/typography"
+import { RichTextEditor } from "themelia-ui/features/rich-text-editor"
+
+import styles from "./editor.module.css"
+
+const SEED = "<p>Select some text and press <strong>B</strong>. The toolbar reports what the caret is inside, so the buttons light up as you move through the document.</p><ul><li>Lists work.</li><li>So does <em>emphasis</em>.</li></ul>"
+
+export default function Editor() {
+	const [body, setBody] = useState(SEED)
+
+	return (
+		<>
+			<RichTextEditor
+				value={body}
+				onValueChange={setBody}
+				placeholder="Write something…"
+				showCounts
+				maxLength={280}
+			/>
+
+			<Stack gap="xs">
+				<DisplayLabel>Emitted HTML</DisplayLabel>
+				<Text size="xs" type="secondary" className={styles.source}>
+					{body || "(empty)"}
+				</Text>
+			</Stack>
+
+			<Stack gap="xs">
+				<DisplayLabel>Rendered through RichText</DisplayLabel>
+				<RichText html={body} />
+			</Stack>
+		</>
+	)
+}
+```
+
 ### compact
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
@@ -278,12 +320,6 @@ export default function EditorCompact() {
 		/>
 	)
 }
-```
-
-### What comes out
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<RichText html={body} />
 ```
 
 ### Type can override the master factor
@@ -429,7 +465,7 @@ export default function TableScale() {
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 import { Text, type TextType } from "themelia-ui/base/typography"
 
-import styles from "../../preview.module.css"
+import styles from "./text-roles.module.css"
 
 const ROLES: TextType[] = ["main", "secondary", "error", "success", "primary"]
 
@@ -442,7 +478,7 @@ export default function TextRoles() {
 				</Text>
 			))}
 			{/* inverse on the page background is invisible, which is the whole point of it. */}
-			<div className={styles.inverseSwatch}>
+			<div className={styles.inverseSurface}>
 				<Text type="inverse">inverse — the role picks the token.</Text>
 			</div>
 		</>

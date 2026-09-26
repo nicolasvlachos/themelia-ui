@@ -6,7 +6,7 @@
       "from": "themelia-ui/blocks/analytics",
       "to": "themelia-ui/patterns/analytics",
       "mechanical": true,
-      "why": "`blocks/` became `patterns/`, and the admin domains moved under `admin/patterns/`. The layer kept its position above features; only the name changed."
+      "why": "`blocks/` became `patterns/`, and the admin domains moved under `admin/patterns/`. The tier kept its position above Features; only the subpath changed."
     },
     {
       "kind": "subpath",
@@ -27,7 +27,7 @@
       "from": "themelia-ui/blocks/access",
       "to": "themelia-ui/admin/patterns/access",
       "mechanical": true,
-      "why": "Admin domains moved into the admin profile, which may build on general families but never the reverse."
+      "why": "Admin domains moved into the admin profile, which may build on general modules but never the reverse."
     },
     {
       "kind": "subpath",
@@ -41,7 +41,7 @@
       "from": "@/services/actions",
       "to": "themelia-ui/features/actions",
       "mechanical": true,
-      "why": "The action registry was never published; it lived at a source alias no consumer could resolve. It is a family now."
+      "why": "The action registry was never published; it lived at a source alias no consumer could resolve. It is a module now."
     },
     {
       "kind": "subpath",
@@ -150,7 +150,7 @@
       "to": "FilterStrings.applying / savedViews / customView and ActivitiesStrings.refreshing / error / refreshError / retry",
       "mechanical": false,
       "phase": "Feature interaction states (1.0.2)",
-      "why": "Pending filters, saved-view selects, and activity loading/retry states now expose their copy through the owning family's strings contract.",
+      "why": "Pending filters, saved-view selects, and activity loading/retry states now expose their copy through the owning module's strings contract.",
       "action": "Partial strings overrides continue to work without changes. Complete FilterStrings maps must add applying (Updating results…), savedViews (Saved views), and customView (Custom view). Complete ActivitiesStrings maps must add refreshing (Updating activity…), error (Could not load activity), refreshError (Could not update activity), and retry (Try again). Spread the respective default strings before overrides to retain fallback copy. DataView's new optional strings.filterError controls its own matching-failure warning."
     },
     {
@@ -194,7 +194,7 @@
       "from": "Names that were only another kit component under a second name: Dialog, DialogTrigger, DialogClose, DialogBody, DialogTitle, DialogDescription, DialogDismissArea and the DialogProps type from base/dialog; Sheet, SheetTrigger, SheetClose, SheetBody, SheetTitle and SheetDescription from base/sheet; AlertDialog, AlertDialogTrigger, AlertDialogBody, AlertDialogTitle and AlertDialogDescription from base/alert-dialog; MenubarMenu, MenubarContent, MenubarItem, MenubarCheckboxItem, MenubarRadioGroup, MenubarRadioItem, MenubarLabel, MenubarGroup, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubTrigger, MenubarSubContent and MenubarPortal from base/menubar; SettingsShell and the SettingsShellProps type from layout/settings; ToggleGroupItem and the ToggleGroupItemProps type from base/toggle; DialogHeader and DialogFooter from base/dialog, SheetHeader and SheetFooter from base/sheet, and AlertDialogHeader and AlertDialogFooter from base/alert-dialog, which only added a class hook no stylesheet read; CommandDialogProps declared against Dialog",
       "to": "The component each one always was, under its own name: Overlay, OverlayTrigger, OverlayClose, OverlayBody, OverlayTitle, OverlayDescription, OverlayDismissArea and OverlayRootProps from base/overlay (for every Dialog*, Sheet* and AlertDialog* name above, and DialogProps); OverlayHeader and OverlayFooter from base/overlay (for every *Header and *Footer above); DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuLabel, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent and DropdownMenuPortal from base/dropdown-menu, around MenubarTrigger; AsideNavShell and AsideNavShellProps from layout/settings; Toggle and ToggleProps from base/toggle; CommandDialogProps declared against OverlayRootProps (the same members)",
       "mechanical": false,
-      "why": "Each removed name was `export const X = Y` of another kit component (or `type X = Y`): the same function under a second name, so there were two names to learn for one thing and every page documented it twice. A preset family now exports only the parts that set something. DialogContent fixes placement; SheetContent fixes an edge and a default shape; AlertDialogContent fixes role and dismissal, and AlertDialogAction and AlertDialogCancel name the answers; AlertDialogMedia is the media slot; MenubarTrigger draws a menu's word in the bar. The root, trigger, close, body, title and description around them are Overlay's own parts, and a menubar's menus are the dropdown menu's. The header and footer parts were OverlayHeader and OverlayFooter with an extra class (dialog--header, sheet--footer, …) that no stylesheet in the kit read, so they went with the aliases.",
+      "why": "Each removed name was `export const X = Y` of another kit component (or `type X = Y`): the same function under a second name, so there were two names to learn for one thing and every page documented it twice. A preset module now exports only the parts that set something. DialogContent fixes placement; SheetContent fixes an edge and a default shape; AlertDialogContent fixes role and dismissal, and AlertDialogAction and AlertDialogCancel name the answers; AlertDialogMedia is the media slot; MenubarTrigger draws a menu's word in the bar. The root, trigger, close, body, title and description around them are Overlay's own parts, and a menubar's menus are the dropdown menu's. The header and footer parts were OverlayHeader and OverlayFooter with an extra class (dialog--header, sheet--footer, …) that no stylesheet in the kit read, so they went with the aliases.",
       "action": "Import the replacement under its own name; props and behaviour are identical because it was always the same component. `import { Dialog, DialogTrigger, DialogContent, DialogTitle } from \"themelia-ui/base/dialog\"` becomes `import { Overlay, OverlayTrigger, OverlayTitle } from \"themelia-ui/base/overlay\"` beside `import { DialogContent } from \"themelia-ui/base/dialog\"`, and `<Dialog>` becomes `<Overlay>`, `<DialogTitle>` `<OverlayTitle>`, and so on; Sheet* and AlertDialog* names map the same way (Sheet → Overlay, SheetClose → OverlayClose, AlertDialogBody → OverlayBody), and DialogDismissArea is OverlayDismissArea. In a Menubar, wrap each menu in `DropdownMenu` instead of `MenubarMenu`, keep `MenubarTrigger`, and swap every other `Menubar<Part>` for `DropdownMenu<Part>` from themelia-ui/base/dropdown-menu; import themelia-ui/base/dropdown-menu.css beside base/menubar.css, since the menubar sheet no longer pulls it in. `SettingsShell` becomes `AsideNavShell` and `ToggleGroupItem` becomes `Toggle` (give it the same `value`), both from the same subpath. `DialogHeader`, `SheetHeader` and `AlertDialogHeader` become `OverlayHeader`, and the three footers `OverlayFooter`; a stylesheet of your own that targeted `.dialog--header`, `.sheet--footer` or the alert-dialog pair should target `.overlay--header` / `.overlay--footer` inside `.dialog--component`, `.sheet--component` or `.alert-dialog--component` instead. Type annotations: DialogProps → OverlayRootProps, SettingsShellProps → AsideNavShellProps, ToggleGroupItemProps → ToggleProps. Code that typed CommandDialogProps needs nothing."
     },
     {
@@ -286,7 +286,7 @@
       "to": "one self-contained sheet per family",
       "mechanical": false,
       "why": "One stylesheet meant every consumer shipped every component's rules. The split means you ship what you import.",
-      "action": "Import each family's stylesheet beside its components; the family sheet imports `core.css` and its cascade layer order itself. `docs/generated/imports.md` lists every exact path. `style.css` still exists as the deduplicated union if you would rather not track them."
+      "action": "Import each module's stylesheet beside its components; the module sheet imports `core.css` and its cascade layer order itself. `docs/generated/imports.md` lists every exact path. `style.css` still exists as the deduplicated union if you would rather not track them."
     },
     {
       "kind": "css",
@@ -407,7 +407,7 @@
       "from": "--medallion-base with --accordion-medallion, --choice-card-icon-box and --choice-card-row-icon; --switch-track-h; --menu-shadow and --menu-ring-width; --sidebar-group-action-size and --sidebar-menu-action-size; --button-px, --button-px-icon, --button-gap, --button-icon, --button-text, --toast-icon, --sidebar-menu-text, --accordion-media-gap; --badge-destructive-bg and the --destructive-60 alpha step only it read",
       "to": "--size-medallion (IconBadge's --icon-badge-size defaults to it); --choice-size; --popover-shadow and --border-width; --size-icon-lg; --control-px, --control-px-sm (for --button-px-icon), --space-sm, --size-icon, --text-sm, --size-icon-lg and --space-lg read directly; --badge-destructive-bg and --destructive-60 removed (nothing read them); use color-mix(in oklab, var(--destructive) 60%, transparent) if you relied on the step",
       "mechanical": true,
-      "why": "Each restated another token's derivation under a family name: the medallion four times from one base, the switch track the checkbox box, the dropdown menu the popover's shadow and hairline, two sidebar actions one size, and the button, toast, sidebar and accordion renamed kit steps with a bare var(). One name per value.",
+      "why": "Each restated another token's derivation under a component's name: the medallion four times from one base, the switch track the checkbox box, the dropdown menu the popover's shadow and hairline, two sidebar actions one size, and the button, toast, sidebar and accordion renamed kit steps with a bare var(). One name per value.",
       "action": "Replace each name with its target where you override it. To retune the medallion everywhere, set --size-medallion; IconBadge alone still takes --icon-badge-size.",
       "tokens": {
         "--medallion-base": "--size-medallion",
@@ -489,8 +489,8 @@
       "from": "--card-framed-bg, --alert-description-fg, --alert-link-hover, --alert-meta-label-fg, --mention-destructive-fg, --menu-item-destructive-bg-hover and --segmented-chip-bg",
       "to": "--card, --text-role-secondary, --text-role-main, --text-role-secondary, --destructive-accent, --destructive-10 and --popover, read directly",
       "mechanical": true,
-      "why": "Each was one family's colour for a role the kit already names, and several carried a dark value of their own. The framed Card lifted itself to --popover in dark while every other card-like surface sat on --card; the inverse Alert kept three names for its text where re-pointing the text roles does the job; the destructive mention and menu highlight mixed their own ink and wash. Each role has one token now: cards paint --card, destructive ink is --destructive-accent, its soft fill --destructive-10, and the raised segmented chip --popover.",
-      "action": "The codemod renames each read. A declaration that restyled one family now sets a shared name, so move it onto that component's element rather than a scope or :root. A dark lift for cards belongs in the theme's --card.",
+      "why": "Each was one component's colour for a role the kit already names, and several carried a dark value of their own. The framed Card lifted itself to --popover in dark while every other card-like surface sat on --card; the inverse Alert kept three names for its text where re-pointing the text roles does the job; the destructive mention and menu highlight mixed their own ink and wash. Each role has one token now: cards paint --card, destructive ink is --destructive-accent, its soft fill --destructive-10, and the raised segmented chip --popover.",
+      "action": "The codemod renames each read. A declaration that restyled one component now sets a shared name, so move it onto that component's element rather than a scope or :root. A dark lift for cards belongs in the theme's --card.",
       "tokens": {
         "--card-framed-bg": "--card",
         "--alert-description-fg": "--text-role-secondary",
@@ -632,7 +632,7 @@
       "from": "InputGroup addon padding hooks for .border-b and .border-t classes, and a combobox-content rule",
       "to": "removed",
       "mechanical": false,
-      "why": "They matched classes no component renders — leftovers from the Tailwind source kit.",
+      "why": "They matched classes no component renders.",
       "action": "If you passed border-b or border-t to an addon for its padding, set the padding yourself."
     },
     {

@@ -5,14 +5,14 @@
 One package, two profiles over one downward dependency graph.
 
 A profile is a **dependency ceiling**, not a subject-matter category, and not a bundle.
-It says which direction an import may travel; it says nothing about what a family is FOR.
-95 of the 97 documented families are `general`, and that includes the
+It says which direction an import may travel; it says nothing about what a module is FOR.
+95 of the 97 documented modules are `general`, and that includes the
 product, order and resource workflows an admin application is mostly built from —
 `general` does not mean "not useful in admin software".
 
-**general** — 95 families. Does not depend on an admin family.
+**general** — 95 modules. Does not depend on an admin module.
 
-**admin** — 2 families. Terminal: may depend on general families, and may
+**admin** — 2 modules. Terminal: may depend on general modules, and may
 never be imported by one.
 
 What a consumer downloads is decided by the exact subpaths they import, not by a profile:
@@ -20,25 +20,28 @@ there is no general bundle and no admin bundle. The machine-readable records —
 `themelia-ui/profiles/general.json` and `.../admin.json` — list every subpath
 available below each ceiling and the optional peers that come with it.
 
-The rule between them is enforced twice: `verify composition` fails any general family that
-names `src/components/admin`, and `verify architecture` fails the same edge in the manifest.
-A general consumer therefore cannot accidentally acquire a domain vocabulary, and an admin
-component cannot become a place where application policy hides.
+The package's own checks reject any general module that imports an admin one, so a general
+consumer never acquires a domain vocabulary by accident, and an admin component cannot
+become a place where application policy hides.
 
 ## The graph
 
 ```text
-foundation → typography → primitives → base ─┬─ layout ────┐
-                                             ├─ features ──┼→ patterns → admin
-                                             └─────────────┘
+Foundations → base/typography → Primitives → Base ─┬─ Layout ────┐
+                                                   ├─ Features ──┼→ Blocks (general → admin)
+                                                   └─────────────┘
 ```
 
-`layout` and `features` are siblings. Neither may import `patterns`; a pattern may
-assemble either one. `admin` is the terminal profile layer.
+Layout and Features are siblings. Neither may import a block; a block may assemble either
+one. `admin` is the terminal profile.
 
-## Families
+## Modules
 
-| family | profile | layer | depends on |
+The `layer` column uses the manifest's `layer` names, which split the tiers more finely:
+`typography` is the Base module `base/typography`, and `patterns` and `admin` together make
+up Blocks.
+
+| module | profile | `layer` | depends on |
 | --- | --- | --- | --- |
 | `admin/patterns/access` | admin | admin | 8 |
 | `admin/patterns/commerce` | admin | admin | 18 |

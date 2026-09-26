@@ -68,8 +68,7 @@ or `data-theme="light"`, on the boundary itself or on any ancestor:
 }
 ```
 
-`scripts/gen-theme.mjs` emits both blocks, and `verify dark-overrides` holds a hand-written
-dark override to the same selectors, so write them exactly.
+A dark override of your own needs both blocks, with exactly these selectors.
 
 **The one nesting a descendant selector cannot see.** An explicit light island inside a
 `.dark` tree keeps its own boundary light, but a bare boundary nested inside that island

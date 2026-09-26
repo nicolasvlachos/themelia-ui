@@ -1,5 +1,5 @@
 {
-  "note": "The theme tokens (src/styles) the package declared at this version, from scripts/lib/token-surface.mjs. Component variables are private and not recorded. verify migrations requires each name to be declared still or mapped in architecture/migrations.json. Rewritten at each release (see docs/maintainers/releasing.md), never to make a removal pass.",
+  "note": "The theme tokens (src/styles) the package declared at this version, from scripts/lib/token-surface.mjs. Component variables are private and not recorded. verify migrations requires each name to be declared still or mapped in architecture/migrations.json. Rewritten at each release (see CONTRIBUTING.md), never to make a removal pass.",
   "version": "2.0.2",
   "tokens": [
     "--accent",

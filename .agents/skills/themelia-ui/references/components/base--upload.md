@@ -20,7 +20,7 @@ import "themelia-ui/base/upload.css"
 
 ## Composition
 
-This family composes `base/badge`, `base/buttons`, `base/display`, `base/feedback`.
+This module composes `base/badge`, `base/buttons`, `base/display`, `base/feedback`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

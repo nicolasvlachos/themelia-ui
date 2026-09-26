@@ -22,9 +22,9 @@ import "themelia-ui/base/dropdown-menu.css"
 
 ## Composition
 
-This family has no component-family dependencies.
+This module depends on no other module.
 
-It is used together with `base/dropdown-menu`: import that family and its stylesheet too.
+It is used together with `base/dropdown-menu`: import that module and its stylesheet too.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

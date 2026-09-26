@@ -20,7 +20,7 @@ import "themelia-ui/layout/header.css"
 
 ## Composition
 
-This family composes `base/action-menu`, `base/avatar`, `base/buttons`, `base/display`, `base/dropdown-menu`, `base/navigation`, `base/popover`, `base/sidebar`, `base/typography`.
+This module composes `base/action-menu`, `base/avatar`, `base/buttons`, `base/display`, `base/dropdown-menu`, `base/navigation`, `base/popover`, `base/sidebar`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

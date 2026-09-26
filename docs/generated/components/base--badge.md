@@ -20,7 +20,7 @@ import "themelia-ui/base/badge.css"
 
 ## Composition
 
-This family composes `base/slot`.
+This module composes `base/slot`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

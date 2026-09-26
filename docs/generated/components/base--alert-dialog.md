@@ -20,7 +20,7 @@ import "themelia-ui/base/alert-dialog.css"
 
 ## Composition
 
-This family composes `base/overlay`.
+This module composes `base/overlay`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -78,33 +78,36 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayFooter, OverlayHeader, OverlayTitle,
 	OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function AlertDialog() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="destructive" buttonStyle="outline" />}>
-				Delete account
-			</OverlayTrigger>
-			<AlertDialogContent>
-				<OverlayHeader>
-					<OverlayTitle>Delete this account?</OverlayTitle>
-					<OverlayDescription>This cannot be undone.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<Text type="secondary">Every project and invoice is removed permanently.</Text>
-				</OverlayBody>
-				<OverlayFooter>
-					<AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</AlertDialogCancel>
-					{/* The answer is an Action, not a second Cancel: they read the same only until a caller hooks the one that commits. */}
-					<AlertDialogAction render={<Button tone="destructive" />}>
-						Delete
-					</AlertDialogAction>
-				</OverlayFooter>
-			</AlertDialogContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="destructive" buttonStyle="outline" />}>
+					Delete account
+				</OverlayTrigger>
+				<AlertDialogContent>
+					<OverlayHeader>
+						<OverlayTitle>Delete this account?</OverlayTitle>
+						<OverlayDescription>This cannot be undone.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">Every project and invoice is removed permanently.</Text>
+					</OverlayBody>
+					<OverlayFooter>
+						<AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</AlertDialogCancel>
+						{/* The answer is an Action, not a second Cancel: they read the same only until a caller hooks the one that commits. */}
+						<AlertDialogAction render={<Button tone="destructive" />}>
+							Delete
+						</AlertDialogAction>
+					</OverlayFooter>
+				</AlertDialogContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```

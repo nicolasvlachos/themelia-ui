@@ -3,18 +3,18 @@
 # The composition ladder
 
 The [composition model](composition.md) lists eight rungs, from ordinary props to a
-documentation recipe. A family offers the *smallest sufficient* seam — not all eight, and
+documentation recipe. A module offers the *smallest sufficient* seam — not all eight, and
 not a headless hook where a prop would do.
 
 The rungs are ordinary props; controlled state and callbacks when state exists; accessors;
 named slots; render props; exported parts; headless hooks; and complete recipes. Passive
-families may stop at the first rung. Interaction features normally expose several.
+modules may stop at the first rung. Interaction features normally expose several.
 
-This table is derived from what each family declares, so it cannot describe a seam that
-was removed or miss one that was added. The table focuses on feature families, where the
+This table is derived from what each module declares, so it cannot describe a seam that
+was removed or miss one that was added. The table focuses on feature modules, where the
 higher rungs are meaningful; the columns start at accessors.
 
-| family | accessors | slots | render props | headless hook | partials | recipe |
+| module | accessors | slots | render props | headless hook | partials | recipe |
 | --- | :-: | :-: | :-: | :-: | :-: | :-: |
 | `features/actions` | ● | ● | · | ● | ● | ● |
 | `features/activities` | ● | ● | ● | ● | ● | ● |

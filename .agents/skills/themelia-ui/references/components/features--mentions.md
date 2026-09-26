@@ -20,7 +20,7 @@ import "themelia-ui/features/mentions.css"
 
 ## Composition
 
-This family composes `base/avatar`, `base/command`, `base/item`, `base/popover`, `base/spinner`, `base/typography`.
+This module composes `base/avatar`, `base/command`, `base/item`, `base/popover`, `base/spinner`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -474,8 +474,8 @@ import {
 	type MentionEditorHandle,
 } from "themelia-ui/features/mentions"
 
-import styles from "../../preview.module.css"
 import { RESOURCES, type Kind } from "./data"
+import styles from "./mention-inline.module.css"
 
 /**
  * The four methods `MentionEditorHandle` asks for, over a plain contenteditable.
@@ -544,7 +544,7 @@ function MiniEditor({
 				onInput(event.currentTarget.innerHTML)
 				onCaretChange()
 			}}
-			className={styles.miniEditor}
+			className={styles.editor}
 		/>
 	)
 }
@@ -572,7 +572,7 @@ export default function MentionInline() {
 
 	return (
 		<>
-			<div className={styles.mentionAnchor}>
+			<div className={styles.anchor}>
 				<MiniEditor
 					handleRef={editorRef}
 					onCaretChange={mentions.handleCaretChange}
@@ -638,7 +638,7 @@ export default function MentionInline() {
 			)}
 
 			{!!html && (
-				<Text size="xs" type="secondary" className={styles.mentionSource}>
+				<Text size="xs" type="secondary" className={styles.source}>
 					{html}
 				</Text>
 			)}

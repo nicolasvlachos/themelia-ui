@@ -20,7 +20,7 @@ import "themelia-ui/base/command.css"
 
 ## Composition
 
-This family composes `base/dialog`, `base/input-group`, `base/overlay`.
+This module composes `base/dialog`, `base/input-group`, `base/overlay`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

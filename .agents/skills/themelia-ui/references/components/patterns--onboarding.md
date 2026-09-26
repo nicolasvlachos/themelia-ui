@@ -20,7 +20,7 @@ import "themelia-ui/patterns/onboarding.css"
 
 ## Composition
 
-This family composes `base/accordion`, `base/display`, `base/feedback`, `base/typography`.
+This module composes `base/accordion`, `base/display`, `base/feedback`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

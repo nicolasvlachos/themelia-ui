@@ -1,23 +1,24 @@
 # Composition model
 
 The kit is designed to build product-specific UI without copying library internals. Start
-at the highest layer that already owns the interaction, then compose downward only when the
+at the highest tier that already owns the interaction, then compose downward only when the
 ready-made surface does not express the job.
 
-## The layers
+## The tiers
 
-| layer | owns | consumer use |
+| tier | owns | consumer use |
 | --- | --- | --- |
-| typography | text roles | keep type, colour, truncation, and semantics consistent |
-| primitives | one formatted value | render money, dates, people, files, and other values |
-| base | one generic UI concept | controls, overlays, rows, cards, feedback, and structure |
-| layout | page and application shells | arrange routes without owning routing or data |
-| features | an interaction lifecycle | use controlled state, callbacks, accessors, parts, or hooks |
-| patterns | a subject-shaped arrangement | assemble base, layout, and feature families |
-| admin | terminal admin presentation | build on general families without leaking admin vocabulary down |
+| Primitives | one formatted value | render money, dates, people, files, and other values |
+| Base | one generic UI concept | controls, overlays, rows, cards, feedback, and structure |
+| Base | text roles, in `base/typography` | keep type, colour, truncation, and semantics consistent |
+| Layout | page and application shells | arrange routes without owning routing or data |
+| Features | an interaction lifecycle | use controlled state, callbacks, accessors, parts, or hooks |
+| Blocks | a subject-shaped arrangement | assemble base, layout, and feature modules |
+| Blocks | terminal admin presentation, in the admin blocks | build on general modules without leaking admin vocabulary down |
 
-`layout` and `features` are siblings. A pattern may compose both; neither may import a
-pattern. The complete generated graph is in Profiles (`node_modules/themelia-ui/docs/generated/profiles.md`).
+`base/typography` sits below Primitives. Layout and Features are siblings. A block may
+compose both; neither may import a block. The complete generated graph is in
+Profiles (`node_modules/themelia-ui/docs/generated/profiles.md`).
 
 ## The composition ladder
 
@@ -30,12 +31,12 @@ Use the lowest rung that solves the real requirement:
 5. Render props when a region needs the component's live state.
 6. Exported parts for assembling a different surface.
 7. A headless hook when the package presentation cannot express the design.
-8. A documented recipe that wires several families into a screen-level result.
+8. A documented recipe that wires several modules into a screen-level result.
 
-Not every family needs every rung. A passive Badge does not need controlled state; a feature
+Not every module needs every rung. A passive Badge does not need controlled state; a feature
 with an interaction lifecycle normally offers several. The generated
 [composition ladder](composition-ladder.md) lists which seams each feature
-family exposes.
+module exposes.
 
 ## Build a business component
 
@@ -105,7 +106,7 @@ responsive geometry, tokens, and reusable interaction contracts.
 ## Common application compositions
 
 These are boundaries, not new package abstractions. Adapt the application-owned data and
-callbacks, then open each linked family reference for the complete prop contract.
+callbacks, then open each linked module reference for the complete prop contract.
 
 ### Dashboard
 
@@ -120,7 +121,7 @@ import "themelia-ui/layout/page.css"
 </Page>
 ```
 
-The pattern owns metric presentation and responsive columns. The app owns the query, time
+The block owns metric presentation and responsive columns. The app owns the query, time
 window, permission-filtered figures, and what clicking a metric means.
 
 ### Resource index
@@ -261,7 +262,7 @@ export function RenameRecord({ initialName, save }: {
 
 ### Responsive resource filters
 
-Install the optional peers listed in the DataView family reference. The ready surface shares
+Install the optional peers listed in the DataView module reference. The ready surface shares
 one filter state across the desktop bar and mobile sheet; the application supplies records
 and owns fetching. This example filters local rows. For server filtering, wire the public
 filtering contract to your query layer instead of filtering an already paged subset twice.
@@ -317,22 +318,22 @@ export function SettingsTabs() {
 
 | Situation | Composition rule |
 | --- | --- |
-| Initial loading | Use the family's loading contract where available; do not show a false empty result. |
+| Initial loading | Use the module's loading contract where available; do not show a false empty result. |
 | Refresh | Keep existing data and drafts visible where supported; distinguish refresh from first load. |
 | Empty or no matches | Distinguish an empty collection from filters excluding every result; offer the relevant next action. |
 | Error | Preserve user input, show recoverable feedback, and wire retry to the app's data operation. |
 | Pending mutation | Prevent duplicate actions; keep progress and errors associated with the initiating control. |
-| Narrow viewport | Use the family's mobile presentation (such as the filter sheet); keep state shared with desktop. |
+| Narrow viewport | Use the module's mobile presentation (such as the filter sheet); keep state shared with desktop. |
 | Typography/theme override | Let semantic owners inherit provider defaults; verify density changes spacing without demoting body copy. |
 
-Only use states the selected family exposes; the API reference is authoritative. The
+Only use states the selected module exposes; the API reference is authoritative. The
 complete examples above type-check against the built package, but their application
 callbacks are illustrative: verify persistence and browser behaviour in your app.
 
 ## When to wrap, compose, or contribute
 
-- **Wrap** when the product needs a stable local name or defaults around one family.
-- **Compose** when several public families form a product concept.
+- **Wrap** when the product needs a stable local name or defaults around one module.
+- **Compose** when several public modules form a product concept.
 - **Use parts or a hook** when a ready-made feature has the right lifecycle but the wrong
   presentation.
 - **Contribute to the package** only when the missing concept is domain-neutral, repeats in
@@ -341,5 +342,5 @@ callbacks are illustrative: verify persistence and browser behaviour in your app
   are not compatibility surfaces. Public props, exported parts, hooks, `data-slot`, BEM
   hooks, and global theme tokens are.
 
-Open [the family API index](components/INDEX.md) after choosing a family. It
-contains every public declaration and the live recipes attributed to that family.
+Open [the module API index](components/INDEX.md) after choosing a module. It
+contains every public declaration and the live recipes attributed to that module.

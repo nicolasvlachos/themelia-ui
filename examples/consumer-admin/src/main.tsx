@@ -1,11 +1,7 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 
-/*
- * `core.css` first: it declares the layer order, and a family stylesheet loaded before it
- * would append its layer name after `utilities` rather than in the declared position.
- */
-import "themelia-ui/core.css"
+/* Each module stylesheet imports core.css (the tokens and the layer order) itself. */
 import "themelia-ui/base/buttons.css"
 import "themelia-ui/base/forms.css"
 import "themelia-ui/base/structure.css"

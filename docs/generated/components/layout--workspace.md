@@ -20,7 +20,7 @@ import "themelia-ui/layout/workspace.css"
 
 ## Composition
 
-This family composes `base/badge`, `base/display`, `base/feedback`, `base/item`, `base/navigation`, `base/typography`.
+This module composes `base/badge`, `base/display`, `base/feedback`, `base/item`, `base/navigation`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

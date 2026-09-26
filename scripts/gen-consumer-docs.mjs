@@ -63,19 +63,19 @@ if (guidanceErrors.length) throw new Error(guidanceErrors.join('\n'))
 const importLines = [
   HEADER('gen-consumer-docs.mjs') + '# Exact imports',
   '',
-  `Every family has one subpath. There are no layer barrels: \`${name}/base\` and its three`,
-  'siblings were removed because one specifier pulled an entire layer and every optional peer',
-  'inside it. The root carries the provider and the display primitives, both peer-free.',
+  `Every module has one subpath. There are no tier barrels: \`${name}/base\` and its three`,
+  'siblings do not exist, because one specifier would pull an entire tier and every optional',
+  'peer inside it. The root carries the provider and the display primitives, both peer-free.',
   '',
   'Import the stylesheet column beside the exact JavaScript subpath. ESM bundlers also',
-  'discover the family rules through the module graph, but the explicit form behaves the',
+  "discover each module's rules through the import graph, but the explicit form behaves the",
   'same in CJS and makes the selected CSS visible in application source.',
   '',
 ]
 for (const profile of ['general', 'admin']) {
   const inProfile = records.filter((r) => r.profile === profile)
-  importLines.push(`## ${profile} profile — ${inProfile.length} families`, '')
-  importLines.push('| family | import | stylesheet | optional peers |', '| --- | --- | --- | --- |')
+  importLines.push(`## ${profile} profile — ${inProfile.length} modules`, '')
+  importLines.push('| module | import | stylesheet | optional peers |', '| --- | --- | --- | --- |')
   for (const record of inProfile) {
     importLines.push(
       `| \`${record.id}\` | \`${record.import}\` | ${record.css ? `\`${record.css}\`` : '—'} | ${record.optionalPeers.join(', ') || '—'} |`,
@@ -95,8 +95,8 @@ for (const record of records) {
 importLines.push(
   `## Optional peers — ${byPeer.size} of them`,
   '',
-  'Each is reachable only from the families below, so a consumer who never imports one never',
-  'resolves it. Release verification rejects a family that reaches an undeclared peer.',
+  'Each is reachable only from the modules below, so a consumer who never imports one never',
+  'resolves it. Release verification rejects a module that reaches an undeclared peer.',
   '',
   '| peer | reachable from |',
   '| --- | --- |',
@@ -129,7 +129,7 @@ const apiLines = [
     .map(
       ({ symbol, record }) =>
         `| \`${symbol}\` | \`${record.import}\` | ` +
-        `[family API](${record.apiDoc})${record.documentation ? ` · ${record.documentation}` : ''} |`,
+        `[module API](${record.apiDoc})${record.documentation ? ` · ${record.documentation}` : ''} |`,
     ),
   '',
 ]
@@ -143,14 +143,14 @@ const profileLines = [
   'One package, two profiles over one downward dependency graph.',
   '',
   'A profile is a **dependency ceiling**, not a subject-matter category, and not a bundle.',
-  'It says which direction an import may travel; it says nothing about what a family is FOR.',
-  `${counts('general')} of the ${records.length} documented families are \`general\`, and that includes the`,
+  'It says which direction an import may travel; it says nothing about what a module is FOR.',
+  `${counts('general')} of the ${records.length} documented modules are \`general\`, and that includes the`,
   'product, order and resource workflows an admin application is mostly built from —',
   '`general` does not mean "not useful in admin software".',
   '',
-  `**general** — ${counts('general')} families. Does not depend on an admin family.`,
+  `**general** — ${counts('general')} modules. Does not depend on an admin module.`,
   '',
-  `**admin** — ${counts('admin')} families. Terminal: may depend on general families, and may`,
+  `**admin** — ${counts('admin')} modules. Terminal: may depend on general modules, and may`,
   'never be imported by one.',
   '',
   'What a consumer downloads is decided by the exact subpaths they import, not by a profile:',
@@ -158,25 +158,28 @@ const profileLines = [
   '`themelia-ui/profiles/general.json` and `.../admin.json` — list every subpath',
   'available below each ceiling and the optional peers that come with it.',
   '',
-  'The rule between them is enforced twice: `verify composition` fails any general family that',
-  'names `src/components/admin`, and `verify architecture` fails the same edge in the manifest.',
-  'A general consumer therefore cannot accidentally acquire a domain vocabulary, and an admin',
-  'component cannot become a place where application policy hides.',
+  'The package\'s own checks reject any general module that imports an admin one, so a general',
+  'consumer never acquires a domain vocabulary by accident, and an admin component cannot',
+  'become a place where application policy hides.',
   '',
   '## The graph',
   '',
   '```text',
-  'foundation → typography → primitives → base ─┬─ layout ────┐',
-  '                                             ├─ features ──┼→ patterns → admin',
-  '                                             └─────────────┘',
+  'Foundations → base/typography → Primitives → Base ─┬─ Layout ────┐',
+  '                                                   ├─ Features ──┼→ Blocks (general → admin)',
+  '                                                   └─────────────┘',
   '```',
   '',
-  '`layout` and `features` are siblings. Neither may import `patterns`; a pattern may',
-  'assemble either one. `admin` is the terminal profile layer.',
+  'Layout and Features are siblings. Neither may import a block; a block may assemble either',
+  'one. `admin` is the terminal profile.',
   '',
-  '## Families',
+  '## Modules',
   '',
-  '| family | profile | layer | depends on |',
+  'The `layer` column uses the manifest\'s `layer` names, which split the tiers more finely:',
+  '`typography` is the Base module `base/typography`, and `patterns` and `admin` together make',
+  'up Blocks.',
+  '',
+  '| module | profile | `layer` | depends on |',
   '| --- | --- | --- | --- |',
   ...records.map(
     (r) => `| \`${r.id}\` | ${r.profile} | ${r.layer} | ${r.dependsOnFamilies.length || '—'} |`,
@@ -298,7 +301,7 @@ writeIfChanged(
       note:
         'Generated by scripts/gen-consumer-docs.mjs. The machine surface: agent skills and ' +
         'component finders read this, not the prose. Every attributed live preview and recipe ' +
-        'is indexed under its family.',
+        'is indexed under its module.',
       schemaVersion: 2,
       packageVersion: pkg.version,
       package: name,
@@ -316,12 +319,15 @@ rmSync(COMPONENTS_OUT, { recursive: true, force: true })
 mkdirSync(COMPONENTS_OUT, { recursive: true })
 
 const componentLines = [
-  HEADER('gen-consumer-docs.mjs') + '# Component-family API',
+  HEADER('gen-consumer-docs.mjs') + '# Module API',
   '',
-  'Open one family at a time. Each reference is generated from the public declaration',
+  'Open one module at a time. Each reference is generated from the public declaration',
   'snapshot, the architecture manifest, selection guidance, and the live preview recipes.',
+  'The `layer` column uses the manifest\'s `layer` names, which split the tiers more finely:',
+  '`typography` is the Base module `base/typography`, and `patterns` and `admin` together make',
+  'up Blocks.',
   '',
-  '| family | layer | profile | reference |',
+  '| module | `layer` | profile | reference |',
   '| --- | --- | --- | --- |',
 ]
 
@@ -335,12 +341,12 @@ for (const record of records) {
   const lines = [
     HEADER('gen-consumer-docs.mjs') + `# \`${record.id}\``,
     '',
-    record.chooseWhen ?? 'Use this family when its public vocabulary matches the interface you are building.',
+    record.chooseWhen ?? 'Use this module when its public vocabulary matches the interface you are building.',
     '',
     '## Selection',
     '',
-    `- **Use when:** ${record.chooseWhen ?? 'the family vocabulary matches the task.'}`,
-    `- **Avoid when:** ${record.avoidWhen ?? 'a smaller family expresses the job.'}`,
+    `- **Use when:** ${record.chooseWhen ?? 'the module\'s vocabulary matches the task.'}`,
+    `- **Avoid when:** ${record.avoidWhen ?? 'a smaller module expresses the job.'}`,
     `- **Consider instead:** ${record.alternatives?.length ? record.alternatives.map((id) => `\`${id}\``).join(', ') : '—'}`,
     `- **Stability:** ${record.status}.`,
     '',
@@ -368,7 +374,7 @@ for (const record of records) {
     lines.push(
       '## Optional peers',
       '',
-      'Install these only when importing this family:',
+      'Install these only when importing this module:',
       '',
       '```bash',
       `npm install ${record.optionalPeers.join(' ')}`,
@@ -381,10 +387,10 @@ for (const record of records) {
     '## Composition',
     '',
     record.dependsOnFamilies.length
-      ? `This family composes ${record.dependsOnFamilies.map((id) => `\`${id}\``).join(', ')}.`
-      : 'This family has no component-family dependencies.',
+      ? `This module composes ${record.dependsOnFamilies.map((id) => `\`${id}\``).join(', ')}.`
+      : 'This module depends on no other module.',
     ...(record.composeWith?.length
-      ? ['', `It is used together with ${record.composeWith.map((id) => `\`${id}\``).join(', ')}: import that family and its stylesheet too.`]
+      ? ['', `It is used together with ${record.composeWith.map((id) => `\`${id}\``).join(', ')}: import that module and its stylesheet too.`]
       : []),
     '',
     'Application policy—routing, fetching, persistence, permissions, and translation—stays',
@@ -428,7 +434,7 @@ for (const record of records) {
   lines.push('## Preview recipes', '')
   if (!applicableRecipes.length) {
     lines.push(
-      'No dedicated recipe is currently attributed to this family. Use the public declarations',
+      'No dedicated recipe is currently attributed to this module. Use the public declarations',
       'above and the composition guide; this absence is explicit and verification-visible.',
       '',
     )
@@ -457,7 +463,7 @@ writeIfChanged(
     {
       note:
         "Generated by scripts/gen-consumer-docs.mjs from the preview pages' own code blocks — " +
-        'the same snippets the human documentation renders. Each names every public family ' +
+        'the same snippets the human documentation renders. Each names every public module ' +
         'represented on its page; cross-cutting token lessons intentionally name none.',
       recipes,
     },
@@ -469,7 +475,7 @@ writeIfChanged(
 /* ── build/recipes.md — the Build audience's human surface ───────────────────────── */
 const byFamily = new Map()
 for (const recipe of recipes) {
-  const key = recipe.family ?? '(no family)'
+  const key = recipe.family ?? '(no module)'
   if (!byFamily.has(key)) byFamily.set(key, [])
   byFamily.get(key).push(recipe)
 }
@@ -479,7 +485,7 @@ const recipeLines = [
   `${recipes.length} adaptable live-preview snippets, taken from the pages that render them —`,
   'so a recipe here and the example on the page cannot drift apart. Excerpts may depend on',
   'surrounding values supplied by the application. Each section names the exact',
-  'import and stylesheet for the family.',
+  'import and stylesheet for the module.',
   '',
   '**What the application still owns:** data fetching, routing, persistence, translation and',
   'domain state. Every snippet below assumes those arrive as props, callbacks or accessors.',
@@ -502,7 +508,7 @@ mkdirSync('docs/build', { recursive: true })
 writeIfChanged('docs/build/recipes.md', recipeLines.join('\n'))
 
 console.log(
-  `consumer docs: ${records.length} families, ${symbolRows.length} symbol exports, ` +
+  `consumer docs: ${records.length} modules, ${symbolRows.length} symbol exports, ` +
     `${records.filter((r) => r.documentation).length} with a documentation route, ` +
     `${recipes.length} recipes`,
 )

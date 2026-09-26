@@ -2,88 +2,71 @@
 
 ## 2.0.2 — 2026-09-26
 
-A fix release for two packaging defects, both present since 1.0.3. Nothing in the API changes.
+Fixes two packaging defects present since 1.0.3 and one scoping defect. No API changes.
 
-- `themelia-ui/primitives.css` now imports its neighbours relatively (`@import "./core.css"`),
-  so it compiles under Tailwind v4. It imported `core.css`, `css/primitives.css` and
-  `css/typography.css` bare, which Tailwind v4's resolver reads as package names:
-  `@tailwindcss/cli`, `@tailwindcss/postcss` (Next.js with Tailwind) and `@tailwindcss/vite`
-  before 4.3 failed with "Can't resolve 'core.css'". Vite, webpack and esbuild on their own
-  try a bare import as a file first, so they resolved these imports.
-- Core styles now load with every component in bundlers that tree-shake re-export modules.
-  Each family entry held the only `import "../core.css"`, and Vite 8, Rspack (Rsbuild) and
-  webpack 5 drop such a module in production builds. In those builds, a component imported
-  without a stylesheet had no tokens or typefaces, and components imported before
-  `style.css`, or before their own family stylesheet as the README's narrow-loading recipe
-  does, declared the `components` layer first, so the base reset overrode every component
-  rule: a Button rendered with no padding, border or fill, in light and dark. Every chunk
-  that carries component styles now imports core itself, and `import "themelia-ui/styles"`,
-  which those bundlers dropped entirely, is declared a side effect and imports `core.css`.
-- The release gate is stricter. `npm run verify:release` runs every check, then Chromium,
-  Firefox and WebKit, on a clean tree, on macOS, because the reviewed screenshot baselines
-  are Chromium on macOS. `npm publish` runs it through `prepublishOnly` and now first
-  refuses a version npm already has or one without a CHANGELOG heading; a stray `.only`
-  fails the gate. New checks reject a shipped `@import` or `url()` that is not relative or
-  does not match a file's exact case, and assert the cascade-layer order of four Vite
-  consumer builds: family sheets, components alone, components before `style.css`, and the
-  `styles` entry.
+- `themelia-ui/primitives.css` compiles under Tailwind v4. It imported its neighbours by bare
+  file name, which `@tailwindcss/cli`, `@tailwindcss/postcss` and `@tailwindcss/vite` before
+  4.3 resolve as package names ("Can't resolve 'core.css'"). Its imports are now relative.
+- Core styles load with every component in bundlers that drop unused re-export modules:
+  Vite 8, Rspack (Rsbuild) and webpack 5 production builds. In those builds a component
+  imported without a stylesheet had no tokens or typefaces, and one imported before
+  `style.css` or its module stylesheet lost every rule to the base reset (a Button rendered
+  with no padding, border or fill). Every chunk that carries component styles now imports
+  `core.css` itself, and `import "themelia-ui/styles"` is marked as a side effect.
+- A nested `UIScope` keeps what an enclosing provider or scope set through `config`:
+  `theme.colors`, `theme.vars`, type sizes and fonts. Semantic colours are declared again at
+  every scope boundary, so the nested scope painted the kit's defaults while `useUIConfig()`
+  reported the merged values. Each scope now writes the merged overrides on its element.
+
+If you switched to `themelia-ui/style.css` to work around either packaging defect, you can
+switch back.
 
 ## 2.0.1 — 2026-09-25
 
-A consistency release: every family now paints each role with one token. Nothing in the
-public API changes. If your CSS reads one of the retired colour steps or component
-variables, run the codemod from your project, dry first:
+Every family now paints each role with one token. No public API changes. If your CSS reads a
+retired colour step or component variable, run the codemod from your project, dry first:
 
 ```sh
 node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/
 ```
 
-- Badges return to the item radius, `--radius-sm`, like buttons and fields beside them. 2.0.0
-  gave them half of it, which read as a different family; the Kanban example's count and the
-  upload cover chip follow.
-- One token per role, across every family. On all 119 component pages, light and dark, at
-  rest, hovered, focused, pressed and opened, the same role was painted many ways: 28
-  shadows, 62 border colour and width pairs, 48 type combinations, and nine different hover
-  fills. Across shape, fill, state, tone, edge, type, elevation, size and dark mode there were
-  281 inconsistencies; each is fixed at its owner, and `src/styles/TOKENS.md` now states the
-  contract as small groups:
-  - **Shape:** `--radius` for wrappers and `--radius-sm` for every item, every control at
-    every size included — checkbox, glyph buttons and swatches take the item radius; the
-    half radius and Button's 30% cap are gone. A wrapper nested in a Card (Alert, bordered
-    Empty, choice and switch cards, upload rows, ContentBlock) steps down to `--radius-sm`.
-    Nested corners stay arithmetic on the two; no state sets a radius.
-  - **Fills:** grounds are `--background`, `--card`, `--popover` and `--sidebar`; every
-    card-like surface sits on `--card`, in dark too (the framed Card no longer lifts itself to
-    the popover grey). Neutral fills are `--muted-50` (wells), `--muted-20` (strips) and
-    `--foreground-8/-10/-20` (chips, skeletons, tracks). A new `--surface-ground` lets sticky
-    cells, rings and fades match the surface they sit on.
-  - **States:** hover is `--accent` on controls and `--accent-50` on rows; the current
-    navigation item is the neutral `--accent` at medium weight; selection takes the brand
-    ladder and outranks hover; one focus ring; disabled is `cursor: not-allowed`; state
-    colour changes share `--transition-control` on `--ease-out`.
-  - **Tones:** each hue has one ladder — ink, wash (5%), soft (10%), soft hover (20%) and line
-    (30%, warning 40%) — used by Badge, Alert, Button tones, mentions, chips, timeline,
-    calendar and progress alike, in place of ad-hoc 12, 15, 35 and 45% mixes.
-  - **Edges:** `--border` outside, `--border-60` inside, `--control-border` for controls in a
-    row with fields, and one invalid edge.
-  - **Elevation:** none, `--shadow-xs` resting, `--shadow-sm` hover, `--popover-shadow` for
-    every anchored popup, `--shadow-lg` floating, `--shadow-xl` modal.
-  - **Type and size:** one weight per role (medium for labels, rows and controls; semibold for
-    surface titles and figures), links on `--link-color` and `--link-underline-offset`, control
-    heights and paddings in matching pairs, and every derived length rounded to a whole pixel.
-  The retired alpha steps, module-local names and glyph sizes are mapped for the codemod; the
-  dark `--sidebar-primary` is neutral like light. `verify css` now also flags a `--muted` or
-  `--foreground` wash on any state, and a module class that sets a Text's colour, weight, size
-  or leading.
-- `deriveThemeElevation` derives every tier from the default theme's geometry and
-  `--shadow-ink`, scaled so `intensity: 0.8` reproduces the default ladder. It used to emit
-  literal black layers in a different shape, so the first Theme Tweaker nudge flattened
-  `--shadow-md` and dropped a tinted shadow ink.
+[`src/styles/TOKENS.md`](src/styles/TOKENS.md) states the contract by role:
+
+- **Shape.** `--radius` for wrappers and `--radius-sm` for every item and every control at
+  every size, checkboxes, glyph buttons, swatches and badges included; the half radius that
+  2.0.0 gave small controls and badges is gone. A wrapper nested in a Card (Alert, bordered
+  Empty, choice and switch cards, upload rows, ContentBlock) steps down to `--radius-sm`.
+  Nested corners are arithmetic on the two, and no state changes a radius.
+- **Fills.** Grounds are `--background`, `--card`, `--popover` and `--sidebar`. Every
+  card-like surface sits on `--card` in dark too; the framed Card no longer lifts to the
+  popover grey. Neutral fills are `--muted-50` (wells), `--muted-20` (strips) and
+  `--foreground-8/-10/-20` (chips, skeletons, tracks). New `--surface-ground` lets sticky
+  cells, rings and fades match the surface they sit on.
+- **States.** Hover is `--accent` on controls and `--accent-50` on rows. The current
+  navigation item is the neutral `--accent` at medium weight; selection takes the brand
+  ladder and outranks hover. One focus ring. Disabled is `cursor: not-allowed`. State colour
+  changes share `--transition-control` on `--ease-out`.
+- **Tones.** Each hue has one ladder: ink, wash (5%), soft (10%), soft hover (20%) and line
+  (30%, warning 40%). Badge, Alert, Button tones, mentions, chips, timeline, calendar and
+  progress all use it.
+- **Edges.** `--border` outside, `--border-60` inside, `--control-border` for controls in a
+  row with fields, and one invalid edge.
+- **Elevation.** None, `--shadow-xs` at rest, `--shadow-sm` on hover, `--popover-shadow` for
+  every anchored popup, `--shadow-lg` floating and `--shadow-xl` modal.
+- **Type and size.** One weight per role: medium for labels, rows and controls, semibold for
+  surface titles and figures. Links use `--link-color` and `--link-underline-offset`, control
+  heights and paddings come in matching pairs, and every derived length is a whole pixel.
+- Glyph buttons below the smallest control come in two sizes: the icon size inside a field,
+  the large icon size elsewhere.
+- The dark `--sidebar-primary` is neutral, as in light.
+- Fixed: `deriveThemeElevation` derives every tier from the default theme's geometry and
+  `--shadow-ink`, so `intensity: 0.8` reproduces the default ladder. It emitted literal black
+  layers, so the first Theme Tweaker change flattened `--shadow-md` and dropped a tinted ink.
 
 ## 2.0.0 — 2026-09-25
 
-A major release. It consolidates the visual system and the token surface — two radii, two
-text colours, one control height, one spacing ladder — and removes names that were only
+A major release. It consolidates the visual system and the token surface (two radii, two
+text colours, one control height, one spacing ladder) and removes names that were only
 another component under a second name. Read
 [Upgrading to 2.0](docs/learn/migration.md#upgrading-to-20), then run the packaged codemod
 from your project, dry first:
@@ -92,972 +75,521 @@ from your project, dry first:
 node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/
 ```
 
-- Merge `--space-scale` into `--density-scale`: one factor moves spacing and control
-  geometry, and every density-scaled length is rounded to a whole pixel with `round()`.
-  `--density-scale` is now a raw input like `--text-scale` — set on `:root` it reaches every
-  scope; before, both factors were re-derived at each boundary, so the documented knob and
-  the Theme Tweaker slider did nothing inside a provider. `--density-preset-scale` is gone.
-  Controls are 34, 30 and 24px at the default (the small tiers were 30.2 and 22.67px) and
-  32, 28 and 23px under `compact`. Navigation-menu triggers take the control height (were
-  36px), menubar triggers the small one (were 28px), toast actions the smallest.
-- `Textarea` puts `className` and `textarea--component` on the `<textarea>`, like `Input`,
-  so a caller can set `resize`; the box is `data-slot="textarea-frame"`.
-- Shipped CSS keeps `:dir(rtl)`. Both builds now target the browser floor — Chrome and Edge
-  125, Firefox 121, Safari 16.4, set by `round()`, `:has()` and `:dir()` and documented in
-  installation. Below it, Vite rewrote every `:dir(rtl)` as a list of right-to-left languages,
-  so the carousel, kanban, navigation and both tables ignored `dir="rtl"` in the package,
-  though not in source. `verify css-budget` now fails on that rewrite.
-- Hashed class names drop `-module`: `button__root___sSlE7`. Hook onto the stable
-  `{name}--component` classes, not these. With the token layer joined once and the older
-  prefixes gone, `style.css` is 74.4 KB gzip (76.3 KB before); its target moves from 72 to
-  74 KiB, with the reason recorded in `architecture/css-budgets.json`.
-- One shape per element, and nested shapes concentric. Twenty-two components (accordion
-  triggers, tabs and tab panels, table and scroll containers, the carousel track, collapsible
-  and upload handles, side-nav items, auth links and others) took a radius only on
-  `:focus-visible`, so they were square at rest and on hover and rounded on focus; the radius
-  now sits on the base rule. Nested items follow their container's curve — the parent's radius
-  less the inset. The batch action bar, the reaction picker and the event calendar's jump
-  popover inset by `--space-md` like a menu, so their buttons stay on `--radius-sm`; enclosed
-  tabs, attached toggles, media-library segments and gallery controls, input-group buttons, the
-  AI chat queue and the metric bar's period button take the parent radius less the inset. The
-  30%-of-height cap (7.2, 5.4 and 4.8px corners) is gone: a checkbox and a glyph-sized button
-  take half the control radius. `Button` reads `--button-radius`, so a container sets the
-  concentric value. The map's place search no longer draws a 16px ring round its 8px field. A
-  geometry test forces hover, focus and press on every route and fails a radius that changes
-  or a tightly nested item off its container's curve.
-- One check runner. `npm run verify` runs every static check in parallel beside the unit
-  tests and a single library build, then the checks that read `dist/` — about 50 seconds;
-  `npm run verify -- --list` names them and `npm run verify composition bem` runs just those.
-  `verify:gates` runs the self-tests (17s, was 35s), `verify:consumer` the packed-package
-  checks, and a release builds once instead of twice. `npm test` runs Chromium; `test:engines`
-  adds Firefox and WebKit and `test:all` runs every browser. 115 npm scripts are 36. Retired:
-  the source-kit parity checks (`verify:button`, `verify:parity`, palette parity), four
-  one-time porting scripts, the payload, baseline and base-parity reports, two one-off
-  generators, the lint budget (now `oxlint --deny-warnings`) and the unshipped `asChild`
-  codemod. `verify composition` catches a hex colour anywhere in a value; it matched only a
-  value that began with one.
-- Tooling cut by another quarter (15.8k → 11.9k lines, 117 → 84 scripts, 34 npm scripts).
-  `verify:release` is a short runner: a clean tree, `verify --all`, then every browser suite,
-  failing if the run rewrote a tracked file; the evidence record, criteria report, class-byte
-  benchmark and `verify:release-criteria` are gone. Merged: strings-reachable and
-  strings-nesting into `strings`, classes into `composition`, tokens-reachable into
-  `token-budget`, consumer-documentation into `docs-freshness` and `architecture`; the
-  manifest's JSON schema became an `architecture` rule. Removed: token-report and its
-  TOKENS.md block, the React matrix (nothing now installs React 19.0.0, the bottom of the peer
-  range) and fifteen self-tests of report and documentation tooling.
-- Every public part carries its `{name}--component` hook. The hook check skipped components
-  exported through `export { X }`, which hid 53 without one — Alert and its parts, Avatar's,
-  Command's, DropdownMenu's and ContextMenu's content, items and separators, InputGroup's,
-  Item's, Popover's, Label, Skeleton and TooltipContent. Target them from your stylesheets
-  like every other hook. The command palette's search field, which showed no focus
-  indicator, now firms its edge like a field.
-- Faster browser suites: Chromium 12.4 → 4.9 minutes, Firefox and WebKit 24 → 12. The suites
-  run against a development-mode build of the docs app served statically — React's warnings
-  stay on, but a fresh page loads one bundle instead of ~1,200 dev-server modules, and an
-  edit made during a run no longer reaches it. The three specs that import source at runtime
-  keep the dev server. That a state never sets a radius moved to `verify css`
-  (`state-radius`); the browser test keeps only the nesting geometry and forces :hover on the
-  few corner items that need it — 11 seconds, where the sweep took 7 minutes under load.
-  Playwright uses 75% of the cores. The long sweeps (focus, axe per theme, reduced motion,
-  pointer, RTL mirroring, labels and ids) run as slices of the routes, so no test runs longer
-  than about 25 seconds.
+The [migration reference](docs/generated/migration.md) lists every removed name, token and
+utility with its replacement.
+
+### Breaking
+
+- **One name per component.** Props and behaviour are unchanged under the remaining name.
+  - `Dialog`, `Sheet` and `AlertDialog`, their `Trigger`, `Close`, `Body`, `Title`,
+    `Description`, `Header` and `Footer` parts, and `DialogDismissArea` are the `Overlay`
+    parts from `themelia-ui/base/overlay`. The presets keep what sets something:
+    `DialogContent`, `SheetContent`, and `AlertDialogContent` with `AlertDialogAction`,
+    `AlertDialogCancel` and `AlertDialogMedia`. CSS aimed at `.dialog--header` and the like
+    targets `.overlay--header` / `.overlay--footer` inside the preset's `--component` class.
+  - A menubar's menus are dropdown menus: `MenubarMenu` is `DropdownMenu`, and every other
+    `Menubar*` part except `MenubarTrigger` is the `DropdownMenu*` part with the same suffix.
+    Import `themelia-ui/base/dropdown-menu.css` beside the menubar's stylesheet.
+  - `SettingsShell` is `AsideNavShell` and `ToggleGroupItem` is `Toggle`. The `DialogProps`,
+    `SettingsShellProps` and `ToggleGroupItemProps` types are `OverlayRootProps`,
+    `AsideNavShellProps` and `ToggleProps`.
+  - `themelia-ui/features/suggestions` and its stylesheet are no longer published. Import the
+    same names from `themelia-ui/features/combobox`; the codemod rewrites both.
+- **A navigation menu has one panel.** `NavigationMenu` owns a shared panel that each
+  `NavigationMenuContent` draws into, so moving between entries resizes one surface and idle
+  entries no longer paint a dot. `side`, `sideOffset` and `container` move from
+  `NavigationMenuContent` to `NavigationMenu`, which also takes `align` (default `"start"`).
+  Panel links sit one per row. `NavigationMenuIndicator` draws a chevron that turns while its
+  panel is open; remove an empty one you relied on to draw nothing.
+- **Two text colours.** Text is `--foreground` or `--muted-foreground`. `Text type="discrete"`
+  is `type="secondary"`, which resolves to `--muted-foreground`; `--text-role-discrete` and
+  `--foreground-80` are removed. Heading subtitles, navigation links and empty-state icons
+  take the muted colour.
+- **Two radii.** `--radius` (1rem) for containers and `--radius-sm` (0.5rem) for what sits
+  inside them, both plain values set at `:root`; nothing derives one from the other, so a
+  theme that sets `--radius` sets `--radius-sm` too. A container insets its items by the
+  difference, `--space-md`, so a highlighted row sits concentric in its menu.
+  `--radius-surface`, `--radius-popup`, `--radius-control`, `--radius-inner` and the `-md` to
+  `-4xl` ladder are removed; `rounded-md`, `rounded-lg` and larger are Tailwind's own radii
+  again. `UIConfig.theme.radiusSm` sits beside `radius`, and the Theme Tweaker edits both.
+- **One density factor.** `--space-scale` merges into `--density-scale`, which now moves
+  spacing and control geometry alike; `--density-preset-scale` is removed. `--density-scale`
+  is a raw input like `--text-scale`: set on `:root`, it reaches inside every provider.
+  Every density-scaled length is rounded to a whole pixel. Controls are 34, 30 and 24px at the
+  default (the small tiers were 30.2 and 22.67px) and 32, 28 and 23px under `compact`.
+  Navigation-menu triggers take the control height (were 36px), menubar triggers the small
+  height (were 28px) and toast actions the smallest.
+- **One name per value.** Tokens that restated another under a component name are removed:
+  `--menu-surface-p`, `--menu-row-px`, `--field-h`, `--field-px`, `--field-py`, `--text-xxs`,
+  and the heading, label and link colours (headings and labels paint `--text-role-main`,
+  subtitles `--text-role-secondary`, links `--link-color`). `--height-action` merges into
+  `--height-control`, and `--action`, `--action-sm` and `--action-2xs` into `--control-h`,
+  `--control-h-sm` and `--control-h-2xs`. The sidebar width is `--sidebar-width` for Sidebar
+  and every shell, and the top-bar height is `--shell-header-height` (3.5rem). The codemod
+  renames each; the migration reference lists the component variables that went with them.
+- **`RANGE_PRESETS` is removed**, as its 1.x deprecation announced. Build presets with
+  `createRangePresets({ strings, weekStartsOn })` from the provider's week, so "This week"
+  agrees with the calendar beside it.
+- **Unwired API is removed.** `PopoverContent`'s `onOpenAutoFocus` and `onInteractOutside`
+  (use Base UI's `initialFocus`/`finalFocus` and `onOpenChange`), `CommandStrings.empty`
+  (`CommandEmpty` renders its children) and `UIConfig.motion.durations.slow`.
+- **`Textarea`** puts `className` and `textarea--component` on the `<textarea>`, like `Input`,
+  so a caller can set `resize`. Select the box with `[data-slot="textarea-frame"]`.
+- **A browser floor.** Chrome and Edge 125, Firefox 121 and Safari 16.4 or newer, set by
+  `round()`, `:has()` and `:dir()`.
+- **Types.** `ResolvedUIConfig.overlay` is required (code that builds a resolved config
+  spreads `DEFAULT_UI_CONFIG`). `OverflowTabBar` no longer accepts the `defaultValue` it
+  ignored. An exhaustive switch over `TabListProps["variant"]` needs a `"pill"` case. A
+  complete `UIConfigSettingsStrings` translation adds `labels.darkMenus` and
+  `darkMenusDescription`.
+
+### Added
+
+- The codemod ships in the package:
+  `node node_modules/themelia-ui/scripts/consumer/codemod.mjs [--dry-run] <paths…>`. Beyond
+  moved and broad imports, it renames every custom property 1.0.4 declared and 2.0 does not,
+  wherever a stylesheet reads or sets it or a script reads it through `var()`, a style key or
+  the CSSOM, and the Tailwind utilities the bridge no longer emits. It reports without editing
+  a removed token with no successor, an override that now sets a shared name, and
+  `rounded-md` and larger.
 - The kit ships its typefaces: Geist for text and Geist Mono for code and identifiers (SIL OFL
   1.1), as variable-weight woff2 files in `dist/fonts/`, one per script, loaded by `core.css`.
-  The stacks named Inter and JetBrains Mono without shipping either, so every machine showed
-  its own system font and layouts that depended on text width differed between macOS and
-  Linux. A theme that sets `--font-sans`/`--font-mono` downloads none of the files. The
-  library build keeps fonts as files (it inlines other assets as base64) and the full
-  stylesheet stays within budget. Badges, 22px controls, take half the control radius like a
-  checkbox (4px, was 8): at the full radius a one-digit count badge was 73% of a circle. The
-  upload cover chip, parked in its tile's corner, keeps the control radius, which is concentric
-  with that corner; the Kanban example's count sits beside its column title.
-- The map draws the kit's focus ring, inset over the tiles. It had none of its own, and the
-  browser's default sits outside the map, where the frame around it clipped it away.
-- The browser suites are tighter still: all three browsers in about six minutes, where
-  Chromium took five and Firefox with WebKit another twelve. Firefox and WebKit run the specs
-  where engines differ; token, layout-fault and axe sweeps walk their routes in slices
-  instead of reloading a page per route; axe runs in one theme (contrast has its own check in
-  both); the foundations spec that repeated the route sweep and axe is gone, and
-  its one extra assertion — every example renders — is part of the narrow-viewport sweep.
-  `npm test` runs Chromium and the Tailwind fixture, which is its own Playwright project; off
-  macOS the pixel specs are skipped rather than failed, and the dev-server specs use port
-  5198 so another app on 5173 is never tested in this one's place.
-- One CSS checker. `verify css` reads and parses every stylesheet once and runs the eleven
-  former checks (composition, factors, token-budget, scoping, wiring, dark-overrides,
-  type-pairing, responsive, container-queries, css-collisions, bem) as rule groups — 0.2s
-  where the eleven took 1.8s, 951 lines where they took 1,913. Each still runs by name
-  (`npm run verify composition`). Checked against the old checkers on 112 injected defects:
-  the same rule fires in the same file; ten defects only the new one catches (a `container`
-  shorthand, a compound `@container`, a last declaration without `;`, a factor dropped on a
-  redeclaration). Its self-test builds temporary fixtures instead of editing source files.
-  Tooling is 10.7k lines, from 17.7k before 2.0.
-- Comments and consumer docs cut to what a reader needs; the maintainer rulebook moved from
-  `docs/learn/` to `docs/maintainers/`.
-- Theme Tweaker exports now reach inside a `UIProvider` and follow `data-theme` and the OS
-  preference; they wrote `:root`/`.dark` only, so exported semantic and type values stopped at
-  the first provider and dark never applied under `colorScheme: "dark"`. `--destructive-accent`
-  now flips inside a nested `.dark` (the generated theme left `.dark` off its boundary list).
-- DatePicker's trigger is a combobox (`aria-haspopup="dialog"`), like Select's, so a required
-  or invalid date field announces it; a button may not carry `aria-required`. DataTable's `sm`
-  and `lg` sizes sit on the spacing ladder (8/12/16px; `lg` was denser than the default). Every
-  hairline reads `--border-width`/`--border-width-strong`, and `verify composition` rejects a
-  literal one. Tabs, table, kanban and carousel measure scroll edges through one shared
-  function; the carousel's arrows and index now work in RTL.
-- Consistency fixes: phone input keeps Canada when +1 is shared and reads custom
-  countries; PillRadioGroup submits its value; chart `nameKey`/`labelKey` read the payload as
-  documented; Slot merges classes and handlers; ObjectRepeater keeps row state across reorder;
-  the table's scroll arrows work in RTL; toasts centre in RTL; a textarea at `maxLength` shows
-  the limit like Input; hard-coded English in date picker, repeater, table, slider, search and
-  upload moved into their strings; CarouselDots get the hit area; `AsideNavShell` without a
-  title keeps main and aside on one row; dialogs inset like sheets on phones; warning text uses
-  the warning ink; hairlines read `--border-width`; duplicate and dead rules removed. Popover's
-  unwired `onOpenAutoFocus`/`onInteractOutside`, `CommandStrings.empty` and
-  `durations.slow` are removed.
-- Remove `RANGE_PRESETS`, deprecated in 1.x with removal promised at 2.0. Build presets with
-  `createRangePresets({ strings, weekStartsOn })` from the provider's week, so "This week"
-  agrees with the calendar beside it; the preview recipe does.
-- Tighten the assistant skill and consumer scripts. The skill gains an upgrade path
-  (codemod, then reinstall the skill), `UIRoot`'s `documentTarget` caveat, the dark-menu
-  default, and Base UI state attributes in place of `data-state`; its link to the full 2.0
-  change list pointed at itself and now opens the packaged migration reference. A family
-  used only together with another says so — the menubar's reference and index record name
-  `base/dropdown-menu` and its stylesheet — and a declaration's `@deprecated` tag prints in
-  its reference. The codemod carries a moved family's stylesheet import with it and names the
-  migration document by its installed path. The skill generator clears its reference folder,
-  which removes three stale reference files that still taught `--radius-surface`, and
-  `verify docs-freshness` rejects any removed token outside a migration guide.
-- Let Tailwind's `rounded-sm` and `font-*` follow a theme again. 2.0 made `--radius-sm` a
-  literal, and the bridge's `@theme inline` froze it into the utility as `0.5rem`, so a theme,
-  `UIConfig.theme.radiusSm` or `typography.fonts` moved every kit component and left the
-  utilities behind. Restated literals now sit in a plain `@theme` and their utilities read the
-  variable at the element; Tailwind's preflight font follows `--font-sans` with them. Formulas
-  and kit references stay inline. `verify consumer-scripts` compiles the bridge with
-  Tailwind and checks both, and that what it emits to `:root` is the kit's own value.
-- Ship the codemod. `node node_modules/themelia-ui/scripts/consumer/codemod.mjs [--dry-run]
-  <paths…>` runs from a consumer's project; `npm run codemod` was a repository script that
-  read files the package does not publish. Beyond moved and broad imports it now renames the
-  67 custom properties 1.0.4 declared and 2.0 does not, wherever a stylesheet reads or sets
-  them or a script reads them through `var()`, a style key or the CSSOM, and the Tailwind
-  utilities the bridge no longer emits. It reports, without editing, a token removed with no
-  successor, an override that now sets a shared name, and `rounded-lg` and larger. Twelve of
-  those removals had no migration record; `verify migrations` now checks every name in
-  `architecture/token-surface.json` is declared or mapped, every mapping lands on a declared
-  token, and no mapping renames a live one.
-- Put every package spacing on the ladder. About two dozen values sat between two steps —
-  10, 14, 18 and 20px. Table cells are 12px (rows 4px taller), aside navigation rows take the
+  Text now renders alike on every platform, so anything sized to its text may be slightly
+  wider or narrower than under 1.x. A theme that sets `--font-sans` and `--font-mono`
+  downloads none of the files.
+- `UIConfig.overlay.darkMenus` (default `true`) keeps dropdown, context, action and menubar
+  menus dark on a light page; `false` lets them follow the scheme around them, and a nested
+  `UIScope` can set either. The overlay settings merge per field, so a scope that sets
+  `backdropBlur` keeps its parent's other overlay settings. The Theme Tweaker has a "Dark
+  menus" toggle.
+- `UIConfig.overlay.backdropBlur` (px or a CSS length; default none) blurs the page behind a
+  modal overlay.
+- `ContextAction<T>`, an `ActionDefinition` whose handler and `visible`/`disabled`
+  predicates take the record, with a `placement` that pins it inline or sends it to the
+  overflow menu. `resolveContextActions` binds a set to one record and `splitActions` divides
+  it. Table row, kanban card and activity actions and `PageActions` all resolve through it.
+- `NavigationTabs` for a bar of links: a `<nav>` with `aria-current="page"`. `OverflowTabBar`
+  runs on `Tabs`, and a bar with nothing selected still has a tab stop. The filled-chip look
+  is `variant="pill"` on any `TabList` or `NavigationTabs`.
+- `PopoverMenuPanel`, the body of `PopoverMenu`, for a surface that brings its own popup.
+  `PopoverMenu` gains `error`, `onRetry`, `minSearchLength` and `label`, and a throwing
+  `onValueChange` reaches `onError` from every commit path. Without a search field its list
+  is the tab stop, a named listbox that announces the highlighted row, so filter pills work
+  from the keyboard and a screen reader.
+- Base `Stepper`, a numbered sequence drawn as a `bar` or a `trail`, which `StepsBar` and
+  `BreadcrumbProgress` render. The current step carries `aria-current="step"`, a finished step
+  says so, and a narrow trail hides its labels visually rather than removing them.
+  `BreadcrumbProgressStrings.step` takes an optional third status argument.
+- `Card` gains `titleLevel`, which renders the title as a heading, and `media`, a full-bleed
+  strip above the header. `AuthCard` is a `Card` and `WorkspaceRecordHeader` a `PageHeading`.
+- `ComboboxPopupInput` puts a combobox's search field inside its popup. `ResourceCombobox`
+  gains controlled search, `defaultOpen`, `clearSearchOnClose` and `requestDelay`;
+  `SuggestionsCombobox` gains form props, `portalContainer` and `highlightMatch`;
+  `ComboboxInputTrigger` and `ComboboxChip` take `strings`.
+- `CommentThreadOptions` on `Comments`, `CommentTimeline` and `CommentItem`:
+  `commentActions`, `maxVisibleReplies`, `clampLines`, `maxVisibleAttachments` and
+  `reactionChoices`. A thread shows its last three replies, folds a body after six lines and
+  shows three attachments before "Show N more"; pass `0` to any of the three to show
+  everything. The new `CommentsStrings` keys are optional.
+- `ToggleField` gains `surface`, `icon`, `hint` and `uncheckedValue`, and `SwitchCard` is
+  `ToggleField surface="card"`. `Dropzone` gains `label`, `hint` and a caller's input id.
+- `SidebarMenuButton` takes a `tooltip` for the collapsed icon rail.
+  `FiltersButton.labelVisibility` restores the labelled add-filter control. `TableSkeleton`
+  takes `framed` (default on; pass `false` inside a card that draws its own edge).
+- `--destructive-accent` for destructive text on a destructive tint, `--accent-50` for row
+  hover, and `--field-focus-ring`.
+- Every public part carries its `{name}--component` hook, among them Alert's parts, Avatar's,
+  Command's, the content, items and separators of DropdownMenu and ContextMenu, InputGroup's,
+  Item's, Popover's, Label, Skeleton and TooltipContent.
+- The packaged assistant skill covers upgrading (run the codemod, then reinstall the skill),
+  `UIRoot`'s `documentTarget`, the dark-menu default and Base UI's state attributes, and a
+  declaration's `@deprecated` tag prints in its reference.
+
+### Changed
+
+- **Spacing sits on the ladder** (2, 4, 6, 8, 12, 16 and 24px). Values between two steps
+  moved to one: table cells are 12px (rows 4px taller), aside navigation rows take the
   sidebar's 8px inset, toggles and pill radios the control inset, Item rows 12px, and the
-  accordion, alert, toast, chart tooltip and calendar gaps the nearest step their peers use.
-  A select's group label sat 2px left of its rows and now shares their inset; a nested
-  sidebar menu's rule and labels are derived from the parent row, which left a child label a
-  pixel off. `--table-cell-py`, `--aside-nav-px`, `--auth-brand-gap`, `--repeater-gap`,
-  `--calendar-months-gap` and `--skeleton-block-gap` are removed, and `verify composition`
-  rejects a spacing token declared between two steps.
-- Let the provider decide the menu colour scheme. `UIConfig.overlay.darkMenus` (default
-  `true`) keeps dropdown, context, action and menubar menus dark on a light page; `false`
-  lets them follow the scheme they are portalled into, and a nested `UIScope` can set it
-  either way. `useOverlayConfig()` reads the resolved overlay slice, which now merges per
-  field, so a scope setting `backdropBlur` no longer drops its parent's other overlay
-  settings. The Theme Tweaker's provider settings gain a "Dark menus" toggle.
-- Calm the shared field surface with flatter idle controls, quieter borders, and a precise
-  two-pixel focus treatment. Keep keyboard focus visibly painted on clipped scroll areas,
-  tabs, and tab panels. Give overlay headers a small optical top inset and keep their close
-  controls aligned with the adjusted title block.
-- Make `DataView` the clearly presented full resource-index composition over `DataTable`,
-  remove demo-only controls from its primary example, and make the add-filter affordance
-  icon-only by default with a tooltip and accessible name. `FiltersButton.labelVisibility`
-  restores the labelled presentation where it is useful as a standalone action.
-- Recompose comments as full-width discussion rows, tighten rich activity feeds, refine the
-  Global Search region rhythm, and bring AI Chat geometry onto shared size, spacing, border,
-  and radius roles. Rebuild the Media Library toolbar as explicit search/type and
-  refine/view bands so it keeps a legible hierarchy at desktop and compact widths. Tighten
-  the shared floating batch-action dock with popup-radius corners, compact insets, restrained
-  elevation, aligned dividers, and quieter ghost actions in the recommended examples.
-- Keep explicit dark themes intact across nested token boundaries. A `Scope`, a
-  `data-density` region, or a provider left on the default `system` colour scheme inside a
-  `.dark` or `data-theme="dark"` tree now re-derives dark values instead of reverting to
-  light. CSS Modules now spell their theme classes `:global(.light)` and `:global(.dark)`,
-  so class-only dark islands such as inverted menus re-derive module tokens, and
-  `verify dark-overrides` rejects the hashed form. The theming guide now shows which names
-  take effect at `:root` and which need the provider or the boundary list.
-- Let a pager's `renderLink` element become the control so router links keep the button's
-  geometry, open a date picker on its selected month rather than today, give the input and
-  textarea clear controls a 24px target, floor mention chips at the smallest type step so a
-  name in small print stays readable, and let a kanban board scroll horizontally when its
-  columns are wider than their container instead of being clipped.
-- Quieten the Global Search chrome: focus on the search row is the rule beneath it rather
-  than a ring around the whole row, group labels and idle headings take the support step in
-  the muted colour so result titles lead, "See all" is a text button instead of an underlined
-  link, and tab counts are tabular figures rather than bordered badges.
-- Base component interaction. Popups opened inside a dialog (select, combobox,
-  popover menu, date picker) now portal into the dialog and are operable; the popover menu
-  moves by arrow keys and a combobox can put its search field inside the popup
-  (`ComboboxPopupInput`). The calendar is one tab stop with PageUp/PageDown, Home/End and
-  Shift paging; time segments are spinbuttons that clamp, snap and wrap; the pill radio group
-  roves with the arrow keys. A loading `Button` keeps focus (`aria-disabled` rather than
-  `disabled`), and `SubmitStateButton` shows its busy and done states in its visible label.
-  Toasts pause on hover and focus, dismiss with Escape and return focus.
-- Forms. `DecimalInput` reads a pasted "€1,234.50" as a number, steps an off-grid value to
-  the nearest step in that direction, disables the stepper at `min`/`max`, and keeps focus in
-  the field when a stepper is clicked. `ErrorSummary` is named by its heading, takes
-  `autoFocus` to receive focus after a failed submit, and styles linked items.
-  `FormField` groups (`htmlFor={false}`) and `FieldGroup` describe themselves with their hint.
-  `PasswordInput`'s reveal control no longer reports two states at once and forwards input
-  strings. `LocalizedStringField` takes the field's label and hint and names its input with
-  the locale; `LocalizedObjectField` gives each field a visible label. `ColorInput` names
-  each swatch by its field, shows an unpaintable value as an empty swatch and marks it
-  invalid once editing stops. File and image uploads put `aria-invalid` and the field's hint
-  on the input, name the picker by its field, accept the same file again after removal, and
-  move focus to the next row when a file is removed; the upload list offers retry and remove
-  on a failed row and announces transfers that finish. Textarea `rows`, `minRows` and
-  `maxRows` now size from the real padding.
-- Display and navigation. A `Table` is a tab stop only while it scrolls, and is then a
-  region named by its caption, its `aria-label`, or the new `containerLabel`; wide tables
-  fade the edge that has more columns. End-aligned sortable headers line up with their
-  values, the sticky header uses the card surface, the selected row uses the DataTable's
-  colour above hover, and header, footer and empty rows no longer hover. A `CardFooter`
-  passed as a child renders as the card's footer. Item rows use the control radius and hover
-  whatever element they render as. `MetadataList` no longer resets a surrounding density
-  scope. Carousel and overflow tab bar fades are masks, correct in dark, on cards and in
-  right-to-left; the carousel honours reduced motion. `OverflowTabBar` is one tab stop with
-  arrow-key movement and matches `Tabs`' type and icon size; tabs reveal a selected tab clear
-  of the fade; the enclosed tab variant is raised in dark. Pagination stays on one row at
-  phone width. `SidebarMenuButton` takes a `tooltip` for the collapsed icon rail, and ⌘B
-  toggles only the sidebar around the focus. Sheets pad for the device safe area.
-- `Text numeric` keeps the text's own typeface (tabular figures only); the monospace stack
-  gains the platform monospace faces before the generic fallback. The undocumented
-  `--field-py` token is removed; fields read `--space-xs`.
-- Consolidate near-duplicate components without changing their public names. `SwitchCard`
-  is now `ToggleField` with `surface="card"` (ToggleField gains `surface`, `icon`, `hint`
-  and `uncheckedValue`); `CardRadioGroup` and `ListRadioGroup` are one option group laid out
-  two ways, and the list now marks its options invalid; `FileUpload` renders `Dropzone`
-  (which gains `label`, `hint` and a caller's input id) instead of a copy of it, and so
-  shows the drop prompt; `ActionDialog`, `ActionSheet` and `ConfirmDialog` share one frame,
-  and the actions outlet renders them instead of rebuilding their footer; `ResourceCombobox`
-  runs on `useSuggestions` (now homed in `features/combobox`); primitives `Link` renders
-  `TextLink`. `CellValue` hands money
-  strings to `Money` instead of `Number()` and honours `dateLocale`. The event calendar's
-  previous/next pair is a `ButtonGroup`, so the focused button's ring is no longer clipped.
-- Merge catalogue pages that showed the same components twice. Input absorbs Search input and
-  Password input; Switch absorbs Toggle field; Radio groups absorbs the card, list and pill
-  pages; Dropdown menu absorbs Context menu; Metadata absorbs Inline stat; Dialog absorbs
-  Alert dialog (whose demo now answers with `AlertDialogAction` and whose API no longer
-  lists a close button it cannot show); Action menu absorbs Action buttons; Side nav absorbs
-  Settings shell; Upload absorbs Image upload and Upload queue; the twenty primitive pages
-  become eight. Every retired address redirects to the page that absorbed it, and
-  `ComponentPage` takes `alsoImports`, so a merged page still yields a gallery card and a
-  search result for each family it documents.
-- Replace the sidebar's current-page bar, an inset shadow that curled round the row's corners,
-  with a lifted row: hover is half the accent, the current page the whole accent with a
-  small shadow and medium weight.
-- One action shape for everything that acts on a record. `ContextAction<T>` is an
-  `ActionDefinition` whose handler and `visible`/`disabled` predicates take the record, with
-  a `placement` that pins it inline or sends it to the overflow menu;
-  `resolveContextActions` binds a set to one record and `splitActions` divides it. Table row
-  actions, kanban card actions, activity actions and `PageActions` all resolve through it, so
-  a predicate or a placement means the same thing in each.
-- `OverflowTabBar` is `Tabs` underneath, and a bar of links is `NavigationTabs`: links are a
-  `<nav>` with `aria-current="page"` rather than tabs that navigate. A bar with nothing
-  selected, such as saved views showing a custom view, still has a tab stop. Its filled-chip
-  look is now `TabList variant="pill"` (and `NavigationTabs variant="pill"`), open to any
-  tab list. An inline `Command` no longer scrolls the page down to itself when it highlights
-  its first row; it scrolls its own list only.
-- The select and async filter editors are one editor on `PopoverMenuPanel`, the body of
-  `PopoverMenu` exported for surfaces that bring their own popup. `PopoverMenu` gains
-  `error`, `onRetry`, `minSearchLength` and `label`; a throwing `onValueChange` now reaches
-  `onError` from every commit path. Without a search field the list is the tab stop, a named
-  listbox that announces the highlighted row, so a filter pill's options work from the
-  keyboard and a screen reader.
-- Base `Stepper` draws a numbered sequence as a `bar` or a `trail`; `StepsBar` and
-  `BreadcrumbProgress` render it. The current step carries `aria-current="step"`, a finished
-  step says so, and narrow trails hide labels visually rather than removing them. The
-  `--steps-line` and `--steps-item-min` tokens are now `--stepper-line` and
-  `--stepper-item-min`.
-- `AuthCard` is a `Card`, and `WorkspaceRecordHeader` is a `PageHeading`. `Card` gains
-  `titleLevel`, which renders the title as a heading, and `media`, a full-bleed strip above
-  the header. A compact inline `MetadataList` keeps each value at its label's size instead of
-  a step smaller.
-- `NavigationTabs` no longer imports the layout layer (its path helpers live in
-  `@/lib/navigation`), and `verify architecture` now rejects an import of a whole layer's
-  barrel. Preset date pickers forward `ref` to their trigger.
-- Popup rows sit concentric in their surface. `--radius-inner` is now the popup radius less
-  the popup inset, so a highlighted row in a dropdown, select, combobox, command list or
-  popover menu follows the menu's corner at every radius preset instead of a fixed fraction
-  of `--radius` that only lined up at one of them.
-- The menubar is the quiet strip its own documentation described: one rule underneath and no
-  outlined frame or inset around the triggers. The indeterminate progress band now crosses
-  the whole track, off-edge to off-edge, in both directions; it used to stop 80% across and
-  snap back. An inline `BatchActionBar` shares the floating dock's geometry — popup radius,
-  compact inset, the same action rhythm — and differs only in being flat and in flow.
-- Global search reads as one structure: every fact on a result's second line is the same
-  size (the subtitle ran a step larger than the facts beside it), a status badge sits on that
-  line without making its row taller, amounts end on the same edge as "See all", group
-  headings share the rows' inset, and the tab strip is a slim band under the field rather
-  than a second header of the same height.
-- The combobox family runs on one engine. `ResourceCombobox` and `SuggestionsCombobox` are
-  presets of one self-fetching picker and `AsyncCombobox` / `AsyncMultiCombobox` share its
-  wiring; `SuggestionsCombobox` and `useSuggestions` now live in `features/combobox`. Drift
-  between the copies is resolved: a field with no preload says "Type to
-  search…" rather than "No results found.", a query waiting on the debounce shows "Searching…",
-  an error belongs to the query that failed, a disabled picker no longer fetches, each chip's
-  remove control names its value, and picker rows match the base combobox rows. Additive
-  options: `ResourceCombobox` gains controlled search, `defaultOpen`, `clearSearchOnClose` and
-  `requestDelay`; `SuggestionsCombobox` gains form props, `portalContainer` and
-  `highlightMatch`; `ComboboxInputTrigger` and `ComboboxChip` take `strings`.
-- Comments read as a social thread: each comment is a bubble beside its avatar with the
-  author, a relative `<time>` and "edited" in its header; replies hang off a thread line with
-  "Show N replies" and "Show N earlier replies" expanders; long bodies fold behind "See more";
-  attachments past the first few fold behind "Show N more"; reactions, Reply and the overflow
-  menu sit in one quiet row. Reply opens a composer inside the thread and editing happens in
-  place, each with its own draft, and focus returns when either closes. New optional
-  `CommentThreadOptions` — `commentActions`, `maxVisibleReplies`, `clampLines`,
-  `maxVisibleAttachments`, `reactionChoices` — on `Comments`, `CommentTimeline` and
-  `CommentItem`; new `CommentsStrings` keys are optional in the type.
-- Catalogue: Overlay is the one page for overlays, and Dialog, AlertDialog and Sheet are
-  presented as its presets; Data view and Data table are one page; Async combobox is part of
-  the Combobox page. `/dialog`, `/sheet`, `/data-table` and `/async-combobox` redirect.
-- **Breaking (2.0):** names that were only another kit component under a second name are
-  removed, along with the entry point that only re-exported another. Dialog, sheet and alert
-  dialog keep the parts that set something (`DialogContent`, `SheetContent`, and the alert
-  dialog's content, media and answers); `Dialog`/`Sheet`/`AlertDialog`, their `Trigger`,
-  `Body`, `Title`, `Description`, `Header` and `Footer`, `DialogClose`, `SheetClose` and
-  `DialogDismissArea` become the `Overlay` parts they always were — the header and footer
-  parts only added a class no stylesheet read. The action overlays' shared frame draws
-  Overlay's header, body and footer itself. A menubar's menus are `DropdownMenu` and its parts
-  around `MenubarTrigger`: `MenubarMenu` is `DropdownMenu`, and `MenubarContent`,
-  `MenubarItem` and the other eleven `Menubar*` parts are the `DropdownMenu*` part of the
-  same suffix (`MenubarPortal` is `DropdownMenuPortal`).
-  `SettingsShell` is `AsideNavShell`, `ToggleGroupItem` is `Toggle`, and the `DialogProps`,
-  `SettingsShellProps` and `ToggleGroupItemProps` types are `OverlayRootProps`,
-  `AsideNavShellProps` and `ToggleProps`. `themelia-ui/features/suggestions` and its
-  stylesheet are no longer published; import the same names from
-  `themelia-ui/features/combobox` (the codemod rewrites the specifier and its stylesheet).
-- One edge for every control that sits beside another. Fields, selects, comboboxes, date
-  pickers, popover triggers, filter pills, neutral and secondary outline buttons, the
-  header's search trigger and the rich-text editor frame all draw `--control-border`, now
-  30% foreground (was 40% on fields, 35% on outline buttons and the bare `--border` on filter
-  pills) — lighter than the old field edge and darker than the old pill edge. The idle edge
-  measures 2.4:1 on the light canvas, a deliberate calm below WCAG 1.4.11's 3:1; hover
-  (4.5:1), focus (4.3:1) and invalid edges still clear it, and the token test holds the idle
-  edge to its own 2.3:1 floor.
-- A command row that is not checked no longer reserves its hidden check mark, so a trailing
-  caption in a `CommandItem` sits at the row's end instead of midway along it.
-- Catalogue navigation: twelve task-shaped groups, each showing how many pages it holds,
-  with labelled sections inside the long ones (Forms › Text, Choice, Numbers…; Data display ›
-  Collections, Content…; Features and Blocks by task). Navigation, Feedback & status and
-  Overlays & menus are groups of their own; Batch action bar and Copyable moved to Actions,
-  Scroll area to Foundations. The page breadcrumb and search results name the section too.
-  The "Menubar, hover card & co." page is seven pages, one per family and each on its own
-  import path: Menubar, Navigation menu, Hover card, Resizable panels, One-time code input,
-  Aspect ratio and Keyboard key.
-- **Breaking (2.0):** a navigation menu has one panel. Every `NavigationMenuContent` built
-  its own portal and popup, so moving between entries swapped surfaces instead of resizing
-  one, and each idle entry painted a dot (a 0x0 popup's ring shadow). `NavigationMenu` now
-  owns the shared panel and each content block is drawn into it; `side`, `sideOffset` and
-  `container` move from `NavigationMenuContent` to `NavigationMenu`, which also takes `align`
-  (default `"start"`, so the panel lines up with its entry instead of centring). Panel links
-  sit one per row. `NavigationMenuIndicator` draws a chevron that turns while its panel is
-  open (it drew nothing without children).
-- **Breaking (2.0):** two text colours. Text is `--foreground` or `--muted-foreground`;
-  `Text type="secondary"` resolves to `--muted-foreground`, and the `discrete` type, the
-  `--text-role-discrete` token and `--foreground-80` are gone. Heading subtitles, navigation
-  links, avatar initials and empty-state icons that painted a third or fourth grey read the
-  same muted colour as every other supporting line.
-- **Breaking (2.0):** two radii, both plain values set once at `:root`: `--radius` (1rem)
-  for containers and `--radius-sm` (0.5rem) for everything inside or small — inputs,
-  buttons, rows, chips, badges, tooltips. Nothing derives one from the other; they are
-  complementary, so a container of `--radius-sm` items insets them by the difference
-  (`--space-md`) and a row sits concentric in its menu. `--radius-surface`,
-  `--radius-popup`, `--radius-control`, `--radius-inner` and the `-md` to `-4xl` ladder are
-  removed (296 uses renamed; the Tailwind bridge and composition gate follow). New
-  `UIConfig.theme.radiusSm` beside `radius`; the ThemeTweaker edits both.
-- **Breaking (2.0):** one name per value. `--menu-surface-p`, `--menu-row-px`, `--field-h`,
-  `--field-px`, `--text-xxs` and the heading, label and link colour roles restated another
-  token under a second name and are removed (popups inset by `--space-md`; headings and
-  labels paint `--text-role-main`, subtitles `--text-role-secondary`, links
-  `--link-color`). Buttons and fields share one height: `--height-action` merges into
-  `--height-control`, and the `--action`, `--action-sm` and `--action-2xs` ladder into
-  `--control-h`, `--control-h-sm` and `--control-h-2xs`.
-- One name per role, continued. The sidebar width had four names (`--shell-sidebar-width`,
-  the app shell's and the workspace's copies, and Sidebar's own) and the shells restated
-  16rem, so the theme knob moved no shell: it is `--sidebar-width` now, for Sidebar and
-  every shell. The header height knob was 4.5rem while the shell hard-coded 3.5rem; the
-  knob is 3.5rem, drives every top bar through `--shell-header-h`, and the media library's
-  scroll offset reads it. The medallion is `--size-medallion` (it was restated four times),
-  the switch track is `--choice-size`, the dropdown menu uses `--popover-shadow`, the two
-  sidebar action sizes are one, menu and list rows share `--row-px`, and the button,
-  toast, sidebar and accordion read the kit's steps instead of renaming them. A dead
-  `--badge-destructive-bg` and its two dark overrides are gone.
-- Contrast and shape fixes. The dark `--accent` steps down to a new neutral-750, so muted
-  text and toned badges on a selected row or active tab stay above 4.5:1. Avatar initials
-  take the main ink. `--destructive-accent` joins the other tone accents for destructive
-  text on a destructive tint (Badge and the analytics deltas read it). Small controls cap
-  their corner at 30% of their height, so an 18px checkbox is no longer a circle and a 20px
-  icon button no longer a near-circle; full-size controls are unaffected at every corner
-  preset. Submenus clear their parent again, the AI-chat queue mirrors under RTL, the
-  activity heatmap's weekday labels are no longer clipped, and a batch action bar docked
-  inside a panel fits it on a phone.
-- Hardening. The token gate no longer lets a bare alias hide behind a test that names
-  it or behind a family prefix. The composition gate now fails a hover, selection or open
-  state filled from the `--muted` family, text painted in an alpha step of the two text
-  colours, and an empty rule. The geometry suite fails a small square that nearly closes
-  into a circle and caps corners at the roundest preset instead of a stale 14px, and a new
-  sweep fails any text clipped at its start edge, at desktop and phone widths. A calendar's
-  disabled day, the breadcrumb separator and a disabled workspace step use the two text
-  colours; a secondary mention chip lifts on hover instead of fading. Item's image media and
-  a file row's thumbnail share the medallion size; the header's inset is `--space-xl`. Hover
-  cards and the header's tool popup cap at the positioner's available width, and toasts at
-  their containing block, so all three fit inside a scoped portal host. The AI chat's step
-  connector mirrors under RTL. Thirty-five CSS rules that no component applied are gone,
-  along with five scope blocks the token merges had emptied. Thirty-eight literal component
-  tokens that were restated at every scope boundary are declared once at `:root`, so an
-  override set on a wrapper is no longer reset by the next nested scope — and DevTools no
-  longer lists a struck-through copy per boundary.
-- One hover language. Neutral hover and selection fills had six values (`--muted`, three
-  `--muted-*` steps, `--accent`, `--muted-40` most of all), and every `--muted` one went
-  darker than a dark card — a hole, not a lift. Controls, popup cursors and
-  selected/current/open states take `--accent`; hover over page rows and large surfaces takes
-  `--accent-50` (added to the alpha ladder). The header search, drawn as a field, hovers like
-  one. Calendar chips deepen their own tone on hover instead of turning grey.
-- Fields focus the way they fail: the edge firms to the focus colour and a soft 22% halo
-  (`--field-focus-ring`) sits round it, instead of a solid ring welded to the border. Applied
-  to every field, shell, input group, OTP slot and colour picker.
-- Buttons no longer scale on press; the label jumped and joined groups and overlay footers
-  opened gaps between neighbours.
-- Overlays move better: the dialog enters over 200ms from 97% with a slight rise and leaves
-  in 150ms; sheets slide their full width out of their edge; the scrim fades with the
-  surface. New `UIProvider config.overlay.backdropBlur` (px or CSS length, default none)
-  blurs the page behind a modal overlay. An overlay with no body draws one rule between its
-  header and footer, not two.
-- Cards are framed by default: a bezel of `--muted-50` round a content plate whose corner is
-  `--radius-sm` inside the frame's `--radius`, with media, footer and primary action
-  following the inner corner.
-- `DateBlock` is a calendar leaf — the month as a band across the top, the day under it,
-  then weekday, year and time — on the small radius, and it has its own catalogue page.
-  Inline it is a phrase at the size of its line. Metadata list and Inline stat are separate
-  pages.
-- `TableSkeleton` reads as a table: the table's edge (`framed`, default on), a wide first
-  column, a right-aligned last one, ragged row measures and short head labels. `PageSkeleton`
-  is PageHeader's row over card-shaped panels, and `TwoColumnPageSkeleton` a record beside
-  its owner and facts; title bars are glyph height rather than a line-box pill.
-- `ScrollArea`'s styled scrollbar now runs in Chromium (the standard `scrollbar-*` pair had
-  switched it off): the thumb is inset from the edge, stops short of rounded corners and is
-  findable against a white card. Firefox keeps the thin standard bar.
-- One match highlight. `<mark>` is styled once in the base layer — an amber wash under full
-  ink, square-ended, with no shift in the text — replacing three different treatments in
-  global search, the combobox and rich text. Global search marks every occurrence.
-- Timeline dots are opaque, so the connector no longer shows through tinted markers.
-- `PreviewTriggerCell`'s hover ground is an even inset paid back by its margins (rows are
-  no taller than plain ones), and its caret sits on the value's line.
-- `MetadataList` compact density tightens gaps only; values no longer drop to 12px under
-  14px labels, and a custom `render` sits in the value's box so it takes the value's size.
-- The pending badge dot is a thin ring rather than a bold "o"; neutral `IconBadge` uses the
-  avatar fallback's disc so two medallions in one list match; mention chips take the line's
-  size and the badge corner.
-- A repeater nested inside another no longer takes its parent's handle indent or carded
-  row inset on its footer.
-- AI chat, comments, media library, event calendar, product variants and analytics polish:
-  one fill per surface, chip heights and borders unified, supporting text on the two
-  colours, aligned glyphs, and narrow-width layouts fixed.
+  accordion, alert, toast, chart tooltip and calendar gaps the nearest step. DataTable's `sm`,
+  default and `lg` cells are 8, 12 and 16px and follow density.
+- **Shapes.** Each element has one radius at rest, on hover and on focus; twenty-two
+  components, among them accordion triggers, tabs, tab panels, table and scroll containers,
+  the carousel track and side-nav items, were square until focused. Nested items follow their
+  container's curve (the parent's radius less the inset): enclosed tabs, attached toggles,
+  media-library segments, gallery controls, input-group buttons, the AI chat queue and the
+  metric bar's period button. The batch action bar, reaction picker and event calendar's jump
+  popover inset by `--space-md` like a menu. `Button` reads `--button-radius`, so a
+  container can set the concentric value. Cards are framed by default: a `--muted-50` bezel
+  round a content plate whose corner is `--radius-sm` inside the frame's `--radius`.
+- **Edges and focus.** Fields, selects, comboboxes, date pickers, popover triggers, filter
+  pills, neutral and secondary outline buttons, the header's search trigger and the rich-text
+  editor frame share `--control-border`, 30% foreground (fields were 40%, outline buttons 35%
+  and filter pills `--border`). The idle edge measures 2.4:1 on the light canvas, a
+  deliberate calm below WCAG 1.4.11's 3:1; hover (4.5:1), focus (4.3:1) and invalid edges
+  clear it. A focused field firms its edge to the focus colour inside a soft 22% halo, on
+  every field, shell, input group, OTP slot and colour picker. Hairlines read `--border-width`
+  and `--border-width-strong`.
+- **Hover and selection.** Controls, popup cursors and selected, current and open states take
+  `--accent`; page rows and large surfaces hover with `--accent-50`, where fills from the
+  `--muted` family read as holes in dark. The header search hovers like a field, and
+  calendar chips deepen their own tone. The sidebar marks the current page with a lifted row,
+  the whole accent with a small shadow and medium weight, in place of an inset bar.
+- **Dark mode.** The dark `--accent` steps down to a new neutral-750, so muted text and toned
+  badges on a selected row or active tab stay above 4.5:1. A `Scope`, a `data-density`
+  region or a provider on the default `system` scheme inside a `.dark` or
+  `data-theme="dark"` tree stays dark instead of reverting to light, and class-only dark
+  islands such as inverted menus re-derive component tokens.
+- **Motion.** Buttons no longer scale on press. The dialog enters over 200ms from 97% with a
+  slight rise and leaves in 150ms, sheets slide their full width out of their edge, and the
+  scrim fades with the surface. The indeterminate progress band crosses the whole track in
+  both directions.
+- **Match highlight.** `<mark>` is styled once in the base layer: an amber wash under full
+  ink, square-ended, with no shift in the text. Global search marks every occurrence.
+- Consolidated components keep their public names: `CardRadioGroup` and `ListRadioGroup` are
+  one option group laid out two ways, `FileUpload` renders `Dropzone` and shows its drop
+  prompt, `ActionDialog`, `ActionSheet` and `ConfirmDialog` share one frame,
+  `ResourceCombobox` and `SuggestionsCombobox` are presets of one self-fetching picker whose
+  wiring `AsyncCombobox` and `AsyncMultiCombobox` share, and primitives' `Link` renders
+  `TextLink`. `SuggestionsCombobox` and `useSuggestions` live in `features/combobox`.
+- `Slot` merges props: classes join, both handlers run (the child's first) and the child's
+  style wins.
+- `PageActions` collapses below the kit's `lg` breakpoint, 1024px, rather than at 1040px;
+  pass `breakpoint={1040}` to keep the old width.
+- A dialog is capped at the viewport less the overlay edge inset, like a sheet, rather than
+  90vw, and `ActionDialog`'s `"full"` width is that cap.
+- `useCopyToClipboard` confirms for 2000ms, as `Copyable` did (was 1600ms).
+- DatePicker's trigger is a combobox (`aria-haspopup="dialog"`) named by its label, with the
+  date as its value, so a required or invalid date field announces it. Tests find it with
+  `getByRole("combobox", { name })`.
+- `StackedAvatarsStrings.overflow` supplies the "+N" chip text.
+- `Text numeric` keeps the text's typeface and uses tabular figures; the monospace stack adds
+  the platform monospace faces before the generic fallback.
+- Hashed class names drop `-module` (`button__root___sSlE7`). Target the stable
+  `{name}--component` classes instead.
+- InputGroup no longer pads addons that carry `border-b` or `border-t` classes.
+- `DataView`'s add-filter control is icon-only, with a tooltip and an accessible name.
+- Surfaces: the menubar is one quiet strip under a rule; an inline `BatchActionBar` shares the
+  floating dock's geometry; comments read as a thread of bubbles with "Show N replies",
+  "See more" and in-place reply and edit, each with its own draft; Global Search has quieter
+  chrome (a rule under the search row, muted group labels, "See all" as a text button,
+  tabular tab counts) and even result lines; the Media Library toolbar is split into
+  search/type and refine/view bands; `DateBlock` is a calendar leaf; `TableSkeleton`,
+  `PageSkeleton` and `TwoColumnPageSkeleton` take the shape of what they stand in for;
+  overlay headers take a small optical top inset; `Item` rows use the control radius; neutral
+  `IconBadge` uses the avatar's disc; the pending badge dot is a thin ring; AI chat, activity,
+  event calendar, product variants and analytics share sizes, fills and borders.
+
+### Fixed
+
+- **Keyboard and assistive technology.** Popups opened inside a dialog (select, combobox,
+  popover menu, date picker) portal into it and are operable. The popover menu moves by arrow
+  keys. The calendar is one tab stop with PageUp/PageDown, Home/End and Shift paging. Time
+  segments are spinbuttons that clamp, snap and wrap. The pill radio group roves with the
+  arrow keys, and `OverflowTabBar` is one tab stop. A loading `Button` keeps focus
+  (`aria-disabled`), and `SubmitStateButton` shows its busy and done states in its visible
+  label. Toasts pause on hover and focus, dismiss with Escape and return focus. A `Table` is a
+  tab stop only while it scrolls, named by its caption, `aria-label` or
+  `strings.scrollRegion`. ⌘B toggles only the sidebar around the focus. Keyboard focus stays
+  visible on clipped scroll areas, tabs and tab panels, the command palette's search field
+  shows focus, and the map draws the kit's focus ring inside its frame.
+- **Forms.** `DecimalInput` reads a pasted "€1,234.50", steps an off-grid value to the nearest
+  step, disables the stepper at `min`/`max` and keeps focus in the field. `ErrorSummary` is
+  named by its heading, takes `autoFocus` and styles its links. `FormField` groups
+  (`htmlFor={false}`) and `FieldGroup` are described by their hint. `PasswordInput`'s reveal
+  control reports one state and forwards input strings. `LocalizedStringField` takes the
+  field's label and hint and names its input with the locale; `LocalizedObjectField` labels
+  each field. `ColorInput` names each swatch and marks an unpaintable value invalid once
+  editing stops. File and image uploads put `aria-invalid` and the hint on the input, name the
+  picker, accept the same file after removal and move focus to the next row; the upload list
+  offers retry and remove on a failed row and announces finished transfers. Textarea `rows`,
+  `minRows` and `maxRows` size from the real padding, and a textarea at `maxLength` shows the
+  limit. The phone input keeps Canada when +1 is shared and reads custom countries.
+  `PillRadioGroup` submits its value. Clear controls in inputs and textareas have a 24px
+  target.
+- **Combobox.** A field with no preload says "Type to search…", a query waiting on the debounce
+  shows "Searching…", an error belongs to the query that failed, a disabled picker does not
+  fetch, each chip's remove control names its value, and picker rows match the base rows.
+- **Right-to-left.** Shipped CSS keeps `:dir(rtl)`, so the carousel, kanban, navigation and
+  both tables honour `dir="rtl"`. The carousel's arrows and index, the table's scroll arrows,
+  toast centring, the AI chat queue and its step connector work in RTL.
+- **Layout.** Wide tables fade the edge with more columns; end-aligned sortable headers line
+  up with their values; the sticky header uses the card surface; the selected row outranks
+  hover, and header, footer and empty rows do not hover. A `CardFooter` passed as a child
+  renders as the footer. `MetadataList` keeps a surrounding density scope, tightens only gaps
+  when compact, and sits a custom `render` in the value's box. Carousel and tab-bar fades are
+  masks, correct in dark, on cards and in RTL; the carousel honours reduced motion; tabs reveal
+  the selected tab clear of the fade. Pagination stays on one row at phone width, sheets pad
+  for the safe area, and a kanban board scrolls horizontally. `AsideNavShell` without a title
+  keeps main and aside on one row. Submenus clear their parent. Hover cards and the header's
+  tool popup cap at the available width, and toasts at their containing block, so they fit a
+  scoped portal host. `ScrollArea`'s styled scrollbar runs in Chromium. A command row that is
+  not checked no longer reserves space for its check mark.
+- **Theming.** Theme Tweaker exports reach inside a `UIProvider` and apply under
+  `colorScheme: "dark"`: shared values are written at every scope boundary, and each scheme
+  at its explicit selectors and the `prefers-color-scheme` blocks. `ThemeSelectors` gains
+  `systemLight` and `systemDark`; re-export a saved theme to pick this up.
+  `--destructive-accent` flips inside a nested `.dark`. Tailwind's `rounded-sm`
+  and `font-*` follow a theme, and the preflight font follows `--font-sans`. Literal component
+  tokens are declared once at `:root`, so an override set on a wrapper is no longer reset by a
+  nested scope.
+- **Other.** A pager's `renderLink` element becomes the control, so router links keep the
+  button's geometry. A date picker opens on its selected month, and preset date pickers
+  forward `ref` to their trigger. Mention chips take the line's size and the badge corner,
+  with a floor at the smallest type step. Chart `nameKey` and `labelKey` read the payload.
+  `ObjectRepeater` keeps row state across reorder, and a nested repeater no longer takes its
+  parent's handle indent. `CellValue` hands money strings to `Money` and honours
+  `dateLocale`. English left in the date picker, repeater, table, slider, search and upload
+  moved into their strings. Warning text uses the warning ink, avatar initials the main ink.
+  The event calendar's previous and next buttons are a `ButtonGroup`, so the focus ring is
+  not clipped. `NavigationTabs` no longer pulls in the layout layer.
 
 ## 1.0.4 — 2026-09-22
 
-- Restore the small shared spacing step between primary and secondary lines in Item,
-  media list rows, filter options, async preview cells, and place results. Product,
-  commerce, credential, and other compact identities now stay visually paired without
-  their two text rows touching.
-- Refine feature and block surface hierarchy so ledgers, activity details, comparison
-  summaries, upload rows, transcript tools, attachments, and other nested regions use the
-  tighter inner radius while genuine cards and shells retain the structural radius. This
-  removes repeated card silhouettes without changing the established typography roles.
-- Rebalance the shared corner system around a 12px default surface and a 14px rounded
-  preset, with visibly tighter control and nested-element roles. Inputs, buttons, menus,
-  cards, preview frames, and composite controls now preserve that hierarchy instead of
-  drifting toward accidental pills. Existing saved 16px preview preferences migrate to
-  the new rounded preset.
-- Separate compact floating surfaces from structural panels with a shared popup-radius
-  role. Menus, submenus, listboxes, popovers, tooltips, chart tooltips, mention pickers,
-  and map popups now stay tighter than cards and dialogs; nested menus also keep a clear
-  four-pixel gap instead of merging into one rounded silhouette. Correct remaining role
-  bypasses in command fields, enclosed tabs, color inputs, and unlayered map chrome.
-- Give browser selection, editing carets, range tracks, progress tracks, and avatar
-  fallbacks deliberate theme-aware colors. These small foundation surfaces now retain
-  their shape and contrast on both light and dark backgrounds instead of blending into
-  nearby cards or falling back to browser-default blue.
-- Replace the raised Preview/Code pills in documentation examples with a quieter underline
-  treatment and expose their pressed state to assistive technology.
-- Replace the duplicate and non-monotonic shadow values with eight distinct key-plus-ambient
-  elevation tiers, from compact controls through exceptional overlays.
-- `CardPrimaryAction`: whole-card links now respond on hover-capable devices with a treatment
-  appropriate to their surface—border and lift for bordered cards, stronger elevation for
-  framed cards, and a quiet background for flat cards—without covering nested controls.
-- Keep the full component-search label visible in the mobile preview header by giving search
-  sole ownership of the flexible space and hiding the desktop keyboard hint at that width.
-- `AppSidebar`: a parent entry without an `href` now opens and closes on click, with
-  `aria-expanded` on the row. The first frame is still derived from the current URL, so a
-  nested route arrives with its group open, and a navigation returns every group to that
-  derived state. `SidebarItemContext` gains an optional `toggle` for custom rows.
-- `PageHeading` / `PageHeader`: when the headline row holds actions, the description
-  sits a medium step below it instead of four pixels under the buttons.
+### Changed
+
+- Corners: a 12px default surface radius and a 14px rounded preset, with tighter control and
+  nested roles, so inputs, buttons, menus, cards and composite controls keep their hierarchy
+  instead of drifting towards pills. Ledgers, activity details, comparison summaries, upload
+  rows, transcript tools, attachments and other nested regions use the tighter inner radius;
+  genuine cards and shells keep the structural one.
+- Compact floating surfaces take a shared popup radius: menus, submenus, listboxes, popovers,
+  tooltips, chart tooltips, mention pickers and map popups stay tighter than cards and
+  dialogs, and nested menus keep a 4px gap. Command fields, enclosed tabs, colour inputs and
+  map chrome follow the roles.
+- Eight distinct key-plus-ambient elevation tiers replace duplicate and non-monotonic
+  shadows.
+- Browser selection, editing carets, range and progress tracks and avatar fallbacks take
+  theme-aware colours in light and dark.
+- `CardPrimaryAction`: a whole-card link responds on hover-capable devices with a treatment
+  that suits its surface (border and lift for bordered cards, stronger elevation for framed
+  cards, a quiet background for flat cards) without covering nested controls.
+- `AppSidebar`: a parent entry without an `href` opens and closes on click, with
+  `aria-expanded` on the row. The first frame still follows the current URL, and navigation
+  returns every group to that state. `SidebarItemContext` gains an optional `toggle`.
+
+### Fixed
+
+- Item, media list rows, filter options, async preview cells and place results keep a small
+  step between primary and secondary lines.
+- `PageHeading` and `PageHeader` place the description a medium step below a headline row
+  that holds actions.
 - The optional peer range for `react-leaflet-markercluster` is `^5.0.0-rc.0`, the only
-  published 5.x; `^5.0.0` excluded it and made `npm install` fail for any consumer of
-  `features/map`.
+  published 5.x; `^5.0.0` made `npm install` fail for consumers of `features/map`.
+
+See [Upgrading to 1.0.4](docs/learn/migration.md#upgrading-to-104).
 
 ## 1.0.3 — 2026-09-17
 
-Unifies component spacing and typography, polishes commerce and catalogue workflows,
-and adds live app theming with accessible, configurable tab overflow controls.
+Unified component spacing and typography, live app theming, and accessible tab overflow.
 
-- Add opt-in `TabList.edgeFade` for soft overflow edges that follow scroll position and
-  text direction. Enable it on the Theme Tweaker category tabs.
+### Added
 
-- Add automatic overflow arrows to the shared TabList, using ScrollArea for touch and
-  trackpad scrolling. Reveal selected tabs without scrolling the page, support RTL and
-  reduced motion, and remove scroll controls when the row fits.
+- `TabList` shows overflow arrows automatically, scrolling through ScrollArea for touch and
+  trackpads, revealing the selected tab without scrolling the page, and supporting RTL and
+  reduced motion; the controls disappear when the row fits. `TabList.edgeFade` adds soft
+  overflow edges that follow scroll position and text direction.
+- `ThemeTweaker` works as a live app tool: a floating launcher with compact appearance
+  controls, advanced values, a full-page workspace, and reset and export controls.
 
-- Integrate Theme Tweaker as a live app tool, available from a floating launcher on every route
-  with compact appearance controls, advanced values, and a full-page workspace. Share
-  theme and provider settings across the app,
-  persist valid edits in browser storage, and provide reset and export controls.
-  Use shared ScrollArea, tabs, form typography, and icon sizing, with fixed panel controls.
-  Restore the overlay sizing API so sheets honor named and custom cross-axis sizes.
+### Changed
 
-- Align all block and feature families on shared composition and typography. Route group
-  labels through DisplayLabel, facts through MetadataList, and primary text through provider
-  defaults. Remove local font and opacity overrides; fix narrow product rows, inline facts,
-  admin action headers, and API reference tables. Add source guardrails and browser checks
-  for canonical typography, consumer overrides, and desktop/mobile layouts in every density.
+- Block and feature families share composition and typography: group labels go through
+  `DisplayLabel`, facts through `MetadataList` and primary text through provider defaults,
+  with no local font or opacity overrides. Commerce blocks use the canonical component
+  typography directly.
+- Card, ContentBlock and overlay spacing follows the shared surface X/Y controls, with local
+  inset overrides kept. Header typography and title/description gaps match across the three,
+  and overlay headers and footers have a little more vertical padding. Metadata labels wrap,
+  and dark scopes inherit custom fonts.
+- Commerce: unified financial ledgers, aligned order and refund metadata, a compact shipment
+  timeline that follows the latest reached event, responsive invoice lists, readable stock
+  quantities, clearer monetary labels, stronger loyalty balances and ruled booking rows.
+  Order summaries skip obsolete or terminal next steps.
+- Catalogue blocks: compact SEO checks, grouped inventory fields and stock summaries, clearer
+  supplier profiles and consistent booking typography. Records are read-only without a change
+  handler.
+- Activity: divided date groups, quieter timeline rails, a visible details control, separate
+  changes, context and related-record sections, before/after values in a description list,
+  and actions after the information they act on.
+- Comments: compact conversation bubbles with inline reply and reaction controls, a shared
+  moderation menu, and connected replies that stay readable in narrow panels. Reply expansion
+  and reaction state are exposed to assistive technology, and deeper replies are kept.
+- GlobalSearch is recomposed from Item, Badge, ScrollArea and the loading components, with
+  unified media, wrapping context and tags, simpler match highlights and readable amounts on
+  narrow screens.
 
-- Remove commerce-specific overrides of metadata labels, item descriptions, and ledger
-  total sizes. Commerce blocks now use the canonical component typography directly;
-  browser regression checks compare their rendered styles with MetadataList and Item.
+### Fixed
 
-- Refine commerce summaries with unified financial ledgers, aligned order and refund
-  metadata, and a compact shipment timeline that follows the latest reached event.
-  Keep prices beside their content on narrow screens and use compact rounded booking
-  date tiles with appointment times beside the service. Skip obsolete or terminal
-  next steps in order summaries.
+- Sheets honour named and custom cross-axis sizes.
+- GlobalSearch: grouped keyboard order, async selection, IME input, result scrolling, group
+  counts, thumbnails and dismissal after a selection in the dialog.
+- Prices stay beside their content on narrow screens, booking date tiles are compact, stock
+  toggles stay readable on phones, and `AdaptiveGrid` keeps its columns inside narrow
+  containers. `StepsBar` scrolls from the keyboard.
+- Loyalty movement signs are normalised, failed cart thumbnails recover, and a code cannot be
+  submitted or removed while pending.
+- Live mentions keep paragraph and list structure.
+- Iconless `ActionMenu` rows have no empty icon column, and long labels in fixed-width menus
+  truncate, checkbox and link actions included.
+- Toolbar separators are centred at icon height. PageHeading and PageHeader title icons align
+  to the first title baseline. Item label/value pairs stay compact.
 
-- Consolidate Card, ContentBlock, and overlay spacing around the shared surface X/Y
-  controls while retaining explicit local inset overrides. Reuse Stack for surface
-  headers and footers and MetadataList for activity changes. Let metadata labels wrap
-  and dark scopes inherit custom fonts. Remove the unused activity rail variable and
-  move GlobalSearch radius and placement onto shared tokens.
-
-- Restructure catalogue blocks with compact SEO checks, grouped inventory fields and
-  stock summaries, clearer supplier profiles, and consistent booking typography. Keep
-  stock toggles readable on phones, make records read-only without a change handler,
-  and add responsive previews with working search-appearance editing.
-
-- Polish commerce blocks with responsive invoice lists and shipment journeys, readable
-  stock quantities, clearer monetary labels, stronger loyalty balances, and ruled booking
-  rows. Normalize loyalty movement signs, recover failed cart thumbnails, and prevent
-  code submission/removal while pending. Make the commerce previews responsive and
-  interactive. Keep AdaptiveGrid columns inside narrow containers and make StepsBar
-  keyboard-scrollable.
-
-- Clarify activity structure with divided date groups, quieter timeline rails, a visible
-  details control, and separate changes/context/related-record sections. Align before/after
-  values in a semantic description list and keep actions after the information they act on.
-
-- Reshape comments into compact conversation bubbles with inline reply/reaction controls,
-  a shared moderation menu, and connected replies that stay readable in narrow panels.
-  Expose reply expansion and reaction state to assistive technology, and retain deeper
-  replies. Preserve paragraph and list structure when rendering live mentions.
-
-- Recompose GlobalSearch with shared Item, Badge, ScrollArea, and loading components;
-  unify media, wrap context and tags, simplify match highlights, and keep amounts readable
-  on narrow screens. Correct grouped keyboard order, async selection, IME handling,
-  result scrolling, group counts, thumbnail images, and dialog selection dismissal.
-
-- Harmonize Card, ContentBlock, and Overlay header typography and small title/description
-  gaps. Give overlay headers and footers a little more vertical padding.
-
-- Remove empty icon columns from iconless ActionMenu rows and apply ellipsis to long
-  labels in fixed-width menus, including checkbox and link actions.
-
-- Center toolbar separators at icon height and simplify the formatting preview, removing
-  empty card padding, narrowing its font-size field, and repairing its API navigation link.
-- Keep the Header preview's sticky backdrop inside its rounded frame so the top borders
-  follow the same corner radius as the bottom borders.
-- Align PageHeading and PageHeader title icons to the first title baseline, including
-  narrow layouts where badges or actions wrap.
-- Keep Item label/value pairs compact with tight line heights and no added inter-line gap,
-  including nested filter values.
+See [Upgrading to 1.0.3](docs/learn/migration.md#upgrading-to-103).
 
 ## 1.0.2 — 2026-09-16
 
-Improves mobile data workflows, activity and mention presentation, media management,
-async interactions, layouts, and foundational controls.
+Mobile data workflows, activity and mention presentation, media management, async
+interactions and foundational controls.
 
 ### Upgrade notes
 
-Review the [1.0.2 migration guide](docs/learn/migration.md#upgrading-to-102) for the
-TipTap peer requirements, Slider wrapper types, decimal Money strings, mobile filter
-presentation, and opt-in iPhone field sizing.
+Review [Upgrading to 1.0.2](docs/learn/migration.md#upgrading-to-102) for the TipTap peers,
+Slider wrapper types, decimal Money strings, mobile filter presentation and opt-in iPhone
+field sizing.
 
-### Mobile filters, activity, and mentions
+### Added
 
-- Move mobile DataView and FilterLayout controls into a 90%-width sheet, with saved-view
-  selection, per-filter clearing, staged editors, focus restoration, and usable nested
-  menus/calendars. Set `mobilePresentation="inline"` to retain an inline mobile layout.
-- Simplify activity headlines and separate timestamps/source labels from row actions.
-  Resource facts expand with the event details. Narrow comment cards give messages the full
-  content width and keep their actions visible below the message.
-- Align mention suggestions with compact menu geometry and shared Item/Command rows.
-  Support Arrow/Enter selection without moving the editor caret, dismiss with Escape,
-  and prevent unchanged caret callbacks from reopening a dismissed query.
+- Media Library grid, list and metadata-table views and a reusable selection bar;
+  `applyItemPatch` for consumer-owned record shapes; fetch retry; announced progress and
+  results; responsive type filters.
+- `ActivityFeed` takes `error` and `onRetry`, and `ActivityLog` supports loading, error and
+  retry, keeping loaded history, expanded details and composer drafts through refreshes.
+- Schema Form's optional `strings.submitError` customises failed-save feedback.
+- `UIProvider config={{ forms: { preventIPhoneZoom: true } }}` applies a 16px minimum to
+  native fields on iPhones; off by default.
+- Admin shell provider configuration and full-width stacked composition options.
 
-### Base controls and primitives
+### Changed
 
-- Harden base fields: disable clear/reveal/step/prefix actions with their fields, preserve
-  intermediate numeric entry, and support ArrowUp/ArrowDown stepping. Keep standard buttons
-  stationary when pressed. FormField labels now reach composite controls through `aria-labelledby`.
-- Keep uncontrolled slider readouts and submitted values current. Slider callbacks now infer
-  scalar/range payloads; explicitly typed wrappers may need a generic parameter (see migration guide).
-- Preserve rejected pasted tags, split typed entries by their delimiter, honor IME composition,
-  and keep keyboard removal available at the tag limit. Omit disabled tags from form data.
-- Correct primitive empty/non-finite states, DMS rounding, fractional-byte units, custom date-range
-  patterns and same-day collapse. Preserve canonical decimal monetary strings and reject malformed amounts.
+- `RichTextEditor` uses TipTap by default, with real formatting and history, source mode,
+  controlled updates and atomic mention chips. Props, ref and the custom-engine API are
+  unchanged, and the `execCommand` factory remains for explicit integrations. The editor,
+  comments and activities need `@tiptap/core`, `@tiptap/pm` and `@tiptap/starter-kit`;
+  root and unrelated imports do not. HTML is normalised to the TipTap schema.
+- Below 768px, DataView and FilterLayout move their controls into a 90%-width sheet with
+  saved-view selection, per-filter clearing and staged editors. `mobilePresentation="inline"`
+  keeps an inline layout.
+- Activity headlines are simpler, with timestamps and source labels apart from row actions,
+  and resource facts expand with the event details. Narrow comment cards give the message the
+  full width and keep their actions below it.
+- Mention suggestions use compact menu geometry and the shared Item and Command rows.
+- Slider callbacks infer scalar or range payloads; explicitly typed wrappers may need a
+  generic parameter.
+- A single dot in a Money string is a decimal separator, and malformed amounts render the
+  empty state.
+- Centred dialogs cap at 90% of the viewport; overlay close icons follow the interface icon
+  scale with a larger click target.
+- Field typography is the same at every width.
 
-### Overlays, async controls, and forms
+### Fixed
 
-- Cap centered dialogs at 90% of the viewport so narrow screens retain visible side margins.
-- Size overlay close icons to the shared interface icon scale while preserving a larger click target.
-- Protect pending action overlays against duplicate confirmations, cancellation, and stale
-  completions; label confirmations and sheets for assistive technology and keep non-modal
-  sheets above sticky page chrome. Honor non-modal Escape dismissal, including nested-control
-  consumption, and remove empty dialog body bands.
-- Honor externally controlled combobox opening and dismissal, preserve multi-select drafts
-  across result changes, compare selections by key, and link errors to their fields.
-- Reuse Async Preview hover requests, cancel on close or record change, recover under Strict
-  Mode, respect cache expiry, and give popovers accessible names and consistent state layouts.
-- Schema Form now owns pending async submissions, prevents duplicate saves, preserves values
-  after errors, and focuses schema validation failures. Invalid JSON blocks submission and
-  reset clears its draft/error; disabled fields no longer block schema validation. Customize
-  failed-save feedback with the optional `strings.submitError` key.
-
-### Media Library and field typography
-
-- Add Media Library grid, list, metadata table, and reusable selection-bar parts. Improve
-  card selection markers, document placeholders, keyboard detail focus, and narrow layouts.
-- Retain detail drafts after failed saves and keep assets visible during deletes. Preserve
-  selected records across remote searches; support consumer-owned patches with `applyItemPatch`.
-- Expose stable staged file IDs through upload helpers, guard duplicate starts, retain failed
-  files for retry, and ignore cancelled or completed upload callbacks. Upload requires a handler.
-- Keep shared field typography consistent at every width. Opt into a 16px native-field minimum
-  on iPhones using `UIProvider config={{ forms: { preventIPhoneZoom: true } }}`; default off.
-
-### Data and editor state handling
-
-- Unify saved-view tabs and selects, including operator defaults, custom selections and
-  ordered ranges. Make pending filters unavailable to keyboard and pointer input,
-  announce progress, and allow clearing search-only filters.
-- Show DataView filter failures alongside fallback rows. Add `error` and `onRetry` to
-  ActivityFeed and loading/error/retry support to ActivityLog; preserve loaded history,
-  expanded details and composer drafts through refreshes.
-- Keep activity presentation density separate from theme/density scopes, preserving
-  explicit light themes on dark-system devices and the surrounding density scale.
-
-- Use TipTap by default and stabilize the RichTextEditor family, with real formatting/history, source
-  mode, controlled updates and atomic mention chips. Keep the existing props, ref and
-  custom-engine API; retain the legacy execCommand factory for explicit integrations.
-- Editor, comments and activities consumers must install `@tiptap/core`, `@tiptap/pm`
-  and `@tiptap/starter-kit`. Root and unrelated imports remain peer-independent.
-  HTML is now normalized to the TipTap schema; use custom extensions for other content.
-- Keep activity-feed header/footer slots mounted through empty and loading states,
-  so an empty activity log can accept its first comment without losing drafts.
-
-### Layouts, interactions, documentation, and verification
-
-- Make the release benchmark reproducible from a standalone checkout using a validated,
-  versioned comparison capture, and reject incomplete measurements.
-- Run interaction, accessibility, token and layout checks across Chromium, Firefox and
-  WebKit while preserving the reviewed Chromium/macOS visual baselines.
-- Restore focus after Safari pointer users dismiss overlays, mobile navigation,
-  resource assignment and site search; preserve rendered trigger callbacks and refs.
-
-- Complete keyboard Kanban reordering, preserve usable narrow-screen lanes, and compare
-  event-calendar bounds by local day.
-- Keep comment submissions locked until completion, isolate drafts and pending actions
-  when records change, announce errors, and demonstrate retained-draft retry. Prevent
-  duplicate attachment uploads under React Strict Mode.
-- Stabilize activity ordering for missing dates, deduplicate expanded IDs, and demonstrate
-  successful recovery from a failed activity action.
-- Make chat controls reflect their callbacks and demonstrate send/stop/reuse. Guard
-  duplicate resource confirmations and stale completions; give action dialogs accessible
-  names and descriptions, with a working assignment retry example.
-- Follow standalone type re-exports, aliases and cycles in API compatibility snapshots;
-  detect member removals, newly required members and narrowing behind those exports.
-
-- Polish admin-shell containment, scrolling, mobile drawers and left/right navigation;
-  add provider configuration and full-width stacked composition options.
-- Correct auth centering and split-container responsiveness; demonstrate card, bare,
-  split and composed auth screens with validation and recovery states.
-- Compose sidebar router callbacks with mobile dismissal and make workspace navigation
-  keyboard-operable with real button/link semantics.
-- Add media-library fetch retry, accessible progress and result announcements, preserved
-  filter/selection state, and responsive type filters.
-- Keep loading-button names stable for assistive technology and preserve grouped-button
-  geometry around progress announcements.
-- Omit preview artwork, test-helper declarations and macOS metadata from library packages.
-
-- Improve avatar/image upload click targets, touch edit affordances, removal focus, and
-  form error descriptions. Keep mixed-drop rejection feedback and stack mobile examples.
-- Cancel pending search drafts when filters are cleared or saved views change.
-- Add disabled pagination controls, retain result counts for zero/one-page data views,
-  and demonstrate real filtering, sorting, pagination, and empty-state recovery.
-
-- Validate handwritten API-table names against their owning TypeScript symbols, including
-  nested types, hook arguments/results, and exported APIs. Correct stale callback, upload,
-  layout, and token documentation; report unresolved runtime defaults explicitly.
-- Correct Theme Tweaker's provider guidance and demonstrate live configuration updates,
-  retaining the last valid locale while an edit is incomplete.
-- Hide decorative command separators from the accessibility tree and improve destructive
-  badge text contrast on muted surfaces. Remove the resolved accessibility allowances.
-- Correct translucent-color measurement and add regressions for popup token overrides,
-  empty-state alignment, numeric steppers, calendar ranges, and provider updates.
+- Base fields disable clear, reveal, step and prefix actions with the field, keep
+  intermediate numeric entry and step with ArrowUp/ArrowDown. `FormField` labels reach
+  composite controls through `aria-labelledby`. Standard buttons stay put when pressed.
+- Uncontrolled slider readouts and submitted values stay current.
+- Tag inputs keep rejected pasted tags, split typed entries by their delimiter, honour IME
+  composition, keep keyboard removal at the limit and omit disabled tags from form data.
+- Primitives: empty and non-finite states, DMS rounding, fractional-byte units, custom
+  date-range patterns and same-day collapse. Canonical decimal money strings are preserved.
+- Mentions: Arrow and Enter select without moving the editor caret, Escape dismisses, and an
+  unchanged caret callback no longer reopens a dismissed query.
+- Action overlays resist duplicate confirmations, cancellation and stale completions;
+  confirmations and sheets are labelled for assistive technology; non-modal sheets sit above
+  sticky page chrome and honour Escape, including when a nested control consumes it; empty
+  dialog body bands are gone.
+- Comboboxes honour externally controlled opening and dismissal, keep multi-select drafts
+  across result changes, compare selections by key and link errors to their fields.
+- Async Preview reuses hover requests, cancels on close or record change, recovers under
+  Strict Mode, respects cache expiry, and names its popovers.
+- Schema Form owns pending async submissions, prevents duplicate saves, keeps values after
+  errors and focuses validation failures; invalid JSON blocks submission, reset clears its
+  draft, and disabled fields no longer block validation.
+- Media Library keeps detail drafts after failed saves, keeps assets visible during deletes,
+  keeps selected records across remote searches, and improves selection markers, document
+  placeholders, keyboard detail focus and narrow layouts. Upload helpers expose stable staged
+  file ids, guard duplicate starts, keep failed files for retry and ignore cancelled or
+  completed callbacks; uploads require a handler.
+- Saved-view tabs and selects agree on operator defaults, custom selections and ordered
+  ranges. Pending filters are unavailable to keyboard and pointer, progress is announced, and
+  search-only filters can be cleared. Clearing filters or changing a saved view cancels
+  pending search drafts. DataView shows filter failures beside fallback rows.
+- Activity presentation density stays separate from theme and density scopes, so an explicit
+  light theme holds on a dark-system device. Activity-feed header and footer slots stay
+  mounted through empty and loading states, so an empty log can take its first comment.
+- Focus returns after Safari pointer users dismiss overlays, mobile navigation, resource
+  assignment and site search; rendered trigger callbacks and refs are preserved.
+- Keyboard Kanban reordering is complete, narrow-screen lanes stay usable, and event-calendar
+  bounds compare by local day.
+- Comment submissions stay locked until complete, drafts and pending actions are isolated per
+  record, errors are announced, and attachments do not upload twice under Strict Mode.
+- Activity ordering is stable for missing dates, and expanded ids are de-duplicated.
+- Chat controls reflect their callbacks; resource confirmations resist duplicates and stale
+  completions; action dialogs have accessible names and descriptions.
+- Admin shell containment, scrolling, mobile drawers and left/right navigation; auth centring
+  and split-container responsiveness; sidebar router callbacks compose with mobile dismissal;
+  workspace navigation uses real buttons and links.
+- Loading buttons keep a stable accessible name, and grouped buttons keep their geometry
+  around progress announcements.
+- Avatar and image uploads have larger click targets, touch edit affordances, removal focus
+  and error descriptions, and keep mixed-drop rejection feedback.
+- Pagination controls disable at the ends, and data views keep result counts for zero and one
+  page.
+- Theme Tweaker keeps the last valid locale while an edit is incomplete.
+- Decorative command separators are hidden from the accessibility tree, and destructive badge
+  text has more contrast on muted surfaces.
+- The package no longer includes preview artwork, test-helper declarations or macOS metadata.
 
 ## 1.0.1
 
-Released 2026-09-14. The package is renamed from `@themelia/ui` to `themelia-ui`, with the
-consumer documentation and the shipped assistant skill updated to match.
+Released 2026-09-14. The package is renamed from `@themelia/ui` to `themelia-ui`; the
+documentation and the packaged assistant skill use the new name.
 
 ## 1.0.0 — initial repository baseline
 
-The original 1.0 surface. Everything below describes that baseline; changes after it follow
+The first stable release. Later changes follow
 [the compatibility policy](docs/learn/api-compatibility.md).
 
-Release-candidate notes last updated 2026-09-10.
-
-### Production-readiness hardening
-
-The global contract now separates whole-interface scale, geometry-only density, and
-type-only scale without per-family factors or double multiplication. Compact/default/
-comfortable density preserves readable type across nested provider, theme, and portal
-boundaries; explicit typography scale inherits through those same scopes. Token reporting
-is generated and freshness-gated at 55 theme variables, 166 global variables, and 429
-component/runtime variables.
-
-The public surface adds an accessible Base UI-backed Toolbar family, explicit render
-composition for FormField and FieldShell, normalized linear/circular progress ranges, and
-CSPProvider integration. The feature editor and data-table toolbars use the shared roving-
-focus model. Exact family CSS remains self-contained and consumer overrides are documented
-and tested against packed Vite and Tailwind applications.
-
-Documentation navigation is now ten job-shaped groups and search is a command dialog with
-grouped ranking, keyboard navigation, focus return, and mobile bounds. Preview surfaces,
-generated docs, API/architecture records, assistant-skill mirrors, and every light/dark
-visual baseline were refreshed together. No broadly reusable primitive is missing for 1.0;
-Meter and a gesture-aware Drawer remain future candidates, to be added when real use calls
-for them rather than as speculative API.
-
-Consumer documentation now ships in the npm tarball with the package skill, practical
-composition/framework/troubleshooting/verification guides, and one progressively disclosed
-API reference per family. Those references are generated from the compatibility snapshot,
-including inherited props, optional peers, exact JS/CSS imports, selection guidance, and the
-same recipes rendered by the previews. A release gate rejects missing packed docs, broken
-relative links, checkout-only imports or commands, stale token/version claims, recipe gaps,
-and incomplete family references.
-
-### Server components, one polymorphic contract, Tailwind v4 and design tokens
-
-**`"use client"` is a directive, not a string.** The library build emitted it after the
-CSS import on every client entry, where it is an inert expression statement and React
-ignores it. A grep for `"use client"` in the bundles was clean; the boundary did not
-exist. `verify:rsc` asserts POSITION now — 79 client-interactive families carry it as
-their FIRST statement in both ESM and CJS, and server-pure families carry none — and
-the classification is derived from source rather than maintained by hand.
-
-**`render` is the only polymorphic contract.** All 13 `asChild` declarations are gone
-and every call site is migrated; `verify:api-vocabulary` fails on the prop, and ADR 0005
-is closed. `scripts/codemods/as-child-to-render.mjs` rewrites the mechanical cases and
-refuses the rest, because a codemod cannot decide whether a child is the element to
-become or the content.
-
-Retiring it exposed a defect in the surviving spelling: `PopoverTrigger` inferred Base
-UI's `nativeButton` from the element on the `asChild` path ONLY, so the canonical form
-shipped `<a href="/x" type="button">` — where `type` on an anchor is the MIME-type hint
-for the destination, not a button type. The deprecated branch had been carrying the fix.
-
-**`themelia-ui/tailwind.css`** bridges the token contract into Tailwind v4, so
-`bg-primary`, `rounded-surface` and `p-md` mean what they mean everywhere else in the
-kit. Import it even if you never write one of those: both projects descend from shadcn,
-41 custom-property names collide, and without the bridge Tailwind's defaults silently win
-23 of them — the whole radius ladder, six type steps, three font stacks. `--text-sm`
-becomes a flat `0.875rem`, which drops the kit's `--text-scale` fallback and stops scoped
-type scaling.
-
-**`themelia-ui/theming`** publishes the theme-synthesis recipes without the React
-feature they used to live behind, so a build script can turn a brand seed into CSS
-variables. Its foreground picker now MEASURES WCAG contrast instead of thresholding OKLCH
-lightness — a behaviour change recorded in the migration map, because `#3b82f6` went from
-white at 3.52:1 (failing AA) to dark at 5.11:1.
-
-**`themelia-ui/tokens.json`** is the contract in W3C DTCG format for Figma and
-design tooling: 164 tokens, OKLCH colour objects with a `hex` fallback, light and dark as
-aliases. What it cannot carry is stated in its own `$extensions` rather than hidden —
-`calc()` is resolved so a derived dimension loses its link to the token it derives from,
-and the shadow ladder is absent because DTCG has no `color-mix`.
-
-### Release truth, consumer guidance, and the rich-text seam
-
-The last phase before 1.0. What changed is mostly what the package can PROVE about
-itself.
-
-**Readiness is an artifact, not a document.** `docs/generated/release-readiness.md`
-was committed and said "`1.0.0` is ready to publish" while the evidence behind it
-named a commit five commits back, on a tree whose live verdict was HOLD. It could
-not say otherwise: its generator stripped the commit and the timestamp so the
-committed file would stop churning. The verdict now renders to `.release/`, which
-is ignored, and names the commit it is about. Nothing committed asserts current
-release state.
-
-**Status comes from one fact source.** README said `0.9.0` and `baseline/report.json`
-recorded 37 lint warnings for a 1.0.0 package with none, and the anti-drift gate
-passed over both. `collectRepositoryFacts` feeds README's status block, which is now
-under `verify:docs-freshness` — putting `0.9.0` back fails `npm run verify`.
-
-**The consumer skill ships.** `files` was `["dist"]`, so the tarball carried 1,878
-build artefacts and no guidance. It now carries the assistant skill, its references, the
-component index, an offline installer and a finder that answers from `node_modules`
-with no checkout and no registry lookup.
-
-**No known string debt.** Two ratcheted baselines holding 102 findings are gone. Three
-were real — a screen-reader-only "Unread", the em dash before a quoted block's
-attribution, and the curly quotes around a search term; the last two are typography
-rather than words, which a list of strings hides. Seventeen unreachable override keys
-are resolved: two named something real and unlabelled and are wired, fifteen named
-nothing their component renders and are removed. The remaining 82 findings are
-exceptions that each name a reason from a closed set and the declaration that owns
-them.
-
-**Two reference consumers.** `examples/consumer-general` and `examples/consumer-admin`
-install from the packed tarball and are typechecked, built and server-rendered on
-every run. They take opposite branches on optional peers, which is what proves the
-forms seam is real rather than described.
-
-**The catalogue has headroom again.** `dist/style.css` was 219 bytes under its
-ceiling; a final pass over the concatenation — and only over the concatenation — leaves it
-at 71,814 gzip bytes, 1,914 under the 72 KiB target. The three representative exact-CSS
-recipes remain inside their 32, 48 and 58 KB budgets.
-
-**Profiles are a dependency ceiling, stated as one.** `themelia-ui/profiles/general.json`
-and `.../admin.json` publish every subpath below each ceiling and the peers that come
-with it. The documentation no longer describes `general` as a subject-matter category.
-
-**Rich text has a stable engine contract.** `RichTextEngine` is the seam between the
-editor's chrome and whatever edits the document; one shared suite runs against the
-built-in `execCommand` engine and a TipTap adapter behind its own exact subpath. The
-contract is stable; the default engine remains experimental.
-
-**Fixed along the way:** `RichText` rendered nothing at all — it sanitised `html` and
-handed it to `Text`, which returned null whenever it had no children, so rich comment
-content lost its paragraphs and its quoted blocks. Four of eleven type roles scaled by
-the SPACING factor, so `--space-scale: 1.25` inverted the type ladder. The SSR sweep
-became 96 named cases, halving the unit suite. `Copyable`'s clipboard behaviour is one
-`useCopyToClipboard` hook instead of five disagreeing copies, and typography gained
-`truncate`, removing the kit's most-repeated CSS from 21 families.
-
-### The surface
-
-**199 published subpaths** across **98 families**, each importable on its own:
-
-| layer | families | may import |
-|---|---|---|
-| `foundation` | 4 | — |
-| `typography` | 1 | foundation |
-| `primitives` | 1 | foundation, typography |
-| `base` | 53 | foundation, typography, primitives |
-| `patterns` | 3 | everything below |
-| `layout` | 9 | foundation, typography, primitives, base |
-| `features` | 25 | foundation, typography, primitives, base |
-| `admin` | 2 | everything below |
-
-There is no `./base` or `./features` aggregate, and there will not be one: an aggregate
-subpath is how a consumer who wanted a Button ends up with the optional peers of a chart.
-
-The exported declarations are recorded name by name with normalised signatures in
-`architecture/api-snapshot.json`. `verify:api-snapshot` fails on a removal, a removed
-interface member, an optional member made required, or a changed member type.
-
-### Profiles
-
-96 families are `general` — domain-neutral presentation. 2 are `admin`, which is B2B
-lifecycle vocabulary, and **nothing general may import from admin**. `verify:architecture`
-enforces the direction.
-
-### CSS delivery
-
-Three ways in, and the narrow one is the default the documentation leads with:
-
-```ts
-import { Button } from "themelia-ui/base/buttons"
-import "themelia-ui/base/buttons.css"     // the family, and the tokens it needs
-```
-
-- **94 stylesheet subpaths** — one per family that draws anything, plus `core.css` and
-  `primitives.css`.
-- `core.css` alone is the token layer, for your own CSS. A family sheet already `@import`s
-  it; you do not need both.
-- `style.css` is the whole catalogue at **71,814 bytes gzip (70 KiB)**. It is the right
-  choice for an application that uses most of the kit and the wrong one for a public page
-  using a handful of components; exact-family recipes are budgeted independently.
-
-The cascade layer order — `tokens, theming, base, components, utilities` — is declared by
-`core.css`. Every family stylesheet imports that contract first, so consumers need a
-separate `core.css` import only when their own CSS needs tokens before a family loads.
-
-### Experimental
-
-**`features/rich-text-editor`.** Its editing engine is `document.execCommand`, which is
-deprecated with no standard replacement. It works in every current browser, and it is not a
-foundation to freeze a stable API on: expect its internals to change within 1.x.
-`RichTextEditorHandle` is the seam intended to survive that. It produces **unsanitized
-HTML** — see [SECURITY.md](SECURITY.md).
-
-Every other family is `stable`.
-
-### Deprecated, removal targets 2.0
-
-11 declarations carry `@deprecated` with a named replacement. Two shapes:
-
-- **`asChild`** on the components that predate Base UI's contract. Use `render`, which they
-  already accept.
-- **`RANGE_PRESETS`** — an English constant computed on date-fns's own week, which is Sunday
-  while this package's default is Monday. Use `createRangePresets({ strings, weekStartsOn })`.
-
-`docs/generated/migration.md` and `docs/generated/migration-broad-imports.md` are generated
-and name every symbol with its replacement.
-
-### Peers
-
-React `>=19.0.0 <20`, proven at both ends by `verify:react-matrix` rather than inferred
-from whichever version was installed. Twelve optional peers are contained per family by
-the packed-package verification.
-
-### What a release proves
-
-`npm run verify:release` runs the 48-step static chain, packed-package consumer contracts,
-reference consumers, API snapshot, CSS budgets, and 620 browser tests, and writes
-`.release/readiness.json` as
-each one passes. A record that is missing, unfinished, from another commit or from a dirty
-tree cannot support a publish — which makes publishing after an incomplete gate unreachable
-rather than merely discouraged.
-
-### Known debt carried into 1.0
-
-- **One dependency-owned accessibility ceiling.** The `/command` preview retains one
-  `aria-required-children` finding in cmdk-generated markup. Kit-owned findings are closed,
-  and the ratchet fails if the count grows.
-- **The documentation bundle is intentionally broad.** Its all-routes production build
-  emits a large-chunk warning. Consumer applications avoid that bundle through exact
-  JavaScript and CSS family entrypoints.
-- **Two RSC boundaries that family granularity cannot reach.** `Separator` needs no client
-  runtime, but it ships from `base/display` beside `Collapsible` and `DateBlock`, which
-  both hold real hooks — so the family is client and `Separator` goes with it. And
-  `Money`, `Number` and the date primitives read the provider's locale through
-  `useFormatting()`, which is a hook, so `primitives` is client by construction. Neither
-  is a bug; both are the cost of drawing the boundary per family, and moving `Separator`
-  to a server-pure family is the fix when it is worth a breaking import change.
-
-The accessibility ceiling is recorded rather than hidden and gated so it cannot grow.
+- **98 families on exact subpaths** across eight layers: foundation, typography, primitives,
+  base, layout, features, patterns and admin. Each family is importable on its own, and there
+  are no layer barrels such as `themelia-ui/base`, so an optional peer is reachable only from
+  the families that use it.
+- **Two profiles.** `general` families are domain-neutral; the two `admin` families carry B2B
+  lifecycle vocabulary and may build on general families, never the reverse.
+  `themelia-ui/profiles/general.json` and `admin.json` list every subpath below each ceiling
+  and the peers that come with it.
+- **CSS per family.** `themelia-ui/<family>.css` carries a family's rules and imports
+  `core.css`, which declares the tokens, themes and the cascade layer order
+  `tokens, theming, base, components, utilities`. `style.css` is the whole catalogue in one
+  file.
+- **One scale contract.** `--scale` moves the whole interface, density moves geometry and the
+  type scale moves text, with no per-family factors; density keeps type readable across nested
+  provider, theme and portal boundaries.
+- **`render` is the only polymorphic prop.** `PopoverTrigger` infers Base UI's
+  `nativeButton` from the rendered element, so `render={<a href="/x" />}` produces a link
+  without `type="button"`.
+- **Server Components.** `"use client"` is the first statement of every interactive entry, in
+  ESM and CJS; server-pure families carry none.
+- **Theming outside React.** `themelia-ui/theming` turns a brand seed into CSS variables, and
+  its foreground picker measures WCAG contrast (`#3b82f6` now takes dark text at 5.11:1, not
+  white at 3.52:1). `themelia-ui/tokens.json` is the token contract in W3C DTCG format, with
+  OKLCH colours and a `hex` fallback. `themelia-ui/tailwind.css` bridges the tokens into
+  Tailwind v4; import it in any Tailwind app, because the two share custom-property names and
+  Tailwind's defaults would otherwise win.
+- **Components.** An accessible Toolbar family, `render` composition for `FormField` and
+  `FieldShell`, normalised linear and circular progress ranges, `CSPProvider`, roving focus in
+  the editor and data-table toolbars, and a `truncate` prop on typography.
+- **Rich text.** `RichTextEngine` is a stable seam between the editor's chrome and the engine
+  that edits the document. The default `execCommand` engine is experimental, and the editor
+  produces unsanitised HTML; `RichText` renders stored HTML through an allow-list. See
+  [SECURITY.md](SECURITY.md).
+- **Documentation in the package**: the guides, one generated API reference per family, the
+  assistant skill with an offline installer, and a component finder that answers from
+  `node_modules`.
+- **Peers.** React `>=19.0.0 <20`. Twelve optional peers, each reached only by the families
+  that need it.
+- **Deprecated:** `RANGE_PRESETS`, an English constant on date-fns's Sunday week; use
+  `createRangePresets({ strings, weekStartsOn })`. Removed in 2.0.
+- **Known limitations.** `Separator` ships from `base/display` beside hooks, so it is a client
+  component, and `primitives` is client because `Money`, `Number` and the date primitives read
+  the provider's locale through a hook. The Command family's cmdk markup has one axe
+  `aria-required-children` finding.

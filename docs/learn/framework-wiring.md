@@ -6,7 +6,7 @@ runtime. Those concerns meet through explicit props rather than hidden framework
 
 ## Routing
 
-Pass the router's link through `render` or a family's documented `renderLink` adapter. Do
+Pass the router's link through `render` or a module's documented `renderLink` adapter. Do
 not put navigation in an `onClick` when the destination is a URL: a real link preserves
 open-in-new-tab, the status-bar destination, and browser semantics.
 
@@ -20,7 +20,7 @@ not import React Router, Next.js, Remix, or another router.
 ## Queries and mutations
 
 Fetch records outside the component, pass data and loading/error state in, and connect
-mutations through callbacks. A callback may return a promise when the family documents an
+mutations through callbacks. A callback may return a promise when the module documents an
 async lifecycle; the application decides cache invalidation, retries, and error reporting.
 
 ```tsx fragment — query client and mutation implementation belong to the application
@@ -40,7 +40,7 @@ async lifecycle; the application decides cache invalidation, retries, and error 
 
 Resolve authorization before constructing actions. Omit an action the user cannot perform;
 disable it only when seeing the unavailable action is itself useful and provide the reason
-through the family's tooltip or description seam.
+through the module's tooltip or description seam.
 
 ## Translation
 
@@ -50,7 +50,7 @@ from the complete shape rather than guessing keys; see [Internationalization](./
 
 ## Server rendering and client boundaries
 
-Import server-pure formatting families freely. Interactive families carry their own
+Import server-pure formatting modules freely. Interactive modules carry their own
 `"use client"` boundary in the published entrypoint. Do not wrap the whole package in one
 client module: exact subpaths keep server-pure imports server-pure and optional peers
 isolated.
@@ -61,11 +61,12 @@ application adapter unless the documented public hooks are insufficient.
 
 ## Vite, Next.js, and CSS entrypoints
 
-Vite and similar bundlers can keep each exact `.css` import beside the component-family
-import. In a framework that restricts where global CSS may be imported, collect those same
-exact family stylesheets in its permitted application or route-layout entry. Do not replace
-them with source paths, and do not import `style.css` merely to avoid learning which families
-the route uses.
+Through a bundler, the ESM build loads each component's CSS, and the exact module stylesheet
+can sit beside the import. In a framework that restricts where global CSS may be imported,
+collect the same module stylesheets in its permitted application or route-layout entry. Do
+not replace them with source paths. `style.css` loads every module; prefer module
+stylesheets when a route uses a few. Server rendering, the CommonJS build and test runners
+are covered in [Loading the CSS](./installation.md#loading-the-css).
 
 Server-rendered HTML and the client bundle must load the same theme tokens before hydration.
 Apply the theme attribute and provider configuration from the same persisted value to avoid

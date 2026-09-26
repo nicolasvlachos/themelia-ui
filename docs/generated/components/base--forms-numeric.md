@@ -20,7 +20,7 @@ import "themelia-ui/base/forms-numeric.css"
 
 ## Composition
 
-This family composes `base/choice-inputs`, `base/text-inputs`.
+This module composes `base/choice-inputs`, `base/text-inputs`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

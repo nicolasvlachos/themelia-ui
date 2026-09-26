@@ -20,7 +20,7 @@ import "themelia-ui/features/combobox.css"
 
 ## Composition
 
-This family composes `base/buttons`, `base/combobox`, `base/display`, `base/feedback`, `base/spinner`, `base/typography`.
+This module composes `base/buttons`, `base/combobox`, `base/display`, `base/feedback`, `base/spinner`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

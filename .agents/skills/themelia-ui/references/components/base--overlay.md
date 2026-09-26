@@ -20,7 +20,7 @@ import "themelia-ui/base/overlay.css"
 
 ## Composition
 
-This family composes `base/slot`, `base/structure`, `base/typography`.
+This module composes `base/slot`, `base/structure`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -252,13 +252,14 @@ import {
 	Overlay, OverlayBody, OverlayClose, OverlayContent, OverlayDescription, OverlayFooter,
 	OverlayHeader, OverlayTitle,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function Modality() {
 	const [nonModal, setNonModal] = useState(false)
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Button tone="neutral" buttonStyle="outline" onClick={() => setNonModal(true)}>
 				Open non-modal
 			</Button>
@@ -281,7 +282,7 @@ export default function Modality() {
 					</OverlayFooter>
 				</OverlayContent>
 			</Overlay>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -336,32 +337,35 @@ import {
 	Overlay, OverlayBody, OverlayContent, OverlayDescription, OverlayDismissArea, OverlayFooter,
 	OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function OverlayStructure() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Open a long surface
-			</OverlayTrigger>
-			<OverlayContent>
-				<OverlayHeader>
-					<OverlayTitle>Structured anatomy</OverlayTitle>
-					<OverlayDescription>Header and footer are fixed; the body scrolls.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					{Array.from({ length: 30 }, (_, i) => (
-						<Text key={i}>Body line {i + 1}.</Text>
-					))}
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayDismissArea>
-						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-						<Button>Save</Button>
-					</OverlayDismissArea>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Open a long surface
+				</OverlayTrigger>
+				<OverlayContent>
+					<OverlayHeader>
+						<OverlayTitle>Structured anatomy</OverlayTitle>
+						<OverlayDescription>Header and footer are fixed; the body scrolls.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						{Array.from({ length: 30 }, (_, i) => (
+							<Text key={i}>Body line {i + 1}.</Text>
+						))}
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayDismissArea>
+							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button>Save</Button>
+						</OverlayDismissArea>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -374,26 +378,29 @@ import {
 	Overlay, OverlayContent, OverlayDescription, OverlayDismissArea, OverlayFooter,
 	OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function DialogSurface() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Confirm
-			</OverlayTrigger>
-			<OverlayContent surface="bare" showCloseButton={false}>
-				<OverlayHeader>
-					<OverlayTitle>Publish this release?</OverlayTitle>
-					<OverlayDescription>It becomes visible to every workspace member.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayFooter>
-					<OverlayDismissArea>
-						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-						<Button>Publish</Button>
-					</OverlayDismissArea>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Confirm
+				</OverlayTrigger>
+				<OverlayContent surface="bare" showCloseButton={false}>
+					<OverlayHeader>
+						<OverlayTitle>Publish this release?</OverlayTitle>
+						<OverlayDescription>It becomes visible to every workspace member.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayFooter>
+						<OverlayDismissArea>
+							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button>Publish</Button>
+						</OverlayDismissArea>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -416,32 +423,34 @@ export default function DialogFocus() {
 	const nameRef = useRef<HTMLInputElement>(null)
 
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				New workspace
-			</OverlayTrigger>
-			<OverlayContent initialFocusRef={nameRef}>
-				<OverlayHeader>
-					<OverlayTitle>New workspace</OverlayTitle>
-				</OverlayHeader>
-				<OverlayBody>
-					<Stack gap="md">
-						<FormField label="Name">
-							<Input ref={nameRef} placeholder="Acme design" />
-						</FormField>
-						<FormField label="Slug" hint="Used in URLs.">
-							<Input placeholder="acme-design" />
-						</FormField>
-					</Stack>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayDismissArea>
-						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-						<Button>Create</Button>
-					</OverlayDismissArea>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					New workspace
+				</OverlayTrigger>
+				<OverlayContent initialFocusRef={nameRef}>
+					<OverlayHeader>
+						<OverlayTitle>New workspace</OverlayTitle>
+					</OverlayHeader>
+					<OverlayBody>
+						<Stack gap="md">
+							<FormField label="Name">
+								<Input ref={nameRef} placeholder="Acme design" />
+							</FormField>
+							<FormField label="Slug" hint="Used in URLs.">
+								<Input placeholder="acme-design" />
+							</FormField>
+						</Stack>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayDismissArea>
+							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button>Create</Button>
+						</OverlayDismissArea>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -475,39 +484,41 @@ const INVITE_ACTIONS: ActionDefinition[] = [
 
 export default function DialogPopups() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Invite member
-			</OverlayTrigger>
-			<OverlayContent>
-				<OverlayHeader>
-					<OverlayTitle>Invite member</OverlayTitle>
-					<OverlayDescription>They receive an email with a link to join.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<Stack gap="md">
-						<FormField label="Email">
-							<Input placeholder="name@example.com" />
-						</FormField>
-						<FormField label="Role" hint="Admins can manage billing.">
-							<Select options={ROLES} defaultValue="member" />
-						</FormField>
-					</Stack>
-				</OverlayBody>
-				<OverlayFooter>
-					<Stack direction="horizontal" gap="md" align="center" wrap>
-						<ActionMenu actions={INVITE_ACTIONS} label="More" />
-						<TooltipButton tooltip="Copy an invite link instead" tone="neutral" buttonStyle="ghost">
-							Copy link
-						</TooltipButton>
-						<OverlayDismissArea>
-							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-							<Button>Send invite</Button>
-						</OverlayDismissArea>
-					</Stack>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Invite member
+				</OverlayTrigger>
+				<OverlayContent>
+					<OverlayHeader>
+						<OverlayTitle>Invite member</OverlayTitle>
+						<OverlayDescription>They receive an email with a link to join.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Stack gap="md">
+							<FormField label="Email">
+								<Input placeholder="name@example.com" />
+							</FormField>
+							<FormField label="Role" hint="Admins can manage billing.">
+								<Select options={ROLES} defaultValue="member" />
+							</FormField>
+						</Stack>
+					</OverlayBody>
+					<OverlayFooter>
+						<Stack direction="horizontal" gap="md" align="center" wrap>
+							<ActionMenu actions={INVITE_ACTIONS} label="More" />
+							<TooltipButton tooltip="Copy an invite link instead" tone="neutral" buttonStyle="ghost">
+								Copy link
+							</TooltipButton>
+							<OverlayDismissArea>
+								<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+								<Button>Send invite</Button>
+							</OverlayDismissArea>
+						</Stack>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -522,34 +533,37 @@ import {
 	Overlay, OverlayBody, OverlayClose, OverlayDescription, OverlayFooter, OverlayHeader,
 	OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Input } from "themelia-ui/base/text-inputs"
 
 export default function Dialog() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Open dialog
-			</OverlayTrigger>
-			<DialogContent>
-				<OverlayHeader>
-					<OverlayTitle>Rename project</OverlayTitle>
-					<OverlayDescription>The new name shows everywhere the project is listed.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<FormField label="Project name">
-						<Input defaultValue="Spring launch" />
-					</FormField>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</OverlayClose>
-					<OverlayClose render={<Button />}>
-						Save
-					</OverlayClose>
-				</OverlayFooter>
-			</DialogContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Open dialog
+				</OverlayTrigger>
+				<DialogContent>
+					<OverlayHeader>
+						<OverlayTitle>Rename project</OverlayTitle>
+						<OverlayDescription>The new name shows everywhere the project is listed.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<FormField label="Project name">
+							<Input defaultValue="Spring launch" />
+						</FormField>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</OverlayClose>
+						<OverlayClose render={<Button />}>
+							Save
+						</OverlayClose>
+					</OverlayFooter>
+				</DialogContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -565,33 +579,36 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayFooter, OverlayHeader, OverlayTitle,
 	OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function AlertDialog() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="destructive" buttonStyle="outline" />}>
-				Delete account
-			</OverlayTrigger>
-			<AlertDialogContent>
-				<OverlayHeader>
-					<OverlayTitle>Delete this account?</OverlayTitle>
-					<OverlayDescription>This cannot be undone.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<Text type="secondary">Every project and invoice is removed permanently.</Text>
-				</OverlayBody>
-				<OverlayFooter>
-					<AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</AlertDialogCancel>
-					{/* The answer is an Action, not a second Cancel: they read the same only until a caller hooks the one that commits. */}
-					<AlertDialogAction render={<Button tone="destructive" />}>
-						Delete
-					</AlertDialogAction>
-				</OverlayFooter>
-			</AlertDialogContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="destructive" buttonStyle="outline" />}>
+					Delete account
+				</OverlayTrigger>
+				<AlertDialogContent>
+					<OverlayHeader>
+						<OverlayTitle>Delete this account?</OverlayTitle>
+						<OverlayDescription>This cannot be undone.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">Every project and invoice is removed permanently.</Text>
+					</OverlayBody>
+					<OverlayFooter>
+						<AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</AlertDialogCancel>
+						{/* The answer is an Action, not a second Cancel: they read the same only until a caller hooks the one that commits. */}
+						<AlertDialogAction render={<Button tone="destructive" />}>
+							Delete
+						</AlertDialogAction>
+					</OverlayFooter>
+				</AlertDialogContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -611,35 +628,37 @@ import { Input } from "themelia-ui/base/text-inputs"
 
 export default function Sheet() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Open sheet
-			</OverlayTrigger>
-			<SheetContent side="inline-end">
-				<OverlayHeader>
-					<OverlayTitle>Edit booking</OverlayTitle>
-					<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<Stack gap="md">
-						<FormField label="Venue">
-							<Input defaultValue="Marlow Hall" />
-						</FormField>
-						<FormField label="Guests">
-							<Input defaultValue="120" inputMode="numeric" />
-						</FormField>
-					</Stack>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</OverlayClose>
-					<OverlayClose render={<Button />}>
-						Save
-					</OverlayClose>
-				</OverlayFooter>
-			</SheetContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Open sheet
+				</OverlayTrigger>
+				<SheetContent side="inline-end">
+					<OverlayHeader>
+						<OverlayTitle>Edit booking</OverlayTitle>
+						<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Stack gap="md">
+							<FormField label="Venue">
+								<Input defaultValue="Marlow Hall" />
+							</FormField>
+							<FormField label="Guests">
+								<Input defaultValue="120" inputMode="numeric" />
+							</FormField>
+						</Stack>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</OverlayClose>
+						<OverlayClose render={<Button />}>
+							Save
+						</OverlayClose>
+					</OverlayFooter>
+				</SheetContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -652,11 +671,12 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
 import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function SheetShape() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Flush, size=&quot;sm&quot;
@@ -711,7 +731,7 @@ export default function SheetShape() {
 					</OverlayBody>
 				</SheetContent>
 			</Overlay>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -724,12 +744,13 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
 import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function SheetProvider() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Kit default
@@ -761,7 +782,7 @@ export default function SheetProvider() {
 					</SheetContent>
 				</Overlay>
 			</UIProvider>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -774,11 +795,12 @@ import { DialogContent } from "themelia-ui/base/dialog"
 import {
 	Overlay, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function OverlayBackdrop() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Default scrim
@@ -804,7 +826,7 @@ export default function OverlayBackdrop() {
 					</DialogContent>
 				</Overlay>
 			</UIProvider>
-		</>
+		</Stack>
 	)
 }
 ```

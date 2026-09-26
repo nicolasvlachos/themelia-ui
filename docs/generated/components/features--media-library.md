@@ -20,7 +20,7 @@ import "themelia-ui/features/media-library.css"
 
 ## Composition
 
-This family composes `base/badge`, `base/batch-action-bar`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/feedback`, `base/forms`, `base/navigation`, `base/structure`, `base/table`, `base/text-inputs`, `base/typography`, `base/upload`, `base/value-inputs`, `features/overlays`.
+This module composes `base/badge`, `base/batch-action-bar`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/feedback`, `base/forms`, `base/navigation`, `base/structure`, `base/table`, `base/text-inputs`, `base/typography`, `base/upload`, `base/value-inputs`, `features/overlays`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -911,17 +911,60 @@ Preview route: Media library — `/media-library`
 ### Asset manager
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MediaLibrary
-  items={assets}
-  collections={collections}
-  value={selected}
-  onValueChange={setSelected}
-  onItemUpdate={(item, patch) => api.updateAsset(item.id, patch)}
-  onItemDelete={(item) => api.deleteAsset(item.id)}
-  onUpload={(files, options, helpers) =>
-    api.upload(files, options, helpers.files, helpers.setProgress, helpers.signal)}
-  onConfirm={(items) => attach(items)}
-/>
+import { useRef, useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { MediaLibrary, type MediaLibraryItem } from "themelia-ui/features/media-library"
+
+import { ASSETS, COLLECTIONS } from "./data"
+
+export default function Library() {
+	const [selected, setSelected] = useState<string[]>(["m1"])
+	const [note, setNote] = useState<string | null>(null)
+	const failNext = useRef(false)
+	const uploadSequence = useRef(0)
+
+	return (
+		<>
+			<MediaLibrary
+				items={ASSETS}
+				collections={COLLECTIONS}
+				value={selected}
+				onValueChange={setSelected}
+				onItemUpdate={async (item) => {
+					await new Promise((resolve) => setTimeout(resolve, 400))
+					if (failNext.current) { failNext.current = false; throw new Error("Sample save failed") }
+					setNote(`Saved ${item.name}`)
+				}}
+				onItemDelete={async (item) => {
+					await new Promise((resolve) => setTimeout(resolve, 400))
+					if (failNext.current) { failNext.current = false; throw new Error("Sample delete failed") }
+					setNote(`Deleted ${item.name}`)
+				}}
+				onUpload={async (files, options, { files: staged, setProgress, signal }) => {
+					for (let step = 20; step <= 100; step += 20) {
+						await new Promise((resolve) => setTimeout(resolve, 120))
+						if (signal.aborted) return
+						for (const file of staged ?? []) setProgress(file.id, step)
+					}
+					if (failNext.current) { failNext.current = false; throw new Error("Sample upload failed") }
+					setNote(`Uploaded ${files.length}`)
+					return files.map((file): MediaLibraryItem => ({ id: `uploaded-${++uploadSequence.current}`, name: file.name, type: file.type.startsWith("image/") ? "image" : file.type.startsWith("video/") ? "video" : "file", size: file.size, uploadedAt: new Date(), ...options }))
+				}}
+				onConfirm={(items) => setNote(`using ${items.length}`)}
+			/>
+			<Stack direction="horizontal" align="center" gap="sm" wrap>
+				<Button tone="neutral" buttonStyle="outline" onClick={() => { failNext.current = true; setNote("The next save, delete, or upload will fail once.") }}>
+					Fail next action
+				</Button>
+				<Text size="sm" type="secondary">Preview recovery without mixing test controls into the library toolbar.</Text>
+			</Stack>
+			{!!note && <Text role="status" size="sm" type="secondary">{note}</Text>}
+		</>
+	)
+}
 ```
 
 ### Loading and recovery
@@ -1011,43 +1054,143 @@ export default function AsyncLibrary() {
 ### Acting on a selection
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MediaLibrary
-  items={assets}
-  bulkActions={({ selectedItems, clearSelection }) => (
-    <>
-      <Button tone="neutral" buttonStyle="ghost">Download</Button>
-      <Button tone="destructive" buttonStyle="ghost"
-        onClick={() => { remove(selectedItems); clearSelection() }}>
-        Delete
-      </Button>
-    </>
-  )}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Text } from "themelia-ui/base/typography"
+import { MediaLibrary } from "themelia-ui/features/media-library"
+
+import { ASSETS, COLLECTIONS } from "./data"
+
+export default function BulkActions() {
+	const [assets, setAssets] = useState(ASSETS)
+	const [selected, setSelected] = useState<string[]>([ASSETS[0]!.id, ASSETS[1]!.id])
+	const [note, setNote] = useState<string | null>(null)
+
+	return (
+		<>
+			{/*
+			 * `transform` makes this box the containing block for the floating bar, so it docks
+			 * to the example rather than the viewport. The same applies in an app: a floating
+			 * bar inside a transformed ancestor docks to that ancestor.
+			 */}
+			<div style={{ transform: "translate(0)", position: "relative", width: "100%" }}>
+				<MediaLibrary
+					items={assets}
+					collections={COLLECTIONS}
+					value={selected}
+					onValueChange={setSelected}
+					bulkActions={({ selectedCount, clearSelection }) => (
+						<>
+							<Button
+								type="button"
+								tone="neutral"
+								buttonStyle="ghost"
+								onClick={() => {
+									setAssets((current) => current.map((asset) => selected.includes(asset.id) ? { ...asset, public: true } : asset))
+									setNote(`Made ${selectedCount} assets public`)
+									clearSelection()
+								}}
+							>
+								Make public
+							</Button>
+							<Button
+								type="button"
+								tone="destructive"
+								buttonStyle="ghost"
+								onClick={() => {
+									setAssets((current) => current.filter((asset) => !selected.includes(asset.id)))
+									setNote(`Deleted ${selectedCount}`)
+									clearSelection()
+								}}
+							>
+								Delete
+							</Button>
+						</>
+					)}
+				/>
+			</div>
+			{!!note && <Text role="status" size="sm" type="secondary">{note}</Text>}
+		</>
+	)
+}
 ```
 
 ### As a picker
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MediaLibraryDialog
-  open={open}
-  onOpenChange={setOpen}
-  items={assets}
-  selectionMode="single"
-  confirmOnSelect
-  onConfirm={([asset]) => setCover(asset)}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Text } from "themelia-ui/base/typography"
+import { MediaLibraryDialog } from "themelia-ui/features/media-library"
+
+import { ASSETS, COLLECTIONS } from "./data"
+
+export default function LibraryDialog() {
+	const [open, setOpen] = useState(false)
+	const [picked, setPicked] = useState<string | null>(null)
+
+	return (
+		<>
+			<Button type="button" onClick={() => setOpen(true)}>Pick an asset</Button>
+			<MediaLibraryDialog
+				open={open}
+				onOpenChange={setOpen}
+				items={ASSETS}
+				collections={COLLECTIONS}
+				selectionMode="single"
+				confirmOnSelect
+				allowUpload={false}
+				onConfirm={(items) => setPicked(items[0]?.name ?? null)}
+			/>
+			{!!picked && <Text role="status" size="sm" type="secondary">picked {picked}</Text>}
+		</>
+	)
+}
 ```
 
 ### Attached to a record
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MediaResourceGallery
-  items={attached}
-  primaryId={coverId}
-  onPrimaryChange={setCoverId}
-  onReorder={(ids, items) => setAttached(items)}
-  onRemove={(id) => detach(id)}
-  onAdd={() => setPickerOpen(true)}
-  maxItems={8}
-/>
+import { useState } from "react"
+
+import {
+	MediaLibraryDialog, MediaResourceGallery, type MediaLibraryItem,
+} from "themelia-ui/features/media-library"
+
+import { ASSETS, COLLECTIONS } from "./data"
+
+export default function Gallery() {
+	const [attached, setAttached] = useState<MediaLibraryItem[]>(ASSETS.slice(0, 4))
+	const [primary, setPrimary] = useState("m1")
+	const [picking, setPicking] = useState(false)
+
+	return (
+		<>
+			<MediaResourceGallery
+				items={attached}
+				title="Venue media"
+				description="The first is the cover."
+				primaryId={primary}
+				onPrimaryChange={setPrimary}
+				onReorder={(_ids, items) => setAttached(items)}
+				onRemove={(id) => setAttached((current) => current.filter((item) => item.id !== id))}
+				onAdd={() => setPicking(true)}
+				maxItems={6}
+			/>
+			{/* Add opens the library as a picker, offering only what is not attached yet. */}
+			<MediaLibraryDialog
+				open={picking}
+				onOpenChange={setPicking}
+				items={ASSETS.filter((asset) => !attached.some((item) => item.id === asset.id))}
+				collections={COLLECTIONS}
+				selectionMode="single"
+				confirmOnSelect
+				allowUpload={false}
+				onConfirm={(items) => setAttached((current) => [...current, ...items])}
+			/>
+		</>
+	)
+}
 ```

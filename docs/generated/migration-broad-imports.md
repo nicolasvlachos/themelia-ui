@@ -15,8 +15,8 @@ every component:
 + import { Button } from "themelia-ui/base/buttons"
 ```
 
-A broad barrel let one specifier pull an entire layer, and with it every optional peer
-inside that layer. Importing a button resolved recharts, leaflet and dnd-kit. The root is
+A broad barrel let one specifier pull an entire tier, and with it every optional peer
+inside that tier. Importing a button resolved recharts, leaflet and dnd-kit. The root is
 now the provider and the display primitives, both peer-free; everything else has an exact
 subpath.
 
@@ -2178,8 +2178,8 @@ own worse stepper instead.
 
 ## Ambiguous names
 
-These are exported by more than one family. The subpath decides which one you get, and
-the broad barrel used to decide for you — silently, by layer order.
+These are exported by more than one module. The subpath decides which one you get, and
+the broad barrel used to decide for you — silently, by tier order.
 
 - `ActionDefinition` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`
 - `ActionPlacement` — `themelia-ui/base/action-menu`, `themelia-ui/features/actions`

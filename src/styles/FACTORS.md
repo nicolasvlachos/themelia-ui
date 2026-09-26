@@ -32,9 +32,5 @@ Every length scaled by `--density-scale` is wrapped in `round(…, 1px)`, so a p
 lands a control or a gap between two pixels: the ladder is 34, 30 and 24px at the default and
 32, 28 and 23px under `compact`.
 
-Per-family factors (`--button-scale` and 44 more) were removed: each needed a named token for
-every measurement it scaled. Scale one region with a scope instead.
-
-`verify factors` (`scripts/verify-css.mjs`) fails when a per-family factor reappears, when a
-length multiplies two factors (the effect squares), when a type token reaches the density
-factor, or when a density-scaled length is not rounded.
+There is no per-component factor: scale one region with a scope instead. Multiply a length by
+one factor only, or the effect squares.

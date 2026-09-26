@@ -20,7 +20,7 @@ import "themelia-ui/base/navigation.css"
 
 ## Composition
 
-This family composes `base/badge`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/dropdown-menu`, `base/typography`.
+This module composes `base/badge`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/dropdown-menu`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

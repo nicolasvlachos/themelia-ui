@@ -20,7 +20,7 @@ import "themelia-ui/features/resource-assignment.css"
 
 ## Composition
 
-This family composes `base/action-menu`, `base/buttons`, `base/display`, `base/feedback`, `base/structure`, `base/typography`, `features/overlays`.
+This module composes `base/action-menu`, `base/buttons`, `base/display`, `base/feedback`, `base/structure`, `base/typography`, `features/overlays`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

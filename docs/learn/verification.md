@@ -1,16 +1,16 @@
 # Verifying a consuming application
 
-The package is verified before it ships. Routing, data, permissions, copy and theme
-overrides belong to the application, so it still needs a small matrix of its own.
+Routing, data, permissions, copy and theme overrides belong to the application, so the
+application needs a small test matrix of its own.
 
 ## Minimum release checks
 
 1. Type-check against the installed package, not a source alias.
-2. Build the production bundle and confirm no optional peer is requested by unused families.
-3. Render every adopted family in light and dark themes.
+2. Build the production bundle and confirm no optional peer is requested by unused modules.
+3. Render every adopted module in light and dark themes.
 4. Exercise compact and comfortable density, plus any custom scale used by the product.
 5. Test keyboard traversal, focus return, dismissal, disabled state, loading state, and
-   destructive confirmations for interactive families.
+   destructive confirmations for interactive modules.
 6. Run automated accessibility checks, then manually verify names, descriptions, focus
    order, landmarks, and screen-reader announcements for the product composition.
 7. Check narrow mobile, ordinary desktop, and one wide viewport; include long translated
@@ -39,11 +39,11 @@ matches nothing.
 
 Create one application fixture that changes primary colour, surface/background roles,
 radius, density, and typography scale at a scope boundary. If a component ignores it, report
-the family and token before adding a local patch: the package may be missing a derivation.
+the module and token before adding a local patch: the package may be missing a derivation.
 
 ## Upgrade check
 
-Read `CHANGELOG.md`, run the package's codemod when a release names one
+Read the [changelog](../../CHANGELOG.md), run the package's codemod when a release names one
 (`node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/`), and let the
 application's own type-check compare the installed declarations. Within a major, a removal
 keeps a deprecated alias until the next major unless keeping it would be unsafe or

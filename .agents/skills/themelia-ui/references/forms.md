@@ -86,5 +86,9 @@ When the fields come from a schema at runtime, use `features/schema-form`. When 
 known at build time, write them: a schema adds indirection that only pays off when the shape
 is genuinely dynamic.
 
-Preview routes with recipes: `/form-binding`, `/form-field`, `/form-workflow`, `/schema-form`
-(search them with the finder's `--route=` option).
+The preview recipes for these patterns are on the routes `/form-binding`, `/form-field`,
+`/form-workflow` and `/schema-form`. The finder lists the modules behind one:
+
+```bash
+node node_modules/themelia-ui/scripts/consumer/find-component.mjs --route=/form-field
+```

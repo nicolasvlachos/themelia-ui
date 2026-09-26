@@ -20,7 +20,7 @@ import "themelia-ui/base/sidebar.css"
 
 ## Composition
 
-This family composes `base/buttons`, `base/display`, `base/overlay`, `base/sheet`, `base/skeleton`, `base/text-inputs`, `base/tooltip`, `base/typography`.
+This module composes `base/buttons`, `base/display`, `base/overlay`, `base/sheet`, `base/skeleton`, `base/text-inputs`, `base/tooltip`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

@@ -20,7 +20,7 @@ import "themelia-ui/base/context-menu.css"
 
 ## Composition
 
-This family composes `base/dropdown-menu`.
+This module composes `base/dropdown-menu`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

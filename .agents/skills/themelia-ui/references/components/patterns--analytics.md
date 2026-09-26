@@ -20,7 +20,7 @@ import "themelia-ui/patterns/analytics.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install recharts
@@ -28,7 +28,7 @@ npm install recharts
 
 ## Composition
 
-This family composes `base/badge`, `base/buttons`, `base/cards`, `base/chart`, `base/display`, `base/feedback`, `base/skeleton`, `base/tooltip`, `base/typography`.
+This module composes `base/badge`, `base/buttons`, `base/cards`, `base/chart`, `base/display`, `base/feedback`, `base/skeleton`, `base/tooltip`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

@@ -20,7 +20,7 @@ import "themelia-ui/layout/page.css"
 
 ## Composition
 
-This family composes `base/action-menu`, `base/buttons`, `base/display`, `base/navigation`, `layout/containers`.
+This module composes `base/action-menu`, `base/buttons`, `base/display`, `base/navigation`, `layout/containers`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

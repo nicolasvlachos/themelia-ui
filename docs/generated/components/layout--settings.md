@@ -20,7 +20,7 @@ import "themelia-ui/layout/settings.css"
 
 ## Composition
 
-This family composes `base/navigation`, `layout/containers`, `layout/navigation`.
+This module composes `base/navigation`, `layout/containers`, `layout/navigation`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

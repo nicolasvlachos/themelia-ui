@@ -19,7 +19,7 @@ import { CSPProvider } from "themelia-ui/ui-provider"
 
 ## Composition
 
-This family has no component-family dependencies.
+This module depends on no other module.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -460,8 +460,8 @@ Kind: interface.
 
 Kind: callable.
 
-`<UIScope>` — a region with its own tokens. Nests freely; writes only its own custom
-property overrides and never touches the document. `render` picks the element, e.g.
+`<UIScope>` — a region with its own tokens. Nests freely; writes the custom properties
+its merged config names and never touches the document. `render` picks the element, e.g.
 `<UIScope render={<aside />}>`, for places a `div` is invalid.
 
 ```text
@@ -941,30 +941,32 @@ function ActionsMenu() {
 
 export default function UiPortalHostExample() {
 	return (
-		<Grid columns={2} gap="lg">
-			<GridCell>
-				<Stack gap="sm">
-					<Text size="xs" type="secondary">
-						Compact scope, no host — the menu portals to the body
-					</Text>
-					<UIScope config={{ density: "compact" }}>
-						<ActionsMenu />
-					</UIScope>
-				</Stack>
-			</GridCell>
-			<GridCell>
-				<Stack gap="sm">
-					<Text size="xs" type="secondary">
-						Compact scope with a host — the menu is compact too
-					</Text>
-					<UIScope config={{ density: "compact" }}>
-						<UIPortalHost>
+		<Stack direction="horizontal">
+			<Grid columns={2} gap="lg">
+				<GridCell>
+					<Stack gap="sm">
+						<Text size="xs" type="secondary">
+							Compact scope, no host — the menu portals to the body
+						</Text>
+						<UIScope config={{ density: "compact" }}>
 							<ActionsMenu />
-						</UIPortalHost>
-					</UIScope>
-				</Stack>
-			</GridCell>
-		</Grid>
+						</UIScope>
+					</Stack>
+				</GridCell>
+				<GridCell>
+					<Stack gap="sm">
+						<Text size="xs" type="secondary">
+							Compact scope with a host — the menu is compact too
+						</Text>
+						<UIScope config={{ density: "compact" }}>
+							<UIPortalHost>
+								<ActionsMenu />
+							</UIPortalHost>
+						</UIScope>
+					</Stack>
+				</GridCell>
+			</Grid>
+		</Stack>
 	)
 }
 ```

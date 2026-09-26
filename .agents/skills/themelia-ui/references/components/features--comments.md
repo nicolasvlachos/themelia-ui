@@ -20,7 +20,7 @@ import "themelia-ui/features/comments.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install @tiptap/core @tiptap/pm @tiptap/starter-kit
@@ -28,7 +28,7 @@ npm install @tiptap/core @tiptap/pm @tiptap/starter-kit
 
 ## Composition
 
-This family composes `base/action-menu`, `base/avatar`, `base/badge`, `base/buttons`, `base/display`, `base/feedback`, `base/popover`, `base/spinner`, `base/structure`, `base/tooltip`, `base/typography`, `features/mentions`, `features/overlays`, `features/rich-text-editor`.
+This module composes `base/action-menu`, `base/avatar`, `base/badge`, `base/buttons`, `base/display`, `base/feedback`, `base/popover`, `base/spinner`, `base/structure`, `base/tooltip`, `base/typography`, `features/mentions`, `features/overlays`, `features/rich-text-editor`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -186,7 +186,7 @@ Kind: interface.
 | `resources` | no | `CommentsConfig<TUser, TMeta, TResource>["resources"]` |  |
 | `renderReference` | no | `CommentsSlots<TUser, TMeta, TResource>["renderReference"]` |  |
 | `sanitizer` | no | `(html: string) => string` | Replaces the kit's allow-list. There is no way to skip sanitising. |
-| `strings` | no | `Partial<CommentsStrings>` | Overrides this component's own copy — the quote attribution, so far. |
+| `strings` | no | `Partial<CommentsStrings>` | Overrides this component's own copy — the quote attribution. |
 | `className` | no | `string` |  |
 
 ### `CommentContentType`

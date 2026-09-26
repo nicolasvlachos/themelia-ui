@@ -20,7 +20,7 @@ import "themelia-ui/features/global-search.css"
 
 ## Composition
 
-This family composes `base/avatar`, `base/badge`, `base/buttons`, `base/display`, `base/feedback`, `base/item`, `base/navigation`, `base/text-inputs`, `base/typography`, `features/overlays`.
+This module composes `base/avatar`, `base/badge`, `base/buttons`, `base/display`, `base/feedback`, `base/item`, `base/navigation`, `base/text-inputs`, `base/typography`, `features/overlays`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -368,26 +368,108 @@ Preview route: Global search — `/global-search`
 ### The panel
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<GlobalSearch<Group>
-  query={query}
-  onQueryChange={setQuery}
-  results={results}
-  loading={isFetching}
-  groupLabels={{ people: "People", bookings: "Bookings" }}
-  idleSections={recentAndSuggested}
-  onResultSelect={(result) => navigate(result.data.href)}
-/>
+import { useMemo, useState } from "react"
+
+import { Switch } from "themelia-ui/base/choice-inputs"
+import { Text } from "themelia-ui/base/typography"
+import { GlobalSearch, type GlobalSearchIdleSection } from "themelia-ui/features/global-search"
+
+import { match } from "./_shared"
+import { GROUP_LABELS, IDLE, type Group } from "./data"
+
+export default function Panel() {
+	const [query, setQuery] = useState("marlow")
+	const [loading, setLoading] = useState(false)
+	const [chosen, setChosen] = useState<string | null>(null)
+
+	const results = useMemo(() => match(query), [query])
+
+	/* Choosing a recent query or a suggestion searches for it. */
+	const idle = useMemo<GlobalSearchIdleSection[]>(
+		() =>
+			IDLE.map((section) => ({
+				...section,
+				items: section.items.map((item) => ({
+					...item,
+					onSelect: () => setQuery(String(item.label)),
+				})),
+			})),
+		[],
+	)
+
+	return (
+		<>
+			<Switch label="Simulate loading" checked={loading} onChange={event => setLoading(event.target.checked)} />
+			<GlobalSearch<Group>
+				loading={loading}
+				query={query}
+				onQueryChange={setQuery}
+				results={results}
+				groupLabels={GROUP_LABELS}
+				idleSections={idle}
+				onResultSelect={(result) => setChosen(result.title)}
+			/>
+			{!!chosen && (
+				<Text size="sm" type="secondary">opened: {chosen}</Text>
+			)}
+		</>
+	)
+}
 ```
 
 ### The palette
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<GlobalSearchDialog
-  open={open}
-  onOpenChange={setOpen}
-  query={query}
-  onQueryChange={setQuery}
-  results={results}
-  onResultSelect={(result) => navigate(result.id)}
-/>
+import { useMemo, useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { GlobalSearchDialog, type GlobalSearchIdleSection } from "themelia-ui/features/global-search"
+
+import { match } from "./_shared"
+import { GROUP_LABELS, IDLE, type Group } from "./data"
+
+export default function Dialog() {
+	const [open, setOpen] = useState(false)
+	const [query, setQuery] = useState("")
+	const [chosen, setChosen] = useState<string | null>(null)
+
+	const results = useMemo(() => match(query), [query])
+
+	/* Choosing a recent query or a suggestion searches for it. */
+	const idle = useMemo<GlobalSearchIdleSection[]>(
+		() =>
+			IDLE.map((section) => ({
+				...section,
+				items: section.items.map((item) => ({
+					...item,
+					onSelect: () => setQuery(String(item.label)),
+				})),
+			})),
+		[],
+	)
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="md" align="center">
+				<Button type="button" onClick={() => setOpen(true)}>Open the palette</Button>
+				<Text size="sm" type="secondary">Then press Escape, or click outside it.</Text>
+			</Stack>
+			<GlobalSearchDialog<Group>
+				open={open}
+				onOpenChange={setOpen}
+				query={query}
+				onQueryChange={setQuery}
+				results={results}
+				groupLabels={GROUP_LABELS}
+				idleSections={idle}
+				onResultSelect={(result) => setChosen(result.title)}
+			/>
+			{!!chosen && (
+				<Text size="sm" type="secondary">opened: {chosen}</Text>
+			)}
+		</>
+	)
+}
 ```

@@ -56,6 +56,6 @@ for (const [id, record] of Object.entries(records)) {
 
 console.log(
   `profile metadata: ${Object.entries(records)
-    .map(([id, r]) => `${id} ${r.families.length} families / ${r.javascriptSubpaths.length} subpaths`)
+    .map(([id, r]) => `${id} ${r.families.length} modules / ${r.javascriptSubpaths.length} subpaths`)
     .join(', ')}`,
 )

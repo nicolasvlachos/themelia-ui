@@ -2,17 +2,17 @@
 
 # Exact imports
 
-Every family has one subpath. There are no layer barrels: `themelia-ui/base` and its three
-siblings were removed because one specifier pulled an entire layer and every optional peer
-inside it. The root carries the provider and the display primitives, both peer-free.
+Every module has one subpath. There are no tier barrels: `themelia-ui/base` and its three
+siblings do not exist, because one specifier would pull an entire tier and every optional
+peer inside it. The root carries the provider and the display primitives, both peer-free.
 
 Import the stylesheet column beside the exact JavaScript subpath. ESM bundlers also
-discover the family rules through the module graph, but the explicit form behaves the
+discover each module's rules through the import graph, but the explicit form behaves the
 same in CJS and makes the selected CSS visible in application source.
 
-## general profile — 95 families
+## general profile — 95 modules
 
-| family | import | stylesheet | optional peers |
+| module | import | stylesheet | optional peers |
 | --- | --- | --- | --- |
 | `base/accordion` | `themelia-ui/base/accordion` | `themelia-ui/base/accordion.css` | — |
 | `base/action-menu` | `themelia-ui/base/action-menu` | `themelia-ui/base/action-menu.css` | — |
@@ -110,17 +110,17 @@ same in CJS and makes the selected CSS visible in application source.
 | `theming` | `themelia-ui/theming` | — | — |
 | `ui-provider` | `themelia-ui/ui-provider` | — | — |
 
-## admin profile — 2 families
+## admin profile — 2 modules
 
-| family | import | stylesheet | optional peers |
+| module | import | stylesheet | optional peers |
 | --- | --- | --- | --- |
 | `admin/patterns/access` | `themelia-ui/admin/patterns/access` | `themelia-ui/admin/patterns/access.css` | — |
 | `admin/patterns/commerce` | `themelia-ui/admin/patterns/commerce` | `themelia-ui/admin/patterns/commerce.css` | — |
 
 ## Optional peers — 15 of them
 
-Each is reachable only from the families below, so a consumer who never imports one never
-resolves it. Release verification rejects a family that reaches an undeclared peer.
+Each is reachable only from the modules below, so a consumer who never imports one never
+resolves it. Release verification rejects a module that reaches an undeclared peer.
 
 | peer | reachable from |
 | --- | --- |

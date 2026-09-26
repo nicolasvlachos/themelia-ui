@@ -19,7 +19,7 @@ import { INK } from "themelia-ui/theming"
 
 ## Composition
 
-This family has no component-family dependencies.
+This module depends on no other module.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -150,5 +150,5 @@ Kind: type.
 
 ## Preview recipes
 
-No dedicated recipe is currently attributed to this family. Use the public declarations
+No dedicated recipe is currently attributed to this module. Use the public declarations
 above and the composition guide; this absence is explicit and verification-visible.

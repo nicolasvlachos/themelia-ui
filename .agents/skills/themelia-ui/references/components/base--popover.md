@@ -20,7 +20,7 @@ import "themelia-ui/base/popover.css"
 
 ## Composition
 
-This family composes `base/slot`, `base/typography`.
+This module composes `base/slot`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

@@ -20,7 +20,7 @@ import "themelia-ui/admin/patterns/access.css"
 
 ## Composition
 
-This family composes `base/action-menu`, `base/badge`, `base/buttons`, `base/copyable`, `base/display`, `base/feedback`, `base/item`, `base/typography`.
+This module composes `base/action-menu`, `base/badge`, `base/buttons`, `base/copyable`, `base/display`, `base/feedback`, `base/item`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

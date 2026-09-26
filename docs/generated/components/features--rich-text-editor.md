@@ -20,7 +20,7 @@ import "themelia-ui/features/rich-text-editor.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install @tiptap/core @tiptap/pm @tiptap/starter-kit
@@ -28,7 +28,7 @@ npm install @tiptap/core @tiptap/pm @tiptap/starter-kit
 
 ## Composition
 
-This family composes `base/text-inputs`, `base/toolbar`, `base/typography`, `features/rich-text-editor/tiptap`.
+This module composes `base/text-inputs`, `base/toolbar`, `base/typography`, `features/rich-text-editor/tiptap`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -304,16 +304,46 @@ The shape the toolbar renders. Built-ins and consumer items resolve to this.
 
 Preview route: Rich text editor — `/rich-text-editor`
 
-### The editor
+### The editor and what comes out
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<RichTextEditor
-  value={body}
-  onValueChange={setBody}
-  showCounts
-  maxLength={280}
-  placeholder="Write something…"
-/>
+import { useState } from "react"
+
+import { Stack } from "themelia-ui/base/structure"
+import { DisplayLabel, RichText, Text } from "themelia-ui/base/typography"
+import { RichTextEditor } from "themelia-ui/features/rich-text-editor"
+
+import styles from "./editor.module.css"
+
+const SEED = "<p>Select some text and press <strong>B</strong>. The toolbar reports what the caret is inside, so the buttons light up as you move through the document.</p><ul><li>Lists work.</li><li>So does <em>emphasis</em>.</li></ul>"
+
+export default function Editor() {
+	const [body, setBody] = useState(SEED)
+
+	return (
+		<>
+			<RichTextEditor
+				value={body}
+				onValueChange={setBody}
+				placeholder="Write something…"
+				showCounts
+				maxLength={280}
+			/>
+
+			<Stack gap="xs">
+				<DisplayLabel>Emitted HTML</DisplayLabel>
+				<Text size="xs" type="secondary" className={styles.source}>
+					{body || "(empty)"}
+				</Text>
+			</Stack>
+
+			<Stack gap="xs">
+				<DisplayLabel>Rendered through RichText</DisplayLabel>
+				<RichText html={body} />
+			</Stack>
+		</>
+	)
+}
 ```
 
 ### compact

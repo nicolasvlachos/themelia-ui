@@ -20,7 +20,7 @@ import "themelia-ui/base/carousel.css"
 
 ## Composition
 
-This family composes `base/buttons`.
+This module composes `base/buttons`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -191,9 +191,10 @@ export default function CarouselExample() {
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 import { Carousel, CarouselSlide } from "themelia-ui/base/carousel"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
-import styles from "../../preview.module.css"
+import styles from "./controls.module.css"
 
 export default function Controls() {
 	return (
@@ -201,9 +202,9 @@ export default function Controls() {
 		<Carousel controls="overlay" label="Gallery">
 			{["One", "Two", "Three"].map((name) => (
 				<CarouselSlide key={name}>
-					<div className={styles.bleedSlide}>
+					<Stack align="center" justify="center" className={styles.slide}>
 						<Text size="lg" weight="semibold">{name}</Text>
-					</div>
+					</Stack>
 				</CarouselSlide>
 			))}
 		</Carousel>

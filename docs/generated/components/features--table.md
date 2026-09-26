@@ -20,7 +20,7 @@ import "themelia-ui/features/table.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install @tanstack/react-table
@@ -28,7 +28,7 @@ npm install @tanstack/react-table
 
 ## Composition
 
-This family composes `base/action-menu`, `base/avatar`, `base/badge`, `base/batch-action-bar`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/feedback`, `base/navigation`, `base/table`, `base/text-inputs`, `base/toolbar`, `base/typography`.
+This module composes `base/action-menu`, `base/avatar`, `base/badge`, `base/batch-action-bar`, `base/buttons`, `base/choice-inputs`, `base/display`, `base/feedback`, `base/navigation`, `base/table`, `base/text-inputs`, `base/toolbar`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -777,19 +777,77 @@ Preview route: Data view & data table — `/data-view`
 ### The table underneath: DataTable
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DataTable
-  columns={columns}
-  data={bookings}
-  enableSorting
-  enableRowSelection
-  enableColumnVisibility
-  stickyFirstColumn
-  getRowId={(row) => row.id}
-  rowActions={(row) => [
-    { id: "open", label: "Open", onClick: () => navigate(row.id) },
-    { id: "archive", label: "Archive", tone: "destructive", onClick: () => archive(row) },
-  ]}
-/>
+import { useState } from "react"
+import { ArchiveIcon, ExternalLinkIcon, Trash2Icon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Text } from "themelia-ui/base/typography"
+import { DataTable } from "themelia-ui/features/table"
+
+import { tableColumns } from "./_shared"
+import { BOOKINGS, type Booking } from "./data"
+
+export default function Table() {
+	const [note, setNote] = useState<string | null>(null)
+	const [page, setPage] = useState(1)
+
+	return (
+		<>
+			<DataTable<Booking>
+				columns={tableColumns}
+				data={BOOKINGS.slice(0, 5)}
+				enableSorting
+				enableRowSelection
+				enableColumnVisibility
+				enableFiltering
+				filterColumn="booking"
+				filterPlaceholder="Filter venues…"
+				showFullscreenToggle
+				/*
+				 * Pinned, because this table scrolls sideways.
+				 *
+				 * Without it, scrolling right takes the venue name and reference off the
+				 * left edge and every row becomes an anonymous set of numbers — you can
+				 * see a total but not what it is the total OF. The one column that says
+				 * which row this is has to survive the scroll.
+				 */
+				stickyFirstColumn
+				getRowId={(row) => row.id}
+				defaultSorting={[{ id: "date", desc: false }]}
+				onRowClick={(row) => setNote(`opened ${row.reference}`)}
+				rowActions={(row) => [
+					{ id: "open", label: "Open", icon: <ExternalLinkIcon />, onClick: () => setNote(`open ${row.reference}`) },
+					{ id: "archive", label: "Archive", icon: <ArchiveIcon />, onClick: () => setNote(`archive ${row.reference}`) },
+					{
+						id: "delete",
+						label: "Delete",
+						icon: <Trash2Icon />,
+						tone: "destructive",
+						// Only on a cancelled booking — the whole reason the factory form exists.
+						visible: (candidate) => candidate.status === "cancelled",
+						onClick: () => setNote(`delete ${row.reference}`),
+					},
+				]}
+				bulkActions={({ selectedRowCount }) => (
+					<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => setNote(`archive ${selectedRowCount}`)}>
+						Archive selected
+					</Button>
+				)}
+				pageCount={3}
+				page={page}
+				onPageChange={setPage}
+				totalRowCount={13}
+				pageSize={5}
+				/*
+				 * Its own name, apart from the index's pager on the same page: two landmarks
+				 * sharing a name are two a reader cannot tell apart.
+				 */
+				strings={{ pagination: { label: "Booking table pages" } }}
+			/>
+			{!!note && <Text size="sm" type="secondary">{note}</Text>}
+		</>
+	)
+}
 ```
 
 ### Cells
@@ -842,13 +900,48 @@ export default function TableCells() {
 ### Acting on a selection
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DataTable
-  enableRowSelection
-  initialState={{ rowSelection: { b2: true, b4: true } }}
-  bulkActions={({ selectedRowCount, clearSelection }) => (
-    <Button onClick={() => archive(selectedRowCount)}>Archive selected</Button>
-  )}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Text } from "themelia-ui/base/typography"
+import { DataTable } from "themelia-ui/features/table"
+
+import { tableColumns } from "./_shared"
+import { BOOKINGS, type Booking } from "./data"
+
+export default function TableSelection() {
+	const [note, setNote] = useState<string | null>(null)
+
+	return (
+		<>
+			{/*
+			 * `transform` makes this box the containing block for the docked bar, so it docks
+			 * to the example rather than the viewport. The same applies in an app: inside a
+			 * transformed ancestor, the bar docks to that box.
+			 */}
+			<div style={{ transform: "translate(0)", position: "relative", width: "100%" }}>
+				<DataTable<Booking>
+					columns={tableColumns}
+					data={BOOKINGS.slice(0, 4)}
+					enableRowSelection
+					getRowId={(row) => row.id}
+					initialState={{ rowSelection: { b2: true, b4: true } }}
+					bulkActions={({ selectedRowCount }) => (
+						<Button
+							type="button"
+							tone="neutral"
+							buttonStyle="outline"
+							onClick={() => setNote(`archive ${selectedRowCount}`)}
+						>
+							Archive selected
+						</Button>
+					)}
+				/>
+			</div>
+			{!!note && <Text size="sm" type="secondary">{note}</Text>}
+		</>
+	)
+}
 ```
 
 ### Nothing to show

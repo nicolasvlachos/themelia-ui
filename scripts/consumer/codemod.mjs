@@ -112,7 +112,7 @@ export function rewriteSource(text, file, maps) {
           if (!entry) continue
           const name = entry.replace(/^type\s+/, '').split(/\s+as\s+/)[0].trim()
           if (maps.ambiguous.has(name)) {
-            notes.push(`ambiguous       ${file}  ${name} — exported by more than one family; choose the subpath yourself`)
+            notes.push(`ambiguous       ${file}  ${name} — exported by more than one module; choose the subpath yourself`)
             return whole
           }
           const subpath = maps.owner[name]

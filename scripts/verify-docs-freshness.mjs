@@ -38,6 +38,7 @@ function markdownUnder(dir) {
 
 const DOCS = [
   'README.md',
+  'CONTRIBUTING.md',
   ...markdownUnder('docs'),
   ...markdownUnder('src/styles'),
   /* The shipped assistant skill too: a coding assistant takes a stale SKILL.md as instructions. */
@@ -131,10 +132,10 @@ const GENERATED = [
   { file: '.agents/skills/themelia-ui/references/imports.md', by: 'scripts/gen-agent-skill.mjs' },
   { file: '.agents/skills/themelia-ui/references/components/INDEX.json', by: 'scripts/gen-agent-skill.mjs' },
   /*
-   * The generator rewrites only README's status block between its markers and copies the rest
-   * through, so a whole-file comparison checks exactly the part it owns.
+   * The generator rewrites only CONTRIBUTING's status block between its markers and copies the
+   * rest through, so a whole-file comparison checks exactly the part it owns.
    */
-  { file: 'README.md', by: 'scripts/gen-status-docs.mjs' },
+  { file: 'CONTRIBUTING.md', by: 'scripts/gen-status-docs.mjs' },
 ]
 
 /* Per-family references are dynamic because the manifest owns the family set. */

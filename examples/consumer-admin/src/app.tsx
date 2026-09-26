@@ -2,7 +2,7 @@
  * A consumer under the admin dependency ceiling.
  *
  * The point of this example beside the general one is the branch: this consumer installs
- * `@tanstack/react-table` and `react-hook-form` because the families it uses require them,
+ * `@tanstack/react-table` and `react-hook-form` because the modules it uses require them,
  * and binds its form through `themelia-ui/forms-rhf`. The general example installs
  * neither and binds through the dependency-free contract. Two consumers taking opposite
  * branches is what proves the seam is real rather than described.

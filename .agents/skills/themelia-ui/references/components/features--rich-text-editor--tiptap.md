@@ -19,7 +19,7 @@ import { createTiptapEngine } from "themelia-ui/features/rich-text-editor/tiptap
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install @tiptap/core @tiptap/pm @tiptap/starter-kit
@@ -27,7 +27,7 @@ npm install @tiptap/core @tiptap/pm @tiptap/starter-kit
 
 ## Composition
 
-This family has no component-family dependencies.
+This module depends on no other module.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -54,5 +54,5 @@ Kind: interface.
 
 ## Preview recipes
 
-No dedicated recipe is currently attributed to this family. Use the public declarations
+No dedicated recipe is currently attributed to this module. Use the public declarations
 above and the composition guide; this absence is explicit and verification-visible.

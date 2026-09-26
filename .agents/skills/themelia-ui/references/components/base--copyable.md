@@ -20,7 +20,7 @@ import "themelia-ui/base/copyable.css"
 
 ## Composition
 
-This family composes `base/buttons`, `base/toaster`, `base/typography`.
+This module composes `base/buttons`, `base/toaster`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -158,6 +158,7 @@ export default function CopyableExample() {
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 import { Button } from "themelia-ui/base/buttons"
 import { useCopyToClipboard } from "themelia-ui/base/copyable"
+import { Stack } from "themelia-ui/base/structure"
 
 /** The hook on its own, driving an affordance `Copyable` does not offer. */
 function ShareLink() {
@@ -177,7 +178,9 @@ function ShareLink() {
 
 export default function UseCopyToClipboard() {
 	return (
-		<ShareLink />
+		<Stack direction="horizontal">
+			<ShareLink />
+		</Stack>
 	)
 }
 ```

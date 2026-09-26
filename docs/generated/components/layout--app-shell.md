@@ -20,7 +20,7 @@ import "themelia-ui/layout/app-shell.css"
 
 ## Composition
 
-This family composes `base/sidebar`.
+This module composes `base/sidebar`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

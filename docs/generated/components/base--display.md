@@ -20,7 +20,7 @@ import "themelia-ui/base/display.css"
 
 ## Composition
 
-This family composes `base/badge`, `base/buttons`, `base/structure`, `base/tooltip`, `base/typography`.
+This module composes `base/badge`, `base/buttons`, `base/structure`, `base/tooltip`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

@@ -30,7 +30,7 @@ const BLURB = {
   layout: 'page and application shells',
   features: 'an owned interaction lifecycle — a context, a hook, a state machine',
   patterns: 'an arrangement rendering a subject',
-  admin: 'the admin profile, built only on general families',
+  admin: 'the admin profile, built only on general modules',
   foundation: 'the provider, the form contract, the root export',
 }
 
@@ -40,7 +40,7 @@ for (const record of records) {
   byLayer.get(record.layer).push(record)
 }
 
-const layers = ['| layer | families | what lives there | example import |', '| --- | --- | --- | --- |']
+const layers = ['| `layer` | modules | what lives there | example import |', '| --- | --- | --- | --- |']
 for (const layer of ORDER) {
   const list = byLayer.get(layer)
   if (!list?.length) continue
@@ -50,8 +50,11 @@ for (const layer of ORDER) {
 const totalComponents = records.reduce((n, r) => n + (r.components?.length ?? 0), 0)
 layers.push(
   '',
-  `${records.length} families, ${totalComponents} public components, ` +
+  `${records.length} modules, ${totalComponents} public components, ` +
     `${records.reduce((n, r) => n + r.symbols.length, 0)} exported symbols in total.`,
+  '',
+  'The `layer` names split the tiers more finely: `typography` is the Base module',
+  '`base/typography`, and `patterns` and `admin` together make up Blocks.',
 )
 
 const withCss = records.filter((r) => r.css).length
@@ -61,8 +64,8 @@ const delivery = [
   `import "${name}/base/buttons.css"`,
   '```',
   '',
-  `**The stylesheet is split per family.** ${withCss} of ${records.length} families ship one;` +
-    ' a family whose components draw nothing has none. Each family stylesheet imports',
+  `**The stylesheet is split per module.** ${withCss} of ${records.length} modules ship one;` +
+    ' a module whose components draw nothing has none. Each module stylesheet imports',
   '`core.css` itself, so the tokens, themes, and cascade layer order arrive automatically.',
   'Import `core.css` on its own only when application CSS needs the token contract before',
   'any component stylesheet is loaded.',
@@ -84,7 +87,7 @@ for (const record of records) {
 }
 const peers = [
   `There are ${peerFamilies.size} optional peer packages. A consumer only needs the peers ` +
-    'reachable from the exact family subpaths it imports; release verification checks that boundary.',
+    'reachable from the exact module subpaths it imports; release verification checks that boundary.',
   '',
   '| peer | reachable only from |',
   '| --- | --- |',
@@ -118,13 +121,13 @@ const search = [
   `node node_modules/${name}/scripts/consumer/find-component.mjs --help`,
   '```',
   '',
-  `It indexes ${records.length} component families, ${recipeCount} attributed live recipes, and`,
-  `${previewCount} live preview routes by public symbol, family id, recipe title, preview route,`,
+  `It indexes ${records.length} modules, ${recipeCount} attributed live recipes, and`,
+  `${previewCount} live preview routes by public symbol, module id, recipe title, preview route,`,
   'component capabilities, descriptions, and positive selection guidance. Negative `avoidWhen` guidance is never treated as a',
   'recommendation. `--json` includes the exact',
   '`publicImport`, `cssImport`, `apiDoc`, optional peers, dependencies, and alternatives.',
   'Use `--explain` to see matched components and why they fit. Component guidance identifies',
-  'curated decisions separately from family-level fallback; missing prop defaults are not inferred.',
+  'curated decisions separately from module-level fallback; missing prop defaults are not inferred.',
 ]
 
 /* What the root is and which broad barrels are published, derived from package.json exports. */
@@ -135,12 +138,12 @@ const root = publishedBroad.length === 0
   ? [
       '**There are no broad aggregate barrels.** `themelia-ui/base` and',
       '`themelia-ui/features` are not published — an import of either fails to resolve.',
-      'Every family has one exact subpath, which is what keeps an optional peer reachable only',
-      'from the family that needs it.',
+      'Every module has one exact subpath, which is what keeps an optional peer reachable only',
+      'from the module that needs it.',
       '',
       'The root, `themelia-ui`, is the provider plus the primitives, and it is',
       'optional-peer-free: a consumer who imports it installs no recharts, no table, no',
-      'leaflet. Reach for a family by its own subpath and the question never comes up.',
+      'leaflet. Reach for a module by its own subpath and the question never comes up.',
     ]
   : [
       `**These broad barrels are published: ${publishedBroad.map((p) => `\`themelia-ui${p.slice(1)}\``).join(', ')}.**`,
@@ -150,7 +153,7 @@ const root = publishedBroad.length === 0
 
 /* The one reference-table row that carries a count (index records exclude the root entry). */
 const indexRow = [
-  `| \`references/components/INDEX.json\` | choosing a component. ${records.length} families with ` +
+  `| \`references/components/INDEX.json\` | choosing a component. ${records.length} modules with ` +
     '`publicImport`, `publicSymbols`, and the `chooseWhen` / `avoidWhen` / `alternatives` that ' +
     'say which one to reach for. The machine surface — filter it, do not read it. |',
 ]
@@ -266,9 +269,9 @@ writeSkill(
     {
       note:
         'Generated by scripts/gen-agent-skill.mjs from docs/generated/component-index.json — ' +
-        'the same records the human documentation reads. Filter by layer, profile, family or ' +
-        'symbol. chooseWhen/avoidWhen/alternatives are the selection guidance; alternatives ' +
-        'name family ids, never symbols.',
+        'the same records the human documentation reads. Filter by `layer`, `profile`, `family` ' +
+        'or symbol. chooseWhen/avoidWhen/alternatives are the selection guidance; alternatives ' +
+        'name module ids, never symbols.',
       schemaVersion: index.schemaVersion,
       packageVersion: index.packageVersion,
       package: name,
@@ -300,6 +303,6 @@ writeSkill(
 )
 
 console.log(
-  `agent skill: ${records.length} families into SKILL.md, references/imports.md and ` +
+  `agent skill: ${records.length} modules into SKILL.md, references/imports.md and ` +
     'references/components/INDEX.json',
 )

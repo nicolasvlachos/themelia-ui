@@ -19,19 +19,19 @@ A deprecated API introduced during a stable major remains available for that maj
 named replacement and migration instructions. It is removed only in the next major unless
 security or correctness makes retaining it unsafe.
 
-Every exported declaration is snapshotted, and a removal, a newly required member or an
-incompatible type change cannot ship without a migration record. ESM, CommonJS,
-declarations, CSS exports and exact subpaths are checked against the packed tarball.
+A removal, a newly required member or an incompatible type change ships with a migration
+record: the [migration reference](../generated/migration.md) names each one with its
+replacement.
 
 ## What consumers should depend on
 
 Prefer the ready-made component, documented parts and hooks, the global theme contract,
 `data-slot`, BEM hooks, and the state attributes the primitives set (`data-open`,
 `data-checked`, `data-disabled`, `data-highlighted`, `data-popup-open`). Use `data-state`
-only where a family reference documents it; few families set it. Do not depend on source
+only where a module reference documents it; few modules set it. Do not depend on source
 paths, internal aliases, hashed CSS Module classes, undocumented DOM nesting, or
 component-owned custom properties.
 
-The generated [family references](../generated/components/INDEX.md) are the exact API
-inventory for the package version you installed. `CHANGELOG.md` records migrations and
-behavioural changes between versions.
+The generated [module references](../generated/components/INDEX.md) are the exact API
+inventory for the package version you installed. The [changelog](../../CHANGELOG.md) records
+migrations and behavioural changes between versions.

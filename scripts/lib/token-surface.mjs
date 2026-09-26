@@ -4,7 +4,7 @@
  * variables are private. `architecture/token-surface.json` records that surface at the last
  * release, and verify migrations requires each recorded name to be still declared or mapped
  * in architecture/migrations.json. `node scripts/lib/token-surface.mjs --write`
- * (`npm run tokens:surface`) records the version being cut — see docs/maintainers/releasing.md.
+ * (`npm run tokens:surface`) records the version being cut — see CONTRIBUTING.md.
  */
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'

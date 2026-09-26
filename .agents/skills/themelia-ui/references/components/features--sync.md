@@ -20,7 +20,7 @@ import "themelia-ui/features/sync.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install react-hook-form
@@ -28,7 +28,7 @@ npm install react-hook-form
 
 ## Composition
 
-This family composes `base/choice-inputs`, `base/label`, `base/structure`, `base/typography`.
+This module composes `base/choice-inputs`, `base/label`, `base/structure`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

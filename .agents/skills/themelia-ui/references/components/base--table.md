@@ -20,7 +20,7 @@ import "themelia-ui/base/table.css"
 
 ## Composition
 
-This family composes `base/typography`.
+This module composes `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -279,8 +279,8 @@ import {
 } from "themelia-ui/base/table"
 import { Money } from "themelia-ui/primitives"
 
-import styles from "../../preview.module.css"
 import { INVOICES } from "./data"
+import styles from "./table-empty.module.css"
 
 export default function TableEmptyExample() {
 	return (
@@ -298,7 +298,7 @@ export default function TableEmptyExample() {
 				</TableBody>
 			</Table>
 
-			<Table stickyHeader containerClassName={styles.stickyDemo}>
+			<Table stickyHeader containerClassName={styles.bounded}>
 				<TableHeader>
 					<TableRow>
 						<TableHead>Invoice</TableHead>

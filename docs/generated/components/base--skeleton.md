@@ -20,7 +20,7 @@ import "themelia-ui/base/skeleton.css"
 
 ## Composition
 
-This family composes `base/display`.
+This module composes `base/display`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

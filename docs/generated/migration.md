@@ -19,13 +19,13 @@ worse than no codemod.
 
 ## Moved subpaths
 
-The layer above features was renamed, and the admin domains moved into the admin profile. Every one of these is a pure specifier rewrite, which is why the codemod does them for you — the stylesheet import moves with its family.
+The tier above Features moved from `blocks/` to `patterns/`, and the admin domains moved into the admin profile. Every one of these is a pure specifier rewrite, which is why the codemod does them for you — the stylesheet import moves with its module.
 
 ### `themelia-ui/blocks/analytics`
 
 **Becomes** `themelia-ui/patterns/analytics` — mechanical, the codemod does it.
 
-`blocks/` became `patterns/`, and the admin domains moved under `admin/patterns/`. The layer kept its position above features; only the name changed.
+`blocks/` became `patterns/`, and the admin domains moved under `admin/patterns/`. The tier kept its position above Features; only the subpath changed.
 
 ### `themelia-ui/blocks/onboarding`
 
@@ -43,7 +43,7 @@ See above.
 
 **Becomes** `themelia-ui/admin/patterns/access` — mechanical, the codemod does it.
 
-Admin domains moved into the admin profile, which may build on general families but never the reverse.
+Admin domains moved into the admin profile, which may build on general modules but never the reverse.
 
 ### `themelia-ui/blocks/commerce`
 
@@ -55,7 +55,7 @@ See above.
 
 **Becomes** `themelia-ui/features/actions` — mechanical, the codemod does it.
 
-The action registry was never published; it lived at a source alias no consumer could resolve. It is a family now.
+The action registry was never published; it lived at a source alias no consumer could resolve. It is a module now.
 
 ### `themelia-ui/features/suggestions`
 
@@ -113,7 +113,7 @@ One idea had two spellings. `render` takes the element as a value, so it can be 
 
 ### `contentAs`
 
-**Becomes** `contentRender` — mechanical, the codemod does it.
+**Becomes** `contentRender` — a direct rename, by hand.
 
 One idea in two vocabularies. Every other polymorphic seam in the kit is `render`, and this one shipped as `contentAs` — a string union naming an element rather than an element to render.
 
@@ -121,7 +121,7 @@ One idea in two vocabularies. Every other polymorphic seam in the kit is `render
 
 ### `FormFieldProps htmlFor: string`
 
-**Becomes** `FormFieldProps htmlFor: string | false` — mechanical, the codemod does it.
+**Becomes** `FormFieldProps htmlFor: string | false` — a direct rename, by hand.
 
 `false` is how a caller says the field wraps a GROUP of controls rather than one — a radio set, a segmented control, a pair of date inputs. There is no single element for a label to point at, so `FormField` stops inventing an id and describes the group instead. Widening an optional input prop: every call site passing a string, and every call site omitting it, is unaffected.
 
@@ -137,7 +137,7 @@ Delete the override. The copy it appeared to control is either supplied by you a
 
 ### `HeaderNotificationsStrings without unreadItem`
 
-**Becomes** `HeaderNotificationsStrings.unreadItem` — mechanical, the codemod does it.
+**Becomes** `HeaderNotificationsStrings.unreadItem` — a direct rename, by hand.
 
 Unread was drawn as a tint and a dot, and neither reaches a screen reader — colour alone is not a state — so the row also carried the word. It was a literal `<VisuallyHidden>Unread</VisuallyHidden>`, which no `strings` override could reach and no consumer could translate.
 
@@ -145,7 +145,7 @@ Nothing to change when passing a partial, which is what the `strings` prop takes
 
 ### `typography written into JSX`
 
-**Becomes** `CommentsStrings.formatQuoteAttribution and MentionInlineSuggestionsStrings.formatQuery` — mechanical, the codemod does it.
+**Becomes** `CommentsStrings.formatQuoteAttribution and MentionInlineSuggestionsStrings.formatQuery` — a direct rename, by hand.
 
 The em dash before a quoted block's attribution, and the curly quotes around a search term, were written into the JSX. Neither is punctuation every language shares — German sets „…“ and French « … » — so a consumer could translate every key in both interfaces and still be left with English convention.
 
@@ -163,7 +163,7 @@ Install @tiptap/core, @tiptap/pm and @tiptap/starter-kit when importing RichText
 
 **Becomes** `FilterStrings.applying / savedViews / customView and ActivitiesStrings.refreshing / error / refreshError / retry` — by hand.
 
-Pending filters, saved-view selects, and activity loading/retry states now expose their copy through the owning family's strings contract.
+Pending filters, saved-view selects, and activity loading/retry states now expose their copy through the owning module's strings contract.
 
 Partial strings overrides continue to work without changes. Complete FilterStrings maps must add applying (Updating results…), savedViews (Saved views), and customView (Custom view). Complete ActivitiesStrings maps must add refreshing (Updating activity…), error (Could not load activity), refreshError (Could not update activity), and retry (Try again). Spread the respective default strings before overrides to retain fallback copy. DataView's new optional strings.filterError controls its own matching-failure warning.
 
@@ -203,13 +203,13 @@ Nothing to change for ordinary use: every member these types had is still there 
 
 **Becomes** `The component each one always was, under its own name: Overlay, OverlayTrigger, OverlayClose, OverlayBody, OverlayTitle, OverlayDescription, OverlayDismissArea and OverlayRootProps from base/overlay (for every Dialog*, Sheet* and AlertDialog* name above, and DialogProps); OverlayHeader and OverlayFooter from base/overlay (for every *Header and *Footer above); DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuLabel, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent and DropdownMenuPortal from base/dropdown-menu, around MenubarTrigger; AsideNavShell and AsideNavShellProps from layout/settings; Toggle and ToggleProps from base/toggle; CommandDialogProps declared against OverlayRootProps (the same members)` — by hand.
 
-Each removed name was `export const X = Y` of another kit component (or `type X = Y`): the same function under a second name, so there were two names to learn for one thing and every page documented it twice. A preset family now exports only the parts that set something. DialogContent fixes placement; SheetContent fixes an edge and a default shape; AlertDialogContent fixes role and dismissal, and AlertDialogAction and AlertDialogCancel name the answers; AlertDialogMedia is the media slot; MenubarTrigger draws a menu's word in the bar. The root, trigger, close, body, title and description around them are Overlay's own parts, and a menubar's menus are the dropdown menu's. The header and footer parts were OverlayHeader and OverlayFooter with an extra class (dialog--header, sheet--footer, …) that no stylesheet in the kit read, so they went with the aliases.
+Each removed name was `export const X = Y` of another kit component (or `type X = Y`): the same function under a second name, so there were two names to learn for one thing and every page documented it twice. A preset module now exports only the parts that set something. DialogContent fixes placement; SheetContent fixes an edge and a default shape; AlertDialogContent fixes role and dismissal, and AlertDialogAction and AlertDialogCancel name the answers; AlertDialogMedia is the media slot; MenubarTrigger draws a menu's word in the bar. The root, trigger, close, body, title and description around them are Overlay's own parts, and a menubar's menus are the dropdown menu's. The header and footer parts were OverlayHeader and OverlayFooter with an extra class (dialog--header, sheet--footer, …) that no stylesheet in the kit read, so they went with the aliases.
 
 Import the replacement under its own name; props and behaviour are identical because it was always the same component. `import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "themelia-ui/base/dialog"` becomes `import { Overlay, OverlayTrigger, OverlayTitle } from "themelia-ui/base/overlay"` beside `import { DialogContent } from "themelia-ui/base/dialog"`, and `<Dialog>` becomes `<Overlay>`, `<DialogTitle>` `<OverlayTitle>`, and so on; Sheet* and AlertDialog* names map the same way (Sheet → Overlay, SheetClose → OverlayClose, AlertDialogBody → OverlayBody), and DialogDismissArea is OverlayDismissArea. In a Menubar, wrap each menu in `DropdownMenu` instead of `MenubarMenu`, keep `MenubarTrigger`, and swap every other `Menubar<Part>` for `DropdownMenu<Part>` from themelia-ui/base/dropdown-menu; import themelia-ui/base/dropdown-menu.css beside base/menubar.css, since the menubar sheet no longer pulls it in. `SettingsShell` becomes `AsideNavShell` and `ToggleGroupItem` becomes `Toggle` (give it the same `value`), both from the same subpath. `DialogHeader`, `SheetHeader` and `AlertDialogHeader` become `OverlayHeader`, and the three footers `OverlayFooter`; a stylesheet of your own that targeted `.dialog--header`, `.sheet--footer` or the alert-dialog pair should target `.overlay--header` / `.overlay--footer` inside `.dialog--component`, `.sheet--component` or `.alert-dialog--component` instead. Type annotations: DialogProps → OverlayRootProps, SettingsShellProps → AsideNavShellProps, ToggleGroupItemProps → ToggleProps. Code that typed CommandDialogProps needs nothing.
 
 ### `TextType including "discrete", Text type="discrete", and the --text-role-discrete role token; --text-role-secondary resolving to --foreground-80`
 
-**Becomes** `TextType without "discrete" — use type="secondary"; --text-role-secondary resolving to --muted-foreground; no --text-role-discrete` — mechanical, the codemod does it.
+**Becomes** `TextType without "discrete" — use type="secondary"; --text-role-secondary resolving to --muted-foreground; no --text-role-discrete` — a direct rename, by hand.
 
 Supporting text had four greys in play: Text secondary (--foreground-80), Text discrete, the modules' --muted-foreground and --foreground-80 set directly. A description and the metadata beside it came out rgb 84 against 99 in light and 204 against 161 in dark, which read as a mismatch rather than a hierarchy. Text now has two colours: the main one and --muted-foreground for everything supporting.
 
@@ -217,7 +217,7 @@ Replace type="discrete" with type="secondary" (the same grey now). A stylesheet 
 
 ### `NavigationMenuContent side, sideOffset and container`
 
-**Becomes** `NavigationMenu side, sideOffset, align and container` — mechanical, the codemod does it.
+**Becomes** `NavigationMenu side, sideOffset, align and container` — a direct rename, by hand.
 
 Every NavigationMenuContent built its own portal, positioner and popup, so a bar of three entries mounted three panels: moving between entries swapped surfaces instead of resizing one, and each idle entry left a 0x0 popup whose ring shadow painted a dot. The bar now owns one shared panel and each content block is drawn into it, so placement is a property of the bar.
 
@@ -281,7 +281,7 @@ Remove durations.slow from your provider config.
 
 ## CSS imports and tokens
 
-One stylesheet became one per family, and the token surface lost every name that restated another. Each token table below is applied by the codemod; a name marked removed is reported, never guessed at.
+One stylesheet became one per module, and the token surface lost every name that restated another. Each token table below is applied by the codemod; a name marked removed is reported, never guessed at.
 
 ### `themelia-ui/style.css`
 
@@ -289,7 +289,7 @@ One stylesheet became one per family, and the token surface lost every name that
 
 One stylesheet meant every consumer shipped every component's rules. The split means you ship what you import.
 
-Import each family's stylesheet beside its components; the family sheet imports `core.css` and its cascade layer order itself. `docs/generated/imports.md` lists every exact path. `style.css` still exists as the deduplicated union if you would rather not track them.
+Import each module's stylesheet beside its components; the module sheet imports `core.css` and its cascade layer order itself. `docs/generated/imports.md` lists every exact path. `style.css` still exists as the deduplicated union if you would rather not track them.
 
 ### `--radius-surface, --radius-popup, --radius-control, --radius-inner, --radius-md, --radius-lg, --radius-xl, --radius-2xl, --radius-3xl and --radius-4xl; --radius-sm as calc(var(--radius) * 0.375)`
 
@@ -402,7 +402,7 @@ The codemod renames the width and toolbar tokens. Set --shell-header-height (3.5
 
 **Becomes** `--size-medallion (IconBadge's --icon-badge-size defaults to it); --choice-size; --popover-shadow and --border-width; --size-icon-lg; --control-px, --control-px-sm (for --button-px-icon), --space-sm, --size-icon, --text-sm, --size-icon-lg and --space-lg read directly; --badge-destructive-bg and --destructive-60 removed (nothing read them); use color-mix(in oklab, var(--destructive) 60%, transparent) if you relied on the step` — mechanical, the codemod does it.
 
-Each restated another token's derivation under a family name: the medallion four times from one base, the switch track the checkbox box, the dropdown menu the popover's shadow and hairline, two sidebar actions one size, and the button, toast, sidebar and accordion renamed kit steps with a bare var(). One name per value.
+Each restated another token's derivation under a component's name: the medallion four times from one base, the switch track the checkbox box, the dropdown menu the popover's shadow and hairline, two sidebar actions one size, and the button, toast, sidebar and accordion renamed kit steps with a bare var(). One name per value.
 
 Replace each name with its target where you override it. To retune the medallion everywhere, set --size-medallion; IconBadge alone still takes --icon-badge-size.
 
@@ -485,9 +485,9 @@ The codemod renames --space-scale; a rule that set both factors now sets --densi
 
 **Becomes** `--card, --text-role-secondary, --text-role-main, --text-role-secondary, --destructive-accent, --destructive-10 and --popover, read directly` — mechanical, the codemod does it.
 
-Each was one family's colour for a role the kit already names, and several carried a dark value of their own. The framed Card lifted itself to --popover in dark while every other card-like surface sat on --card; the inverse Alert kept three names for its text where re-pointing the text roles does the job; the destructive mention and menu highlight mixed their own ink and wash. Each role has one token now: cards paint --card, destructive ink is --destructive-accent, its soft fill --destructive-10, and the raised segmented chip --popover.
+Each was one component's colour for a role the kit already names, and several carried a dark value of their own. The framed Card lifted itself to --popover in dark while every other card-like surface sat on --card; the inverse Alert kept three names for its text where re-pointing the text roles does the job; the destructive mention and menu highlight mixed their own ink and wash. Each role has one token now: cards paint --card, destructive ink is --destructive-accent, its soft fill --destructive-10, and the raised segmented chip --popover.
 
-The codemod renames each read. A declaration that restyled one family now sets a shared name, so move it onto that component's element rather than a scope or :root. A dark lift for cards belongs in the theme's --card.
+The codemod renames each read. A declaration that restyled one component now sets a shared name, so move it onto that component's element rather than a scope or :root. A dark lift for cards belongs in the theme's --card.
 
 | was | is |
 | --- | --- |
@@ -622,7 +622,7 @@ Nothing, unless a layout of yours assumed the 90vw cap on phones.
 
 **Becomes** `removed` — by hand.
 
-They matched classes no component renders — leftovers from the Tailwind source kit.
+They matched classes no component renders.
 
 If you passed border-b or border-t to an addon for its padding, set the padding yourself.
 

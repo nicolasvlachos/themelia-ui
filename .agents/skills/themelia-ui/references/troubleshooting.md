@@ -2,38 +2,60 @@
 
 ## A component is unstyled
 
-Import its exact family stylesheet beside the JavaScript subpath, or import the complete
-`themelia-ui/style.css` once. A family stylesheet already imports `core.css`; importing
-core alone supplies tokens but no component rules.
+With an ESM bundler, importing a component loads its CSS. Where the JavaScript carries none
+(the CommonJS build, or a test runner that stubs CSS), import the module's stylesheet beside
+the JavaScript subpath, or `themelia-ui/style.css` once. `core.css` alone supplies tokens but
+no component rules. See [Loading the CSS](installation.md#loading-the-css).
 
-Keep application overrides after package CSS. The package uses cascade layers, so ordinary
-unlayered application CSS wins without `!important` or selector escalation.
+Overrides need no `!important` or selector escalation: the kit's rules are layered, and
+unlayered application CSS beats them.
+
+## Node throws on a `.css` import
+
+`ERR_UNKNOWN_FILE_EXTENSION` for a `.css` file means Node is running the ESM build unbundled,
+usually during server rendering or in Vitest. Let the bundler process the package
+(`ssr.noExternal` in Vite, `test.server.deps.inline` in Vitest), or resolve it through
+`require`. See [Where the JavaScript carries no CSS](installation.md#where-the-javascript-carries-no-css).
 
 ## A subpath does not resolve
 
-There are no layer barrels such as `themelia-ui/base`. Use the generated
+There are no tier barrels such as `themelia-ui/base`. Use the generated
 [import table](imports.md) or run:
 
 ```bash
 node node_modules/themelia-ui/scripts/consumer/find-component.mjs "what the UI must do"
 ```
 
-Import the returned exact family path and its returned CSS path.
+Import the returned exact module path and its returned CSS path.
 
 ## An optional peer is missing
 
-Install only the peers listed for the imported family. The generated import table maps every
-optional peer to the exact families that reach it. If the error names a peer for a family not
+Install only the peers listed for the imported module. The generated import table maps every
+optional peer to the exact modules that reach it. If the error names a peer for a module not
 listed there, report it as a package containment defect.
 
-## A scoped theme or density does not apply
+## A theme or density override does not apply
 
-Set tokens through `UIProvider` or `UIScope` config, on a `Scope` or other
-`[data-ui-scope]` element, on a theme signal, or on another documented scope boundary.
-Derived custom properties resolve where they are declared, so a source value set on an
-arbitrary descendant leaves the already-resolved derived value unchanged. A semantic colour
-or `--density-scale` set on `:root` alone is re-declared at the first boundary. See
-[Theming](theming.md) and [Provider and scoping](provider-and-scoping.md).
+Derived tokens are declared at every scope boundary (`:root`, `[data-ui-scope]`,
+`[data-density]`, `[data-theme]`, `.light` and `.dark`) and resolve there. Which selector an
+override needs depends on the token:
+
+- **Raw inputs**, such as the radii, font stacks, palette steps, `--scale`,
+  `--density-scale` and `--text-scale`, are declared at `:root` only, so a value set on
+  `:root` reaches every scope. Inside a `data-density` preset region, the preset's
+  `--density-scale` applies instead.
+- **Semantic colours** such as `--primary` and `--background` are re-declared at every
+  boundary. Set on `:root` alone, they stop at the first boundary, and every provider renders
+  one. Declare them at the boundary list, or pass them through provider config.
+- **A provider's `theme.colors`** is written on the provider's own element, so a nested
+  provider, `Scope` or `data-density` region inside it declares the kit's colours again. For
+  colours that must reach every region, use the boundary list, or set palette steps
+  (`theme.palette`), which each nested boundary derives its colours from.
+- **A plain element** that is not a boundary sets the variable, and nothing re-derives from
+  it: the derived values were resolved above it. Wrap the region in `Scope`.
+
+See [Theming](theming.md#setting-a-theme) and
+[Provider and scoping](provider-and-scoping.md).
 
 ## A portal has the wrong theme
 
@@ -48,7 +70,7 @@ overrides that `<body>` popups must see belong in CSS at the scope boundaries. S
 
 A controlled value changes only when the consumer feeds the new value back. Connect the
 documented change callback to state, cache, or URL ownership. If the application does not
-need ownership, omit the controlled prop and use the family's documented default-value API
+need ownership, omit the controlled prop and use the module's documented default-value API
 when one exists.
 
 ## A link behaves like a button
@@ -61,20 +83,20 @@ element's semantics while applying the component's behaviour and geometry.
 
 Use `CSPProvider` with the request nonce. For a policy that forbids style elements entirely,
 set `disableStyleElements` and serve the documented Base UI behaviour rules from an external
-stylesheet. Family CSS itself is ordinary static CSS.
+stylesheet. The module stylesheets themselves are ordinary static CSS. See
+[Provider and scoping](provider-and-scoping.md#strict-content-security-policy).
 
 ## The design looks inconsistent after overrides
 
-Override global semantic tokens first: colour roles, radius, spacing/density, typography,
-and control geometry. Component-level variables are implementation plumbing unless the
-family reference describes one as an extension point. Do not target hashed CSS Module
-names; use stable `data-slot` or BEM hooks, and for a state the attributes the primitives
-set (`data-open`, `data-checked`, `data-disabled`, `data-highlighted`, `data-popup-open`).
-Radix's `[data-state="open"]` matches nothing here.
+Override global semantic tokens first: colour roles, radius, spacing and density,
+typography, and control geometry. Component-level variables are implementation detail
+unless the module reference describes one as an extension point. Do not target hashed CSS
+Module names; use the stable `data-slot` attributes and BEM hooks such as
+`{name}--component`, and for a state the attributes the primitives set (`data-open`, `data-checked`, `data-disabled`,
+`data-highlighted`, `data-popup-open`). Radix's `[data-state="open"]` matches nothing here.
 
 ## Rich text and untrusted HTML
 
-`RichTextEditor` and editor engines keep drafts unsanitized. Render stored HTML with
-`RichText`, which always sanitizes through an allow-list. Any application-owned
-`dangerouslySetInnerHTML` remains the application's responsibility; see `SECURITY.md` in the
-package root.
+`RichTextEditor` and its engines keep drafts unsanitised. Render stored HTML with `RichText`,
+which always sanitises it through a fixed allow-list. Any `dangerouslySetInnerHTML` of your
+own is your application's responsibility; see SECURITY.md (`node_modules/themelia-ui/SECURITY.md`).

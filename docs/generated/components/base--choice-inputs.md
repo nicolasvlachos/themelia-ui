@@ -20,7 +20,7 @@ import "themelia-ui/base/choice-inputs.css"
 
 ## Composition
 
-This family composes `base/display`, `base/label`, `base/structure`, `base/tooltip`, `base/typography`.
+This module composes `base/display`, `base/label`, `base/structure`, `base/tooltip`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

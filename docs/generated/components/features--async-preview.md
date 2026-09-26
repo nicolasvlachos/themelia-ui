@@ -20,7 +20,7 @@ import "themelia-ui/features/async-preview.css"
 
 ## Composition
 
-This family composes `base/badge`, `base/feedback`, `base/popover`, `base/spinner`, `base/tooltip`.
+This module composes `base/badge`, `base/feedback`, `base/popover`, `base/spinner`, `base/tooltip`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -442,7 +442,7 @@ export default function AsyncPreviewBasic() {
 	}
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Stack direction="horizontal" gap="xl" wrap>
 				{Object.values(CUSTOMERS).map((customer) => (
 					<AsyncPreview.Root<Customer, { id: string }, "customer">
@@ -492,7 +492,7 @@ export default function AsyncPreviewBasic() {
 					</Stack>
 				)}
 			</Stack>
-		</>
+		</Stack>
 	)
 }
 ```

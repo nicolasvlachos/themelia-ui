@@ -24,15 +24,13 @@ One of three things, and a name that does none of them is noise:
 A name like `--sidebar-p: var(--space-md)` does none: however often it is read, it is one
 name in front of one step, and every reader can say `--space-md`.
 
-Two exemptions. A **family with a member re-declared in another file** is an extension
-point: inlining `--text-role-main` breaks the inverse Alert that re-points it for its own
-subtree. A token **named in TSX or a test** has a reader a `var()` scan cannot see.
+Two exemptions. A **token family with a member re-declared in another file** is an
+extension point: inlining `--text-role-main` breaks the inverse Alert that re-points it for
+its own subtree. A token **named in TSX or a test** has a reader a `var()` scan cannot see.
 
 ## What a theme owns
 
-`themes/default.css` is shadcn-shaped, so a shadcn theme drops in. In the repository it is
-generated from `scripts/theme-manifest.mjs` by `npm run tokens:theme`; edit the manifest,
-not the file.
+`themes/default.css` is shadcn-shaped, so a shadcn theme drops in.
 
 **Colour** resolves through the ramp in `tokens/palette.css`. The theme file holds no
 literals, so a rebrand moves the ramp rather than forty separate values.
@@ -276,7 +274,7 @@ with custom before/after values. Specialized timelines and ledgers keep their ow
 
 `--content-block-p` and `--overlay-region-p` are optional local overrides. They are unset
 (`initial`) by default, so each axis follows the shared surface controls; setting either
-sets both axes for that surface. Do not add another family-specific padding variable for
+sets both axes for that surface. Do not add another component-specific padding variable for
 the same job.
 
 Set fonts at the theme root or an explicit scope. Dark regions inherit the font family;

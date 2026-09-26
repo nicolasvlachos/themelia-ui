@@ -20,7 +20,7 @@ import "themelia-ui/features/actions.css"
 
 ## Composition
 
-This family composes `features/overlays`.
+This module composes `features/overlays`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

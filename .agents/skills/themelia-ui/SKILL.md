@@ -8,19 +8,19 @@ description: Use when a React consumer is selecting, importing, composing, themi
 
 Use this skill for application code that consumes the package. It is not a maintainer guide.
 Do not infer APIs from source layouts or from shadcn conventions: this kit is Tailwind-free,
-uses CSS Modules over Base UI, publishes exact family subpaths, and has no `ui/` directory,
+uses CSS Modules over Base UI, publishes exact module subpaths, and has no `ui/` directory,
 `cn()` helper, `tailwind-merge`, or class-variance-authority contract.
 
 ## Workflow
 
 1. Search the packaged catalogue by the job the interface must do.
 2. Read the best match's `chooseWhen`, `avoidWhen`, alternatives, status, and optional peers.
-3. Open that family's generated API reference before writing JSX. It contains every public
+3. Open that module's generated API reference before writing JSX. It contains every public
    declaration, inherited prop contract, dependency, and attributed live-preview recipe.
-4. Prefer the highest ready family that owns the behavior, then customize it at the lowest
+4. Prefer the highest ready module that owns the behavior, then customize it at the lowest
    sufficient extension rung: prop → provider default → slot/render prop → composition →
    consumer CSS → application-owned component.
-5. Import the exact JavaScript subpath and exact family stylesheet.
+5. Import the exact JavaScript subpath and exact module stylesheet.
 6. Keep application policy in the application, then verify the composed result in its real
    route, theme, density, data states, keyboard flow, and production bundle.
 
@@ -41,7 +41,7 @@ These paths exist after installation and are the source of truth:
 
 | authority | answers |
 | --- | --- |
-| `node_modules/themelia-ui/docs/generated/components/INDEX.md` | family-by-family API references and recipes |
+| `node_modules/themelia-ui/docs/generated/components/INDEX.md` | module-by-module API references and recipes |
 | `node_modules/themelia-ui/docs/generated/component-index.json` | machine-readable discovery records |
 | `node_modules/themelia-ui/docs/generated/public-api.md` | every exported name and exact subpath |
 | `node_modules/themelia-ui/docs/generated/imports.md` | every JS/CSS import and optional-peer owner |
@@ -52,7 +52,7 @@ These paths exist after installation and are the source of truth:
 | `node_modules/themelia-ui/docs/generated/migration.md` | every renamed or removed name, token and utility, with what replaces it |
 | `node_modules/themelia-ui/scripts/consumer/codemod.mjs` | applies the mechanical half of an upgrade to your source |
 
-## Find the right family
+## Find the right module
 
 <!-- GENERATED:search by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
 Do not guess a component name, and do not fall back to a `<div>` because nothing obvious
@@ -67,24 +67,24 @@ node node_modules/themelia-ui/scripts/consumer/find-component.mjs --peer=@tansta
 node node_modules/themelia-ui/scripts/consumer/find-component.mjs --help
 ```
 
-It indexes 97 component families, 389 attributed live recipes, and
-118 live preview routes by public symbol, family id, recipe title, preview route,
+It indexes 97 modules, 386 attributed live recipes, and
+118 live preview routes by public symbol, module id, recipe title, preview route,
 component capabilities, descriptions, and positive selection guidance. Negative `avoidWhen` guidance is never treated as a
 recommendation. `--json` includes the exact
 `publicImport`, `cssImport`, `apiDoc`, optional peers, dependencies, and alternatives.
 Use `--explain` to see matched components and why they fit. Component guidance identifies
-curated decisions separately from family-level fallback; missing prop defaults are not inferred.
+curated decisions separately from module-level fallback; missing prop defaults are not inferred.
 <!-- /GENERATED:search -->
 
 Selection rules:
 
 - Search first. Do not invent an export or recreate a package-looking local component.
 - Treat `avoidWhen` as a rejection signal, never as a keyword recommendation.
-- Choose the family whose public vocabulary owns the job. Use a lower layer only when the
+- Choose the module whose public vocabulary owns the job. Use a lower tier only when the
   application genuinely needs a new composition, not merely because its API is familiar.
-- If no family owns the need, semantic HTML or an application-owned composition is correct.
+- If no module owns the need, semantic HTML or an application-owned composition is correct.
   Preserve native semantics; do not wrap markup only to make it look package-like.
-- Never invent a prop such as `size="sm"`. Use a size prop only when that exact family's API
+- Never invent a prop such as `size="sm"`. Use a size prop only when that exact module's API
   documents it. Prefer global density and scale for system-wide geometry.
 - Use `Text`, `Heading`, `Label`, or `TextLink` when copy should follow a kit typography role.
   Choose the semantic element through the documented API; native text markup remains valid
@@ -92,10 +92,10 @@ Selection rules:
 - Follow the documented controlled or uncontrolled contract. Do not mix `value` with a
   default-only callback model, and do not hide server data or mutation policy inside a view.
 
-## Layer and composition model
+## Tiers and composition
 
 <!-- GENERATED:layers by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
-| layer | families | what lives there | example import |
+| `layer` | modules | what lives there | example import |
 | --- | --- | --- | --- |
 | `typography` | 1 | text in a role — Text, Heading, Label, TextLink | `themelia-ui/base/typography` |
 | `primitives` | 1 | one formatted value, no interaction — Money, Date, Email | `themelia-ui/primitives` |
@@ -103,52 +103,55 @@ Selection rules:
 | `layout` | 9 | page and application shells | `themelia-ui/layout/app-shell` |
 | `features` | 24 | an owned interaction lifecycle — a context, a hook, a state machine | `themelia-ui/features/actions` |
 | `patterns` | 3 | an arrangement rendering a subject | `themelia-ui/patterns/analytics` |
-| `admin` | 2 | the admin profile, built only on general families | `themelia-ui/admin/patterns/access` |
+| `admin` | 2 | the admin profile, built only on general modules | `themelia-ui/admin/patterns/access` |
 | `foundation` | 4 | the provider, the form contract, the root export | `themelia-ui/forms` |
 
-97 families, 752 public components, 1070 exported symbols in total.
+97 modules, 752 public components, 1070 exported symbols in total.
+
+The `layer` names split the tiers more finely: `typography` is the Base module
+`base/typography`, and `patterns` and `admin` together make up Blocks.
 <!-- /GENERATED:layers -->
 
 Dependencies flow downward:
 
 ```text
-foundation → typography → primitives → base ─┬─ layout ────┐
-                                             ├─ features ──┼→ patterns → admin
-                                             └─────────────┘
+Foundations → base/typography → Primitives → Base ─┬─ Layout ────┐
+                                                   ├─ Features ──┼→ Blocks (general → admin)
+                                                   └─────────────┘
 ```
 
-`layout` and `features` are siblings. A pattern may compose either. The `admin` profile is
-terminal and may use general families; a general family never depends on an admin one.
+Layout and Features are siblings. A block may compose either. The `admin` profile is
+terminal and may use general modules; a general module never depends on an admin one.
 
-Use the layers by ownership, not by visual size:
+Use the tiers by ownership, not by visual size:
 
 - **Primitives** format one value without owning interaction.
 - **Base** owns a generic control or structural concept.
 - **Features** own a reusable interaction lifecycle, context, hook, or state machine.
 - **Layout** owns page and application structure without domain policy.
-- **Patterns** arrange lower layers around a subject.
-- **Admin** supplies terminal B2B/admin presentation vocabulary.
+- **Blocks** arrange lower tiers around a subject; the admin blocks supply terminal B2B/admin
+  presentation vocabulary.
 
 Application-specific cards, pages, workflows, and business components should normally be
-compositions of these families. The package owns reusable rendering and interaction
+compositions of these modules. The package owns reusable rendering and interaction
 mechanics. The application owns routing, fetching, caching, mutations, permissions,
 analytics, persistence, translation orchestration, and domain decisions. Pass those through
 documented props, callbacks, accessors, slots, render props, hooks, and provider seams.
 
 Read `references/composition.md` for page examples and
-`references/composition-ladder.md` for layer-by-layer tradeoffs.
+`references/composition-ladder.md` for tier-by-tier tradeoffs.
 
 ## Imports and CSS delivery
 
 <!-- GENERATED:root by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
 **There are no broad aggregate barrels.** `themelia-ui/base` and
 `themelia-ui/features` are not published — an import of either fails to resolve.
-Every family has one exact subpath, which is what keeps an optional peer reachable only
-from the family that needs it.
+Every module has one exact subpath, which is what keeps an optional peer reachable only
+from the module that needs it.
 
 The root, `themelia-ui`, is the provider plus the primitives, and it is
 optional-peer-free: a consumer who imports it installs no recharts, no table, no
-leaflet. Reach for a family by its own subpath and the question never comes up.
+leaflet. Reach for a module by its own subpath and the question never comes up.
 <!-- /GENERATED:root -->
 
 <!-- GENERATED:delivery by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
@@ -157,7 +160,7 @@ import { Button } from "themelia-ui/base/buttons"
 import "themelia-ui/base/buttons.css"
 ```
 
-**The stylesheet is split per family.** 90 of 97 families ship one; a family whose components draw nothing has none. Each family stylesheet imports
+**The stylesheet is split per module.** 90 of 97 modules ship one; a module whose components draw nothing has none. Each module stylesheet imports
 `core.css` itself, so the tokens, themes, and cascade layer order arrive automatically.
 Import `core.css` on its own only when application CSS needs the token contract before
 any component stylesheet is loaded.
@@ -169,11 +172,11 @@ Import consumer overrides after the kit. Its component rules are layered, so ord
 unlayered app CSS wins without specificity tricks.
 <!-- /GENERATED:delivery -->
 
-Never import an internal `src/` path or a nonexistent layer barrel. Install only the optional
+Never import an internal `src/` path or a nonexistent tier barrel. Install only the optional
 peers reachable from the exact families in use:
 
 <!-- GENERATED:peers by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
-There are 15 optional peer packages. A consumer only needs the peers reachable from the exact family subpaths it imports; release verification checks that boundary.
+There are 15 optional peer packages. A consumer only needs the peers reachable from the exact module subpaths it imports; release verification checks that boundary.
 
 | peer | reachable only from |
 | --- | --- |
@@ -259,15 +262,15 @@ portals, strict CSP, or streaming SSR. Read `references/theming.md` before defin
 | file | open it when |
 | --- | --- |
 <!-- GENERATED:index-row by scripts/gen-agent-skill.mjs — do not edit between these markers. -->
-| `references/components/INDEX.json` | choosing a component. 97 families with `publicImport`, `publicSymbols`, and the `chooseWhen` / `avoidWhen` / `alternatives` that say which one to reach for. The machine surface — filter it, do not read it. |
+| `references/components/INDEX.json` | choosing a component. 97 modules with `publicImport`, `publicSymbols`, and the `chooseWhen` / `avoidWhen` / `alternatives` that say which one to reach for. The machine surface — filter it, do not read it. |
 <!-- /GENERATED:index-row -->
-| `references/components/INDEX.md` | opening one complete generated family API reference |
+| `references/components/INDEX.md` | opening one complete generated module API reference |
 | `references/imports.md` | confirming exact imports and optional-peer ownership |
 | `references/installation.md` | installing the package and choosing CSS delivery |
 | `references/theming.md` | changing color, radius, density, scale, typography, DTCG, or Tailwind integration |
 | `references/provider-and-scoping.md` | configuring roots, nested regions, portals, CSP, or SSR |
 | `references/composition.md` | building application-specific pages and business components |
-| `references/composition-ladder.md` | choosing the highest ready layer and lowest extension seam |
+| `references/composition-ladder.md` | choosing the highest ready tier and lowest extension seam |
 | `references/framework-wiring.md` | connecting router, data, permissions, persistence, and rendering boundaries |
 | `references/forms.md` | binding fields to React state, react-hook-form, or another controller |
 | `references/i18n.md` | overriding component copy and translating application-owned text |
@@ -278,8 +281,8 @@ portals, strict CSP, or streaming SSR. Read `references/theming.md` before defin
 
 ## Consumer completion checklist
 
-- Exact family import and its CSS resolve from the installed package.
-- Only the selected families' optional peers are installed and bundled.
+- Exact module import and its CSS resolve from the installed package.
+- Only the selected modules' optional peers are installed and bundled.
 - Public props and slots are used; no internal path, hash class, or undocumented token leaks in.
 - Loading, empty, error, disabled, destructive, and largest-realistic data states are covered.
 - Keyboard traversal, focus return, names, descriptions, announcements, and contrast are sound.

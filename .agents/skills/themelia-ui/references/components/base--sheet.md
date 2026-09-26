@@ -20,7 +20,7 @@ import "themelia-ui/base/sheet.css"
 
 ## Composition
 
-This family composes `base/overlay`.
+This module composes `base/overlay`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -74,35 +74,37 @@ import { Input } from "themelia-ui/base/text-inputs"
 
 export default function Sheet() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Open sheet
-			</OverlayTrigger>
-			<SheetContent side="inline-end">
-				<OverlayHeader>
-					<OverlayTitle>Edit booking</OverlayTitle>
-					<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<Stack gap="md">
-						<FormField label="Venue">
-							<Input defaultValue="Marlow Hall" />
-						</FormField>
-						<FormField label="Guests">
-							<Input defaultValue="120" inputMode="numeric" />
-						</FormField>
-					</Stack>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</OverlayClose>
-					<OverlayClose render={<Button />}>
-						Save
-					</OverlayClose>
-				</OverlayFooter>
-			</SheetContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Open sheet
+				</OverlayTrigger>
+				<SheetContent side="inline-end">
+					<OverlayHeader>
+						<OverlayTitle>Edit booking</OverlayTitle>
+						<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Stack gap="md">
+							<FormField label="Venue">
+								<Input defaultValue="Marlow Hall" />
+							</FormField>
+							<FormField label="Guests">
+								<Input defaultValue="120" inputMode="numeric" />
+							</FormField>
+						</Stack>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</OverlayClose>
+						<OverlayClose render={<Button />}>
+							Save
+						</OverlayClose>
+					</OverlayFooter>
+				</SheetContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -115,11 +117,12 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
 import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function SheetShape() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Flush, size=&quot;sm&quot;
@@ -174,7 +177,7 @@ export default function SheetShape() {
 					</OverlayBody>
 				</SheetContent>
 			</Overlay>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -187,12 +190,13 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
 import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function SheetProvider() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Kit default
@@ -224,7 +228,7 @@ export default function SheetProvider() {
 					</SheetContent>
 				</Overlay>
 			</UIProvider>
-		</>
+		</Stack>
 	)
 }
 ```

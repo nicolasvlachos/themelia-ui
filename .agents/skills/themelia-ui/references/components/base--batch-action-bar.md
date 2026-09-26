@@ -20,7 +20,7 @@ import "themelia-ui/base/batch-action-bar.css"
 
 ## Composition
 
-This family composes `base/buttons`, `base/typography`.
+This module composes `base/buttons`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

@@ -2,15 +2,15 @@
 
 # Recipes
 
-394 adaptable live-preview snippets, taken from the pages that render them —
+391 adaptable live-preview snippets, taken from the pages that render them —
 so a recipe here and the example on the page cannot drift apart. Excerpts may depend on
 surrounding values supplied by the application. Each section names the exact
-import and stylesheet for the family.
+import and stylesheet for the module.
 
 **What the application still owns:** data fetching, routing, persistence, translation and
 domain state. Every snippet below assumes those arrive as props, callbacks or accessors.
 
-## (no family)
+## (no module)
 
 Preview route: Rich text editor — `/rich-text-editor`
 
@@ -1181,8 +1181,6 @@ import { PencilIcon, ShareIcon, TrashIcon } from "lucide-react"
 import { ActionMenu, type ActionDefinition } from "themelia-ui/base/action-menu"
 import { Stack } from "themelia-ui/base/structure"
 
-import { Callout } from "../../partials/callout"
-
 /* Delete declared first on purpose: the example shows it moving last. */
 const DESTRUCTIVE_FIRST: ActionDefinition[] = [
 	{ label: "Delete", icon: TrashIcon, onClick: () => {}, tone: "destructive" },
@@ -1192,28 +1190,20 @@ const DESTRUCTIVE_FIRST: ActionDefinition[] = [
 
 export default function ActionMenuOrder() {
 	return (
-		<>
-			{/* The same delete-first array: default ordering on the left, `preserveOrder` on the right. */}
-			<Stack direction="horizontal" gap="lg" align="center">
-				<ActionMenu
-					actions={DESTRUCTIVE_FIRST}
-					label="Sorted"
-					buttonProps={{ tone: "neutral", buttonStyle: "outline" }}
-				/>
-				<ActionMenu
-					actions={DESTRUCTIVE_FIRST}
-					preserveOrder
-					label="preserveOrder"
-					buttonProps={{ tone: "neutral", buttonStyle: "outline" }}
-				/>
-			</Stack>
-
-			<Callout label="Rule">
-				One <code>ActionMenu</code> for every overflow in the app — page headers, card
-				headers, table rows. A surface-specific copy is how two menus in the same product
-				end up ordering their delete differently.
-			</Callout>
-		</>
+		// The same delete-first array: default ordering on the left, `preserveOrder` on the right.
+		<Stack direction="horizontal" gap="lg" align="center">
+			<ActionMenu
+				actions={DESTRUCTIVE_FIRST}
+				label="Sorted"
+				buttonProps={{ tone: "neutral", buttonStyle: "outline" }}
+			/>
+			<ActionMenu
+				actions={DESTRUCTIVE_FIRST}
+				preserveOrder
+				label="preserveOrder"
+				buttonProps={{ tone: "neutral", buttonStyle: "outline" }}
+			/>
+		</Stack>
 	)
 }
 ```
@@ -1373,33 +1363,36 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayFooter, OverlayHeader, OverlayTitle,
 	OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function AlertDialog() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="destructive" buttonStyle="outline" />}>
-				Delete account
-			</OverlayTrigger>
-			<AlertDialogContent>
-				<OverlayHeader>
-					<OverlayTitle>Delete this account?</OverlayTitle>
-					<OverlayDescription>This cannot be undone.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<Text type="secondary">Every project and invoice is removed permanently.</Text>
-				</OverlayBody>
-				<OverlayFooter>
-					<AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</AlertDialogCancel>
-					{/* The answer is an Action, not a second Cancel: they read the same only until a caller hooks the one that commits. */}
-					<AlertDialogAction render={<Button tone="destructive" />}>
-						Delete
-					</AlertDialogAction>
-				</OverlayFooter>
-			</AlertDialogContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="destructive" buttonStyle="outline" />}>
+					Delete account
+				</OverlayTrigger>
+				<AlertDialogContent>
+					<OverlayHeader>
+						<OverlayTitle>Delete this account?</OverlayTitle>
+						<OverlayDescription>This cannot be undone.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">Every project and invoice is removed permanently.</Text>
+					</OverlayBody>
+					<OverlayFooter>
+						<AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</AlertDialogCancel>
+						{/* The answer is an Action, not a second Cancel: they read the same only until a caller hooks the one that commits. */}
+						<AlertDialogAction render={<Button tone="destructive" />}>
+							Delete
+						</AlertDialogAction>
+					</OverlayFooter>
+				</AlertDialogContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -1719,17 +1712,18 @@ export default function Scale() {
 
 ```tsx
 import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function State() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Button>Save changes</Button>
 			<Button loading>Save changes</Button>
 			<Button disabled>Disabled</Button>
 			<Button tone="neutral" buttonStyle="outline" loading>
 				Loading
 			</Button>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -1740,14 +1734,15 @@ export default function State() {
 import { PlusIcon } from "lucide-react"
 
 import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function IconOnly() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Button iconOnly aria-label="Add"><PlusIcon /></Button>
 			<Button tone="neutral" buttonStyle="outline" iconOnly aria-label="Edit">✎</Button>
 			<Button tone="destructive" buttonStyle="ghost" iconOnly aria-label="Delete">🗑</Button>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -1756,10 +1751,11 @@ export default function IconOnly() {
 
 ```tsx
 import { Button, ButtonGroup } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function Group() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<ButtonGroup>
 				<Button tone="neutral" buttonStyle="outline">Day</Button>
 				<Button tone="neutral" buttonStyle="outline">Week</Button>
@@ -1769,7 +1765,7 @@ export default function Group() {
 				<Button tone="neutral" buttonStyle="outline">Top</Button>
 				<Button tone="neutral" buttonStyle="outline">Bottom</Button>
 			</ButtonGroup>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -2188,9 +2184,10 @@ export default function CarouselExample() {
 
 ```tsx
 import { Carousel, CarouselSlide } from "themelia-ui/base/carousel"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
-import styles from "../../preview.module.css"
+import styles from "./controls.module.css"
 
 export default function Controls() {
 	return (
@@ -2198,9 +2195,9 @@ export default function Controls() {
 		<Carousel controls="overlay" label="Gallery">
 			{["One", "Two", "Three"].map((name) => (
 				<CarouselSlide key={name}>
-					<div className={styles.bleedSlide}>
+					<Stack align="center" justify="center" className={styles.slide}>
 						<Text size="lg" weight="semibold">{name}</Text>
-					</div>
+					</Stack>
 				</CarouselSlide>
 			))}
 		</Carousel>
@@ -3090,6 +3087,7 @@ export default function CopyableExample() {
 ```tsx
 import { Button } from "themelia-ui/base/buttons"
 import { useCopyToClipboard } from "themelia-ui/base/copyable"
+import { Stack } from "themelia-ui/base/structure"
 
 /** The hook on its own, driving an affordance `Copyable` does not offer. */
 function ShareLink() {
@@ -3109,7 +3107,9 @@ function ShareLink() {
 
 export default function UseCopyToClipboard() {
 	return (
-		<ShareLink />
+		<Stack direction="horizontal">
+			<ShareLink />
+		</Stack>
 	)
 }
 ```
@@ -3307,34 +3307,37 @@ import {
 	Overlay, OverlayBody, OverlayClose, OverlayDescription, OverlayFooter, OverlayHeader,
 	OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Input } from "themelia-ui/base/text-inputs"
 
 export default function Dialog() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Open dialog
-			</OverlayTrigger>
-			<DialogContent>
-				<OverlayHeader>
-					<OverlayTitle>Rename project</OverlayTitle>
-					<OverlayDescription>The new name shows everywhere the project is listed.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<FormField label="Project name">
-						<Input defaultValue="Spring launch" />
-					</FormField>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</OverlayClose>
-					<OverlayClose render={<Button />}>
-						Save
-					</OverlayClose>
-				</OverlayFooter>
-			</DialogContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Open dialog
+				</OverlayTrigger>
+				<DialogContent>
+					<OverlayHeader>
+						<OverlayTitle>Rename project</OverlayTitle>
+						<OverlayDescription>The new name shows everywhere the project is listed.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<FormField label="Project name">
+							<Input defaultValue="Spring launch" />
+						</FormField>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</OverlayClose>
+						<OverlayClose render={<Button />}>
+							Save
+						</OverlayClose>
+					</OverlayFooter>
+				</DialogContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -3347,11 +3350,12 @@ import { DialogContent } from "themelia-ui/base/dialog"
 import {
 	Overlay, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function OverlayBackdrop() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Default scrim
@@ -3377,7 +3381,7 @@ export default function OverlayBackdrop() {
 					</DialogContent>
 				</Overlay>
 			</UIProvider>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -5470,38 +5474,41 @@ import {
 	NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem,
 	NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger,
 } from "themelia-ui/base/navigation-menu"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function NavigationMenuExample() {
 	return (
-		<NavigationMenu aria-label="Documentation">
-			<NavigationMenuList>
-				<NavigationMenuItem>
-					<NavigationMenuTrigger>
-						Guides <NavigationMenuIndicator />
-					</NavigationMenuTrigger>
-					<NavigationMenuContent>
-						<NavigationMenuLink href="#/page">Page layouts</NavigationMenuLink>
-						<NavigationMenuLink href="#/data-view">Data views</NavigationMenuLink>
-						<NavigationMenuLink href="#/form-field">Forms</NavigationMenuLink>
-					</NavigationMenuContent>
-				</NavigationMenuItem>
-				<NavigationMenuItem>
-					<NavigationMenuTrigger>
-						Components <NavigationMenuIndicator />
-					</NavigationMenuTrigger>
-					<NavigationMenuContent>
-						<NavigationMenuLink href="#/button">Buttons</NavigationMenuLink>
-						<NavigationMenuLink href="#/card">Cards</NavigationMenuLink>
-						<NavigationMenuLink href="#/overlay">Overlays</NavigationMenuLink>
-						<NavigationMenuLink href="#/table">Tables</NavigationMenuLink>
-					</NavigationMenuContent>
-				</NavigationMenuItem>
-				<NavigationMenuItem>
-					{/* A destination with nothing to preview is a link in the bar, with no caret. */}
-					<NavigationMenuLink href="#/tokens">Tokens</NavigationMenuLink>
-				</NavigationMenuItem>
-			</NavigationMenuList>
-		</NavigationMenu>
+		<Stack direction="horizontal">
+			<NavigationMenu aria-label="Documentation">
+				<NavigationMenuList>
+					<NavigationMenuItem>
+						<NavigationMenuTrigger>
+							Guides <NavigationMenuIndicator />
+						</NavigationMenuTrigger>
+						<NavigationMenuContent>
+							<NavigationMenuLink href="#/page">Page layouts</NavigationMenuLink>
+							<NavigationMenuLink href="#/data-view">Data views</NavigationMenuLink>
+							<NavigationMenuLink href="#/form-field">Forms</NavigationMenuLink>
+						</NavigationMenuContent>
+					</NavigationMenuItem>
+					<NavigationMenuItem>
+						<NavigationMenuTrigger>
+							Components <NavigationMenuIndicator />
+						</NavigationMenuTrigger>
+						<NavigationMenuContent>
+							<NavigationMenuLink href="#/button">Buttons</NavigationMenuLink>
+							<NavigationMenuLink href="#/card">Cards</NavigationMenuLink>
+							<NavigationMenuLink href="#/overlay">Overlays</NavigationMenuLink>
+							<NavigationMenuLink href="#/table">Tables</NavigationMenuLink>
+						</NavigationMenuContent>
+					</NavigationMenuItem>
+					<NavigationMenuItem>
+						{/* A destination with nothing to preview is a link in the bar, with no caret. */}
+						<NavigationMenuLink href="#/tokens">Tokens</NavigationMenuLink>
+					</NavigationMenuItem>
+				</NavigationMenuList>
+			</NavigationMenu>
+		</Stack>
 	)
 }
 ```
@@ -5558,13 +5565,14 @@ import {
 	Overlay, OverlayBody, OverlayClose, OverlayContent, OverlayDescription, OverlayFooter,
 	OverlayHeader, OverlayTitle,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function Modality() {
 	const [nonModal, setNonModal] = useState(false)
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Button tone="neutral" buttonStyle="outline" onClick={() => setNonModal(true)}>
 				Open non-modal
 			</Button>
@@ -5587,7 +5595,7 @@ export default function Modality() {
 					</OverlayFooter>
 				</OverlayContent>
 			</Overlay>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -5642,32 +5650,35 @@ import {
 	Overlay, OverlayBody, OverlayContent, OverlayDescription, OverlayDismissArea, OverlayFooter,
 	OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function OverlayStructure() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Open a long surface
-			</OverlayTrigger>
-			<OverlayContent>
-				<OverlayHeader>
-					<OverlayTitle>Structured anatomy</OverlayTitle>
-					<OverlayDescription>Header and footer are fixed; the body scrolls.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					{Array.from({ length: 30 }, (_, i) => (
-						<Text key={i}>Body line {i + 1}.</Text>
-					))}
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayDismissArea>
-						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-						<Button>Save</Button>
-					</OverlayDismissArea>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Open a long surface
+				</OverlayTrigger>
+				<OverlayContent>
+					<OverlayHeader>
+						<OverlayTitle>Structured anatomy</OverlayTitle>
+						<OverlayDescription>Header and footer are fixed; the body scrolls.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						{Array.from({ length: 30 }, (_, i) => (
+							<Text key={i}>Body line {i + 1}.</Text>
+						))}
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayDismissArea>
+							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button>Save</Button>
+						</OverlayDismissArea>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -5680,26 +5691,29 @@ import {
 	Overlay, OverlayContent, OverlayDescription, OverlayDismissArea, OverlayFooter,
 	OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function DialogSurface() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Confirm
-			</OverlayTrigger>
-			<OverlayContent surface="bare" showCloseButton={false}>
-				<OverlayHeader>
-					<OverlayTitle>Publish this release?</OverlayTitle>
-					<OverlayDescription>It becomes visible to every workspace member.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayFooter>
-					<OverlayDismissArea>
-						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-						<Button>Publish</Button>
-					</OverlayDismissArea>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Confirm
+				</OverlayTrigger>
+				<OverlayContent surface="bare" showCloseButton={false}>
+					<OverlayHeader>
+						<OverlayTitle>Publish this release?</OverlayTitle>
+						<OverlayDescription>It becomes visible to every workspace member.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayFooter>
+						<OverlayDismissArea>
+							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button>Publish</Button>
+						</OverlayDismissArea>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -5722,32 +5736,34 @@ export default function DialogFocus() {
 	const nameRef = useRef<HTMLInputElement>(null)
 
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				New workspace
-			</OverlayTrigger>
-			<OverlayContent initialFocusRef={nameRef}>
-				<OverlayHeader>
-					<OverlayTitle>New workspace</OverlayTitle>
-				</OverlayHeader>
-				<OverlayBody>
-					<Stack gap="md">
-						<FormField label="Name">
-							<Input ref={nameRef} placeholder="Acme design" />
-						</FormField>
-						<FormField label="Slug" hint="Used in URLs.">
-							<Input placeholder="acme-design" />
-						</FormField>
-					</Stack>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayDismissArea>
-						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-						<Button>Create</Button>
-					</OverlayDismissArea>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					New workspace
+				</OverlayTrigger>
+				<OverlayContent initialFocusRef={nameRef}>
+					<OverlayHeader>
+						<OverlayTitle>New workspace</OverlayTitle>
+					</OverlayHeader>
+					<OverlayBody>
+						<Stack gap="md">
+							<FormField label="Name">
+								<Input ref={nameRef} placeholder="Acme design" />
+							</FormField>
+							<FormField label="Slug" hint="Used in URLs.">
+								<Input placeholder="acme-design" />
+							</FormField>
+						</Stack>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayDismissArea>
+							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button>Create</Button>
+						</OverlayDismissArea>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -5781,39 +5797,41 @@ const INVITE_ACTIONS: ActionDefinition[] = [
 
 export default function DialogPopups() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Invite member
-			</OverlayTrigger>
-			<OverlayContent>
-				<OverlayHeader>
-					<OverlayTitle>Invite member</OverlayTitle>
-					<OverlayDescription>They receive an email with a link to join.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<Stack gap="md">
-						<FormField label="Email">
-							<Input placeholder="name@example.com" />
-						</FormField>
-						<FormField label="Role" hint="Admins can manage billing.">
-							<Select options={ROLES} defaultValue="member" />
-						</FormField>
-					</Stack>
-				</OverlayBody>
-				<OverlayFooter>
-					<Stack direction="horizontal" gap="md" align="center" wrap>
-						<ActionMenu actions={INVITE_ACTIONS} label="More" />
-						<TooltipButton tooltip="Copy an invite link instead" tone="neutral" buttonStyle="ghost">
-							Copy link
-						</TooltipButton>
-						<OverlayDismissArea>
-							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-							<Button>Send invite</Button>
-						</OverlayDismissArea>
-					</Stack>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Invite member
+				</OverlayTrigger>
+				<OverlayContent>
+					<OverlayHeader>
+						<OverlayTitle>Invite member</OverlayTitle>
+						<OverlayDescription>They receive an email with a link to join.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Stack gap="md">
+							<FormField label="Email">
+								<Input placeholder="name@example.com" />
+							</FormField>
+							<FormField label="Role" hint="Admins can manage billing.">
+								<Select options={ROLES} defaultValue="member" />
+							</FormField>
+						</Stack>
+					</OverlayBody>
+					<OverlayFooter>
+						<Stack direction="horizontal" gap="md" align="center" wrap>
+							<ActionMenu actions={INVITE_ACTIONS} label="More" />
+							<TooltipButton tooltip="Copy an invite link instead" tone="neutral" buttonStyle="ghost">
+								Copy link
+							</TooltipButton>
+							<OverlayDismissArea>
+								<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+								<Button>Send invite</Button>
+							</OverlayDismissArea>
+						</Stack>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -5833,35 +5851,37 @@ import { Input } from "themelia-ui/base/text-inputs"
 
 export default function Sheet() {
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				Open sheet
-			</OverlayTrigger>
-			<SheetContent side="inline-end">
-				<OverlayHeader>
-					<OverlayTitle>Edit booking</OverlayTitle>
-					<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
-				</OverlayHeader>
-				<OverlayBody>
-					<Stack gap="md">
-						<FormField label="Venue">
-							<Input defaultValue="Marlow Hall" />
-						</FormField>
-						<FormField label="Guests">
-							<Input defaultValue="120" inputMode="numeric" />
-						</FormField>
-					</Stack>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
-						Cancel
-					</OverlayClose>
-					<OverlayClose render={<Button />}>
-						Save
-					</OverlayClose>
-				</OverlayFooter>
-			</SheetContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Open sheet
+				</OverlayTrigger>
+				<SheetContent side="inline-end">
+					<OverlayHeader>
+						<OverlayTitle>Edit booking</OverlayTitle>
+						<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Stack gap="md">
+							<FormField label="Venue">
+								<Input defaultValue="Marlow Hall" />
+							</FormField>
+							<FormField label="Guests">
+								<Input defaultValue="120" inputMode="numeric" />
+							</FormField>
+						</Stack>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+							Cancel
+						</OverlayClose>
+						<OverlayClose render={<Button />}>
+							Save
+						</OverlayClose>
+					</OverlayFooter>
+				</SheetContent>
+			</Overlay>
+		</Stack>
 	)
 }
 ```
@@ -5874,11 +5894,12 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
 import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function SheetShape() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Flush, size=&quot;sm&quot;
@@ -5933,7 +5954,7 @@ export default function SheetShape() {
 					</OverlayBody>
 				</SheetContent>
 			</Overlay>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -5946,12 +5967,13 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
 import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function SheetProvider() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Kit default
@@ -5983,7 +6005,7 @@ export default function SheetProvider() {
 					</SheetContent>
 				</Overlay>
 			</UIProvider>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -7209,8 +7231,8 @@ import {
 } from "themelia-ui/base/table"
 import { Money } from "themelia-ui/primitives"
 
-import styles from "../../preview.module.css"
 import { INVOICES } from "./data"
+import styles from "./table-empty.module.css"
 
 export default function TableEmptyExample() {
 	return (
@@ -7228,7 +7250,7 @@ export default function TableEmptyExample() {
 				</TableBody>
 			</Table>
 
-			<Table stickyHeader containerClassName={styles.stickyDemo}>
+			<Table stickyHeader containerClassName={styles.bounded}>
 				<TableHeader>
 					<TableRow>
 						<TableHead>Invoice</TableHead>
@@ -7858,42 +7880,45 @@ Preview route: Toolbar — `/toolbar`
 ```tsx
 import { BoldIcon, ItalicIcon, Redo2Icon, Undo2Icon } from "lucide-react"
 
+import { Stack } from "themelia-ui/base/structure"
 import {
 	Toolbar, ToolbarButton, ToolbarGroup, ToolbarInput, ToolbarLink, ToolbarSeparator,
 } from "themelia-ui/base/toolbar"
 
 export default function ToolbarExample() {
 	return (
-		<Toolbar aria-label="Formatting">
-			<ToolbarGroup>
-				<ToolbarButton iconOnly aria-label="Bold">
-					<BoldIcon />
-				</ToolbarButton>
-				<ToolbarButton iconOnly aria-label="Italic">
-					<ItalicIcon />
-				</ToolbarButton>
-			</ToolbarGroup>
-			<ToolbarSeparator />
-			<ToolbarGroup>
-				<ToolbarButton iconOnly aria-label="Undo">
-					<Undo2Icon />
-				</ToolbarButton>
-				<ToolbarButton iconOnly aria-label="Redo" disabled>
-					<Redo2Icon />
-				</ToolbarButton>
-			</ToolbarGroup>
-			<ToolbarSeparator />
-			<ToolbarInput aria-label="Font size" defaultValue="14" inputMode="numeric" style={{ width: "calc(4rem * var(--scale))" }} />
-			<ToolbarLink
-				href="#/toolbar"
-				onClick={(event) => {
-					event.preventDefault()
-					document.getElementById("toolbar-api")?.scrollIntoView({ behavior: "smooth" })
-				}}
-			>
-				API
-			</ToolbarLink>
-		</Toolbar>
+		<Stack direction="horizontal">
+			<Toolbar aria-label="Formatting">
+				<ToolbarGroup>
+					<ToolbarButton iconOnly aria-label="Bold">
+						<BoldIcon />
+					</ToolbarButton>
+					<ToolbarButton iconOnly aria-label="Italic">
+						<ItalicIcon />
+					</ToolbarButton>
+				</ToolbarGroup>
+				<ToolbarSeparator />
+				<ToolbarGroup>
+					<ToolbarButton iconOnly aria-label="Undo">
+						<Undo2Icon />
+					</ToolbarButton>
+					<ToolbarButton iconOnly aria-label="Redo" disabled>
+						<Redo2Icon />
+					</ToolbarButton>
+				</ToolbarGroup>
+				<ToolbarSeparator />
+				<ToolbarInput aria-label="Font size" defaultValue="14" inputMode="numeric" style={{ width: "calc(4rem * var(--scale))" }} />
+				<ToolbarLink
+					href="#/toolbar"
+					onClick={(event) => {
+						event.preventDefault()
+						document.getElementById("toolbar-api")?.scrollIntoView({ behavior: "smooth" })
+					}}
+				>
+					API
+				</ToolbarLink>
+			</Toolbar>
+		</Stack>
 	)
 }
 ```
@@ -7972,20 +7997,14 @@ import { … } from "themelia-ui/base/typography"
 import "themelia-ui/base/typography.css"
 ```
 
-Preview route: Rich text editor — `/rich-text-editor`
-
-### What comes out
-
-```tsx
-<RichText html={body} />
-```
+Preview route: Typography — `/typography`
 
 ### Text roles
 
 ```tsx
 import { Text, type TextType } from "themelia-ui/base/typography"
 
-import styles from "../../preview.module.css"
+import styles from "./text-roles.module.css"
 
 const ROLES: TextType[] = ["main", "secondary", "error", "success", "primary"]
 
@@ -7998,7 +8017,7 @@ export default function TextRoles() {
 				</Text>
 			))}
 			{/* inverse on the page background is invisible, which is the whole point of it. */}
-			<div className={styles.inverseSwatch}>
+			<div className={styles.inverseSurface}>
 				<Text type="inverse">inverse — the role picks the token.</Text>
 			</div>
 		</>
@@ -8643,30 +8662,179 @@ Preview route: Activities — `/activities`
 ### ActivityFeed
 
 ```tsx
-<ActivityFeed
-  activities={activities}
-  density="rich"
-  loading={pending}
-  error={loadError}
-  onRetry={reloadHistory}
-  currentUserId="u1"
-  resources={registry}
-  onActorClick={(actor) => open(actor)}
-/>
+import { useState } from "react"
+import { ExternalLinkIcon, RotateCwIcon } from "lucide-react"
+
+import { PillRadioGroup, Select } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ActivityFeed, type ActivityDensity } from "themelia-ui/features/activities"
+
+import styles from "./activities.module.css"
+import { ACTIVITIES, REGISTRY } from "./data"
+
+export default function ActivityFeedExample() {
+	const [density, setDensity] = useState<ActivityDensity>("rich")
+	const [activities, setActivities] = useState(ACTIVITIES)
+	const [feedState, setFeedState] = useState("ready")
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="sm" wrap>
+				<PillRadioGroup
+					value={density}
+					onValueChange={(next) => next && setDensity(next as ActivityDensity)}
+					options={[
+						{ value: "compact", label: "compact" },
+						{ value: "default", label: "default" },
+						{ value: "rich", label: "rich" },
+					]}
+				/>
+				<Select aria-label="Feed state" value={feedState} className={styles.stateSelect}
+					options={[
+						{ value: "ready", label: "Loaded" }, { value: "refreshing", label: "Refreshing" },
+						{ value: "error", label: "Refresh failed" }, { value: "loading", label: "Initial loading" },
+						{ value: "initial-error", label: "Initial load failed" }, { value: "empty", label: "Empty" },
+					]}
+					onValueChange={(value) => value && setFeedState(value)} />
+			</Stack>
+
+			<ActivityFeed
+				activities={["empty", "loading", "initial-error"].includes(feedState) ? [] : activities}
+				loading={feedState === "refreshing" || feedState === "loading"}
+				error={feedState === "error" || feedState === "initial-error" ? "The activity service is unavailable. Try again to reload history." : undefined}
+				onRetry={() => setFeedState("ready")}
+				density={density}
+				currentUserId="u1"
+				resources={REGISTRY}
+				onActorClick={(actor) => note(`actor: ${actor.name}`)}
+				onResourceClick={(resource) => note(`resource: ${resource.key}`)}
+				actionsForActivity={(activity) =>
+					activity.event === "mail_bounced"
+						? [
+								{ id: "resend", label: "Resend", icon: RotateCwIcon, presentation: "inline" },
+								{ id: "open", label: "Open message", icon: ExternalLinkIcon },
+							]
+						: undefined
+				}
+				onAction={(actionId, activity) => {
+					if (actionId === "resend") {
+						setActivities((current) => current.map((item) =>
+							item.id === activity.id
+								? { ...item, event: "mail_sent", description: "The confirmation was delivered on retry." }
+								: item,
+						))
+					}
+					note(`${actionId} on ${activity.id}`)
+				}}
+			/>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### ActivityLog
 
 ```tsx
-<ActivityLog
-  entries={entries}
-  loading={pending}
-  error={loadError}
-  onRetry={reloadHistory}
-  resources={resources}
-  canModerate
-  composer={{ enabled: true, context, onSubmit }}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Select } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ActivityLog, createActivityEventAdapter } from "themelia-ui/features/activities"
+import type { CommentUser } from "themelia-ui/features/comments"
+
+import styles from "./activities.module.css"
+import { AUDIT, LOG_ENTRIES, RESOURCES, type AuditRow, type Kind } from "./data"
+
+// Pinned to the log's kind union, so the entries it produces line up with the rest.
+const toEntry = createActivityEventAdapter<AuditRow, CommentUser, unknown, Kind>({
+	id: (row) => row.uuid,
+	timestamp: (row) => row.at,
+	kind: () => "audit",
+	event: (row) => row.verb,
+	actor: (row) => row.who,
+	action: (row) => row.verb,
+	target: (row) => row.subject,
+	source: () => "Audit",
+})
+
+const ENTRIES = [...LOG_ENTRIES, ...AUDIT.map(toEntry)]
+
+export default function ActivityLogExample() {
+	const [entries, setEntries] = useState(ENTRIES)
+	const [logState, setLogState] = useState("ready")
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="sm" wrap>
+				<Button tone="neutral" buttonStyle="outline" onClick={() => setEntries([])} disabled={entries.length === 0}>Show empty log</Button>
+				<Button tone="neutral" buttonStyle="outline" onClick={() => setEntries(ENTRIES)}>Restore sample</Button>
+				<Select aria-label="Log state" value={logState} className={styles.stateSelect}
+					options={[{ value: "ready", label: "Loaded" }, { value: "loading", label: "Updating" }, { value: "error", label: "Failed" }]}
+					onValueChange={(value) => value && setLogState(value)} />
+			</Stack>
+
+			<ActivityLog<CommentUser, unknown, Kind>
+				entries={entries}
+				loading={logState === "loading"}
+				error={logState === "error" ? "The latest history could not be loaded. Your draft is still here." : undefined}
+				onRetry={() => setLogState("ready")}
+				resources={RESOURCES}
+				canModerate
+				composer={{
+					enabled: true,
+					context: { id: "4417", type: "booking" },
+					placeholder: "Add a note to this booking…",
+					onSubmit: (values, helpers) => {
+						setEntries((prev) => [
+							{
+								id: `c-${Date.now()}`,
+								kind: "comment" as const,
+								timestamp: new Date().toISOString(),
+								comment: {
+									id: `c-${Date.now()}`,
+									contentType: "html",
+									content: values.content,
+									createdAt: new Date().toISOString(),
+									user: { id: "me", name: "You" },
+									references: values.references,
+								},
+							},
+							...prev,
+						])
+						helpers.reset()
+					},
+				}}
+				onCommentDelete={(id) => setEntries((prev) => prev.filter((entry) => entry.id !== id))}
+				onEventAction={(actionId, entry) => note(`${actionId} on ${entry.id}`)}
+			/>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### createActivityEventAdapter
@@ -8697,27 +8865,159 @@ Preview route: AI chat — `/ai-chat`
 ### The chat
 
 ```tsx
-<AiChat
-  messages={messages}
-  inputValue={input}
-  onInputChange={setInput}
-  onSubmit={({ text, attachments }) => send(text, attachments)}
-  onStop={() => abort()}
-  streaming={isStreaming}
-  agent={{ name: "Atlas", subtitle: "model-large", status: "thinking" }}
-  suggestions={suggestions}
-  onPickSuggestion={(s) => setInput(String(s.label))}
-/>
+import { useRef, useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AiChat, type AiChatMessageData } from "themelia-ui/features/ai-chat"
+
+import { MESSAGES, SUGGESTIONS } from "./data"
+
+export default function Chat() {
+	const [input, setInput] = useState("")
+	const [streaming, setStreaming] = useState(false)
+	const [messages, setMessages] = useState<AiChatMessageData[]>(MESSAGES)
+	const [activeResponseId, setActiveResponseId] = useState<string | null>(null)
+	const messageSequence = useRef(0)
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			{/* The chat fills the box it is given, and the transcript scrolls inside it. */}
+			<div style={{ height: "40rem" }}>
+				<AiChat
+					messages={messages}
+					inputValue={input}
+					onInputChange={setInput}
+					onSubmit={({ text }) => {
+						messageSequence.current += 1
+						const sequence = messageSequence.current
+						const responseId = `demo-response-${sequence}`
+						setMessages((current) => [
+							...current,
+							{
+								id: `demo-user-${sequence}`,
+								role: "user",
+								authorName: "You",
+								parts: [{ type: "text", content: text }],
+							},
+							{
+								id: responseId,
+								role: "assistant",
+								authorName: "Atlas",
+								parts: [],
+								pending: true,
+							},
+						])
+						note(`sent: ${text}`)
+						setInput("")
+						setActiveResponseId(responseId)
+						setStreaming(true)
+					}}
+					onStop={() => {
+						setMessages((current) =>
+							current.map((message) =>
+								message.id === activeResponseId
+									? {
+										...message,
+										pending: false,
+										parts: [{ type: "text", content: "Generation stopped." }],
+									}
+									: message,
+							),
+						)
+						note("stopped generation")
+						setActiveResponseId(null)
+						setStreaming(false)
+					}}
+					streaming={streaming}
+					agent={{
+						name: "Atlas",
+						subtitle: "model-large",
+						status: streaming ? "working" : "idle",
+					}}
+					headerActions={
+						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={() => note("settings")}>
+							Settings
+						</Button>
+					}
+					suggestions={SUGGESTIONS}
+					onPickSuggestion={(suggestion) => setInput(String(suggestion.label))}
+					onAttach={() => note("attach")}
+					onMessageCopy={(message) => note(`copied ${message.id}`)}
+					onMessageRegenerate={(message) => note(`regenerate ${message.id}`)}
+					queue={[
+						{ id: "q1", label: "Backfill the 2025 invoices", status: "running" },
+						{ id: "q2", label: "Run the billing tests" },
+					]}
+					onCancelQueueItem={(id) => note(`cancelled ${id}`)}
+				/>
+			</div>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### A turn
 
 ```tsx
-<AiMessageBubble role="assistant" authorName="Atlas" onRegenerate={retry}>
-  The totals are summed as floats.
-</AiMessageBubble>
+import { useState } from "react"
 
-<AiShimmer>Thinking…</AiShimmer>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AiMessageBubble, AiShimmer } from "themelia-ui/features/ai-chat"
+
+export default function Turn() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Stack gap="lg">
+				<AiMessageBubble
+					role="user"
+					authorName="You"
+					timestamp="09:12"
+				>
+					Why is the invoice total off by a cent on some orders?
+				</AiMessageBubble>
+				<AiMessageBubble
+					role="assistant"
+					authorName="Atlas"
+					timestamp="09:12"
+					plainText="Each line is rounded before the sum, so the error compounds."
+					onRegenerate={() => note("regenerate")}
+				>
+					Each line is rounded before the sum, so the error compounds.
+				</AiMessageBubble>
+				<AiMessageBubble role="system">
+					Atlas switched to model-large.
+				</AiMessageBubble>
+				<AiShimmer />
+			</Stack>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Reasoning and plans
@@ -8806,12 +9106,72 @@ export default function Tools() {
 ### What it produced
 
 ```tsx
-<AiArtifact title="totals.ts" subtitle="TypeScript" copyText={code} onDownload={save}>
-  <AiCodeBlock code={code} language="TypeScript" showLineNumbers highlightLines={[2, 8]} />
-</AiArtifact>
+import { useState } from "react"
+import { FileTextIcon } from "lucide-react"
 
-<AiSources sources={sources} defaultExpanded />
-<AiSources sources={sources} variant="avatars" />
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AiArtifact, AiAttachment, AiCodeBlock, AiSources } from "themelia-ui/features/ai-chat"
+
+import { SAMPLE_CODE, SOURCES, STAGED } from "./data"
+
+export default function Output() {
+	const [attachments, setAttachments] = useState(STAGED)
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Stack gap="lg">
+				<AiArtifact
+					title="totals.ts"
+					subtitle="TypeScript · 11 lines"
+					icon={FileTextIcon}
+					copyText={SAMPLE_CODE}
+					onDownload={() => note("download")}
+					onOpen={() => note("open artifact")}
+				>
+					<AiCodeBlock
+						code={SAMPLE_CODE}
+						language="TypeScript"
+						showLineNumbers
+						highlightLines={[2, 8]}
+						hideHeader
+					/>
+				</AiArtifact>
+
+				<AiSources sources={SOURCES} defaultExpanded />
+				<AiSources sources={SOURCES} variant="avatars" />
+
+				<Stack direction="horizontal" gap="md" wrap>
+					{attachments.map((attachment) => (
+						<AiAttachment
+							key={attachment.id}
+							name={attachment.name}
+							meta={attachment.meta}
+							kind={attachment.kind}
+							progress={attachment.progress}
+							onOpen={() => note(`open ${attachment.name}`)}
+							onRemove={() =>
+								setAttachments((current) => current.filter((item) => item.id !== attachment.id))
+							}
+						/>
+					))}
+					<AiAttachment name="broken.zip" meta="upload failed" kind="archive" errored />
+				</Stack>
+			</Stack>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Asking first
@@ -8887,7 +9247,7 @@ export default function AsyncPreviewBasic() {
 	}
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Stack direction="horizontal" gap="xl" wrap>
 				{Object.values(CUSTOMERS).map((customer) => (
 					<AsyncPreview.Root<Customer, { id: string }, "customer">
@@ -8937,7 +9297,7 @@ export default function AsyncPreviewBasic() {
 					</Stack>
 				)}
 			</Stack>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -9840,9 +10200,9 @@ import { Text } from "themelia-ui/base/typography"
 import { DataView } from "themelia-ui/features/data-view"
 import type { ActiveFilter } from "themelia-ui/features/filters"
 
-import styles from "../../preview.module.css"
 import { FILTERS, indexColumns } from "./_shared"
 import { BOOKINGS, TABS, type Booking } from "./data"
+import styles from "./data-view-states.module.css"
 
 export default function DataViewStates() {
 	const [requestState, setRequestState] = useState("ready")
@@ -9852,7 +10212,7 @@ export default function DataViewStates() {
 		<>
 			<Stack direction="horizontal" align="center" gap="sm" wrap>
 				<Text size="sm" type="secondary">Result state</Text>
-				<Select aria-label="Result state" value={requestState} className={styles.featureStateSelect}
+				<Select aria-label="Result state" value={requestState} className={styles.stateSelect}
 					options={[{ value: "ready", label: "Ready" }, { value: "pending", label: "Updating" }, { value: "error", label: "Failed" }]}
 					onValueChange={(value) => value && setRequestState(value)} />
 				{requestState === "error" && <Button tone="neutral" buttonStyle="outline" onClick={() => setRequestState("ready")}>Restore results</Button>}
@@ -9881,30 +10241,105 @@ Preview route: Event calendar — `/event-calendar`
 ### The grid
 
 ```tsx
-<EventCalendar
-  events={events}
-  categories={categories}
-  enableCategoryFilter
-  onEventClick={(event) => open(event.id)}
-  onDayClick={(date, events) => setDay({ date, events })}
-/>
+import { useState } from "react"
+import { PlusIcon } from "lucide-react"
+
+import { Text } from "themelia-ui/base/typography"
+import { EventCalendar, type CalendarViewMode } from "themelia-ui/features/event-calendar"
+
+import { CATEGORIES } from "./_shared"
+import { EVENTS, MONTH } from "./data"
+
+export default function Month() {
+	const [view, setView] = useState<CalendarViewMode>("month")
+	const [picked, setPicked] = useState<string | null>(null)
+	const [visible, setVisible] = useState<string[]>([])
+
+	return (
+		<>
+			<EventCalendar
+				events={EVENTS}
+				categories={CATEGORIES}
+				defaultDate={MONTH}
+				viewMode={view}
+				onViewModeChange={setView}
+				enableCategoryFilter
+				visibleCategories={visible}
+				onVisibleCategoriesChange={setVisible}
+				maxEventsPerDay={2}
+				actions={[{ id: "new", label: "New booking", icon: PlusIcon, onClick: () => setPicked("new booking") }]}
+				onEventClick={(event) => setPicked(event.title)}
+				onDayClick={(date, events) =>
+					setPicked(`${date.toDateString()} — ${events.length} event${events.length === 1 ? "" : "s"}`)
+				}
+			/>
+			{!!picked && <Text size="sm" type="secondary">picked: {picked}</Text>}
+		</>
+	)
+}
 ```
 
 ### The agenda
 
 ```tsx
-<EventCalendar viewMode="agenda" events={events} categories={categories} />
+import { useState } from "react"
+
+import { Text } from "themelia-ui/base/typography"
+import { EventCalendar } from "themelia-ui/features/event-calendar"
+
+import { CATEGORIES } from "./_shared"
+import { EVENTS, MONTH } from "./data"
+
+export default function Agenda() {
+	const [picked, setPicked] = useState<string | null>(null)
+
+	return (
+		<>
+			<EventCalendar
+				events={EVENTS}
+				categories={CATEGORIES}
+				defaultDate={MONTH}
+				viewMode="agenda"
+				showLegend={false}
+				onEventClick={(event) => setPicked(event.title)}
+			/>
+			{!!picked && <Text size="sm" type="secondary">picked: {picked}</Text>}
+		</>
+	)
+}
 ```
 
 ### A week, and a range
 
 ```tsx
-<EventCalendar
-  viewMode="week"
-  minDate={new Date(2026, 8, 1)}
-  maxDate={new Date(2026, 8, 30)}
-  disabledDates={(date) => date.getDay() === 0}
-/>
+import { useState } from "react"
+
+import { Text } from "themelia-ui/base/typography"
+import { EventCalendar } from "themelia-ui/features/event-calendar"
+
+import { CATEGORIES } from "./_shared"
+import { EVENTS } from "./data"
+
+export default function Week() {
+	const [picked, setPicked] = useState<string | null>(null)
+
+	return (
+		<>
+			<EventCalendar
+				events={EVENTS}
+				categories={CATEGORIES}
+				defaultDate={new Date(2026, 8, 14)}
+				viewMode="week"
+				showLegend={false}
+				minDate={new Date(2026, 8, 1)}
+				maxDate={new Date(2026, 8, 30)}
+				disabledDates={(date) => date.getDay() === 0}
+				onEventClick={(event) => setPicked(event.title)}
+			/>
+			{!!picked && <Text size="sm" type="secondary">picked: {picked}</Text>}
+		</>
+	)
+}
 ```
 
 ## features/filters
@@ -10077,28 +10512,110 @@ Preview route: Global search — `/global-search`
 ### The panel
 
 ```tsx
-<GlobalSearch<Group>
-  query={query}
-  onQueryChange={setQuery}
-  results={results}
-  loading={isFetching}
-  groupLabels={{ people: "People", bookings: "Bookings" }}
-  idleSections={recentAndSuggested}
-  onResultSelect={(result) => navigate(result.data.href)}
-/>
+import { useMemo, useState } from "react"
+
+import { Switch } from "themelia-ui/base/choice-inputs"
+import { Text } from "themelia-ui/base/typography"
+import { GlobalSearch, type GlobalSearchIdleSection } from "themelia-ui/features/global-search"
+
+import { match } from "./_shared"
+import { GROUP_LABELS, IDLE, type Group } from "./data"
+
+export default function Panel() {
+	const [query, setQuery] = useState("marlow")
+	const [loading, setLoading] = useState(false)
+	const [chosen, setChosen] = useState<string | null>(null)
+
+	const results = useMemo(() => match(query), [query])
+
+	/* Choosing a recent query or a suggestion searches for it. */
+	const idle = useMemo<GlobalSearchIdleSection[]>(
+		() =>
+			IDLE.map((section) => ({
+				...section,
+				items: section.items.map((item) => ({
+					...item,
+					onSelect: () => setQuery(String(item.label)),
+				})),
+			})),
+		[],
+	)
+
+	return (
+		<>
+			<Switch label="Simulate loading" checked={loading} onChange={event => setLoading(event.target.checked)} />
+			<GlobalSearch<Group>
+				loading={loading}
+				query={query}
+				onQueryChange={setQuery}
+				results={results}
+				groupLabels={GROUP_LABELS}
+				idleSections={idle}
+				onResultSelect={(result) => setChosen(result.title)}
+			/>
+			{!!chosen && (
+				<Text size="sm" type="secondary">opened: {chosen}</Text>
+			)}
+		</>
+	)
+}
 ```
 
 ### The palette
 
 ```tsx
-<GlobalSearchDialog
-  open={open}
-  onOpenChange={setOpen}
-  query={query}
-  onQueryChange={setQuery}
-  results={results}
-  onResultSelect={(result) => navigate(result.id)}
-/>
+import { useMemo, useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { GlobalSearchDialog, type GlobalSearchIdleSection } from "themelia-ui/features/global-search"
+
+import { match } from "./_shared"
+import { GROUP_LABELS, IDLE, type Group } from "./data"
+
+export default function Dialog() {
+	const [open, setOpen] = useState(false)
+	const [query, setQuery] = useState("")
+	const [chosen, setChosen] = useState<string | null>(null)
+
+	const results = useMemo(() => match(query), [query])
+
+	/* Choosing a recent query or a suggestion searches for it. */
+	const idle = useMemo<GlobalSearchIdleSection[]>(
+		() =>
+			IDLE.map((section) => ({
+				...section,
+				items: section.items.map((item) => ({
+					...item,
+					onSelect: () => setQuery(String(item.label)),
+				})),
+			})),
+		[],
+	)
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="md" align="center">
+				<Button type="button" onClick={() => setOpen(true)}>Open the palette</Button>
+				<Text size="sm" type="secondary">Then press Escape, or click outside it.</Text>
+			</Stack>
+			<GlobalSearchDialog<Group>
+				open={open}
+				onOpenChange={setOpen}
+				query={query}
+				onQueryChange={setQuery}
+				results={results}
+				groupLabels={GROUP_LABELS}
+				idleSections={idle}
+				onResultSelect={(result) => setChosen(result.title)}
+			/>
+			{!!chosen && (
+				<Text size="sm" type="secondary">opened: {chosen}</Text>
+			)}
+		</>
+	)
+}
 ```
 
 ## features/kanban
@@ -10126,7 +10643,7 @@ import {
 	type KanbanValue,
 } from "themelia-ui/features/kanban"
 
-import styles from "../../preview.module.css"
+import styles from "./kanban.module.css"
 
 interface Card_ {
 	id: string
@@ -10185,28 +10702,28 @@ export default function KanbanExample() {
 					},
 				]}
 			>
-				<KanbanBoard className={styles.kanbanBoard}>
+				<KanbanBoard className={styles.board}>
 					{COLUMNS.map((column) => (
-						<KanbanColumn key={column.id} value={column.id} className={styles.kanbanColumn}>
-							<div className={styles.kanbanColumnHeader}>
+						<KanbanColumn key={column.id} value={column.id} className={styles.column}>
+							<Stack direction="horizontal" align="center" justify="between" gap="sm">
 								<DisplayLabel>{column.title}</DisplayLabel>
 								<Badge tone="neutral">{board[column.id]?.length ?? 0}</Badge>
-							</div>
+							</Stack>
 							<KanbanColumnContent value={column.id}>
 								{(board[column.id] ?? []).map((card) => (
 									<KanbanItem key={card.id} value={card.id}>
-										<Card className={styles.kanbanCard}>
-											<div className={styles.kanbanCardTop}>
+										<Card className={styles.card}>
+											<Stack direction="horizontal" align="start" gap="xs">
 												<KanbanItemHandle />
-												<Text size="sm" weight="medium" className={styles.kanbanCardTitle}>
+												<Text size="sm" weight="medium" className={styles.cardTitle}>
 													{card.title}
 												</Text>
 												<KanbanItemActions<Card_> />
-											</div>
-											<div className={styles.kanbanCardMeta}>
+											</Stack>
+											<Stack direction="horizontal" align="baseline" justify="between" gap="sm" className={styles.cardMeta}>
 												<Text size="xs" type="secondary">{card.owner}</Text>
 												<Text size="xs" type="secondary" numeric>{card.value}</Text>
-											</div>
+											</Stack>
 										</Card>
 									</KanbanItem>
 								))}
@@ -10247,7 +10764,6 @@ import {
 	MapMarker, MapPopup, MapTileLayer, MapTooltip, MapZoomControl,
 } from "themelia-ui/features/map"
 
-import styles from "../../preview.module.css"
 import { MARLOW } from "./data"
 
 const VENUES: { id: string; name: string; position: [number, number]; capacity: number }[] = [
@@ -10258,34 +10774,32 @@ const VENUES: { id: string; name: string; position: [number, number]; capacity: 
 
 export default function MapExample() {
 	return (
-		<div className={styles.mapFrame}>
-			<Map center={MARLOW} zoom={13}>
-				<MapLayers defaultTileLayer="Streets" defaultLayerGroups={["Venues"]}>
-					<MapTileLayer name="Streets" />
-					<MapTileLayer
-						name="Terrain"
-						url="https://tile.opentopomap.org/{z}/{x}/{y}.png"
-						attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
-					/>
-					<MapLayerGroup name="Venues">
-						{VENUES.map((venue) => (
-							<MapMarker key={venue.id} position={venue.position} ariaLabel={venue.name}>
-								<MapTooltip>{venue.name}</MapTooltip>
-								<MapPopup>
-									<Text weight="semibold">{venue.name}</Text>
-									<Text size="sm" type="secondary">{venue.capacity} seated</Text>
-								</MapPopup>
-							</MapMarker>
-						))}
-					</MapLayerGroup>
-					<MapLayersControl />
-				</MapLayers>
+		<Map center={MARLOW} zoom={13} height="26rem">
+			<MapLayers defaultTileLayer="Streets" defaultLayerGroups={["Venues"]}>
+				<MapTileLayer name="Streets" />
+				<MapTileLayer
+					name="Terrain"
+					url="https://tile.opentopomap.org/{z}/{x}/{y}.png"
+					attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
+				/>
+				<MapLayerGroup name="Venues">
+					{VENUES.map((venue) => (
+						<MapMarker key={venue.id} position={venue.position} ariaLabel={venue.name}>
+							<MapTooltip>{venue.name}</MapTooltip>
+							<MapPopup>
+								<Text weight="semibold">{venue.name}</Text>
+								<Text size="sm" type="secondary">{venue.capacity} seated</Text>
+							</MapPopup>
+						</MapMarker>
+					))}
+				</MapLayerGroup>
+				<MapLayersControl />
+			</MapLayers>
 
-				<MapZoomControl />
-				<MapFullscreenControl position="bottom-right" />
-				<MapLocateControl position="bottom-right" />
-			</Map>
-		</div>
+			<MapZoomControl />
+			<MapFullscreenControl position="bottom-right" />
+			<MapLocateControl position="bottom-right" />
+		</Map>
 	)
 }
 ```
@@ -10303,7 +10817,6 @@ import {
 	MapZoomControl,
 } from "themelia-ui/features/map"
 
-import styles from "../../preview.module.css"
 import { MARLOW } from "./data"
 
 export default function Draw() {
@@ -10311,22 +10824,20 @@ export default function Draw() {
 
 	return (
 		<>
-			<div className={styles.mapFrame}>
-				<Map center={MARLOW} zoom={13}>
-					<MapTileLayer />
-					<MapZoomControl />
-					<MapDrawControl onLayersChange={(group) => setShapes(group.getLayers().length)}>
-						<MapDrawMarker />
-						<MapDrawPolyline />
-						<MapDrawPolygon />
-						<MapDrawRectangle />
-						<MapDrawCircle />
-						<MapDrawEdit />
-						<MapDrawDelete />
-						<MapDrawUndo />
-					</MapDrawControl>
-				</Map>
-			</div>
+			<Map center={MARLOW} zoom={13} height="26rem">
+				<MapTileLayer />
+				<MapZoomControl />
+				<MapDrawControl onLayersChange={(group) => setShapes(group.getLayers().length)}>
+					<MapDrawMarker />
+					<MapDrawPolyline />
+					<MapDrawPolygon />
+					<MapDrawRectangle />
+					<MapDrawCircle />
+					<MapDrawEdit />
+					<MapDrawDelete />
+					<MapDrawUndo />
+				</MapDrawControl>
+			</Map>
 			<Text size="sm" type="secondary">
 				shapes drawn: <Badge tone="neutral">{shapes}</Badge>
 			</Text>
@@ -10340,12 +10851,12 @@ export default function Draw() {
 ```tsx
 import { useState } from "react"
 
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 import {
 	Map, MapSearchControl, MapTileLayer, MapZoomControl, PlaceAutocomplete, type PlaceFeature,
 } from "themelia-ui/features/map"
 
-import styles from "../../preview.module.css"
 import { MARLOW } from "./data"
 
 export default function PlaceAutocompleteExample() {
@@ -10353,9 +10864,9 @@ export default function PlaceAutocompleteExample() {
 
 	return (
 		<>
-			<div className={styles.mapSearch}>
+			<Stack maxWidth="24rem">
 				<PlaceAutocomplete limit={5} onPlaceSelect={setPlace} />
-			</div>
+			</Stack>
 			{!!place && (
 				<Text size="sm" type="secondary" numeric>
 					{place.properties.name} — {place.geometry.coordinates[1].toFixed(4)},{" "}
@@ -10363,13 +10874,11 @@ export default function PlaceAutocompleteExample() {
 				</Text>
 			)}
 
-			<div className={styles.mapFrame}>
-				<Map center={MARLOW} zoom={13}>
-					<MapTileLayer />
-					<MapSearchControl position="top-left" limit={5} />
-					<MapZoomControl position="top-right" />
-				</Map>
-			</div>
+			<Map center={MARLOW} zoom={13} height="26rem">
+				<MapTileLayer />
+				<MapSearchControl position="top-left" limit={5} />
+				<MapZoomControl position="top-right" />
+			</Map>
 		</>
 	)
 }
@@ -10387,17 +10896,60 @@ Preview route: Media library — `/media-library`
 ### Asset manager
 
 ```tsx
-<MediaLibrary
-  items={assets}
-  collections={collections}
-  value={selected}
-  onValueChange={setSelected}
-  onItemUpdate={(item, patch) => api.updateAsset(item.id, patch)}
-  onItemDelete={(item) => api.deleteAsset(item.id)}
-  onUpload={(files, options, helpers) =>
-    api.upload(files, options, helpers.files, helpers.setProgress, helpers.signal)}
-  onConfirm={(items) => attach(items)}
-/>
+import { useRef, useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { MediaLibrary, type MediaLibraryItem } from "themelia-ui/features/media-library"
+
+import { ASSETS, COLLECTIONS } from "./data"
+
+export default function Library() {
+	const [selected, setSelected] = useState<string[]>(["m1"])
+	const [note, setNote] = useState<string | null>(null)
+	const failNext = useRef(false)
+	const uploadSequence = useRef(0)
+
+	return (
+		<>
+			<MediaLibrary
+				items={ASSETS}
+				collections={COLLECTIONS}
+				value={selected}
+				onValueChange={setSelected}
+				onItemUpdate={async (item) => {
+					await new Promise((resolve) => setTimeout(resolve, 400))
+					if (failNext.current) { failNext.current = false; throw new Error("Sample save failed") }
+					setNote(`Saved ${item.name}`)
+				}}
+				onItemDelete={async (item) => {
+					await new Promise((resolve) => setTimeout(resolve, 400))
+					if (failNext.current) { failNext.current = false; throw new Error("Sample delete failed") }
+					setNote(`Deleted ${item.name}`)
+				}}
+				onUpload={async (files, options, { files: staged, setProgress, signal }) => {
+					for (let step = 20; step <= 100; step += 20) {
+						await new Promise((resolve) => setTimeout(resolve, 120))
+						if (signal.aborted) return
+						for (const file of staged ?? []) setProgress(file.id, step)
+					}
+					if (failNext.current) { failNext.current = false; throw new Error("Sample upload failed") }
+					setNote(`Uploaded ${files.length}`)
+					return files.map((file): MediaLibraryItem => ({ id: `uploaded-${++uploadSequence.current}`, name: file.name, type: file.type.startsWith("image/") ? "image" : file.type.startsWith("video/") ? "video" : "file", size: file.size, uploadedAt: new Date(), ...options }))
+				}}
+				onConfirm={(items) => setNote(`using ${items.length}`)}
+			/>
+			<Stack direction="horizontal" align="center" gap="sm" wrap>
+				<Button tone="neutral" buttonStyle="outline" onClick={() => { failNext.current = true; setNote("The next save, delete, or upload will fail once.") }}>
+					Fail next action
+				</Button>
+				<Text size="sm" type="secondary">Preview recovery without mixing test controls into the library toolbar.</Text>
+			</Stack>
+			{!!note && <Text role="status" size="sm" type="secondary">{note}</Text>}
+		</>
+	)
+}
 ```
 
 ### Loading and recovery
@@ -10487,45 +11039,145 @@ export default function AsyncLibrary() {
 ### Acting on a selection
 
 ```tsx
-<MediaLibrary
-  items={assets}
-  bulkActions={({ selectedItems, clearSelection }) => (
-    <>
-      <Button tone="neutral" buttonStyle="ghost">Download</Button>
-      <Button tone="destructive" buttonStyle="ghost"
-        onClick={() => { remove(selectedItems); clearSelection() }}>
-        Delete
-      </Button>
-    </>
-  )}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Text } from "themelia-ui/base/typography"
+import { MediaLibrary } from "themelia-ui/features/media-library"
+
+import { ASSETS, COLLECTIONS } from "./data"
+
+export default function BulkActions() {
+	const [assets, setAssets] = useState(ASSETS)
+	const [selected, setSelected] = useState<string[]>([ASSETS[0]!.id, ASSETS[1]!.id])
+	const [note, setNote] = useState<string | null>(null)
+
+	return (
+		<>
+			{/*
+			 * `transform` makes this box the containing block for the floating bar, so it docks
+			 * to the example rather than the viewport. The same applies in an app: a floating
+			 * bar inside a transformed ancestor docks to that ancestor.
+			 */}
+			<div style={{ transform: "translate(0)", position: "relative", width: "100%" }}>
+				<MediaLibrary
+					items={assets}
+					collections={COLLECTIONS}
+					value={selected}
+					onValueChange={setSelected}
+					bulkActions={({ selectedCount, clearSelection }) => (
+						<>
+							<Button
+								type="button"
+								tone="neutral"
+								buttonStyle="ghost"
+								onClick={() => {
+									setAssets((current) => current.map((asset) => selected.includes(asset.id) ? { ...asset, public: true } : asset))
+									setNote(`Made ${selectedCount} assets public`)
+									clearSelection()
+								}}
+							>
+								Make public
+							</Button>
+							<Button
+								type="button"
+								tone="destructive"
+								buttonStyle="ghost"
+								onClick={() => {
+									setAssets((current) => current.filter((asset) => !selected.includes(asset.id)))
+									setNote(`Deleted ${selectedCount}`)
+									clearSelection()
+								}}
+							>
+								Delete
+							</Button>
+						</>
+					)}
+				/>
+			</div>
+			{!!note && <Text role="status" size="sm" type="secondary">{note}</Text>}
+		</>
+	)
+}
 ```
 
 ### As a picker
 
 ```tsx
-<MediaLibraryDialog
-  open={open}
-  onOpenChange={setOpen}
-  items={assets}
-  selectionMode="single"
-  confirmOnSelect
-  onConfirm={([asset]) => setCover(asset)}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Text } from "themelia-ui/base/typography"
+import { MediaLibraryDialog } from "themelia-ui/features/media-library"
+
+import { ASSETS, COLLECTIONS } from "./data"
+
+export default function LibraryDialog() {
+	const [open, setOpen] = useState(false)
+	const [picked, setPicked] = useState<string | null>(null)
+
+	return (
+		<>
+			<Button type="button" onClick={() => setOpen(true)}>Pick an asset</Button>
+			<MediaLibraryDialog
+				open={open}
+				onOpenChange={setOpen}
+				items={ASSETS}
+				collections={COLLECTIONS}
+				selectionMode="single"
+				confirmOnSelect
+				allowUpload={false}
+				onConfirm={(items) => setPicked(items[0]?.name ?? null)}
+			/>
+			{!!picked && <Text role="status" size="sm" type="secondary">picked {picked}</Text>}
+		</>
+	)
+}
 ```
 
 ### Attached to a record
 
 ```tsx
-<MediaResourceGallery
-  items={attached}
-  primaryId={coverId}
-  onPrimaryChange={setCoverId}
-  onReorder={(ids, items) => setAttached(items)}
-  onRemove={(id) => detach(id)}
-  onAdd={() => setPickerOpen(true)}
-  maxItems={8}
-/>
+import { useState } from "react"
+
+import {
+	MediaLibraryDialog, MediaResourceGallery, type MediaLibraryItem,
+} from "themelia-ui/features/media-library"
+
+import { ASSETS, COLLECTIONS } from "./data"
+
+export default function Gallery() {
+	const [attached, setAttached] = useState<MediaLibraryItem[]>(ASSETS.slice(0, 4))
+	const [primary, setPrimary] = useState("m1")
+	const [picking, setPicking] = useState(false)
+
+	return (
+		<>
+			<MediaResourceGallery
+				items={attached}
+				title="Venue media"
+				description="The first is the cover."
+				primaryId={primary}
+				onPrimaryChange={setPrimary}
+				onReorder={(_ids, items) => setAttached(items)}
+				onRemove={(id) => setAttached((current) => current.filter((item) => item.id !== id))}
+				onAdd={() => setPicking(true)}
+				maxItems={6}
+			/>
+			{/* Add opens the library as a picker, offering only what is not attached yet. */}
+			<MediaLibraryDialog
+				open={picking}
+				onOpenChange={setPicking}
+				items={ASSETS.filter((asset) => !attached.some((item) => item.id === asset.id))}
+				collections={COLLECTIONS}
+				selectionMode="single"
+				confirmOnSelect
+				allowUpload={false}
+				onConfirm={(items) => setAttached((current) => [...current, ...items])}
+			/>
+		</>
+	)
+}
 ```
 
 ## features/mentions
@@ -10551,8 +11203,8 @@ import {
 	type MentionEditorHandle,
 } from "themelia-ui/features/mentions"
 
-import styles from "../../preview.module.css"
 import { RESOURCES, type Kind } from "./data"
+import styles from "./mention-inline.module.css"
 
 /**
  * The four methods `MentionEditorHandle` asks for, over a plain contenteditable.
@@ -10621,7 +11273,7 @@ function MiniEditor({
 				onInput(event.currentTarget.innerHTML)
 				onCaretChange()
 			}}
-			className={styles.miniEditor}
+			className={styles.editor}
 		/>
 	)
 }
@@ -10649,7 +11301,7 @@ export default function MentionInline() {
 
 	return (
 		<>
-			<div className={styles.mentionAnchor}>
+			<div className={styles.anchor}>
 				<MiniEditor
 					handleRef={editorRef}
 					onCaretChange={mentions.handleCaretChange}
@@ -10715,7 +11367,7 @@ export default function MentionInline() {
 			)}
 
 			{!!html && (
-				<Text size="xs" type="secondary" className={styles.mentionSource}>
+				<Text size="xs" type="secondary" className={styles.source}>
 					{html}
 				</Text>
 			)}
@@ -10797,8 +11449,8 @@ import { useState } from "react"
 
 import { Button } from "themelia-ui/base/buttons"
 import { FormField } from "themelia-ui/base/forms"
-import { Input } from "themelia-ui/base/text-inputs"
 import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
 import { Text } from "themelia-ui/base/typography"
 import { ActionDialog } from "themelia-ui/features/overlays"
 
@@ -10809,7 +11461,7 @@ export default function ActionDialogExample() {
 	const [failure, setFailure] = useState<string | null>(null)
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Stack direction="horizontal" gap="lg" wrap>
 				<ActionDialog
 					title="Rename workspace"
@@ -10862,7 +11514,7 @@ export default function ActionDialogExample() {
 					last result: {saved}
 				</Text>
 			)}
-		</>
+		</Stack>
 	)
 }
 ```
@@ -10998,109 +11650,406 @@ Preview route: Options & variants — `/product-variants`
 ### Options and variants together
 
 ```tsx
-<ProductVariantsManager
-  optionGroups={options}
-  variants={variants}
-  groupByOptionId="size"
-  cellDisplay="field"
-  onCreateOption={createOption}
-  onSaveEditingOption={(option, draft) => save(option.id, draft)}
-  onAddValue={addValue}
-  onGenerateVariants={generate}
-  onVariantFieldBlur={(variant, field, value) => patch(variant.id, field, value)}
-/>
-```
+import { useState } from "react"
 
-### The two option surfaces
+import { PillRadioGroup } from "themelia-ui/base/choice-inputs"
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import {
+	ProductOptionsMatrix, ProductOptionsSummary, ProductVariantsBulkTable, ProductVariantsManager,
+	ProductVariantsTable,
+} from "themelia-ui/features/products"
 
-```tsx
-<ProductOptionsSummary options={summary} onManageOptions={openMatrix} />
+import { OPTION_GROUPS, OPTION_SUMMARY, VARIANTS } from "./data"
+import { useCatalogue } from "./use-catalogue"
 
-<ProductOptionsMatrix
-  optionGroups={groups}
-  onSaveEditingOption={(option, draft) => save(option.id, draft)}
-  onAddValue={addValue}
-  onDeleteOption={remove}
-  confirmDelete            // on by default — removing an option removes its variants
-/>
-```
+export default function Manager() {
+	const [log, setLog] = useState<string[]>([])
+	const [groupBy, setGroupBy] = useState<string | null>("size")
+	const catalogue = useCatalogue(OPTION_GROUPS, VARIANTS)
 
-### Variants
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
 
-```tsx
-<ProductVariantsBulkTable
-  variants={variants}
-  optionGroups={groups}
-  groupByOptionId="size"
-  cellDisplay={{ sku: "field", price: "field", inventory: "text" }}
-  onVariantFieldBlur={(variant, field, value) => api.patch(variant.id, { [field]: value })}
-  onBulkDelete={(rows) => api.removeMany(rows.map((row) => row.id))}
-/>
+	/* Every option and variant callback, wired to the same store — so the manager, the
+	 * matrix and the bulk table below it are all editing one catalogue. */
+	const optionHandlers = {
+		optionGroups: catalogue.options,
+		editingOptionId: catalogue.editingOptionId,
+		onEditingOptionIdChange: catalogue.setEditingOptionId,
+		onCreateOption: catalogue.createOption,
+		onDeleteOption: catalogue.deleteOption,
+		onAddValue: catalogue.addValue,
+		onDeleteValue: catalogue.deleteValue,
+		onSaveEditingOption: catalogue.saveOption,
+		onCancelEditingOption: () => catalogue.setEditingOptionId(null),
+		onReorderOptions: catalogue.reorderOptions,
+	}
+
+	const variantHandlers = {
+		variants: catalogue.variants,
+		onGenerateVariants: catalogue.generateVariants,
+		onVariantFieldBlur: (variant: { id: string }, field: "sku" | "price" | "inventory", value: string) =>
+			catalogue.setVariantField(variant.id, field, value),
+		onBulkDelete: (rows: readonly { id: string }[]) =>
+			catalogue.deleteVariants(rows.map((row) => row.id)),
+		onSetVariantImage: (variant: { id: string }) => note(`choose a picture for ${variant.id}`),
+	}
+
+	return (
+		<>
+			<ProductVariantsManager
+				{...optionHandlers}
+				{...variantHandlers}
+				defaultGroupByOptionId={catalogue.options[0]?.id ?? null}
+				visibleColumns={["variant", "sku", "price", "inventory"]}
+				cellDisplay="field"
+				confirmDelete={false}
+				onEditVariant={(variant) => note(`edit ${variant.id}`)}
+			/>
+			<Text size="xs" type="secondary">
+				{catalogue.options.length} options describe {catalogue.variantCount} combinations ·{" "}
+				{catalogue.variants.length} rows exist
+			</Text>
+
+			<Grid gap="lg">
+				<ProductOptionsSummary
+					options={OPTION_SUMMARY}
+					onManageOptions={() => note("manage options")}
+					onSelectOption={(option) => note(`open ${option.id}`)}
+				/>
+				<ProductOptionsMatrix {...optionHandlers} confirmDelete={false} />
+			</Grid>
+
+			<ProductVariantsTable
+				variants={catalogue.variants.slice(0, 3).map((variant) => ({
+					...variant,
+					options: [variant.optionValues?.size, variant.optionValues?.build],
+				}))}
+				onCreateVariant={() => note("create variant")}
+				onEditVariant={(variant) => note(`edit ${variant.id}`)}
+				onDeleteVariant={(variant) => note(`delete ${variant.id}`)}
+			/>
+
+			<Stack direction="horizontal" gap="md" align="center">
+				<Text size="sm" type="secondary">Group by</Text>
+				<PillRadioGroup
+					value={groupBy}
+					onValueChange={setGroupBy}
+					allowClear
+					options={[
+						{ value: "size", label: "Frame size" },
+						{ value: "build", label: "Build kit" },
+					]}
+				/>
+			</Stack>
+
+			<ProductVariantsBulkTable
+				{...variantHandlers}
+				optionGroups={catalogue.options}
+				groupByOptionId={groupBy}
+				cellDisplay={{ sku: "field", price: "field" }}
+				onEditVariant={(variant) => note(`edit ${variant.id}`)}
+				onBulkEdit={(rows) => note(`bulk edit ${rows.length}`)}
+			/>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### One variant, read and edited
 
 ```tsx
-<ProductVariantDetails
-  variant={selected}
-  optionItems={options}
-  onBack={() => setSelected(null)}
-  onEditVariant={(variant) => setEditing(variant)}
-/>
+import { useState } from "react"
 
-<ProductVariantEditor
-  defaultValue={{ name: "M · Trail", sku: "TRL-29-M-TR", price: "€1,850" }}
-  optionFields={[{ id: "size", label: "Frame size", choices: sizes }]}
-  statusOptions={statuses}
-  onSubmit={(values) => api.save(values)}
-  onDelete={(values) => api.remove(values)}
-/>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ProductVariantDetails, ProductVariantEditor } from "themelia-ui/features/products"
+
+import { OPTION_SUMMARY } from "./data"
+
+export default function VariantDetail() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			{/* Stacked, not two-up: both of these switch layout on their OWN width, and a
+			    half-column here is narrower than either ever gets in a real rail. */}
+			<Stack gap="lg">
+				<ProductVariantDetails
+					variant={{
+						id: "m-trail",
+						name: "M · Trail",
+						description: "Medium frame, Trail build kit.",
+						options: ["M", "Trail"],
+						sku: "TRL-29-M-TR",
+						price: "€1,850",
+						inventory: "31",
+						channels: "Online store, POS",
+						updatedAt: "yesterday",
+						status: "Live",
+						statusTone: "success",
+					}}
+					optionItems={OPTION_SUMMARY}
+					onBack={() => note("back to the list")}
+					onEditVariant={(variant) => note(`edit ${variant.id}`)}
+					onDeleteVariant={(variant) => note(`delete ${variant.id}`)}
+					onSelectOption={(option) => note(`open option ${option.id}`)}
+				/>
+
+				<ProductVariantEditor
+					defaultValue={{
+						name: "M · Trail",
+						sku: "TRL-29-M-TR",
+						price: "€1,850",
+						inventory: "31",
+						status: "live",
+						channels: "Online store, POS",
+						options: { size: "m", build: "trail" },
+					}}
+					statusOptions={[
+						{ value: "live", label: "Live" },
+						{ value: "draft", label: "Draft" },
+						{ value: "archived", label: "Archived" },
+					]}
+					optionFields={[
+						{
+							id: "size",
+							label: "Frame size",
+							choices: [
+								{ value: "s", label: "S" },
+								{ value: "m", label: "M" },
+								{ value: "l", label: "L" },
+							],
+						},
+						{
+							id: "build",
+							label: "Build kit",
+							choices: [
+								{ value: "trail", label: "Trail" },
+								{ value: "expedition", label: "Expedition" },
+							],
+						},
+					]}
+					onSubmit={(values) => note(`saved ${values.name ?? "the variant"}`)}
+					onCancel={() => note("cancelled")}
+					onDelete={(values) => note(`delete ${values.sku ?? "the variant"}`)}
+				/>
+			</Stack>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Nothing yet
 
 ```tsx
-<ProductVariantsBulkTable
-  variants={[]}
-  onGenerateVariants={() => api.generate(productId)}
-/>
+import { useState } from "react"
+
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ProductOptionsMatrix, ProductVariantsBulkTable } from "themelia-ui/features/products"
+
+export default function Empty() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Grid gap="lg">
+				<ProductVariantsBulkTable
+					variants={[]}
+					onGenerateVariants={() => note("generate the combinations")}
+				/>
+				<ProductOptionsMatrix
+					optionGroups={[]}
+					onCreateOption={() => note("create the first option")}
+				/>
+			</Grid>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Overview and quote
 
 ```tsx
-<ProductOverview
-  title="Trailhead 29er"
-  status="Live"
-  statusTone="success"
-  metrics={[{ id: "variants", label: "Variants", value: "18" }]}
-/>
+import { useState } from "react"
 
-<ProductQuotePreviewCard
-  lines={[…, { id: "total", label: "Total", value: "€2,268", emphasis: true }]}
-  onRecalculate={() => api.quote(id)}
-/>
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ProductOverview, ProductQuotePreviewCard } from "themelia-ui/features/products"
+
+import { CONTRACT_METRICS, QUOTE } from "./data"
+
+export default function Overview() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Grid gap="lg">
+				<ProductOverview
+					title="Trailhead 29er"
+					description="Aluminium trail hardtail, sold as a frameset or a complete build."
+					status="Live"
+					statusTone="success"
+					metrics={CONTRACT_METRICS}
+				/>
+				<ProductQuotePreviewCard
+					lines={QUOTE}
+					note="Carrier is an estimate until an oversize profile is chosen."
+					onRecalculate={() => note("recalculated the quote")}
+				/>
+			</Grid>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Readiness, structure, operations
 
 ```tsx
-<ProductReadinessCard
-  score={72}
-  items={[{ id: "price", label: "Pricing", tone: "warning", value: "1 missing" }]}
-  onSelectReadinessItem={(item) => open(item.id)}
-/>
+import { useState } from "react"
+import { BoxIcon, LayersIcon, WarehouseIcon } from "lucide-react"
+
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import {
+	ProductOperationsCard, ProductReadinessCard, ProductStructureCard,
+} from "themelia-ui/features/products"
+
+import { OPERATIONS, READINESS } from "./data"
+
+const STRUCTURE = [
+	{ id: "variants", label: "Variants", value: "18", description: "3 sizes × 3 colours × 2 builds", icon: <LayersIcon /> },
+	{ id: "skus", label: "Live SKUs", value: "14", description: "4 held back for launch", tone: "primary" as const, icon: <BoxIcon /> },
+	{ id: "stock", label: "On hand", value: "212", description: "Across two warehouses", icon: <WarehouseIcon /> },
+]
+
+export default function Rows() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Grid gap="lg">
+				<ProductReadinessCard
+					score={72}
+					items={READINESS}
+					summary="Two checks left before this can be published."
+					onSelectReadinessItem={(item) => note(`readiness: ${item.id}`)}
+				/>
+				<Stack gap="lg">
+					<ProductStructureCard
+						metrics={STRUCTURE}
+						onSelectMetric={(metric) => note(`structure: ${metric.id}`)}
+					/>
+					<ProductOperationsCard
+						items={OPERATIONS}
+						onSelectOperation={(item) => note(`operations: ${item.id}`)}
+					/>
+				</Stack>
+			</Grid>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Details, contract, policies
 
 ```tsx
-<ProductContractOverview
-  metrics={metrics}
-  terms={terms}          // MetadataListItem[]
-  rules={rules}
-  onCreateRule={() => …}
-/>
+import { useState } from "react"
+
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import {
+	ProductContractOverview, ProductDetailsCard, ProductPoliciesCard,
+} from "themelia-ui/features/products"
+
+import { CONTRACT_METRICS, CONTRACT_TERMS, DETAILS, POLICIES, RULES } from "./data"
+
+export default function Contract() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Grid gap="lg">
+				<Stack gap="lg">
+					<ProductDetailsCard
+						metadata={DETAILS}
+						onEditDetails={() => note("edit details")}
+					/>
+					<ProductPoliciesCard
+						policies={POLICIES}
+						onSelectPolicy={(policy) => note(`policy: ${policy.id}`)}
+					/>
+				</Stack>
+				<ProductContractOverview
+					metrics={CONTRACT_METRICS}
+					terms={CONTRACT_TERMS}
+					rules={RULES}
+					onOpenContract={() => note("open contract")}
+					onCreateRule={() => note("create rule")}
+				/>
+			</Grid>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ## features/resource
@@ -11530,16 +12479,46 @@ import "themelia-ui/features/rich-text-editor.css"
 
 Preview route: Rich text editor — `/rich-text-editor`
 
-### The editor
+### The editor and what comes out
 
 ```tsx
-<RichTextEditor
-  value={body}
-  onValueChange={setBody}
-  showCounts
-  maxLength={280}
-  placeholder="Write something…"
-/>
+import { useState } from "react"
+
+import { Stack } from "themelia-ui/base/structure"
+import { DisplayLabel, RichText, Text } from "themelia-ui/base/typography"
+import { RichTextEditor } from "themelia-ui/features/rich-text-editor"
+
+import styles from "./editor.module.css"
+
+const SEED = "<p>Select some text and press <strong>B</strong>. The toolbar reports what the caret is inside, so the buttons light up as you move through the document.</p><ul><li>Lists work.</li><li>So does <em>emphasis</em>.</li></ul>"
+
+export default function Editor() {
+	const [body, setBody] = useState(SEED)
+
+	return (
+		<>
+			<RichTextEditor
+				value={body}
+				onValueChange={setBody}
+				placeholder="Write something…"
+				showCounts
+				maxLength={280}
+			/>
+
+			<Stack gap="xs">
+				<DisplayLabel>Emitted HTML</DisplayLabel>
+				<Text size="xs" type="secondary" className={styles.source}>
+					{body || "(empty)"}
+				</Text>
+			</Stack>
+
+			<Stack gap="xs">
+				<DisplayLabel>Rendered through RichText</DisplayLabel>
+				<RichText html={body} />
+			</Stack>
+		</>
+	)
+}
 ```
 
 ### compact
@@ -11633,24 +12612,243 @@ Preview route: Schema form — `/schema-form`
 ### One surface
 
 ```tsx
-<SchemaForm
-  schema={{
-    sections: [{ id: "identity", title: "Identity", columns: 2 }],
-    fields: [
-      { key: "name", label: "Venue name", sectionId: "identity", required: true },
-      { key: "cutoff", type: "integer", label: "Cut-off",
-        hidden: (values) => values.selfService !== true },
-    ],
-  }}
-  onSubmit={(values) => api.save(values)}
-  onReset={() => undefined}
-/>
+import { useState } from "react"
+import { BuildingIcon, CreditCardIcon, SettingsIcon } from "lucide-react"
+
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { Text } from "themelia-ui/base/typography"
+import { SchemaForm, type SchemaFormSchema, type SchemaFormValues } from "themelia-ui/features/schema-form"
+
+const VENUE_SCHEMA: SchemaFormSchema = {
+	title: "Venue details",
+	description: "What appears on the booking confirmation.",
+	sections: [
+		{ id: "identity", title: "Identity", icon: <BuildingIcon />, columns: 2 },
+		{
+			id: "commercial",
+			title: "Commercial",
+			description: "Only the deposit is shown to the customer.",
+			icon: <CreditCardIcon />,
+			columns: 2,
+		},
+		{ id: "advanced", title: "Advanced", icon: <SettingsIcon />, columns: 1 },
+	],
+	fields: [
+		{
+			key: "name",
+			label: "Venue name",
+			sectionId: "identity",
+			required: true,
+			placeholder: "Marlow Hall",
+			defaultValue: "Marlow Hall",
+		},
+		{
+			key: "email",
+			type: "email",
+			label: "Bookings email",
+			sectionId: "identity",
+			required: true,
+			placeholder: "bookings@example.com",
+			defaultValue: "bookings@marlowhall.example",
+			validate: (value) =>
+				typeof value === "string" && value.includes("@") ? true : "That is not an email address.",
+		},
+		{
+			key: "address",
+			type: "textarea",
+			label: "Address",
+			sectionId: "identity",
+			width: "full",
+			rows: 2,
+			defaultValue: "14 Bridge Street, Marlow",
+		},
+		{
+			key: "capacity",
+			type: "integer",
+			label: "Seated capacity",
+			sectionId: "commercial",
+			min: 0,
+			step: 10,
+			defaultValue: 180,
+		},
+		{
+			key: "deposit",
+			type: "decimal",
+			label: "Deposit",
+			sectionId: "commercial",
+			decimalPlaces: 2,
+			min: 0,
+			defaultValue: 300,
+			helperText: "Charged when the booking is confirmed.",
+		},
+		{
+			key: "tier",
+			type: "radio-cards",
+			label: "Rate card",
+			sectionId: "commercial",
+			width: "full",
+			columns: 3,
+			defaultValue: "standard",
+			options: [
+				{ value: "standard", label: "Standard", description: "The published rate." },
+				{ value: "partner", label: "Partner", description: "15% off, invoiced monthly." },
+				{ value: "internal", label: "Internal", description: "No charge." },
+			],
+		},
+		{
+			key: "amenities",
+			type: "checkbox-cards",
+			label: "Included",
+			sectionId: "commercial",
+			width: "full",
+			columns: 3,
+			defaultValue: ["bar"],
+			options: [
+				{ value: "bar", label: "Bar" },
+				{ value: "kitchen", label: "Kitchen" },
+				{ value: "parking", label: "Parking" },
+			],
+		},
+		{
+			key: "tags",
+			type: "tags",
+			label: "Tags",
+			sectionId: "advanced",
+			maxTags: 5,
+			recommendations: ["wedding", "conference", "accessible", "late licence"],
+			defaultValue: ["wedding"],
+		},
+		{
+			key: "selfService",
+			type: "switch",
+			switchStyle: "card",
+			label: "Self-service booking",
+			description: "Customers can book without an operator.",
+			sectionId: "advanced",
+			defaultValue: false,
+		},
+		{
+			key: "cutoffHours",
+			type: "integer",
+			label: "Cut-off (hours before)",
+			sectionId: "advanced",
+			min: 0,
+			defaultValue: 48,
+			// Only meaningful once self-service is on — the whole reason the predicate form exists.
+			hidden: (values) => values.selfService !== true,
+		},
+		{
+			key: "metadata",
+			type: "json",
+			label: "Integration metadata",
+			sectionId: "advanced",
+			rows: 4,
+			defaultValue: { externalId: "MRL-1", region: "south" },
+			helperText: "Sent verbatim to the booking provider.",
+		},
+	],
+}
+
+export default function FormLayout() {
+	const [submitted, setSubmitted] = useState<string | null>(null)
+	const [failSave, setFailSave] = useState(false)
+
+	const submit = async (values: SchemaFormValues) => {
+		await new Promise((resolve) => setTimeout(resolve, 600))
+		if (failSave) throw new Error("Save failed")
+		setSubmitted(JSON.stringify(values))
+	}
+
+	return (
+		<>
+			<Checkbox label="Make the save fail" checked={failSave} onChange={(event) => setFailSave(event.target.checked)} />
+			<SchemaForm
+				schema={VENUE_SCHEMA}
+				onSubmit={(values) => submit(values)}
+				onReset={() => setSubmitted(null)}
+			/>
+			{!!submitted && (
+				<Text size="xs" type="secondary" numeric>submitted: {submitted}</Text>
+			)}
+		</>
+	)
+}
 ```
 
 ### One surface per section
 
 ```tsx
-<SchemaForm schema={schema} layout="cards" onSubmit={save} />
+import { useState } from "react"
+
+import { Text } from "themelia-ui/base/typography"
+import { SchemaForm, type SchemaFormSchema, type SchemaFormValues } from "themelia-ui/features/schema-form"
+
+const SETTINGS_SCHEMA: SchemaFormSchema = {
+	sections: [
+		{ id: "notify", title: "Notifications", columns: 1 },
+		{ id: "billing", title: "Billing", columns: 2 },
+	],
+	fields: [
+		{
+			key: "digest",
+			type: "switch",
+			label: "Daily digest",
+			description: "One email at 08:00 with yesterday's bookings.",
+			sectionId: "notify",
+			defaultValue: true,
+		},
+		{
+			key: "channel",
+			type: "select",
+			label: "Escalation channel",
+			sectionId: "notify",
+			allowClear: true,
+			placeholder: "None",
+			options: [
+				{ value: "email", label: "Email" },
+				{ value: "sms", label: "SMS" },
+				{ value: "webhook", label: "Webhook" },
+			],
+		},
+		{
+			key: "vat",
+			label: "VAT number",
+			sectionId: "billing",
+			placeholder: "GB123456789",
+		},
+		{
+			key: "terms",
+			type: "integer",
+			label: "Payment terms (days)",
+			sectionId: "billing",
+			defaultValue: 30,
+			min: 0,
+		},
+	],
+}
+
+export default function CardsLayout() {
+	const [submitted, setSubmitted] = useState<string | null>(null)
+
+	const submit = async (values: SchemaFormValues) => {
+		await new Promise((resolve) => setTimeout(resolve, 600))
+		setSubmitted(JSON.stringify(values))
+	}
+
+	return (
+		<>
+			<SchemaForm
+				schema={SETTINGS_SCHEMA}
+				layout="cards"
+				submitLabel="Save settings"
+				onSubmit={(values) => submit(values)}
+			/>
+			{!!submitted && (
+				<Text size="xs" type="secondary" numeric>submitted: {submitted}</Text>
+			)}
+		</>
+	)
+}
 ```
 
 ## features/sync
@@ -11718,19 +12916,77 @@ Preview route: Data view & data table — `/data-view`
 ### The table underneath: DataTable
 
 ```tsx
-<DataTable
-  columns={columns}
-  data={bookings}
-  enableSorting
-  enableRowSelection
-  enableColumnVisibility
-  stickyFirstColumn
-  getRowId={(row) => row.id}
-  rowActions={(row) => [
-    { id: "open", label: "Open", onClick: () => navigate(row.id) },
-    { id: "archive", label: "Archive", tone: "destructive", onClick: () => archive(row) },
-  ]}
-/>
+import { useState } from "react"
+import { ArchiveIcon, ExternalLinkIcon, Trash2Icon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Text } from "themelia-ui/base/typography"
+import { DataTable } from "themelia-ui/features/table"
+
+import { tableColumns } from "./_shared"
+import { BOOKINGS, type Booking } from "./data"
+
+export default function Table() {
+	const [note, setNote] = useState<string | null>(null)
+	const [page, setPage] = useState(1)
+
+	return (
+		<>
+			<DataTable<Booking>
+				columns={tableColumns}
+				data={BOOKINGS.slice(0, 5)}
+				enableSorting
+				enableRowSelection
+				enableColumnVisibility
+				enableFiltering
+				filterColumn="booking"
+				filterPlaceholder="Filter venues…"
+				showFullscreenToggle
+				/*
+				 * Pinned, because this table scrolls sideways.
+				 *
+				 * Without it, scrolling right takes the venue name and reference off the
+				 * left edge and every row becomes an anonymous set of numbers — you can
+				 * see a total but not what it is the total OF. The one column that says
+				 * which row this is has to survive the scroll.
+				 */
+				stickyFirstColumn
+				getRowId={(row) => row.id}
+				defaultSorting={[{ id: "date", desc: false }]}
+				onRowClick={(row) => setNote(`opened ${row.reference}`)}
+				rowActions={(row) => [
+					{ id: "open", label: "Open", icon: <ExternalLinkIcon />, onClick: () => setNote(`open ${row.reference}`) },
+					{ id: "archive", label: "Archive", icon: <ArchiveIcon />, onClick: () => setNote(`archive ${row.reference}`) },
+					{
+						id: "delete",
+						label: "Delete",
+						icon: <Trash2Icon />,
+						tone: "destructive",
+						// Only on a cancelled booking — the whole reason the factory form exists.
+						visible: (candidate) => candidate.status === "cancelled",
+						onClick: () => setNote(`delete ${row.reference}`),
+					},
+				]}
+				bulkActions={({ selectedRowCount }) => (
+					<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => setNote(`archive ${selectedRowCount}`)}>
+						Archive selected
+					</Button>
+				)}
+				pageCount={3}
+				page={page}
+				onPageChange={setPage}
+				totalRowCount={13}
+				pageSize={5}
+				/*
+				 * Its own name, apart from the index's pager on the same page: two landmarks
+				 * sharing a name are two a reader cannot tell apart.
+				 */
+				strings={{ pagination: { label: "Booking table pages" } }}
+			/>
+			{!!note && <Text size="sm" type="secondary">{note}</Text>}
+		</>
+	)
+}
 ```
 
 ### Cells
@@ -11783,13 +13039,48 @@ export default function TableCells() {
 ### Acting on a selection
 
 ```tsx
-<DataTable
-  enableRowSelection
-  initialState={{ rowSelection: { b2: true, b4: true } }}
-  bulkActions={({ selectedRowCount, clearSelection }) => (
-    <Button onClick={() => archive(selectedRowCount)}>Archive selected</Button>
-  )}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Text } from "themelia-ui/base/typography"
+import { DataTable } from "themelia-ui/features/table"
+
+import { tableColumns } from "./_shared"
+import { BOOKINGS, type Booking } from "./data"
+
+export default function TableSelection() {
+	const [note, setNote] = useState<string | null>(null)
+
+	return (
+		<>
+			{/*
+			 * `transform` makes this box the containing block for the docked bar, so it docks
+			 * to the example rather than the viewport. The same applies in an app: inside a
+			 * transformed ancestor, the bar docks to that box.
+			 */}
+			<div style={{ transform: "translate(0)", position: "relative", width: "100%" }}>
+				<DataTable<Booking>
+					columns={tableColumns}
+					data={BOOKINGS.slice(0, 4)}
+					enableRowSelection
+					getRowId={(row) => row.id}
+					initialState={{ rowSelection: { b2: true, b4: true } }}
+					bulkActions={({ selectedRowCount }) => (
+						<Button
+							type="button"
+							tone="neutral"
+							buttonStyle="outline"
+							onClick={() => setNote(`archive ${selectedRowCount}`)}
+						>
+							Archive selected
+						</Button>
+					)}
+				/>
+			</div>
+			{!!note && <Text size="sm" type="secondary">{note}</Text>}
+		</>
+	)
+}
 ```
 
 ### Nothing to show
@@ -11827,13 +13118,32 @@ Preview route: Theme tweaker — `/theme-tweaker`
 
 ```tsx
 import { Button } from "themelia-ui/base/buttons"
+import { Card } from "themelia-ui/base/cards"
+import { Grid } from "themelia-ui/base/structure"
 import { ThemeScope, createTheme } from "themelia-ui/features/theme-tweaker"
+
+/*
+ * Both radii: a container reads --radius and the controls inside it read --radius-sm, so a
+ * scope that set only one would leave half the corners as they were.
+ */
+const SQUARE_CORNERS = createTheme({ shared: { "--radius": "0.25rem", "--radius-sm": "0.125rem" } })
 
 export default function IsolatedThemeScope() {
 	return (
-		<ThemeScope theme={createTheme({ shared: { "--radius": "0.875rem" } })}>
-			<Button>Scoped radius</Button>
-		</ThemeScope>
+		<Grid gap="lg">
+			<Card
+				title="App theme"
+				description="The corners every other region uses."
+				footerSlot={<Button>Unscoped</Button>}
+			/>
+			<ThemeScope theme={SQUARE_CORNERS}>
+				<Card
+					title="Scoped theme"
+					description="Squarer corners, in this region only."
+					footerSlot={<Button>Scoped radius</Button>}
+				/>
+			</ThemeScope>
+		</Grid>
 	)
 }
 ```
@@ -13611,30 +14921,32 @@ function ActionsMenu() {
 
 export default function UiPortalHostExample() {
 	return (
-		<Grid columns={2} gap="lg">
-			<GridCell>
-				<Stack gap="sm">
-					<Text size="xs" type="secondary">
-						Compact scope, no host — the menu portals to the body
-					</Text>
-					<UIScope config={{ density: "compact" }}>
-						<ActionsMenu />
-					</UIScope>
-				</Stack>
-			</GridCell>
-			<GridCell>
-				<Stack gap="sm">
-					<Text size="xs" type="secondary">
-						Compact scope with a host — the menu is compact too
-					</Text>
-					<UIScope config={{ density: "compact" }}>
-						<UIPortalHost>
+		<Stack direction="horizontal">
+			<Grid columns={2} gap="lg">
+				<GridCell>
+					<Stack gap="sm">
+						<Text size="xs" type="secondary">
+							Compact scope, no host — the menu portals to the body
+						</Text>
+						<UIScope config={{ density: "compact" }}>
 							<ActionsMenu />
-						</UIPortalHost>
-					</UIScope>
-				</Stack>
-			</GridCell>
-		</Grid>
+						</UIScope>
+					</Stack>
+				</GridCell>
+				<GridCell>
+					<Stack gap="sm">
+						<Text size="xs" type="secondary">
+							Compact scope with a host — the menu is compact too
+						</Text>
+						<UIScope config={{ density: "compact" }}>
+							<UIPortalHost>
+								<ActionsMenu />
+							</UIPortalHost>
+						</UIScope>
+					</Stack>
+				</GridCell>
+			</Grid>
+		</Stack>
 	)
 }
 ```

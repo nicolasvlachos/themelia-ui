@@ -20,7 +20,7 @@ import "themelia-ui/base/buttons.css"
 
 ## Composition
 
-This family composes `base/slot`, `base/tooltip`, `base/typography`.
+This module composes `base/slot`, `base/tooltip`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -161,7 +161,7 @@ Extends: `Omit<ButtonProps, "onClick">`.
 | member | required | type | description / documented default |
 | --- | :-: | --- | --- |
 | `loading` | no | `boolean` | Controlled pending state. Omit to let the button manage it from `onClick`. |
-| `handlesLoading` | no | `boolean` | Accepted for source-kit compatibility; inert. Choosing `LoaderButton` is already that<br>decision. Swallowed rather than spread, so ported call sites don't leak it to the DOM. |
+| `handlesLoading` | no | `boolean` | Accepted so call sites that pass it keep compiling; inert. Choosing `LoaderButton` is<br>already that decision. Swallowed rather than spread, so it never reaches the DOM. |
 | `onClick` | no | `(event: React.MouseEvent<HTMLButtonElement>) => void \| Promise<unknown>` | May return a promise; the button then stays pending until it settles. |
 | `strings` | no | `StringsProp<ButtonLoadingStrings>` |  |
 
@@ -271,17 +271,18 @@ export default function Scale() {
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function State() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Button>Save changes</Button>
 			<Button loading>Save changes</Button>
 			<Button disabled>Disabled</Button>
 			<Button tone="neutral" buttonStyle="outline" loading>
 				Loading
 			</Button>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -292,14 +293,15 @@ export default function State() {
 import { PlusIcon } from "lucide-react"
 
 import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function IconOnly() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Button iconOnly aria-label="Add"><PlusIcon /></Button>
 			<Button tone="neutral" buttonStyle="outline" iconOnly aria-label="Edit">✎</Button>
 			<Button tone="destructive" buttonStyle="ghost" iconOnly aria-label="Delete">🗑</Button>
-		</>
+		</Stack>
 	)
 }
 ```
@@ -308,10 +310,11 @@ export default function IconOnly() {
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 import { Button, ButtonGroup } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
 
 export default function Group() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<ButtonGroup>
 				<Button tone="neutral" buttonStyle="outline">Day</Button>
 				<Button tone="neutral" buttonStyle="outline">Week</Button>
@@ -321,7 +324,7 @@ export default function Group() {
 				<Button tone="neutral" buttonStyle="outline">Top</Button>
 				<Button tone="neutral" buttonStyle="outline">Bottom</Button>
 			</ButtonGroup>
-		</>
+		</Stack>
 	)
 }
 ```

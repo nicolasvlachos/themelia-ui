@@ -20,7 +20,7 @@ import "themelia-ui/features/activities.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install @tiptap/core @tiptap/pm @tiptap/starter-kit
@@ -28,7 +28,7 @@ npm install @tiptap/core @tiptap/pm @tiptap/starter-kit
 
 ## Composition
 
-This family composes `base/action-menu`, `base/badge`, `base/buttons`, `base/display`, `base/feedback`, `base/typography`, `features/comments`, `features/mentions`.
+This module composes `base/action-menu`, `base/badge`, `base/buttons`, `base/display`, `base/feedback`, `base/typography`, `features/comments`, `features/mentions`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -885,30 +885,179 @@ Preview route: Activities — `/activities`
 ### ActivityFeed
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ActivityFeed
-  activities={activities}
-  density="rich"
-  loading={pending}
-  error={loadError}
-  onRetry={reloadHistory}
-  currentUserId="u1"
-  resources={registry}
-  onActorClick={(actor) => open(actor)}
-/>
+import { useState } from "react"
+import { ExternalLinkIcon, RotateCwIcon } from "lucide-react"
+
+import { PillRadioGroup, Select } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ActivityFeed, type ActivityDensity } from "themelia-ui/features/activities"
+
+import styles from "./activities.module.css"
+import { ACTIVITIES, REGISTRY } from "./data"
+
+export default function ActivityFeedExample() {
+	const [density, setDensity] = useState<ActivityDensity>("rich")
+	const [activities, setActivities] = useState(ACTIVITIES)
+	const [feedState, setFeedState] = useState("ready")
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="sm" wrap>
+				<PillRadioGroup
+					value={density}
+					onValueChange={(next) => next && setDensity(next as ActivityDensity)}
+					options={[
+						{ value: "compact", label: "compact" },
+						{ value: "default", label: "default" },
+						{ value: "rich", label: "rich" },
+					]}
+				/>
+				<Select aria-label="Feed state" value={feedState} className={styles.stateSelect}
+					options={[
+						{ value: "ready", label: "Loaded" }, { value: "refreshing", label: "Refreshing" },
+						{ value: "error", label: "Refresh failed" }, { value: "loading", label: "Initial loading" },
+						{ value: "initial-error", label: "Initial load failed" }, { value: "empty", label: "Empty" },
+					]}
+					onValueChange={(value) => value && setFeedState(value)} />
+			</Stack>
+
+			<ActivityFeed
+				activities={["empty", "loading", "initial-error"].includes(feedState) ? [] : activities}
+				loading={feedState === "refreshing" || feedState === "loading"}
+				error={feedState === "error" || feedState === "initial-error" ? "The activity service is unavailable. Try again to reload history." : undefined}
+				onRetry={() => setFeedState("ready")}
+				density={density}
+				currentUserId="u1"
+				resources={REGISTRY}
+				onActorClick={(actor) => note(`actor: ${actor.name}`)}
+				onResourceClick={(resource) => note(`resource: ${resource.key}`)}
+				actionsForActivity={(activity) =>
+					activity.event === "mail_bounced"
+						? [
+								{ id: "resend", label: "Resend", icon: RotateCwIcon, presentation: "inline" },
+								{ id: "open", label: "Open message", icon: ExternalLinkIcon },
+							]
+						: undefined
+				}
+				onAction={(actionId, activity) => {
+					if (actionId === "resend") {
+						setActivities((current) => current.map((item) =>
+							item.id === activity.id
+								? { ...item, event: "mail_sent", description: "The confirmation was delivered on retry." }
+								: item,
+						))
+					}
+					note(`${actionId} on ${activity.id}`)
+				}}
+			/>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### ActivityLog
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ActivityLog
-  entries={entries}
-  loading={pending}
-  error={loadError}
-  onRetry={reloadHistory}
-  resources={resources}
-  canModerate
-  composer={{ enabled: true, context, onSubmit }}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Select } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ActivityLog, createActivityEventAdapter } from "themelia-ui/features/activities"
+import type { CommentUser } from "themelia-ui/features/comments"
+
+import styles from "./activities.module.css"
+import { AUDIT, LOG_ENTRIES, RESOURCES, type AuditRow, type Kind } from "./data"
+
+// Pinned to the log's kind union, so the entries it produces line up with the rest.
+const toEntry = createActivityEventAdapter<AuditRow, CommentUser, unknown, Kind>({
+	id: (row) => row.uuid,
+	timestamp: (row) => row.at,
+	kind: () => "audit",
+	event: (row) => row.verb,
+	actor: (row) => row.who,
+	action: (row) => row.verb,
+	target: (row) => row.subject,
+	source: () => "Audit",
+})
+
+const ENTRIES = [...LOG_ENTRIES, ...AUDIT.map(toEntry)]
+
+export default function ActivityLogExample() {
+	const [entries, setEntries] = useState(ENTRIES)
+	const [logState, setLogState] = useState("ready")
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="sm" wrap>
+				<Button tone="neutral" buttonStyle="outline" onClick={() => setEntries([])} disabled={entries.length === 0}>Show empty log</Button>
+				<Button tone="neutral" buttonStyle="outline" onClick={() => setEntries(ENTRIES)}>Restore sample</Button>
+				<Select aria-label="Log state" value={logState} className={styles.stateSelect}
+					options={[{ value: "ready", label: "Loaded" }, { value: "loading", label: "Updating" }, { value: "error", label: "Failed" }]}
+					onValueChange={(value) => value && setLogState(value)} />
+			</Stack>
+
+			<ActivityLog<CommentUser, unknown, Kind>
+				entries={entries}
+				loading={logState === "loading"}
+				error={logState === "error" ? "The latest history could not be loaded. Your draft is still here." : undefined}
+				onRetry={() => setLogState("ready")}
+				resources={RESOURCES}
+				canModerate
+				composer={{
+					enabled: true,
+					context: { id: "4417", type: "booking" },
+					placeholder: "Add a note to this booking…",
+					onSubmit: (values, helpers) => {
+						setEntries((prev) => [
+							{
+								id: `c-${Date.now()}`,
+								kind: "comment" as const,
+								timestamp: new Date().toISOString(),
+								comment: {
+									id: `c-${Date.now()}`,
+									contentType: "html",
+									content: values.content,
+									createdAt: new Date().toISOString(),
+									user: { id: "me", name: "You" },
+									references: values.references,
+								},
+							},
+							...prev,
+						])
+						helpers.reset()
+					},
+				}}
+				onCommentDelete={(id) => setEntries((prev) => prev.filter((entry) => entry.id !== id))}
+				onEventAction={(actionId, entry) => note(`${actionId} on ${entry.id}`)}
+			/>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### createActivityEventAdapter

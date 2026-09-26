@@ -20,7 +20,7 @@ import "themelia-ui/features/filters.css"
 
 ## Composition
 
-This family composes `base/badge`, `base/buttons`, `base/choice-inputs`, `base/command`, `base/date-pickers`, `base/dropdown-menu`, `base/feedback`, `base/item`, `base/navigation`, `base/overlay`, `base/popover`, `base/popover-menu`, `base/sheet`, `base/spinner`, `base/text-inputs`, `base/typography`, `base/value-inputs`.
+This module composes `base/badge`, `base/buttons`, `base/choice-inputs`, `base/command`, `base/date-pickers`, `base/dropdown-menu`, `base/feedback`, `base/item`, `base/navigation`, `base/overlay`, `base/popover`, `base/popover-menu`, `base/sheet`, `base/spinner`, `base/text-inputs`, `base/typography`, `base/value-inputs`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.

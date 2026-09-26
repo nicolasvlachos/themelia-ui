@@ -1,12 +1,12 @@
 /*
  * A general-profile consumer, built the way the documentation says to build one.
  *
- * Every import is an exact published subpath and every family brings its own stylesheet.
+ * Every import is an exact published subpath and every module brings its own stylesheet.
  * Nothing here reaches into `src/`, nothing imports `style.css`, and nothing installs an
  * optional peer — which is what makes this a test of the package rather than of the
  * repository. `verify:reference-consumers` installs it from a packed tarball and builds it.
  *
- * The composition is deliberately cross-cutting. Smoke snippets import one family at a
+ * The composition is deliberately cross-cutting. Smoke snippets import one module at a
  * time and prove resolution; what they cannot pressure is a provider nested inside another
  * provider, an overlay rendered through a portal out of a scoped subtree, or a controlled
  * form whose values three components read at once.
@@ -87,7 +87,7 @@ function InviteForm({ onSubmit }: { onSubmit: (email: string) => void }) {
  *
  * `UIScope` sets its tokens on an element; a portal escapes that element by definition, so
  * without a host inside the scope the popover would render against the root's tokens. This
- * is the composition that most often goes wrong and that a per-family smoke test cannot see.
+ * is the composition that most often goes wrong and that a per-module smoke test cannot see.
  */
 function ScopedPanel() {
   return (

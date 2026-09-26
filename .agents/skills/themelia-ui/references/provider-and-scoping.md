@@ -47,7 +47,7 @@ When an application embeds another:
 </UIScope>
 ```
 
-Its `config` is its **own overrides only**; inherited values already cascade in.
+Its `config` holds its **own overrides only**; the rest comes from the enclosing provider.
 
 `transparent` (default `true`) removes the element from layout with `display: contents`.
 Custom properties still inherit through it, because inheritance does not depend on the box.
@@ -60,7 +60,7 @@ below a slice as well as at it:
 ```tsx fragment — shape only, not a program
 <UIProvider config={{ theme: { colors: { primary: "blue", secondary: "green" } } }}>
   <UIScope config={{ theme: { colors: { primary: "red" } } }}>
-    {/* primary is red, secondary is still green */}
+    {/* useUIConfig().theme.colors: primary "red", secondary "green" */}
   </UIScope>
 </UIProvider>
 ```
@@ -68,6 +68,14 @@ below a slice as well as at it:
 This applies to every record-shaped field: `theme.colors`, `theme.palette`, `theme.vars`,
 `typography.fonts`, `typography.sizes` and `motion.durations`. Below them a record is a flat
 map of token to value, and a value is replaced, not merged.
+
+That is the configuration components read, and the CSS follows it: each scope writes the
+merged overrides on its element, so inside the nested scope above `--primary` is red and
+`--secondary` is green. Raw inputs (palette steps, radii, fonts, durations and the scale
+factors) inherit through every boundary. Semantic colours and type sizes do not: a `Scope`,
+or any other element on the boundary list, declares them again from the palette. To keep a
+colour across one of those, set it through `theme.palette` or declare it at the boundary
+list; see [Theming](theming.md#setting-a-theme).
 
 ## Scope — tokens only
 
@@ -113,7 +121,8 @@ Wrap the region in `UIPortalHost` and the popups render inside it instead:
 
 The host renders one `display: contents` element inside the scope, and every portal in the
 subtree targets it, so the popup inherits from the scope. DropdownMenu, ContextMenu, Select,
-Tooltip, HoverCard, Popover, NavigationMenu and Toaster all resolve it.
+Combobox, Tooltip, HoverCard, Popover, NavigationMenu and Toaster all resolve it. An
+`Overlay` needs no host: it renders in place, and the popups inside it portal into it.
 
 Precedence, most specific first:
 
@@ -163,7 +172,7 @@ ship the scrollbar rule in the consuming application's stylesheet:
 ```
 
 `disableStyleElements` does not disable kit behavior; it moves those small rules into the
-consuming app. It does not replace the normal `core.css`, family CSS, or `style.css` import.
+consuming app. It does not replace the normal `core.css`, module stylesheet, or `style.css` import.
 
 ## Reading the config
 
@@ -180,7 +189,7 @@ provider, so read `useDefaults` rather than hard-coding a size or variant.
 `useMoneyConfig`, `useDatesConfig`, `useOverlayConfig`, `useDensity`, `useScale`,
 `useFormatting`, `useTypographyConfig`. `useDefaults` takes the component's *own* defaults
 and merges the scope's over them, which keeps the values beside the component, makes the
-call order-independent, and lets an unused family tree-shake away.
+call order-independent, and lets an unused module tree-shake away.
 
 The provider holds stable display policy: money, dates, size, density, scale. Per-feature
 policy, query timing, domain accessors, data and callbacks stay props.
@@ -195,8 +204,8 @@ still take precedence over provider defaults.
 and supplies that state to its provider. Its internal editor state alone does not change
 an enclosing provider. Keep unfinished text edits separate from applied configuration:
 for example, validate a locale with `Intl.getCanonicalLocales` before passing it to
-formatting components. The [Theme Tweaker recipe](components/features--theme-tweaker.md)
-shows this wiring and keeps the last valid preview while a locale is being typed.
+formatting components. [Editing a theme at runtime](theming.md#editing-a-theme-at-runtime)
+shows the wiring.
 
 ## Optional iPhone input zoom prevention
 

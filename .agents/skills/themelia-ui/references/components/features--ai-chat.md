@@ -20,7 +20,7 @@ import "themelia-ui/features/ai-chat.css"
 
 ## Composition
 
-This family composes `base/badge`, `base/buttons`, `base/copyable`, `base/display`, `base/feedback`, `base/text-inputs`, `base/typography`, `base/upload`.
+This module composes `base/badge`, `base/buttons`, `base/copyable`, `base/display`, `base/feedback`, `base/text-inputs`, `base/typography`, `base/upload`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -1116,27 +1116,159 @@ Preview route: AI chat — `/ai-chat`
 ### The chat
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AiChat
-  messages={messages}
-  inputValue={input}
-  onInputChange={setInput}
-  onSubmit={({ text, attachments }) => send(text, attachments)}
-  onStop={() => abort()}
-  streaming={isStreaming}
-  agent={{ name: "Atlas", subtitle: "model-large", status: "thinking" }}
-  suggestions={suggestions}
-  onPickSuggestion={(s) => setInput(String(s.label))}
-/>
+import { useRef, useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AiChat, type AiChatMessageData } from "themelia-ui/features/ai-chat"
+
+import { MESSAGES, SUGGESTIONS } from "./data"
+
+export default function Chat() {
+	const [input, setInput] = useState("")
+	const [streaming, setStreaming] = useState(false)
+	const [messages, setMessages] = useState<AiChatMessageData[]>(MESSAGES)
+	const [activeResponseId, setActiveResponseId] = useState<string | null>(null)
+	const messageSequence = useRef(0)
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			{/* The chat fills the box it is given, and the transcript scrolls inside it. */}
+			<div style={{ height: "40rem" }}>
+				<AiChat
+					messages={messages}
+					inputValue={input}
+					onInputChange={setInput}
+					onSubmit={({ text }) => {
+						messageSequence.current += 1
+						const sequence = messageSequence.current
+						const responseId = `demo-response-${sequence}`
+						setMessages((current) => [
+							...current,
+							{
+								id: `demo-user-${sequence}`,
+								role: "user",
+								authorName: "You",
+								parts: [{ type: "text", content: text }],
+							},
+							{
+								id: responseId,
+								role: "assistant",
+								authorName: "Atlas",
+								parts: [],
+								pending: true,
+							},
+						])
+						note(`sent: ${text}`)
+						setInput("")
+						setActiveResponseId(responseId)
+						setStreaming(true)
+					}}
+					onStop={() => {
+						setMessages((current) =>
+							current.map((message) =>
+								message.id === activeResponseId
+									? {
+										...message,
+										pending: false,
+										parts: [{ type: "text", content: "Generation stopped." }],
+									}
+									: message,
+							),
+						)
+						note("stopped generation")
+						setActiveResponseId(null)
+						setStreaming(false)
+					}}
+					streaming={streaming}
+					agent={{
+						name: "Atlas",
+						subtitle: "model-large",
+						status: streaming ? "working" : "idle",
+					}}
+					headerActions={
+						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={() => note("settings")}>
+							Settings
+						</Button>
+					}
+					suggestions={SUGGESTIONS}
+					onPickSuggestion={(suggestion) => setInput(String(suggestion.label))}
+					onAttach={() => note("attach")}
+					onMessageCopy={(message) => note(`copied ${message.id}`)}
+					onMessageRegenerate={(message) => note(`regenerate ${message.id}`)}
+					queue={[
+						{ id: "q1", label: "Backfill the 2025 invoices", status: "running" },
+						{ id: "q2", label: "Run the billing tests" },
+					]}
+					onCancelQueueItem={(id) => note(`cancelled ${id}`)}
+				/>
+			</div>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### A turn
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AiMessageBubble role="assistant" authorName="Atlas" onRegenerate={retry}>
-  The totals are summed as floats.
-</AiMessageBubble>
+import { useState } from "react"
 
-<AiShimmer>Thinking…</AiShimmer>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AiMessageBubble, AiShimmer } from "themelia-ui/features/ai-chat"
+
+export default function Turn() {
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Stack gap="lg">
+				<AiMessageBubble
+					role="user"
+					authorName="You"
+					timestamp="09:12"
+				>
+					Why is the invoice total off by a cent on some orders?
+				</AiMessageBubble>
+				<AiMessageBubble
+					role="assistant"
+					authorName="Atlas"
+					timestamp="09:12"
+					plainText="Each line is rounded before the sum, so the error compounds."
+					onRegenerate={() => note("regenerate")}
+				>
+					Each line is rounded before the sum, so the error compounds.
+				</AiMessageBubble>
+				<AiMessageBubble role="system">
+					Atlas switched to model-large.
+				</AiMessageBubble>
+				<AiShimmer />
+			</Stack>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Reasoning and plans
@@ -1225,12 +1357,72 @@ export default function Tools() {
 ### What it produced
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AiArtifact title="totals.ts" subtitle="TypeScript" copyText={code} onDownload={save}>
-  <AiCodeBlock code={code} language="TypeScript" showLineNumbers highlightLines={[2, 8]} />
-</AiArtifact>
+import { useState } from "react"
+import { FileTextIcon } from "lucide-react"
 
-<AiSources sources={sources} defaultExpanded />
-<AiSources sources={sources} variant="avatars" />
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AiArtifact, AiAttachment, AiCodeBlock, AiSources } from "themelia-ui/features/ai-chat"
+
+import { SAMPLE_CODE, SOURCES, STAGED } from "./data"
+
+export default function Output() {
+	const [attachments, setAttachments] = useState(STAGED)
+	const [log, setLog] = useState<string[]>([])
+
+	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
+
+	return (
+		<>
+			<Stack gap="lg">
+				<AiArtifact
+					title="totals.ts"
+					subtitle="TypeScript · 11 lines"
+					icon={FileTextIcon}
+					copyText={SAMPLE_CODE}
+					onDownload={() => note("download")}
+					onOpen={() => note("open artifact")}
+				>
+					<AiCodeBlock
+						code={SAMPLE_CODE}
+						language="TypeScript"
+						showLineNumbers
+						highlightLines={[2, 8]}
+						hideHeader
+					/>
+				</AiArtifact>
+
+				<AiSources sources={SOURCES} defaultExpanded />
+				<AiSources sources={SOURCES} variant="avatars" />
+
+				<Stack direction="horizontal" gap="md" wrap>
+					{attachments.map((attachment) => (
+						<AiAttachment
+							key={attachment.id}
+							name={attachment.name}
+							meta={attachment.meta}
+							kind={attachment.kind}
+							progress={attachment.progress}
+							onOpen={() => note(`open ${attachment.name}`)}
+							onRemove={() =>
+								setAttachments((current) => current.filter((item) => item.id !== attachment.id))
+							}
+						/>
+					))}
+					<AiAttachment name="broken.zip" meta="upload failed" kind="archive" errored />
+				</Stack>
+			</Stack>
+
+			{log.length > 0 && (
+				<Stack gap="none">
+					{log.map((line, index) => (
+						<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
+					))}
+				</Stack>
+			)}
+		</>
+	)
+}
 ```
 
 ### Asking first

@@ -20,7 +20,7 @@ import "themelia-ui/features/map.css"
 
 ## Optional peers
 
-Install these only when importing this family:
+Install these only when importing this module:
 
 ```bash
 npm install leaflet leaflet-draw leaflet.fullscreen leaflet.markercluster react-leaflet react-leaflet-markercluster
@@ -28,7 +28,7 @@ npm install leaflet leaflet-draw leaflet.fullscreen leaflet.markercluster react-
 
 ## Composition
 
-This family composes `base/buttons`, `base/command`, `base/display`, `base/dropdown-menu`, `base/input-group`, `base/popover`, `base/typography`.
+This module composes `base/buttons`, `base/command`, `base/display`, `base/dropdown-menu`, `base/input-group`, `base/popover`, `base/typography`.
 
 Application policy—routing, fetching, persistence, permissions, and translation—stays
 outside the package and arrives through the public props, callbacks, slots, or accessors below.
@@ -650,7 +650,6 @@ import {
 	MapMarker, MapPopup, MapTileLayer, MapTooltip, MapZoomControl,
 } from "themelia-ui/features/map"
 
-import styles from "../../preview.module.css"
 import { MARLOW } from "./data"
 
 const VENUES: { id: string; name: string; position: [number, number]; capacity: number }[] = [
@@ -661,34 +660,32 @@ const VENUES: { id: string; name: string; position: [number, number]; capacity: 
 
 export default function MapExample() {
 	return (
-		<div className={styles.mapFrame}>
-			<Map center={MARLOW} zoom={13}>
-				<MapLayers defaultTileLayer="Streets" defaultLayerGroups={["Venues"]}>
-					<MapTileLayer name="Streets" />
-					<MapTileLayer
-						name="Terrain"
-						url="https://tile.opentopomap.org/{z}/{x}/{y}.png"
-						attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
-					/>
-					<MapLayerGroup name="Venues">
-						{VENUES.map((venue) => (
-							<MapMarker key={venue.id} position={venue.position} ariaLabel={venue.name}>
-								<MapTooltip>{venue.name}</MapTooltip>
-								<MapPopup>
-									<Text weight="semibold">{venue.name}</Text>
-									<Text size="sm" type="secondary">{venue.capacity} seated</Text>
-								</MapPopup>
-							</MapMarker>
-						))}
-					</MapLayerGroup>
-					<MapLayersControl />
-				</MapLayers>
+		<Map center={MARLOW} zoom={13} height="26rem">
+			<MapLayers defaultTileLayer="Streets" defaultLayerGroups={["Venues"]}>
+				<MapTileLayer name="Streets" />
+				<MapTileLayer
+					name="Terrain"
+					url="https://tile.opentopomap.org/{z}/{x}/{y}.png"
+					attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
+				/>
+				<MapLayerGroup name="Venues">
+					{VENUES.map((venue) => (
+						<MapMarker key={venue.id} position={venue.position} ariaLabel={venue.name}>
+							<MapTooltip>{venue.name}</MapTooltip>
+							<MapPopup>
+								<Text weight="semibold">{venue.name}</Text>
+								<Text size="sm" type="secondary">{venue.capacity} seated</Text>
+							</MapPopup>
+						</MapMarker>
+					))}
+				</MapLayerGroup>
+				<MapLayersControl />
+			</MapLayers>
 
-				<MapZoomControl />
-				<MapFullscreenControl position="bottom-right" />
-				<MapLocateControl position="bottom-right" />
-			</Map>
-		</div>
+			<MapZoomControl />
+			<MapFullscreenControl position="bottom-right" />
+			<MapLocateControl position="bottom-right" />
+		</Map>
 	)
 }
 ```
@@ -706,7 +703,6 @@ import {
 	MapZoomControl,
 } from "themelia-ui/features/map"
 
-import styles from "../../preview.module.css"
 import { MARLOW } from "./data"
 
 export default function Draw() {
@@ -714,22 +710,20 @@ export default function Draw() {
 
 	return (
 		<>
-			<div className={styles.mapFrame}>
-				<Map center={MARLOW} zoom={13}>
-					<MapTileLayer />
-					<MapZoomControl />
-					<MapDrawControl onLayersChange={(group) => setShapes(group.getLayers().length)}>
-						<MapDrawMarker />
-						<MapDrawPolyline />
-						<MapDrawPolygon />
-						<MapDrawRectangle />
-						<MapDrawCircle />
-						<MapDrawEdit />
-						<MapDrawDelete />
-						<MapDrawUndo />
-					</MapDrawControl>
-				</Map>
-			</div>
+			<Map center={MARLOW} zoom={13} height="26rem">
+				<MapTileLayer />
+				<MapZoomControl />
+				<MapDrawControl onLayersChange={(group) => setShapes(group.getLayers().length)}>
+					<MapDrawMarker />
+					<MapDrawPolyline />
+					<MapDrawPolygon />
+					<MapDrawRectangle />
+					<MapDrawCircle />
+					<MapDrawEdit />
+					<MapDrawDelete />
+					<MapDrawUndo />
+				</MapDrawControl>
+			</Map>
 			<Text size="sm" type="secondary">
 				shapes drawn: <Badge tone="neutral">{shapes}</Badge>
 			</Text>
@@ -743,12 +737,12 @@ export default function Draw() {
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 import { useState } from "react"
 
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 import {
 	Map, MapSearchControl, MapTileLayer, MapZoomControl, PlaceAutocomplete, type PlaceFeature,
 } from "themelia-ui/features/map"
 
-import styles from "../../preview.module.css"
 import { MARLOW } from "./data"
 
 export default function PlaceAutocompleteExample() {
@@ -756,9 +750,9 @@ export default function PlaceAutocompleteExample() {
 
 	return (
 		<>
-			<div className={styles.mapSearch}>
+			<Stack maxWidth="24rem">
 				<PlaceAutocomplete limit={5} onPlaceSelect={setPlace} />
-			</div>
+			</Stack>
 			{!!place && (
 				<Text size="sm" type="secondary" numeric>
 					{place.properties.name} — {place.geometry.coordinates[1].toFixed(4)},{" "}
@@ -766,13 +760,11 @@ export default function PlaceAutocompleteExample() {
 				</Text>
 			)}
 
-			<div className={styles.mapFrame}>
-				<Map center={MARLOW} zoom={13}>
-					<MapTileLayer />
-					<MapSearchControl position="top-left" limit={5} />
-					<MapZoomControl position="top-right" />
-				</Map>
-			</div>
+			<Map center={MARLOW} zoom={13} height="26rem">
+				<MapTileLayer />
+				<MapSearchControl position="top-left" limit={5} />
+				<MapZoomControl position="top-right" />
+			</Map>
 		</>
 	)
 }
