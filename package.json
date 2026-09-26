@@ -1165,7 +1165,7 @@
     "publish:without-tests": "npm publish --ignore-scripts --access public",
     "codemod": "node scripts/consumer/codemod.mjs",
     "find": "node scripts/consumer/find-component.mjs",
-    "tokens:theme": "node scripts/gen-theme.mjs",
+    "tokens:theme": "node scripts/gen-theme.mjs && node scripts/gen-token-names.mjs",
     "tokens:tailwind": "node scripts/gen-tailwind-bridge.mjs",
     "tokens:surface": "node scripts/lib/token-surface.mjs --write",
     "gen:architecture": "node scripts/gen-architecture-manifest.mjs && node scripts/gen-migration-map.mjs",

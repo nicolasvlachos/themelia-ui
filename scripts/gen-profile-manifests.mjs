@@ -1,15 +1,14 @@
 /*
- * Writes dist-metadata/profiles/{general,admin}.json from architecture/manifest.json: the
- * exact JS/CSS subpaths and optional peers available below each profile. A profile is a
- * dependency ceiling, not a subject-matter split. The records are committed outside dist/ so
- * they stay reviewable, and copied into dist/profiles/, where the package exports point.
+ * Writes dist/profiles/{general,admin}.json, where the package exports point, from
+ * architecture/manifest.json: the exact JS/CSS subpaths and optional peers available below
+ * each profile. A profile is a dependency ceiling, not a subject-matter split.
  * Fails if a listed subpath is not in package.json exports.
  */
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
 const manifest = JSON.parse(readFileSync('architecture/manifest.json', 'utf8'))
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
-const OUT_DIR = 'dist-metadata/profiles'
+const OUT_DIR = 'dist/profiles'
 
 const byId = new Map(manifest.families.map((family) => [family.id, family]))
 
@@ -51,10 +50,8 @@ if (missing.length > 0) {
 }
 
 mkdirSync(OUT_DIR, { recursive: true })
-if (existsSync('dist')) mkdirSync('dist/profiles', { recursive: true })
 for (const [id, record] of Object.entries(records)) {
   writeFileSync(`${OUT_DIR}/${id}.json`, `${JSON.stringify(record, null, 2)}\n`)
-  if (existsSync('dist')) copyFileSync(`${OUT_DIR}/${id}.json`, `dist/profiles/${id}.json`)
 }
 
 console.log(

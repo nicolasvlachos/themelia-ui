@@ -61,7 +61,7 @@
 	--sidebar-accent: var(--neutral-75); /* Sidebar hover and selected-row neutral fill. */
 	--sidebar-accent-foreground: var(--neutral-900); /* Text and icons on sidebar accent fills. */
 	--sidebar-border: var(--neutral-200); /* Sidebar dividers and shell border. */
-	--sidebar-ring: var(--neutral-400); /* Focus-visible ring inside the sidebar. */
+	--sidebar-ring: var(--neutral-400); /* The sidebar's focus-ring seed, as --ring is the page's: sidebar surfaces mix it 70/30 toward --sidebar-foreground in light, read it unmixed in dark, and compose --focus-ring, --focus-ring-inset and --field-focus-ring from it. */
 	--shadow-ink: var(--pure-black); /* Ink every elevation tier tints with. */
 	--shadow-2xs: 0 1px 2px 0px color-mix(in oklab, var(--shadow-ink) 4%, transparent); /* shadcn compatibility only; no kit surface reads it. Resting lift is --shadow-xs. */
 	--shadow-xs: 0 1px 2px 0px color-mix(in oklab, var(--shadow-ink) 6%, transparent), 0 1px 1px -1px color-mix(in oklab, var(--shadow-ink) 6%, transparent); /* Resting lift: a framed card's bezel, a raised chip, a slider thumb, a floating sidebar. */
