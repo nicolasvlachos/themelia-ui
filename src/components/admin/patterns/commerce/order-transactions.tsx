@@ -84,8 +84,7 @@ export function OrderTransactions({
 							 * The mark's tone is a PROP, not a rule reaching into the badge from this
 							 * module. IconBadge declares its fill and its glyph as one pair so a badge
 							 * cannot end up with one tone's ground and another's ink; overriding half
-							 * of it from outside — which is what the local copy did — is how they come
-							 * apart.
+							 * of it from outside is how they come apart.
 							 */
 							const markTone: IconBadgeTone =
 								transaction.status === "failure"

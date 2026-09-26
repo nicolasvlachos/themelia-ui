@@ -25,7 +25,7 @@ const DEFAULT_UPLOAD_OPTIONS: MediaLibraryUploadOptions = {
 /** A stable empty array for memo dependencies. */
 const EMPTY: readonly unknown[] = []
 
-/** The hook supplies recovery controls even when a legacy state adapter omits them. */
+/** The hook supplies the recovery controls, which a state adapter may omit. */
 type ResolvedMediaLibraryState<TItem> = MediaLibraryState<TItem> &
 	Required<Pick<MediaLibraryState<TItem>, "fetchError" | "refetch" | "selectVisible" | "deselectVisible">>
 

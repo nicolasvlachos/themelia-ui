@@ -25,7 +25,7 @@ export default defineConfig({
 	css: sharedCss,
 	build: {
 		// The docs app must NOT share dist/ with the library build — both empty their outDir,
-		// so whichever ran last silently replaced the other's output.
+		// so whichever runs last would silently replace the other's output.
 		outDir: "dist-docs",
 		cssTarget: browserFloor,
 	},

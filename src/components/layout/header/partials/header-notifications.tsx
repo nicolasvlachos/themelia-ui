@@ -84,12 +84,10 @@ export function HeaderNotifications({
 					{notifications.length === 0 ? (
 						<div className={styles.notificationsEmpty}>
 							{/*
-							 * Plain text rather than `Empty`, and this is the exception rather than
-							 * the oversight. `Empty` is a content region and carries `role="status"`;
-							 * this sits inside a menu popup, whose children ARIA expects to be
-							 * menuitems. Putting a live region among them trades a tidy import for
-							 * an invalid menu — the one thing the accessibility work in this repo
-							 * has spent the most time undoing.
+							 * Plain text rather than `Empty`, deliberately. `Empty` is a content region
+							 * and carries `role="status"`; this sits inside a menu popup, whose
+							 * children ARIA expects to be menuitems. A live region among them would
+							 * trade a tidy import for an invalid menu.
 							 */}
 							<Text type="secondary">{copy.empty}</Text>
 						</div>

@@ -147,7 +147,7 @@ for (const subpath of Object.keys(current).sort()) {
 if (!process.argv.includes('--update')) writeBack(before)
 
 function writeBack(text) {
-  // In-process: a snapshot can exceed the OS command-line limit (api-exports.test.mjs).
+  // In-process: a snapshot can exceed the OS command-line limit.
   writeFileSync(PATH, text)
 }
 

@@ -1,5 +1,5 @@
 /*
- * Structure — Stack, Grid, GridCell, AdaptiveGrid.
+ * Structure — Stack, Grid, GridCell, AdaptiveGrid, Split, Bleed.
  *
  * ── How responsive props work here ───────────────────────────────────────────────────
  * Each prop writes one custom property per breakpoint it specifies, and every breakpoint
@@ -9,24 +9,23 @@
  *
  * ── Why every chain is written out in full ───────────────────────────────────────────
  * `var()` fallbacks nest rather than cascade: there is no way to express "the nearest
- * defined breakpoint at or below this one" other than by chaining all of them. The chains
- * used to be truncated — `lg` fell back to `md` and then straight to `base`, skipping
- * `sm` — so a value set at `sm` applied up to 64rem and then silently reverted to the base
- * value on a wide screen, which is the opposite of what a mobile-first responsive prop
- * means. `flex-wrap` was missing from the two widest queries entirely, and the grid's
- * `row-gap`, `column-gap` and `align-items` had no responsive rules at all.
+ * defined breakpoint at or below this one" other than by chaining all of them. A chain
+ * that skips a step — `lg` falling back to `md` and then straight to `base` — lets a value
+ * set at `sm` apply up to 64rem and then silently revert to the base value on a wide
+ * screen, the opposite of what a mobile-first responsive prop means. A property missing
+ * from a query ignores the prop at that width.
  *
- * That is why this file is GENERATED-shaped: every property appears in every query, every
- * variable is reset so it cannot inherit, and `verify responsive` fails the build if
- * either stops being true.
+ * So the file is deliberately regular: every property appears in every query, every
+ * variable is reset so it cannot inherit, and `verify responsive` fails if either stops
+ * being true.
  */
 
 /*
  * ── Why every variable is reset to `initial` ─────────────────────────────────────────
  * Custom properties INHERIT. A `<Stack direction="horizontal">` writes
- * `--stack-direction-base: row` as an inline style, and every Stack nested inside it —
- * one that asked for nothing — read that value and turned itself into a row too. A column
- * of fields inside a horizontal toolbar silently became a second toolbar.
+ * `--stack-direction-base: row` as an inline style, and without a reset every Stack nested
+ * inside it — one that asked for nothing — would read that value and turn into a row too:
+ * a column of fields inside a horizontal toolbar would become a second toolbar.
  *
  * Resetting here breaks the inheritance without breaking the prop: an inline style
  * outranks a class rule, so a Stack that sets its own value keeps it, and a Stack that
@@ -245,10 +244,9 @@
  * ── The same ladder, keyed to a CONTAINER ────────────────────────────────────────────
  *
  * A Grid's width comes from its parent, not from its contents, so the honest question is
- * "how much room am I in" — and until now the answer came from the viewport. A Grid in a
- * 327px rail at a 1440px viewport resolved the column count of a full-width page, which is
- * why a card holding three facts had to be told `columns={2}` by hand, and why a hand-set
- * count could not know how many items it would receive.
+ * "how much room am I in", which the viewport cannot answer. Keyed to the viewport, a Grid
+ * in a 327px rail at a 1440px viewport resolves the column count of a full-width page, and
+ * a card holding three facts has to be told `columns={2}` by hand.
  *
  * These rules are INERT by default: an @container query matches nothing unless an ancestor
  * declares `container-type`. The first block, `(min-width: 0)`, is true of ANY container,
@@ -264,20 +262,19 @@
  *
  * A container is always narrower than the screen holding it, so reusing 40/48/64/80/96rem
  * makes every step unreachable: a 700px panel never meets `md` at 768px, and a Grid told
- * `{ base: 1, md: 2 }` collapsed to one column inside a container wide enough for three.
- * Measured that way first — /resource grew 357px and every two-column grid in it became
- * one.
+ * `{ base: 1, md: 2 }` would collapse to one column inside a container wide enough for
+ * three.
  *
  * 24 / 32 / 40 / 52 / 64rem instead. The prop keeps its meaning — `md` is a medium amount
- * of ROOM, which is what an author writing `md: 2` meant — and the same value now answers
- * the space the grid is actually in.
+ * of ROOM, which is what an author writing `md: 2` means — and the same value answers the
+ * space the grid is actually in.
  *
  * The upper steps are round container widths rather than scaled-down viewport ones: a
- * 700px panel is the commonest main-content column in this kit, and at 44rem it missed
- * `lg` by four pixels and lost a column it had no reason to lose.
+ * 700px panel is the commonest main-content column in this kit, and a 44rem `lg` would miss
+ * it by four pixels and cost it a column.
  *
- * The step VALUES are generated from the @media ladder above so the two cannot drift; only
- * the thresholds differ.
+ * The step VALUES repeat the @media ladder above and only the thresholds differ, so change
+ * the two together.
  */
 @container (min-width: 0) {
 	.grid {
@@ -673,16 +670,13 @@
 }
 
 /*
- * AdaptiveGrid's breakpoint rules, which it shipped without.
+ * AdaptiveGrid's breakpoint rules.
  *
  * It takes the same responsive `gap` and `align` props as Grid and writes the same
- * variables, and `.adaptive` read only the `-base` one — so
- * `gap={{ base: "sm", lg: "xl" }}` set `--grid-gap-lg` and nothing ever looked at it. The
- * prop typechecked, the value was in the DOM, and the layout never moved.
- *
- * `verify responsive` did not catch it because its contract list named `stack`, `grid` and
- * `cell`; `.adaptive` is in that list now, along with the three components added beside
- * it, so the next one cannot ship the same way.
+ * variables, so `.adaptive` must read every breakpoint's variable, not only the `-base` one.
+ * Otherwise `gap={{ base: "sm", lg: "xl" }}` sets `--grid-gap-lg` and nothing reads it: the
+ * prop typechecks, the value is in the DOM, and the layout never moves. `.adaptive` is in
+ * `verify responsive`'s contract list, so a missing step fails.
  */
 @media (--bp-sm) {
 	.adaptive {

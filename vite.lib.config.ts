@@ -32,8 +32,8 @@ fontsStayFiles.postcss = true
  * One build entry per published subpath, read from the architecture manifest.
  *
  * The manifest is the single source of truth for entries, and it is itself derived from the
- * source tree by `gen-architecture-manifest.mjs` — so this keeps the "no list to forget to
- * update" property while removing the second, independent discovery that used to live here.
+ * source tree by `gen-architecture-manifest.mjs`, so there is no hand-kept list to forget to
+ * update and no second, independent discovery to disagree with it.
  *
  * The catch with reading a generated file at build time is that a STALE one under-builds
  * silently: add a family, forget to regenerate, and the build simply omits it. So the disk
@@ -84,7 +84,7 @@ function discoverEntries(): Record<string, string> {
  * Ships the stylesheet sources next to the bundled one.
  *
  * `dist/style.css` is the processed single file for a plain `<link>` or one import.
- * `dist/styles/**` is the readable source tree — 29 small files whose whole point is that a
+ * `dist/styles/**` is the readable source tree — small files whose whole point is that a
  * consumer can read the token contract and override a layer. Flattening that away would
  * remove the thing the kit is actually selling.
  */
@@ -105,9 +105,8 @@ function shipStyleSources(): Plugin {
 		generateBundle(_options, bundle) {
 			/*
 			 * TRANSITIVELY. `viteMetadata.importedCss` lists only what a chunk imports directly,
-			 * and most component CSS lives in the shared chunks an entry pulls in — taking the
-			 * direct set gave 35 families a stylesheet and left the other 49 shipping unstyled,
-			 * which is the exact failure the single-sheet build existed to avoid.
+			 * and most component CSS lives in the shared chunks an entry pulls in — taking only
+			 * the direct set would leave most families shipping unstyled.
 			 */
 			const cssOf = (name: string, seen = new Set<string>()): string[] => {
 				if (seen.has(name)) return []
@@ -147,8 +146,8 @@ function shipStyleSources(): Plugin {
 			 * The layer order, restated.
 			 *
 			 * The minifier drops the bare `@layer a, b, c;` statement, which is safe only while
-			 * the layers happen to first APPEAR in the right order. Split into 84 files that is
-			 * no longer a happy accident but an impossibility: a consumer importing two families
+			 * the layers happen to first APPEAR in the right order. Split into a sheet per family,
+			 * that is not a happy accident but an impossibility: a consumer importing two families
 			 * fixes the order by whichever they imported first. So `core.css` declares it, and
 			 * every family sheet contains only `@layer components { … }` — which is why core
 			 * must be imported before any of them, and why every ESM entry imports it.
@@ -188,8 +187,8 @@ function shipStyleSources(): Plugin {
 
 			/* ── the source assets, once each ───────────────────────────────────────────
 			 * Under `css/`, keeping their emitted names. Writing a family's whole closure into
-			 * its own sheet instead made `admin/patterns/commerce.css` 157 KB and the package
-			 * 7.4 MB, because forty families each carried their own copy of `base/buttons`.
+			 * its own sheet instead would give every family that uses `base/buttons` its own
+			 * copy of it, and multiply the package's size.
 			 */
 			const cssDir = resolve(root, "dist/css")
 			mkdirSync(cssDir, { recursive: true })
@@ -212,8 +211,8 @@ function shipStyleSources(): Plugin {
 				/*
 				 * `./` at the top level, never nothing. Tailwind v4's resolver (@tailwindcss/cli,
 				 * @tailwindcss/postcss, @tailwindcss/vite before 4.3) reads a bare `@import "core.css"`
-				 * as a package named core.css, and could not build 2.0.1's `primitives.css`. Vite
-				 * forgives it, so `verify package` guards it instead.
+				 * as a package named core.css and fails to build. Vite forgives it, so
+				 * `verify package` guards it instead.
 				 */
 				const depth = entry.split("/").length - 1
 				const up = depth ? "../".repeat(depth) : "./"
@@ -228,13 +227,12 @@ function shipStyleSources(): Plugin {
 			 * Generated, not maintained — but from the SOURCE assets, each once.
 			 *
 			 * A family sheet carries its dependencies so that importing it is sufficient on its
-			 * own, which means concatenating the family sheets ships `base/buttons` in every
-			 * one of the forty families that use it: the first version of this produced a 4.1 MB
-			 * style.css from a 438 KB catalogue. The union is the same rules, once each, and
+			 * own, which means concatenating the family sheets would repeat `base/buttons` once
+			 * for every family that uses it. The union is the same rules, once each, and
 			 * every class in it is unique anyway — `verify css-collisions` proves no two
 			 * components share one, so order inside `@layer components` is not load-bearing.
 			 */
-			/* `core` already holds the `styles` entry's sheet; joining it again cost 236 gzip bytes. */
+			/* `core` already holds the `styles` entry's sheet, so it is not joined a second time. */
 			const everyAsset = [...new Set([...cssByEntry.values()].flat())]
 				.filter((file) => !coreFiles.includes(file))
 				.sort()
@@ -242,8 +240,7 @@ function shipStyleSources(): Plugin {
 			 * One final pass, over the CATALOGUE only.
 			 *
 			 * Every asset above was minified separately, so each seam between them is a missed
-			 * merge. The join was 76,581 gzip bytes against a 76,800 ceiling — 219 bytes, which
-			 * is a coincidence rather than a margin. This recovers about 5.5 KB.
+			 * merge that one more pass over the join recovers.
 			 *
 			 * `core.css`, `dist/css/**` and every family index are written from the ORIGINAL
 			 * assets, untouched. A catalogue optimisation must not be able to change what a
@@ -269,10 +266,9 @@ function shipStyleSources(): Plugin {
 			 * chunk carries none.
 			 *
 			 * `base/buttons.js` is a thin facade; its rules live in a shared chunk. Injecting
-			 * only where a chunk had DIRECT css therefore left the entry with no `core.css`
-			 * import, and the layer order is fixed by whichever sheet a consumer's bundler
-			 * happens to place first. Split across 84 files, that is not a happy accident but
-			 * an impossibility — so the entry states it.
+			 * only where a chunk has DIRECT css would leave the entry with no `core.css` import,
+			 * and the layer order would be fixed by whichever sheet a consumer's bundler happens
+			 * to place first — so the entry states it.
 			 */
 			let linked = 0
 			for (const entry of cssByEntry.keys()) {
@@ -287,9 +283,8 @@ function shipStyleSources(): Plugin {
 
 			for (const [chunkFile, files] of cssByChunk) {
 				/*
-				 * ESM only. The CJS build must stay executable in Node, and `import "./x.css"`
-				 * inside a `.cjs` file is a syntax error there — which is exactly what the first
-				 * version shipped, because the chunk map holds both formats.
+				 * ESM only. The CJS build must stay executable in Node, `import "./x.css"` inside a
+				 * `.cjs` file is a syntax error there, and the chunk map holds both formats.
 				 */
 				if (!chunkFile.endsWith(".js")) continue
 				const js = resolve(root, "dist", chunkFile)
@@ -299,10 +294,10 @@ function shipStyleSources(): Plugin {
 				/*
 				 * Core first, on the chunk itself. The entry's `import "../core.css"` is not enough:
 				 * an entry is a re-export module, `sideEffects: ["**\/*.css"]` marks it pure, and
-				 * Vite 8, Rspack and webpack 5 drop it, import and all. A JS-only consumer then got
-				 * no tokens, and one who imported components before `style.css` or their own family
-				 * sheet got `components` declared first, so the base reset beat every component
-				 * rule. The chunk survives because its code is used.
+				 * Vite 8, Rspack and webpack 5 drop it, import and all. A JS-only consumer would then
+				 * get no tokens, and one who imports components before `style.css` or their own
+				 * family sheet would get `components` declared first, so the base reset would beat
+				 * every component rule. The chunk survives because its code is used.
 				 *
 				 * The core sheet itself is never imported twice: a chunk whose CSS is that sheet
 				 * (the `styles` entry) imports `core.css`, which carries it with the layer order
@@ -331,11 +326,11 @@ function shipStyleSources(): Plugin {
 			 * Hoist `"use client"` back to the top, once, after every CSS injection.
 			 *
 			 * It is a directive PROLOGUE: it counts only while it is the first statement in the
-			 * module. Two separate loops above prepend stylesheet imports, and each one pushed
+			 * module. Two separate loops above prepend stylesheet imports, and each one pushes
 			 * the banner down into an ordinary string expression — present in the file, visible
-			 * to a grep, and meaningless to every RSC bundler. The CJS output was correct at the
-			 * same moment, because nothing injects CSS into it, which is exactly how this would
-			 * have shipped: half right and grep-clean.
+			 * to a grep, and meaningless to every RSC bundler. The CJS output stays correct,
+			 * because nothing injects CSS into it, so the fault would ship half right and
+			 * grep-clean.
 			 *
 			 * One pass at the end rather than a fix at each injection site, because the next
 			 * loop to prepend something would reintroduce it. `verify rsc` asserts the position
@@ -381,8 +376,8 @@ export default defineConfig({
 				"src/services/**",
 				"src/App.tsx",
 				"src/main.tsx",
-				/* Tests are not a published surface. 68 of their declarations shipped because
-				 * only `.spec` was listed, and every one of them now has a `.d.cts` twin too. */
+				/* Tests are not a published surface. Every test suffix is listed: a declaration
+				 * emitted here ships, and gen-cjs-declarations gives it a `.d.cts` twin too. */
 				"**/*.spec.ts",
 				"**/*.test.ts",
 				"**/*.test.tsx",
@@ -410,8 +405,8 @@ export default defineConfig({
 		 */
 		cssCodeSplit: true,
 		/*
-		 * No sourcemaps. They embed the full original source via `sourcesContent`, which made
-		 * them 67% of the package — a second copy of the source tree in every consumer's
+		 * No sourcemaps. They embed the full original source via `sourcesContent`, which would
+		 * make them most of the package — a second copy of the source tree in every consumer's
 		 * node_modules. All they buy is step-debugging into kit internals: bundlers ignore
 		 * node_modules maps in production, most consumers debug their own code, and the source
 		 * is MIT in a public repo. The part consumers genuinely read — the CSS token contract —
@@ -446,13 +441,13 @@ export default defineConfig({
 				 * `"use client"` on the entries that need it.
 				 *
 				 * A React Server Component bundler treats the directive as a BOUNDARY: the module
-				 * declaring it, and everything below, run on the client. Three files in `src/`
-				 * declared it and no published bundle carried it, so importing `Button` into a
-				 * Next.js App Router server component failed at the first `useState` — with a
-				 * stack pointing into this package rather than at the consumer's page.
+				 * declaring it, and everything below, run on the client. A directive in a source
+				 * file does not survive bundling, so without this banner, importing `Button` into a
+				 * Next.js App Router server component fails at the first `useState` — with a stack
+				 * pointing into this package rather than at the consumer's page.
 				 *
 				 * On ENTRIES only, and only those that reach a hook. Marking every chunk would
-				 * pull the eleven genuinely server-pure families onto the client for nothing; the
+				 * pull the genuinely server-pure families onto the client for nothing; the
 				 * boundary at the entry already covers what it imports.
 				 *
 				 * Derived per build rather than listed, because a list is wrong the first time a

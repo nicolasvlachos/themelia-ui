@@ -15,8 +15,8 @@ export interface LoaderButtonProps extends Omit<ButtonProps, "onClick"> {
 	/** Controlled pending state. Omit to let the button manage it from `onClick`. */
 	loading?: boolean
 	/**
-	 * Accepted for source-kit compatibility; inert. Choosing `LoaderButton` is already that
-	 * decision. Swallowed rather than spread, so ported call sites don't leak it to the DOM.
+	 * Accepted so call sites that pass it keep compiling; inert. Choosing `LoaderButton` is
+	 * already that decision. Swallowed rather than spread, so it never reaches the DOM.
 	 */
 	handlesLoading?: boolean
 	/** May return a promise; the button then stays pending until it settles. */

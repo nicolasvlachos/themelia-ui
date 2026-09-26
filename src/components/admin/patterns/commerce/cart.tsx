@@ -184,9 +184,9 @@ export interface Discount {
 	/**
 	 * What kind of discount it is — "Code", "Automatic", "Volume".
 	 *
-	 * Rendered as a quiet qualifier beside the label, not as a chip. A Badge here was the
-	 * first thing tried and it failed contrast at 3.45:1 in the dark theme: a chip is drawn
-	 * to sit on a card, and the ledger it lands in has its own tinted ground under it.
+	 * Rendered as a quiet qualifier beside the label, not as a chip. A chip is drawn to sit on
+	 * a card, and the ledger it would land in has its own tinted ground: a Badge here fails
+	 * contrast in the dark theme (3.45:1).
 	 */
 	kind?: ReactNode
 	amount: string
@@ -238,10 +238,10 @@ export function DiscountStack({
 /**
  * CodeEntry — a discount code or a gift card.
  *
- * These were two components, and they were the same component twice: a title, a field, a
- * button, and an applied state. The only real difference is that a gift card holds a
- * BALANCE — money that may outlast this order — where a discount either applies or does
- * not. That is one optional prop, not a second component.
+ * One component for both: a title, a field, a button, and an applied state. The only real
+ * difference is that a gift card holds a BALANCE — money that may outlast this order —
+ * where a discount either applies or does not. That is one optional prop, not a second
+ * component.
  *
  * `kind` picks the preset: the icon, the default copy, and whether the code is upper-cased
  * on submit. Gift card codes are printed in capitals and nobody types them that way.
@@ -294,8 +294,7 @@ export function CodeEntry({
 					<div className={styles.couponApplied}>
 						{/*
 						 * The kit's medallion, solid: a tick that has to be found at a glance on a
-						 * tinted panel. The local copy was the same ten lines and the same size
-						 * expression under a different name.
+						 * tinted panel.
 						 */}
 						<IconBadge icon={CheckIcon} tone="success" shape="circle" solid aria-hidden="true" />
 						<span className={styles.couponAppliedBody}>

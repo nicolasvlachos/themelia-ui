@@ -1,14 +1,14 @@
 /**
- * Foreground choice by measured contrast, compared against the retired lightness
- * threshold (INK above L 0.67, else PAPER), which picks the less readable candidate in
- * the mid-lightness band.
+ * Foreground choice by measured contrast, compared against a lightness threshold (INK
+ * above L 0.67, else PAPER), which picks the less readable candidate in the mid-lightness
+ * band.
  */
 import { wcagContrast } from "culori"
 import { describe, expect, it } from "vitest"
 
 import { INK, PAPER, readableForeground } from "./contrast"
 
-/** The rule this module replaced, kept here so the comparison is executable. */
+/** The lightness threshold, written out so the comparison is executable. */
 const byLightnessThreshold = (color: string) => {
 	const lightness = Number.parseFloat(color.match(/oklch\(\s*([\d.]+)/i)?.[1] ?? "NaN")
 	return lightness > 0.67 ? INK : PAPER
@@ -16,7 +16,7 @@ const byLightnessThreshold = (color: string) => {
 
 describe("readableForeground", () => {
 	it("picks the measurably more readable candidate, where the threshold did not", () => {
-		/* A plausible brand green. L is 0.59, so the old rule took PAPER. */
+		/* A plausible brand green. L is 0.59, so the threshold takes PAPER. */
 		const brand = "oklch(0.59 0.12 167)"
 
 		expect(byLightnessThreshold(brand)).toBe(PAPER)

@@ -20,7 +20,7 @@ it("keeps router links unavailable while disabled, then restores navigation", ()
 	/*
 	 * The caller's anchor BECOMES the control: it carries the button's classes so it sizes
 	 * like the buttons beside it, and the current page keeps its outline. Handed back bare
-	 * it had no geometry, and the arrow's chevron wrapped away from its word.
+	 * it would have no geometry, and the arrow's chevron would wrap away from its word.
 	 */
 	expect(link).toHaveClass("button--component")
 	expect(screen.getByRole("link", { name: "Page 2" })).toHaveAttribute("aria-current", "page")

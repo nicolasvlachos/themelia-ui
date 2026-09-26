@@ -15,7 +15,7 @@ describe("OtpInput", () => {
 	})
 
 	it("leaves no box unnamed", () => {
-		/* The rule axe was actually reporting, stated directly rather than box by box. */
+		/* axe's rule that every input is named, stated directly rather than box by box. */
 		render(<OtpInput length={6} />)
 
 		for (const input of screen.getAllByRole("textbox")) {

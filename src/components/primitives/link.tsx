@@ -102,11 +102,10 @@ export function Url({ value, display, external = false, strings, ...props }: Url
 			{/*
 			 * The new tab, said rather than drawn.
 			 *
-			 * `target="_blank"` and the rel hardening were both here and correct, and the two
-			 * links on the URL example rendered as the same word: nothing told a reader —
-			 * sighted or not — that one of them leaves the page. A glyph would answer half of
-			 * that and cannot be translated, so this is copy, visually hidden, and part of the
-			 * link's own accessible name.
+			 * `target="_blank"` and the rel hardening alone leave a new-tab link reading like
+			 * any other: nothing tells a reader — sighted or not — that it leaves the page. A
+			 * glyph would answer half of that and cannot be translated, so this is copy,
+			 * visually hidden, and part of the link's own accessible name.
 			 */}
 			{!!external && <span className={styles.newTab}>{copy.opensInNewTab}</span>}
 		</Link>

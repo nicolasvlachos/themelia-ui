@@ -25,7 +25,7 @@ export interface CommentContentProps<
 	renderReference?: CommentsSlots<TUser, TMeta, TResource>["renderReference"]
 	/** Replaces the kit's allow-list. There is no way to skip sanitising. */
 	sanitizer?: (html: string) => string
-	/** Overrides this component's own copy — the quote attribution, so far. */
+	/** Overrides this component's own copy — the quote attribution. */
 	strings?: Partial<CommentsStrings>
 	className?: string
 }

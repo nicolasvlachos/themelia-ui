@@ -1,14 +1,14 @@
 /**
  * Theme manifest — the single source of truth for the light and dark palettes.
  *
- * GENERATED ONCE from the ported CSS, then hand-maintained. scripts/gen-theme.mjs emits
- * styles/themes/default.css and styles/tokens/states.css from this file.
+ * Edited by hand; scripts/gen-theme.mjs emits styles/themes/default.css and
+ * styles/tokens/states.css from it.
  *
  * ── Why a manifest ──────────────────────────────────────────────────────────────────
- * Upstream, `:root, .light` and `.dark` each redeclared the full palette by hand. Adding
- * a token meant editing both, and forgetting the dark half meant it silently inherited
- * the light value — a bug that looks like a design decision. 20 of 58 dark declarations
- * were also exact duplicates of their light counterparts, restated for no reason.
+ * Hand-written `:root, .light` and `.dark` blocks each redeclare the full palette. Adding a
+ * token means editing both, and forgetting the dark half silently inherits the light value
+ * — a bug that looks like a design decision — while dark declarations that merely repeat
+ * their light counterparts pile up unnoticed.
  *
  * Here every token declares its dark behaviour exactly once, and must declare it:
  *
@@ -25,11 +25,10 @@ export const theme = {
 	 * rounded things — a card, a dialog, a popover, a menu. `--radius-sm` rounds everything
 	 * inside one or smaller than one — a control, a row, a chip, a badge, a tooltip.
 	 *
-	 * Both are plain values a theme sets, declared once at `:root`. `--radius-sm` was the
-	 * outer radius less a menu's inset: it tied every input and button to a spacing token
-	 * with "menu" in its name, turned them to 12px the moment `--radius` went to 1rem, and —
-	 * being derived — had to be restated at every scope boundary, which is the stack of
-	 * struck-through copies a DevTools panel showed for it.
+	 * Both are plain values a theme sets, declared once at `:root`. Deriving `--radius-sm` as
+	 * the outer radius less a menu's inset would tie every input and button to a menu's
+	 * spacing token, round them to 12px the moment `--radius` goes to 1rem, and — being
+	 * derived — force a restatement at every scope boundary.
 	 *
 	 * They are still complementary: a container that holds `--radius-sm` items insets them
 	 * by the difference (1rem − 0.5rem = `--space-md`), so outer = inner + padding and a row
@@ -174,8 +173,8 @@ export const theme = {
 	/*
 	 * Border WEIGHT, beside `--border` (its colour) and `--radius` (its corner). The
 	 * three together are the whole edge treatment, which is why they sit next to each
-	 * other: 194 rules wrote `1px` by hand, so a theme could restyle every edge in the
-	 * kit except its thickness — the one property a denser or airier theme wants most.
+	 * other: with `1px` written into each rule, a theme could restyle every edge in the kit
+	 * except its thickness — the one property a denser or airier theme wants most.
 	 */
 	"--border-width": {
 		rootOnly: true,
@@ -331,9 +330,9 @@ export const states = {
 		doc: "Warning colour drawn AS foreground — icons and marks — on a tinted warning surface. Darkens here and brightens in dark, where --warning stays a light fill so solid warning chips keep the amber.",
 	},
 	/*
-	 * Destructive as TEXT on a destructive tint. The hue alone measured 4.4:1 on its own 10%
-	 * wash in dark; moved 15% toward the foreground it clears 4.5 in both themes. Badge had
-	 * this recipe privately and an analytics delta chip beside it did not.
+	 * Destructive as TEXT on a destructive tint, one recipe for every chip that needs it. The
+	 * hue alone measures 4.4:1 on its own 10% wash in dark; moved 15% toward the foreground it
+	 * clears 4.5 in both themes.
 	 */
 	"--destructive-accent": {
 		light: "color-mix(in oklab, var(--destructive) 85%, var(--foreground))",

@@ -1,13 +1,12 @@
 /*
  * Alpha ladder — the global colour wiring layer.
  *
- *
  * Every colour/alpha pair the components actually use, declared once. Modules
  * reference `var(--border-60)` rather than repeating color-mix() inline, which
  * gives consumers a single override point per pair and keeps modules value-free.
  *
  * `color-mix(in oklab, …)` is exactly what Tailwind v4 emits for `/nn` opacity,
- * so the rendered colour is identical to the source implementation.
+ * so each pair renders the colour the matching Tailwind utility would.
  *
  * 38 pairs across 13 colours.
  *

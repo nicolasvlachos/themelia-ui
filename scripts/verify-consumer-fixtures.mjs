@@ -316,11 +316,11 @@ try {
 }
 
 /*
- * 5b — the setups a tree-shaking bundler used to break. Each family entry was a re-export
- * module holding the only `import "../core.css"`; `sideEffects: ["**\/*.css"]` let Vite 8,
- * Rspack and webpack 5 drop it, core and all. A JS-only import then shipped no tokens, the
- * README's order (components first, then `style.css`) declared `components` first, and the
- * `themelia-ui/styles` entry, which is nothing but a stylesheet import, shipped nothing.
+ * 5b — the setups a tree-shaking bundler breaks when a re-export module holds the only
+ * `import "../core.css"`: `sideEffects: ["**\/*.css"]` lets Vite 8, Rspack and webpack 5
+ * drop it, core and all. A JS-only import, the README's order (components first, then
+ * `style.css`) and the `themelia-ui/styles` entry, which is nothing but a stylesheet import,
+ * must each still ship the tokens, a typeface and the layers in order.
  */
 for (const [dir, what, main, required] of [
   ['app-js-only', 'JS only', [

@@ -16,7 +16,7 @@ test('names each bare, missing, escaping and wrong-case specifier, and nothing e
     writeFileSync(join(root, 'core.css'), ':root{}')
     writeFileSync(join(root, 'css/typography.css'), '.t{}')
     writeFileSync(join(root, 'fonts/geist.woff2'), '')
-    /* the 2.0.1 shape, one line per defect, and the forms that must stay silent */
+    /* one line per defect, and the forms that must stay silent */
     writeFileSync(join(root, 'primitives.css'), [
       '/* @import "tailwindcss"; — documentation, not an import */',
       '@import "core.css";',

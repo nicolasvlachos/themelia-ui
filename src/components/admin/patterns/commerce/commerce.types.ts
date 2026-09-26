@@ -41,8 +41,8 @@ export type RefundStage = "requested" | "approved" | "processing" | "completed"
 export const REFUND_STAGES: readonly RefundStage[] = ["requested", "approved", "processing", "completed"]
 
 /**
- * Card networks and wallets. The brand is named, never painted: trademark colours would
- * need literals `verify composition` forbids. Pass a logo as `icon`.
+ * Card networks and wallets. The brand is named, never painted: the kit draws no trademark
+ * colours. Pass a logo as `icon`.
  */
 export type PaymentBrand =
 	| "visa"
@@ -58,7 +58,7 @@ export type AddressKind = "shipping" | "billing" | "pickup"
 
 /* ── Order status, on two axes ───────────────────────────────────────────────────
  * Goods and money move independently ("refunded, still unfulfilled"). `OrderStatus`
- * remains for a single summary state; an order page uses both of these.
+ * is a single summary state; an order page uses both of these.
  */
 
 /** Where the goods are. */

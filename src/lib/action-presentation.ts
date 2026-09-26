@@ -10,7 +10,7 @@ export type ActionButtonStyle = (typeof ACTION_BUTTON_STYLES)[number]
  * page header, table row, command palette), so one definition looks the same everywhere.
  */
 export interface ActionPresentation {
-	/** Semantic colour intent. `tone`, never `variant` — see docs/maintainers/guidelines.md. */
+	/** Semantic colour intent. Colour is always `tone`, never `variant`. */
 	tone?: SemanticTone
 	/** Button treatment, independent of the colour. */
 	buttonStyle?: ActionButtonStyle

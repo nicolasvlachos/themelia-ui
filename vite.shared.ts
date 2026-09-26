@@ -10,7 +10,7 @@ import type { CSSOptions } from "vite"
  * styles/index.css declares the layer order, and module rules must land in the
  * `components` layer for a consumer's unlayered `className` to win — that is the whole
  * replacement for `tailwind-merge`. Doing it here rather than by hand keeps the
- * guarantee out of 600 individual files, where one forgotten wrapper would silently
+ * guarantee out of every module file, where one forgotten wrapper would silently
  * make that component un-overridable.
  *
  * `@import`, `@charset`, and `@layer` statements must stay at the top level, and
@@ -18,7 +18,7 @@ import type { CSSOptions } from "vite"
  * theme variables, but if one does, layering them would change their precedence.
  *
  * Shared by the app build and the library build. A library consumer who lost this
- * wrapper would find their own `className` outranked by our internals, so the two
+ * wrapper would find their own `className` outranked by the kit's internals, so the two
  * configs must never drift.
  */
 export function cssModulesInComponentsLayer(): PostcssPlugin {
@@ -99,7 +99,7 @@ export const browserFloor = ["chrome125", "edge125", "firefox121", "safari16.4"]
  * `button__root___a1B2c`: the file, the class, and a hash of both with the file's path, so
  * the two `table.module.css` files never share a class. Written out because the
  * `[name]__[local]___[hash:base64:5]` pattern keeps a `-module` suffix in `[name]`, which
- * cost 16 KB raw and 1.1 KB gzip across the catalogue. Consumers target the stable
+ * every class in the catalogue would then carry. Consumers target the stable
  * `{name}--component` hooks, not these; a snapshot of one breaks when this changes.
  */
 function scopedName(local: string, filename: string) {

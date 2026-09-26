@@ -8,8 +8,7 @@ import { fileURLToPath } from "node:url"
  *
  * Those suites walk preview routes, so they cover what a page renders. They cannot cover a
  * hook's reaction to a prop flipping mid-gesture, an effect's cleanup, SSR output, or two
- * React roots arbitrating over the document — and those are exactly where this kit's
- * defects have been. `UIRoot` shipped three of them at once.
+ * React roots arbitrating over the document; this runner exists for those.
  *
  * Deliberately narrow: unit tests here are for logic the routes cannot reach. Anything a
  * page can show belongs in the visual, contrast, geometry or layout-fault suites, which

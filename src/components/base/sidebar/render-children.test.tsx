@@ -4,7 +4,7 @@ import { expect, it } from "vitest"
 
 import { Sidebar, SidebarMenuButton, SidebarProvider } from "./index"
 
-/* Kept beside the sidebar: importing its graph from the button suite timed out under load. */
+/* Kept beside the sidebar: importing its graph from the button suite can time out under load. */
 it("keeps a render element's own content in SidebarMenuButton", () => {
 	render(
 		<SidebarProvider>

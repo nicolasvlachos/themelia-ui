@@ -99,8 +99,8 @@ function Mark({
 		 * The other five marks are sketches — shapes with no reading of their own, so they
 		 * are `aria-hidden` and hand-drawn on purpose. This one is a real measurement
 		 * against a real bound, which is what Progress is: it reports the role and the
-		 * value range, and the local copy reported neither. What stays here is the colour,
-		 * because the series hue is this block's decision and not a state.
+		 * value range. What stays here is the colour, because the series hue is this
+		 * block's decision and not a state.
 		 */
 		return <Progress value={value} max={max} label={label} className={styles.microProgress} />
 	}

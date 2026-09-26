@@ -5,8 +5,8 @@
  * A bare `@import "core.css"` names a PACKAGE to Tailwind v4's own resolver (@tailwindcss/cli,
  * @tailwindcss/postcss, which Next.js with Tailwind runs, and @tailwindcss/vite before 4.3).
  * Vite, webpack, esbuild and postcss-import try it as a relative file first and forgive it,
- * which is how primitives.css shipped that way from 1.0.3 to 2.0.1 unnoticed. Exact case
- * stands in for the case-sensitive Linux file systems no local run sees.
+ * so no local build notices one. Exact case stands in for the case-sensitive Linux file
+ * systems no local run sees.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { dirname, join, relative, resolve, sep } from 'node:path'

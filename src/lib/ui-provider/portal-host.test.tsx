@@ -126,7 +126,7 @@ describe("portals inside a UIPortalHost", () => {
 		})
 
 		it(`${popup.name} keeps the primitive's default with no host`, () => {
-			/* Opt-in: without a host the popup portals outside the scope, as before. */
+			/* Opt-in: without a host the popup portals outside the scope. */
 			const { container } = render(
 				<UIScope config={{ density: "compact" }} transparent={false}>
 					{popup.render(popup.child)}
