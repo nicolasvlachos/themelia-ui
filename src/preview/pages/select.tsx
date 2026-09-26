@@ -1,26 +1,8 @@
-import { GlobeIcon } from "lucide-react"
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { Stack } from "@/components/base/structure"
-import { Select } from "@/components/base/choice-inputs"
-import { NativeSelect } from "@/components/base/text-inputs"
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const COUNTRIES = [
-	{ value: "nl", label: "Netherlands", description: "VAT charged at 21%.", icon: <GlobeIcon /> },
-	{ value: "de", label: "Germany", description: "VAT charged at 19%.", icon: <GlobeIcon /> },
-	{ value: "fr", label: "France", description: "VAT charged at 20%.", icon: <GlobeIcon /> },
-	{ value: "us", label: "United States", description: "Sales tax varies by state.", icon: <GlobeIcon /> },
-	{ value: "jp", label: "Japan", description: "Consumption tax at 10%.", icon: <GlobeIcon />, disabled: true },
-]
-
 export function SelectPage() {
-	const [country, setCountry] = useState<string | undefined>("nl")
-
 	return (
 		<ComponentPage
 			title="Select"
@@ -30,38 +12,11 @@ export function SelectPage() {
 			]}
 		>
 			<Example
-				id="select"
+				example="select/select"
 				title="Select"
 				description="The canonical finite-option control, on Base UI. An option carries an icon and a second line, both of which show once the list is open. The trigger wears the shared field surface — the same height, border, focus ring and chevron as Input, Combobox and NativeSelect, so a form built from all four reads as one set of controls."
 				stacked
-				code={`<Select
-  options={countries}
-  value={country}
-  onValueChange={setCountry}
-  allowClear
-/>`}
-			>
-				<Stack gap="lg" style={MEASURE.field}>
-					<FormField label="Billing country">
-						<Select options={COUNTRIES} value={country} onValueChange={setCountry} allowClear />
-					</FormField>
-					<FormField label="Invalid" error="Choose a country to continue.">
-						<Select options={COUNTRIES} invalid placeholder="Choose a country" />
-					</FormField>
-					<FormField label="Disabled">
-						<Select options={COUNTRIES} disabled defaultValue="nl" />
-					</FormField>
-					<FormField
-						label="Native select"
-						helperText="The escape hatch: NativeSelect, when the platform picker is specifically what you want."
-					>
-						<NativeSelect defaultValue="nl">
-							<option value="nl">Netherlands</option>
-							<option value="de">Germany</option>
-						</NativeSelect>
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="select-api" title="API">
 				<PropTable owner="Select"

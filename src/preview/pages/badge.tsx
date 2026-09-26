@@ -1,13 +1,7 @@
-import { Badge, type BadgeTone } from "@/components/base/badge"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const TONES: BadgeTone[] = ["neutral", "primary", "secondary", "success", "info", "warning", "destructive"]
 
 export function BadgePage() {
 	return (
@@ -18,44 +12,18 @@ export function BadgePage() {
 			exports={["Badge", "type BadgeTone"]}
 		>
 			<Example
-				id="badge-tones"
+				example="badge/badge-tones"
 				title="Tones"
 				description="Seven tones across three variants. The tone supplies the hue; the variant decides how much of it is applied — soft for a label in a table, solid for a mark that must be found at a glance, outline for one that must not compete with the row it sits in."
 				stacked
-				code={`<Badge tone="success">Paid</Badge>
-<Badge tone="warning" variant="solid">Due</Badge>
-<Badge tone="destructive" variant="outline">Overdue</Badge>`}
-			>
-				<Stack gap="lg" style={{ width: "100%" }}>
-					{(["soft", "solid", "outline"] as const).map((variant) => (
-						<Stack key={variant} gap="xs">
-							<Text size="xs" type="secondary">{variant}</Text>
-							<Stack direction="horizontal" gap="sm" wrap>
-								{TONES.map((tone) => (
-									<Badge key={tone} tone={tone} variant={variant}>{tone}</Badge>
-								))}
-							</Stack>
-						</Stack>
-					))}
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="badge-dot"
+				example="badge/badge-dot"
 				title="Status dot"
 				description="A filled dot for a state that has happened, a hollow one for a state that has not, and a pulse for one that is changing. The shape carries the difference so it survives being printed, screenshotted, or read by someone who cannot separate the hues."
 				stacked
-				code={`<Badge tone="success" dot>Live</Badge>
-<Badge tone="warning" dot pending>Queued</Badge>
-<Badge tone="info" dot pulse>Syncing</Badge>`}
-			>
-				<Stack direction="horizontal" gap="sm" wrap>
-					<Badge tone="success" dot>Live</Badge>
-					<Badge tone="warning" dot pending>Queued</Badge>
-					<Badge tone="info" dot pulse>Syncing</Badge>
-					<Badge tone="destructive" dot>Failed</Badge>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="badge-rule" title="Tone, never variant, for colour" stacked>
 				<Callout label="Rule">

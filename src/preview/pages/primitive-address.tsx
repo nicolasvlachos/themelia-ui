@@ -1,15 +1,9 @@
-import { Address, Coordinates } from "@/components/primitives"
-import { Grid, Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
+import { Coordinates } from "@/components/primitives"
 
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 import { SpecimenList } from "../partials/specimen-list"
-
-const UK = { line1: "221B Baker Street", city: "London", postalCode: "NW1 6XE", country: "GB" }
-const US = { line1: "1600 Amphitheatre Parkway", city: "Mountain View", region: "CA", postalCode: "94043", country: "US" }
-const DE = { line1: "Unter den Linden 77", city: "Berlin", postalCode: "10117", country: "DE" }
 
 export function PrimitiveAddressPage() {
 	return (
@@ -20,50 +14,25 @@ export function PrimitiveAddressPage() {
 			exports={["Address", "formatAddress", "formatAddressLines", "Coordinates"]}
 		>
 			<Example
-				id="address"
+				example="primitive-address/address"
 				title="Ordered by country"
 				description="Germany puts the postcode before the city, Britain puts it last and alone, the United States runs city, state and ZIP together on one line. There is no Intl for this, so the kit ships three orderings keyed by country and takes an explicit order for anything else — rather than pretending to know every country and being wrong quietly, in someone else's."
 				stacked
-				code={`<Address value={{ line1, city, postalCode, country: "GB" }} />`}
-			>
-				{/* Captioned with the country code you pass; the name is the address's last line. */}
-				<Grid columns={{ base: 1, md: 3 }} gap="xl">
-					{[["GB", UK], ["US", US], ["DE", DE]].map(([label, value]) => (
-						<Stack key={label as string} gap="2xs">
-							<Text size="xs" type="secondary">country: "{label as string}"</Text>
-							<Address value={value as typeof UK} />
-						</Stack>
-					))}
-				</Grid>
-			</Example>
+			/>
 
 			<Example
-				id="address-inline"
+				example="primitive-address/address-inline"
 				title="Inline, for a cell"
 				description="The same ordering on one line. Both forms come from one function, so a city that moves line in the block form moves position here too and the two cannot disagree."
 				stacked
-				code={`<Address value={value} format="inline" />`}
-			>
-				<Stack gap="xs">
-					<Address value={UK} format="inline" />
-					<Address value={US} format="inline" />
-					<Address value={DE} format="inline" />
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="address-partial"
+				example="primitive-address/address-partial"
 				title="Missing fields"
 				description="An empty field drops out, and a line left with nothing drops with it — so a missing line2 never leaves a blank row in the middle of an address."
 				stacked
-				code={`<Address value={{ line1: "221B Baker Street", city: "London" }} />`}
-			>
-				<Grid columns={{ base: 1, md: 3 }} gap="xl">
-					<Address value={{ line1: "221B Baker Street", city: "London" }} />
-					<Address value={{ city: "London", postalCode: "NW1 6XE" }} />
-					<Address value={null} />
-				</Grid>
-			</Example>
+			/>
 
 			<Example
 				id="coordinates"

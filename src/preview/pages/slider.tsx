@@ -1,21 +1,8 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { Stack } from "@/components/base/structure"
-import {
-	Slider,
-	SliderField,
-} from "@/components/base/value-inputs"
-
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function SliderPage() {
-	const [range, setRange] = useState<number[]>([20, 70])
-	const [volume, setVolume] = useState(40)
-
 	return (
 		<ComponentPage
 			title="Slider"
@@ -25,83 +12,32 @@ export function SliderPage() {
 			]}
 		>
 			<Example
-				id="slider"
+				example="slider/slider"
 				title="SliderField"
 				description="One number in a range. Emits both a bare value and a native-shaped change event, because a form library registers a field by handing it an onChange and reading event.target.value."
 				stacked
-				code={`<SliderField value={volume} onValueChange={setVolume} showValue unit="%" />`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="Volume">
-						<SliderField value={volume} onValueChange={setVolume} showValue unit="%" />
-					</FormField>
-					<FormField label="Steps of 10" helperText="onValueCommitted fires once on release, not on every step.">
-						<SliderField defaultValue={50} step={10} showValue />
-					</FormField>
-					<FormField label="Invalid" error="Pick a value above 60.">
-						<SliderField defaultValue={20} invalid showValue />
-					</FormField>
-					<FormField label="Disabled">
-						<SliderField defaultValue={30} disabled showValue />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="slider-sizes"
+				example="slider/slider-sizes"
 				title="Sizes"
 				description="One of the few surviving size props in the kit, and it survives for a reason: a slider is dragged. A thumb sized for a settings row is a poor target on a touch screen or in a media control, and one sized for those dominates a form."
 				stacked
-				code={`<SliderField size="sm" />   {/* the default — a row in a form */}
-<SliderField size="md" />   {/* touch, media controls */}`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="sm — the default">
-						<SliderField value={volume} onValueChange={setVolume} showValue unit="%" />
-					</FormField>
-					<FormField label="md — a larger target">
-						<SliderField size="md" value={volume} onValueChange={setVolume} showValue unit="%" />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="slider-orientation"
+				example="slider/slider-orientation"
 				title="Vertical, and a range"
 				description="A vertical track takes its height from `--slider-vertical-min-h` rather than from its content, because a slider has none. Two values make it a range: the same field, one more number in the array."
 				stacked
-				code={`<SliderField orientation="vertical" value={level} onValueChange={setLevel} />
-<SliderField value={[20, 70]} onValueChange={setRange} />`}
-			>
-				<Stack direction="horizontal" gap="2xl" align="start">
-					<FormField label="Level">
-						<SliderField
-							orientation="vertical"
-							value={volume}
-							onValueChange={setVolume}
-							showValue
-							unit="%"
-						/>
-					</FormField>
-					<div style={MEASURE.field}>
-						<FormField label="Budget band" helperText="Two handles, one field.">
-							<SliderField value={range} onValueChange={setRange} showValue />
-						</FormField>
-					</div>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="slider-bare"
+				example="slider/slider-bare"
 				title="Slider"
 				description="The control without SliderField&rsquo;s label, value read-out and help text — for a slider in a toolbar or a popover, where the surface around it already says what it adjusts. Everything else is the same component, so the two cannot drift apart."
 				stacked
-				code={`<Slider defaultValue={40} aria-label="Zoom" />`}
-			>
-				<div style={{ maxWidth: "20rem" }}>
-					<Slider defaultValue={40} aria-label="Zoom" />
-				</div>
-			</Example>
+			/>
 
 			<Example id="slider-api" title="API">
 				<PropTable owner="SliderField"

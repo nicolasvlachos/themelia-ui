@@ -47,21 +47,87 @@ Omit<OverlayContentProps, "placement"> & Omit<React.ComponentProps<"dialog">, "c
 
 Preview route: Overlay, dialog & sheet — `/overlay`
 
-### Three presets, one surface
+### Dialog
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Overlay>
-  <OverlayTrigger render={<Button>Rename</Button>} />
-  <DialogContent>
-    <OverlayHeader><OverlayTitle>Rename project</OverlayTitle></OverlayHeader>
-    <OverlayBody>…</OverlayBody>
-    <OverlayFooter>
-      <OverlayClose render={<Button>Cancel</Button>} />
-      <OverlayClose render={<Button>Save</Button>} />
-    </OverlayFooter>
-  </DialogContent>
-</Overlay>
+import { Button } from "themelia-ui/base/buttons"
+import { DialogContent } from "themelia-ui/base/dialog"
+import { FormField } from "themelia-ui/base/forms"
+import {
+	Overlay, OverlayBody, OverlayClose, OverlayDescription, OverlayFooter, OverlayHeader,
+	OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { Input } from "themelia-ui/base/text-inputs"
 
-{/* DialogContent is exactly */}
-<OverlayContent placement="center">…</OverlayContent>
+export default function Dialog() {
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				Open dialog
+			</OverlayTrigger>
+			<DialogContent>
+				<OverlayHeader>
+					<OverlayTitle>Rename project</OverlayTitle>
+					<OverlayDescription>The new name shows everywhere the project is listed.</OverlayDescription>
+				</OverlayHeader>
+				<OverlayBody>
+					<FormField label="Project name">
+						<Input defaultValue="Spring launch" />
+					</FormField>
+				</OverlayBody>
+				<OverlayFooter>
+					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+						Cancel
+					</OverlayClose>
+					<OverlayClose render={<Button />}>
+						Save
+					</OverlayClose>
+				</OverlayFooter>
+			</DialogContent>
+		</Overlay>
+	)
+}
+```
+
+### A blurred scrim, when a product wants one
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { DialogContent } from "themelia-ui/base/dialog"
+import {
+	Overlay, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function OverlayBackdrop() {
+	return (
+		<>
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Default scrim
+				</OverlayTrigger>
+				<DialogContent>
+					<OverlayHeader>
+						<OverlayTitle>Default scrim</OverlayTitle>
+						<OverlayDescription>A tint only — the page behind stays sharp.</OverlayDescription>
+					</OverlayHeader>
+				</DialogContent>
+			</Overlay>
+
+			<UIProvider config={{ overlay: { backdropBlur: 4 } }}>
+				<Overlay>
+					<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+						Blurred scrim
+					</OverlayTrigger>
+					<DialogContent>
+						<OverlayHeader>
+							<OverlayTitle>Blurred scrim</OverlayTitle>
+							<OverlayDescription>The same dialog under a provider that asks for a 4px blur.</OverlayDescription>
+						</OverlayHeader>
+					</DialogContent>
+				</Overlay>
+			</UIProvider>
+		</>
+	)
+}
 ```

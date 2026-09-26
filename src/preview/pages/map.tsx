@@ -7,36 +7,14 @@ import "leaflet-draw/dist/leaflet.draw.css"
 import "leaflet.markercluster/dist/MarkerCluster.css"
 import "leaflet.fullscreen/dist/Control.FullScreen.css"
 
-import { useState } from "react"
-
-import { Badge } from "@/components/base/badge"
 import { Text } from "@/components/base/typography"
-import {
-	Map, MapDrawCircle, MapDrawControl, MapDrawDelete, MapDrawEdit, MapDrawMarker,
-	MapDrawPolygon, MapDrawPolyline, MapDrawRectangle, MapDrawUndo, MapFullscreenControl,
-	MapLayerGroup, MapLayers, MapLayersControl, MapLocateControl, MapMarker, MapPopup,
-	MapSearchControl, MapTileLayer, MapTooltip, MapZoomControl,
-	PlaceAutocomplete, type PlaceFeature,
-} from "@/components/features"
 
-import styles from "../preview.module.css"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const MARLOW: [number, number] = [51.5687, -0.7746]
-
-const VENUES: { id: string; name: string; position: [number, number]; capacity: number }[] = [
-	{ id: "v1", name: "Marlow Hall", position: [51.5687, -0.7746], capacity: 180 },
-	{ id: "v2", name: "The Old Granary", position: [51.5731, -0.7692], capacity: 60 },
-	{ id: "v3", name: "Riverside Rooms", position: [51.5642, -0.7801], capacity: 240 },
-]
-
 export function MapPage() {
-	const [place, setPlace] = useState<PlaceFeature | null>(null)
-	const [shapes, setShapes] = useState(0)
-
 	return (
 		<ComponentPage
 			title="Map"
@@ -47,131 +25,25 @@ export function MapPage() {
 			]}
 		>
 			<Example
-				id="map"
+				example="map/map"
 				title="A map with controls"
 				description="Zoom, layers, fullscreen, locate, and search — each an ordinary child positioned over the tiles, built from the kit's own Button and DropdownMenu rather than Leaflet's hand-built control DOM. The default basemap is OpenStreetMap's own, because it is the only one that renders with no key — and in dark mode it is inverted, since there is no key-less dark basemap to pair with it."
 				stacked
-				code={`<Map center={[51.5687, -0.7746]} zoom={13}>
-  <MapLayers defaultTileLayer="Streets">
-    <MapTileLayer name="Streets" />
-    <MapTileLayer name="Terrain" url="https://tile.opentopomap.org/{z}/{x}/{y}.png" />
-    <MapLayerGroup name="Venues">
-      {venues.map((venue) => (
-        <MapMarker key={venue.id} position={venue.position}>
-          <MapPopup>{venue.name}</MapPopup>
-        </MapMarker>
-      ))}
-    </MapLayerGroup>
-    <MapLayersControl />
-  </MapLayers>
-  <MapZoomControl />
-  <MapFullscreenControl position="bottom-right" />
-</Map>`}
-			>
-				<div className={styles.mapFrame}>
-					<Map center={MARLOW} zoom={13}>
-						<MapLayers defaultTileLayer="Streets" defaultLayerGroups={["Venues"]}>
-							<MapTileLayer name="Streets" />
-							<MapTileLayer
-								name="Terrain"
-								url="https://tile.opentopomap.org/{z}/{x}/{y}.png"
-								attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
-							/>
-							<MapLayerGroup name="Venues">
-								{VENUES.map((venue) => (
-									<MapMarker key={venue.id} position={venue.position} ariaLabel={venue.name}>
-										<MapTooltip>{venue.name}</MapTooltip>
-										<MapPopup>
-											<Text weight="semibold">{venue.name}</Text>
-											<Text size="sm" type="secondary">{venue.capacity} seated</Text>
-										</MapPopup>
-									</MapMarker>
-								))}
-							</MapLayerGroup>
-							<MapLayersControl />
-						</MapLayers>
-
-						<MapZoomControl />
-						<MapFullscreenControl position="bottom-right" />
-						<MapLocateControl position="bottom-right" />
-					</Map>
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="draw"
+				example="map/draw"
 				title="Drawing"
 				description="One shape per press: the tool disarms as soon as the shape lands, because staying armed means the next click draws another. Edit and Delete stay disabled until something is drawn, and leaving either mode commits — leaflet-draw stages changes until save() runs."
 				stacked
-				code={`<Map center={center} zoom={13}>
-  <MapTileLayer />
-  <MapDrawControl onLayersChange={(group) => save(group.toGeoJSON())}>
-    <MapDrawMarker />
-    <MapDrawPolyline />
-    <MapDrawPolygon />
-    <MapDrawRectangle />
-    <MapDrawCircle />
-    <MapDrawEdit />
-    <MapDrawDelete />
-    <MapDrawUndo />
-  </MapDrawControl>
-</Map>`}
-			>
-				<div className={styles.mapFrame}>
-					<Map center={MARLOW} zoom={13}>
-						<MapTileLayer />
-						<MapZoomControl />
-						<MapDrawControl onLayersChange={(group) => setShapes(group.getLayers().length)}>
-							<MapDrawMarker />
-							<MapDrawPolyline />
-							<MapDrawPolygon />
-							<MapDrawRectangle />
-							<MapDrawCircle />
-							<MapDrawEdit />
-							<MapDrawDelete />
-							<MapDrawUndo />
-						</MapDrawControl>
-					</Map>
-				</div>
-				<Text size="sm" type="secondary">
-					shapes drawn: <Badge tone="neutral">{shapes}</Badge>
-				</Text>
-			</Example>
+			/>
 
 			<Example
-				id="place-autocomplete"
+				example="map/place-autocomplete"
 				title="Place autocomplete"
 				description="A field that turns typing into places, backed by Photon — free, key-less, and OpenStreetMap-derived, which makes it the only geocoder that works with no configuration. It is also rate-limited, which is what searchUrl is for."
 				stacked
-				code={`<PlaceAutocomplete
-  limit={5}
-  onPlaceSelect={(feature) => {
-    const [lon, lat] = feature.geometry.coordinates
-    map.flyTo([lat, lon], 15)
-  }}
-/>
-
-// Inside a map, as a control:
-<MapSearchControl position="top-left" />`}
-			>
-				<div className={styles.mapSearch}>
-					<PlaceAutocomplete limit={5} onPlaceSelect={setPlace} />
-				</div>
-				{!!place && (
-					<Text size="sm" type="secondary" numeric>
-						{place.properties.name} — {place.geometry.coordinates[1].toFixed(4)},{" "}
-						{place.geometry.coordinates[0].toFixed(4)}
-					</Text>
-				)}
-
-				<div className={styles.mapFrame}>
-					<Map center={MARLOW} zoom={13}>
-						<MapTileLayer />
-						<MapSearchControl position="top-left" limit={5} />
-						<MapZoomControl position="top-right" />
-					</Map>
-				</div>
-			</Example>
+			/>
 
 			<Example id="map-rules" title="What the map decides" stacked>
 				<Callout label="Rule">

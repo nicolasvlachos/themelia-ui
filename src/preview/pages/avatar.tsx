@@ -1,17 +1,6 @@
-import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, StackedAvatars } from "@/components/base/avatar"
-import { Stack } from "@/components/base/structure"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const MEMBERS = [
-	{ id: "1", name: "Jane McDonald", initials: "JM" },
-	{ id: "2", name: "Rin Fujita", initials: "RF" },
-	{ id: "3", name: "Mei Chen", initials: "MC" },
-	{ id: "4", name: "Raj Patel", initials: "RP" },
-	{ id: "5", name: "Ana Silva", initials: "AS" },
-	{ id: "6", name: "Tom Weber", initials: "TW" },
-]
 
 export function AvatarPage() {
 	return (
@@ -23,45 +12,18 @@ export function AvatarPage() {
 			]}
 		>
 			<Example
-				id="avatar"
+				example="avatar/avatar"
 				title="Avatar"
 				description="The fallback is not a spinner or a blank disc — a missing photograph is the normal case, not a loading state, and initials identify the person while the image is absent."
 				stacked
-				code={`<Avatar>
-  <AvatarImage src={user.photo} alt="" />
-  <AvatarFallback>JM</AvatarFallback>
-</Avatar>`}
-			>
-				<Stack direction="horizontal" gap="lg" align="center">
-					{(["sm", "default", "lg"] as const).map((size) => (
-						<Avatar key={size} size={size}>
-							<AvatarFallback>JM</AvatarFallback>
-						</Avatar>
-					))}
-					<Avatar>
-						<AvatarFallback>RF</AvatarFallback>
-						<AvatarBadge />
-					</Avatar>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="stacked"
+				example="avatar/stacked"
 				title="StackedAvatars"
 				description="An overlapping row capped at max, with the remainder as a count. The cap is a prop rather than a CSS truncation because the overflow number has to be correct, not merely hidden."
 				stacked
-				code={`<StackedAvatars users={members} max={4} />`}
-			>
-				<Stack gap="lg">
-					<StackedAvatars users={MEMBERS} max={4} />
-					<StackedAvatars users={MEMBERS} max={2} />
-					<AvatarGroup>
-						<Avatar><AvatarFallback>JM</AvatarFallback></Avatar>
-						<Avatar><AvatarFallback>RF</AvatarFallback></Avatar>
-						<Avatar><AvatarFallback>MC</AvatarFallback></Avatar>
-					</AvatarGroup>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="avatar-api" title="API">
 				<PropTable

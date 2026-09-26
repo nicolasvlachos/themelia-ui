@@ -1,33 +1,8 @@
-import { useMemo, useState } from "react"
-
-import {
-	DatePicker,
-	MonthYearPicker,
-	MultipleDatePicker,
-	RangeDatePicker,
-	SingleDatePicker,
-	createRangePresets,
-	type DateRangeValue,
-} from "@/components/base/date-pickers"
-import { FormField } from "@/components/base/forms"
-import { useDatesConfig } from "@/lib/ui-provider"
-import type { MonthYearValue } from "@/components/base/date-pickers"
-import { Stack } from "@/components/base/structure"
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function DatePickerPage() {
-	/* A fixed day, so the example reads the same on every visit. See time-picker.tsx. */
-	const [day, setDay] = useState<Date | undefined>(new Date("2026-03-12T00:00:00"))
-	const [range, setRange] = useState<DateRangeValue>({})
-	const [days, setDays] = useState<Date[]>([])
-	const [month, setMonth] = useState<MonthYearValue | undefined>(undefined)
-	/* The presets agree with the calendar's week because both read the provider's. */
-	const { weekStartsOn } = useDatesConfig()
-	const presets = useMemo(() => createRangePresets({ weekStartsOn }), [weekStartsOn])
-
 	return (
 		<ComponentPage
 			title="Date picker"
@@ -37,58 +12,18 @@ export function DatePickerPage() {
 			]}
 		>
 			<Example
-				id="date-picker"
+				example="date-picker/date-picker"
 				title="DatePicker"
 				description="A Popover, not a modal: a date field sits inside a form, and trapping focus to pick a day makes tabbing through the rest of it impossible."
 				stacked
-				code={`<DatePicker value={day} onValueChange={setDay} clearable />
-const { weekStartsOn } = useDatesConfig()
-const presets = useMemo(() => createRangePresets({ weekStartsOn }), [weekStartsOn])
-<DatePicker mode="range" value={range} onValueChange={setRange} presets={presets} />`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="Due date">
-						<DatePicker value={day} onValueChange={(next) => setDay(next as Date)} clearable />
-					</FormField>
-					<FormField label="Reporting period" helperText="Two months side by side, with shortcuts down the side.">
-						<DatePicker
-							mode="range"
-							value={range}
-							onValueChange={(next) => setRange(next as DateRangeValue)}
-							presets={presets}
-							placeholder="Choose a range"
-						/>
-					</FormField>
-					<FormField label="Blackout dates" helperText="Multiple: beyond two, the trigger shows a count.">
-						<DatePicker
-							mode="multiple"
-							value={days}
-							onValueChange={(next) => setDays(next as Date[])}
-							placeholder="Choose dates"
-						/>
-					</FormField>
-					<FormField label="Invalid" error="Choose a date.">
-						<DatePicker invalid placeholder="Choose a date" />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="date-picker-modes"
+				example="date-picker/date-picker-modes"
 				title="One picker, four fixed modes"
 				description="Each preset is DatePicker with its mode pinned, and the point is the TYPE: a single picker hands back a Date, a range hands back { from, to }, a multiple hands back an array. The generic component has to widen its callback to cover all three, which pushes a cast into every call site — the presets take it back."
 				stacked
-				code={`<SingleDatePicker value={day} onValueChange={setDay} />
-<RangeDatePicker value={range} onValueChange={setRange} />
-<MonthYearPicker value={month} onValueChange={setMonth} />`}
-			>
-				<Stack direction="horizontal" gap="lg" wrap align="start">
-					<SingleDatePicker value={day} onValueChange={setDay} />
-					<RangeDatePicker value={range} onValueChange={setRange} />
-					<MultipleDatePicker value={days} onValueChange={setDays} />
-					<MonthYearPicker value={month} onValueChange={setMonth} />
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="date-picker-api" title="API">
 				<PropTable owner="DatePicker"

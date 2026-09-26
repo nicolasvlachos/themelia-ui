@@ -12,7 +12,15 @@ export default defineConfig({
 	server: { port: Number(process.env.PORT) || 5173 },
 	plugins: [react()],
 	resolve: {
-		alias: { "@": resolve(import.meta.dirname, "src") },
+		/*
+		 * Preview examples import the published subpaths (`themelia-ui/base/badge`), so the
+		 * Code tab shows what a consumer writes. Mirrored in tsconfig.app.json.
+		 */
+		alias: [
+			{ find: /^themelia-ui\/(forms|forms-rhf|theming|ui-provider)$/, replacement: resolve(import.meta.dirname, "src/lib/$1") },
+			{ find: /^themelia-ui\/(.+)$/, replacement: resolve(import.meta.dirname, "src/components/$1") },
+			{ find: "@", replacement: resolve(import.meta.dirname, "src") },
+		],
 	},
 	css: sharedCss,
 	build: {

@@ -774,7 +774,7 @@ Kind: callable.
 
 Preview route: Data view & data table — `/data-view`
 
-### What the data view decides
+### The table underneath: DataTable
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 <DataTable
@@ -795,13 +795,48 @@ Preview route: Data view & data table — `/data-view`
 ### Cells
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-cell: ({ row }) => (
-  <CellStack values={[
-    row.customer,
-    [row.customerEmail, "email"],
-    row.vip && { value: "VIP", kind: "mono" },
-  ]} />
-)
+import { CellStack, DataTable } from "themelia-ui/features/table"
+
+import { BOOKINGS, type Booking } from "./data"
+
+export default function TableCells() {
+	return (
+		<DataTable<Booking>
+			surface="glass"
+			columns={[
+				{
+					id: "who",
+					header: "Customer",
+					accessorKey: "customer",
+					cell: ({ row }) => (
+						<CellStack
+							values={[
+								row.original.customer,
+								[row.original.customerEmail, "email"],
+							]}
+						/>
+					),
+				},
+				{
+					id: "ref",
+					header: "Reference",
+					accessorKey: "reference",
+					cell: ({ row }) => <CellStack values={[[row.original.reference, "mono"]]} />,
+				},
+				{
+					id: "amount",
+					header: "Total",
+					accessorKey: "total",
+					meta: { align: "end" },
+					cell: ({ row }) => (
+						<CellStack values={[[row.original.total, "money", { currency: "EUR" }]]} />
+					),
+				},
+			]}
+			data={BOOKINGS.slice(0, 3)}
+		/>
+	)
+}
 ```
 
 ### Acting on a selection
@@ -814,4 +849,26 @@ cell: ({ row }) => (
     <Button onClick={() => archive(selectedRowCount)}>Archive selected</Button>
   )}
 />
+```
+
+### Nothing to show
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { DataTable } from "themelia-ui/features/table"
+
+import { tableColumns } from "./_shared"
+import type { Booking } from "./data"
+
+export default function TableEmpty() {
+	return (
+		<DataTable<Booking>
+			surface="glass"
+			columns={tableColumns.slice(0, 3)}
+			data={[]}
+			emptyStateMessage="No bookings match these filters."
+			emptyStateAction={<Button type="button" tone="neutral" buttonStyle="outline">Clear filters</Button>}
+		/>
+	)
+}
 ```

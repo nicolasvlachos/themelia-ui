@@ -1,9 +1,3 @@
-import { InfoIcon } from "lucide-react"
-
-import { Button, TooltipButton } from "@/components/base/buttons"
-import { Stack } from "@/components/base/structure"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/base/tooltip"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
@@ -18,37 +12,11 @@ export function TooltipPage() {
 			exports={["Tooltip", "TooltipTrigger", "TooltipContent", "TooltipProvider"]}
 		>
 			<Example
-				id="tooltip"
+				example="tooltip/tooltip"
 				title="Tooltip"
 				description="The trigger has to be a real focusable element, so the tip opens on keyboard focus and not only on hover."
 				stacked
-				code={`<Tooltip>
-  <TooltipTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
-    Hover me
-  </TooltipTrigger>
-  <TooltipContent>Explains the control.</TooltipContent>
-</Tooltip>`}
-			>
-				<Stack direction="horizontal" gap="lg" align="center" wrap>
-					<Tooltip>
-						<TooltipTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
-							Hover or focus
-						</TooltipTrigger>
-						<TooltipContent>Charged on the first of the month.</TooltipContent>
-					</Tooltip>
-
-					<Tooltip>
-						<TooltipTrigger render={<Button buttonStyle="ghost" tone="neutral" iconOnly aria-label="About billing" />}>
-							<InfoIcon />
-						</TooltipTrigger>
-						<TooltipContent>An icon-only control still needs a name of its own.</TooltipContent>
-					</Tooltip>
-
-					<TooltipButton tooltip="TooltipButton wires the two together" buttonStyle="outline" tone="neutral">
-						TooltipButton
-					</TooltipButton>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="tooltip-rule" title="Never the only copy" stacked>
 				<Callout label="Rule">

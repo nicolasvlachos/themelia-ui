@@ -1,7 +1,3 @@
-import { Card } from "@/components/base/cards"
-import { Text } from "@/components/base/typography"
-import { Container, Section, TwoColumnLayout } from "@/components/layout"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
@@ -16,59 +12,18 @@ export function ContainersPage() {
 			exports={["PageViewport", "Container", "Section", "TwoColumnLayout"]}
 		>
 			<Example
-				id="blocks"
+				example="containers/blocks"
 				title="The four blocks"
 				description="PageViewport owns page scroll and the page container query. Container owns the reading measure and the gutter. Section owns the rhythm between groups. TwoColumnLayout owns the main/aside grid. Nothing else in the kit claims any of those four jobs."
 				stacked
-				code={`<PageViewport>
-  <Container maxWidth="xl" gutter="md">
-    <Section>
-      <PageHeading title="Invoices" />
-      <Card>…</Card>
-    </Section>
-  </Container>
-</PageViewport>`}
-			>
-				{/* Dashed on the inline edges only: the gutter is inline padding. */}
-					<Container maxWidth="md" gutter="sm" style={{ borderInline: "1px dashed var(--border)" }}>
-					<Section>
-						<Card surface="bordered" title="Section" description="A group, with the rhythm between its children.">
-							<Text size="sm" type="secondary">
-								Container centres this at the reading measure and owns the gutter you can
-								see as the dashed edge.
-							</Text>
-						</Card>
-						<Card surface="bordered" title="Second group" />
-					</Section>
-				</Container>
-			</Example>
+			/>
 
 			<Example
-				id="two-column"
+				example="containers/two-column"
 				title="TwoColumnLayout"
 				description="The aside is second in the DOM at every width, so a reader tabbing through meets the primary content first. When the columns stack, the grid reorders them — the element never moves, which is what keeps that promise true. asidePosition moves the column, not the element, for the same reason."
 				stacked
-				code={`<TwoColumnLayout
-  main={<InvoiceForm />}
-  aside={<SummaryCard />}
-  asidePosition="end"
-  stickyAside
-/>`}
-			>
-				<TwoColumnLayout
-					style={{ width: "100%" }}
-					main={
-						<Card surface="bordered" title="main" description="Primary detail, form, or index content.">
-							<Text size="sm" type="secondary">Takes the wider column.</Text>
-						</Card>
-					}
-					aside={
-						<Card surface="bordered" title="aside" description="Summary, support, or an action rail.">
-							<Text size="sm" type="secondary">Second in the DOM, always.</Text>
-						</Card>
-					}
-				/>
-			</Example>
+			/>
 
 			<Example id="containers-rule" title="One owner per job" stacked>
 				<Callout label="Rule">

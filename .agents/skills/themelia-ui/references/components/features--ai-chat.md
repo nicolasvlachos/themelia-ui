@@ -1142,24 +1142,84 @@ Preview route: AI chat — `/ai-chat`
 ### Reasoning and plans
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AiReasoning streaming={isThinking} durationSeconds={4}>
-  {trace}
-</AiReasoning>
+import { Stack } from "themelia-ui/base/structure"
+import { AiChainOfThought, AiReasoning, AiTask } from "themelia-ui/features/ai-chat"
 
-<AiChainOfThought steps={steps} streaming />
-<AiTask task={plan} />
+const PLAN = {
+	id: "t0",
+	title: "Fix the rounding",
+	status: "running" as const,
+	rightSlot: "2 of 4",
+	children: [
+		{ id: "t1", title: "Move amounts to cents", status: "completed" as const },
+		{ id: "t2", title: "Round once in formatTotal", status: "completed" as const },
+		{ id: "t3", title: "Backfill the existing invoices", status: "running" as const },
+		{ id: "t4", title: "Add a regression test", status: "queued" as const },
+	],
+}
+
+const CHAIN = [
+	{ id: "c1", title: "Read the failing orders", description: "Nine of 4,102 are off by one cent.", status: "completed" as const },
+	{ id: "c2", title: "Compare the sums", description: "Per-line rounding, then a sum.", status: "completed" as const },
+	{ id: "c3", title: "Draft the fix", status: "active" as const },
+	{ id: "c4", title: "Write the test", status: "pending" as const },
+]
+
+export default function Thinking() {
+	return (
+		<Stack gap="lg">
+			<AiReasoning durationSeconds={4}>
+				The totals are summed as floats. 0.1 + 0.2 is 0.30000000000000004, and rounding
+				each line before summing compounds the error across a long invoice.
+			</AiReasoning>
+			<AiReasoning streaming>
+				Checking whether the backfill needs to run per tenant…
+			</AiReasoning>
+			<AiChainOfThought steps={CHAIN} streaming />
+			<AiTask task={PLAN} density="expanded" />
+		</Stack>
+	)
+}
 ```
 
 ### Tool calls
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AiToolCall
-  name="search_codebase"
-  status="success"
-  durationMs={820}
-  args={JSON.stringify(args, null, 2)}
-  result={summary}
-/>
+import { SearchIcon } from "lucide-react"
+
+import { Stack } from "themelia-ui/base/structure"
+import { AiToolCall } from "themelia-ui/features/ai-chat"
+
+export default function Tools() {
+	return (
+		<Stack gap="md">
+			<AiToolCall name="read_file" status="pending" />
+			<AiToolCall
+				name="search_codebase"
+				status="running"
+				icon={SearchIcon}
+				args={'{ "query": "invoice total" }'}
+			/>
+			<AiToolCall
+				name="search_codebase"
+				status="success"
+				icon={SearchIcon}
+				durationMs={820}
+				defaultExpanded
+				args={'{\n  "query": "invoice total",\n  "path": "src/billing"\n}'}
+				result={"3 matches\n  invoice.ts:41\n  totals.ts:12\n  order.ts:88"}
+			/>
+			<AiToolCall
+				name="run_migration"
+				status="error"
+				durationMs={14_200}
+				defaultExpanded
+				args={'{ "name": "amounts_to_cents" }'}
+				error={"SQLSTATE 23505: duplicate key value violates unique constraint"}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### What it produced
@@ -1176,12 +1236,36 @@ Preview route: AI chat — `/ai-chat`
 ### Asking first
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AiConfirmation
-  title="Run the backfill on 4,102 invoices"
-  description="Rewrites every amount into cents. Not reversible."
-  tone="destructive"
-  status={status}
-  onApprove={approve}
-  onReject={reject}
-/>
+import { useState } from "react"
+import { SparklesIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { AiAgent, AiConfirmation } from "themelia-ui/features/ai-chat"
+
+export default function Approval() {
+	const [approval, setApproval] = useState<"pending" | "approved" | "rejected">("pending")
+
+	return (
+		<Stack gap="lg">
+			<AiConfirmation
+				title="Run the backfill on 4,102 invoices"
+				description="Rewrites every stored amount into cents. There is no undo."
+				tone="destructive"
+				status={approval}
+				onApprove={() => setApproval("approved")}
+				onReject={() => setApproval("rejected")}
+			/>
+			{approval !== "pending" && (
+				<Stack direction="horizontal" gap="md">
+					<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => setApproval("pending")}>
+						Ask again
+					</Button>
+				</Stack>
+			)}
+			<AiAgent name="Atlas" subtitle="model-large" status="working" variant="card" />
+			<AiAgent name="Scribe" icon={SparklesIcon} tone="success" status="done" />
+		</Stack>
+	)
+}
 ```

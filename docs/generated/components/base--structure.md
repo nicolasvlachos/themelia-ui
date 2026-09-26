@@ -268,48 +268,407 @@ as a field's ~26rem.
 
 ## Preview recipes
 
-Preview route: Stack & grid — `/structure`
+Preview route: Form field — `/form-field`
+
+### Scale
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Input, NativeSelect } from "themelia-ui/base/text-inputs"
+import { MonoValue } from "themelia-ui/primitives"
+import { Scope } from "themelia-ui/ui-provider"
+
+export default function FormsScale() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{[1, 0.875, 1.125].map((scale) => (
+				<Scope key={scale} vars={{ "--density-scale": scale }}>
+					<Stack direction="horizontal" gap="md" align="center" justify="start">
+						{/* Widths on the wrappers: Input's style lands on the inner control, not its frame. */}
+						<MonoValue size="xs" style={{ width: "3.5rem", flexShrink: 0, fontSize: "0.75rem" }}>
+							{scale}
+						</MonoValue>
+						{/* Named even in a geometry demo: a placeholder is not a label. */}
+						<div style={{ width: "12rem", flexShrink: 0 }}>
+							<Input placeholder="Field" aria-label={`Example field at density ${scale}`} />
+						</div>
+						<div style={{ width: "9rem", flexShrink: 0 }}>
+							<NativeSelect defaultValue="a" aria-label={`Example select at density ${scale}`}>
+								<option value="a">Option</option>
+							</NativeSelect>
+						</div>
+					</Stack>
+				</Scope>
+			))}
+		</Stack>
+	)
+}
+```
+
+### placement
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import type { OverlayPlacement } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
+
+import { Demo } from "./_shared"
+
+export default function OverlayPlacementExample() {
+	return (
+		<Stack direction="horizontal" gap="md" wrap>
+			{(
+				["center", "inline-start", "inline-end", "block-start", "block-end"] as OverlayPlacement[]
+			).map((placement) => (
+				<Demo key={placement} label={placement} placement={placement} />
+			))}
+		</Stack>
+	)
+}
+```
+
+### dismissal
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+
+import { Demo } from "./_shared"
+
+export default function OverlayDismissal() {
+	return (
+		<Stack direction="horizontal" gap="md" wrap>
+			<Demo label="no backdrop dismiss" dismissal={{ backdrop: false }} />
+			<Demo label="no escape" dismissal={{ escape: false }} />
+		</Stack>
+	)
+}
+```
+
+### The factor
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+import { ControlRow } from "./_shared"
+
+const FACTORS = [0.75, 0.875, 1, 1.125, 1.25] as const
+
+export default function TheFactor() {
+	return (
+		<>
+			{FACTORS.map((scale) => (
+				<UIProvider key={scale} config={{ scale }}>
+					<Stack direction="horizontal" gap="lg" align="center">
+						<code style={{ width: "4rem", fontSize: "var(--text-xs)" }}>{scale}</code>
+						<ControlRow />
+					</Stack>
+				</UIProvider>
+			))}
+		</>
+	)
+}
+```
+
+### Type can override the master factor
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function TypeFactor() {
+	return (
+		<Stack gap="lg">
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">typography.scale 0.875 — type shrinks, control geometry holds</Text>
+				<UIProvider config={{ typography: { scale: 0.875 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">scale 0.875 + typography.scale 1 — geometry shrinks, type holds</Text>
+				<UIProvider config={{ scale: 0.875, typography: { scale: 1 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+		</Stack>
+	)
+}
+```
+
+### Two levels of control
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { Scope } from "themelia-ui/ui-provider"
+
+import { ControlRow } from "./_shared"
+
+export default function FactorChain() {
+	return (
+		<Stack gap="lg">
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">default</Text>
+				<ControlRow />
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--density-scale: 0.8 — heights and rows tighten, gaps hold</Text>
+				<Scope vars={{ "--density-scale": 0.8 }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--density-scale: 1.4 — gaps open, control heights hold</Text>
+				<Scope vars={{ "--density-scale": 1.4 }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--button-h: 2.75rem — one measurement</Text>
+				<Scope vars={{ "--button-h": "2.75rem" }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+		</Stack>
+	)
+}
+```
+
+### Nesting
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+import { ControlRow } from "./_shared"
+
+export default function Nesting() {
+	return (
+		<UIProvider config={{ scale: 1.125 }}>
+			<Stack gap="lg">
+				<Text type="secondary" size="sm">
+					Outer scope — 1.125
+				</Text>
+				<ControlRow />
+				<UIProvider config={{ scale: 0.8 }}>
+					<Stack gap="md">
+						<Text type="secondary" size="sm">
+							Nested scope — 0.8
+						</Text>
+						<ControlRow />
+					</Stack>
+				</UIProvider>
+			</Stack>
+		</UIProvider>
+	)
+}
+```
+
+### Density presets
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+import { ControlRow } from "./_shared"
+
+export default function Density() {
+	return (
+		<>
+			{(["compact", "default", "comfortable"] as const).map((density) => (
+				<UIProvider key={density} config={{ density }}>
+					<Stack direction="horizontal" gap="lg" align="center">
+						<code style={{ width: "7rem", fontSize: "var(--text-xs)" }}>{density}</code>
+						<ControlRow />
+					</Stack>
+				</UIProvider>
+			))}
+		</>
+	)
+}
+```
+
+### variant
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+
+import { Panel } from "./_shared"
+
+export default function SidebarVariantExample() {
+	return (
+		<Stack gap="xl">
+			<Panel variant="floating" />
+			<Panel variant="inset" />
+		</Stack>
+	)
+}
+```
 
 ### Stack
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Stack gap="sm">…</Stack>
-<Stack direction="horizontal" justify="between" align="center">…</Stack>
+import { Stack } from "themelia-ui/base/structure"
+
+import { Box } from "./_shared"
+
+export default function StackExample() {
+	return (
+		<>
+			<Stack gap="sm">
+				<Box>vertical, gap sm</Box>
+				<Box>second</Box>
+			</Stack>
+			<Stack direction="horizontal" gap="md" justify="between" align="center">
+				<Box>horizontal</Box>
+				<Box>justify between</Box>
+				<Box>align center</Box>
+			</Stack>
+		</>
+	)
+}
 ```
 
 ### Responsive props
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Stack direction={{ base: "vertical", md: "horizontal" }} gap={{ base: "xs", md: "xl" }}>
+import { Stack } from "themelia-ui/base/structure"
+
+import { Box } from "./_shared"
+
+export default function ResponsiveProps() {
+	return (
+		<Stack direction={{ base: "vertical", md: "horizontal" }} gap={{ base: "xs", md: "xl" }}>
+			<Box>stacks on small</Box>
+			<Box>row from md</Box>
+			<Box>gap grows too</Box>
+		</Stack>
+	)
+}
 ```
 
 ### Grid
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Grid columns={{ base: 1, md: 3 }}>
-  <GridCell span="full">…</GridCell>
-</Grid>
+import { Grid, GridCell } from "themelia-ui/base/structure"
+
+import { Box } from "./_shared"
+
+export default function GridExample() {
+	return (
+		<Grid columns={{ base: 1, md: 3 }} gap="md">
+			<GridCell span="full"><Box>span full</Box></GridCell>
+			<GridCell><Box>one</Box></GridCell>
+			<GridCell><Box>two</Box></GridCell>
+			<GridCell><Box>three</Box></GridCell>
+			<GridCell span={{ base: 1, md: 2 }}><Box>span 2 from md</Box></GridCell>
+			<GridCell><Box>four</Box></GridCell>
+		</Grid>
+	)
+}
 ```
 
 ### AdaptiveGrid
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AdaptiveGrid minColumnWidth="sm">…</AdaptiveGrid>
+import { AdaptiveGrid } from "themelia-ui/base/structure"
+
+import { Box } from "./_shared"
+
+export default function AdaptiveGridExample() {
+	return (
+		<AdaptiveGrid minColumnWidth="sm" gap="md">
+			{Array.from({ length: 6 }, (_, i) => (
+				<Box key={i}>card {i + 1}</Box>
+			))}
+		</AdaptiveGrid>
+	)
+}
 ```
 
 ### Split
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Split sideWidth="14rem" gap="md">
-  <Box>main</Box>
-  <Box>side</Box>
-</Split>
+import { Split, Stack } from "themelia-ui/base/structure"
+
+import { Box } from "./_shared"
+
+export default function SplitExample() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			<Split sideWidth="14rem" gap="md">
+				<Box>main content, takes the rest</Box>
+				<Box>side, 14rem</Box>
+			</Split>
+			<Split side="start" sideWidth="14rem" gap="md">
+				<Box>main content — still first in the DOM</Box>
+				<Box>side, drawn on the left</Box>
+			</Split>
+		</Stack>
+	)
+}
 ```
 
 ### Bleed
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Bleed amount="md">
-  <img … />
-</Bleed>
+import { Bleed } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function BleedExample() {
+	return (
+		<div style={{ width: "100%", padding: "var(--space-md)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)" }}>
+			<Text size="xs" type="secondary">A surface padded by --space-md.</Text>
+			<Bleed amount="md">
+				<div style={{ background: "var(--muted)", padding: "var(--space-sm) var(--space-md)", marginBlock: "var(--space-sm)" }}>
+					<Text size="xs">This band bleeds to both edges.</Text>
+				</div>
+			</Bleed>
+			<Text size="xs" type="secondary">Inset content resumes here.</Text>
+		</div>
+	)
+}
+```
+
+### Density
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { Scope } from "themelia-ui/ui-provider"
+
+import { InvoiceTable } from "./_shared"
+
+export default function TableScale() {
+	return (
+		/*
+		 * Both, captioned. On its own the scoped table just looked like a table —
+		 * the section asserted a difference the page gave the reader no way to see.
+		 */
+		<Stack gap="lg" style={{ width: "100%" }}>
+			<Stack gap="xs" style={{ width: "100%" }}>
+				<Text size="xs" type="secondary">--density-scale: 1</Text>
+				<InvoiceTable />
+			</Stack>
+			<Stack gap="xs" style={{ width: "100%" }}>
+				<Text size="xs" type="secondary">--density-scale: 0.85</Text>
+				<Scope vars={{ "--density-scale": 0.85 }} style={{ width: "100%" }}>
+					<InvoiceTable />
+				</Scope>
+			</Stack>
+		</Stack>
+	)
+}
 ```

@@ -1,253 +1,11 @@
-import { useMemo, useState } from "react"
-
-import {
-	ComboboxChip, ComboboxChips, ComboboxChipsInput, ComboboxEmpty, ComboboxGroup, ComboboxGroupLabel, ComboboxInputTrigger, ComboboxItem, ComboboxList, ComboboxPopup, ComboboxPopupInput, ComboboxPortal, ComboboxPositioner, ComboboxRoot, ComboboxTrigger, ComboboxValue, useComboboxFilter,
-} from "@/components/base/combobox"
-import { Checkbox } from "@/components/base/choice-inputs"
-import { FormField } from "@/components/base/forms"
-import { Input } from "@/components/base/text-inputs"
-import { Stack } from "@/components/base/structure"
 import { Text } from "@/components/base/typography"
-import {
-	AsyncCombobox, AsyncMultiCombobox, ResourceCombobox, SuggestionsCombobox,
-} from "@/components/features/combobox"
 
-import { MEASURE } from "../partials/measures"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-/* ── Fixtures for the parts ────────────────────────────────────────────────────────── */
-
-const COUNTRY_NAMES = [
-	"Argentina", "Australia", "Austria", "Belgium", "Brazil", "Canada", "Chile",
-	"Denmark", "Finland", "France", "Germany", "Greece", "Iceland", "Ireland",
-	"Italy", "Japan", "Kenya", "Mexico", "Netherlands", "New Zealand", "Norway",
-	"Poland", "Portugal", "Spain", "Sweden", "Switzerland",
-]
-
-const REGIONS: Record<string, string[]> = {
-	Europe: ["Austria", "Belgium", "Denmark", "France", "Germany", "Spain", "Sweden"],
-	Americas: ["Argentina", "Brazil", "Canada", "Chile", "Mexico"],
-	"Asia Pacific": ["Australia", "Japan", "New Zealand"],
-}
-
-/* ── Fixtures for the pickers ──────────────────────────────────────────────────────── */
-
-interface Country {
-	code: string
-	name: string
-	region: string
-	capital: string
-}
-
-const COUNTRIES: Country[] = [
-	{ code: "GR", name: "Greece", region: "Europe", capital: "Athens" },
-	{ code: "GB", name: "United Kingdom", region: "Europe", capital: "London" },
-	{ code: "GE", name: "Georgia", region: "Asia", capital: "Tbilisi" },
-	{ code: "DE", name: "Germany", region: "Europe", capital: "Berlin" },
-	{ code: "GH", name: "Ghana", region: "Africa", capital: "Accra" },
-	{ code: "GT", name: "Guatemala", region: "Americas", capital: "Guatemala City" },
-	{ code: "GY", name: "Guyana", region: "Americas", capital: "Georgetown" },
-	{ code: "GN", name: "Guinea", region: "Africa", capital: "Conakry" },
-	{ code: "GA", name: "Gabon", region: "Africa", capital: "Libreville" },
-	{ code: "GM", name: "Gambia", region: "Africa", capital: "Banjul" },
-]
-
-const wait = (ms: number, signal?: AbortSignal) =>
-	new Promise<void>((resolve, reject) => {
-		const timer = setTimeout(resolve, ms)
-		signal?.addEventListener("abort", () => {
-			clearTimeout(timer)
-			reject(new DOMException("Aborted", "AbortError"))
-		})
-	})
-
-/** The consumer's filter. The pickers deliberately do none of their own. */
-const matching = (query: string) =>
-	COUNTRIES.filter((country) => country.name.toLowerCase().includes(query.toLowerCase()))
-
-/** Like a real endpoint: the first page is instant, a search waits, so the loading row shows. */
-async function searchCountries({ query, limit, signal }: { query: string; limit: number; signal?: AbortSignal }) {
-	if (query) await wait(450, signal)
-	return matching(query).slice(0, limit)
-}
-
-/* ── The parts, composed by hand ───────────────────────────────────────────────────── */
-
-/* Forwards `id` to the input, so `FormField`'s label reaches the control. */
-function SingleCombobox({ id }: { id?: string }) {
-	const [value, setValue] = useState<string | null>(null)
-	const [query, setQuery] = useState("")
-	const filter = useComboboxFilter()
-	const items = useMemo(
-		() => COUNTRY_NAMES.filter((country) => filter.contains(country, query)),
-		[filter, query],
-	)
-
-	return (
-		<ComboboxRoot
-			value={value}
-			onValueChange={setValue}
-			inputValue={query}
-			onInputValueChange={setQuery}
-			items={items}
-		>
-			{/* Named: a placeholder is not a label. */}
-			<ComboboxInputTrigger
-				id={id}
-				aria-label="Search countries"
-				placeholder="Search countries…"
-				showClear={value != null}
-			/>
-			<ComboboxPortal>
-				<ComboboxPositioner>
-					<ComboboxPopup>
-						<ComboboxEmpty>No country matches “{query}”.</ComboboxEmpty>
-						<ComboboxList>
-							{(country: string) => (
-								<ComboboxItem key={country} value={country}>
-									{country}
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-					</ComboboxPopup>
-				</ComboboxPositioner>
-			</ComboboxPortal>
-		</ComboboxRoot>
-	)
-}
-
-/* Forwards `id` to the trigger, so `FormField`'s label names it (a combobox is not named by its value). */
-function SelectLikeCombobox({ id }: { id?: string }) {
-	const [value, setValue] = useState<string | null>(null)
-
-	return (
-		<ComboboxRoot value={value} onValueChange={setValue} items={COUNTRY_NAMES.slice(0, 8)}>
-			<ComboboxTrigger id={id}>
-				<ComboboxValue placeholder="Choose a country" />
-			</ComboboxTrigger>
-			<ComboboxPortal>
-				<ComboboxPositioner>
-					<ComboboxPopup>
-						<ComboboxPopupInput placeholder="Search countries" aria-label="Search countries" />
-						<ComboboxEmpty>No country matches.</ComboboxEmpty>
-						<ComboboxList>
-							{(country: string) => (
-								<ComboboxItem key={country} value={country}>
-									{country}
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-					</ComboboxPopup>
-				</ComboboxPositioner>
-			</ComboboxPortal>
-		</ComboboxRoot>
-	)
-}
-
-/* Forwards `id` to the trigger, so `FormField`'s label names it (a combobox is not named by its value). */
-function GroupedCombobox({ id }: { id?: string }) {
-	const [value, setValue] = useState<string | null>(null)
-
-	return (
-		<ComboboxRoot value={value} onValueChange={setValue}>
-			<ComboboxTrigger id={id}>
-				<ComboboxValue placeholder="Choose a country" />
-			</ComboboxTrigger>
-			<ComboboxPortal>
-				<ComboboxPositioner>
-					<ComboboxPopup>
-						<ComboboxPopupInput placeholder="Search countries" aria-label="Search countries" />
-						<ComboboxEmpty>No country matches.</ComboboxEmpty>
-						<ComboboxList>
-							{Object.entries(REGIONS).map(([region, countries]) => (
-								<ComboboxGroup key={region}>
-									<ComboboxGroupLabel>{region}</ComboboxGroupLabel>
-									{countries.map((country) => (
-										<ComboboxItem key={country} value={country}>
-											{country}
-										</ComboboxItem>
-									))}
-								</ComboboxGroup>
-							))}
-						</ComboboxList>
-					</ComboboxPopup>
-				</ComboboxPositioner>
-			</ComboboxPortal>
-		</ComboboxRoot>
-	)
-}
-
-/* Forwards `id` to the input, so `FormField`'s label reaches the control. */
-function MultiCombobox({ id }: { id?: string }) {
-	const [value, setValue] = useState<string[]>(["France", "Japan"])
-	const [query, setQuery] = useState("")
-	const filter = useComboboxFilter()
-	const items = useMemo(
-		() => COUNTRY_NAMES.filter((country) => filter.contains(country, query)),
-		[filter, query],
-	)
-
-	return (
-		<ComboboxRoot
-			multiple
-			value={value}
-			onValueChange={setValue}
-			inputValue={query}
-			onInputValueChange={setQuery}
-			items={items}
-		>
-			<ComboboxChips>
-				{value.map((country) => (
-					<ComboboxChip key={country}>{country}</ComboboxChip>
-				))}
-				<ComboboxChipsInput
-					id={id}
-					aria-label="Add countries"
-					placeholder={value.length === 0 ? "Add countries…" : undefined}
-				/>
-			</ComboboxChips>
-			<ComboboxPortal>
-				<ComboboxPositioner>
-					<ComboboxPopup>
-						<ComboboxEmpty>Nothing left to add.</ComboboxEmpty>
-						<ComboboxList>
-							{(country: string) => (
-								<ComboboxItem key={country} value={country}>
-									{country}
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-					</ComboboxPopup>
-				</ComboboxPositioner>
-			</ComboboxPortal>
-		</ComboboxRoot>
-	)
-}
-
 export function ComboboxPage() {
-	const [query, setQuery] = useState("")
-	const [selected, setSelected] = useState<Country | null>(null)
-
-	const [multiQuery, setMultiQuery] = useState("")
-	const [multiSelected, setMultiSelected] = useState<Country[]>([])
-
-	const [applyQuery, setApplyQuery] = useState("")
-	const [applied, setApplied] = useState<Country[]>([])
-
-	const [created, setCreated] = useState<string[]>([])
-	const [createQuery, setCreateQuery] = useState("")
-	const [createSelected, setCreateSelected] = useState<Country | null>(null)
-
-	const [failing, setFailing] = useState(true)
-
-	const items = useMemo(() => matching(query), [query])
-	const multiItems = useMemo(() => matching(multiQuery), [multiQuery])
-	const applyItems = useMemo(() => matching(applyQuery), [applyQuery])
-	const createItems = useMemo(() => matching(createQuery), [createQuery])
-
 	return (
 		<ComponentPage
 			title="Combobox"
@@ -260,233 +18,53 @@ export function ComboboxPage() {
 			]}
 		>
 			<Example
-				id="combobox-picker"
+				example="combobox/combobox-picker"
 				title="A picker that fetches"
 				description="The combobox most fields want. Give it a fetcher and it owns the rest: one request per pause in typing, the previous request aborted when a new one starts, and a response that arrives late never overwrites a newer one. It preloads, so the list is there on open, and a row can carry a description and meta beside its label. Everything further down is either a preset of this same engine or the parts it is built from."
 				stacked
-				code={`<ResourceCombobox
-  fetcher={({ query, limit, signal }) => api.countries.search(query, { limit, signal })}
-  getKey={(c) => c.code}
-  getLabel={(c) => c.name}
-  getDescription={(c) => c.capital}
-  getMeta={(c) => c.region}
-  highlightMatch
-/>`}
-			>
-				<Stack style={MEASURE.field}>
-					<FormField label="Destination" helperText="Open it to browse, or type to search.">
-						<ResourceCombobox<Country>
-							fetcher={searchCountries}
-							getKey={(country) => country.code}
-							getLabel={(country) => country.name}
-							getDescription={(country) => country.capital}
-							getMeta={(country) => country.region}
-							highlightMatch
-						/>
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="suggestions"
+				example="combobox/suggestions"
 				title="SuggestionsCombobox"
 				description="The same engine in the vocabulary of useSuggestions — fetchData(query, { signal }), itemKey, itemText — with that hook's defaults: one character before a request, and no preload unless asked. useSuggestions on its own is the state machine for a surface that is not a combobox at all, such as a command palette or a search bar with its own results panel."
 				stacked
-				code={`import { SuggestionsCombobox, useSuggestions } from "themelia-ui/features/combobox"
-
-const suggestions = useSuggestions({ fetchData, minQueryLength: 1 })
-
-// or, when it really is a combobox:
-<SuggestionsCombobox
-  fetchData={(q, { signal }) => api.search(q, { signal })}
-  itemKey={(c) => c.code}
-  itemText={(c) => c.name}
-  preload
-/>`}
-			>
-				<Stack style={MEASURE.field}>
-					<FormField label="Search">
-						<SuggestionsCombobox<Country>
-							fetchData={async (needle, context) => {
-								if (needle) await wait(400, context?.signal)
-								return matching(needle).slice(0, 5)
-							}}
-							itemKey={(country) => country.code}
-							itemText={(country) => country.name}
-							preload
-						/>
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="resource-combobox"
+				example="combobox/resource-combobox"
 				title="When the fetch fails"
 				description="The error is exclusive: the list is suppressed and a retry appears under the field, but the selection survives — a failure to load MORE options is not a reason to lose the one already chosen — and so does the query, so the retry asks the same question again. Typing on hides the error at once; it belonged to the query that failed. Untick the box and retry."
 				stacked
-				code={`<ResourceCombobox
-  fetcher={search}
-  getKey={(c) => c.code}
-  getLabel={(c) => c.name}
-  errorMessage="The lookup service is unavailable."
-/>`}
-			>
-				<Stack gap="lg" style={MEASURE.field}>
-					<FormField label="Country (self-fetching)">
-						<ResourceCombobox<Country>
-							// No preload, so the error does not appear on mount.
-							preload={false}
-							fetcher={async ({ query: needle, signal }) => {
-								await wait(500, signal)
-								if (failing) throw new Error("The lookup service is unavailable.")
-								return matching(needle).slice(0, 6)
-							}}
-							getKey={(country) => country.code}
-							getLabel={(country) => country.name}
-							getDescription={(country) => country.capital}
-							getMeta={(country) => country.region}
-						/>
-					</FormField>
-					<Checkbox label="Make the fetcher fail" checked={failing} onChange={(event) => setFailing(event.target.checked)} />
-
-					<FormField label="Country (working)" helperText="No preload: it asks you to type first.">
-						<ResourceCombobox<Country>
-							preload={false}
-							fetcher={searchCountries}
-							getKey={(country) => country.code}
-							getLabel={(country) => country.name}
-							getDescription={(country) => country.capital}
-							getMeta={(country) => country.region}
-						/>
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="async-combobox"
+				example="combobox/async-combobox"
 				title="Results you already hold"
 				description="AsyncCombobox is the engine without the fetch, for a screen that already has a data layer: the consumer holds the items, the query and the loading flag. Type at least three characters — below the threshold the status row says how many more are needed, and no search fires. Grouped by region, the matched run emphasised."
 				stacked
-				code={`<AsyncCombobox
-  items={items}
-  searchValue={query}
-  onSearchValueChange={setQuery}
-  selectedValue={selected}
-  onSelectedValueChange={setSelected}
-  getItemLabel={(c) => c.name}
-  getItemKey={(c) => c.code}
-  getItemGroup={(c) => c.region}
-  highlightMatch
-/>`}
-			>
-				<Stack gap="sm" style={MEASURE.field}>
-					<FormField label="Country">
-						<AsyncCombobox<Country>
-							items={items}
-							searchValue={query}
-							onSearchValueChange={setQuery}
-							selectedValue={selected}
-							onSelectedValueChange={setSelected}
-							getItemLabel={(country) => country.name}
-							getItemKey={(country) => country.code}
-							getItemGroup={(country) => country.region}
-							highlightMatch
-						/>
-					</FormField>
-					<Text size="sm" type="secondary">
-						{selected ? `${selected.name} — ${selected.capital}` : "nothing selected"}
-					</Text>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="async-multi-combobox"
+				example="combobox/async-multi-combobox"
 				title="Several at once"
 				description="AsyncMultiCombobox: chips in the field, checks in the list. Selections are merged ahead of the results and de-duplicated by key, so a chosen country stays visible and checked even when the current search does not return it — which is what happens on the very next keystroke. Each chip's remove control is named after it."
 				stacked
-				code={`<AsyncMultiCombobox
-  items={items}
-  selectedValues={selected}
-  onSelectedValuesChange={setSelected}
-  …
-/>`}
-			>
-				<Stack gap="sm" style={MEASURE.field}>
-					<FormField label="Countries">
-						<AsyncMultiCombobox<Country>
-							items={multiItems}
-							searchValue={multiQuery}
-							onSearchValueChange={setMultiQuery}
-							selectedValues={multiSelected}
-							onSelectedValuesChange={setMultiSelected}
-							getItemLabel={(country) => country.name}
-							getItemKey={(country) => country.code}
-							minSearchLength={0}
-							highlightMatch
-						/>
-					</FormField>
-					<Text size="sm" type="secondary">
-						{multiSelected.length} selected
-					</Text>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="apply-button"
+				example="combobox/apply-button"
 				title="Apply before it counts"
 				description="With applyButton, edits accumulate in a draft until Apply. For a filter that costs something to apply — a query, a page load. Cancel or dismissing puts the draft back, so closing without committing cannot half-apply a change. Without it every toggle commits, which is right when committing is free."
 				stacked
-				code={`<AsyncMultiCombobox applyButton onApply={run} … />`}
-			>
-				<Stack gap="sm" style={MEASURE.field}>
-					<FormField label="Filter by country">
-						<AsyncMultiCombobox<Country>
-							items={applyItems}
-							searchValue={applyQuery}
-							onSearchValueChange={setApplyQuery}
-							selectedValues={applied}
-							onSelectedValuesChange={setApplied}
-							getItemLabel={(country) => country.name}
-							getItemKey={(country) => country.code}
-							minSearchLength={0}
-							applyButton
-						/>
-					</FormField>
-					<Text size="sm" type="secondary">
-						applied: {applied.length > 0 ? applied.map((c) => c.name).join(", ") : "none"}
-					</Text>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="creatable"
+				example="combobox/creatable"
 				title="Create what is missing"
 				description="With creatable, an inline create row appears when the typed text matches no existing label — compared case-insensitively, because offering “Create Greece” beside an existing “greece” is offering a duplicate. It arrives at onCreate rather than at onSelectedValueChange: the consumer creates the record and decides what, if anything, to select."
 				stacked
-				code={`<AsyncCombobox creatable onCreate={(name) => create(name)} … />`}
-			>
-				<Stack gap="sm" style={MEASURE.field}>
-					<FormField label="Country or a new one">
-						<AsyncCombobox<Country>
-							items={createItems}
-							searchValue={createQuery}
-							onSearchValueChange={setCreateQuery}
-							selectedValue={createSelected}
-							onSelectedValueChange={setCreateSelected}
-							getItemLabel={(country) => country.name}
-							getItemKey={(country) => country.code}
-							creatable
-							onCreate={(name) => {
-								setCreated((prev) => [...prev, name])
-								setCreateQuery("")
-							}}
-						/>
-					</FormField>
-					{created.length > 0 && (
-						<Text size="sm" type="secondary">created: {created.join(", ")}</Text>
-					)}
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="combobox-rule" title="The pickers do not filter" stacked>
 				<Callout label="Rule">
@@ -505,66 +83,25 @@ const suggestions = useSuggestions({ fetchData, minQueryLength: 1 })
 			</Example>
 
 			<Example
-				id="combobox-field"
+				example="combobox/combobox-field"
 				title="The parts: one field surface"
 				description="Below the pickers are the parts they are built from. The input, the trigger, and the chips container all carry the shared field attributes, so they wear the same height, border, focus ring, and invalid state as Input and Select — not an approximation of them."
 				stacked
-				code={`<ComboboxInputTrigger placeholder="Search…" showClear />`}
-			>
-				<Stack gap="lg" style={MEASURE.field}>
-					<FormField label="Plain input, for comparison">
-						<Input placeholder="A regular text field" />
-					</FormField>
-					<FormField label="Combobox">
-						<SingleCombobox />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="combobox-select"
+				example="combobox/combobox-select"
 				title="Without free text"
 				description="The whole field as one trigger, when the value can only come from the list. The search band inside the popup is required, not decoration: it takes focus on open and owns the arrow keys, Home, End and Enter. Without it the list can only be used with a pointer — for a short list with no search, use Select."
 				stacked
-				code={`<ComboboxTrigger>
-  <ComboboxValue placeholder="Choose a country" />
-</ComboboxTrigger>
-<ComboboxPortal>
-  <ComboboxPositioner>
-    <ComboboxPopup>
-      <ComboboxPopupInput aria-label="Search countries" placeholder="Search countries" />
-      <ComboboxEmpty>No country matches.</ComboboxEmpty>
-      <ComboboxList>…</ComboboxList>
-    </ComboboxPopup>
-  </ComboboxPositioner>
-</ComboboxPortal>`}
-			>
-				<Stack gap="lg" style={MEASURE.field}>
-					<FormField label="Country from the list">
-						<SelectLikeCombobox />
-					</FormField>
-					<FormField label="Grouped" helperText="Groups get a caption and their own scroll block.">
-						<GroupedCombobox />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="combobox-multiple"
+				example="combobox/combobox-multiple"
 				title="Multiple"
 				description="Chips inside the field rather than a list beneath it. A chip lights up when it is the keyboard target, because backspacing through chips is how a keyboard user removes them."
 				stacked
-				code={`<ComboboxChips>
-  {value.map((item) => <ComboboxChip key={item}>{item}</ComboboxChip>)}
-  <ComboboxChipsInput />
-</ComboboxChips>`}
-			>
-				<Stack style={MEASURE.field}>
-					<FormField label="Ships to" helperText="Type to filter, Backspace to remove the last chip.">
-						<MultiCombobox />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="combobox-anatomy" title="Pickers first, parts when none fits" stacked>
 				<Callout label="Rule">

@@ -231,26 +231,88 @@ Preview route: Timelines, onboarding & admin — `/blocks-admin`
 ### Changelog
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ChangelogTimeline
-  entries={[
-    { id: "1", kind: "added", title: "Saved views", version: "v3.4.0", timestamp: "16 Aug" },
-  ]}
-/>
+import { ChangelogTimeline, type ChangelogEntry } from "themelia-ui/patterns/timelines"
+
+const CHANGELOG: ChangelogEntry[] = [
+	{
+		id: "1",
+		kind: "added",
+		title: "Saved views on the data table",
+		description: "A view captures filters, column order and page size.",
+		version: "v3.4.0",
+		timestamp: "16 Aug",
+		author: "Alice Mercer",
+	},
+	{
+		id: "2",
+		kind: "fixed",
+		title: "Sheet no longer traps focus after a nested dialog closes",
+		version: "v3.3.2",
+		timestamp: "12 Aug",
+	},
+	{
+		id: "3",
+		kind: "modified",
+		title: "Badge tones renamed to the semantic set",
+		description: "The default and error tones are gone; use neutral and destructive.",
+		version: "v3.3.0",
+		timestamp: "4 Aug",
+	},
+	{
+		id: "4",
+		kind: "removed",
+		title: "The legacy size prop on Metric",
+		version: "v3.3.0",
+		timestamp: "4 Aug",
+	},
+]
+
+export default function BlocksChangelog() {
+	return (
+		<ChangelogTimeline entries={CHANGELOG} />
+	)
+}
 ```
 
 ### Milestones
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MilestonesTimeline
-  milestones={[
-    { id: "3", title: "Token consolidation", status: "inProgress", progress: 68 },
-  ]}
-/>
+import { MilestonesTimeline, type Milestone } from "themelia-ui/patterns/timelines"
+
+const MILESTONES: Milestone[] = [
+	{ id: "1", title: "Discovery", description: "Interviews with eight teams.", status: "completed", dueDate: "12 Jun" },
+	{ id: "2", title: "Design system audit", status: "completed", dueDate: "3 Jul" },
+	{ id: "3", title: "Token consolidation", description: "1,699 custom properties down to 479.", status: "inProgress", dueDate: "29 Aug", progress: 68 },
+	{ id: "4", title: "Consumer migration", status: "blocked", description: "Waiting on the package release." },
+	{ id: "5", title: "Deprecate the old kit", status: "upcoming", dueDate: "Q4" },
+]
+
+export default function BlocksMilestones() {
+	return (
+		<MilestonesTimeline milestones={MILESTONES} />
+	)
+}
 ```
 
 ### Steps, vertical and horizontal
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Steps steps={steps} />
-<StepsBar steps={steps} />
+import { Stack } from "themelia-ui/base/structure"
+import { Steps, StepsBar, type Step } from "themelia-ui/patterns/timelines"
+
+const STEPS: Step[] = [
+	{ id: "1", title: "Create your workspace", description: "Name it and pick a region.", status: "completed", timestamp: "Done 14 Aug" },
+	{ id: "2", title: "Invite your team", description: "Add the people who need access.", status: "completed", timestamp: "Done 15 Aug" },
+	{ id: "3", title: "Connect a data source", description: "Postgres, BigQuery, or a CSV upload.", status: "current", badge: "Required" },
+	{ id: "4", title: "Publish your first dashboard", description: "Pick a template or start empty.", status: "upcoming" },
+]
+
+export default function BlocksSteps() {
+	return (
+		<Stack gap="2xl">
+			<StepsBar steps={STEPS} />
+			<Steps steps={STEPS} />
+		</Stack>
+	)
+}
 ```

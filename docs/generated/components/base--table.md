@@ -190,58 +190,133 @@ Kind: interface.
 
 Preview route: Table — `/table`
 
-### Table
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Table>
-  <TableHeader>
-    <TableRow><TableHead>Invoice</TableHead>…</TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell>INV-4417</TableCell>
-      <TableCell align="end"><Money amount={1299.5} /></TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
-```
-
-### Selection
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TableRow data-state={isSelected ? "selected" : undefined}>
-  <TableCell><Checkbox … /></TableCell>
-  …
-</TableRow>
-```
-
-### Overflow
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Scope vars={{ "--density-scale": 0.85 }}>
-  <Table>…</Table>
-</Scope>
-```
-
 ### Sortable columns
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TableHead
-  sortable
-  sortDirection={sort.key === "amount" ? sort.direction : null}
-  onSort={() => toggleSort("amount")}
-  align="end"
->
-  Amount
-</TableHead>
+import { useState } from "react"
+
+import {
+	Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type TableSortDirection,
+} from "themelia-ui/base/table"
+import { Money } from "themelia-ui/primitives"
+
+import { INVOICES } from "./data"
+
+/**
+ * Sorting is the CALLER's job — the table renders the order it is given.
+ *
+ * A table that sorted its own rows would have to own them, and then it cannot be driven by
+ * a server that paginates, or by a filter that lives above it.
+ */
+function SortableInvoiceTable() {
+	const [sort, setSort] = useState<{ key: "id" | "client" | "amount"; direction: Exclude<TableSortDirection, null> }>({
+		key: "amount",
+		direction: "descending",
+	})
+
+	const toggleSort = (key: "id" | "client" | "amount") =>
+		setSort((current) =>
+			current.key === key
+				? { key, direction: current.direction === "ascending" ? "descending" : "ascending" }
+				: { key, direction: "ascending" },
+		)
+
+	const rows = [...INVOICES].sort((a, b) => {
+		const left = a[sort.key]
+		const right = b[sort.key]
+		const order = typeof left === "number" && typeof right === "number"
+			? left - right
+			: String(left).localeCompare(String(right))
+		return sort.direction === "ascending" ? order : -order
+	})
+
+	const head = (key: "id" | "client" | "amount", label: string, align?: "end") => (
+		<TableHead
+			sortable
+			align={align}
+			sortDirection={sort.key === key ? sort.direction : null}
+			onSort={() => toggleSort(key)}
+		>
+			{label}
+		</TableHead>
+	)
+
+	return (
+		<Table>
+			<TableHeader>
+				<TableRow>
+					{head("id", "Invoice")}
+					{head("client", "Client")}
+					{head("amount", "Amount", "end")}
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{rows.map((invoice) => (
+					<TableRow key={invoice.id}>
+						<TableCell>{invoice.id}</TableCell>
+						<TableCell>{invoice.client}</TableCell>
+						<TableCell align="end"><Money amount={invoice.amount} /></TableCell>
+					</TableRow>
+				))}
+			</TableBody>
+		</Table>
+	)
+}
+
+export default function TableSorting() {
+	return (
+		<SortableInvoiceTable />
+	)
+}
 ```
 
 ### Empty and sticky
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TableBody>
-  {rows.length === 0 ? <TableEmpty colSpan={4} /> : rows.map(…)}
-</TableBody>
+import { Stack } from "themelia-ui/base/structure"
+import {
+	Table, TableBody, TableCell, TableEmpty, TableHead, TableHeader, TableRow,
+} from "themelia-ui/base/table"
+import { Money } from "themelia-ui/primitives"
 
-<Table stickyHeader containerClassName="…max-height…">
+import styles from "../../preview.module.css"
+import { INVOICES } from "./data"
+
+export default function TableEmptyExample() {
+	return (
+		<Stack gap="xl" style={{ width: "100%" }}>
+			<Table>
+				<TableHeader>
+					<TableRow>
+						<TableHead>Invoice</TableHead>
+						<TableHead>Client</TableHead>
+						<TableHead align="end">Amount</TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					<TableEmpty colSpan={3}>No invoices match this filter.</TableEmpty>
+				</TableBody>
+			</Table>
+
+			<Table stickyHeader containerClassName={styles.stickyDemo}>
+				<TableHeader>
+					<TableRow>
+						<TableHead>Invoice</TableHead>
+						<TableHead>Client</TableHead>
+						<TableHead align="end">Amount</TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					{[...INVOICES, ...INVOICES, ...INVOICES].map((invoice, index) => (
+						<TableRow key={index}>
+							<TableCell>{invoice.id}</TableCell>
+							<TableCell>{invoice.client}</TableCell>
+							<TableCell align="end"><Money amount={invoice.amount} /></TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+		</Stack>
+	)
+}
 ```

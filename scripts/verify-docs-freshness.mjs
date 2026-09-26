@@ -236,6 +236,6 @@ if (failures.length) {
   process.exit(1)
 }
 console.log(
-  `PASS verify docs-freshness — ${DOCS.length} documents carry no retired vocabulary, no dead path, ` +
+  `PASS verify docs-freshness — ${DOCS.length} documents cite no dead path, ` +
     `no dead script, and ${GENERATED.length} generated files match their generators.`,
 )

@@ -581,7 +581,14 @@ Preview route: Theme tweaker — `/theme-tweaker`
 ### Isolated theme scopes
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ThemeScope theme={createTheme({ shared: { "--radius": "0.875rem" } })}>
-  <Button>Scoped radius</Button>
-</ThemeScope>
+import { Button } from "themelia-ui/base/buttons"
+import { ThemeScope, createTheme } from "themelia-ui/features/theme-tweaker"
+
+export default function IsolatedThemeScope() {
+	return (
+		<ThemeScope theme={createTheme({ shared: { "--radius": "0.875rem" } })}>
+			<Button>Scoped radius</Button>
+		</ThemeScope>
+	)
+}
 ```

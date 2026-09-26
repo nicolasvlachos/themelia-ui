@@ -1,48 +1,7 @@
-import { FileTextIcon, SettingsIcon, ShieldIcon, UsersIcon } from "lucide-react"
-import { useState } from "react"
-
-import { Card } from "@/components/base/cards"
-import { Text } from "@/components/base/typography"
-import { AsideNavShell, BreadcrumbProgress, SectionNav, SideNav } from "@/components/layout"
-
 import { Callout } from "../partials/callout"
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const SETTINGS_NAV = [
-	{
-		id: "workspace",
-		label: "Workspace",
-		items: [
-			{ label: "General", href: "/settings", icon: SettingsIcon },
-			{ label: "Members", href: "/settings/members", icon: UsersIcon, badge: "12" },
-			{ label: "Security", href: "/settings/security", icon: ShieldIcon },
-		],
-	},
-	{
-		id: "billing",
-		label: "Billing",
-		collapsible: true,
-		items: [
-			{ label: "Invoices", href: "/settings/invoices", icon: FileTextIcon },
-			{ label: "Plan", href: "/settings/plan", disabled: true },
-		],
-	},
-]
-
-const WIZARD = [
-	{ id: "account", label: "Account", hint: "Who you are" },
-	{ id: "workspace", label: "Workspace", hint: "Name and region" },
-	{ id: "billing", label: "Billing", hint: "Plan and payment" },
-	{ id: "review", label: "Review", hint: "Check and confirm" },
-]
-
-function WizardProgress() {
-	const [current, setCurrent] = useState(2)
-	return <BreadcrumbProgress steps={WIZARD} currentIndex={current} onStepClick={(_id, index) => setCurrent(index)} />
-}
 
 export function SideNavPage() {
 	return (
@@ -58,62 +17,25 @@ export function SideNavPage() {
 			]}
 		>
 			<Example
-				id="side-nav"
+				example="side-nav/side-nav"
 				title="SideNav"
 				description="The rail between the pages of one section, not the app's global sidebar. Entries are data, so the active state, the ARIA, and the router integration are decided once. The active entry is matched by longest prefix — an index entry otherwise lights up on every page beneath it."
 				stacked
-				code={`<SideNav groups={settingsNav} currentPath="/settings/members" />`}
-			>
-				<div style={MEASURE.narrow}>
-					<SideNav groups={SETTINGS_NAV} currentPath="/settings/members" />
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="section-nav"
+				example="side-nav/section-nav"
 				title="SectionNav"
 				description="The in-page table of contents. It tracks which heading is on screen, which is the whole reason it exists — a list of anchors is trivial, a list of anchors that knows where the reader is needs an observer and a rule for which heading counts when two are visible."
 				stacked
-				code={`<SectionNav
-  items={[
-    { id: "side-nav", label: "SideNav" },
-    { id: "section-nav", label: "SectionNav", depth: 2 },
-  ]}
-/>`}
-			>
-				<div style={MEASURE.narrow}>
-					<SectionNav
-						items={[
-							{ id: "side-nav", label: "SideNav" },
-							{ id: "section-nav", label: "SectionNav" },
-							{ id: "side-nav-api", label: "API", depth: 2 },
-						]}
-					/>
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="settings-shell"
+				example="side-nav/settings-shell"
 				title="The rail beside its content: AsideNavShell"
 				description="A composition of TwoColumnLayout and SideNav rather than new layout, with the rail drawn on the start side. The aside is still second in the DOM, so the content is reached first — the position is a grid decision, never a DOM one."
 				stacked
-				code={`<AsideNavShell title="Settings" groups={settingsNav} currentPath="/settings/members">
-  <Card title="Members" />
-</AsideNavShell>`}
-			>
-				{/* Its own landmark name, distinct from the SideNav demo above. */}
-				<AsideNavShell
-					title="Settings"
-					description="Everything about this workspace."
-					aside={<SideNav groups={SETTINGS_NAV} currentPath="/settings/members" strings={{ label: "Settings" }} />}
-					stickyAside={false}
-					style={{ width: "100%" }}
-				>
-					<Card surface="bordered" title="Members" description="Who can sign in and what they can do.">
-						<Text size="sm" type="secondary">The section's content sits here.</Text>
-					</Card>
-				</AsideNavShell>
-			</Example>
+			/>
 
 			<Example id="settings-shell-rule" title="One component, named for its shape" stacked>
 				<Callout label="Rule">
@@ -125,18 +47,11 @@ export function SideNavPage() {
 			</Example>
 
 			<Example
-				id="breadcrumb-progress"
+				example="side-nav/breadcrumb-progress"
 				title="A wizard's position: BreadcrumbProgress"
 				description="How far through a sequence the reader is, drawn by base's Stepper as a trail. Finished steps and the current one are reachable when onStepClick is given; steps ahead are not, because a wizard that lets you skip a step you have not filled in is not a wizard. Below lg the labels fold away and the markers carry the position alone — a screen reader still hears each step's name."
 				stacked
-				code={`<BreadcrumbProgress
-  steps={[{ id: "account", label: "Account" }, { id: "billing", label: "Billing" }, …]}
-  currentIndex={current}
-  onStepClick={(_id, index) => setCurrent(index)}
-/>`}
-			>
-				<WizardProgress />
-			</Example>
+			/>
 
 			<Example id="side-nav-api" title="SideNav and SectionNav API">
 				<PropTable

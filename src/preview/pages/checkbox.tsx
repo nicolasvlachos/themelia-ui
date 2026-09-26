@@ -1,6 +1,3 @@
-import { Checkbox } from "@/components/base/choice-inputs"
-import { Stack } from "@/components/base/structure"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
@@ -14,21 +11,11 @@ export function CheckboxPage() {
 			exports={["Checkbox"]}
 		>
 			<Example
-				id="checkbox"
+				example="checkbox/checkbox"
 				title="Checkbox"
 				description="The label is part of the target, and a label that wraps keeps the box on the first line instead of floating into the middle of the paragraph."
 				stacked
-				code={`<Checkbox label="Checked" defaultChecked />
-<Checkbox label="Indeterminate" indeterminate />`}
-			>
-				<Stack gap="sm">
-					<Checkbox label="Unchecked" />
-					<Checkbox label="Checked" defaultChecked />
-					<Checkbox label="Indeterminate" indeterminate />
-					<Checkbox label="Disabled" disabled />
-					<Checkbox label="A long label that wraps onto a second line, so the box stays on the first line instead of floating into the middle of the paragraph." />
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="checkbox-api" title="API">
 				<PropTable owner="Checkbox"

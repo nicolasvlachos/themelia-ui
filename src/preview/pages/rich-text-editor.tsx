@@ -1,10 +1,8 @@
-import { useRef, useState } from "react"
-import { AtSignIcon, PaperclipIcon } from "lucide-react"
+import { useState } from "react"
 
-import { Button } from "@/components/base/buttons"
 import { Stack } from "@/components/base/structure"
 import { RichText, Text } from "@/components/base/typography"
-import { RichTextEditor, type RichTextEditorHandle } from "@/components/features"
+import { RichTextEditor } from "@/components/features"
 
 import styles from "../preview.module.css"
 import { Callout } from "../partials/callout"
@@ -16,8 +14,6 @@ const SEED = "<p>Select some text and press <strong>B</strong>. The toolbar repo
 
 export function RichTextEditorPage() {
 	const [body, setBody] = useState(SEED)
-	const [note, setNote] = useState("")
-	const composerRef = useRef<RichTextEditorHandle>(null)
 
 	return (
 		<ComponentPage
@@ -53,51 +49,11 @@ export function RichTextEditorPage() {
 			</Example>
 
 			<Example
-				id="editor-compact"
+				example="rich-text-editor/editor-compact"
 				title="compact"
 				description="A shorter body for a comment box rather than a page. The submit control goes in footerSlot, under the body and inside the same frame, so it sits where CommentComposer puts it and where a reader finishing a draft looks for it. toolbarTrailing is still there for a control that belongs with the formatting buttons."
 				stacked
-				code={`<RichTextEditor
-  compact
-  value={note}
-  onValueChange={setNote}
-  hideSourceToggle
-  footerSlot={<><AttachmentChips /><Button>Post</Button></>}
-/>`}
-			>
-				<RichTextEditor
-					ref={composerRef}
-					compact
-					value={note}
-					onValueChange={setNote}
-					placeholder="Add a note…"
-					hideSourceToggle
-					extraToolbarItems={[
-						{
-							id: "mention",
-							icon: AtSignIcon,
-							label: "Insert reference",
-							onClick: () => composerRef.current?.insertHTML("@"),
-						},
-						{
-							id: "attach",
-							icon: PaperclipIcon,
-							label: "Attach a file",
-							onClick: () => undefined,
-						},
-					]}
-					footerSlot={
-						<Stack direction="horizontal" align="center" justify="between" gap="md">
-							<Text size="xs" type="secondary">
-								Markdown is not parsed — use the toolbar.
-							</Text>
-							<Button disabled={!note} onClick={() => setNote("")}>
-								Post
-							</Button>
-						</Stack>
-					}
-				/>
-			</Example>
+			/>
 
 			<Example
 				id="editor-output"

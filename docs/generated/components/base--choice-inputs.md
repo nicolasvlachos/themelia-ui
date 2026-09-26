@@ -481,64 +481,298 @@ Preview route: Checkbox — `/checkbox`
 ### Checkbox
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Checkbox label="Checked" defaultChecked />
-<Checkbox label="Indeterminate" indeterminate />
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function CheckboxExample() {
+	return (
+		<Stack gap="sm">
+			<Checkbox label="Unchecked" />
+			<Checkbox label="Checked" defaultChecked />
+			<Checkbox label="Indeterminate" indeterminate />
+			<Checkbox label="Disabled" disabled />
+			<Checkbox label="A long label that wraps onto a second line, so the box stays on the first line instead of floating into the middle of the paragraph." />
+		</Stack>
+	)
+}
 ```
 
 ### Radio group
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<RadioGroup name="shipping">
-  <Radio label="Standard" value="standard" defaultChecked />
-  <Radio label="Express" value="express" />
-</RadioGroup>
+import { Radio, RadioGroup } from "themelia-ui/base/choice-inputs"
+
+export default function RadioGroupExample() {
+	return (
+		<RadioGroup name="demo-shipping">
+			<Radio label="Standard — 3 to 5 days" value="standard" defaultChecked />
+			<Radio label="Express — next day" value="express" />
+			<Radio label="Overnight" value="overnight" />
+			<Radio label="Pickup (unavailable)" value="pickup" disabled />
+		</RadioGroup>
+	)
+}
 ```
 
 ### Cards
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<CardRadioGroup options={plans} value={plan} onValueChange={setPlan} columns={3} />
+import { SparklesIcon, UsersIcon, ZapIcon } from "lucide-react"
+import { useState } from "react"
+
+import { CardRadioGroup } from "themelia-ui/base/choice-inputs"
+
+const PLANS = [
+	{
+		value: "free",
+		label: "Free",
+		description: "One project, community support.",
+		icon: SparklesIcon,
+		tooltip: "No card required. Upgrade at any time without losing data.",
+	},
+	{ value: "pro", label: "Pro", description: "Ten projects, email support.", icon: ZapIcon },
+	{
+		value: "team",
+		label: "Team",
+		description: "Unlimited projects, SSO, audit log.",
+		icon: UsersIcon,
+		tooltip: "Billed per seat. SSO requires a verified domain.",
+	},
+]
+
+export default function CardRadio() {
+	const [plan, setPlan] = useState("pro")
+
+	return (
+		<CardRadioGroup options={PLANS} value={plan} onValueChange={setPlan} columns={3} />
+	)
+}
 ```
 
 ### Cards, several at once
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<CardCheckboxGroup options={channels} value={selected} onValueChange={setSelected} columns={4} />
+import { GlobeIcon, MailIcon, ShieldIcon, SmartphoneIcon } from "lucide-react"
+import { useState } from "react"
+
+import { CardCheckboxGroup } from "themelia-ui/base/choice-inputs"
+
+const CHANNELS = [
+	{ value: "email", label: "Email", description: "Daily digest.", icon: MailIcon },
+	{ value: "push", label: "Push", description: "Mobile and desktop.", icon: SmartphoneIcon },
+	{ value: "web", label: "In-app", description: "Only while signed in.", icon: GlobeIcon },
+	{ value: "sms", label: "SMS", description: "Critical alerts only.", icon: ShieldIcon, disabled: true },
+]
+
+export default function CardCheckbox() {
+	const [channels, setChannels] = useState<string[]>(["email"])
+
+	return (
+		<CardCheckboxGroup options={CHANNELS} value={channels} onValueChange={setChannels} columns={4} name="channels" />
+	)
+}
 ```
 
 ### List
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ListRadioGroup options={roles} value={role} onValueChange={setRole} />
+import { useState } from "react"
+
+import { ListRadioGroup } from "themelia-ui/base/choice-inputs"
+
+
+const ROLES = [
+	{ value: "owner", label: "Owner", description: "Full access, including billing and deletion." },
+	{ value: "admin", label: "Admin", description: "Manages members and settings.", tooltip: "Cannot delete the workspace or change the billing plan." },
+	{ value: "member", label: "Member", description: "Reads and writes project data." },
+	{ value: "viewer", label: "Viewer", description: "Read-only.", disabled: true },
+]
+
+export default function ListRadio() {
+	const [role, setRole] = useState("admin")
+
+	return (
+		<div style={{ maxWidth: "34rem", width: "100%" }}>
+			<ListRadioGroup options={ROLES} value={role} onValueChange={setRole} />
+		</div>
+	)
+}
 ```
 
 ### Pills
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PillRadioGroup options={views} value={view} onValueChange={setView} allowClear />
+import { BuildingIcon, LayoutGridIcon, ListIcon } from "lucide-react"
+import { useState } from "react"
+
+import { PillRadioGroup } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+
+const VIEWS = [
+	{ value: "grid", label: "Grid", icon: LayoutGridIcon },
+	{ value: "list", label: "List", icon: ListIcon },
+	{ value: "board", label: "Board", icon: BuildingIcon },
+]
+
+export default function PillRadio() {
+	const [view, setView] = useState<string | null>("grid")
+
+	return (
+		<Stack gap="lg" align="start">
+			<PillRadioGroup name="view" options={VIEWS} value={view} onValueChange={setView} allowClear />
+			<PillRadioGroup
+				name="range"
+				options={[
+					{ value: "7d", label: "7 days" },
+					{ value: "30d", label: "30 days" },
+					{ value: "90d", label: "90 days" },
+				]}
+				value="30d"
+				onValueChange={() => {}}
+			/>
+		</Stack>
+	)
+}
+```
+
+### Type can override the master factor
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function TypeFactor() {
+	return (
+		<Stack gap="lg">
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">typography.scale 0.875 — type shrinks, control geometry holds</Text>
+				<UIProvider config={{ typography: { scale: 0.875 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">scale 0.875 + typography.scale 1 — geometry shrinks, type holds</Text>
+				<UIProvider config={{ scale: 0.875, typography: { scale: 1 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
 ### Select
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Select
-  options={countries}
-  value={country}
-  onValueChange={setCountry}
-  allowClear
-/>
+import { GlobeIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Select } from "themelia-ui/base/choice-inputs"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { NativeSelect } from "themelia-ui/base/text-inputs"
+
+
+const COUNTRIES = [
+	{ value: "nl", label: "Netherlands", description: "VAT charged at 21%.", icon: <GlobeIcon /> },
+	{ value: "de", label: "Germany", description: "VAT charged at 19%.", icon: <GlobeIcon /> },
+	{ value: "fr", label: "France", description: "VAT charged at 20%.", icon: <GlobeIcon /> },
+	{ value: "us", label: "United States", description: "Sales tax varies by state.", icon: <GlobeIcon /> },
+	{ value: "jp", label: "Japan", description: "Consumption tax at 10%.", icon: <GlobeIcon />, disabled: true },
+]
+
+export default function SelectExample() {
+	const [country, setCountry] = useState<string | undefined>("nl")
+
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Billing country">
+				<Select options={COUNTRIES} value={country} onValueChange={setCountry} allowClear />
+			</FormField>
+			<FormField label="Invalid" error="Choose a country to continue.">
+				<Select options={COUNTRIES} invalid placeholder="Choose a country" />
+			</FormField>
+			<FormField label="Disabled">
+				<Select options={COUNTRIES} disabled defaultValue="nl" />
+			</FormField>
+			<FormField
+				label="Native select"
+				helperText="The escape hatch: NativeSelect, when the platform picker is specifically what you want."
+			>
+				<NativeSelect defaultValue="nl">
+					<option value="nl">Netherlands</option>
+					<option value="de">Germany</option>
+				</NativeSelect>
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Switch
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Switch label="Email notifications" defaultChecked />
+import { Switch } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function SwitchExample() {
+	return (
+		<Stack gap="sm">
+			<Switch label="Email notifications" defaultChecked />
+			<Switch label="Disabled" disabled />
+		</Stack>
+	)
+}
 ```
 
 ### Settings rows and feature cards
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SwitchCard label="Two-factor authentication" icon={ShieldIcon} description="…" />
-<ToggleField label="Email notifications" description="…" />
-<ToggleField surface="card" kind="checkbox" label="Usage reports" />
+import { RocketIcon, ShieldIcon } from "lucide-react"
+
+import { SwitchCard, ToggleField } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+
+
+export default function ToggleRows() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "34rem", width: "100%" }}>
+			<SwitchCard
+				label="Two-factor authentication"
+				icon={ShieldIcon}
+				description="Require a second factor when signing in from a new device."
+				hint="Recovery codes are issued once, when you turn this on."
+				defaultValue
+				name="twofa"
+			/>
+			<SwitchCard
+				label="Beta features"
+				icon={RocketIcon}
+				description="Turn on features that are still changing."
+			/>
+			<Stack gap="2xs">
+				<ToggleField label="Email notifications" description="A daily digest, sent at 09:00." defaultValue />
+				<ToggleField label="Product updates" description="Occasional release notes." />
+				<ToggleField
+					label="Usage reports"
+					description="A checkbox instead of a switch, for a row that is a preference rather than a state."
+					kind="checkbox"
+					controlPosition="leading"
+				/>
+				<ToggleField label="Disabled" description="Not available on this plan." disabled />
+			</Stack>
+		</Stack>
+	)
+}
 ```

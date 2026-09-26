@@ -1,14 +1,13 @@
 import { useRef, useState } from "react"
 import {
-	CodeIcon, DatabaseIcon, FileTextIcon, GlobeIcon, SearchIcon, SparklesIcon,
+	CodeIcon, DatabaseIcon, FileTextIcon, GlobeIcon, SearchIcon,
 } from "lucide-react"
 
 import { Button } from "@/components/base/buttons"
 import { Stack } from "@/components/base/structure"
 import { Text } from "@/components/base/typography"
 import {
-	AiAgent, AiArtifact, AiAttachment, AiChainOfThought, AiChat, AiCodeBlock, AiConfirmation,
-	AiMessageBubble, AiReasoning, AiShimmer, AiSources, AiTask, AiToolCall,
+	AiArtifact, AiAttachment, AiChat, AiCodeBlock, AiMessageBubble, AiShimmer, AiSources,
 	type AiChatAttachment, type AiChatMessageData,
 } from "@/components/features"
 
@@ -87,30 +86,9 @@ const STAGED: AiChatAttachment[] = [
 	{ id: "a3", name: "upload.csv", meta: "uploading", kind: "document", progress: 0.62 },
 ]
 
-const PLAN = {
-	id: "t0",
-	title: "Fix the rounding",
-	status: "running" as const,
-	rightSlot: "2 of 4",
-	children: [
-		{ id: "t1", title: "Move amounts to cents", status: "completed" as const },
-		{ id: "t2", title: "Round once in formatTotal", status: "completed" as const },
-		{ id: "t3", title: "Backfill the existing invoices", status: "running" as const },
-		{ id: "t4", title: "Add a regression test", status: "queued" as const },
-	],
-}
-
-const CHAIN = [
-	{ id: "c1", title: "Read the failing orders", description: "Nine of 4,102 are off by one cent.", status: "completed" as const },
-	{ id: "c2", title: "Compare the sums", description: "Per-line rounding, then a sum.", status: "completed" as const },
-	{ id: "c3", title: "Draft the fix", status: "active" as const },
-	{ id: "c4", title: "Write the test", status: "pending" as const },
-]
-
 export function AiChatPage() {
 	const [input, setInput] = useState("")
 	const [log, setLog] = useState<string[]>([])
-	const [approval, setApproval] = useState<"pending" | "approved" | "rejected">("pending")
 	const [attachments, setAttachments] = useState(STAGED)
 	const [streaming, setStreaming] = useState(false)
 	const [messages, setMessages] = useState<AiChatMessageData[]>(MESSAGES)
@@ -253,70 +231,18 @@ export function AiChatPage() {
 			</Example>
 
 			<Example
-				id="thinking"
+				example="ai-chat/thinking"
 				title="Reasoning and plans"
 				description="Two shapes for two things a model emits. Reasoning is free-form text that streams — it opens while it is arriving and closes when it stops, because nobody rereads a trace. A chain of thought is structured steps, so it stays open and marks where the work has got to."
 				stacked
-				code={`<AiReasoning streaming={isThinking} durationSeconds={4}>
-  {trace}
-</AiReasoning>
-
-<AiChainOfThought steps={steps} streaming />
-<AiTask task={plan} />`}
-			>
-				<Stack gap="lg">
-					<AiReasoning durationSeconds={4}>
-						The totals are summed as floats. 0.1 + 0.2 is 0.30000000000000004, and rounding
-						each line before summing compounds the error across a long invoice.
-					</AiReasoning>
-					<AiReasoning streaming>
-						Checking whether the backfill needs to run per tenant…
-					</AiReasoning>
-					<AiChainOfThought steps={CHAIN} streaming />
-					<AiTask task={PLAN} density="expanded" />
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="tools"
+				example="ai-chat/tools"
 				title="Tool calls"
 				description="Every state a call passes through, and the one rule that matters: with no arguments and no result there is nothing behind the header, so it is a plain row rather than a disclosure that opens onto an empty panel."
 				stacked
-				code={`<AiToolCall
-  name="search_codebase"
-  status="success"
-  durationMs={820}
-  args={JSON.stringify(args, null, 2)}
-  result={summary}
-/>`}
-			>
-				<Stack gap="md">
-					<AiToolCall name="read_file" status="pending" />
-					<AiToolCall
-						name="search_codebase"
-						status="running"
-						icon={SearchIcon}
-						args={'{ "query": "invoice total" }'}
-					/>
-					<AiToolCall
-						name="search_codebase"
-						status="success"
-						icon={SearchIcon}
-						durationMs={820}
-						defaultExpanded
-						args={'{\n  "query": "invoice total",\n  "path": "src/billing"\n}'}
-						result={"3 matches\n  invoice.ts:41\n  totals.ts:12\n  order.ts:88"}
-					/>
-					<AiToolCall
-						name="run_migration"
-						status="error"
-						durationMs={14_200}
-						defaultExpanded
-						args={'{ "name": "amounts_to_cents" }'}
-						error={"SQLSTATE 23505: duplicate key value violates unique constraint"}
-					/>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
 				id="output"
@@ -371,39 +297,11 @@ export function AiChatPage() {
 			</Example>
 
 			<Example
-				id="approval"
+				example="ai-chat/approval"
 				title="Asking first"
 				description="The one surface here that blocks the agent, so it is a polite live region: it appears after the reader has stopped watching the transcript, and a screen reader has to be told. Once answered the action row is replaced by the outcome rather than left disabled."
 				stacked
-				code={`<AiConfirmation
-  title="Run the backfill on 4,102 invoices"
-  description="Rewrites every amount into cents. Not reversible."
-  tone="destructive"
-  status={status}
-  onApprove={approve}
-  onReject={reject}
-/>`}
-			>
-				<Stack gap="lg">
-					<AiConfirmation
-						title="Run the backfill on 4,102 invoices"
-						description="Rewrites every stored amount into cents. There is no undo."
-						tone="destructive"
-						status={approval}
-						onApprove={() => setApproval("approved")}
-						onReject={() => setApproval("rejected")}
-					/>
-					{approval !== "pending" && (
-						<Stack direction="horizontal" gap="md">
-							<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => setApproval("pending")}>
-								Ask again
-							</Button>
-						</Stack>
-					)}
-					<AiAgent name="Atlas" subtitle="model-large" status="working" variant="card" />
-					<AiAgent name="Scribe" icon={SparklesIcon} tone="success" status="done" />
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="ai-chat-rules" title="Three rules" stacked>
 				<Callout label="Enter sends, unless it is composing">

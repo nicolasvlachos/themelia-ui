@@ -180,42 +180,88 @@ Preview route: Page & page header — `/page`
 ### PageHeader
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PageHeader
-  backHref="/invoices"
-  titleIcon={FileTextIcon}
-  title="Invoice #4417"
-  titleBadges={[{ label: "Paid", tone: "success" }]}
-  description="Northwind Traders — issued 1 September 2026."
-  actions={<PageActions actions={actions} />}
-/>
+import { FileTextIcon } from "lucide-react"
+
+import { PageActions, PageHeader } from "themelia-ui/layout/page"
+
+import { RECORD_ACTIONS } from "./data"
+
+export default function PageHeaderExample() {
+	return (
+		<div style={{ width: "100%" }}>
+			<PageHeader
+				level={2}
+				backHref="#/page"
+				strings={{ back: "Back to invoices" }}
+				titleIcon={FileTextIcon}
+				title="Invoice #4417"
+				titleBadges={[{ label: "Paid", tone: "success" }, { label: "Net 30" }]}
+				description="Northwind Traders — issued 1 September 2026."
+				actions={<PageActions actions={RECORD_ACTIONS} />}
+				withSeparator
+			/>
+		</div>
+	)
+}
 ```
 
 ### PageActions
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PageActions actions={actions} maxInlineActions={3} />
-<PageActions actions={actions} display="menu" />
+import { Text } from "themelia-ui/base/typography"
+import { PageActions } from "themelia-ui/layout/page"
+
+import { RECORD_ACTIONS } from "./data"
+
+export default function PageActionsExample() {
+	return (
+		<div style={{ width: "100%", display: "grid", gap: "var(--space-xl)" }}>
+			{[4, 2, 1].map((max) => (
+				<div key={max} style={{ display: "grid", gap: "var(--space-xs)" }}>
+					<Text size="xs" type="secondary">maxInlineActions={max}</Text>
+					<PageActions actions={RECORD_ACTIONS} display="inline" maxInlineActions={max} />
+				</div>
+			))}
+			<div style={{ display: "grid", gap: "var(--space-xs)" }}>
+				<Text size="xs" type="secondary">display="menu"</Text>
+				<PageActions actions={RECORD_ACTIONS} display="menu" />
+			</div>
+		</div>
+	)
+}
 ```
 
 ### Page
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Page
-  maxWidth="xl"
-  header={{ title: "Invoices", description: "Newest first." }}
->
-  <Card title="September" />
-</Page>
-```
+import { Button } from "themelia-ui/base/buttons"
+import { Card } from "themelia-ui/base/cards"
+import { Text } from "themelia-ui/base/typography"
+import { Page } from "themelia-ui/layout/page"
 
-### Why two factors, and no third
+/* Dashed on the inline edges only: Container's gutter is inline padding. */
+const FRAME = {
+	width: "100%",
+	borderInline: "1px dashed var(--border)",
+} as const
 
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ scale: 1.125 }}>
-  <Page>
-    <UIProvider config={{ scale: 0.875 }}>
-      <Toolbar />
-    </UIProvider>
-  </Page>
-</UIProvider>
+export default function PageExample() {
+	return (
+		<div style={FRAME}>
+			<Page
+				maxWidth="md"
+				gutter="sm"
+				header={{
+					title: "Invoices",
+					description: "The dashed edges are the container's gutter. It is inline only — vertical rhythm belongs to the shell around the page, not to the container.",
+					actions: <Button>New</Button>,
+				}}
+			>
+				<Card surface="bordered" title="September" description="24 invoices, 3 overdue.">
+					<Text size="sm" type="secondary">The body region.</Text>
+				</Card>
+			</Page>
+		</div>
+	)
+}
 ```

@@ -1,81 +1,9 @@
-import { useState } from "react"
-import { BuildingIcon, DownloadIcon, PlusIcon } from "lucide-react"
-
-import { Badge } from "@/components/base/badge"
-import { Button } from "@/components/base/buttons"
-import { MetadataList, type MetadataListItem } from "@/components/base/display"
-import { StackedCardsIllustration } from "@/components/base/feedback"
-import { Stack } from "@/components/base/structure"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/base/table"
-import { Input } from "@/components/base/text-inputs"
-import { Text } from "@/components/base/typography"
-import {
-	ResourceActionBar, ResourceDetailsSection, ResourceEmptyState, ResourceHeader,
-	ResourceIndexShell, ResourceShowShell, TabbedResourceShell,
-} from "@/components/features"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-type ShellState = "ready" | "loading" | "empty" | "error"
-
-const INVOICES = [
-	{ ref: "INV-4417", customer: "Northwind Traders", amount: "$48,200.00", status: "Overdue" },
-	{ ref: "INV-4418", customer: "Contoso Ltd", amount: "$12,400.00", status: "Paid" },
-	{ ref: "INV-4419", customer: "Fabrikam Inc", amount: "$1,950.00", status: "Draft" },
-]
-
-const DETAILS: MetadataListItem[] = [
-	{ label: "Reference", value: { kind: "mono", value: "INV-4417" } },
-	{ label: "Amount", value: { kind: "money", value: 48_200, currency: "USD" } },
-	{ label: "Issued", value: { kind: "date", value: "2026-08-14" } },
-	{ label: "Due", value: { kind: "date", value: "2026-08-28" } },
-	{ label: "Billing email", value: { kind: "email", value: "billing@northwind.test" } },
-	{ label: "Paid", value: null },
-]
-
-const TABS = [
-	{ id: "overview", label: "Overview" },
-	{ id: "lines", label: "Line items", badge: <Badge tone="neutral">7</Badge> },
-	{ id: "payments", label: "Payments" },
-	{ id: "history", label: "History" },
-]
-
-function InvoiceTable() {
-	return (
-		<Table>
-			<TableHeader>
-				<TableRow>
-					<TableHead>Reference</TableHead>
-					<TableHead>Customer</TableHead>
-					<TableHead>Amount</TableHead>
-					<TableHead>Status</TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{INVOICES.map((invoice) => (
-					<TableRow key={invoice.ref}>
-						<TableCell>{invoice.ref}</TableCell>
-						<TableCell>{invoice.customer}</TableCell>
-						<TableCell>{invoice.amount}</TableCell>
-						<TableCell>
-							<Badge tone={invoice.status === "Paid" ? "success" : invoice.status === "Overdue" ? "destructive" : "neutral"}>
-								{invoice.status}
-							</Badge>
-						</TableCell>
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
-	)
-}
-
 export function ResourcePage() {
-	const [state, setState] = useState<ShellState>("ready")
-	const [tab, setTab] = useState("overview")
-
 	return (
 		<ComponentPage
 			title="Resource shells"
@@ -86,176 +14,32 @@ export function ResourcePage() {
 			]}
 		>
 			<Example
-				id="resource-index"
+				example="resource/resource-index"
 				title="ResourceIndexShell"
 				description="A list screen. loading, error, and empty REPLACE the body rather than sitting beside it — a screen showing a spinner above a stale table is giving two answers to the same question, and the reader has no way to tell which one is current."
 				stacked
-				code={`<ResourceIndexShell
-  title="Invoices"
-  description="Everything billed on this account."
-  actions={<Button>New invoice</Button>}
-  loading={isLoading}
-  error={error}
-  empty={rows.length === 0}
-  onRetry={refetch}
-  toolbar={<ResourceActionBar leading={<SearchInput />} />}
->
-  <InvoiceTable rows={rows} />
-</ResourceIndexShell>`}
-			>
-				<Stack direction="horizontal" gap="sm" wrap>
-					{(["ready", "loading", "empty", "error"] as const).map((option) => (
-						<Button
-							key={option}
-							tone={state === option ? "primary" : "neutral"}
-							buttonStyle={state === option ? "solid" : "outline"}
-							onClick={() => setState(option)}
-						>
-							{option}
-						</Button>
-					))}
-				</Stack>
-
-				<ResourceIndexShell
-					title="Invoices"
-					description="Everything billed on this account."
-					actions={
-						<>
-							<Button tone="neutral" buttonStyle="outline">
-								<DownloadIcon />
-								Export
-							</Button>
-							<Button>
-								<PlusIcon />
-								New invoice
-							</Button>
-						</>
-					}
-					toolbar={
-						<ResourceActionBar
-							leading={<Input placeholder="Search invoices…" />}
-							trailing={<Text size="sm" type="secondary">3 of 3</Text>}
-						/>
-					}
-					loading={state === "loading"}
-					empty={state === "empty"}
-					error={state === "error" ? new Error("The billing service returned 502.") : undefined}
-					onRetry={() => setState("ready")}
-					strings={{
-						emptyTitle: "No invoices yet",
-						emptyDescription: "Invoices appear here once a customer is billed.",
-						errorTitle: "Invoices unavailable",
-					}}
-				>
-					<InvoiceTable />
-				</ResourceIndexShell>
-			</Example>
+			/>
 
 			<Example
-				id="resource-show"
+				example="resource/resource-show"
 				title="ResourceShowShell"
 				description="A detail screen, with an aside. The aside drops below the body on a CONTAINER query, not a media query — the same shell sits inside a full-width page and inside a split pane, and only the container knows which."
 				stacked
-				code={`<ResourceShowShell
-  title="INV-4417"
-  slots={{ aside: <PaymentPanel /> }}
->
-  <ResourceDetailsSection title="Details" metadata={facts} />
-</ResourceShowShell>`}
-			>
-				<ResourceShowShell
-					slots={{
-						header: (
-							<ResourceHeader
-								eyebrow="Northwind Traders"
-								title="INV-4417"
-								description="Issued 14 August, due 28 August."
-								icon={BuildingIcon}
-								badges={<Badge tone="destructive">Overdue</Badge>}
-								metadata={<MetadataList layout="inline" itemSeparator items={[
-									{ label: "Amount", value: { kind: "money", value: 48_200, currency: "USD" } },
-									{ label: "Terms", value: "Net 14" },
-								]} />}
-								actions={<Button tone="neutral" buttonStyle="outline">Send reminder</Button>}
-							/>
-						),
-						aside: (
-							<ResourceDetailsSection
-								title="Payment"
-								metadata={[
-									{ label: "Method", value: "Bank transfer" },
-									{ label: "Received", value: null },
-								]}
-								metadataColumns={1}
-								metadataDense
-							/>
-						),
-					}}
-				>
-					<ResourceDetailsSection
-						title="Details"
-						description="Everything recorded against this invoice."
-						metadata={DETAILS}
-						metadataColumns={2}
-						help="Amounts exclude tax and any credit applied at settlement."
-					/>
-				</ResourceShowShell>
-			</Example>
+			/>
 
 			<Example
-				id="tabbed-resource"
+				example="resource/tabbed-resource"
 				title="TabbedResourceShell"
 				description="The show shell with a tab row in its toolbar. The tabs scroll rather than wrap: wrapping onto a second line changes the page's height as the reader switches, which shifts everything below them."
 				stacked
-				code={`<TabbedResourceShell
-  tabs={tabs}
-  activeTab={tab}
-  onTabChange={setTab}
-  title="INV-4417"
->
-  {panelFor(tab)}
-</TabbedResourceShell>`}
-			>
-				<TabbedResourceShell
-					title="INV-4417"
-					description="Northwind Traders · Net 14"
-					tabs={TABS}
-					activeTab={tab}
-					onTabChange={setTab}
-					strings={{ tabsLabel: "Invoice sections" }}
-				>
-					<ResourceDetailsSection
-						title={TABS.find((item) => item.id === tab)?.label}
-						metadata={tab === "overview" ? DETAILS : undefined}
-						body={tab === "overview" ? undefined : <Text type="secondary">Nothing recorded on this tab yet.</Text>}
-					/>
-				</TabbedResourceShell>
-			</Example>
+			/>
 
 			<Example
-				id="resource-empty"
+				example="resource/resource-empty"
 				title="ResourceEmptyState"
 				description="The shell's empty state on its own, for a screen supplying its own through slots.empty. It is `Empty` with the resource hook applied, so an illustration, a footer, and the dashed affordance all work exactly as they do there."
 				stacked
-				code={`slots={{ empty: (
-  <ResourceEmptyState
-    mediaVariant="illustration"
-    media={<StackedCardsIllustration />}
-    title="No invoices yet"
-    action={<Button>New invoice</Button>}
-    border
-  />
-) }}`}
-			>
-				<ResourceEmptyState
-					mediaVariant="illustration"
-					media={<StackedCardsIllustration />}
-					title="No invoices yet"
-					description="Invoices appear here once a customer is billed."
-					action={<Button><PlusIcon />New invoice</Button>}
-					border
-				/>
-			</Example>
+			/>
 
 			<Example id="resource-rule" title="What `error` accepts" stacked>
 				<Callout label="Rule">

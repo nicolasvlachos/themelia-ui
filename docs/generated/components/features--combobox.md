@@ -446,78 +446,271 @@ Preview route: Combobox — `/combobox`
 ### A picker that fetches
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ResourceCombobox
-  fetcher={({ query, limit, signal }) => api.countries.search(query, { limit, signal })}
-  getKey={(c) => c.code}
-  getLabel={(c) => c.name}
-  getDescription={(c) => c.capital}
-  getMeta={(c) => c.region}
-  highlightMatch
-/>
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { ResourceCombobox } from "themelia-ui/features/combobox"
+
+import { searchCountries, type Country } from "./data"
+
+export default function ComboboxPicker() {
+	return (
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Destination" helperText="Open it to browse, or type to search.">
+				<ResourceCombobox<Country>
+					fetcher={searchCountries}
+					getKey={(country) => country.code}
+					getLabel={(country) => country.name}
+					getDescription={(country) => country.capital}
+					getMeta={(country) => country.region}
+					highlightMatch
+				/>
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### SuggestionsCombobox
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-import { SuggestionsCombobox, useSuggestions } from "themelia-ui/features/combobox"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { SuggestionsCombobox } from "themelia-ui/features/combobox"
 
-const suggestions = useSuggestions({ fetchData, minQueryLength: 1 })
+import { matching, wait, type Country } from "./data"
 
-// or, when it really is a combobox:
-<SuggestionsCombobox
-  fetchData={(q, { signal }) => api.search(q, { signal })}
-  itemKey={(c) => c.code}
-  itemText={(c) => c.name}
-  preload
-/>
+export default function Suggestions() {
+	return (
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Search">
+				<SuggestionsCombobox<Country>
+					fetchData={async (needle, context) => {
+						if (needle) await wait(400, context?.signal)
+						return matching(needle).slice(0, 5)
+					}}
+					itemKey={(country) => country.code}
+					itemText={(country) => country.name}
+					preload
+				/>
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### When the fetch fails
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ResourceCombobox
-  fetcher={search}
-  getKey={(c) => c.code}
-  getLabel={(c) => c.name}
-  errorMessage="The lookup service is unavailable."
-/>
+import { useState } from "react"
+
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { ResourceCombobox } from "themelia-ui/features/combobox"
+
+import { matching, searchCountries, wait, type Country } from "./data"
+
+export default function ResourceComboboxExample() {
+	const [failing, setFailing] = useState(true)
+
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Country (self-fetching)">
+				<ResourceCombobox<Country>
+					// No preload, so the error does not appear on mount.
+					preload={false}
+					fetcher={async ({ query: needle, signal }) => {
+						await wait(500, signal)
+						if (failing) throw new Error("The lookup service is unavailable.")
+						return matching(needle).slice(0, 6)
+					}}
+					getKey={(country) => country.code}
+					getLabel={(country) => country.name}
+					getDescription={(country) => country.capital}
+					getMeta={(country) => country.region}
+				/>
+			</FormField>
+			<Checkbox label="Make the fetcher fail" checked={failing} onChange={(event) => setFailing(event.target.checked)} />
+
+			<FormField label="Country (working)" helperText="No preload: it asks you to type first.">
+				<ResourceCombobox<Country>
+					preload={false}
+					fetcher={searchCountries}
+					getKey={(country) => country.code}
+					getLabel={(country) => country.name}
+					getDescription={(country) => country.capital}
+					getMeta={(country) => country.region}
+				/>
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Results you already hold
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AsyncCombobox
-  items={items}
-  searchValue={query}
-  onSearchValueChange={setQuery}
-  selectedValue={selected}
-  onSelectedValueChange={setSelected}
-  getItemLabel={(c) => c.name}
-  getItemKey={(c) => c.code}
-  getItemGroup={(c) => c.region}
-  highlightMatch
-/>
+import { useMemo, useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AsyncCombobox } from "themelia-ui/features/combobox"
+
+import { matching, type Country } from "./data"
+
+export default function AsyncComboboxExample() {
+	const [query, setQuery] = useState("")
+	const [selected, setSelected] = useState<Country | null>(null)
+
+	const items = useMemo(() => matching(query), [query])
+
+	return (
+		<Stack gap="sm" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Country">
+				<AsyncCombobox<Country>
+					items={items}
+					searchValue={query}
+					onSearchValueChange={setQuery}
+					selectedValue={selected}
+					onSelectedValueChange={setSelected}
+					getItemLabel={(country) => country.name}
+					getItemKey={(country) => country.code}
+					getItemGroup={(country) => country.region}
+					highlightMatch
+				/>
+			</FormField>
+			<Text size="sm" type="secondary">
+				{selected ? `${selected.name} — ${selected.capital}` : "nothing selected"}
+			</Text>
+		</Stack>
+	)
+}
 ```
 
 ### Several at once
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AsyncMultiCombobox
-  items={items}
-  selectedValues={selected}
-  onSelectedValuesChange={setSelected}
-  …
-/>
+import { useMemo, useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AsyncMultiCombobox } from "themelia-ui/features/combobox"
+
+import { matching, type Country } from "./data"
+
+export default function AsyncMultiComboboxExample() {
+	const [multiQuery, setMultiQuery] = useState("")
+	const [multiSelected, setMultiSelected] = useState<Country[]>([])
+
+	const multiItems = useMemo(() => matching(multiQuery), [multiQuery])
+
+	return (
+		<Stack gap="sm" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Countries">
+				<AsyncMultiCombobox<Country>
+					items={multiItems}
+					searchValue={multiQuery}
+					onSearchValueChange={setMultiQuery}
+					selectedValues={multiSelected}
+					onSelectedValuesChange={setMultiSelected}
+					getItemLabel={(country) => country.name}
+					getItemKey={(country) => country.code}
+					minSearchLength={0}
+					highlightMatch
+				/>
+			</FormField>
+			<Text size="sm" type="secondary">
+				{multiSelected.length} selected
+			</Text>
+		</Stack>
+	)
+}
 ```
 
 ### Apply before it counts
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AsyncMultiCombobox applyButton onApply={run} … />
+import { useMemo, useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AsyncMultiCombobox } from "themelia-ui/features/combobox"
+
+import { matching, type Country } from "./data"
+
+export default function ApplyButton() {
+	const [applyQuery, setApplyQuery] = useState("")
+	const [applied, setApplied] = useState<Country[]>([])
+
+	const applyItems = useMemo(() => matching(applyQuery), [applyQuery])
+
+	return (
+		<Stack gap="sm" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Filter by country">
+				<AsyncMultiCombobox<Country>
+					items={applyItems}
+					searchValue={applyQuery}
+					onSearchValueChange={setApplyQuery}
+					selectedValues={applied}
+					onSelectedValuesChange={setApplied}
+					getItemLabel={(country) => country.name}
+					getItemKey={(country) => country.code}
+					minSearchLength={0}
+					applyButton
+				/>
+			</FormField>
+			<Text size="sm" type="secondary">
+				applied: {applied.length > 0 ? applied.map((c) => c.name).join(", ") : "none"}
+			</Text>
+		</Stack>
+	)
+}
 ```
 
 ### Create what is missing
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AsyncCombobox creatable onCreate={(name) => create(name)} … />
+import { useMemo, useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AsyncCombobox } from "themelia-ui/features/combobox"
+
+import { matching, type Country } from "./data"
+
+export default function Creatable() {
+	const [created, setCreated] = useState<string[]>([])
+	const [createQuery, setCreateQuery] = useState("")
+	const [createSelected, setCreateSelected] = useState<Country | null>(null)
+
+	const createItems = useMemo(() => matching(createQuery), [createQuery])
+
+	return (
+		<Stack gap="sm" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Country or a new one">
+				<AsyncCombobox<Country>
+					items={createItems}
+					searchValue={createQuery}
+					onSearchValueChange={setCreateQuery}
+					selectedValue={createSelected}
+					onSelectedValueChange={setCreateSelected}
+					getItemLabel={(country) => country.name}
+					getItemKey={(country) => country.code}
+					creatable
+					onCreate={(name) => {
+						setCreated((prev) => [...prev, name])
+						setCreateQuery("")
+					}}
+				/>
+			</FormField>
+			{created.length > 0 && (
+				<Text size="sm" type="secondary">created: {created.join(", ")}</Text>
+			)}
+		</Stack>
+	)
+}
 ```

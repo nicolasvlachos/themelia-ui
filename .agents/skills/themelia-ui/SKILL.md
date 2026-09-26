@@ -67,7 +67,7 @@ node node_modules/themelia-ui/scripts/consumer/find-component.mjs --peer=@tansta
 node node_modules/themelia-ui/scripts/consumer/find-component.mjs --help
 ```
 
-It indexes 97 component families, 383 attributed live recipes, and
+It indexes 97 component families, 389 attributed live recipes, and
 118 live preview routes by public symbol, family id, recipe title, preview route,
 component capabilities, descriptions, and positive selection guidance. Negative `avoidWhen` guidance is never treated as a
 recommendation. `--json` includes the exact

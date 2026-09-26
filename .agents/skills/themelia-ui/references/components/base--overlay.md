@@ -242,144 +242,569 @@ Kind: callable.
 
 Preview route: Overlay, dialog & sheet — `/overlay`
 
-### placement
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Overlay>
-  <OverlayTrigger render={<Button>Open</Button>} />
-  <OverlayContent placement="inline-end">
-    <OverlayHeader>…</OverlayHeader>
-    <OverlayBody>…</OverlayBody>
-  </OverlayContent>
-</Overlay>
-```
-
 ### modality
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OverlayContent placement="inline-end" modality="non-modal" />
+import { useState } from "react"
 
-{/* the same, as the preset */}
-<SheetContent modality="non-modal" />
-```
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayBody, OverlayClose, OverlayContent, OverlayDescription, OverlayFooter,
+	OverlayHeader, OverlayTitle,
+} from "themelia-ui/base/overlay"
+import { Text } from "themelia-ui/base/typography"
 
-### dismissal
+export default function Modality() {
+	const [nonModal, setNonModal] = useState(false)
 
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OverlayContent dismissal={{ backdrop: false, escape: false }} />
+	return (
+		<>
+			<Button tone="neutral" buttonStyle="outline" onClick={() => setNonModal(true)}>
+				Open non-modal
+			</Button>
+			<Text type="secondary" size="sm">
+				The page stays scrollable and interactive while it is open.
+			</Text>
+			<Overlay open={nonModal} onOpenChange={setNonModal}>
+				<OverlayContent placement="inline-end" modality="non-modal">
+					<OverlayHeader>
+						<OverlayTitle>Inspector</OverlayTitle>
+						<OverlayDescription>No scrim, no scroll lock.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">Scroll the page behind; this stays where it is.</Text>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+							Close
+						</OverlayClose>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</>
+	)
+}
 ```
 
 ### Controlled
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Overlay open={open} onOpenChange={setOpen}>
-  <OverlayContent>…</OverlayContent>
-</Overlay>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayClose, OverlayContent, OverlayDescription, OverlayFooter, OverlayHeader,
+	OverlayTitle,
+} from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function OverlayControlled() {
+	const [open, setOpen] = useState(false)
+
+	return (
+		<Stack direction="horizontal" gap="md" align="center">
+			<Button tone="neutral" buttonStyle="outline" onClick={() => setOpen(true)}>
+				Open from outside
+			</Button>
+			<Text size="xs" type="secondary">
+				open: {String(open)}
+			</Text>
+			<Overlay open={open} onOpenChange={setOpen}>
+				<OverlayContent>
+					<OverlayHeader>
+						<OverlayTitle>Controlled</OverlayTitle>
+						<OverlayDescription>The caller owns the open state.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayFooter>
+						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+							Close
+						</OverlayClose>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
+	)
+}
 ```
 
 ### Header, body and footer
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Overlay>
-  <OverlayTrigger render={<Button>Open</Button>} />
-  <OverlayContent>
-    <OverlayHeader><OverlayTitle>Title</OverlayTitle></OverlayHeader>
-    <OverlayBody>…</OverlayBody>
-    <OverlayFooter>
-      <OverlayDismissArea>
-        <Button>Cancel</Button><Button>Save</Button>
-      </OverlayDismissArea>
-    </OverlayFooter>
-  </OverlayContent>
-</Overlay>
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayBody, OverlayContent, OverlayDescription, OverlayDismissArea, OverlayFooter,
+	OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { Text } from "themelia-ui/base/typography"
 
-{/* or per action, when only some of them close: */}
-<OverlayClose render={<Button>Cancel</Button>} />
+export default function OverlayStructure() {
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				Open a long surface
+			</OverlayTrigger>
+			<OverlayContent>
+				<OverlayHeader>
+					<OverlayTitle>Structured anatomy</OverlayTitle>
+					<OverlayDescription>Header and footer are fixed; the body scrolls.</OverlayDescription>
+				</OverlayHeader>
+				<OverlayBody>
+					{Array.from({ length: 30 }, (_, i) => (
+						<Text key={i}>Body line {i + 1}.</Text>
+					))}
+				</OverlayBody>
+				<OverlayFooter>
+					<OverlayDismissArea>
+						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+						<Button>Save</Button>
+					</OverlayDismissArea>
+				</OverlayFooter>
+			</OverlayContent>
+		</Overlay>
+	)
+}
 ```
 
 ### Bare surface
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OverlayContent surface="bare" showCloseButton={false}>
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayContent, OverlayDescription, OverlayDismissArea, OverlayFooter,
+	OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+
+export default function DialogSurface() {
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				Confirm
+			</OverlayTrigger>
+			<OverlayContent surface="bare" showCloseButton={false}>
+				<OverlayHeader>
+					<OverlayTitle>Publish this release?</OverlayTitle>
+					<OverlayDescription>It becomes visible to every workspace member.</OverlayDescription>
+				</OverlayHeader>
+				<OverlayFooter>
+					<OverlayDismissArea>
+						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+						<Button>Publish</Button>
+					</OverlayDismissArea>
+				</OverlayFooter>
+			</OverlayContent>
+		</Overlay>
+	)
+}
 ```
 
 ### Where focus lands
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-const nameRef = useRef<HTMLInputElement>(null)
+import { useRef } from "react"
 
-<OverlayContent initialFocusRef={nameRef}>
-  <Input ref={nameRef} />
-</OverlayContent>
+import { Button } from "themelia-ui/base/buttons"
+import { FormField } from "themelia-ui/base/forms"
+import {
+	Overlay, OverlayBody, OverlayContent, OverlayDismissArea, OverlayFooter, OverlayHeader,
+	OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
+
+export default function DialogFocus() {
+	const nameRef = useRef<HTMLInputElement>(null)
+
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				New workspace
+			</OverlayTrigger>
+			<OverlayContent initialFocusRef={nameRef}>
+				<OverlayHeader>
+					<OverlayTitle>New workspace</OverlayTitle>
+				</OverlayHeader>
+				<OverlayBody>
+					<Stack gap="md">
+						<FormField label="Name">
+							<Input ref={nameRef} placeholder="Acme design" />
+						</FormField>
+						<FormField label="Slug" hint="Used in URLs.">
+							<Input placeholder="acme-design" />
+						</FormField>
+					</Stack>
+				</OverlayBody>
+				<OverlayFooter>
+					<OverlayDismissArea>
+						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+						<Button>Create</Button>
+					</OverlayDismissArea>
+				</OverlayFooter>
+			</OverlayContent>
+		</Overlay>
+	)
+}
 ```
 
 ### Popups inside an overlay
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OverlayContent>
-  <OverlayBody>
-    <Select options={roles} />
-    <ActionMenu actions={actions} />
-  </OverlayBody>
-</OverlayContent>
+import { ActionMenu, type ActionDefinition } from "themelia-ui/base/action-menu"
+import { Button, TooltipButton } from "themelia-ui/base/buttons"
+import { Select } from "themelia-ui/base/choice-inputs"
+import { FormField } from "themelia-ui/base/forms"
+import {
+	Overlay, OverlayBody, OverlayContent, OverlayDescription, OverlayDismissArea, OverlayFooter,
+	OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
+
+const ROLES = [
+	{ value: "viewer", label: "Viewer" },
+	{ value: "member", label: "Member" },
+	{ value: "admin", label: "Admin" },
+	{ value: "owner", label: "Owner" },
+]
+
+const INVITE_ACTIONS: ActionDefinition[] = [
+	{ label: "Invite several people", onClick: () => {} },
+	{ label: "Import from a CSV", onClick: () => {} },
+	{ label: "Invite settings", onClick: () => {}, group: true },
+]
+
+export default function DialogPopups() {
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				Invite member
+			</OverlayTrigger>
+			<OverlayContent>
+				<OverlayHeader>
+					<OverlayTitle>Invite member</OverlayTitle>
+					<OverlayDescription>They receive an email with a link to join.</OverlayDescription>
+				</OverlayHeader>
+				<OverlayBody>
+					<Stack gap="md">
+						<FormField label="Email">
+							<Input placeholder="name@example.com" />
+						</FormField>
+						<FormField label="Role" hint="Admins can manage billing.">
+							<Select options={ROLES} defaultValue="member" />
+						</FormField>
+					</Stack>
+				</OverlayBody>
+				<OverlayFooter>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<ActionMenu actions={INVITE_ACTIONS} label="More" />
+						<TooltipButton tooltip="Copy an invite link instead" tone="neutral" buttonStyle="ghost">
+							Copy link
+						</TooltipButton>
+						<OverlayDismissArea>
+							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button>Send invite</Button>
+						</OverlayDismissArea>
+					</Stack>
+				</OverlayFooter>
+			</OverlayContent>
+		</Overlay>
+	)
+}
 ```
 
-### Three presets, one surface
+### Dialog
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Overlay>
-  <OverlayTrigger render={<Button>Rename</Button>} />
-  <DialogContent>
-    <OverlayHeader><OverlayTitle>Rename project</OverlayTitle></OverlayHeader>
-    <OverlayBody>…</OverlayBody>
-    <OverlayFooter>
-      <OverlayClose render={<Button>Cancel</Button>} />
-      <OverlayClose render={<Button>Save</Button>} />
-    </OverlayFooter>
-  </DialogContent>
-</Overlay>
+import { Button } from "themelia-ui/base/buttons"
+import { DialogContent } from "themelia-ui/base/dialog"
+import { FormField } from "themelia-ui/base/forms"
+import {
+	Overlay, OverlayBody, OverlayClose, OverlayDescription, OverlayFooter, OverlayHeader,
+	OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { Input } from "themelia-ui/base/text-inputs"
 
-{/* DialogContent is exactly */}
-<OverlayContent placement="center">…</OverlayContent>
+export default function Dialog() {
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				Open dialog
+			</OverlayTrigger>
+			<DialogContent>
+				<OverlayHeader>
+					<OverlayTitle>Rename project</OverlayTitle>
+					<OverlayDescription>The new name shows everywhere the project is listed.</OverlayDescription>
+				</OverlayHeader>
+				<OverlayBody>
+					<FormField label="Project name">
+						<Input defaultValue="Spring launch" />
+					</FormField>
+				</OverlayBody>
+				<OverlayFooter>
+					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+						Cancel
+					</OverlayClose>
+					<OverlayClose render={<Button />}>
+						Save
+					</OverlayClose>
+				</OverlayFooter>
+			</DialogContent>
+		</Overlay>
+	)
+}
 ```
 
 ### Alert dialog
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Overlay>
-  <OverlayTrigger render={<Button tone="destructive">Delete account</Button>} />
-  <AlertDialogContent>
-    <OverlayHeader><OverlayTitle>Delete this account?</OverlayTitle></OverlayHeader>
-    <OverlayFooter>
-      <AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>Cancel</AlertDialogCancel>
-      <AlertDialogAction render={<Button tone="destructive" />}>Delete</AlertDialogAction>
-    </OverlayFooter>
-  </AlertDialogContent>
-</Overlay>
+import {
+	AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+} from "themelia-ui/base/alert-dialog"
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayBody, OverlayDescription, OverlayFooter, OverlayHeader, OverlayTitle,
+	OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { Text } from "themelia-ui/base/typography"
 
-{/* AlertDialogContent is exactly */}
-<OverlayContent
-  role="alertdialog"
-  dismissal={{ backdrop: false, escape: false }}
-  showCloseButton={false}
-/>
+export default function AlertDialog() {
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="destructive" buttonStyle="outline" />}>
+				Delete account
+			</OverlayTrigger>
+			<AlertDialogContent>
+				<OverlayHeader>
+					<OverlayTitle>Delete this account?</OverlayTitle>
+					<OverlayDescription>This cannot be undone.</OverlayDescription>
+				</OverlayHeader>
+				<OverlayBody>
+					<Text type="secondary">Every project and invoice is removed permanently.</Text>
+				</OverlayBody>
+				<OverlayFooter>
+					<AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>
+						Cancel
+					</AlertDialogCancel>
+					{/* The answer is an Action, not a second Cancel: they read the same only until a caller hooks the one that commits. */}
+					<AlertDialogAction render={<Button tone="destructive" />}>
+						Delete
+					</AlertDialogAction>
+				</OverlayFooter>
+			</AlertDialogContent>
+		</Overlay>
+	)
+}
 ```
 
-### An alert dialog cannot be dismissed by accident
+### Sheet
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Overlay>
-  <OverlayTrigger render={<Button>Edit</Button>} />
-  <SheetContent side="inline-end">
-    <OverlayHeader><OverlayTitle>Edit booking</OverlayTitle></OverlayHeader>
-    <OverlayBody>…</OverlayBody>
-    <OverlayFooter>
-      <OverlayClose render={<Button>Cancel</Button>} />
-      <OverlayClose render={<Button>Save</Button>} />
-    </OverlayFooter>
-  </SheetContent>
-</Overlay>
+import { Button } from "themelia-ui/base/buttons"
+import { FormField } from "themelia-ui/base/forms"
+import {
+	Overlay, OverlayBody, OverlayClose, OverlayDescription, OverlayFooter, OverlayHeader,
+	OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
 
-{/* SheetContent is exactly */}
-<OverlayContent placement="inline-end" size="md" length="full" inset={false}>…</OverlayContent>
+export default function Sheet() {
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				Open sheet
+			</OverlayTrigger>
+			<SheetContent side="inline-end">
+				<OverlayHeader>
+					<OverlayTitle>Edit booking</OverlayTitle>
+					<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
+				</OverlayHeader>
+				<OverlayBody>
+					<Stack gap="md">
+						<FormField label="Venue">
+							<Input defaultValue="Marlow Hall" />
+						</FormField>
+						<FormField label="Guests">
+							<Input defaultValue="120" inputMode="numeric" />
+						</FormField>
+					</Stack>
+				</OverlayBody>
+				<OverlayFooter>
+					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+						Cancel
+					</OverlayClose>
+					<OverlayClose render={<Button />}>
+						Save
+					</OverlayClose>
+				</OverlayFooter>
+			</SheetContent>
+		</Overlay>
+	)
+}
+```
+
+### Size, length, and inset
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { SheetContent } from "themelia-ui/base/sheet"
+import { Text } from "themelia-ui/base/typography"
+
+export default function SheetShape() {
+	return (
+		<>
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Flush, size=&quot;sm&quot;
+				</OverlayTrigger>
+				<SheetContent side="inline-end" size="sm">
+					<OverlayHeader>
+						<OverlayTitle>Flush</OverlayTitle>
+						<OverlayDescription>Welded to the edge, square outer corners.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">What a sheet has always been.</Text>
+					</OverlayBody>
+				</SheetContent>
+			</Overlay>
+
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Inset
+				</OverlayTrigger>
+				<SheetContent side="inline-end" size="28rem" inset>
+					<OverlayHeader>
+						<OverlayTitle>Corner-anchored</OverlayTitle>
+						<OverlayDescription>
+							Detached by one offset on all three sides, so the page shows past it.
+						</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">
+							The main view is still there — that is the point of the shape.
+						</Text>
+					</OverlayBody>
+				</SheetContent>
+			</Overlay>
+
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Inset from block-end
+				</OverlayTrigger>
+				<SheetContent side="block-end" size="60%" length="70%" inset="1.5rem">
+					<OverlayHeader>
+						<OverlayTitle>From the bottom</OverlayTitle>
+						<OverlayDescription>
+							size caps the height here and length sets the width — the two swap axes
+							with the side.
+						</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">
+							A bottom sheet sizes to its content, so <code>size</code> is a ceiling rather
+							than a height — that is what keeps a short one from being a tall empty box.
+						</Text>
+					</OverlayBody>
+				</SheetContent>
+			</Overlay>
+		</>
+	)
+}
+```
+
+### Decided once, not per call site
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { SheetContent } from "themelia-ui/base/sheet"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function SheetProvider() {
+	return (
+		<>
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Kit default
+				</OverlayTrigger>
+				<SheetContent>
+					<OverlayHeader>
+						<OverlayTitle>Kit default</OverlayTitle>
+						<OverlayDescription>Flush, three-quarters wide.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">No shape props at the call site.</Text>
+					</OverlayBody>
+				</SheetContent>
+			</Overlay>
+
+			<UIProvider config={{ defaults: { sheet: { size: "26rem", inset: true } } }}>
+				<Overlay>
+					<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+						Under a provider
+					</OverlayTrigger>
+					<SheetContent>
+						<OverlayHeader>
+							<OverlayTitle>Under a provider</OverlayTitle>
+							<OverlayDescription>The same JSX, a different shape — one offset, spent equally on all three sides.</OverlayDescription>
+						</OverlayHeader>
+						<OverlayBody>
+							<Text type="secondary">Decided once for the whole product.</Text>
+						</OverlayBody>
+					</SheetContent>
+				</Overlay>
+			</UIProvider>
+		</>
+	)
+}
+```
+
+### A blurred scrim, when a product wants one
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { DialogContent } from "themelia-ui/base/dialog"
+import {
+	Overlay, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function OverlayBackdrop() {
+	return (
+		<>
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Default scrim
+				</OverlayTrigger>
+				<DialogContent>
+					<OverlayHeader>
+						<OverlayTitle>Default scrim</OverlayTitle>
+						<OverlayDescription>A tint only — the page behind stays sharp.</OverlayDescription>
+					</OverlayHeader>
+				</DialogContent>
+			</Overlay>
+
+			<UIProvider config={{ overlay: { backdropBlur: 4 } }}>
+				<Overlay>
+					<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+						Blurred scrim
+					</OverlayTrigger>
+					<DialogContent>
+						<OverlayHeader>
+							<OverlayTitle>Blurred scrim</OverlayTitle>
+							<OverlayDescription>The same dialog under a provider that asks for a 4px blur.</OverlayDescription>
+						</OverlayHeader>
+					</DialogContent>
+				</Overlay>
+			</UIProvider>
+		</>
+	)
+}
 ```

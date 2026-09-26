@@ -247,54 +247,224 @@ Preview route: Resource shells — `/resource`
 ### ResourceIndexShell
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ResourceIndexShell
-  title="Invoices"
-  description="Everything billed on this account."
-  actions={<Button>New invoice</Button>}
-  loading={isLoading}
-  error={error}
-  empty={rows.length === 0}
-  onRetry={refetch}
-  toolbar={<ResourceActionBar leading={<SearchInput />} />}
->
-  <InvoiceTable rows={rows} />
-</ResourceIndexShell>
+import { DownloadIcon, PlusIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "themelia-ui/base/table"
+import { Input } from "themelia-ui/base/text-inputs"
+import { Text } from "themelia-ui/base/typography"
+import { ResourceActionBar, ResourceIndexShell } from "themelia-ui/features/resource"
+
+type ShellState = "ready" | "loading" | "empty" | "error"
+
+const INVOICES = [
+	{ ref: "INV-4417", customer: "Northwind Traders", amount: "$48,200.00", status: "Overdue" },
+	{ ref: "INV-4418", customer: "Contoso Ltd", amount: "$12,400.00", status: "Paid" },
+	{ ref: "INV-4419", customer: "Fabrikam Inc", amount: "$1,950.00", status: "Draft" },
+]
+
+function InvoiceTable() {
+	return (
+		<Table>
+			<TableHeader>
+				<TableRow>
+					<TableHead>Reference</TableHead>
+					<TableHead>Customer</TableHead>
+					<TableHead>Amount</TableHead>
+					<TableHead>Status</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{INVOICES.map((invoice) => (
+					<TableRow key={invoice.ref}>
+						<TableCell>{invoice.ref}</TableCell>
+						<TableCell>{invoice.customer}</TableCell>
+						<TableCell>{invoice.amount}</TableCell>
+						<TableCell>
+							<Badge tone={invoice.status === "Paid" ? "success" : invoice.status === "Overdue" ? "destructive" : "neutral"}>
+								{invoice.status}
+							</Badge>
+						</TableCell>
+					</TableRow>
+				))}
+			</TableBody>
+		</Table>
+	)
+}
+
+export default function ResourceIndex() {
+	const [state, setState] = useState<ShellState>("ready")
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="sm" wrap>
+				{(["ready", "loading", "empty", "error"] as const).map((option) => (
+					<Button
+						key={option}
+						tone={state === option ? "primary" : "neutral"}
+						buttonStyle={state === option ? "solid" : "outline"}
+						onClick={() => setState(option)}
+					>
+						{option}
+					</Button>
+				))}
+			</Stack>
+
+			<ResourceIndexShell
+				title="Invoices"
+				description="Everything billed on this account."
+				actions={
+					<>
+						<Button tone="neutral" buttonStyle="outline">
+							<DownloadIcon />
+							Export
+						</Button>
+						<Button>
+							<PlusIcon />
+							New invoice
+						</Button>
+					</>
+				}
+				toolbar={
+					<ResourceActionBar
+						leading={<Input placeholder="Search invoices…" />}
+						trailing={<Text size="sm" type="secondary">3 of 3</Text>}
+					/>
+				}
+				loading={state === "loading"}
+				empty={state === "empty"}
+				error={state === "error" ? new Error("The billing service returned 502.") : undefined}
+				onRetry={() => setState("ready")}
+				strings={{
+					emptyTitle: "No invoices yet",
+					emptyDescription: "Invoices appear here once a customer is billed.",
+					errorTitle: "Invoices unavailable",
+				}}
+			>
+				<InvoiceTable />
+			</ResourceIndexShell>
+		</>
+	)
+}
 ```
 
 ### ResourceShowShell
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ResourceShowShell
-  title="INV-4417"
-  slots={{ aside: <PaymentPanel /> }}
->
-  <ResourceDetailsSection title="Details" metadata={facts} />
-</ResourceShowShell>
+import { BuildingIcon } from "lucide-react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Button } from "themelia-ui/base/buttons"
+import { MetadataList } from "themelia-ui/base/display"
+import { ResourceDetailsSection, ResourceHeader, ResourceShowShell } from "themelia-ui/features/resource"
+
+import { DETAILS } from "./data"
+
+export default function ResourceShow() {
+	return (
+		<ResourceShowShell
+			slots={{
+				header: (
+					<ResourceHeader
+						eyebrow="Northwind Traders"
+						title="INV-4417"
+						description="Issued 14 August, due 28 August."
+						icon={BuildingIcon}
+						badges={<Badge tone="destructive">Overdue</Badge>}
+						metadata={<MetadataList layout="inline" itemSeparator items={[
+							{ label: "Amount", value: { kind: "money", value: 48_200, currency: "USD" } },
+							{ label: "Terms", value: "Net 14" },
+						]} />}
+						actions={<Button tone="neutral" buttonStyle="outline">Send reminder</Button>}
+					/>
+				),
+				aside: (
+					<ResourceDetailsSection
+						title="Payment"
+						metadata={[
+							{ label: "Method", value: "Bank transfer" },
+							{ label: "Received", value: null },
+						]}
+						metadataColumns={1}
+						metadataDense
+					/>
+				),
+			}}
+		>
+			<ResourceDetailsSection
+				title="Details"
+				description="Everything recorded against this invoice."
+				metadata={DETAILS}
+				metadataColumns={2}
+				help="Amounts exclude tax and any credit applied at settlement."
+			/>
+		</ResourceShowShell>
+	)
+}
 ```
 
 ### TabbedResourceShell
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TabbedResourceShell
-  tabs={tabs}
-  activeTab={tab}
-  onTabChange={setTab}
-  title="INV-4417"
->
-  {panelFor(tab)}
-</TabbedResourceShell>
+import { useState } from "react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Text } from "themelia-ui/base/typography"
+import { ResourceDetailsSection, TabbedResourceShell } from "themelia-ui/features/resource"
+
+import { DETAILS } from "./data"
+
+const TABS = [
+	{ id: "overview", label: "Overview" },
+	{ id: "lines", label: "Line items", badge: <Badge tone="neutral">7</Badge> },
+	{ id: "payments", label: "Payments" },
+	{ id: "history", label: "History" },
+]
+
+export default function TabbedResource() {
+	const [tab, setTab] = useState("overview")
+
+	return (
+		<TabbedResourceShell
+			title="INV-4417"
+			description="Northwind Traders · Net 14"
+			tabs={TABS}
+			activeTab={tab}
+			onTabChange={setTab}
+			strings={{ tabsLabel: "Invoice sections" }}
+		>
+			<ResourceDetailsSection
+				title={TABS.find((item) => item.id === tab)?.label}
+				metadata={tab === "overview" ? DETAILS : undefined}
+				body={tab === "overview" ? undefined : <Text type="secondary">Nothing recorded on this tab yet.</Text>}
+			/>
+		</TabbedResourceShell>
+	)
+}
 ```
 
 ### ResourceEmptyState
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-slots={{ empty: (
-  <ResourceEmptyState
-    mediaVariant="illustration"
-    media={<StackedCardsIllustration />}
-    title="No invoices yet"
-    action={<Button>New invoice</Button>}
-    border
-  />
-) }}
+import { PlusIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { StackedCardsIllustration } from "themelia-ui/base/feedback"
+import { ResourceEmptyState } from "themelia-ui/features/resource"
+
+export default function ResourceEmpty() {
+	return (
+		<ResourceEmptyState
+			mediaVariant="illustration"
+			media={<StackedCardsIllustration />}
+			title="No invoices yet"
+			description="Invoices appear here once a customer is billed."
+			action={<Button><PlusIcon />New invoice</Button>}
+			border
+		/>
+	)
+}
 ```

@@ -1,8 +1,3 @@
-import { FormField } from "@/components/base/forms"
-import { PercentageInput } from "@/components/base/forms-numeric"
-import { Stack } from "@/components/base/structure"
-
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
@@ -16,21 +11,11 @@ export function PercentageInputPage() {
 			exports={["PercentageInput"]}
 		>
 			<Example
-				id="percentage"
+				example="percentage-input/percentage"
 				title="PercentageInput"
 				description="Bounded to 0–100 with a trailing sign. The suffix is a field affordance, not part of the value — nothing downstream has to strip a symbol before parsing."
 				stacked
-				code={`<PercentageInput defaultValue="21" />`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="VAT rate">
-						<PercentageInput defaultValue="21" />
-					</FormField>
-					<FormField label="With steppers">
-						<PercentageInput defaultValue="50" step={5} decimalPlaces={0} />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="percentage-input-api" title="API">
 				<PropTable owner="PercentageInput"

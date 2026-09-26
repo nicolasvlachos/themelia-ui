@@ -1,19 +1,9 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { Stack } from "@/components/base/structure"
-import { PhoneInput } from "@/components/base/value-inputs"
-
-import { MEASURE } from "../partials/measures"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function PhoneInputPage() {
-	const [prefix, setPrefix] = useState("+31")
-	const [phone, setPhone] = useState("6 1234 5678")
-
 	return (
 		<ComponentPage
 			title="Phone input"
@@ -22,32 +12,11 @@ export function PhoneInputPage() {
 			exports={["PhoneInput", "DEFAULT_COUNTRY_PREFIXES"]}
 		>
 			<Example
-				id="phone"
+				example="phone-input/phone"
 				title="PhoneInput"
 				description="The dial code and the number are separate fields. One combined field has to guess where the prefix ends, and it guesses wrong on every number pasted with its own formatting."
 				stacked
-				code={`<PhoneInput
-  prefix={prefix}
-  onPrefixChange={setPrefix}
-  value={number}
-  onChange={(e) => setNumber(e.target.value)}
-/>`}
-			>
-				<Stack gap="xl" style={MEASURE.wide}>
-					<FormField label="Mobile" helperText="Leaving the field strips a typed prefix and the trunk zero.">
-						<PhoneInput
-							prefix={prefix}
-							onPrefixChange={setPrefix}
-							prefixes={["NL", "BE", "DE", "GB", "US"]}
-							value={phone}
-							onChange={(event) => setPhone(event.target.value)}
-						/>
-					</FormField>
-					<FormField label="Without the picker">
-						<PhoneInput disablePrefixSelector defaultValue="020 123 4567" />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="value-inputs-rule" title="One field surface" stacked>
 				<Callout label="Rule">

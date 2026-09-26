@@ -73,19 +73,80 @@ Preview route: Toggle — `/toggle`
 ### Toggle
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Toggle pressed={bold} onPressedChange={setBold} aria-label="Bold">
-  <BoldIcon />
-</Toggle>
+import { BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Stack } from "themelia-ui/base/structure"
+import { Toggle } from "themelia-ui/base/toggle"
+import { Text } from "themelia-ui/base/typography"
+
+export default function ToggleExample() {
+	const [bold, setBold] = useState(false)
+
+	return (
+		<Stack direction="horizontal" gap="lg" align="center">
+			<Toggle pressed={bold} onPressedChange={setBold} aria-label="Bold">
+				<BoldIcon />
+			</Toggle>
+			<Toggle variant="outline" aria-label="Italic">
+				<ItalicIcon />
+			</Toggle>
+			<Toggle disabled aria-label="Underline">
+				<UnderlineIcon />
+			</Toggle>
+			<Text size="sm" type="secondary">
+				{bold ? "pressed" : "not pressed"}
+			</Text>
+		</Stack>
+	)
+}
 ```
 
 ### ToggleGroup
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-{/* several at once */}
-<ToggleGroup multiple value={marks} onValueChange={setMarks}>
-  <Toggle value="bold"><BoldIcon /></Toggle>
-</ToggleGroup>
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, BoldIcon, ItalicIcon, UnderlineIcon } from "lucide-react"
+import { useState } from "react"
 
-{/* one at a time */}
-<ToggleGroup value={[align]} onValueChange={([next]) => setAlign(next)}>
+import { Stack } from "themelia-ui/base/structure"
+import { Toggle, ToggleGroup } from "themelia-ui/base/toggle"
+import { Text } from "themelia-ui/base/typography"
+
+export default function ToggleGroupExample() {
+	const [marks, setMarks] = useState<string[]>(["bold"])
+	const [align, setAlign] = useState("left")
+
+	return (
+		<Stack gap="xl">
+			<Stack gap="xs" align="start">
+				<Text size="xs" type="secondary">multiple — several at once</Text>
+				<ToggleGroup multiple value={marks} onValueChange={setMarks}>
+					<Toggle value="bold" aria-label="Bold"><BoldIcon /></Toggle>
+					<Toggle value="italic" aria-label="Italic"><ItalicIcon /></Toggle>
+					<Toggle value="underline" aria-label="Underline"><UnderlineIcon /></Toggle>
+				</ToggleGroup>
+			</Stack>
+
+			<Stack gap="xs" align="start">
+				<Text size="xs" type="secondary">one at a time</Text>
+				<ToggleGroup
+					value={[align]}
+					onValueChange={(next) => setAlign(next[0] ?? align)}
+				>
+					<Toggle value="left" aria-label="Align left"><AlignLeftIcon /></Toggle>
+					<Toggle value="center" aria-label="Align centre"><AlignCenterIcon /></Toggle>
+					<Toggle value="right" aria-label="Align right"><AlignRightIcon /></Toggle>
+				</ToggleGroup>
+			</Stack>
+
+			<Stack gap="xs" align="start">
+				<Text size="xs" type="secondary">attached={"{false}"} — separate buttons</Text>
+				<ToggleGroup attached={false} multiple>
+					<Toggle value="a" variant="outline">Day</Toggle>
+					<Toggle value="b" variant="outline">Week</Toggle>
+				</ToggleGroup>
+			</Stack>
+		</Stack>
+	)
+}
 ```

@@ -1,7 +1,3 @@
-import { AspectRatio } from "@/components/base/aspect-ratio"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
@@ -15,30 +11,11 @@ export function AspectRatioPage() {
 			exports={["AspectRatio"]}
 		>
 			<Example
-				id="aspect-ratio"
+				example="aspect-ratio/aspect-ratio"
 				title="AspectRatio"
 				description="The CSS property, given a name — and the rule that makes it useful: the direct child is stretched to fill and told to cover. Without that an image keeps its intrinsic size and simply overflows, which looks like the ratio doing nothing."
 				stacked
-				code={`<AspectRatio ratio={16 / 9}>
-  <img src={cover} alt="" />
-</AspectRatio>`}
-			>
-				<Stack direction="horizontal" gap="lg" style={{ width: "100%" }}>
-					{[
-						{ ratio: 16 / 9, label: "16 / 9" },
-						{ ratio: 1, label: "1 / 1" },
-						{ ratio: 3 / 4, label: "3 / 4" },
-					].map((entry) => (
-						<Stack key={entry.label} gap="2xs" style={{ flex: 1 }}>
-							<AspectRatio ratio={entry.ratio}>
-								<div style={{ display: "grid", placeItems: "center", background: "var(--muted-40)", borderRadius: "var(--radius)" }}>
-									<Text size="xs" type="secondary">{entry.label}</Text>
-								</div>
-							</AspectRatio>
-						</Stack>
-					))}
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="aspect-ratio-api" title="API">
 				<PropTable

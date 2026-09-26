@@ -1,123 +1,11 @@
-import { useMemo, useState } from "react"
-import {
-	BuildingIcon, CalendarIcon, CircleCheckIcon, CircleDashedIcon, CircleXIcon,
-	TagIcon, UsersIcon,
-} from "lucide-react"
-
 import { Text } from "@/components/base/typography"
-import { Button } from "@/components/base/buttons"
-import { Stack } from "@/components/base/structure"
-import {
-	FilterLayout, FilterProvider, FilterType, defineAsyncSelectConfig,
-	serializeFiltersToQuery,
-	type ActiveFilter, type FilterConfig, type FilterTab,
-} from "@/components/features"
 
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const VENUES = [
-	{ id: "v-1", name: "Marlow Hall" },
-	{ id: "v-2", name: "The Old Granary" },
-	{ id: "v-3", name: "Riverside Rooms" },
-	{ id: "v-4", name: "Sattersby Barn" },
-]
-
-const FILTERS: FilterConfig[] = [
-	{
-		key: "q",
-		label: "Search",
-		type: FilterType.SEARCH,
-		placeholder: "Search bookings…",
-		delay: 250,
-	},
-	{
-		key: "status",
-		label: "Status",
-		pluralLabel: "statuses",
-		type: FilterType.MULTI_SELECT,
-		icon: <CircleCheckIcon />,
-		displayConfig: { display: "always", priority: 0 },
-		options: [
-			{ value: "confirmed", label: "Confirmed", icon: <CircleCheckIcon /> },
-			{ value: "pending", label: "Pending", icon: <CircleDashedIcon /> },
-			{ value: "cancelled", label: "Cancelled", icon: <CircleXIcon /> },
-		],
-	},
-	{
-		key: "venue",
-		label: "Venue",
-		pluralLabel: "venues",
-		type: FilterType.ASYNC_SELECT,
-		icon: <BuildingIcon />,
-		multiple: true,
-		displayConfig: { priority: 1 },
-		asyncConfig: defineAsyncSelectConfig({
-			// Stands in for the app's own endpoint.
-			fetcher: async ({ query }) => {
-				await new Promise((resolve) => setTimeout(resolve, 250))
-				return VENUES.filter((venue) =>
-					venue.name.toLowerCase().includes(query.toLowerCase()),
-				)
-			},
-			mapToOption: (venue) => ({ value: venue.id, label: venue.name }),
-		}),
-	},
-	{
-		key: "date",
-		label: "Date",
-		type: FilterType.DATE,
-		icon: <CalendarIcon />,
-		operator: "between",
-		displayConfig: { priority: 2 },
-	},
-	{
-		key: "guests",
-		label: "Guests",
-		type: FilterType.RANGE,
-		icon: <UsersIcon />,
-		operator: "between",
-		displayConfig: { priority: 3 },
-	},
-	{
-		key: "tags",
-		label: "Tag",
-		pluralLabel: "tags",
-		type: FilterType.TAGS,
-		icon: <TagIcon />,
-		displayConfig: { priority: 4 },
-	},
-]
-
-const TABS: FilterTab[] = [
-	{ id: "all", label: "All", presets: [] },
-	{
-		id: "confirmed",
-		label: "Confirmed",
-		count: 24,
-		presets: [{ key: "status", value: ["confirmed"] }],
-	},
-	{
-		id: "needs-attention",
-		label: "Needs attention",
-		count: 3,
-		presets: [{ key: "status", value: ["pending", "cancelled"] }],
-	},
-]
-
 export function FiltersPage() {
-	const [navigating, setNavigating] = useState(false)
-	const [active, setActive] = useState<ActiveFilter[]>([
-		{ id: "status", key: "status", operator: "equals", value: ["confirmed"] },
-	])
-
-	const query = useMemo(
-		() => serializeFiltersToQuery(FILTERS, active),
-		[active],
-	)
-
 	return (
 		<ComponentPage
 			title="Filters"
@@ -129,48 +17,11 @@ export function FiltersPage() {
 			]}
 		>
 			<Example
-				id="filters"
+				example="filters/filters"
 				title="The bar"
 				description="On phones, search stays visible and Filters opens a sheet with applied values, comparisons, and individual clear controls. On larger screens, each pill keeps its edit, comparison, and clear actions."
 				stacked
-				code={`<FilterProvider
-  filters={filters}
-  activeFilters={active}
-  onFilterChange={setActive}
-  navigating={pending}
->
-  <FilterLayout tabs={savedViews} showClearFilters />
-</FilterProvider>
-
-// And when a change lands, hand the query to your own router:
-const query = serializeFiltersToQuery(filters, active)`}
-			>
-				<Stack direction="horizontal" gap="sm">
-					<Button tone="neutral" buttonStyle="outline" onClick={() => setNavigating((current) => !current)}>
-						{navigating ? "Resume filtering" : "Show pending state"}
-					</Button>
-				</Stack>
-				<FilterProvider
-					filters={FILTERS}
-					activeFilters={active}
-					onFilterChange={setActive}
-					navigating={navigating}
-				>
-					<FilterLayout tabs={TABS} showClearFilters />
-				</FilterProvider>
-
-				<Text size="xs" type="secondary" numeric>
-					{Object.keys(query).length === 0
-						? "no filters applied"
-						: new URLSearchParams(
-								Object.entries(query).flatMap(([key, value]) =>
-									Array.isArray(value)
-										? value.map((entry) => [key, entry] as [string, string])
-										: [[key, String(value)] as [string, string]],
-								),
-							).toString()}
-				</Text>
-			</Example>
+			/>
 
 			<Example id="filters-rules" title="What the filters decide" stacked>
 				<Callout label="Rule">

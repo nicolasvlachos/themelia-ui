@@ -1,7 +1,5 @@
 import { Heading, Text } from "@/components/base/typography"
 import { MonoValue } from "@/components/primitives"
-import { UIProvider } from "@/lib/ui-provider"
-import { Button } from "@/components/base/buttons"
 
 import { Example } from "../partials/example"
 import { ComponentPage } from "../partials/component-page"
@@ -62,28 +60,11 @@ export function TokensPage() {
 			</Example>
 
 			<Example
-				id="scoped-theming"
+				example="tokens/scoped-theming"
 				title="Scoped theming"
 				description="A nested provider re-derives the whole system from whatever it overrides. This works because derived tokens are declared at every scope boundary rather than at :root — see styles/SCOPES.md."
 				stacked
-				code={`<UIProvider config={{ theme: { colors: { primary: "oklch(0.55 0.2 25)" } } }}>`}
-			>
-				<div style={{ display: "flex", gap: ".75rem", alignItems: "center", flexWrap: "wrap" }}>
-					<Button>root</Button>
-					<UIProvider config={{ theme: { colors: { primary: "oklch(0.55 0.2 25)" } } }}>
-						<Button>scoped red</Button>
-					</UIProvider>
-					<UIProvider config={{ theme: { colors: { primary: "oklch(0.5 0.2 265)" } } }}>
-						<Button>scoped blue</Button>
-					</UIProvider>
-					<UIProvider config={{ density: "compact" }}>
-						<Button>compact</Button>
-					</UIProvider>
-					<UIProvider config={{ density: "comfortable" }}>
-						<Button>comfortable</Button>
-					</UIProvider>
-				</div>
-			</Example>
+			/>
 
 			<Example
 				id="the-tiers"

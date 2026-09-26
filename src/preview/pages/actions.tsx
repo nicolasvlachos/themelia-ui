@@ -1,94 +1,7 @@
-import { TrashIcon } from "lucide-react"
-import { useState } from "react"
-
-import { Button } from "@/components/base/buttons"
-import { Card } from "@/components/base/cards"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-import {
-	ActionOverlayOutlet, ActionProvider, defineAction, useActionSurface, useRegisterActions,
-	type ActionDefinition,
-} from "@/components/features/actions"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-/**
- * One action registered once, read by a page toolbar and a card's overflow menu. The store
- * owns confirmation, loading and errors, so both agree.
- */
-function ActionsDemo() {
-	const [deleted, setDeleted] = useState<string[]>([])
-
-	const actions: ActionDefinition[] = [
-		defineAction({
-			id: "invoice.delete",
-			label: "Delete invoice",
-			icon: TrashIcon,
-			tone: "destructive",
-			surfaces: ["page", "card"],
-			modality: {
-				type: "alert",
-				title: "Delete this invoice?",
-				description: "This cannot be undone.",
-				confirmLabel: "Delete",
-				tone: "destructive",
-				closeOnSuccess: true,
-			},
-			run: async ({ payload }) => {
-				await wait(700)
-				setDeleted((current) => [...current, String(payload ?? "INV-4417")])
-				return payload
-			},
-		}),
-	]
-
-	useRegisterActions(actions, { scope: "invoice" })
-
-	const pageActions = useActionSurface({ surface: "page", scope: "invoice", payload: "INV-4417" })
-	const cardActions = useActionSurface({ surface: "card", scope: "invoice", payload: "INV-4418" })
-
-	return (
-		<Stack gap="xl" style={{ width: "100%" }}>
-			<Stack direction="horizontal" gap="md" align="center">
-				{pageActions.map((action) => (
-					<Button
-						key={action.key}
-						tone={action.definition.tone}
-						loading={action.isRunning}
-						disabled={action.disabled}
-						onClick={() => action.open()}
-					>
-						{action.label}
-					</Button>
-				))}
-				<Text size="sm" type="secondary">
-					page surface — payload INV-4417
-				</Text>
-			</Stack>
-
-			<Card
-				surface="bordered"
-				title="Northwind Traders"
-				description="Invoice #4418 — the same action, from a card menu."
-				actions={cardActions.map((action) => ({
-					label: action.label,
-					icon: action.definition.icon,
-					tone: action.definition.tone,
-					onClick: () => action.open(),
-				}))}
-			>
-				<Text size="sm" type="secondary">
-					{deleted.length ? `Deleted: ${deleted.join(", ")}` : "Nothing deleted yet."}
-				</Text>
-			</Card>
-		</Stack>
-	)
-}
 
 export function ActionsPage() {
 	return (
@@ -113,26 +26,11 @@ export function ActionsPage() {
 			]}
 		>
 			<Example
-				id="actions"
+				example="actions/actions"
 				title="One definition, many surfaces"
 				description="Register once with useRegisterActions, then read the same action from each surface. Both controls below drive the same definition with different payloads, and both open the same confirm dialog through the outlet."
 				stacked
-				code={`const actions = [defineAction({
-  id: "invoice.delete",
-  label: "Delete invoice",
-  surfaces: ["page", "card"],
-  modality: { type: "alert", title: "Delete this invoice?", tone: "destructive" },
-  run: async ({ payload }) => api.delete(payload),
-})]
-
-useRegisterActions(actions, { scope: "invoice" })
-const pageActions = useActionSurface({ surface: "page", scope: "invoice", payload: id })`}
-			>
-				<ActionProvider>
-					<ActionsDemo />
-					<ActionOverlayOutlet />
-				</ActionProvider>
-			</Example>
+			/>
 
 			<Example id="actions-rule" title="Behaviour lives in callbacks" stacked>
 				<Callout label="Rule">

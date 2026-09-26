@@ -176,21 +176,75 @@ Preview route: Timelines, onboarding & admin — `/blocks-admin`
 ### Credential list
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<CredentialList items={keys} onAdd={add} onDelete={remove} />
+import { CredentialList } from "themelia-ui/admin/patterns/access"
+
+const CREDENTIALS = [
+	{ id: "1", name: "Production", value: "sk_live_4417a92f0b3d", displayValue: "sk_live_••••0b3d" },
+	{ id: "2", name: "Staging", value: "sk_test_88fe12c4a771", displayValue: "sk_test_••••a771" },
+	{ id: "3", name: "CI", value: "sk_ci_29ab77f0e145", displayValue: "sk_ci_••••e145", disabled: true },
+]
+
+export default function BlocksCredentials() {
+	return (
+		<CredentialList items={CREDENTIALS} onAdd={() => {}} onDelete={() => {}} />
+	)
+}
 ```
 
 ### Role permissions
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<RolePermissions roleName="Editor" groups={groups} memberCount={12} onEdit={edit} />
+import { RolePermissions } from "themelia-ui/admin/patterns/access"
+
+const GROUPS = [
+	{
+		name: "Members",
+		permissions: [
+			{ label: "View", granted: true },
+			{ label: "Invite", granted: true },
+			{ label: "Remove", granted: false },
+		],
+	},
+	{
+		name: "Billing",
+		permissions: [
+			{ label: "View invoices", granted: true },
+			{ label: "Change plan", granted: false },
+			{ label: "Update card", granted: false },
+		],
+	},
+]
+
+export default function BlocksRoles() {
+	return (
+		<RolePermissions
+			roleName="Editor"
+			description="Can publish and manage content, but not billing."
+			memberCount={12}
+			groups={GROUPS}
+			onEdit={() => {}}
+		/>
+	)
+}
 ```
 
 ### Sensitive action
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SensitiveAction
-  title="Delete this workspace"
-  confirmation="Every dashboard, source and saved view goes with it."
-  action={<Button tone="destructive">Delete</Button>}
-/>
+import { KeyRoundIcon } from "lucide-react"
+
+import { SensitiveAction } from "themelia-ui/admin/patterns/access"
+import { Button } from "themelia-ui/base/buttons"
+
+export default function BlocksSensitive() {
+	return (
+		<SensitiveAction
+			title="Delete this workspace"
+			description="Removes the workspace and everything inside it."
+			confirmation="Every dashboard, data source and saved view goes with it. This cannot be undone."
+			icon={KeyRoundIcon}
+			action={<Button tone="destructive">Delete workspace</Button>}
+		/>
+	)
+}
 ```

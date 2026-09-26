@@ -1071,24 +1071,101 @@ Extract<TextProps["type"], "inherit" | "main" | "secondary">
 
 ## Preview recipes
 
-Preview route: Addresses & places — `/primitive-address`
+Preview route: Form field — `/form-field`
+
+### Scale
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Input, NativeSelect } from "themelia-ui/base/text-inputs"
+import { MonoValue } from "themelia-ui/primitives"
+import { Scope } from "themelia-ui/ui-provider"
+
+export default function FormsScale() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{[1, 0.875, 1.125].map((scale) => (
+				<Scope key={scale} vars={{ "--density-scale": scale }}>
+					<Stack direction="horizontal" gap="md" align="center" justify="start">
+						{/* Widths on the wrappers: Input's style lands on the inner control, not its frame. */}
+						<MonoValue size="xs" style={{ width: "3.5rem", flexShrink: 0, fontSize: "0.75rem" }}>
+							{scale}
+						</MonoValue>
+						{/* Named even in a geometry demo: a placeholder is not a label. */}
+						<div style={{ width: "12rem", flexShrink: 0 }}>
+							<Input placeholder="Field" aria-label={`Example field at density ${scale}`} />
+						</div>
+						<div style={{ width: "9rem", flexShrink: 0 }}>
+							<NativeSelect defaultValue="a" aria-label={`Example select at density ${scale}`}>
+								<option value="a">Option</option>
+							</NativeSelect>
+						</div>
+					</Stack>
+				</Scope>
+			))}
+		</Stack>
+	)
+}
+```
 
 ### Ordered by country
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Address value={{ line1, city, postalCode, country: "GB" }} />
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { Address } from "themelia-ui/primitives"
+
+import { DE, UK, US } from "./data"
+
+export default function AddressExample() {
+	return (
+		// Captioned with the country code you pass; the name is the address's last line.
+		<Grid columns={{ base: 1, md: 3 }} gap="xl">
+			{[["GB", UK], ["US", US], ["DE", DE]].map(([label, value]) => (
+				<Stack key={label as string} gap="2xs">
+					<Text size="xs" type="secondary">country: "{label as string}"</Text>
+					<Address value={value as typeof UK} />
+				</Stack>
+			))}
+		</Grid>
+	)
+}
 ```
 
 ### Inline, for a cell
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Address value={value} format="inline" />
+import { Stack } from "themelia-ui/base/structure"
+import { Address } from "themelia-ui/primitives"
+
+import { DE, UK, US } from "./data"
+
+export default function AddressInline() {
+	return (
+		<Stack gap="xs">
+			<Address value={UK} format="inline" />
+			<Address value={US} format="inline" />
+			<Address value={DE} format="inline" />
+		</Stack>
+	)
+}
 ```
 
 ### Missing fields
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Address value={{ line1: "221B Baker Street", city: "London" }} />
+import { Grid } from "themelia-ui/base/structure"
+import { Address } from "themelia-ui/primitives"
+
+export default function AddressPartial() {
+	return (
+		<Grid columns={{ base: 1, md: 3 }} gap="xl">
+			<Address value={{ line1: "221B Baker Street", city: "London" }} />
+			<Address value={{ city: "London", postalCode: "NW1 6XE" }} />
+			<Address value={null} />
+		</Grid>
+	)
+}
 ```
 
 ### Coordinates
@@ -1143,7 +1220,7 @@ import { de } from "date-fns/locale"
 </UIProvider>
 ```
 
-### date-fns, not hand-rolled Date
+### DateRange
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 <DateRange start={MARCH_3} end={MARCH_7} />
@@ -1169,7 +1246,7 @@ import { de } from "date-fns/locale"
 <RelativeTime value={date} now={now} includeSeconds />
 ```
 
-### Pass the clock in
+### Duration
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 <Duration value={45} />
@@ -1341,7 +1418,7 @@ import { de } from "date-fns/locale"
 <EmptyValue />
 ```
 
-### Absent is a state
+### Inline list
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 <InlineList items={["Alice", "Bob", "Carol"]} />

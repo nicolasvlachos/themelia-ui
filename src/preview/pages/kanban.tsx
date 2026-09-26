@@ -1,64 +1,11 @@
-import { useState } from "react"
-import { ArchiveIcon, ExternalLinkIcon, RotateCwIcon } from "lucide-react"
+import { Text } from "@/components/base/typography"
 
-import { Badge } from "@/components/base/badge"
-import { Card } from "@/components/base/cards"
-import { Stack } from "@/components/base/structure"
-import { DisplayLabel, Text } from "@/components/base/typography"
-import {
-	Kanban, KanbanBoard, KanbanColumn, KanbanColumnContent, KanbanItem,
-	KanbanItemActions, KanbanItemHandle, KanbanOverlay,
-	SyncRangeForm,
-	type KanbanValue,
-} from "@/components/features"
-
-import styles from "../preview.module.css"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-interface Card_ {
-	id: string
-	title: string
-	owner: string
-	value: string
-}
-
-const COLUMNS = [
-	{ id: "backlog", title: "Backlog" },
-	{ id: "progress", title: "In progress" },
-	{ id: "done", title: "Done" },
-]
-
-const INITIAL: KanbanValue<Card_> = {
-	backlog: [
-		{ id: "c1", title: "Reconcile August payouts", owner: "Maria", value: "€12,400" },
-		{ id: "c2", title: "Chase the Marlow deposit", owner: "Marcus", value: "€300" },
-	],
-	progress: [{ id: "c3", title: "Migrate the invoice numbering", owner: "Alice", value: "—" }],
-	done: [{ id: "c4", title: "Close the Q2 books", owner: "Maria", value: "€48,200" }],
-}
-
-const WINDOWS = [
-	{ value: "6", label: "6 hours", description: "A quick catch-up." },
-	{ value: "24", label: "24 hours", description: "The usual overnight run." },
-	{ value: "168", label: "7 days", description: "A full week — slower." },
-	{ value: "720", label: "30 days", description: "A full reconcile." },
-]
-
-const SYNC_OPTIONS = [
-	{ value: "invoices", label: "Invoices", description: "Reconcile invoice records only." },
-	{ value: "payouts", label: "Payouts", description: "Reconcile settlement records only." },
-]
-
 export function KanbanPage() {
-	const [board, setBoard] = useState(INITIAL)
-	const [log, setLog] = useState<string[]>([])
-	const [submitted, setSubmitted] = useState<string | null>(null)
-
-	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
-
 	return (
 		<ComponentPage
 			title="Kanban & sync"
@@ -69,99 +16,11 @@ export function KanbanPage() {
 			]}
 		>
 			<Example
-				id="kanban"
+				example="kanban/kanban"
 				title="The board"
 				description="Drag a card by its handle, or move one with the keyboard — tab to a handle, press space, and use the arrow keys. Every move is announced, which is the whole reason the keyboard path is usable at all. The value is a plain Record<columnId, item[]>, because that is what a board is and it serialises without a thought."
 				stacked
-				code={`<Kanban
-  value={board}
-  onValueChange={setBoard}
-  getItemValue={(card) => card.id}
-  onItemMove={(event) => api.persist(event)}
-  itemActions={(card) => card.done ? [reopen] : [archive]}
->
-  <KanbanBoard>
-    {columns.map((column) => (
-      <KanbanColumn key={column.id} value={column.id}>
-        <header>{column.title}</header>
-        <KanbanColumnContent value={column.id}>
-          {board[column.id].map((card) => (
-            <KanbanItem key={card.id} value={card.id}>…</KanbanItem>
-          ))}
-        </KanbanColumnContent>
-      </KanbanColumn>
-    ))}
-  </KanbanBoard>
-  <KanbanOverlay />
-</Kanban>`}
-			>
-				<Kanban<Card_>
-					value={board}
-					onValueChange={setBoard}
-					getItemValue={(card) => card.id}
-					onItemMove={(event) =>
-						note(`${event.item.title}: ${event.from.columnId} → ${event.to.columnId} @ ${event.to.index}`)
-					}
-					onItemClick={(card) => note(`opened ${card.title}`)}
-					itemActions={(card) => [
-						{ id: "open", label: "Open", icon: <ExternalLinkIcon />, onClick: () => note(`open ${card.id}`) },
-						{
-							id: "reopen",
-							label: "Reopen",
-							icon: <RotateCwIcon />,
-							// Only on a finished card — the whole reason the factory form exists.
-							visible: () => (board.done ?? []).some((done) => done.id === card.id),
-							onClick: () => note(`reopen ${card.id}`),
-						},
-						{
-							id: "archive",
-							label: "Archive",
-							icon: <ArchiveIcon />,
-							tone: "destructive",
-							onClick: () => note(`archive ${card.id}`),
-						},
-					]}
-				>
-					<KanbanBoard className={styles.kanbanBoard}>
-						{COLUMNS.map((column) => (
-							<KanbanColumn key={column.id} value={column.id} className={styles.kanbanColumn}>
-								<div className={styles.kanbanColumnHeader}>
-									<DisplayLabel>{column.title}</DisplayLabel>
-									<Badge tone="neutral">{board[column.id]?.length ?? 0}</Badge>
-								</div>
-								<KanbanColumnContent value={column.id}>
-									{(board[column.id] ?? []).map((card) => (
-										<KanbanItem key={card.id} value={card.id}>
-											<Card className={styles.kanbanCard}>
-												<div className={styles.kanbanCardTop}>
-													<KanbanItemHandle />
-													<Text size="sm" weight="medium" className={styles.kanbanCardTitle}>
-														{card.title}
-													</Text>
-													<KanbanItemActions<Card_> />
-												</div>
-												<div className={styles.kanbanCardMeta}>
-													<Text size="xs" type="secondary">{card.owner}</Text>
-													<Text size="xs" type="secondary" numeric>{card.value}</Text>
-												</div>
-											</Card>
-										</KanbanItem>
-									))}
-								</KanbanColumnContent>
-							</KanbanColumn>
-						))}
-					</KanbanBoard>
-					<KanbanOverlay<Card_> />
-				</Kanban>
-
-				{log.length > 0 && (
-					<Stack gap="none">
-						{log.map((line, index) => (
-							<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
-						))}
-					</Stack>
-				)}
-			</Example>
+			/>
 
 			<Example id="kanban-rule" title="Where the handle goes" stacked>
 				<Callout label="Rule">
@@ -178,36 +37,11 @@ export function KanbanPage() {
 			</Example>
 
 			<Example
-				id="sync-range-form"
+				example="kanban/sync-range-form"
 				title="SyncRangeForm"
 				description="The body of a “reconcile the last N hours” dialog. It renders no buttons: the overlay owns the footer, and formId is the join — the form carries the id, the footer's submit carries form={id}, and native validation runs before this sees a submit."
 				stacked
-				code={`<ActionDialog
-  title="Run a sync"
-  formId="sync-form"
-  trigger={<Button>Sync</Button>}
->
-  <SyncRangeForm
-    formId="sync-form"
-    options={windows}
-    syncOptions={families}
-    onSubmit={({ hours, options }) => api.sync(hours, options)}
-  />
-</ActionDialog>`}
-			>
-				<SyncRangeForm
-					formId="sync-demo"
-					options={WINDOWS}
-					syncOptions={SYNC_OPTIONS}
-					onSubmit={(data) => setSubmitted(`${data.hours}h · ${data.options.join(", ") || "everything"}`)}
-				/>
-				<Stack direction="horizontal" gap="md" align="center">
-					<button type="submit" form="sync-demo" className={styles.demoSubmit}>
-						Run sync
-					</button>
-					{!!submitted && <Text size="sm" type="secondary">submitted: {submitted}</Text>}
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="kanban-api" title="API">
 				<PropTable owner="Kanban"

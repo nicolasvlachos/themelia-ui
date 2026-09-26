@@ -224,26 +224,89 @@ Preview route: Side nav & section nav — `/side-nav`
 ### SideNav
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SideNav groups={settingsNav} currentPath="/settings/members" />
+import { SideNav } from "themelia-ui/layout/navigation"
+
+import { SETTINGS_NAV } from "./data"
+
+export default function SideNavExample() {
+	return (
+		<div style={{ maxWidth: "16rem", width: "100%" }}>
+			<SideNav groups={SETTINGS_NAV} currentPath="/settings/members" />
+		</div>
+	)
+}
 ```
 
 ### SectionNav
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SectionNav
-  items={[
-    { id: "side-nav", label: "SideNav" },
-    { id: "section-nav", label: "SectionNav", depth: 2 },
-  ]}
-/>
+import { SectionNav } from "themelia-ui/layout/navigation"
+
+
+export default function SectionNavExample() {
+	return (
+		<div style={{ maxWidth: "16rem", width: "100%" }}>
+			<SectionNav
+				items={[
+					{ id: "side-nav", label: "SideNav" },
+					{ id: "section-nav", label: "SectionNav" },
+					{ id: "side-nav-api", label: "API", depth: 2 },
+				]}
+			/>
+		</div>
+	)
+}
 ```
 
-### One component, named for its shape
+### The rail beside its content: AsideNavShell
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<BreadcrumbProgress
-  steps={[{ id: "account", label: "Account" }, { id: "billing", label: "Billing" }, …]}
-  currentIndex={current}
-  onStepClick={(_id, index) => setCurrent(index)}
-/>
+import { Card } from "themelia-ui/base/cards"
+import { Text } from "themelia-ui/base/typography"
+import { SideNav } from "themelia-ui/layout/navigation"
+import { AsideNavShell } from "themelia-ui/layout/settings"
+
+import { SETTINGS_NAV } from "./data"
+
+export default function SettingsShell() {
+	return (
+		<>
+			{/* Its own landmark name, distinct from the SideNav demo above. */}
+			<AsideNavShell
+				title="Settings"
+				description="Everything about this workspace."
+				aside={<SideNav groups={SETTINGS_NAV} currentPath="/settings/members" strings={{ label: "Settings" }} />}
+				stickyAside={false}
+				style={{ width: "100%" }}
+			>
+				<Card surface="bordered" title="Members" description="Who can sign in and what they can do.">
+					<Text size="sm" type="secondary">The section's content sits here.</Text>
+				</Card>
+			</AsideNavShell>
+		</>
+	)
+}
+```
+
+### A wizard's position: BreadcrumbProgress
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { useState } from "react"
+
+import { BreadcrumbProgress } from "themelia-ui/layout/navigation"
+
+const WIZARD = [
+	{ id: "account", label: "Account", hint: "Who you are" },
+	{ id: "workspace", label: "Workspace", hint: "Name and region" },
+	{ id: "billing", label: "Billing", hint: "Plan and payment" },
+	{ id: "review", label: "Review", hint: "Check and confirm" },
+]
+
+export default function BreadcrumbProgressExample() {
+	const [current, setCurrent] = useState(2)
+
+	return (
+		<BreadcrumbProgress steps={WIZARD} currentIndex={current} onStepClick={(_id, index) => setCurrent(index)} />
+	)
+}
 ```

@@ -1,25 +1,8 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import {
-	CoordinatesInput,
-	DimensionsInput,
-	WeightInput,
-	type CoordinatesValue,
-	type DimensionsValue,
-} from "@/components/base/forms-numeric"
-import { Stack } from "@/components/base/structure"
-
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function UnitInputsPage() {
-	const [weight, setWeight] = useState("2.4")
-	const [dimensions, setDimensions] = useState<DimensionsValue>({ length: "30", width: "20", height: "12" })
-	const [coordinates, setCoordinates] = useState<CoordinatesValue>({ latitude: "52.370216", longitude: "4.895168" })
-
 	return (
 		<ComponentPage
 			title="Unit inputs"
@@ -28,30 +11,11 @@ export function UnitInputsPage() {
 			exports={["WeightInput", "DimensionsInput", "CoordinatesInput"]}
 		>
 			<Example
-				id="units"
+				example="unit-inputs/units"
 				title="Weight, dimensions, coordinates"
 				description="Same idea, other units. The dimension boxes carry captions because three identical boxes say nothing, and the separator sits on the field row so it lines up with the boxes rather than the captions."
 				stacked
-				code={`<WeightInput value={weight} onChange={(e) => setWeight(e.target.value)} />
-<DimensionsInput value={dimensions} onValueChange={setDimensions} />
-<CoordinatesInput value={coordinates} onValueChange={setCoordinates} />`}
-			>
-				<Stack gap="xl" style={MEASURE.wide}>
-					<FormField label="Shipping weight">
-						<WeightInput
-							value={weight}
-							onChange={(event) => setWeight(event.target.value)}
-							defaultUnit="kg"
-						/>
-					</FormField>
-					<FormField label="Package">
-						<DimensionsInput value={dimensions} onValueChange={setDimensions} defaultUnit="cm" />
-					</FormField>
-					<FormField label="Warehouse" helperText="Latitude is ±90, longitude ±180 — bounded separately.">
-						<CoordinatesInput value={coordinates} onValueChange={setCoordinates} />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="unit-inputs-api" title="API">
 				<PropTable owner="WeightInput"

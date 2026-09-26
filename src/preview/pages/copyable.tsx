@@ -1,30 +1,6 @@
-import { Button } from "@/components/base/buttons"
-import { Card } from "@/components/base/cards"
-import { Copyable, useCopyToClipboard } from "@/components/base/copyable"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-import { Email, MonoValue } from "@/components/primitives"
-
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-/** The hook on its own, driving an affordance `Copyable` does not offer. */
-function ShareLink() {
-	const { copied, copy } = useCopyToClipboard()
-	const url = "https://northwind.example/invite/9f2c4b"
-
-	return (
-		<Button
-			buttonStyle="outline"
-			tone="neutral"
-			onClick={() => void copy(url)}
-		>
-			{copied ? "Link copied" : "Copy invite link"}
-		</Button>
-	)
-}
 
 export function CopyablePage() {
 	return (
@@ -35,56 +11,17 @@ export function CopyablePage() {
 			exports={["Copyable", "useCopyToClipboard"]}
 		>
 			<Example
-				id="copyable"
+				example="copyable/copyable"
 				title="Copyable"
 				description="The value stays passive and the copy button is its sibling. Wrapping the value in a button would nest one interactive element inside another the moment the value is an Email or a Url."
 				stacked
-				code={`{/* truncate keeps the button in view however long the value is */}
-<Copyable value="sk_live_9f2c…" mono truncate />
-<Copyable value="jane@example.com" displayValue={<Email value="jane@example.com" />} />`}
-			>
-				<Card surface="bordered" style={MEASURE.field}>
-					<Stack gap="md">
-						<Stack gap="2xs">
-							<Text size="xs" type="secondary">
-								API key
-							</Text>
-							<Copyable value="key_live_9f2c4b1e77a0d3f8b6c5a41d0e73b28c9f4610d7" mono truncate />
-						</Stack>
-						<Stack gap="2xs">
-							<Text size="xs" type="secondary">
-								Billing contact
-							</Text>
-							<Copyable
-								value="jane@northwind.example"
-								displayValue={<Email value="jane@northwind.example" />}
-							/>
-						</Stack>
-						<Stack gap="2xs">
-							<Text size="xs" type="secondary">
-								Workspace id
-							</Text>
-							<Copyable
-								value="ws_01J8Z9K2QW"
-								displayValue={<MonoValue>ws_01J8Z9K2QW</MonoValue>}
-							/>
-						</Stack>
-					</Stack>
-				</Card>
-			</Example>
+			/>
 
 			<Example
-				id="use-copy-to-clipboard"
+				example="copyable/use-copy-to-clipboard"
 				title="useCopyToClipboard"
 				description="The behaviour without the markup, for an affordance that is not a value with a button beside it — a share action, a code block, a menu item. It owns the write, the confirmation window and the failure, which is the part five surfaces in this kit each used to write out and each got slightly wrong."
-				code={`const { copied, copy } = useCopyToClipboard()
-
-<Button onClick={() => void copy(url)}>
-  {copied ? "Link copied" : "Copy invite link"}
-</Button>`}
-			>
-				<ShareLink />
-			</Example>
+			/>
 
 			<Example id="copyable-api" title="API">
 				<PropTable owner="Copyable"

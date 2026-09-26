@@ -1,16 +1,8 @@
-import { useState } from "react"
-
-import { OtpInput } from "@/components/base/otp-input"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function OtpInputPage() {
-	const [code, setCode] = useState("")
-
 	return (
 		<ComponentPage
 			title="One-time code input"
@@ -19,20 +11,11 @@ export function OtpInputPage() {
 			exports={["OtpInput"]}
 		>
 			<Example
-				id="otp-input"
+				example="otp-input/otp-input"
 				title="OtpInput"
 				description="A one-time code, one box per character — and ONE input underneath, which is what makes paste and SMS autofill work. Six separate inputs each take one character and drop the other five, which is the failure every hand-built version of this has."
 				stacked
-				code={`<OtpInput length={6} groupSize={3} value={code} onValueChange={setCode} />`}
-			>
-				<Stack gap="lg" align="start">
-					<OtpInput length={6} value={code} onValueChange={setCode} />
-					<Stack gap="xs" align="start">
-						<Text size="xs" type="secondary">groupSize={"{3}"} — written as "123 456"</Text>
-						<OtpInput length={6} groupSize={3} />
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="otp-input-api" title="API">
 				<PropTable

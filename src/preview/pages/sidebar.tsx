@@ -1,141 +1,9 @@
-import { useState } from "react"
-import {
-	BellIcon, ChartLineIcon, InboxIcon, PlusIcon, SettingsIcon, ShoppingBagIcon,
-} from "lucide-react"
-
-import {
-	Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction,
-	SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset,
-	SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem,
-	SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem,
-	SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger,
-	type SidebarCollapsible, type SidebarVariant,
-} from "@/components/base/sidebar"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const NAV = [
-	{ label: "Inbox", icon: InboxIcon, badge: "12" },
-	{ label: "Orders", icon: ShoppingBagIcon },
-	{ label: "Analytics", icon: ChartLineIcon },
-]
-
-/** One panel, so each example differs only by the prop it is demonstrating. */
-function Panel({
-	variant,
-	collapsible,
-}: {
-	variant?: SidebarVariant
-	collapsible?: SidebarCollapsible
-}) {
-	return (
-		/* `contained`: the panel is `position: fixed` by default and would pin to the window. */
-		<div
-			style={{
-				height: "22rem",
-				width: "100%",
-				overflow: "hidden",
-				border: "var(--border-width) solid var(--border)",
-				borderRadius: "var(--radius)",
-			}}
-		>
-			<SidebarProvider contained>
-				<Sidebar variant={variant} collapsible={collapsible}>
-					<SidebarHeader>
-						<SidebarInput placeholder="Search" aria-label="Search" />
-					</SidebarHeader>
-
-					<SidebarContent>
-						<SidebarGroup>
-							<SidebarGroupLabel>Workspace</SidebarGroupLabel>
-							<SidebarGroupAction aria-label="Add">
-								<PlusIcon aria-hidden="true" />
-							</SidebarGroupAction>
-							<SidebarGroupContent>
-								<SidebarMenu>
-									{NAV.map((item, index) => (
-										<SidebarMenuItem key={item.label}>
-											<SidebarMenuButton active={index === 0} tooltip={item.label}>
-												<item.icon aria-hidden="true" />
-												<span>{item.label}</span>
-											</SidebarMenuButton>
-											{item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
-											{index === 1 && (
-												<SidebarMenuAction aria-label="More">
-													<BellIcon aria-hidden="true" />
-												</SidebarMenuAction>
-											)}
-											{index === 1 && (
-												<SidebarMenuSub>
-													<SidebarMenuSubItem>
-														<SidebarMenuSubButton>Unfulfilled</SidebarMenuSubButton>
-													</SidebarMenuSubItem>
-													<SidebarMenuSubItem>
-														<SidebarMenuSubButton>Refunded</SidebarMenuSubButton>
-													</SidebarMenuSubItem>
-												</SidebarMenuSub>
-											)}
-										</SidebarMenuItem>
-									))}
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
-
-						<SidebarSeparator />
-
-						<SidebarGroup>
-							<SidebarGroupLabel>Loading</SidebarGroupLabel>
-							<SidebarGroupContent>
-								<SidebarMenu>
-									<SidebarMenuItem>
-										<SidebarMenuSkeleton showIcon />
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuSkeleton showIcon />
-									</SidebarMenuItem>
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					</SidebarContent>
-
-					<SidebarFooter>
-						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton tooltip="Settings">
-									<SettingsIcon aria-hidden="true" />
-									<span>Settings</span>
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarFooter>
-
-					<SidebarRail />
-				</Sidebar>
-
-				{/* embedded in a docs page, so the page's own <main> stays the only one */}
-				<SidebarInset render={<div />}>
-					<Stack gap="md" style={{ padding: "var(--space-xl)" }}>
-						<SidebarTrigger />
-						<Text size="xs" type="secondary">
-							SidebarInset renders the page beside the panel — as a real{" "}
-							<code>&lt;main&gt;</code>, so it is the document's main landmark rather than
-							another div.
-						</Text>
-					</Stack>
-				</SidebarInset>
-			</SidebarProvider>
-		</div>
-	)
-}
-
 export function SidebarPage() {
-	const [open, setOpen] = useState(true)
-
 	return (
 		<ComponentPage
 			title="Sidebar"
@@ -151,107 +19,32 @@ export function SidebarPage() {
 			]}
 		>
 			<Example
-				id="sidebar-anatomy"
+				example="sidebar/sidebar-anatomy"
 				title="Anatomy"
 				description="Provider, panel, inset. Everything inside the panel is a slot: a header that holds its edge, a scrolling content region, groups with their own label and action, menu rows that take a badge, a secondary action and a nested sub-menu, and a footer. The rail is the drag edge."
 				stacked
-				code={`<SidebarProvider>
-  <Sidebar>
-    <SidebarHeader>…</SidebarHeader>
-    <SidebarContent>
-      <SidebarGroup>
-        <SidebarGroupLabel>Workspace</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton active>…</SidebarMenuButton>
-              <SidebarMenuBadge>12</SidebarMenuBadge>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    </SidebarContent>
-    <SidebarFooter>…</SidebarFooter>
-    <SidebarRail />
-  </Sidebar>
-  <SidebarInset>…</SidebarInset>
-</SidebarProvider>`}
-			>
-				<Panel />
-			</Example>
+			/>
 
 			<Example
-				id="sidebar-variant"
+				example="sidebar/sidebar-variant"
 				title="variant"
 				description="`sidebar` sits against the shell's edge. `floating` and `inset` detach it, so the panel reads as a card inside the page rather than as the page's own edge — which is what a shell with a coloured ground wants."
 				stacked
-				code={`<Sidebar variant="floating" />`}
-			>
-				<Stack gap="xl">
-					<Panel variant="floating" />
-					<Panel variant="inset" />
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="sidebar-collapsible"
+				example="sidebar/sidebar-collapsible"
 				title="collapsible"
 				description="`offcanvas` slides the panel away entirely; `icon` keeps a rail of glyphs, so the navigation is still reachable at a glance; `none` pins it open, for a layout where the panel is not optional. Press the trigger in the inset to collapse."
 				stacked
-				code={`<Sidebar collapsible="icon" />`}
-			>
-				<Panel collapsible="icon" />
-			</Example>
+			/>
 
 			<Example
-				id="sidebar-controlled"
+				example="sidebar/sidebar-controlled"
 				title="Controlled"
 				description="`open` and `onOpenChange` on the provider, for a shell that persists the panel's state or opens it from a route. The trigger and the rail both go through the same state, so nothing can disagree about whether the panel is open."
 				stacked
-				code={`<SidebarProvider open={open} onOpenChange={setOpen}>…</SidebarProvider>`}
-			>
-				<Stack gap="md">
-					<Text size="xs" type="secondary">
-						open: {String(open)}
-					</Text>
-					<div
-						style={{
-							height: "16rem",
-							width: "100%",
-							overflow: "hidden",
-							border: "var(--border-width) solid var(--border)",
-							borderRadius: "var(--radius)",
-						}}
-					>
-						<SidebarProvider contained open={open} onOpenChange={setOpen}>
-							<Sidebar collapsible="icon">
-								<SidebarContent>
-									<SidebarGroup>
-										<SidebarGroupContent>
-											<SidebarMenu>
-												{NAV.map((item) => (
-													<SidebarMenuItem key={item.label}>
-														<SidebarMenuButton tooltip={item.label}>
-															<item.icon aria-hidden="true" />
-															<span>{item.label}</span>
-														</SidebarMenuButton>
-													</SidebarMenuItem>
-												))}
-											</SidebarMenu>
-										</SidebarGroupContent>
-									</SidebarGroup>
-								</SidebarContent>
-							</Sidebar>
-							{/* embedded in a docs page, so the page's own <main> stays the only one */}
-							<SidebarInset render={<div />}>
-								<Stack style={{ padding: "var(--space-xl)" }}>
-									<SidebarTrigger />
-								</Stack>
-							</SidebarInset>
-						</SidebarProvider>
-					</div>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="sidebar-rule" title="Primitive, not shell" stacked>
 				<Callout label="Rule">

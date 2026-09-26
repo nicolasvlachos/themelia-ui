@@ -1,30 +1,9 @@
-import { ChevronDownIcon, UserIcon } from "lucide-react"
-import { useState } from "react"
-
-import { Button } from "@/components/base/buttons"
-import { PopoverMenu, PopoverMenuPanel, type PopoverMenuItem } from "@/components/base/popover-menu"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
-import { MEASURE } from "../partials/measures"
 import { PropTable } from "../partials/prop-table"
 
-const OWNERS: PopoverMenuItem[] = [
-	{ value: "jane", label: "Jane McDonald", description: "jane@northwind.example", icon: <UserIcon /> },
-	{ value: "raj", label: "Raj Patel", description: "raj@northwind.example", icon: <UserIcon /> },
-	{ value: "mei", label: "Mei Chen", description: "mei@northwind.example", icon: <UserIcon /> },
-	{ value: "sam", label: "Sam Okafor", description: "sam@northwind.example", icon: <UserIcon />, disabled: true },
-]
-
-
 export function PopoverMenuPage() {
-	const [owner, setOwner] = useState("jane")
-	const [failed, setFailed] = useState(true)
-	const [picked, setPicked] = useState<string[]>(["raj"])
-
 	return (
 		<ComponentPage
 			title="Popover menu"
@@ -33,124 +12,25 @@ export function PopoverMenuPage() {
 			exports={["PopoverMenu", "PopoverMenuPanel", "type PopoverMenuItem"]}
 		>
 			<Example
-				id="popover-menu"
+				example="popover-menu/popover-menu"
 				title="PopoverMenu"
 				description="Trigger, optional header, search, list, optional footer. The picker shape behind filter facets, operator selects, and assignee menus. `search={false}` drops the field for a list short enough to read at a glance; `loading` puts a strip where the list goes, because an async picker with no state reads as an empty one."
 				stacked
-				code={`<PopoverMenu
-  trigger={<Button buttonStyle="outline">Owner</Button>}
-  items={owners}
-  onSelect={(item) => setOwner(item.value)}
-/>`}
-			>
-				<Stack direction="horizontal" gap="xl" align="center">
-					<PopoverMenu
-						trigger={
-							<Button buttonStyle="outline" tone="neutral">
-								Owner
-								<ChevronDownIcon />
-							</Button>
-						}
-						items={OWNERS.map((item) => ({ ...item, selected: item.value === owner }))}
-						onSelect={(item) => setOwner(item.value)}
-						header={
-							<Text size="xs" type="secondary">
-								Assign to
-							</Text>
-						}
-					/>
-					<PopoverMenu
-						trigger={
-							<Button buttonStyle="outline" tone="neutral">
-								No search
-								<ChevronDownIcon />
-							</Button>
-						}
-						search={false}
-						items={OWNERS.slice(0, 3)}
-						onSelect={() => {}}
-					/>
-					<PopoverMenu
-						trigger={
-							<Button buttonStyle="outline" tone="neutral">
-								Loading
-								<ChevronDownIcon />
-							</Button>
-						}
-						loading
-						items={[]}
-						onSelect={() => {}}
-					/>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="popover-menu-states"
+				example="popover-menu/popover-menu-states"
 				title="Error and minimum search"
 				description="`error` stands where the rows would — `true` for `strings.error`, or a node of your own — and `onRetry` puts a control under it. It gives way to `loading`, so a retry in flight never shows beside the failure it is answering. `minSearchLength` keeps an empty field browsable and shows `strings.formatTypeToSearch` for one character up to the minimum."
 				stacked
-				code={`<PopoverMenu
-  trigger={<Button buttonStyle="outline">Owner</Button>}
-  items={owners}
-  error={query.isError}
-  onRetry={query.refetch}
-  onSelect={(item) => setOwner(item.value)}
-/>
-
-<PopoverMenu trigger={trigger} items={owners} minSearchLength={2} onSelect={pick} />`}
-			>
-				<Stack direction="horizontal" gap="xl" align="center">
-					<PopoverMenu
-						trigger={
-							<Button buttonStyle="outline" tone="neutral">
-								Failed load
-								<ChevronDownIcon />
-							</Button>
-						}
-						items={failed ? [] : OWNERS}
-						error={failed}
-						onRetry={() => setFailed(false)}
-						onSelect={() => setFailed(true)}
-					/>
-					<PopoverMenu
-						trigger={
-							<Button buttonStyle="outline" tone="neutral">
-								Two characters
-								<ChevronDownIcon />
-							</Button>
-						}
-						items={OWNERS}
-						minSearchLength={2}
-						onSelect={() => {}}
-					/>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="popover-menu-panel"
+				example="popover-menu/popover-menu-panel"
 				title="PopoverMenuPanel"
 				description="The same header, search, rows, states and footer without the popover, for a surface something else already owns — one step of a two-step popup, a sheet, a pill whose popover anchors to the whole pill. It owns no selection and closes nothing; the host decides both. The filter editors are built on it."
 				stacked
-				code={`<PopoverMenuPanel
-  search={false}
-  items={owners.map((owner) => ({ ...owner, selected: picked.includes(owner.value) }))}
-  onSelect={(item) => toggle(item.value)}
-/>`}
-			>
-				<div style={MEASURE.narrow}>
-					<PopoverMenuPanel
-						search={false}
-						items={OWNERS.map((item) => ({ ...item, selected: picked.includes(item.value) }))}
-						onSelect={(item) =>
-							setPicked((current) =>
-								current.includes(item.value)
-									? current.filter((value) => value !== item.value)
-									: [...current, item.value],
-							)
-						}
-					/>
-				</div>
-			</Example>
+			/>
 
 			<Example id="popover-menu-composition" title="What it is made of" stacked>
 				<Callout label="Two components, five regions">

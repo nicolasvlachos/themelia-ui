@@ -137,31 +137,112 @@ Preview route: Item — `/item`
 ### Item
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ItemGroup>
-  <Item>
-    <ItemMedia variant="image"><Avatar /></ItemMedia>
-    <ItemContent>
-      <ItemTitle>Jane McDonald</ItemTitle>
-      <ItemDescription>jane@example.com</ItemDescription>
-    </ItemContent>
-    <ItemActions><Badge>Active</Badge></ItemActions>
-  </Item>
-</ItemGroup>
+import { CreditCardIcon } from "lucide-react"
+
+import { Badge } from "themelia-ui/base/badge"
+import {
+	Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemSeparator,
+	ItemTitle,
+} from "themelia-ui/base/item"
+import { Money, RelativeTime } from "themelia-ui/primitives"
+
+export default function ItemExample() {
+	return (
+		<ItemGroup style={{ width: "100%" }}>
+			{[
+				{ name: "Northwind Traders", detail: "Invoice #4417", amount: 1299.5 },
+				{ name: "Acme Corporation", detail: "Invoice #4418", amount: 84 },
+			].map((row, index) => (
+				<Item key={row.name} surface={index === 0 ? "bordered" : "neutral"}>
+					<ItemMedia variant="icon">
+						<CreditCardIcon />
+					</ItemMedia>
+					<ItemContent>
+						<ItemTitle>{row.name}</ItemTitle>
+						<ItemDescription>
+							{row.detail} · <RelativeTime value="2026-08-20T00:00:00Z" />
+						</ItemDescription>
+					</ItemContent>
+					<ItemActions>
+						<Money amount={row.amount} />
+						<Badge tone="neutral">Paid</Badge>
+					</ItemActions>
+				</Item>
+			))}
+			<ItemSeparator />
+			<Item surface="muted">
+				<ItemContent>
+					<ItemTitle>Muted surface</ItemTitle>
+					<ItemDescription>For a de-emphasised row.</ItemDescription>
+				</ItemContent>
+			</Item>
+		</ItemGroup>
+	)
+}
 ```
 
 ### Density
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Scope vars={{ "--density-scale": 0.85 }}>
-  <ItemGroup>…</ItemGroup>
-</Scope>
+import { Card } from "themelia-ui/base/cards"
+import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "themelia-ui/base/item"
+import { Stack } from "themelia-ui/base/structure"
+import { Scope } from "themelia-ui/ui-provider"
+
+export default function CardsScale() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{[1, 0.85].map((scale) => (
+				<Scope key={scale} vars={{ "--density-scale": scale }}>
+					<Card surface="bordered" title={`--density-scale ${scale}`}>
+						<ItemGroup>
+							<Item surface="bordered">
+								<ItemContent>
+									<ItemTitle>First row</ItemTitle>
+									<ItemDescription>Supporting detail.</ItemDescription>
+								</ItemContent>
+							</Item>
+							<Item surface="bordered">
+								<ItemContent>
+									<ItemTitle>Second row</ItemTitle>
+									<ItemDescription>Supporting detail.</ItemDescription>
+								</ItemContent>
+							</Item>
+						</ItemGroup>
+					</Card>
+				</Scope>
+			))}
+		</Stack>
+	)
+}
 ```
 
 ### A ruled group
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ItemGroup ruled>
-  <Item>…</Item>
-  <Item>…</Item>
-</ItemGroup>
+import { CreditCardIcon } from "lucide-react"
+
+import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "themelia-ui/base/item"
+
+export default function ItemRuled() {
+	return (
+		<ItemGroup ruled style={{ width: "100%" }}>
+			{[
+				{ name: "Production", detail: "sk_live_••••0b3d" },
+				{ name: "Staging", detail: "sk_test_••••a771" },
+				{ name: "CI", detail: "sk_ci_••••e145" },
+			].map((row) => (
+				<Item key={row.name}>
+					<ItemMedia variant="icon">
+						<CreditCardIcon />
+					</ItemMedia>
+					<ItemContent>
+						<ItemTitle>{row.name}</ItemTitle>
+						<ItemDescription>{row.detail}</ItemDescription>
+					</ItemContent>
+				</Item>
+			))}
+		</ItemGroup>
+	)
+}
 ```

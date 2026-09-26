@@ -345,42 +345,127 @@ Preview route: Data view & data table — `/data-view`
 ### An index
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-// Filter and sort the complete collection before slicing a page.
-// A server-backed view can pass the returned page and total instead.
-const { rows } = useDataView({ data: bookings, filtering })
-const sorted = useLegacyTable({
-  data: rows, columns, state: { sorting },
-  getCoreRowModel: getCoreRowModel(),
-  getSortedRowModel: getSortedRowModel(),
-})
-const sortedRows = sorted.getRowModel().rows.map((row) => row.original)
-const pageRows = sortedRows.slice((page - 1) * pageSize, page * pageSize)
+import { useState } from "react"
+import type { SortingState } from "@tanstack/react-table"
+import { getCoreRowModel, getSortedRowModel, useLegacyTable } from "@tanstack/react-table/legacy"
 
-<DataView
-  data={pageRows}
-  columns={columns}
-  filtering={{
-    ...filtering,
-    filterRows: ({ data }) => data, // Already filtered before paging.
-    tabs: savedViews,
-  }}
-  table={{ enableSorting: true, manualSorting: true, sorting, onSortingChange }}
-  slots={{ footer: <DataViewPagination
-    page={page}
-    pageCount={Math.ceil(rows.length / pageSize)}
-    total={resultSummary}
-    onPageChange={setPage}
-  /> }}
-/>
+import { Button } from "themelia-ui/base/buttons"
+import { DataView, DataViewPagination, useDataView } from "themelia-ui/features/data-view"
+import { useFilters, type ActiveFilter } from "themelia-ui/features/filters"
+
+import { FILTERS, indexColumns } from "./_shared"
+import { BOOKINGS, TABS, type Booking } from "./data"
+
+const PAGE_SIZE = 3
+// Filtering has already run before sorting and paging. DataView still owns the controls.
+const keepPage = ({ data }: { data: readonly Booking[] }) => data as Booking[]
+
+function ResetViewButton({ disabled, onReset }: { disabled: boolean; onReset: () => void }) {
+	const { clearFilters } = useFilters()
+	return <Button tone="neutral" buttonStyle="outline" disabled={disabled}
+		onClick={() => { clearFilters(); onReset() }}>Reset view</Button>
+}
+
+export default function DataViewExample() {
+	const [active, setActive] = useState<ActiveFilter[]>([])
+	const [page, setPage] = useState(1)
+	const [sorting, setSorting] = useState<SortingState>([])
+	const updateFilters = (next: ActiveFilter[]) => {
+		setActive(next)
+		setPage(1)
+	}
+	const { rows } = useDataView({ data: BOOKINGS, filtering: {
+		filters: FILTERS, activeFilters: active, onFilterChange: updateFilters,
+	} })
+
+	const sorted = useLegacyTable({
+		data: rows as Booking[], columns: indexColumns, state: { sorting },
+		getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel(),
+	})
+	const pageCount = Math.ceil(rows.length / PAGE_SIZE)
+	const currentPage = Math.min(page, Math.max(1, pageCount))
+	const start = (currentPage - 1) * PAGE_SIZE
+	const pageRows = sorted.getRowModel().rows.slice(start, start + PAGE_SIZE).map((row) => row.original)
+	const summary = pageCount > 1
+		? `${start + 1}–${start + pageRows.length} of ${rows.length} bookings`
+		: `${rows.length} ${rows.length === 1 ? "booking" : "bookings"}`
+
+	return (
+		<DataView<Booking>
+			data={pageRows}
+			columns={indexColumns}
+			filtering={{
+				filters: FILTERS,
+				activeFilters: active,
+				onFilterChange: updateFilters,
+				filterRows: keepPage,
+				tabs: TABS,
+			}}
+			table={{
+				enableSorting: true,
+				manualSorting: true,
+				sorting,
+				onSortingChange: (next) => { setSorting(next); setPage(1) },
+				enableColumnVisibility: true,
+				getRowId: (row) => row.id,
+				emptyStateMessage: "No bookings match your filters",
+				emptyStateAction: <Button tone="neutral" buttonStyle="outline" onClick={() => updateFilters([])}>Clear filters</Button>,
+			}}
+			slots={{
+				topbarEnd: <ResetViewButton
+					disabled={active.length === 0 && sorting.length === 0 && currentPage === 1}
+					onReset={() => { setSorting([]); setPage(1) }} />,
+				footer: (
+					<DataViewPagination
+						page={currentPage}
+						pageCount={pageCount}
+						total={summary}
+						onPageChange={setPage}
+					/>
+				),
+			}}
+		/>
+	)
+}
 ```
 
 ### Pending results and recovery
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DataView data={bookings} columns={columns} filtering={{
-  filters, activeFilters, onFilterChange,
-  isFiltering: pending,
-  filterRows: matchRows,
-  onError: reportError,
-}} />
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Select } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { DataView } from "themelia-ui/features/data-view"
+import type { ActiveFilter } from "themelia-ui/features/filters"
+
+import styles from "../../preview.module.css"
+import { FILTERS, indexColumns } from "./_shared"
+import { BOOKINGS, TABS, type Booking } from "./data"
+
+export default function DataViewStates() {
+	const [requestState, setRequestState] = useState("ready")
+	const [recoveryFilters, setRecoveryFilters] = useState<ActiveFilter[]>([])
+
+	return (
+		<>
+			<Stack direction="horizontal" align="center" gap="sm" wrap>
+				<Text size="sm" type="secondary">Result state</Text>
+				<Select aria-label="Result state" value={requestState} className={styles.featureStateSelect}
+					options={[{ value: "ready", label: "Ready" }, { value: "pending", label: "Updating" }, { value: "error", label: "Failed" }]}
+					onValueChange={(value) => value && setRequestState(value)} />
+				{requestState === "error" && <Button tone="neutral" buttonStyle="outline" onClick={() => setRequestState("ready")}>Restore results</Button>}
+			</Stack>
+			<DataView<Booking> data={BOOKINGS.slice(0, 3)} columns={indexColumns}
+				filtering={{ filters: FILTERS, activeFilters: recoveryFilters, onFilterChange: setRecoveryFilters,
+					tabs: TABS, isFiltering: requestState === "pending",
+					filterRows: requestState === "error" ? () => { throw new Error("Preview matcher failure") } : undefined,
+				}}
+				table={{ getRowId: (row) => row.id, emptyStateMessage: "No bookings match your filters",
+					emptyStateAction: <Button tone="neutral" buttonStyle="outline" onClick={() => setRecoveryFilters([])}>Clear filters</Button> }} />
+		</>
+	)
+}
 ```

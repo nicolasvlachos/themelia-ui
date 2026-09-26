@@ -131,38 +131,73 @@ No own members are present in the normalized public snapshot.
 
 ## Preview recipes
 
-Preview route: Scale & density — `/scale`
-
-### The factor
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ scale: 0.875 }}>
-  <Toolbar />
-</UIProvider>
-```
-
-### Why two factors, and no third
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ scale: 1.125 }}>
-  <Page>
-    <UIProvider config={{ scale: 0.875 }}>
-      <Toolbar />
-    </UIProvider>
-  </Page>
-</UIProvider>
-```
+Preview route: Toolbar — `/toolbar`
 
 ### Formatting controls
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Toolbar aria-label="Formatting">
-  <ToolbarGroup>
-    <ToolbarButton iconOnly aria-label="Bold"><BoldIcon /></ToolbarButton>
-    <ToolbarButton iconOnly aria-label="Italic"><ItalicIcon /></ToolbarButton>
-  </ToolbarGroup>
-  <ToolbarSeparator />
-  <ToolbarInput aria-label="Font size" defaultValue="14" inputMode="numeric"
-    style={{ width: "calc(4rem * var(--scale))" }} />
-</Toolbar>
+import { BoldIcon, ItalicIcon, Redo2Icon, Undo2Icon } from "lucide-react"
+
+import {
+	Toolbar, ToolbarButton, ToolbarGroup, ToolbarInput, ToolbarLink, ToolbarSeparator,
+} from "themelia-ui/base/toolbar"
+
+export default function ToolbarExample() {
+	return (
+		<Toolbar aria-label="Formatting">
+			<ToolbarGroup>
+				<ToolbarButton iconOnly aria-label="Bold">
+					<BoldIcon />
+				</ToolbarButton>
+				<ToolbarButton iconOnly aria-label="Italic">
+					<ItalicIcon />
+				</ToolbarButton>
+			</ToolbarGroup>
+			<ToolbarSeparator />
+			<ToolbarGroup>
+				<ToolbarButton iconOnly aria-label="Undo">
+					<Undo2Icon />
+				</ToolbarButton>
+				<ToolbarButton iconOnly aria-label="Redo" disabled>
+					<Redo2Icon />
+				</ToolbarButton>
+			</ToolbarGroup>
+			<ToolbarSeparator />
+			<ToolbarInput aria-label="Font size" defaultValue="14" inputMode="numeric" style={{ width: "calc(4rem * var(--scale))" }} />
+			<ToolbarLink
+				href="#/toolbar"
+				onClick={(event) => {
+					event.preventDefault()
+					document.getElementById("toolbar-api")?.scrollIntoView({ behavior: "smooth" })
+				}}
+			>
+				API
+			</ToolbarLink>
+		</Toolbar>
+	)
+}
+```
+
+### Vertical orientation
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Redo2Icon, Undo2Icon } from "lucide-react"
+
+import { Stack } from "themelia-ui/base/structure"
+import { Toolbar, ToolbarButton } from "themelia-ui/base/toolbar"
+
+export default function ToolbarOrientation() {
+	return (
+		<Stack direction="horizontal" gap="xl" align="start">
+			<Toolbar aria-label="History" orientation="vertical">
+				<ToolbarButton iconOnly aria-label="Undo">
+					<Undo2Icon />
+				</ToolbarButton>
+				<ToolbarButton iconOnly aria-label="Redo">
+					<Redo2Icon />
+				</ToolbarButton>
+			</Toolbar>
+		</Stack>
+	)
+}
 ```

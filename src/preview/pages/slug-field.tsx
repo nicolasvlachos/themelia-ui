@@ -1,27 +1,6 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { Stack } from "@/components/base/structure"
-import { Input, SlugField } from "@/components/base/text-inputs"
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-function SlugFieldDemo() {
-	const [title, setTitle] = useState("Northwind Traders — Q4 Report & Notes")
-
-	return (
-		<Stack gap="lg" style={MEASURE.field}>
-			<FormField label="Title">
-				<Input value={title} onChange={(event) => setTitle(event.target.value)} />
-			</FormField>
-			<FormField label="URL" helperText="Derived from the title. Accents fold, punctuation collapses.">
-				<SlugField value={title} prefix="acme.com/" />
-			</FormField>
-		</Stack>
-	)
-}
 
 export function SlugFieldPage() {
 	return (
@@ -32,14 +11,11 @@ export function SlugFieldPage() {
 			exports={["SlugField"]}
 		>
 			<Example
-				id="slug-field"
+				example="slug-field/slug-field"
 				title="SlugField"
 				description="A read-only mirror of another field. Read-only rather than editable-with-sync: a slug that both follows the title and accepts edits has to decide which wins on every keystroke, and every answer to that surprises someone."
 				stacked
-				code={`<SlugField value={title} prefix="acme.com/" />`}
-			>
-				<SlugFieldDemo />
-			</Example>
+			/>
 
 			<Example id="slug-api" title="API">
 				<PropTable owner="SlugField"

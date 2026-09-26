@@ -1,24 +1,6 @@
-import { PlusIcon } from "lucide-react"
-
-import {
-	Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, LoaderButton, TextButton,
-	TooltipButton,
-} from "@/components/base/buttons"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-import { MonoValue } from "@/components/primitives"
-import { Checkbox } from "@/components/base/choice-inputs"
-import { UIProvider } from "@/lib/ui-provider"
-import type { ButtonStyle, ButtonTone } from "@/components/base/buttons"
-
 import { Example } from "../partials/example"
 import { ComponentPage } from "../partials/component-page"
 import { PropTable } from "../partials/prop-table"
-
-const TONES: ButtonTone[] = [
-	"neutral", "primary", "secondary", "info", "success", "warning", "destructive",
-]
-const STYLES: ButtonStyle[] = ["solid", "outline", "ghost"]
 
 export function ButtonPage() {
 	return (
@@ -32,152 +14,50 @@ export function ButtonPage() {
 			]}
 		>
 			<Example
-				id="tone-style"
+				example="button/tone-style"
 				title="Tone × style"
 				description="Seven tones by three treatments. The matrix is generated, so a new tone is four variables rather than nine rules."
 				stacked
-				code={`<Button tone="destructive" buttonStyle="ghost">Delete</Button>`}
-			>
-				{STYLES.map((buttonStyle) => (
-					<div key={buttonStyle} style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
-						{TONES.map((tone) => (
-							<Button key={tone} tone={tone} buttonStyle={buttonStyle}>
-								{tone}
-							</Button>
-						))}
-					</div>
-				))}
-			</Example>
+			/>
 
 			<Example
-				id="scale"
+				example="button/scale"
 				title="Scale, not size"
 				description="There is no size prop. Geometry comes from one scale factor, so every button on a surface is the same button — a denser region is a scope, which moves its controls together instead of one at a time."
 				stacked
-				code={`{/* not this */}
-<Button>Save</Button>
-
-{/* this — the whole region stays in proportion */}
-<UIProvider config={{ scale: 0.875 }}>
-  <Toolbar />
-</UIProvider>`}
-			>
-				{([0.875, 1, 1.125] as const).map((scale) => (
-					<UIProvider key={scale} config={{ scale }}>
-						<div style={{ display: "flex", gap: ".75rem", alignItems: "center", flexWrap: "wrap" }}>
-							{/* A fixed column and type size: the caption sits inside the scaled scope. */}
-							<MonoValue
-								size="xs"
-								style={{ width: "5.5rem", flexShrink: 0, fontSize: "0.75rem" }}
-							>
-								scale {scale}
-							</MonoValue>
-							<Button>Save</Button>
-							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-							<Button iconOnly aria-label="Add"><PlusIcon /></Button>
-							<Checkbox label="Also this" defaultChecked />
-						</div>
-					</UIProvider>
-				))}
-			</Example>
+			/>
 
 			<Example
-				id="state"
+				example="button/state"
 				title="State"
 				description="A loading button keeps its label's space, so it cannot resize under a cursor that is already over it. The pair below is the same button in both states — identical width, and the label is still there for a screen reader under aria-busy."
-				code={`<Button>Save changes</Button>
-<Button loading>Save changes</Button>
-<Button disabled>Disabled</Button>`}
-			>
-				<Button>Save changes</Button>
-				<Button loading>Save changes</Button>
-				<Button disabled>Disabled</Button>
-				<Button tone="neutral" buttonStyle="outline" loading>
-					Loading
-				</Button>
-			</Example>
+			/>
 
 			<Example
-				id="icon-only"
+				example="button/icon-only"
 				title="Icon only"
 				description="A square button sized to its own height. The label becomes the accessible name."
-				code={`<Button iconOnly aria-label="Settings">⚙</Button>`}
-			>
-				<Button iconOnly aria-label="Add"><PlusIcon /></Button>
-				<Button tone="neutral" buttonStyle="outline" iconOnly aria-label="Edit">✎</Button>
-				<Button tone="destructive" buttonStyle="ghost" iconOnly aria-label="Delete">🗑</Button>
-			</Example>
+			/>
 
 			<Example
-				id="group"
+				example="button/group"
 				title="Group"
 				description="Adjacent buttons that read as one control: the seam collapses to a single hairline and inner corners square off."
-				code={`<ButtonGroup>\n  <Button buttonStyle="outline" tone="neutral">Day</Button>\n  <Button buttonStyle="outline" tone="neutral">Week</Button>\n</ButtonGroup>`}
-			>
-				<ButtonGroup>
-					<Button tone="neutral" buttonStyle="outline">Day</Button>
-					<Button tone="neutral" buttonStyle="outline">Week</Button>
-					<Button tone="neutral" buttonStyle="outline">Month</Button>
-				</ButtonGroup>
-				<ButtonGroup orientation="vertical">
-					<Button tone="neutral" buttonStyle="outline">Top</Button>
-					<Button tone="neutral" buttonStyle="outline">Bottom</Button>
-				</ButtonGroup>
-			</Example>
+			/>
 
 			<Example
-				id="button-variants"
+				example="button/button-variants"
 				title="Three buttons that are not styles"
 				description="A style prop cannot express these, because each changes what the button IS rather than how it looks. TextButton reads as a link but stays a button, so a screen reader announces &quot;button&quot; and Space activates it — anything that navigates should be a real anchor even when it looks identical. LoaderButton owns its pending state and can run the handler itself. TooltipButton makes the tooltip the accessible NAME, which is the commonest way an icon button stops being usable without a mouse."
 				stacked
-				code={`<TextButton onClick={undo}>Undo</TextButton>
-<LoaderButton onClick={async () => save()}>Save</LoaderButton>
-<TooltipButton tooltip="Archive" iconOnly><ArchiveIcon /></TooltipButton>`}
-			>
-				<Stack direction="horizontal" gap="xl" wrap align="center">
-					<Text size="xs" type="secondary">
-						Changed your mind? <TextButton>Undo the import</TextButton>
-					</Text>
-					<LoaderButton
-						tone="neutral"
-						buttonStyle="outline"
-						onClick={() => new Promise((resolve) => setTimeout(resolve, 1200))}
-					>
-						Save and wait
-					</LoaderButton>
-					<TooltipButton tooltip="Archive this order" tone="neutral" buttonStyle="outline">
-						Archive
-					</TooltipButton>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="button-group-parts"
+				example="button/button-group-parts"
 				title="Separators and text inside a group"
 				description="A group welds its children into one control, so a divider inside it is not a Separator — that would draw a full-height rule against the group's own border. ButtonGroupSeparator is the seam, and ButtonGroupText is a label that sits in the run without becoming pressable."
 				stacked
-				code={`<ButtonGroup>
-  <Button>Day</Button>
-  <ButtonGroupSeparator />
-  <ButtonGroupText>of</ButtonGroupText>
-  <Button>Week</Button>
-</ButtonGroup>`}
-			>
-				<Stack direction="horizontal" gap="xl" wrap align="center">
-					<ButtonGroup>
-						<Button tone="neutral" buttonStyle="outline">Day</Button>
-						<ButtonGroupSeparator />
-						<Button tone="neutral" buttonStyle="outline">Week</Button>
-						<ButtonGroupSeparator />
-						<Button tone="neutral" buttonStyle="outline">Month</Button>
-					</ButtonGroup>
-					<ButtonGroup>
-						<ButtonGroupText>Show</ButtonGroupText>
-						<Button tone="neutral" buttonStyle="outline">All</Button>
-						<Button tone="neutral" buttonStyle="outline">Open</Button>
-					</ButtonGroup>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
 				id="api"

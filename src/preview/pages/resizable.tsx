@@ -1,19 +1,6 @@
-import {
-	ResizableHandle, ResizablePanel, ResizablePanelGroup,
-} from "@/components/base/resizable"
-import { Text } from "@/components/base/typography"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const FRAME: React.CSSProperties = {
-	width: "100%",
-	height: "12rem",
-	border: "1px solid var(--border)",
-	borderRadius: "var(--radius)",
-	overflow: "hidden",
-}
 
 export function ResizablePage() {
 	return (
@@ -24,32 +11,11 @@ export function ResizablePage() {
 			exports={["ResizablePanelGroup", "ResizablePanel", "ResizableHandle"]}
 		>
 			<Example
-				id="resizable"
+				example="resizable/resizable"
 				title="Resizable"
 				description="Split panes with a real separator — role=separator and arrow-key support, which is what makes this different from a div with a mousedown listener. Keep the layout in your own state with `onLayoutChanged` and hand it back through `defaultLayout`; a reader who widened the inspector expects it wide next time."
 				stacked
-				code={`<ResizablePanelGroup orientation="horizontal" defaultLayout={savedLayout} onLayoutChanged={saveLayout}>
-  <ResizablePanel defaultSize="65%">…</ResizablePanel>
-  <ResizableHandle withHandle />
-  <ResizablePanel defaultSize="35%">…</ResizablePanel>
-</ResizablePanelGroup>`}
-			>
-				<div style={FRAME}>
-					<ResizablePanelGroup orientation="horizontal">
-						<ResizablePanel defaultSize="65%">
-							<div style={{ padding: "var(--space-lg)" }}>
-								<Text size="sm" type="secondary">The document</Text>
-							</div>
-						</ResizablePanel>
-						<ResizableHandle withHandle />
-						<ResizablePanel defaultSize="35%">
-							<div style={{ padding: "var(--space-lg)" }}>
-								<Text size="sm" type="secondary">The inspector</Text>
-							</div>
-						</ResizablePanel>
-					</ResizablePanelGroup>
-				</div>
-			</Example>
+			/>
 
 			<Example id="resizable-api" title="API">
 				<PropTable

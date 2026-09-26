@@ -1,33 +1,7 @@
-import { BellIcon, PlusIcon } from "lucide-react"
-
-import { Avatar, AvatarFallback } from "@/components/base/avatar"
-import { Button } from "@/components/base/buttons"
-import { SearchInput } from "@/components/base/text-inputs"
-import { Header } from "@/components/layout"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-/*
- * The frame holds a strip of page under the header, so the rounded corners belong to the
- * page body and the header's bottom rule runs unclipped.
- */
-const FRAME = {
-	width: "100%",
-	/* Give the sticky backdrop layer the same clipping curve as the frame. */
-	clipPath: "inset(0 round var(--radius))",
-	border: "1px solid var(--border)",
-	borderRadius: "var(--radius)",
-	overflow: "hidden",
-} as const
-
-/** The page under the bar. It exists to own the frame's bottom corners. */
-const FRAME_BODY = {
-	height: "var(--space-2xl)",
-	backgroundColor: "var(--muted-20)",
-} as const
 
 export function LayoutHeaderPage() {
 	return (
@@ -40,66 +14,18 @@ export function LayoutHeaderPage() {
 			]}
 		>
 			<Example
-				id="header"
+				example="layout-header/header"
 				title="Header"
 				description="Slot-driven, because every product puts something different up here. What it owns is the arrangement: the centre slot shrinks before the right cluster does, so a search field gives up width rather than an icon button truncating into uselessness."
 				stacked
-				code={`<Header
-  breadcrumbs={[{ label: "Billing", href: "/billing" }, { label: "Invoices" }]}
-  slots={{
-    center: <SearchInput />,
-    right: <><Notifications /><Account /></>,
-  }}
-/>`}
-			>
-				<div style={FRAME}>
-					<Header
-						breadcrumbs={[{ label: "Billing", href: "#/header" }, { label: "Invoices" }]}
-						slots={{
-							center: <SearchInput placeholder="Search invoices…" />,
-							right: (
-								<>
-									<Button tone="neutral" buttonStyle="outline">
-										<PlusIcon />
-										New
-									</Button>
-									<Button iconOnly tone="neutral" buttonStyle="ghost" aria-label="Notifications">
-										<BellIcon />
-									</Button>
-									<Avatar size="sm">
-										<AvatarFallback>JM</AvatarFallback>
-									</Avatar>
-								</>
-							),
-						}}
-					/>
-					<div style={FRAME_BODY} />
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="header-breadcrumbs"
+				example="layout-header/header-breadcrumbs"
 				title="Breadcrumbs are built in"
 				description="They are the one region whose position is not negotiable: a trail that moves between screens stops being a trail. homeCrumb prepends a root that is not part of the route — and passing null omits it, which is different from not passing it at all. A shell with no home destination should say so rather than get a default one."
 				stacked
-				code={`<Header
-  homeCrumb={{ label: "Home", href: "/" }}
-  breadcrumbs={[{ label: "Settings", href: "/settings" }, { label: "Members" }]}
-/>`}
-			>
-				<div style={FRAME}>
-					<Header
-						homeCrumb={{ label: "Home", href: "#/header" }}
-						/* A second trail on the page needs a distinct landmark name. */
-						breadcrumbsStrings={{ label: "Settings breadcrumb example" }}
-						breadcrumbs={[
-							{ label: "Settings", href: "#/settings-shell" },
-							{ label: "Members" },
-						]}
-					/>
-					<div style={FRAME_BODY} />
-				</div>
-			</Example>
+			/>
 
 			<Example id="header-rule" title="What gives way" stacked>
 				<Callout label="Rule">

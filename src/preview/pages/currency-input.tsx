@@ -1,18 +1,8 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { CurrencyInput } from "@/components/base/forms-numeric"
-import { Stack } from "@/components/base/structure"
-
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function CurrencyInputPage() {
-	const [amount, setAmount] = useState("1299.50")
-	const [currency, setCurrency] = useState("EUR")
-
 	return (
 		<ComponentPage
 			title="Currency input"
@@ -21,32 +11,11 @@ export function CurrencyInputPage() {
 			exports={["CurrencyInput", "CURRENCY_SYMBOLS", "MoneyInput"]}
 		>
 			<Example
-				id="currency"
+				example="currency-input/currency"
 				title="CurrencyInput"
 				description="The amount and the currency are separate channels. An amount stored as “€1,234.50” has to be parsed by everything downstream, and the parse depends on a locale nobody recorded."
 				stacked
-				code={`<CurrencyInput
-  value={amount}
-  onChange={(e) => setAmount(e.target.value)}
-  currency={currency}
-  onCurrencyChange={setCurrency}
-/>`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="Invoice total">
-						<CurrencyInput
-							value={amount}
-							onChange={(event) => setAmount(event.target.value)}
-							currency={currency}
-							onCurrencyChange={setCurrency}
-							currencies={["EUR", "USD", "GBP"]}
-						/>
-					</FormField>
-					<FormField label="Selector at the end">
-						<CurrencyInput defaultValue="49.00" defaultCurrency="USD" currencyPosition="end" />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="currency-input-api" title="API">
 				<PropTable owner="CurrencyInput"

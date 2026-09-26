@@ -322,43 +322,230 @@ Kind: interface.
 
 ## Preview recipes
 
-Preview route: Input — `/input`
+Preview route: Form field — `/form-field`
+
+### Scale
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Input, NativeSelect } from "themelia-ui/base/text-inputs"
+import { MonoValue } from "themelia-ui/primitives"
+import { Scope } from "themelia-ui/ui-provider"
+
+export default function FormsScale() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{[1, 0.875, 1.125].map((scale) => (
+				<Scope key={scale} vars={{ "--density-scale": scale }}>
+					<Stack direction="horizontal" gap="md" align="center" justify="start">
+						{/* Widths on the wrappers: Input's style lands on the inner control, not its frame. */}
+						<MonoValue size="xs" style={{ width: "3.5rem", flexShrink: 0, fontSize: "0.75rem" }}>
+							{scale}
+						</MonoValue>
+						{/* Named even in a geometry demo: a placeholder is not a label. */}
+						<div style={{ width: "12rem", flexShrink: 0 }}>
+							<Input placeholder="Field" aria-label={`Example field at density ${scale}`} />
+						</div>
+						<div style={{ width: "9rem", flexShrink: 0 }}>
+							<NativeSelect defaultValue="a" aria-label={`Example select at density ${scale}`}>
+								<option value="a">Option</option>
+							</NativeSelect>
+						</div>
+					</Stack>
+				</Scope>
+			))}
+		</Stack>
+	)
+}
+```
+
+### One shared surface
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Input, NativeSelect, Textarea } from "themelia-ui/base/text-inputs"
+
+
+export default function SharedSurface() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Input">
+				<Input placeholder="Northwind Traders" />
+			</FormField>
+			<FormField label="Native select">
+				<NativeSelect defaultValue="">
+					<option value="" disabled>
+						Select an option
+					</option>
+					<option value="a">First option</option>
+					<option value="b">Second option</option>
+				</NativeSelect>
+			</FormField>
+			<FormField label="Textarea">
+				<Textarea placeholder="Anything worth recording." />
+			</FormField>
+		</Stack>
+	)
+}
+```
 
 ### Optional iPhone zoom prevention
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ forms: { preventIPhoneZoom: true } }}>
-  <Input aria-label="Enabled on iPhones" />
-</UIProvider>
+import { Select } from "themelia-ui/base/choice-inputs"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Input, NativeSelect, Textarea } from "themelia-ui/base/text-inputs"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+
+export default function IphoneInputZoom() {
+	return (
+		<UIProvider config={{ forms: { preventIPhoneZoom: true } }}>
+			<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+				<FormField label="Enabled on iPhones"><Input placeholder="16px minimum on iPhone" /></FormField>
+				<FormField label="iPhone textarea"><Textarea /></FormField>
+				<FormField label="iPhone native select"><NativeSelect><option>First option</option></NativeSelect></FormField>
+				<FormField label="Button select"><Select options={[{ value: "a", label: "First option" }]} defaultValue="a" /></FormField>
+				<UIProvider config={{ forms: { preventIPhoneZoom: false } }}>
+					<FormField label="Nested opt-out"><Input placeholder="Normal field typography" /></FormField>
+				</UIProvider>
+			</Stack>
+		</UIProvider>
+	)
+}
 ```
 
 ### States
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Input aria-invalid="true" />
-<Input disabled />
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Input, NativeSelect } from "themelia-ui/base/text-inputs"
+
+
+export default function States() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Default" helperText="The supporting line.">
+				<Input placeholder="name@example.com" />
+			</FormField>
+			<FormField label="Invalid" error="Enter a valid email address.">
+				<Input defaultValue="not-an-email" aria-invalid="true" />
+			</FormField>
+			<FormField label="Disabled">
+				<Input placeholder="Not editable" disabled />
+			</FormField>
+			<FormField label="Disabled select">
+				<NativeSelect disabled defaultValue="a">
+					<option value="a">Not editable</option>
+				</NativeSelect>
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Inline affordances
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FieldShell start={<SearchIcon />} end={<Button>Go</Button>}>
-  <Input />
-</FieldShell>
+import { useState } from "react"
 
-<PasswordInput />
-<SearchInput value={q} onChange={…} onClear={…} />
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { FieldShell, Input, PasswordInput, SearchInput } from "themelia-ui/base/text-inputs"
+import { Text } from "themelia-ui/base/typography"
+
+
+export default function Affordances() {
+	const [search, setSearch] = useState("shipping")
+
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Search" helperText="Clear appears once there is a value.">
+				<SearchInput
+					value={search}
+					onChange={(event) => setSearch(event.target.value)}
+					onClear={() => setSearch("")}
+					placeholder="Search orders"
+				/>
+			</FormField>
+			<FormField label="Password" helperText="Revealing is its own control, never hover or focus.">
+				<PasswordInput defaultValue="hunter2" />
+			</FormField>
+			<FormField label="Password, invalid" error="Too short.">
+				<PasswordInput defaultValue="abc" invalid />
+			</FormField>
+			<FormField label="Weight" helperText="A trailing unit, outside the text.">
+				<FieldShell end={<Text tag="span" size="xs" type="secondary">kg</Text>}>
+					<Input type="number" defaultValue="12" />
+				</FieldShell>
+			</FormField>
+			<FormField label="Character count">
+				<Input showCharacterCount maxLength={40} defaultValue="Counted" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### SlugField
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SlugField value={title} prefix="acme.com/" />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Input, SlugField } from "themelia-ui/base/text-inputs"
+
+
+function SlugFieldDemo() {
+	const [title, setTitle] = useState("Northwind Traders — Q4 Report & Notes")
+
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Title">
+				<Input value={title} onChange={(event) => setTitle(event.target.value)} />
+			</FormField>
+			<FormField label="URL" helperText="Derived from the title. Accents fold, punctuation collapses.">
+				<SlugField value={title} prefix="acme.com/" />
+			</FormField>
+		</Stack>
+	)
+}
+
+export default function SlugFieldExample() {
+	return (
+		<SlugFieldDemo />
+	)
+}
 ```
 
 ### Textarea
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Textarea rows={4} placeholder="Notes" />
-<Textarea showCharacterCount maxLength={280} />
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Textarea } from "themelia-ui/base/text-inputs"
+
+
+export default function TextareaExample() {
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Notes" helperText="Plain multi-line text.">
+				<Textarea rows={4} placeholder="Anything worth recording." />
+			</FormField>
+			<FormField label="Summary" helperText="With a limit and a count.">
+				<Textarea rows={3} showCharacterCount maxLength={280} defaultValue="Quarterly summary." />
+			</FormField>
+			<FormField label="Invalid" error="Required.">
+				<Textarea rows={2} invalid />
+			</FormField>
+			<FormField label="Disabled">
+				<Textarea rows={2} disabled defaultValue="Not editable." />
+			</FormField>
+		</Stack>
+	)
+}
 ```

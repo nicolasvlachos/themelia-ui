@@ -1,24 +1,8 @@
-import { AdaptiveGrid, Bleed, Grid, GridCell, Split, Stack } from "@/components/base/structure"
 import { Text } from "@/components/base/typography"
 
 import { Example } from "../partials/example"
 import { ComponentPage } from "../partials/component-page"
 import { PropTable } from "../partials/prop-table"
-
-function Box({ children }: { children: React.ReactNode }) {
-	return (
-		<div
-			style={{
-				padding: "var(--space-md) var(--space-lg)",
-				borderRadius: "var(--radius-sm)",
-				background: "var(--muted)",
-				fontSize: "var(--text-sm)",
-			}}
-		>
-			{children}
-		</div>
-	)
-}
 
 export function StructurePage() {
 	return (
@@ -29,109 +13,46 @@ export function StructurePage() {
 			exports={["Stack", "Grid", "GridCell", "AdaptiveGrid", "Split", "Bleed"]}
 		>
 			<Example
-				id="stack"
+				example="structure/stack"
 				title="Stack"
 				description="Vertical by default, because most page composition is. Gaps come from the spacing scale, so a compact scope tightens every Stack."
 				stacked
-				code={`<Stack gap="sm">…</Stack>\n<Stack direction="horizontal" justify="between" align="center">…</Stack>`}
-			>
-				<Stack gap="sm">
-					<Box>vertical, gap sm</Box>
-					<Box>second</Box>
-				</Stack>
-				<Stack direction="horizontal" gap="md" justify="between" align="center">
-					<Box>horizontal</Box>
-					<Box>justify between</Box>
-					<Box>align center</Box>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="responsive-props"
+				example="structure/responsive-props"
 				title="Responsive props"
 				description="Resize the window: this row stacks below md and becomes a row above it. One tree, one prop."
 				stacked
-				code={`<Stack direction={{ base: "vertical", md: "horizontal" }} gap={{ base: "xs", md: "xl" }}>`}
-			>
-				<Stack direction={{ base: "vertical", md: "horizontal" }} gap={{ base: "xs", md: "xl" }}>
-					<Box>stacks on small</Box>
-					<Box>row from md</Box>
-					<Box>gap grows too</Box>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="grid"
+				example="structure/grid"
 				title="Grid"
 				description="An explicit column count, for when the layout is a decision rather than a consequence of available space."
 				stacked
-				code={`<Grid columns={{ base: 1, md: 3 }}>\n  <GridCell span="full">…</GridCell>\n</Grid>`}
-			>
-				<Grid columns={{ base: 1, md: 3 }} gap="md">
-					<GridCell span="full"><Box>span full</Box></GridCell>
-					<GridCell><Box>one</Box></GridCell>
-					<GridCell><Box>two</Box></GridCell>
-					<GridCell><Box>three</Box></GridCell>
-					<GridCell span={{ base: 1, md: 2 }}><Box>span 2 from md</Box></GridCell>
-					<GridCell><Box>four</Box></GridCell>
-				</Grid>
-			</Example>
+			/>
 
 			<Example
-				id="adaptivegrid"
+				example="structure/adaptivegrid"
 				title="AdaptiveGrid"
 				description="Columns follow the available width via auto-fit, so it needs no breakpoints. Use it when the question is 'how narrow may a column get', not 'how many columns do I want'."
 				stacked
-				code={`<AdaptiveGrid minColumnWidth="sm">…</AdaptiveGrid>`}
-			>
-				<AdaptiveGrid minColumnWidth="sm" gap="md">
-					{Array.from({ length: 6 }, (_, i) => (
-						<Box key={i}>card {i + 1}</Box>
-					))}
-				</AdaptiveGrid>
-			</Example>
+			/>
 
 			<Example
-				id="split"
+				example="structure/split"
 				title="Split"
 				description="A fixed column beside a fluid one. Grid divides space into equal shares and Stack gives each child what it asks for; neither says 'this side is 18rem and the other takes the rest', which is the shape of a rail beside content."
 				stacked
-				code={`<Split sideWidth="14rem" gap="md">
-  <Box>main</Box>
-  <Box>side</Box>
-</Split>`}
-			>
-				<Stack gap="lg" style={{ width: "100%" }}>
-					<Split sideWidth="14rem" gap="md">
-						<Box>main content, takes the rest</Box>
-						<Box>side, 14rem</Box>
-					</Split>
-					<Split side="start" sideWidth="14rem" gap="md">
-						<Box>main content — still first in the DOM</Box>
-						<Box>side, drawn on the left</Box>
-					</Split>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="bleed"
+				example="structure/bleed"
 				title="Bleed"
 				description="Lets a child escape the padding it is sitting in — a full-width image at the top of a padded card, a rule that meets both edges. The amount is a spacing step rather than a length, so it cancels a padding that came from the same scale and the two cannot drift apart under a density change."
 				stacked
-				code={`<Bleed amount="md">
-  <img … />
-</Bleed>`}
-			>
-				<div style={{ width: "100%", padding: "var(--space-md)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)" }}>
-					<Text size="xs" type="secondary">A surface padded by --space-md.</Text>
-					<Bleed amount="md">
-						<div style={{ background: "var(--muted)", padding: "var(--space-sm) var(--space-md)", marginBlock: "var(--space-sm)" }}>
-							<Text size="xs">This band bleeds to both edges.</Text>
-						</div>
-					</Bleed>
-					<Text size="xs" type="secondary">Inset content resumes here.</Text>
-				</div>
-			</Example>
+			/>
 
 			<Example
 				id="implementation-note"

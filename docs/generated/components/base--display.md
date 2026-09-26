@@ -570,167 +570,574 @@ Preview route: Collapsible — `/collapsible`
 ### Collapsible
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Collapsible>
-  <CollapsibleTrigger>Advanced options</CollapsibleTrigger>
-  <CollapsibleContent>…</CollapsibleContent>
-</Collapsible>
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function CollapsibleExample() {
+	return (
+		<Collapsible>
+			<CollapsibleTrigger>
+				<Text tag="span" size="sm" weight="medium">
+					Advanced options
+				</Text>
+			</CollapsibleTrigger>
+			<CollapsibleContent>
+				<Stack gap="sm" style={{ paddingTop: "var(--space-md)" }}>
+					<Text type="secondary" size="sm">
+						Content that expands to its natural height.
+					</Text>
+					<Text type="secondary" size="sm">
+						However many lines it happens to be.
+					</Text>
+				</Stack>
+			</CollapsibleContent>
+		</Collapsible>
+	)
+}
 ```
 
 ### Four surfaces
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ContentBlock surface="card" title="Contract" description="…">
-  …
-</ContentBlock>
+import { ShieldCheckIcon } from "lucide-react"
+
+import { ContentBlock } from "themelia-ui/base/display"
+import { Grid, GridCell } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function ContentBlockSurfaces() {
+	return (
+		<Grid columns={{ base: 1, sm: 2 }} gap="lg">
+			{(["plain", "bordered", "muted", "card"] as const).map((surface) => (
+				<GridCell key={surface}>
+					<ContentBlock
+						surface={surface}
+						icon={<ShieldCheckIcon aria-hidden="true" />}
+						title={`surface="${surface}"`}
+						description="The header renders only when there is something to put in it."
+					>
+						<Text size="xs" type="secondary">
+							A block with no title, description, icon or headerEnd draws no header at all —
+							which is what makes it usable as a bare surface.
+						</Text>
+					</ContentBlock>
+				</GridCell>
+			))}
+		</Grid>
+	)
+}
 ```
 
 ### flush
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ContentBlock surface="card" flush>
-  <ItemGroup ruled>…</ItemGroup>
-</ContentBlock>
+import { KeyRoundIcon } from "lucide-react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { ContentBlock, IconBadge } from "themelia-ui/base/display"
+import { Item, ItemContent, ItemGroup, ItemMedia, ItemTitle } from "themelia-ui/base/item"
+import { Grid, GridCell } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function ContentBlockFlush() {
+	return (
+		<Grid columns={2} gap="lg">
+			<GridCell>
+				<ContentBlock surface="card" flush>
+					<ItemGroup ruled>
+						{[
+							{ name: "Production", value: "sk_live_••••0b3d" },
+							{ name: "Staging", value: "sk_test_••••a771" },
+						].map((row) => (
+							<Item key={row.name} style={{ paddingInline: "var(--space-xl)" }}>
+								<ItemMedia>
+									<IconBadge icon={KeyRoundIcon} />
+								</ItemMedia>
+								<ItemContent>
+									<ItemTitle>{row.name}</ItemTitle>
+									<Text size="xs" type="secondary">
+										{row.value}
+									</Text>
+								</ItemContent>
+							</Item>
+						))}
+					</ItemGroup>
+				</ContentBlock>
+			</GridCell>
+			<GridCell>
+				<ContentBlock
+					surface="card"
+					title="Not flush"
+					titleSuffix={<Badge tone="neutral">for contrast</Badge>}
+				>
+					<Text size="xs" type="secondary">
+						The block pays the inset here, so nothing inside it can touch the border. Right
+						for prose and for a stack of controls; wrong for a run of ruled rows.
+					</Text>
+				</ContentBlock>
+			</GridCell>
+		</Grid>
+	)
+}
 ```
 
 ### The header assembles itself
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ContentBlock
-  icon={<TruckIcon />}
-  title="Shipment"
-  titleSuffix={<Badge tone="info">In transit</Badge>}
-  headerEnd={<Button buttonStyle="ghost">Track</Button>}
-/>
+import { TruckIcon } from "lucide-react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Button } from "themelia-ui/base/buttons"
+import { ContentBlock, Separator } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function ContentBlockHeader() {
+	return (
+		<Stack gap="lg">
+			<ContentBlock
+				surface="card"
+				icon={<TruckIcon aria-hidden="true" />}
+				title="Shipment"
+				titleSuffix={<Badge tone="info">In transit</Badge>}
+				headerEnd={
+					<Button tone="neutral" buttonStyle="ghost">
+						Track
+					</Button>
+				}
+				description="A description is its own row, so a long one wraps under the whole header rather than squeezing the title."
+			>
+				<Separator />
+				<Text size="xs" type="secondary">
+					Children follow, spaced by the block's own gap.
+				</Text>
+			</ContentBlock>
+		</Stack>
+	)
+}
 ```
 
 ### IconBadge
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<IconBadge icon={CreditCardIcon} tone="success" />
-<IconBadge icon={CreditCardIcon} tone="success" shape="circle" solid />
+import { CreditCardIcon } from "lucide-react"
+
+import { IconBadge } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function IconBadgeExample() {
+	return (
+		<Stack gap="xl">
+			<Stack direction="horizontal" gap="lg" wrap align="center">
+				{(["neutral", "primary", "success", "warning", "destructive", "info"] as const).map(
+					(tone) => (
+						<IconBadge key={tone} icon={CreditCardIcon} tone={tone} />
+					),
+				)}
+			</Stack>
+			<Stack direction="horizontal" gap="lg" wrap align="center">
+				{(["neutral", "primary", "success", "warning", "destructive", "info"] as const).map(
+					(tone) => (
+						<IconBadge key={tone} icon={CreditCardIcon} tone={tone} shape="circle" solid />
+					),
+				)}
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
 ### PlaceholderPattern
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PlaceholderPattern style={{ height: "8rem" }} />
+import { PlaceholderPattern } from "themelia-ui/base/display"
+
+export default function PlaceholderPatternExample() {
+	return (
+		<PlaceholderPattern style={{ height: "8rem", borderRadius: "var(--radius)" }} />
+	)
+}
+```
+
+### DirectionProvider and Slot
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { ContentBlock } from "themelia-ui/base/display"
+import { DirectionProvider } from "themelia-ui/base/direction"
+import { Slot } from "themelia-ui/base/slot"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function DirectionSlot() {
+	return (
+		<Stack gap="lg">
+			<DirectionProvider direction="rtl">
+				<ContentBlock surface="card" title="اتجاه من اليمين إلى اليسار">
+					<Text size="xs" type="secondary">
+						Every inset, gap and border in this block is a logical property, so the whole
+						region mirrors from one prop rather than from a stylesheet per direction.
+					</Text>
+				</ContentBlock>
+			</DirectionProvider>
+			<Slot className={undefined}>
+				<Text size="xs" type="secondary">
+					Slot renders its child, merged. There is nothing of its own on the page.
+				</Text>
+			</Slot>
+		</Stack>
+	)
+}
 ```
 
 ### DateBlock
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DateBlock date="2026-08-16" />
+import { DateBlock } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function DateBlockExample() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap align="start">
+			<DateBlock date="2026-08-16" />
+			<DateBlock date="2026-12-31" />
+			<DateBlock date="2027-01-04" showYear />
+			<DateBlock date="2026-09-28" time="09:00" />
+		</Stack>
+	)
+}
 ```
 
 ### Parts
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DateBlock date={date} showWeekday={false} />
-<DateBlock date={date} showMonth={false} />
-<DateBlock date={date} showYear />
-<DateBlock date={date} time="09:00 – 10:30" />
+import { DateBlock } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function DateBlockParts() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap align="start">
+			<DateBlock date="2026-09-02" showWeekday={false} />
+			<DateBlock date="2026-09-02" showMonth={false} />
+			<DateBlock date="2026-09-02" showYear />
+			<DateBlock date="2026-09-02" time="09:00 – 10:30" />
+		</Stack>
+	)
+}
 ```
 
 ### In a list
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Item>
-  <ItemMedia><DateBlock date={event.date} /></ItemMedia>
-  <ItemContent>
-    <ItemTitle>{event.title}</ItemTitle>
-    <ItemDescription>{event.meta}</ItemDescription>
-  </ItemContent>
-</Item>
+import { Badge } from "themelia-ui/base/badge"
+import { DateBlock } from "themelia-ui/base/display"
+import {
+	Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle,
+} from "themelia-ui/base/item"
+import { Stack } from "themelia-ui/base/structure"
+
+const EVENTS = [
+	{ id: "kickoff", date: "2026-09-28", title: "Quarterly kickoff", meta: "09:00 – 10:30 · Main hall", tone: "info" as const, badge: "All hands" },
+	{ id: "review", date: "2026-10-02", title: "Design review", meta: "14:00 – 15:00 · Room 4", tone: "neutral" as const, badge: "Team" },
+	{ id: "release", date: "2026-10-09", title: "2.0 release", meta: "All day", tone: "success" as const, badge: "Milestone" },
+]
+
+export default function DateBlockInAList() {
+	return (
+		<Stack maxWidth="36rem" gap="none">
+			<ItemGroup ruled>
+				{EVENTS.map((event) => (
+					<Item key={event.id}>
+						<ItemMedia>
+							<DateBlock date={event.date} />
+						</ItemMedia>
+						<ItemContent>
+							<ItemTitle>{event.title}</ItemTitle>
+							<ItemDescription>{event.meta}</ItemDescription>
+						</ItemContent>
+						<ItemActions>
+							<Badge tone={event.tone}>{event.badge}</Badge>
+						</ItemActions>
+					</Item>
+				))}
+			</ItemGroup>
+		</Stack>
+	)
+}
 ```
 
 ### Unboxed and inline
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DateBlock date={date} boxed={false} />
-<DateBlock date={date} layout="inline" time="09:00" />
+import { DateBlock } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function DateBlockUnboxed() {
+	return (
+		<Stack gap="lg">
+			<Stack direction="horizontal" gap="xl" wrap align="start">
+				<DateBlock date="2026-08-27" boxed={false} />
+				<DateBlock date="2026-08-27" boxed={false} showWeekday={false} />
+			</Stack>
+			<Stack direction="horizontal" gap="sm" align="baseline">
+				<Text size="sm" type="secondary">Next session</Text>
+				<DateBlock date="2026-08-27" layout="inline" time="· 09:00" />
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
 ### Three layouts for one fact
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InlineStat label="Subtotal" value="€ 1,240.00" mono />
-<InlineStat layout="inline" label="Region" value="eu-west-1" mono />
-<InlineStat layout="stacked" label="Open invoices" value="14" mono />
+import { Card, CardContent } from "themelia-ui/base/cards"
+import { InlineStat } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function InlineStatExample() {
+	return (
+		<Stack gap="xl">
+			<Card style={{ maxWidth: "24rem" }}>
+				<CardContent>
+					<Stack gap="md">
+						<InlineStat label="Subtotal" value="€ 1,240.00" mono />
+						<InlineStat label="Shipping" value="€ 18.50" mono />
+						<InlineStat label="Discount" value={null} mono />
+					</Stack>
+				</CardContent>
+			</Card>
+			<Stack direction="horizontal" gap="2xl" wrap>
+				<InlineStat layout="inline" label="Region" value="eu-west-1" mono />
+				<InlineStat layout="inline" label="Plan" value="Team" />
+				<InlineStat layout="inline" label="Seats" value="12" mono />
+			</Stack>
+			<Stack direction="horizontal" gap="2xl" wrap>
+				<InlineStat layout="stacked" label="Open invoices" value="14" mono />
+				<InlineStat layout="stacked" label="Overdue" value="3" mono />
+				<InlineStat layout="stacked" label="Collected" value="€ 48,200.00" mono />
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
 ### Kbd
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Kbd>⌘K</Kbd>
+import { Kbd, KbdGroup } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
 
-// A sequence — pressed one after another — is a group:
-<KbdGroup><Kbd>G</Kbd><Kbd>I</Kbd></KbdGroup>
+export default function KbdExample() {
+	return (
+		<Stack gap="sm">
+			<Stack direction="horizontal" gap="md" align="center">
+				<Text size="sm" type="secondary">Open the palette with</Text>
+				<Kbd>⌘K</Kbd>
+				<Text size="sm" type="secondary">or</Text>
+				<Kbd>Ctrl K</Kbd>
+				<Text size="sm" type="secondary">· close with</Text>
+				<Kbd>Esc</Kbd>
+			</Stack>
+			<Stack direction="horizontal" gap="md" align="center">
+				<Text size="sm" type="secondary">Go to the inbox with</Text>
+				{/* A sequence: G, then I. The wider gap between caps says "in turn". */}
+				<KbdGroup>
+					<Kbd>G</Kbd>
+					<Kbd>I</Kbd>
+				</KbdGroup>
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
 ### grid
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetadataList
-  columns={3}
-  items={[
-    { label: "Reference", value: { kind: "mono", value: "INV-4417" } },
-    { label: "Amount", value: { kind: "money", value: 48200, currency: "USD" } },
-    { label: "Status", value: { kind: "badge", value: "Overdue", badgeTone: "destructive" } },
-  ]}
-/>
+import { MetadataList } from "themelia-ui/base/display"
+
+import { FACTS } from "./data"
+
+export default function MetadataGrid() {
+	return (
+		<MetadataList items={FACTS} columns={3} />
+	)
+}
 ```
 
 ### rows
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetadataList layout="rows" itemSeparator items={facts} />
+import { MetadataList } from "themelia-ui/base/display"
+
+import { FACTS } from "./data"
+
+export default function MetadataRows() {
+	return (
+		<MetadataList layout="rows" itemSeparator items={FACTS} />
+	)
+}
 ```
 
 ### inline
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetadataList layout="inline" itemSeparator items={summary} />
+import { MetadataList, type MetadataInlineListItem } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+
+// Typed for the inline layout, which has no second line to put a description on.
+const SUMMARY: MetadataInlineListItem[] = [
+	{ label: "Created", value: { kind: "date", value: "2026-08-14" } },
+	{ label: "By", value: "Alice Mercer" },
+	{ label: "Version", value: { kind: "mono", value: "v3.2" } },
+]
+
+export default function MetadataInline() {
+	return (
+		<Stack gap="lg">
+			<MetadataList layout="inline" itemSeparator items={SUMMARY} />
+			<MetadataList layout="inline" itemSeparator="—" density="compact" items={SUMMARY} />
+		</Stack>
+	)
+}
 ```
 
 ### density
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetadataList density="compact" columns={2} items={facts} />
+import { MetadataList } from "themelia-ui/base/display"
+
+import { FACTS } from "./data"
+
+export default function MetadataDensity() {
+	return (
+		<MetadataList density="compact" columns={2} items={FACTS.slice(0, 4)} title="Invoice" titleSeparator />
+	)
+}
 ```
 
 ### ScrollArea
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ScrollArea style={{ maxHeight: "8rem" }}>…</ScrollArea>
+import { ScrollArea } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+// A card's edge and inset, so the demo frames the region the way a real surface would.
+const SCROLL_FRAME = {
+	maxHeight: "9rem",
+	border: "var(--border-width) solid var(--border)",
+	borderRadius: "var(--radius)",
+	padding: "var(--surface-y) var(--surface-x)",
+} as const
+
+export default function ScrollAreaExample() {
+	return (
+		<ScrollArea style={SCROLL_FRAME}>
+			<Stack gap="xs">
+				{Array.from({ length: 12 }, (_, index) => (
+					<Text key={index} size="sm" type="secondary">
+						Scrollable line {index + 1}
+					</Text>
+				))}
+			</Stack>
+		</ScrollArea>
+	)
+}
 ```
 
 ### BooleanIndicator
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<BooleanIndicator value strings={{ true: "Active", false: "Paused" }} />
+import { BooleanIndicator } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function BooleanIndicatorExample() {
+	return (
+		<Stack direction="horizontal" gap="xl">
+			<BooleanIndicator value strings={{ true: "Active", false: "Paused" }} />
+			<BooleanIndicator value={false} strings={{ true: "Active", false: "Paused" }} />
+		</Stack>
+	)
+}
 ```
 
 ### VisuallyHidden
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Text>
-  Saved
-  <VisuallyHidden> at 09:32 by Jane McDonald</VisuallyHidden>
-</Text>
+import { VisuallyHidden } from "themelia-ui/base/display"
+import { Text } from "themelia-ui/base/typography"
+
+export default function VisuallyHiddenExample() {
+	return (
+		<Text size="sm" type="secondary">
+			This sentence has a hidden note for screen readers.
+			<VisuallyHidden> Only assistive technology reads this.</VisuallyHidden>
+		</Text>
+	)
+}
 ```
 
 ### Separator
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Separator />
-<Separator label="OR" />
-<Separator orientation="vertical" />
+import { Separator } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function SeparatorExample() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			<Separator />
+			<Separator label="OR" />
+			<Stack direction="horizontal" gap="md" align="center" style={{ height: "1.5rem" }}>
+				<Text size="sm">Left</Text>
+				<Separator orientation="vertical" />
+				<Text size="sm">Right</Text>
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
 ### Variants and thickness
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Separator variant="dashed" />
-<Separator variant="dotted" />
-<Separator thickness={2} />
+import { Separator } from "themelia-ui/base/display"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+
+export default function SeparatorVariants() {
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<Stack gap="xs">
+				<Text size="xs" type="secondary">solid</Text>
+				<Separator />
+			</Stack>
+			<Stack gap="xs">
+				<Text size="xs" type="secondary">dashed</Text>
+				<Separator variant="dashed" />
+			</Stack>
+			<Stack gap="xs">
+				<Text size="xs" type="secondary">dotted</Text>
+				<Separator variant="dotted" />
+			</Stack>
+			<Stack gap="xs">
+				<Text size="xs" type="secondary">thickness=&#123;2&#125;</Text>
+				<Separator thickness={2} />
+			</Stack>
+			<Stack direction="horizontal" gap="lg" style={{ height: "3rem" }}>
+				<Text size="sm">Vertical</Text>
+				<Separator orientation="vertical" variant="dashed" />
+				<Text size="sm">rules</Text>
+				<Separator orientation="vertical" thickness={2} />
+				<Text size="sm">too</Text>
+			</Stack>
+		</Stack>
+	)
+}
 ```

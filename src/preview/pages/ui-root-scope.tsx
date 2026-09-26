@@ -1,58 +1,7 @@
-import { Badge } from "@/components/base/badge"
-import { Button } from "@/components/base/buttons"
-import { Card, CardContent } from "@/components/base/cards"
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/base/dropdown-menu"
-import { Input } from "@/components/base/text-inputs"
-import { Grid, GridCell, Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-import { UIPortalHost, UIScope } from "@/lib/ui-provider"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-/** One set of controls, so a scope's effect is the only thing that differs between cards. */
-function Sample({ label }: { label: string }) {
-	return (
-		<Card>
-			<CardContent>
-				<Stack gap="md">
-					<Text size="xs" type="secondary">
-						{label}
-					</Text>
-					<Input placeholder="Search orders" aria-label={`Search in ${label}`} />
-					<Stack direction="horizontal" gap="sm" align="center">
-						<Button>Save</Button>
-						<Button tone="neutral" buttonStyle="outline">
-							Cancel
-						</Button>
-						<Badge tone="success">Live</Badge>
-					</Stack>
-				</Stack>
-			</CardContent>
-		</Card>
-	)
-}
-
-/** One menu, rendered twice, so the only difference is whether a host is above it. */
-function ActionsMenu() {
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger render={<Button buttonStyle="outline">Actions</Button>} />
-			<DropdownMenuContent>
-				<DropdownMenuItem>Duplicate</DropdownMenuItem>
-				<DropdownMenuItem>Move to…</DropdownMenuItem>
-				<DropdownMenuItem>Archive</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	)
-}
 
 export function UIRootScopePage() {
 	return (
@@ -82,106 +31,32 @@ export function UIRootScopePage() {
 			]}
 		>
 			<Example
-				id="ui-scope-density"
+				example="ui-root-scope/ui-scope-density"
 				title="A scope is a region"
 				description="Each card sets its own density. The scope writes only its OWN overrides — everything else cascades in from above — so a nested scope is a nested scope rather than a fresh start."
 				stacked
-				code={`<UIScope config={{ density: "compact" }}>
-  <Toolbar />
-</UIScope>`}
-			>
-				<Grid columns={3} gap="lg">
-					{(["compact", "default", "comfortable"] as const).map((density) => (
-						<GridCell key={density}>
-							<UIScope config={{ density }}>
-								<Sample label={`density="${density}"`} />
-							</UIScope>
-						</GridCell>
-					))}
-				</Grid>
-			</Example>
+			/>
 
 			<Example
-				id="ui-scope-nesting"
+				example="ui-root-scope/ui-scope-nesting"
 				title="Nesting merges"
 				description="The cascade merges the custom properties and context merges the JavaScript half, so an inner scope changing density inherits the outer scope's theme without restating it. There is no depth limit and no remount: writing a custom property is ordinary state."
 				stacked
-				code={`<UIScope config={{ colorScheme: "dark" }}>
-  <UIScope config={{ density: "compact" }}>…</UIScope>
-</UIScope>`}
-			>
-				<UIScope config={{ colorScheme: "dark" }} transparent={false} style={{ padding: "var(--space-xl)", borderRadius: "var(--radius)", background: "var(--background)" }}>
-					<Stack gap="lg">
-						<Text size="xs" type="secondary">
-							outer: colorScheme=&quot;dark&quot;
-						</Text>
-						<UIScope config={{ density: "compact" }}>
-							<Sample label="inner: density=&quot;compact&quot;, theme inherited" />
-						</UIScope>
-					</Stack>
-				</UIScope>
-			</Example>
+			/>
 
 			<Example
-				id="ui-scope-render"
+				example="ui-root-scope/ui-scope-render"
 				title="render decides the element"
 				description="A scope forced to be a div is unusable exactly where one is most wanted — inside a table, a definition list, or any markup with an opinion about its children. It renders what you ask for."
 				stacked
-				code={`<UIScope render={<aside />} config={{ density: "compact" }}>…</UIScope>`}
-			>
-				<UIScope
-					render={<aside />}
-					transparent={false}
-					config={{ density: "compact" }}
-					style={{ padding: "var(--space-lg)", border: "var(--border-width) solid var(--border)", borderRadius: "var(--radius)" }}
-				>
-					<Text size="xs" type="secondary">
-						This scope is a real &lt;aside&gt;, at compact density.
-					</Text>
-				</UIScope>
-			</Example>
+			/>
 
 			<Example
-				id="ui-portal-host"
+				example="ui-root-scope/ui-portal-host"
 				title="Popups stay inside the scope"
 				description="A portal renders outside the scope's DOM subtree, and both scoping mechanisms — custom properties and the `[data-density]` / `[data-theme]` selectors — work by inheritance down it. So a menu opened inside a compact region came out at the ROOT's density. `UIPortalHost` renders the portal target inside the scope instead, and the cascade does the rest."
-				code={`<UIScope config={{ density: "compact" }}>
-  <UIPortalHost>
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<Button>Actions</Button>} />
-      <DropdownMenuContent>
-        <DropdownMenuItem>Duplicate</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </UIPortalHost>
-</UIScope>`}
 				overflowing
-			>
-				<Grid columns={2} gap="lg">
-					<GridCell>
-						<Stack gap="sm">
-							<Text size="xs" type="secondary">
-								Compact scope, no host — the menu portals to the body
-							</Text>
-							<UIScope config={{ density: "compact" }}>
-								<ActionsMenu />
-							</UIScope>
-						</Stack>
-					</GridCell>
-					<GridCell>
-						<Stack gap="sm">
-							<Text size="xs" type="secondary">
-								Compact scope with a host — the menu is compact too
-							</Text>
-							<UIScope config={{ density: "compact" }}>
-								<UIPortalHost>
-									<ActionsMenu />
-								</UIPortalHost>
-							</UIScope>
-						</Stack>
-					</GridCell>
-				</Grid>
-			</Example>
+			/>
 
 			<Example id="ui-root-rule" title="Which one to reach for" stacked>
 				<Callout label="Rule">

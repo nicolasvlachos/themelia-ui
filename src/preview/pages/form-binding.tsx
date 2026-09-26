@@ -1,54 +1,9 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { Button } from "@/components/base/buttons"
-import { Stack } from "@/components/base/structure"
-import { Input } from "@/components/base/text-inputs"
-import { MonoValue } from "@/components/primitives"
-import { useFormFieldBinding, useStateFormControl } from "@/lib/forms"
-
-import { MEASURE } from "../partials/measures"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-/**
- * A field bound through the headless contract, so the demo exercises the real seam rather
- * than describing it. `useFormFieldBinding` returns exactly the props a control takes.
- */
-function BoundInput({
-	name,
-	label,
-	control,
-	type,
-}: {
-	name: string
-	label: string
-	control: Parameters<typeof useFormFieldBinding<string>>[0]["control"]
-	type?: string
-}) {
-	const field = useFormFieldBinding<string>({ name, control })
-	return (
-		<FormField label={label} error={field.error}>
-			<Input
-				type={type}
-				value={field.value ?? ""}
-				onChange={(event) => field.onValueChange(event.target.value)}
-				onBlur={field.onBlur}
-				aria-invalid={field.invalid || undefined}
-			/>
-		</FormField>
-	)
-}
-
 export function FormBindingPage() {
-	const [submitted, setSubmitted] = useState<string | null>(null)
-	const control = useStateFormControl(
-		{ email: "", workspace: "acme-corp" },
-		{ errors: { email: "" } },
-	)
-
 	return (
 		<ComponentPage
 			title="Form binding"
@@ -57,39 +12,11 @@ export function FormBindingPage() {
 			exports={["useFormFieldBinding", "useStateFormControl"]}
 		>
 			<Example
-				id="form-binding-state"
+				example="form-binding/form-binding-state"
 				title="useStateFormControl"
 				description="The zero-dependency default. It holds the values in React state and returns a FormControl, so a form needs no library at all until it needs one."
 				stacked
-				code={`const control = useStateFormControl({ email: "", workspace: "acme-corp" })
-
-function BoundInput({ name, label, control }) {
-  const field = useFormFieldBinding<string>({ name, control })
-  return (
-    <FormField label={label} error={field.error}>
-      <Input
-        value={field.value ?? ""}
-        onChange={(event) => field.onValueChange(event.target.value)}
-        onBlur={field.onBlur}
-      />
-    </FormField>
-  )
-}`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<BoundInput name="email" label="Email" control={control} type="email" />
-					<BoundInput name="workspace" label="Workspace" control={control} />
-					<Stack direction="horizontal" gap="sm" align="center">
-						<Button onClick={() => setSubmitted(JSON.stringify(control.values))}>
-							Submit
-						</Button>
-						<Button buttonStyle="outline" onClick={() => control.reset()}>
-							Reset
-						</Button>
-					</Stack>
-					{submitted !== null && <MonoValue>{submitted}</MonoValue>}
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="form-binding-contract" title="The contract" stacked>
 				<Callout>

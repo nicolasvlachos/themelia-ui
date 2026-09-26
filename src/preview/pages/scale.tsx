@@ -1,34 +1,10 @@
-import { Button } from "@/components/base/buttons"
-import { Checkbox, Switch } from "@/components/base/choice-inputs"
-import { Input } from "@/components/base/text-inputs"
 import { Stack } from "@/components/base/structure"
 import { Heading, Text } from "@/components/base/typography"
-import { Scope, UIProvider } from "@/lib/ui-provider"
 
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const FACTORS = [0.75, 0.875, 1, 1.125, 1.25] as const
-
-function ControlRow() {
-	return (
-		<Stack direction="horizontal" gap="md" align="center" wrap>
-			<Text size="sm">Label</Text>
-			<Button>Save</Button>
-			<Button tone="neutral" buttonStyle="outline">
-				Cancel
-			</Button>
-			<Button iconOnly aria-label="Add">
-				＋
-			</Button>
-			<Input aria-label="Field" placeholder="Field" style={{ width: "9rem" }} />
-			<Checkbox label="Check" defaultChecked />
-			<Switch label="Switch" defaultChecked />
-		</Stack>
-	)
-}
 
 export function ScalePage() {
 	return (
@@ -37,23 +13,11 @@ export function ScalePage() {
 			summary="One master factor keeps geometry and typography in proportion. Scoped spacing, density, and type overrides handle the few cases that need to disagree without adding per-component sizes."
 		>
 			<Example
-				id="the-factor"
+				example="scale/the-factor"
 				title="The factor"
 				description="Height, padding, gap, icon size, prose, and control text all follow `--scale`. Default 1."
 				stacked
-				code={`<UIProvider config={{ scale: 0.875 }}>
-  <Toolbar />
-</UIProvider>`}
-			>
-				{FACTORS.map((scale) => (
-					<UIProvider key={scale} config={{ scale }}>
-						<Stack direction="horizontal" gap="lg" align="center">
-							<code style={{ width: "4rem", fontSize: "var(--text-xs)" }}>{scale}</code>
-							<ControlRow />
-						</Stack>
-					</UIProvider>
-				))}
-			</Example>
+			/>
 
 			<Example
 				id="why-not-size-props"
@@ -86,85 +50,18 @@ export function ScalePage() {
 			</Example>
 
 			<Example
-				id="type-factor"
+				example="scale/type-factor"
 				title="Type can override the master factor"
 				description="Reading size and control geometry are different decisions. An admin surface wants 14px body copy with full-size controls — coupling them means asking for smaller text shrinks every button to match."
 				stacked
-				code={`{/* smaller type, control geometry untouched */}
-<UIProvider config={{ typography: { scale: 0.875 } }}>…</UIProvider>
-
-{/* denser geometry, type held at its default */}
-<UIProvider config={{ scale: 0.875, typography: { scale: 1 } }}>…</UIProvider>`}
-			>
-				<Stack gap="lg">
-					<Stack gap="sm">
-						<Text type="secondary" size="xs">typography.scale 0.875 — type shrinks, control geometry holds</Text>
-						<UIProvider config={{ typography: { scale: 0.875 } }}>
-							<Stack direction="horizontal" gap="md" align="center" wrap>
-								<Text>Body copy at this factor.</Text>
-								<Button>Save</Button>
-								<Checkbox label="Check" defaultChecked />
-							</Stack>
-						</UIProvider>
-					</Stack>
-					<Stack gap="sm">
-						<Text type="secondary" size="xs">scale 0.875 + typography.scale 1 — geometry shrinks, type holds</Text>
-						<UIProvider config={{ scale: 0.875, typography: { scale: 1 } }}>
-							<Stack direction="horizontal" gap="md" align="center" wrap>
-								<Text>Body copy at this factor.</Text>
-								<Button>Save</Button>
-								<Checkbox label="Check" defaultChecked />
-							</Stack>
-						</UIProvider>
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="factor-chain"
+				example="scale/factor-chain"
 				title="Two levels of control"
 				description="A factor, then a single token. A consumer reaches in at whichever level matches the change they are making."
 				stacked
-				code={`/* everything denser */
-<UIProvider config={{ scale: 0.875 }}>
-
-/* heights and rows only — gaps untouched */
-<Scope vars={{ "--density-scale": 0.875 }}>
-
-/* gaps and padding only — control heights untouched */
-<Scope vars={{ "--density-scale": 0.875 }}>
-
-/* one measurement, leaving everything else alone */
-<Scope vars={{ "--button-h": "2.75rem" }}>
-
-/* a plain div does NOT work: overriding a factor needs a scope
-   boundary, or the measurements above it have already resolved. */`}
-			>
-				<Stack gap="lg">
-					<Stack gap="sm">
-						<Text type="secondary" size="xs">default</Text>
-						<ControlRow />
-					</Stack>
-					<Stack gap="sm">
-						<Text type="secondary" size="xs">--density-scale: 0.8 — heights and rows tighten, gaps hold</Text>
-						<Scope vars={{ "--density-scale": 0.8 }}>
-							<ControlRow />
-						</Scope>
-					</Stack>
-					<Stack gap="sm">
-						<Text type="secondary" size="xs">--density-scale: 1.4 — gaps open, control heights hold</Text>
-						<Scope vars={{ "--density-scale": 1.4 }}>
-							<ControlRow />
-						</Scope>
-					</Stack>
-					<Stack gap="sm">
-						<Text type="secondary" size="xs">--button-h: 2.75rem — one measurement</Text>
-						<Scope vars={{ "--button-h": "2.75rem" }}>
-							<ControlRow />
-						</Scope>
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
 				id="why-two-levels"
@@ -192,55 +89,18 @@ export function ScalePage() {
 			</Example>
 
 			<Example
-				id="nesting"
+				example="scale/nesting"
 				title="Nesting"
 				description="Scopes compose. A compact toolbar inside a comfortable page is two providers, and each region is internally consistent."
 				stacked
-				code={`<UIProvider config={{ scale: 1.125 }}>
-  <Page>
-    <UIProvider config={{ scale: 0.875 }}>
-      <Toolbar />
-    </UIProvider>
-  </Page>
-</UIProvider>`}
-			>
-				<UIProvider config={{ scale: 1.125 }}>
-					<Stack gap="lg">
-						<Text type="secondary" size="sm">
-							Outer scope — 1.125
-						</Text>
-						<ControlRow />
-						<UIProvider config={{ scale: 0.8 }}>
-							<Stack gap="md">
-								<Text type="secondary" size="sm">
-									Nested scope — 0.8
-								</Text>
-								<ControlRow />
-							</Stack>
-						</UIProvider>
-					</Stack>
-				</UIProvider>
-			</Example>
+			/>
 
 			<Example
-				id="density"
+				example="scale/density"
 				title="Density presets"
 				description="Named spacing and control-geometry steps that preserve readable type. The CSS-only path works without a provider — any element can carry `data-density`."
 				stacked
-				code={`<UIProvider config={{ density: "compact" }}>…</UIProvider>
-
-{/* or, with no provider at all */}
-<div data-density="compact">…</div>`}
-			>
-				{(["compact", "default", "comfortable"] as const).map((density) => (
-					<UIProvider key={density} config={{ density }}>
-						<Stack direction="horizontal" gap="lg" align="center">
-							<code style={{ width: "7rem", fontSize: "var(--text-xs)" }}>{density}</code>
-							<ControlRow />
-						</Stack>
-					</UIProvider>
-				))}
-			</Example>
+			/>
 
 			<Example id="scale-api" title="API">
 				<Heading level={3} size="sm">

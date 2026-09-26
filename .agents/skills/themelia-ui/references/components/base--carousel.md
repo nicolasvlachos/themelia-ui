@@ -164,24 +164,73 @@ Preview route: Carousel — `/carousel`
 ### Carousel
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Carousel showDots dotStyle="pill" label="Recent invoices">
-  {invoices.map((name) => (
-    <CarouselSlide key={name} size="16rem">
-      <Card surface="bordered" title={name} />
-    </CarouselSlide>
-  ))}
-</Carousel>
+import { Card } from "themelia-ui/base/cards"
+import { Carousel, CarouselSlide } from "themelia-ui/base/carousel"
+import { Text } from "themelia-ui/base/typography"
+
+const INVOICES = ["Northwind", "Acme", "Globex", "Initech", "Umbrella"]
+
+export default function CarouselExample() {
+	return (
+		<Carousel showDots dotStyle="pill" label="Recent invoices">
+			{INVOICES.map((name) => (
+				<CarouselSlide key={name} size="16rem">
+					<Card surface="bordered" title={name} description="Invoice due in 14 days.">
+						<Text size="sm" type="secondary">
+							Slide content.
+						</Text>
+					</Card>
+				</CarouselSlide>
+			))}
+		</Carousel>
+	)
+}
 ```
 
 ### Control placement
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Carousel controls="overlay" label="Gallery">…</Carousel>
+import { Carousel, CarouselSlide } from "themelia-ui/base/carousel"
+import { Text } from "themelia-ui/base/typography"
+
+import styles from "../../preview.module.css"
+
+export default function Controls() {
+	return (
+		// Full-bleed slides: overlay controls float over the slide's edges.
+		<Carousel controls="overlay" label="Gallery">
+			{["One", "Two", "Three"].map((name) => (
+				<CarouselSlide key={name}>
+					<div className={styles.bleedSlide}>
+						<Text size="lg" weight="semibold">{name}</Text>
+					</div>
+				</CarouselSlide>
+			))}
+		</Carousel>
+	)
+}
 ```
 
 ### Slide width
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<CarouselSlide size="50%">…</CarouselSlide>
-<CarouselSlide size="18rem">…</CarouselSlide>
+import { Card } from "themelia-ui/base/cards"
+import { Carousel, CarouselSlide } from "themelia-ui/base/carousel"
+import { Text } from "themelia-ui/base/typography"
+
+export default function Sizes() {
+	return (
+		<Carousel label="Two per view">
+			{["Half", "Half", "Half", "Half"].map((name, index) => (
+				<CarouselSlide key={index} size="50%">
+					<Card surface="bordered" title={`${name} ${index + 1}`}>
+						<Text size="sm" type="secondary">
+							Two slides fill the track.
+						</Text>
+					</Card>
+				</CarouselSlide>
+			))}
+		</Carousel>
+	)
+}
 ```

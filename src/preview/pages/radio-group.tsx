@@ -1,63 +1,8 @@
-import {
-	BuildingIcon, GlobeIcon, LayoutGridIcon, ListIcon, MailIcon, ShieldIcon, SmartphoneIcon,
-	SparklesIcon, UsersIcon, ZapIcon,
-} from "lucide-react"
-import { useState } from "react"
-
-import {
-	CardCheckboxGroup, CardRadioGroup, ListRadioGroup, PillRadioGroup, Radio, RadioGroup,
-} from "@/components/base/choice-inputs"
-import { Stack } from "@/components/base/structure"
-
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const PLANS = [
-	{
-		value: "free",
-		label: "Free",
-		description: "One project, community support.",
-		icon: SparklesIcon,
-		tooltip: "No card required. Upgrade at any time without losing data.",
-	},
-	{ value: "pro", label: "Pro", description: "Ten projects, email support.", icon: ZapIcon },
-	{
-		value: "team",
-		label: "Team",
-		description: "Unlimited projects, SSO, audit log.",
-		icon: UsersIcon,
-		tooltip: "Billed per seat. SSO requires a verified domain.",
-	},
-]
-
-const CHANNELS = [
-	{ value: "email", label: "Email", description: "Daily digest.", icon: MailIcon },
-	{ value: "push", label: "Push", description: "Mobile and desktop.", icon: SmartphoneIcon },
-	{ value: "web", label: "In-app", description: "Only while signed in.", icon: GlobeIcon },
-	{ value: "sms", label: "SMS", description: "Critical alerts only.", icon: ShieldIcon, disabled: true },
-]
-
-const ROLES = [
-	{ value: "owner", label: "Owner", description: "Full access, including billing and deletion." },
-	{ value: "admin", label: "Admin", description: "Manages members and settings.", tooltip: "Cannot delete the workspace or change the billing plan." },
-	{ value: "member", label: "Member", description: "Reads and writes project data." },
-	{ value: "viewer", label: "Viewer", description: "Read-only.", disabled: true },
-]
-
-const VIEWS = [
-	{ value: "grid", label: "Grid", icon: LayoutGridIcon },
-	{ value: "list", label: "List", icon: ListIcon },
-	{ value: "board", label: "Board", icon: BuildingIcon },
-]
-
 export function RadioGroupPage() {
-	const [plan, setPlan] = useState("pro")
-	const [channels, setChannels] = useState<string[]>(["email"])
-	const [role, setRole] = useState("admin")
-	const [view, setView] = useState<string | null>("grid")
-
 	return (
 		<ComponentPage
 			title="Radio groups"
@@ -66,76 +11,39 @@ export function RadioGroupPage() {
 			exports={["RadioGroup", "Radio", "CardRadioGroup", "CardCheckboxGroup", "ListRadioGroup", "PillRadioGroup"]}
 		>
 			<Example
-				id="radio-group"
+				example="radio-group/radio-group"
 				title="Radio group"
 				description="Arrows move between options and select as they go, which is the native radio behaviour — a group is one stop in the tab sequence, not one stop per option."
 				stacked
-				code={`<RadioGroup name="shipping">
-  <Radio label="Standard" value="standard" defaultChecked />
-  <Radio label="Express" value="express" />
-</RadioGroup>`}
-			>
-				<RadioGroup name="demo-shipping">
-					<Radio label="Standard — 3 to 5 days" value="standard" defaultChecked />
-					<Radio label="Express — next day" value="express" />
-					<Radio label="Overnight" value="overnight" />
-					<Radio label="Pickup (unavailable)" value="pickup" disabled />
-				</RadioGroup>
-			</Example>
+			/>
 
 			<Example
-				id="card-radio"
+				example="radio-group/card-radio"
 				title="Cards"
 				description="Tiled single-select with an icon, a title, a sentence, and — where the sentence is not enough — an info affordance. The grid steps down on its own container's width, not the viewport's, because a card group is as likely to sit in a drawer as at page width."
 				stacked
-				code={`<CardRadioGroup options={plans} value={plan} onValueChange={setPlan} columns={3} />`}
-			>
-				<CardRadioGroup options={PLANS} value={plan} onValueChange={setPlan} columns={3} />
-			</Example>
+			/>
 
 			<Example
-				id="card-checkbox"
+				example="radio-group/card-checkbox"
 				title="Cards, several at once"
 				description="CardCheckboxGroup is the multi-select twin, sharing the card geometry so the two line up when a form uses both."
 				stacked
-				code={`<CardCheckboxGroup options={channels} value={selected} onValueChange={setSelected} columns={4} />`}
-			>
-				<CardCheckboxGroup options={CHANNELS} value={channels} onValueChange={setChannels} columns={4} name="channels" />
-			</Example>
+			/>
 
 			<Example
-				id="list-radio"
+				example="radio-group/list-radio"
 				title="List"
 				description="The same options stacked instead of tiled — for more options than a card grid holds without becoming a wall, or where the second line carries the actual decision. CardRadioGroup and ListRadioGroup are one component laid out two ways."
 				stacked
-				code={`<ListRadioGroup options={roles} value={role} onValueChange={setRole} />`}
-			>
-				<div style={MEASURE.wide}>
-					<ListRadioGroup options={ROLES} value={role} onValueChange={setRole} />
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="pill-radio"
+				example="radio-group/pill-radio"
 				title="Pills"
 				description="A segmented control for two to five short options — a view switch, a period, a mode — where a Select is too heavy and cards are too tall. allowClear lets the active pill be clicked again to clear."
 				stacked
-				code={`<PillRadioGroup options={views} value={view} onValueChange={setView} allowClear />`}
-			>
-				<Stack gap="lg" align="start">
-					<PillRadioGroup name="view" options={VIEWS} value={view} onValueChange={setView} allowClear />
-					<PillRadioGroup
-						name="range"
-						options={[
-							{ value: "7d", label: "7 days" },
-							{ value: "30d", label: "30 days" },
-							{ value: "90d", label: "90 days" },
-						]}
-						value="30d"
-						onValueChange={() => {}}
-					/>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="radio-group-api" title="RadioGroup API">
 				<PropTable owner="RadioGroup"

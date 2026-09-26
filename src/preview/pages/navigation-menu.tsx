@@ -1,8 +1,3 @@
-import {
-	NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger,
-	NavigationMenuContent, NavigationMenuLink, NavigationMenuIndicator,
-} from "@/components/base/navigation-menu"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
@@ -19,56 +14,10 @@ export function NavigationMenuPage() {
 			]}
 		>
 			<Example
-				id="navigation-menu"
+				example="navigation-menu/navigation-menu"
 				title="Navigation menu"
 				description="Grouped destinations use links. Use a menubar for commands in the current view; use the navigation menu for moving to another section."
-				code={`<NavigationMenu aria-label="Documentation">
-  <NavigationMenuList>
-    <NavigationMenuItem>
-      <NavigationMenuTrigger>
-        Guides <NavigationMenuIndicator />
-      </NavigationMenuTrigger>
-      <NavigationMenuContent>
-        <NavigationMenuLink href="#/page">Page layouts</NavigationMenuLink>
-        <NavigationMenuLink href="#/data-view">Data views</NavigationMenuLink>
-      </NavigationMenuContent>
-    </NavigationMenuItem>
-    <NavigationMenuItem>
-      <NavigationMenuLink href="#/tokens">Tokens</NavigationMenuLink>
-    </NavigationMenuItem>
-  </NavigationMenuList>
-</NavigationMenu>`}
-			>
-				<NavigationMenu aria-label="Documentation">
-					<NavigationMenuList>
-						<NavigationMenuItem>
-							<NavigationMenuTrigger>
-								Guides <NavigationMenuIndicator />
-							</NavigationMenuTrigger>
-							<NavigationMenuContent>
-								<NavigationMenuLink href="#/page">Page layouts</NavigationMenuLink>
-								<NavigationMenuLink href="#/data-view">Data views</NavigationMenuLink>
-								<NavigationMenuLink href="#/form-field">Forms</NavigationMenuLink>
-							</NavigationMenuContent>
-						</NavigationMenuItem>
-						<NavigationMenuItem>
-							<NavigationMenuTrigger>
-								Components <NavigationMenuIndicator />
-							</NavigationMenuTrigger>
-							<NavigationMenuContent>
-								<NavigationMenuLink href="#/button">Buttons</NavigationMenuLink>
-								<NavigationMenuLink href="#/card">Cards</NavigationMenuLink>
-								<NavigationMenuLink href="#/overlay">Overlays</NavigationMenuLink>
-								<NavigationMenuLink href="#/table">Tables</NavigationMenuLink>
-							</NavigationMenuContent>
-						</NavigationMenuItem>
-						<NavigationMenuItem>
-							{/* A destination with nothing to preview is a link in the bar, with no caret. */}
-							<NavigationMenuLink href="#/tokens">Tokens</NavigationMenuLink>
-						</NavigationMenuItem>
-					</NavigationMenuList>
-				</NavigationMenu>
-			</Example>
+			/>
 
 			<Example id="navigation-menu-api" title="API">
 				<PropTable

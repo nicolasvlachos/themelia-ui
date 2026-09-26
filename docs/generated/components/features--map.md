@@ -644,53 +644,136 @@ Preview route: Map — `/map`
 ### A map with controls
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Map center={[51.5687, -0.7746]} zoom={13}>
-  <MapLayers defaultTileLayer="Streets">
-    <MapTileLayer name="Streets" />
-    <MapTileLayer name="Terrain" url="https://tile.opentopomap.org/{z}/{x}/{y}.png" />
-    <MapLayerGroup name="Venues">
-      {venues.map((venue) => (
-        <MapMarker key={venue.id} position={venue.position}>
-          <MapPopup>{venue.name}</MapPopup>
-        </MapMarker>
-      ))}
-    </MapLayerGroup>
-    <MapLayersControl />
-  </MapLayers>
-  <MapZoomControl />
-  <MapFullscreenControl position="bottom-right" />
-</Map>
+import { Text } from "themelia-ui/base/typography"
+import {
+	Map, MapFullscreenControl, MapLayerGroup, MapLayers, MapLayersControl, MapLocateControl,
+	MapMarker, MapPopup, MapTileLayer, MapTooltip, MapZoomControl,
+} from "themelia-ui/features/map"
+
+import styles from "../../preview.module.css"
+import { MARLOW } from "./data"
+
+const VENUES: { id: string; name: string; position: [number, number]; capacity: number }[] = [
+	{ id: "v1", name: "Marlow Hall", position: [51.5687, -0.7746], capacity: 180 },
+	{ id: "v2", name: "The Old Granary", position: [51.5731, -0.7692], capacity: 60 },
+	{ id: "v3", name: "Riverside Rooms", position: [51.5642, -0.7801], capacity: 240 },
+]
+
+export default function MapExample() {
+	return (
+		<div className={styles.mapFrame}>
+			<Map center={MARLOW} zoom={13}>
+				<MapLayers defaultTileLayer="Streets" defaultLayerGroups={["Venues"]}>
+					<MapTileLayer name="Streets" />
+					<MapTileLayer
+						name="Terrain"
+						url="https://tile.opentopomap.org/{z}/{x}/{y}.png"
+						attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
+					/>
+					<MapLayerGroup name="Venues">
+						{VENUES.map((venue) => (
+							<MapMarker key={venue.id} position={venue.position} ariaLabel={venue.name}>
+								<MapTooltip>{venue.name}</MapTooltip>
+								<MapPopup>
+									<Text weight="semibold">{venue.name}</Text>
+									<Text size="sm" type="secondary">{venue.capacity} seated</Text>
+								</MapPopup>
+							</MapMarker>
+						))}
+					</MapLayerGroup>
+					<MapLayersControl />
+				</MapLayers>
+
+				<MapZoomControl />
+				<MapFullscreenControl position="bottom-right" />
+				<MapLocateControl position="bottom-right" />
+			</Map>
+		</div>
+	)
+}
 ```
 
 ### Drawing
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Map center={center} zoom={13}>
-  <MapTileLayer />
-  <MapDrawControl onLayersChange={(group) => save(group.toGeoJSON())}>
-    <MapDrawMarker />
-    <MapDrawPolyline />
-    <MapDrawPolygon />
-    <MapDrawRectangle />
-    <MapDrawCircle />
-    <MapDrawEdit />
-    <MapDrawDelete />
-    <MapDrawUndo />
-  </MapDrawControl>
-</Map>
+import { useState } from "react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Text } from "themelia-ui/base/typography"
+import {
+	Map, MapDrawCircle, MapDrawControl, MapDrawDelete, MapDrawEdit, MapDrawMarker,
+	MapDrawPolygon, MapDrawPolyline, MapDrawRectangle, MapDrawUndo, MapTileLayer,
+	MapZoomControl,
+} from "themelia-ui/features/map"
+
+import styles from "../../preview.module.css"
+import { MARLOW } from "./data"
+
+export default function Draw() {
+	const [shapes, setShapes] = useState(0)
+
+	return (
+		<>
+			<div className={styles.mapFrame}>
+				<Map center={MARLOW} zoom={13}>
+					<MapTileLayer />
+					<MapZoomControl />
+					<MapDrawControl onLayersChange={(group) => setShapes(group.getLayers().length)}>
+						<MapDrawMarker />
+						<MapDrawPolyline />
+						<MapDrawPolygon />
+						<MapDrawRectangle />
+						<MapDrawCircle />
+						<MapDrawEdit />
+						<MapDrawDelete />
+						<MapDrawUndo />
+					</MapDrawControl>
+				</Map>
+			</div>
+			<Text size="sm" type="secondary">
+				shapes drawn: <Badge tone="neutral">{shapes}</Badge>
+			</Text>
+		</>
+	)
+}
 ```
 
 ### Place autocomplete
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PlaceAutocomplete
-  limit={5}
-  onPlaceSelect={(feature) => {
-    const [lon, lat] = feature.geometry.coordinates
-    map.flyTo([lat, lon], 15)
-  }}
-/>
+import { useState } from "react"
 
-// Inside a map, as a control:
-<MapSearchControl position="top-left" />
+import { Text } from "themelia-ui/base/typography"
+import {
+	Map, MapSearchControl, MapTileLayer, MapZoomControl, PlaceAutocomplete, type PlaceFeature,
+} from "themelia-ui/features/map"
+
+import styles from "../../preview.module.css"
+import { MARLOW } from "./data"
+
+export default function PlaceAutocompleteExample() {
+	const [place, setPlace] = useState<PlaceFeature | null>(null)
+
+	return (
+		<>
+			<div className={styles.mapSearch}>
+				<PlaceAutocomplete limit={5} onPlaceSelect={setPlace} />
+			</div>
+			{!!place && (
+				<Text size="sm" type="secondary" numeric>
+					{place.properties.name} — {place.geometry.coordinates[1].toFixed(4)},{" "}
+					{place.geometry.coordinates[0].toFixed(4)}
+				</Text>
+			)}
+
+			<div className={styles.mapFrame}>
+				<Map center={MARLOW} zoom={13}>
+					<MapTileLayer />
+					<MapSearchControl position="top-left" limit={5} />
+					<MapZoomControl position="top-right" />
+				</Map>
+			</div>
+		</>
+	)
+}
 ```

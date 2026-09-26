@@ -551,64 +551,185 @@ Preview route: Analytics — `/analytics`
 ### Metric bar
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetricBar
-  metrics={metrics}
-  period={{ label: "Last 30 days", value: "30d" }}
-  footerText="Updated 10 minutes ago"
-/>
+import { MetricBar } from "themelia-ui/patterns/analytics"
+
+import { METRICS } from "./data"
+
+export default function AnalyticsBar() {
+	return (
+		<MetricBar
+			metrics={METRICS}
+			period={{ label: "Last 30 days", value: "30d" }}
+			footerText="Updated 10 minutes ago"
+		/>
+	)
+}
 ```
 
 ### Metric grid
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetricGrid metrics={metrics} variant="card" />
+import { MetricGrid } from "themelia-ui/patterns/analytics"
+
+import { METRICS } from "./data"
+
+export default function AnalyticsGrid() {
+	return (
+		<MetricGrid metrics={METRICS} variant="card" />
+	)
+}
 ```
 
 ### Seven variants, one shape
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Metric data={revenue} variant="bordered" />
+import { Stack } from "themelia-ui/base/structure"
+import { Metric, MetricGrid } from "themelia-ui/patterns/analytics"
+
+import { CHURN, FULFILMENT, ORDERS, REVENUE } from "./data"
+
+export default function AnalyticsVariants() {
+	return (
+		<Stack gap="xl">
+			<MetricGrid metrics={[REVENUE, CHURN]} variant="bordered" columns={2} />
+			<MetricGrid metrics={[ORDERS, FULFILMENT]} variant="compact" columns={2} />
+			<MetricGrid metrics={[REVENUE, CHURN]} variant="accent" columns={2} />
+			<Metric data={ORDERS} variant="colored" tone="primary" progress={62} />
+			<Metric data={REVENUE} variant="minimal" />
+		</Stack>
+	)
+}
 ```
 
 ### Comparison
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetricComparison
-  current={{ id: "c", label: "Revenue", value: 48200, valueType: "currency", currency: "EUR" }}
-  previous={{ id: "p", label: "Revenue", value: 42900, valueType: "currency", currency: "EUR" }}
-  currentPeriod="Aug 2026"
-  previousPeriod="Jul 2026"
-/>
+import { MetricComparison } from "themelia-ui/patterns/analytics"
+
+export default function AnalyticsComparison() {
+	return (
+		<MetricComparison
+			current={{ id: "c", label: "Revenue", value: 48_200, valueType: "currency", currency: "EUR" }}
+			previous={{ id: "p", label: "Revenue", value: 42_900, valueType: "currency", currency: "EUR" }}
+			currentPeriod="Aug 2026"
+			previousPeriod="Jul 2026"
+		/>
+	)
+}
 ```
 
 ### Gradient hero
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetricGradient title="Sessions" value="18,204" data={points} theme="ocean" />
+import { MetricGradient } from "themelia-ui/patterns/analytics"
+
+import { SERIES } from "./data"
+
+const HERO = SERIES.map((point) => ({ label: point.month, value: point.sessions }))
+
+export default function AnalyticsHero() {
+	return (
+		<MetricGradient
+			title="Sessions this quarter"
+			value="18,204"
+			subtitle="Across every channel"
+			change={{ value: "9.2%", direction: "up" }}
+			data={HERO}
+			theme="ocean"
+		/>
+	)
+}
 ```
 
 ### Micro grid
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<MetricMicroGrid cells={cells} />
+import { MetricMicroGrid } from "themelia-ui/patterns/analytics"
+
+const MICRO = [
+	{ label: "Sessions", value: "18.2k", data: [4, 9, 6, 12, 10, 17] },
+	{ label: "Signups", value: "412", data: [2, 5, 4, 8, 7, 11] },
+	{ label: "Activation", value: "63%", data: [3, 6, 5, 9, 8, 12] },
+	{ label: "Seats used", value: "84 / 120", data: [84, 120] },
+	{ label: "Retention", value: "91%", data: [6, 7, 7, 9, 10, 12] },
+	{ label: "Plan mix", value: "3 tiers", data: [5, 3, 2] },
+]
+
+export default function AnalyticsMicro() {
+	return (
+		<MetricMicroGrid cells={MICRO} />
+	)
+}
 ```
 
 ### Chart card
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ChartCard title="Sessions" config={config} surface="bordered">
-  <AreaChart data={series}>…</AreaChart>
-</ChartCard>
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+
+import type { ChartConfig } from "themelia-ui/base/chart"
+import { ChartCard } from "themelia-ui/patterns/analytics"
+
+import { SERIES } from "./data"
+
+const CHART_CONFIG = {
+	sessions: { label: "Sessions", color: "var(--chart-1)" },
+} satisfies ChartConfig
+
+export default function AnalyticsChartCard() {
+	return (
+		<ChartCard
+			title="Sessions"
+			description="Six months, all channels."
+			config={CHART_CONFIG}
+			surface="bordered"
+		>
+			<AreaChart data={SERIES}>
+				<CartesianGrid vertical={false} />
+				<XAxis dataKey="month" tickLine={false} axisLine={false} />
+				<Area dataKey="sessions" type="monotone" stroke="var(--color-sessions)" fill="var(--color-sessions)" fillOpacity={0.2} />
+			</AreaChart>
+		</ChartCard>
+	)
+}
 ```
 
 ### Activity heatmap
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ActivityHeatmap data={days} />
+import {
+	ActivityHeatmap, type ActivityHeatmapDay, type ActivityLevel,
+} from "themelia-ui/patterns/analytics"
+
+/* A fixed, cyclic pattern, not random data, for stable visual baselines. */
+const HEATMAP: ActivityHeatmapDay[] = Array.from({ length: 182 }, (_, index) => {
+	const date = new Date("2026-03-02T00:00:00")
+	date.setDate(date.getDate() + index)
+	const weekday = date.getDay()
+	const level = (weekday === 0 || weekday === 6 ? index % 2 : (index % 5) + 1) as ActivityLevel
+	return { date: date.toISOString().slice(0, 10), level: Math.min(level, 4) as ActivityLevel }
+})
+
+export default function AnalyticsHeatmap() {
+	return (
+		<ActivityHeatmap data={HEATMAP} />
+	)
+}
 ```
 
 ### Time ruler
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TimeRuler hours={hours} currentHour={14} />
+import { TimeRuler } from "themelia-ui/patterns/analytics"
+
+const HOURS = [
+	0, 0, 0, 0, 1, 2, 5, 9, 14, 18, 22, 25,
+	24, 19, 21, 23, 20, 16, 12, 9, 6, 4, 2, 1,
+]
+
+export default function AnalyticsRuler() {
+	return (
+		<TimeRuler hours={HOURS} currentHour={14} />
+	)
+}
 ```

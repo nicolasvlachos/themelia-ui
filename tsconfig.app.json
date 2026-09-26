@@ -12,9 +12,17 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
 
-    /* Path alias mirrored in vite.config.ts. Paths resolve relative to this file, so
-       no baseUrl is needed — it is deprecated as of TypeScript 6. */
-    "paths": { "@/*": ["./src/*"] },
+    /* Path aliases mirrored in vite.config.ts. Paths resolve relative to this file, so
+       no baseUrl is needed — it is deprecated as of TypeScript 6. `themelia-ui/*` is how
+       preview examples import the published subpaths. */
+    "paths": {
+      "@/*": ["./src/*"],
+      "themelia-ui/forms": ["./src/lib/forms"],
+      "themelia-ui/forms-rhf": ["./src/lib/forms-rhf"],
+      "themelia-ui/theming": ["./src/lib/theming"],
+      "themelia-ui/ui-provider": ["./src/lib/ui-provider"],
+      "themelia-ui/*": ["./src/components/*"]
+    },
 
     /* Bundler mode */
     "moduleResolution": "bundler",

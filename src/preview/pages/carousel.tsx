@@ -1,14 +1,7 @@
-import { Card } from "@/components/base/cards"
-import { Carousel, CarouselSlide } from "@/components/base/carousel"
-import { Text } from "@/components/base/typography"
-
-import styles from "../preview.module.css"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const INVOICES = ["Northwind", "Acme", "Globex", "Initech", "Umbrella"]
 
 export function CarouselPage() {
 	return (
@@ -19,70 +12,25 @@ export function CarouselPage() {
 			exports={["Carousel", "CarouselSlide", "CarouselControl", "CarouselDots", "useCarousel"]}
 		>
 			<Example
-				id="carousel"
+				example="carousel/carousel"
 				title="Carousel"
 				description="The browser already does momentum, touch, and rubber-banding better than JS can, and a scroll container is keyboard-scrollable and readable by assistive technology for free. Slide width is a CSS length, so a track can show one card or five."
 				stacked
-				code={`<Carousel showDots dotStyle="pill" label="Recent invoices">
-  {invoices.map((name) => (
-    <CarouselSlide key={name} size="16rem">
-      <Card surface="bordered" title={name} />
-    </CarouselSlide>
-  ))}
-</Carousel>`}
-			>
-				<Carousel showDots dotStyle="pill" label="Recent invoices">
-					{INVOICES.map((name) => (
-						<CarouselSlide key={name} size="16rem">
-							<Card surface="bordered" title={name} description="Invoice due in 14 days.">
-								<Text size="sm" type="secondary">
-									Slide content.
-								</Text>
-							</Card>
-						</CarouselSlide>
-					))}
-				</Carousel>
-			</Example>
+			/>
 
 			<Example
-				id="controls"
+				example="carousel/controls"
 				title="Control placement"
 				description="outside keeps the buttons clear of the content, which is right when slides have their own edges. overlay floats them over the track for full-bleed slides, where outside controls would push the track narrower than the viewport."
 				stacked
-				code={`<Carousel controls="overlay" label="Gallery">…</Carousel>`}
-			>
-				{/* Full-bleed slides: overlay controls float over the slide's edges. */}
-				<Carousel controls="overlay" label="Gallery">
-					{["One", "Two", "Three"].map((name) => (
-						<CarouselSlide key={name}>
-							<div className={styles.bleedSlide}>
-								<Text size="lg" weight="semibold">{name}</Text>
-							</div>
-						</CarouselSlide>
-					))}
-				</Carousel>
-			</Example>
+			/>
 
 			<Example
-				id="sizes"
+				example="carousel/sizes"
 				title="Slide width"
 				description="size is the width the slide takes in the track — a percentage for a fixed number per view, a length for a fixed card. Mixed widths are allowed; snapping follows whatever each slide occupies."
 				stacked
-				code={`<CarouselSlide size="50%">…</CarouselSlide>
-<CarouselSlide size="18rem">…</CarouselSlide>`}
-			>
-				<Carousel label="Two per view">
-					{["Half", "Half", "Half", "Half"].map((name, index) => (
-						<CarouselSlide key={index} size="50%">
-							<Card surface="bordered" title={`${name} ${index + 1}`}>
-								<Text size="sm" type="secondary">
-									Two slides fill the track.
-								</Text>
-							</Card>
-						</CarouselSlide>
-					))}
-				</Carousel>
-			</Example>
+			/>
 
 			<Example id="carousel-rule" title="The scroll is the source of truth" stacked>
 				<Callout label="Rule">

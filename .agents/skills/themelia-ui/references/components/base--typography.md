@@ -197,7 +197,88 @@ Kind: type.
 
 ## Preview recipes
 
-Preview route: Rich text editor — `/rich-text-editor`
+Preview route: Action menu & buttons — `/action-menu`
+
+### In a card header
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { LogOutIcon, PencilIcon, TrashIcon } from "lucide-react"
+
+import { Card } from "themelia-ui/base/cards"
+import { Text } from "themelia-ui/base/typography"
+
+export default function MenusInContext() {
+	return (
+		<Card
+			surface="bordered"
+			title="Northwind Traders"
+			description="Customer since 2019"
+			actions={[
+				{ label: "Edit", icon: PencilIcon, onClick: () => {} },
+				{ label: "Sign out of all sessions", icon: LogOutIcon, onClick: () => {}, group: true },
+				{ label: "Delete customer", icon: TrashIcon, onClick: () => {}, tone: "destructive" },
+			]}
+			style={{ maxWidth: "26rem" }}
+		>
+			<Text size="sm" type="secondary">
+				The header menu is an ActionMenu — the card passes its actions straight through.
+			</Text>
+		</Card>
+	)
+}
+```
+
+### compact
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { AtSignIcon, PaperclipIcon } from "lucide-react"
+import { useRef, useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { RichTextEditor, type RichTextEditorHandle } from "themelia-ui/features/rich-text-editor"
+
+export default function EditorCompact() {
+	const [note, setNote] = useState("")
+	const composerRef = useRef<RichTextEditorHandle>(null)
+
+	return (
+		<RichTextEditor
+			ref={composerRef}
+			compact
+			value={note}
+			onValueChange={setNote}
+			placeholder="Add a note…"
+			hideSourceToggle
+			extraToolbarItems={[
+				{
+					id: "mention",
+					icon: AtSignIcon,
+					label: "Insert reference",
+					onClick: () => composerRef.current?.insertHTML("@"),
+				},
+				{
+					id: "attach",
+					icon: PaperclipIcon,
+					label: "Attach a file",
+					onClick: () => undefined,
+				},
+			]}
+			footerSlot={
+				<Stack direction="horizontal" align="center" justify="between" gap="md">
+					<Text size="xs" type="secondary">
+						Markdown is not parsed — use the toolbar.
+					</Text>
+					<Button disabled={!note} onClick={() => setNote("")}>
+						Post
+					</Button>
+				</Stack>
+			}
+		/>
+	)
+}
+```
 
 ### What comes out
 
@@ -205,47 +286,279 @@ Preview route: Rich text editor — `/rich-text-editor`
 <RichText html={body} />
 ```
 
+### Type can override the master factor
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function TypeFactor() {
+	return (
+		<Stack gap="lg">
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">typography.scale 0.875 — type shrinks, control geometry holds</Text>
+				<UIProvider config={{ typography: { scale: 0.875 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">scale 0.875 + typography.scale 1 — geometry shrinks, type holds</Text>
+				<UIProvider config={{ scale: 0.875, typography: { scale: 1 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+		</Stack>
+	)
+}
+```
+
+### Two levels of control
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { Scope } from "themelia-ui/ui-provider"
+
+import { ControlRow } from "./_shared"
+
+export default function FactorChain() {
+	return (
+		<Stack gap="lg">
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">default</Text>
+				<ControlRow />
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--density-scale: 0.8 — heights and rows tighten, gaps hold</Text>
+				<Scope vars={{ "--density-scale": 0.8 }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--density-scale: 1.4 — gaps open, control heights hold</Text>
+				<Scope vars={{ "--density-scale": 1.4 }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--button-h: 2.75rem — one measurement</Text>
+				<Scope vars={{ "--button-h": "2.75rem" }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+		</Stack>
+	)
+}
+```
+
+### Nesting
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+import { ControlRow } from "./_shared"
+
+export default function Nesting() {
+	return (
+		<UIProvider config={{ scale: 1.125 }}>
+			<Stack gap="lg">
+				<Text type="secondary" size="sm">
+					Outer scope — 1.125
+				</Text>
+				<ControlRow />
+				<UIProvider config={{ scale: 0.8 }}>
+					<Stack gap="md">
+						<Text type="secondary" size="sm">
+							Nested scope — 0.8
+						</Text>
+						<ControlRow />
+					</Stack>
+				</UIProvider>
+			</Stack>
+		</UIProvider>
+	)
+}
+```
+
+### Density
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { Scope } from "themelia-ui/ui-provider"
+
+import { InvoiceTable } from "./_shared"
+
+export default function TableScale() {
+	return (
+		/*
+		 * Both, captioned. On its own the scoped table just looked like a table —
+		 * the section asserted a difference the page gave the reader no way to see.
+		 */
+		<Stack gap="lg" style={{ width: "100%" }}>
+			<Stack gap="xs" style={{ width: "100%" }}>
+				<Text size="xs" type="secondary">--density-scale: 1</Text>
+				<InvoiceTable />
+			</Stack>
+			<Stack gap="xs" style={{ width: "100%" }}>
+				<Text size="xs" type="secondary">--density-scale: 0.85</Text>
+				<Scope vars={{ "--density-scale": 0.85 }} style={{ width: "100%" }}>
+					<InvoiceTable />
+				</Scope>
+			</Stack>
+		</Stack>
+	)
+}
+```
+
 ### Text roles
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Text type="secondary">Supporting copy</Text>
+import { Text, type TextType } from "themelia-ui/base/typography"
+
+import styles from "../../preview.module.css"
+
+const ROLES: TextType[] = ["main", "secondary", "error", "success", "primary"]
+
+export default function TextRoles() {
+	return (
+		<>
+			{ROLES.map((type) => (
+				<Text key={type} type={type}>
+					{type} — the role picks the token.
+				</Text>
+			))}
+			{/* inverse on the page background is invisible, which is the whole point of it. */}
+			<div className={styles.inverseSwatch}>
+				<Text type="inverse">inverse — the role picks the token.</Text>
+			</div>
+		</>
+	)
+}
 ```
 
 ### Size
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Text size="xs">Metadata</Text>
+import { Text } from "themelia-ui/base/typography"
+
+export default function Size() {
+	return (
+		<>
+			{(["xs", "pxs", "sm", "base", "lg", "xl"] as const).map((size) => (
+				<Text key={size} size={size}>
+					{size} — the quick brown fox jumps over the lazy dog
+				</Text>
+			))}
+		</>
+	)
+}
 ```
 
 ### Heading
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Heading level={2} size="lg" subHeading="Supporting line">Title</Heading>
+import { Heading } from "themelia-ui/base/typography"
+
+export default function HeadingExample() {
+	return (
+		<>
+			<Heading level={1}>Level 1, default size</Heading>
+			<Heading level={2}>Level 2, default size</Heading>
+			<Heading level={2} size="sm">Level 2 rendered small</Heading>
+			<Heading level={3} subHeading="A supporting line under the heading.">
+				With a subheading
+			</Heading>
+		</>
+	)
+}
 ```
 
 ### Numeric
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Text numeric>1,234,567.89</Text>
+import { Text } from "themelia-ui/base/typography"
+
+export default function Numeric() {
+	return (
+		<>
+			<Text numeric>1,234,567.89</Text>
+			<Text numeric>9,876,543.21</Text>
+		</>
+	)
+}
 ```
 
 ### Alignment
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Text align="right" numeric>1,234.50</Text>
+import { Text } from "themelia-ui/base/typography"
+
+
+export default function Alignment() {
+	return (
+		<div style={{ maxWidth: "26rem", width: "100%", borderInline: "1px dashed var(--border)" }}>
+			<Text align="left">left — the default</Text>
+			<Text align="center">center</Text>
+			<Text align="right" numeric>1,234.50</Text>
+			<Text align="right" numeric>42.00</Text>
+		</div>
+	)
+}
 ```
 
 ### Truncation
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-{/* Stack sets min-width: 0 on itself, so a nested one can still shrink */}
-<Stack gap="sm">
-  <Text truncate>{veryLongName}</Text>
-</Stack>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+
+export default function Truncate() {
+	return (
+		<Stack id="truncate-demo" gap="sm" style={{ maxWidth: "26rem", width: "100%", borderInline: "1px dashed var(--border)" }}>
+			<Text truncate>
+				A file name long enough that it cannot fit the width the caller allotted it
+			</Text>
+			<Text tag="span" size="xs" type="secondary" truncate>
+				key_live_9f2c4b1e77a0d3f8b6c5a41d0e73b28c9f4610d7a2b8e5c1904f6d3b7e28a05c
+			</Text>
+			<Text>
+				Without it the same string wraps to as many lines as it needs, which is right
+				for prose and wrong for a row that has to hold its height.
+			</Text>
+		</Stack>
+	)
+}
 ```
 
 ### DisplayLabel and TextLink
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TextLink render={<RouterLink to="/x" />}>Go</TextLink>
+import { DisplayLabel, Text, TextLink } from "themelia-ui/base/typography"
+
+export default function DisplaylabelAndTextlink() {
+	return (
+		<>
+			<DisplayLabel>Account status</DisplayLabel>
+			<Text>
+				Active since 2024. <TextLink href="#x">View history</TextLink>, or{" "}
+				<TextLink href="#y" variant="subtle">read the docs</TextLink>.
+			</Text>
+		</>
+	)
+}
 ```

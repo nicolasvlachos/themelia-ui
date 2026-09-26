@@ -1843,198 +1843,873 @@ Preview route: Catalogue & partners — `/blocks-catalogue`
 ### SeoListing
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-import { calculateSeoScore } from "themelia-ui/admin/patterns/commerce"
+import { useState } from "react"
 
-const score = calculateSeoScore({ title, description, permalink, baseUrl, keyword })
-<SeoListing listing={listing} score={score} onEdit={edit} />
+import {
+	SeoListing,
+	calculateSeoScore,
+	type SeoScoreInput,
+} from "themelia-ui/admin/patterns/commerce"
+import { FormField } from "themelia-ui/base/forms"
+import { AdaptiveGrid, Stack } from "themelia-ui/base/structure"
+import { Input, Textarea } from "themelia-ui/base/text-inputs"
+import { ActionDialog } from "themelia-ui/features/overlays"
+
+const LISTING = {
+	title: "Merino crew neck sweater — soft, breathable, machine washable",
+	description:
+		"A midweight merino crew neck that holds its shape, resists odour, and washes at 30°C. Ships free in the EU, returns accepted for 60 days.",
+	permalink: "https://northwind.example/products/merino-crew-neck",
+	baseUrl: "https://northwind.example",
+	keyword: "merino crew neck",
+}
+
+/* A deliberately weak listing, so both ends of the scale are visible on one page. */
+const WEAK_LISTING = {
+	title: "Sweater",
+	description: "A sweater.",
+	permalink: "http://northwind.example/p/SKU_44172?ref=home",
+	baseUrl: "http://northwind.example",
+}
+
+function ListingDemo({ initial }: { initial: SeoScoreInput }) {
+	const [listing, setListing] = useState(initial)
+	const [draft, setDraft] = useState(initial)
+	const [open, setOpen] = useState(false)
+	return (
+		<>
+			<SeoListing
+				listing={listing}
+				score={calculateSeoScore(listing)}
+				onEdit={() => { setDraft(listing); setOpen(true) }}
+			/>
+			<ActionDialog
+				open={open}
+				onOpenChange={setOpen}
+				title="Edit search appearance"
+				description="Update the title, description, and address shown in the preview."
+				strings={{ confirm: "Save changes" }}
+				onConfirm={() => setListing(draft)}
+			>
+				<Stack gap="lg">
+					<FormField label="Page title">
+						<Input value={draft.title ?? ""} onChange={event => setDraft({ ...draft, title: event.target.value })} />
+					</FormField>
+					<FormField label="Description">
+						<Textarea value={draft.description ?? ""} onChange={event => setDraft({ ...draft, description: event.target.value })} />
+					</FormField>
+					<FormField label="Permalink">
+						<Input value={draft.permalink ?? ""} onChange={event => setDraft({ ...draft, permalink: event.target.value })} />
+					</FormField>
+					<FormField label="Site address">
+						<Input value={draft.baseUrl ?? ""} onChange={event => setDraft({ ...draft, baseUrl: event.target.value })} />
+					</FormField>
+				</Stack>
+			</ActionDialog>
+		</>
+	)
+}
+
+export default function CatalogueSeo() {
+	return (
+		<AdaptiveGrid minColumnWidth="lg" gap="xl" align="start">
+			<ListingDemo initial={LISTING} />
+			{/* Scored outside the card and handed in — the seam an editor uses. */}
+			<ListingDemo initial={WEAK_LISTING} />
+		</AdaptiveGrid>
+	)
+}
 ```
 
 ### InventorySection
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InventorySection
-  value={value}
-  sections={["summary", "identity", "tracking"]}
-  onFieldChange={({ field, value }) => update(field, value)}
-/>
+import { useState } from "react"
+
+import { InventorySection, type InventorySectionValue } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+const INVENTORY: InventorySectionValue = {
+	sku: "MRN-CRW-M-CHR",
+	barcode: "5012345678900",
+	trackQuantity: true,
+	available: "84",
+	committed: "12",
+	incoming: "60",
+	lowStockThreshold: "20",
+	inventoryPolicy: "deny",
+	binLocation: "A-14-3",
+	requiresShipping: true,
+	weight: "0.42",
+	countryOfOrigin: "Portugal",
+	hsCode: "6110.11",
+	tags: ["knitwear", "core", "autumn"],
+}
+
+function InventoryDemo() {
+	const [value, setValue] = useState(INVENTORY)
+	return (
+		<InventorySection
+			value={value}
+			onFieldChange={({ field, value: next }) => setValue((current) => ({ ...current, [field]: next }))}
+		/>
+	)
+}
+
+export default function CatalogueInventory() {
+	return (
+		<Stack maxWidth="40rem" gap="none">
+			<InventoryDemo />
+		</Stack>
+	)
+}
 ```
 
 ### VendorProfile
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<VendorProfile name="Northwind Traders" earnings="48,200.00 EUR" metrics={metrics} stats={stats} />
+import { VendorProfile } from "themelia-ui/admin/patterns/commerce"
+import { ContentBlock } from "themelia-ui/base/display"
+import { AdaptiveGrid } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+import { Number as NumberValue } from "themelia-ui/primitives"
+
+export default function CatalogueVendor() {
+	return (
+		<AdaptiveGrid minColumnWidth="lg" gap="xl" align="start">
+			<ContentBlock surface="bordered">
+				<VendorProfile
+					name="Northwind Traders"
+					role="Knitwear · Portugal"
+					verified
+					earnings="48,200.00 EUR"
+					metrics={[
+						{ id: "1", label: "Lead time", value: "6 days" },
+						{ id: "2", label: "Fill rate", value: "98.2%" },
+						{ id: "3", label: "Open disputes", value: "0" },
+					]}
+					stats={[
+						{ id: "1", label: "On-time", value: "96%", change: "+2pp", changeTone: "success" },
+						{ id: "2", label: "Returns", value: "1.8%", change: "+0.4pp", changeTone: "warning" },
+						{ id: "3", label: "Orders", value: <NumberValue value={1284} size="inherit" weight="semibold" /> },
+						{ id: "4", label: "Rating", value: "4.7 / 5" },
+					]}
+					onMessage={() => toast("Supplier selected", { description: "Ready to start a conversation." })}
+					onHire={() => toast("Supplier selected", { description: "Ready to start onboarding." })}
+				/>
+			</ContentBlock>
+			<ContentBlock surface="bordered">
+				<VendorProfile
+					name="Bansko Textiles"
+					role="Cut and sew · Bulgaria"
+					metrics={[
+						{ id: "1", label: "Lead time", value: "11 days" },
+						{ id: "2", label: "Fill rate", value: "91.0%" },
+					]}
+					onMessage={() => toast("Supplier selected", { description: "Ready to start a conversation." })}
+				/>
+			</ContentBlock>
+		</AdaptiveGrid>
+	)
+}
 ```
 
 ### BookingCard
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<BookingCard title="Reservation #4417" details={details} actionLabel="Open booking" onAction={open} />
+import { BookingCard } from "themelia-ui/admin/patterns/commerce"
+import { Badge } from "themelia-ui/base/badge"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+import { Money } from "themelia-ui/primitives"
+
+export default function CatalogueBooking() {
+	return (
+		<Stack maxWidth="36rem" gap="none">
+			<BookingCard
+				title="Reservation #4417"
+				description="Studio session, two hours"
+				status={<Badge tone="success">Confirmed</Badge>}
+				details={[
+					{ id: "date", label: "Date", value: "02 Sep 2026, 09:30" },
+					{ id: "customer", label: "Customer", value: "Alice Mercer" },
+					{ id: "room", label: "Room", value: "Studio B" },
+					{ id: "amount", label: "Amount", value: <Money amount={120} currency="EUR" /> },
+					{ id: "note", label: "Note", value: "Needs the tall backdrop stand.", fullWidth: true },
+				]}
+				actionLabel="Open booking"
+				onAction={() => toast("Open reservation #4417 requested")}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### CartSummary
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<CartSummary items={items} subtotal="258.00 EUR" discount="50.00 EUR" total="264.40 EUR" />
+import { CartSummary, type CartLine } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+
+const CART: CartLine[] = [
+	{ id: "1", title: "Merino crew neck", variantTitle: "Medium / Charcoal", quantity: 1, price: "89.00 EUR" },
+	{ id: "2", title: "Oxford shirt", variantTitle: "Large / White", quantity: 2, price: "124.00 EUR" },
+	{ id: "3", title: "Leather belt", quantity: 1, price: "45.00 EUR" },
+]
+
+export default function CartSummaryExample() {
+	return (
+		<Stack maxWidth="32rem" gap="none">
+			<CartSummary
+				items={CART}
+				subtotal="258.00 EUR"
+				tax="51.60 EUR"
+				shipping="4.80 EUR"
+				discount="50.00 EUR"
+				total="264.40 EUR"
+				onCheckout={() => toast("Checkout requested", { description: "Preview callback — connect this action to your application." })}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### TaxBreakdown
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TaxBreakdown subtotal="258.00 EUR" taxes={taxes} totalTax="52.89 EUR" total="310.89 EUR" />
+import { TaxBreakdown } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function TaxBreakdownExample() {
+	return (
+		<Stack maxWidth="32rem" gap="none">
+			<TaxBreakdown
+				subtotal="258.00 EUR"
+				taxes={[
+					{ id: "vat", label: "VAT", rate: "20%", amount: "51.60 EUR" },
+					{ id: "eco", label: "Eco levy", rate: "0.5%", amount: "1.29 EUR" },
+				]}
+				totalTax="52.89 EUR"
+				total="310.89 EUR"
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### DiscountStack
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DiscountStack discounts={discounts} totalSavings="50.00 EUR" />
+import { DiscountStack } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function DiscountStackExample() {
+	return (
+		<Stack maxWidth="32rem" gap="none">
+			<DiscountStack
+				discounts={[
+					{ id: "1", label: "Summer sale", kind: "Automatic", amount: "30.00 EUR" },
+					{ id: "2", label: "WELCOME10", kind: "Code", amount: "20.00 EUR" },
+				]}
+				totalSavings="50.00 EUR"
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### CodeEntry
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<CodeEntry onApply={apply} />
-<CodeEntry kind="gift" appliedCode="GC-4417-92AB" balance="45.00 EUR" onRemove={remove} />
+import { useState } from "react"
+
+import { CodeEntry } from "themelia-ui/admin/patterns/commerce"
+import { AdaptiveGrid, GridCell } from "themelia-ui/base/structure"
+
+function CodeEntryDemo({ gift = false }: { gift?: boolean }) {
+	const [appliedCode, setAppliedCode] = useState<string | undefined>(gift ? "GC-4417-92AB" : undefined)
+	const [error, setError] = useState<string>()
+	const [loading, setLoading] = useState(false)
+	return <CodeEntry
+		kind={gift ? "gift" : "discount"}
+		appliedCode={appliedCode}
+		appliedDiscount={!gift && appliedCode ? "25.00 EUR" : undefined}
+		balance={gift && appliedCode ? "45.00 EUR" : undefined}
+		error={error}
+		loading={loading}
+		onApply={async code => {
+			setLoading(true)
+			setError(undefined)
+			await new Promise(resolve => setTimeout(resolve, 600))
+			if (code.toUpperCase() === (gift ? "GC-4417-92AB" : "WELCOME10")) setAppliedCode(code.toUpperCase())
+			else setError(gift ? "Gift card not found. Try GC-4417-92AB." : "Code not found. Try WELCOME10.")
+			setLoading(false)
+		}}
+		onRemove={() => { setAppliedCode(undefined); setError(undefined) }}
+	/>
+}
+
+export default function CodeEntryExample() {
+	/* Two instances: empty on the left, applied on the right, covering both kinds. */
+	return (
+		<AdaptiveGrid minColumnWidth="lg" gap="xl">
+			<GridCell>
+				<CodeEntryDemo />
+			</GridCell>
+			<GridCell>
+				<CodeEntryDemo gift />
+			</GridCell>
+		</AdaptiveGrid>
+	)
+}
 ```
 
 ### OrderStatusCard
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OrderStatusCard orderNumber="#1041" status="shipped" events={events} eta="18 Aug" />
+import { OrderStatusCard, type OrderEvent } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+const ORDER_EVENTS: OrderEvent[] = [
+	{ id: "1", label: "Order placed", timestamp: "14 Aug, 09:12", complete: true },
+	{ id: "2", label: "Payment captured", timestamp: "14 Aug, 09:12", complete: true },
+	{ id: "3", label: "Packed", timestamp: "15 Aug, 11:40", complete: true },
+	{ id: "4", label: "Shipped", timestamp: "16 Aug, 06:02", complete: true },
+	{ id: "5", label: "Delivered", complete: false },
+]
+
+export default function OrderStatusExample() {
+	return (
+		<Stack maxWidth="40rem" gap="none">
+			<OrderStatusCard orderNumber="#1041" status="shipped" events={ORDER_EVENTS} eta="18 Aug" />
+		</Stack>
+	)
+}
 ```
 
 ### ShipmentTracking
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ShipmentTracking trackingNumber="1Z999AA1…" carrier="UPS" status="inTransit" steps={steps} />
+import { ShipmentTracking } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function ShipmentTrackingExample() {
+	return (
+		<Stack maxWidth="40rem" gap="none">
+			<ShipmentTracking
+				trackingNumber="1Z999AA10123456784"
+				carrier="UPS"
+				status="inTransit"
+				steps={[
+					{ label: "Label created", done: true, timestamp: "14 Aug, 09:40" },
+					{ label: "Collected", done: true, timestamp: "14 Aug, 17:05" },
+					{ label: "In transit", done: true, timestamp: "15 Aug, 03:22" },
+					{ label: "Out for delivery", done: false },
+					{ label: "Delivered", done: false },
+				]}
+				details={[{ label: "Service", value: "Express" }]}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### RefundStatus
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<RefundStatus stage="processing" amount="124.00 EUR" reason="Damaged on arrival" />
+import { RefundStatus } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function RefundStatusExample() {
+	return (
+		<Stack maxWidth="40rem" gap="none">
+			<RefundStatus
+				stage="processing"
+				amount="124.00 EUR"
+				reason="Damaged on arrival"
+				method="Visa ending 4417"
+				eta="22 Aug"
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### InvoiceHeader
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InvoiceHeader invoiceNumber="INV-2026-0114" status="overdue" from={from} to={to} amountDue="3,120.00 EUR" />
+import { InvoiceHeader } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function InvoiceHeaderExample() {
+	return (
+		<Stack maxWidth="40rem" gap="none">
+			<InvoiceHeader
+				invoiceNumber="INV-2026-0114"
+				status="overdue"
+				from={{ name: "Northwind Traders", location: "Rotterdam, NL" }}
+				to={{ name: "Adventure Park Bansko", location: "Bansko, BG" }}
+				issuedAt="14 Aug 2026"
+				dueAt="28 Aug 2026"
+				amountDue="3,120.00 EUR"
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### InvoiceLineItems
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InvoiceLineItems currency="EUR" taxRate={0.2} lines={lines} />
+import { InvoiceLineItems } from "themelia-ui/admin/patterns/commerce"
+
+export default function InvoiceLineItemsExample() {
+	return (
+		<InvoiceLineItems
+			currency="EUR"
+			taxRate={0.2}
+			lines={[
+				{ id: "1", description: "Design retainer", quantity: 1, unitPrice: 2000 },
+				{ id: "2", description: "Implementation", quantity: 12, unitPrice: 45 },
+				{ id: "3", description: "Hosting", quantity: 3, unitPrice: 20 },
+			]}
+		/>
+	)
+}
 ```
 
 ### InvoiceMini
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ContentBlock surface="bordered"><InvoiceMini invoiceNumber="INV-0114" status="overdue" customerName="…" total="3,120.00 EUR" /></ContentBlock>
+import { InvoiceMini } from "themelia-ui/admin/patterns/commerce"
+import { ContentBlock } from "themelia-ui/base/display"
+import { AdaptiveGrid, GridCell } from "themelia-ui/base/structure"
+
+export default function InvoiceMiniExample() {
+	return (
+		<AdaptiveGrid minColumnWidth="md" gap="xl">
+			<GridCell>
+				<ContentBlock surface="bordered"><InvoiceMini invoiceNumber="INV-0114" status="overdue" customerName="Adventure Park Bansko" lineCount={3} dueAt="28 Aug" total="3,120.00 EUR" /></ContentBlock>
+			</GridCell>
+			<GridCell>
+				<ContentBlock surface="bordered"><InvoiceMini invoiceNumber="INV-0115" status="pending" customerName="Northwind Traders" lineCount={1} dueAt="04 Sep" total="900.00 EUR" /></ContentBlock>
+			</GridCell>
+			<GridCell>
+				<ContentBlock surface="bordered"><InvoiceMini invoiceNumber="INV-0392" status="paid" customerName="Contoso Ltd" lineCount={7} dueAt="12 Aug" total="12,480.00 EUR" /></ContentBlock>
+			</GridCell>
+		</AdaptiveGrid>
+	)
+}
 ```
 
 ### AddressCard
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AddressCard kind="shipping" name="Alice Mercer" line1="14 Kingsway" city="London" country="United Kingdom" isDefault />
+import { AddressCard } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+
+const ADDRESS = {
+	name: "Alice Mercer",
+	line1: "14 Kingsway",
+	line2: "Flat 3",
+	city: "London",
+	postalCode: "WC2B 6UF",
+	country: "United Kingdom",
+	phone: "+44 20 7946 0102",
+}
+
+export default function AddressCardExample() {
+	return (
+		<Stack maxWidth="28rem" gap="none">
+			<AddressCard kind="shipping" {...ADDRESS} isDefault onEdit={() => toast("Edit address requested", { description: "Preview callback — connect this action to your application." })} onRemove={() => toast("Remove address requested", { description: "Preview callback — connect this action to your application." })} />
+		</Stack>
+	)
+}
 ```
 
 ### PaymentMethodCard
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PaymentMethodCard brand="visa" last4="4417" expiry="09/28" isDefault onChange={change} />
+import { PaymentMethodCard } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+
+export default function PaymentMethod() {
+	return (
+		<Stack maxWidth="28rem" gap="none">
+			<PaymentMethodCard brand="visa" last4="4417" expiry="09/28" holderName="A. Mercer" isDefault onChange={() => toast("Change payment method requested", { description: "Preview callback — connect this action to your application." })} />
+		</Stack>
+	)
+}
 ```
 
 ### PaymentTimeline
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PaymentTimeline events={events} />
+import { BanknoteIcon, CreditCardIcon } from "lucide-react"
+
+import { PaymentTimeline } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function PaymentTimelineExample() {
+	return (
+		<Stack maxWidth="32rem" gap="none">
+			<PaymentTimeline
+				events={[
+					{ id: "1", label: "Authorised", date: "14 Aug", amount: "3,120.00 EUR", icon: CreditCardIcon, settled: true },
+					{ id: "2", label: "Captured", date: "15 Aug", amount: "3,120.00 EUR", icon: BanknoteIcon, settled: true },
+					{ id: "3", label: "Payout", date: "Expected 22 Aug", icon: BanknoteIcon, settled: false },
+				]}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### SubscriptionSummary
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SubscriptionSummary planName="Scale" price="240.00 EUR" cycle="Per month" nextBillingDate="01 Sep 2026" />
+import { CheckIcon, CloudIcon, HeadphonesIcon, ShieldIcon } from "lucide-react"
+
+import { SubscriptionSummary } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+
+export default function SubscriptionSummaryExample() {
+	return (
+		<Stack maxWidth="32rem" gap="none">
+			<SubscriptionSummary
+				planName="Scale"
+				price="240.00 EUR"
+				cycle="Per month"
+				nextBillingDate="01 Sep 2026"
+				status="Active"
+				perks={[
+					{ label: "Unlimited seats", icon: CheckIcon },
+					{ label: "99.9% uptime SLA", icon: ShieldIcon },
+					{ label: "Priority support", icon: HeadphonesIcon },
+					{ label: "500 GB storage", icon: CloudIcon },
+				]}
+				onManage={() => toast("Manage subscription requested", { description: "Preview callback — connect this action to your application." })}
+				onUpgrade={() => toast("Upgrade subscription requested", { description: "Preview callback — connect this action to your application." })}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### InventoryLevel
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InventoryLevel productName="Merino crew neck" stock={8} reorderLevel={12} maxStock={120} />
+import { InventoryLevel } from "themelia-ui/admin/patterns/commerce"
+import { AdaptiveGrid, GridCell } from "themelia-ui/base/structure"
+
+export default function InventoryLevelExample() {
+	return (
+		<AdaptiveGrid minColumnWidth="lg" gap="xl">
+			<GridCell>
+				<InventoryLevel productName="Merino crew neck" variant="Medium / Charcoal" stock={8} reorderLevel={12} maxStock={120} lastRestocked="02 Aug" />
+			</GridCell>
+			<GridCell>
+				<InventoryLevel productName="Oxford shirt" variant="Large / White" stock={0} reorderLevel={10} maxStock={80} lastRestocked="21 Jul" />
+			</GridCell>
+		</AdaptiveGrid>
+	)
+}
 ```
 
 ### UpcomingBookings
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UpcomingBookings bookings={bookings} boxedDate />
+import { UpcomingBookings, type Booking } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+const BOOKINGS: Booking[] = [
+	{ id: "1", date: "2026-09-02", time: "09:30", service: "Studio session", customer: "Alice Mercer", amount: "120.00 EUR" },
+	{ id: "2", date: "2026-09-02", time: "14:00", service: "Equipment hire", customer: "Contoso Ltd", amount: "48.00 EUR" },
+	{ id: "3", date: "2026-09-04", time: "11:15", service: "Consultation", customer: "Northwind Traders", amount: "90.00 EUR" },
+]
+
+export default function UpcomingBookingsExample() {
+	return (
+		<Stack maxWidth="40rem" gap="none">
+			<UpcomingBookings bookings={BOOKINGS} boxedDate />
+		</Stack>
+	)
+}
 ```
 
 ### LoyaltyPoints
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<LoyaltyPoints balance={4830} tier="Platinum" movements={movements} onRedeem={redeem} />
+import { LoyaltyPoints } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+
+export default function LoyaltyPointsExample() {
+	return (
+		<Stack maxWidth="32rem" gap="none">
+			<LoyaltyPoints
+				balance={4830}
+				tier="Platinum"
+				tierTone="secondary"
+				movements={[
+					{ id: "1", label: "Order #1041", date: "16 Aug", points: "310", earned: true },
+					{ id: "2", label: "Redeemed for shipping", date: "12 Aug", points: "500", earned: false },
+					{ id: "3", label: "Birthday bonus", date: "01 Aug", points: "250", earned: true },
+				]}
+				onRedeem={() => toast("Redeem points requested", { description: "Preview callback — connect this action to your application." })}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### Two statuses, not one
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OrderHeader
-  orderNumber="1036"
-  paymentStatus="refunded"
-  fulfillmentStatus="unfulfilled"
-  placedAt="December 21, 2025 at 10:10 pm"
-  source="Simple Sample Data (via import)"
-/>
+import { OrderHeader } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function OrderStatusAxes() {
+	return (
+		<Stack gap="xl">
+			<OrderHeader
+				orderNumber="1036"
+				paymentStatus="refunded"
+				fulfillmentStatus="unfulfilled"
+				placedAt="December 21, 2025 at 10:10 pm"
+				source="Simple Sample Data (via import)"
+				actions={[
+					{ id: "print", label: "Print packing slip" },
+					{ id: "cancel", label: "Cancel order", tone: "destructive" },
+				]}
+			/>
+			<OrderHeader orderNumber="1037" paymentStatus="authorized" fulfillmentStatus="scheduled" placedAt="2 Jan 2026" />
+			<OrderHeader orderNumber="1038" paymentStatus="paid" fulfillmentStatus="partiallyFulfilled" placedAt="4 Jan 2026" />
+		</Stack>
+	)
+}
 ```
 
 ### Fulfillment groups
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FulfillmentGroup
-  status="unfulfilled"
-  location="Bul Bulgaria 111"
-  notice="Shipping not required"
-  items={lines}
-  actions={[{ id: "fulfil", label: "Mark as fulfilled", onClick: fulfil }]}
-/>
+import { BanIcon } from "lucide-react"
+
+import { FulfillmentGroup, type OrderLine } from "themelia-ui/admin/patterns/commerce"
+import { Stack } from "themelia-ui/base/structure"
+
+const LINES: OrderLine[] = [
+	{
+		id: "1",
+		title: "ADIDAS | CLASSIC BACKPACK | LEGEND INK MULTICOLOUR",
+		variantTitle: "OS / blue",
+		sku: "AD-04-OS-blue",
+		unitPrice: "€50.00",
+		quantity: 1,
+		total: "€50.00",
+	},
+	{
+		id: "2",
+		title: "VANS | ERA 59 MOROCCAN | GEO/DRESS BLUES",
+		variantTitle: "8 / blue",
+		sku: "VN-04-8-blue",
+		unitPrice: "€119.95",
+		quantity: 1,
+		total: "€119.95",
+	},
+	{
+		id: "3",
+		title: "NIKE | TODDLER ROSHE ONE",
+		variantTitle: "4 / black",
+		sku: "NK-02-4-black",
+		unitPrice: "€70.00",
+		quantity: 1,
+		total: "€70.00",
+	},
+]
+
+export default function OrderFulfillment() {
+	return (
+		<Stack gap="xl">
+			<FulfillmentGroup
+				status="unfulfilled"
+				location="Bul Bulgaria 111"
+				notice="Shipping not required"
+				noticeIcon={BanIcon}
+				items={LINES}
+				actions={[
+					{ id: "fulfil", label: "Mark as fulfilled" },
+					{ id: "hold", label: "Put on hold" },
+					{ id: "cancel", label: "Cancel items", tone: "destructive" },
+				]}
+			/>
+			<FulfillmentGroup
+				status="fulfilled"
+				location="Amsterdam warehouse"
+				items={[LINES[1]!]}
+				actions={[{ id: "track", label: "Track shipment" }]}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### A line, and what a consumer attaches to it
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OrderLineItem
-  {...line}
-  properties={[
-    { label: "Engraving", value: "A. MERCER" },
-    { label: "Gift message", value: "Happy birthday" },
-  ]}
-/>
+import { FulfillmentGroup, OrderLineItem, type OrderLine } from "themelia-ui/admin/patterns/commerce"
+
+const PERSONALISED: OrderLine = {
+	id: "4",
+	title: "ENGRAVED LEATHER TAG",
+	variantTitle: "Tan",
+	sku: "LT-01-tan",
+	unitPrice: "€24.00",
+	quantity: 2,
+	/* Not 2 × 24: this line carries a bundle discount the unit price does not predict. */
+	total: "€38.40",
+	properties: [
+		{ label: "Engraving", value: "A. MERCER" },
+		{ label: "Gift message", value: "Happy birthday, from all of us" },
+		{ label: "Bundle", value: "Buy 2, save 20%" },
+	],
+}
+
+export default function OrderLineItemExample() {
+	return (
+		// Passed as children rather than items — the seam a caller uses for a bespoke row.
+		<FulfillmentGroup status="unfulfilled">
+			<OrderLineItem {...PERSONALISED} />
+		</FulfillmentGroup>
+	)
+}
 ```
 
 ### OrderSummary
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OrderSummary
-  goods={[{ label: "Subtotal", note: "3 items", amount: "€239.95" }]}
-  total={{ label: "Total", amount: "€239.95" }}
-  payments={[{ label: "Paid", amount: "€0.00" }, { label: "Balance", amount: "€239.95" }]}
-  alert="€239.95 of the balance is currently unauthorized"
-/>
+import { OrderSummary } from "themelia-ui/admin/patterns/commerce"
+
+export default function OrderSummaryExample() {
+	return (
+		<OrderSummary
+			paymentStatus="refunded"
+			goods={[
+				{ id: "sub", label: "Subtotal", note: "3 items", amount: "€239.95" },
+				{ id: "ship", label: "Shipping", note: "Standard", amount: "€0.00" },
+				{ id: "tax", label: "Tax", note: "20%", amount: "€0.00" },
+			]}
+			total={{ label: "Total", amount: "€239.95" }}
+			payments={[
+				{ id: "paid", label: "Paid", amount: "€0.00" },
+				{ id: "balance", label: "Balance", amount: "€239.95" },
+			]}
+			alert="€239.95 of the balance is currently unauthorized"
+		/>
+	)
+}
 ```
 
 ### OrderTransactions
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OrderTransactions transactions={transactions} />
+import { OrderTransactions, type Transaction } from "themelia-ui/admin/patterns/commerce"
+
+const TRANSACTIONS: Transaction[] = [
+	{
+		id: "1",
+		kind: "authorization",
+		status: "success",
+		amount: "€239.95",
+		processedAt: "21 Dec 2025, 22:10",
+		method: "Visa ending 4417",
+		reference: "ch_3Qa8Kd2eZvKYlo2C",
+		gateway: "Stripe",
+	},
+	{
+		id: "2",
+		kind: "capture",
+		status: "failure",
+		amount: "€239.95",
+		processedAt: "22 Dec 2025, 04:02",
+		method: "Visa ending 4417",
+		reference: "ch_3Qa8Kd2eZvKYlo2C",
+		gateway: "Stripe",
+	},
+	{
+		id: "3",
+		kind: "refund",
+		status: "success",
+		amount: "€239.95",
+		processedAt: "23 Dec 2025, 09:41",
+		method: "Visa ending 4417",
+		reference: "re_3QaB9x2eZvKYlo2C",
+		gateway: "Stripe",
+	},
+]
+
+export default function OrderTransactionsExample() {
+	return (
+		<OrderTransactions transactions={TRANSACTIONS} />
+	)
+}
 ```
 
 ### Customer and addresses
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OrderCustomer
-  name="Alice Mercer"
-  email="alice@example.test"
-  orderCount={4}
-  shippingAddress={address}
-  billingSameAsShipping
-/>
+import { OrderCustomer } from "themelia-ui/admin/patterns/commerce"
+import { Grid, GridCell } from "themelia-ui/base/structure"
+
+export default function OrderCustomerExample() {
+	return (
+		<Grid columns={{ base: 1, md: 2 }} gap="xl">
+			<GridCell>
+				<OrderCustomer
+					name="Alice Mercer"
+					email="alice.mercer@example.test"
+					phone="+44 20 7946 0102"
+					orderCount={4}
+					shippingAddress={{
+						name: "Alice Mercer",
+						line1: "14 Kingsway",
+						line2: "Flat 3",
+						city: "London",
+						postalCode: "WC2B 6UF",
+						country: "United Kingdom",
+					}}
+					billingSameAsShipping
+					onOpenCustomer={() => {}}
+					onEditShipping={() => {}}
+				/>
+			</GridCell>
+			<GridCell>
+				<OrderCustomer
+					name="Adventure Park Bansko"
+					email="ops@bansko.example"
+					orderCount={1}
+					shippingAddress={{
+						line1: "Pirin Street 71",
+						city: "Bansko",
+						region: "Blagoevgrad",
+						postalCode: "2770",
+						country: "Bulgaria",
+					}}
+					billingAddress={{
+						line1: "Bul Bulgaria 111",
+						city: "Sofia",
+						postalCode: "1404",
+						country: "Bulgaria",
+					}}
+					onEditShipping={() => {}}
+					onEditBilling={() => {}}
+				/>
+			</GridCell>
+		</Grid>
+	)
+}
 ```

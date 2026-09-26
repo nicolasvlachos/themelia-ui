@@ -1,106 +1,7 @@
-import {
-	CheckIcon, CircleDotIcon, CreditCardIcon, PackageIcon, TruckIcon, UndoIcon,
-} from "lucide-react"
-import { useState } from "react"
-
-import { Badge } from "@/components/base/badge"
-import { Stack } from "@/components/base/structure"
-import { Stepper, Timeline, type StepperStep, type TimelineItem } from "@/components/base/timeline"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const ORDER: TimelineItem[] = [
-	{
-		id: "placed",
-		title: "Order placed",
-		description: "Eight items, paid in full.",
-		timestamp: "14 Aug, 09:12",
-		icon: CheckIcon,
-		status: "completed",
-	},
-	{
-		id: "paid",
-		title: "Payment captured",
-		description: "Visa ending 4417.",
-		timestamp: "14 Aug, 09:12",
-		icon: CreditCardIcon,
-		status: "completed",
-	},
-	{
-		id: "packed",
-		title: "Packed",
-		timestamp: "15 Aug, 11:40",
-		icon: PackageIcon,
-		status: "completed",
-	},
-	{
-		id: "transit",
-		title: "In transit",
-		description: "Left the Rotterdam depot.",
-		timestamp: "16 Aug, 06:02",
-		icon: TruckIcon,
-		status: "current",
-	},
-	{
-		id: "delivered",
-		title: "Delivered",
-		timestamp: "Expected 18 Aug",
-		status: "pending",
-	},
-]
-
-const STATUSES: TimelineItem[] = [
-	{ id: "completed", title: "completed", description: "It happened, and it went as intended.", status: "completed" },
-	{ id: "current", title: "current", description: "Where the thing is right now.", icon: CircleDotIcon, status: "current" },
-	{ id: "warning", title: "warning", description: "It happened, but it needs a look.", status: "warning" },
-	{ id: "destructive", title: "destructive", description: "It failed. Never \"error\" — the kit has one word for this.", status: "destructive" },
-	{ id: "pending", title: "pending", description: "It has not happened yet, so the dot is unfilled.", status: "pending" },
-	{ id: "neutral", title: "neutral", description: "It happened and carries no judgement. The default.", status: "neutral" },
-]
-
-const WITH_CONTENT: TimelineItem[] = [
-	{
-		id: "refund",
-		title: "Refund issued",
-		timestamp: "17 Aug, 14:20",
-		icon: UndoIcon,
-		status: "warning",
-		children: (
-			<Stack direction="horizontal" gap="sm">
-				<Badge tone="warning">Partial</Badge>
-				<Badge tone="neutral">€ 42.00</Badge>
-			</Stack>
-		),
-	},
-	{
-		id: "note",
-		title: "Note added",
-		timestamp: "17 Aug, 14:26",
-		status: "neutral",
-		// A sentence is a description; `children` is for blocks, and pays a block's gap.
-		description: "Customer reported one damaged item on arrival.",
-	},
-]
-
-const WIZARD: StepperStep[] = [
-	{ id: "account", label: "Account", hint: "Who you are", status: "completed" },
-	{ id: "billing", label: "Billing", hint: "How you pay", status: "completed" },
-	{ id: "shipping", label: "Shipping", hint: "Where it goes", status: "current" },
-	{ id: "review", label: "Review", hint: "Check and place", status: "upcoming" },
-]
-
-/* The caller owns the position; a press on a finished step makes it current again. */
-function PressableTrail() {
-	const [current, setCurrent] = useState(2)
-	const steps = WIZARD.map((step, index) => ({
-		...step,
-		status: index < current ? ("completed" as const) : index === current ? ("current" as const) : ("upcoming" as const),
-	}))
-	return <Stepper variant="trail" steps={steps} onStepClick={(_, index) => setCurrent(index)} />
-}
 
 export function TimelinePage() {
 	return (
@@ -111,49 +12,25 @@ export function TimelinePage() {
 			exports={["Timeline", "Stepper"]}
 		>
 			<Example
-				id="timeline-default"
+				example="timeline/timeline-default"
 				title="An order's progress"
 				description="Each entry carries a status, and the connector below it takes the same tone — so a run of completed steps reads as one finished stretch rather than as separate dots on a neutral thread."
 				stacked
-				code={`<Timeline
-  items={[
-    { id: "placed", title: "Order placed", timestamp: "14 Aug, 09:12", icon: CheckIcon, status: "completed" },
-    { id: "transit", title: "In transit", timestamp: "16 Aug, 06:02", icon: TruckIcon, status: "current" },
-    { id: "delivered", title: "Delivered", timestamp: "Expected 18 Aug", status: "pending" },
-  ]}
-/>`}
-			>
-				<Timeline items={ORDER} />
-			</Example>
+			/>
 
 			<Example
-				id="timeline-statuses"
+				example="timeline/timeline-statuses"
 				title="Statuses"
 				description="Progress states first, then outcomes. `pending` is the only one that describes an absence, which is why it is the only unfilled dot."
 				stacked
-				code={`<Timeline items={[{ id: "1", title: "Packed", status: "completed" }]} />`}
-			>
-				<Timeline items={STATUSES} />
-			</Example>
+			/>
 
 			<Example
-				id="timeline-content"
+				example="timeline/timeline-content"
 				title="Entries that carry more than a line"
 				description="`children` hangs anything under the description — a badge row, a diff, an action. The rail keeps its geometry regardless of how tall an entry grows, because the connector fills the space rather than being offset into it."
 				stacked
-				code={`<Timeline
-  items={[
-    {
-      id: "refund",
-      title: "Refund issued",
-      status: "warning",
-      children: <Badge tone="warning">Partial</Badge>,
-    },
-  ]}
-/>`}
-			>
-				<Timeline items={WITH_CONTENT} />
-			</Example>
+			/>
 
 			<Example
 				id="timeline-props"
@@ -181,40 +58,19 @@ export function TimelinePage() {
 				/>
 			</Example>
 			<Example
-				id="stepper-default"
+				example="timeline/stepper-default"
 				title="Stepper"
 				description="A numbered sequence the reader is partway through: a numeral that becomes a tick, a connector to the next step, a label and an optional hint. StepsBar and BreadcrumbProgress both draw with it, so the markers, the connectors and the state rules are decided once. `bar` sets the label under a ringed marker in an equal column; `trail` sets it beside a filled marker and folds it away below lg."
 				stacked
 				bleed
-				code={`<Stepper
-  steps={[
-    { id: "account", label: "Account", hint: "Who you are", status: "completed" },
-    { id: "shipping", label: "Shipping", status: "current" },
-    { id: "review", label: "Review", status: "upcoming" },
-  ]}
-/>
-
-<Stepper variant="trail" steps={steps} />`}
-			>
-				<Stack gap="2xl">
-					<Stepper steps={WIZARD} />
-					<Stepper variant="trail" steps={WIZARD} />
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="stepper-pressable"
+				example="timeline/stepper-pressable"
 				title="Going back a step"
 				description="`onStepClick` turns each step into a button. Finished steps and the current one are reachable; upcoming ones are disabled, because a wizard that lets you skip ahead past a step you have not filled in is not a wizard. The caller owns the position — the stepper only reports the press."
 				stacked
-				code={`<Stepper
-  variant="trail"
-  steps={steps}
-  onStepClick={(id, index) => setCurrent(index)}
-/>`}
-			>
-				<PressableTrail />
-			</Example>
+			/>
 
 			<Example
 				id="stepper-props"

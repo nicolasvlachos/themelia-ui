@@ -1,9 +1,3 @@
-import { Checkbox } from "@/components/base/choice-inputs"
-import { Label } from "@/components/base/label"
-import { Stack } from "@/components/base/structure"
-import { Input } from "@/components/base/text-inputs"
-
-import { MEASURE } from "../partials/measures"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
@@ -18,24 +12,11 @@ export function LabelPage() {
 			exports={["Label"]}
 		>
 			<Example
-				id="label"
+				example="label/label"
 				title="Label"
 				description="A real <label>, wired by htmlFor. Clicking it focuses the control, which is the behaviour a styled <span> silently loses."
 				stacked
-				code={`<Label htmlFor="email">Email</Label>
-<Input id="email" />`}
-			>
-				<Stack gap="lg" style={MEASURE.field}>
-					<Stack gap="xs">
-						<Label htmlFor="demo-email">Email</Label>
-						<Input id="demo-email" placeholder="name@example.com" />
-					</Stack>
-					<Stack direction="horizontal" gap="sm" align="center">
-						<Checkbox id="demo-terms" />
-						<Label htmlFor="demo-terms">I accept the terms</Label>
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="label-rule" title="Prefer FormField" stacked>
 				<Callout label="Rule">

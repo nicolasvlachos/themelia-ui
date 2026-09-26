@@ -1,33 +1,9 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-import {
-	AvatarUpload, FileUpload, ImageUpload, MediaGallery, UploadProgressList, UploadTray,
-	defaultFileUploadStrings, type FileRejection, type UploadItem,
-} from "@/components/base/upload"
-
-import { MEASURE } from "../partials/measures"
-import { SAMPLE_IMAGES, SAMPLE_IMAGE_URL } from "../partials/sample-images"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const QUEUE: UploadItem[] = [
-	{ id: "1", name: "report.pdf", size: 234_400, status: "uploading", progress: 62 },
-	{ id: "2", name: "photo.jpg", size: 1_100_000, status: "done" },
-	{ id: "3", name: "big.zip", size: 85_800_000, status: "error", error: "Larger than 5 MB." },
-]
-
 export function FileUploadPage() {
-	const [files, setFiles] = useState<File[]>([])
-	const [rejected, setRejected] = useState<FileRejection[]>([])
-	const [error, setError] = useState<string>()
-	const [images, setImages] = useState<File[]>(SAMPLE_IMAGES)
-	const items = QUEUE
-
 	return (
 		<ComponentPage
 			title="Upload"
@@ -37,54 +13,11 @@ export function FileUploadPage() {
 			]}
 		>
 			<Example
-				id="file-upload"
+				example="file-upload/file-upload"
 				title="FileUpload"
 				description="A labelled region with a real file input stretched over it, not a div with drag handlers — browsing has to work from the keyboard, and drag-and-drop is the enhancement on top."
 				stacked
-				code={`<FileUpload
-  multiple
-  accept=".pdf,image/*"
-  maxSizeBytes={5 * 1024 * 1024}
-  maxFiles={4}
-  value={files}
-  onValueChange={setFiles}
-  onRejectedFiles={setRejected}
-/>`}
-			>
-				<Stack gap="xl" style={MEASURE.wide}>
-					<FormField label="Attachments" helperText="Drag files in, or click to browse.">
-						<FileUpload
-							multiple
-							accept=".pdf,image/*"
-							maxSizeBytes={5 * 1024 * 1024}
-							maxFiles={4}
-							value={files}
-							onValueChange={setFiles}
-							onRejectedFiles={setRejected}
-						/>
-					</FormField>
-					{rejected.length > 0 && (
-						<Text size="xs" type="secondary">
-							Last refusal code: {rejected[0]?.code}
-						</Text>
-					)}
-					<FormField label="Compact" helperText="A single row, for a zone inside a form rather than one owning a page.">
-						<FileUpload compact accept=".csv" />
-					</FormField>
-					<FormField label="With transfer progress">
-						{/* Seeded with files: `progress` is keyed by file name. */}
-						<FileUpload
-							multiple
-							value={SAMPLE_IMAGES}
-							progress={{ "cover.png": 62, "detail.png": 100 }}
-							hint="Pass progress keyed by file name; this component does not transfer."
-						/>
-					</FormField>
-					<FormField label="Invalid" error="At least one attachment is required.">
-						<FileUpload invalid />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="upload-rule" title="Validation is not the dialog's job" stacked>
 				<Callout label="Rule">
@@ -97,86 +30,32 @@ export function FileUploadPage() {
 			</Example>
 
 			<Example
-				id="media-upload"
+				example="file-upload/media-upload"
 				title="One image: AvatarUpload and ImageUpload"
 				description="Add an image, replace it, or remove it. The second set starts with a stored image. On touch screens, a small edit strip keeps the change action visible."
 				stacked
-				code={`<AvatarUpload onValueChange={setAvatar} />
-<ImageUpload previewUrl={coverUrl} onValueChange={setCover} />`}
-			>
-				<Stack direction={{ base: "vertical", sm: "horizontal" }} gap="2xl" align="start" style={{ width: "100%" }}>
-					<Stack gap="xl" style={MEASURE.field}>
-						<FormField label="Profile photo" helperText="Nothing stored yet.">
-							<AvatarUpload />
-						</FormField>
-						<FormField label="Cover image" helperText="PNG or JPEG, up to 2 MB." error={error}>
-							<ImageUpload accept="image/png,image/jpeg" maxSizeBytes={2_000_000}
-								onRejectedFiles={(rejections) => setError(defaultFileUploadStrings.rejection(rejections[0]!))}
-								onValueChange={() => setError(undefined)} />
-						</FormField>
-					</Stack>
-					<Stack gap="xl" style={MEASURE.field}>
-						<FormField label="Profile photo" helperText="Your current profile photo.">
-							<AvatarUpload previewUrl={SAMPLE_IMAGE_URL} />
-						</FormField>
-						<FormField label="Cover image" helperText="Choosing a file replaces it.">
-							<ImageUpload previewUrl={SAMPLE_IMAGE_URL} />
-						</FormField>
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="upload-queue"
+				example="file-upload/upload-queue"
 				title="Files on their way: upload progress"
 				description="Each row shows what its status means: a spinner and a bar while it moves, a check when it lands, the reason and a retry when it fails. The component owns none of that state."
 				stacked
-				code={`<UploadProgressList items={items} onRetry={retry} onRemove={remove} />`}
-			>
-				<Stack style={MEASURE.wide}>
-					<UploadProgressList items={items} onRetry={() => {}} onRemove={() => {}} />
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="upload-tray"
+				example="file-upload/upload-tray"
 				title="UploadTray"
 				description="The same rows with a drop target above them and a summary beneath — for uploads that outlive the screen they started on. Adding files does NOT write to items: the tray reports the drop, the caller starts the transfer and reports back, which is what keeps one tray usable over fetch, XHR, or a resumable protocol."
 				stacked
-				code={`<UploadTray
-  items={items}
-  onAddFiles={start}
-  onRetry={retry}
-  onRemove={remove}
-  onClearAll={clear}
-/>`}
-			>
-				<Stack style={MEASURE.wide}>
-					<UploadTray
-						items={items}
-						onAddFiles={() => {}}
-						onRetry={() => {}}
-						onRemove={() => {}}
-						onClearAll={() => {}}
-					/>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="media-gallery"
+				example="file-upload/media-gallery"
 				title="MediaGallery"
 				description="Chosen images as reorderable tiles rather than a list of filenames — a gallery, where the ORDER is part of the value and the first tile is the cover. Pass showCover={false} when the order carries no meaning; a badge saying “Cover” on a set that has no cover is worse than no badge."
 				stacked
-				code={`<MediaGallery
-  value={images}
-  onValueChange={setImages}
-  maxFiles={6}
-/>`}
-			>
-				<Stack style={MEASURE.wide}>
-					<MediaGallery value={images} onValueChange={setImages} maxFiles={6} />
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="upload-queue-rule" title="It reports, it does not transfer" stacked>
 				<Callout label="Rule">

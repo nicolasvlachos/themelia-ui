@@ -1,226 +1,20 @@
-import { useMemo, useState } from "react"
-import {
-	ArchiveIcon, BuildingIcon, CircleCheckIcon, CircleDashedIcon, CircleXIcon, ExternalLinkIcon,
-	Trash2Icon,
-} from "lucide-react"
-import type { SortingState } from "@tanstack/react-table"
-import { getCoreRowModel, getSortedRowModel, useLegacyTable, type LegacyColumnDef } from "@tanstack/react-table/legacy"
+import { useState } from "react"
+import { ArchiveIcon, ExternalLinkIcon, Trash2Icon } from "lucide-react"
 
 import { Button } from "@/components/base/buttons"
-import { Select } from "@/components/base/choice-inputs"
-import { Stack } from "@/components/base/structure"
 import { Text } from "@/components/base/typography"
-import {
-	AvatarCell, CellStack, CurrencyCell, DataTable, DataView, DataViewPagination, DateMetaCell,
-	FilterType, ResourceCell, StatusCell, useDataView, useFilters,
-	type ActiveFilter, type FilterConfig, type FilterTab,
-} from "@/components/features"
+import { DataTable } from "@/components/features"
 
+import { tableColumns } from "../examples/data-view/_shared"
+import { BOOKINGS, type Booking } from "../examples/data-view/data"
 import { Callout } from "../partials/callout"
-import styles from "../preview.module.css"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-interface Booking {
-	id: string
-	reference: string
-	venue: string
-	customer: string
-	customerEmail: string
-	status: "confirmed" | "pending" | "cancelled"
-	guests: number
-	total: number
-	date: string
-}
-
-/* One set of bookings for the whole page: the index and the engine under it show the same records. */
-const BOOKINGS: Booking[] = [
-	{ id: "b1", reference: "BK-4417", venue: "Marlow Hall", customer: "Marla Okonkwo", customerEmail: "marla@example.com", status: "confirmed", guests: 120, total: 12400, date: "2026-10-14" },
-	{ id: "b2", reference: "BK-4418", venue: "The Old Granary", customer: "Tom Adeyemi", customerEmail: "tom@example.com", status: "pending", guests: 45, total: 3200, date: "2026-10-18" },
-	{ id: "b3", reference: "BK-4419", venue: "Riverside Rooms", customer: "Priya Raman", customerEmail: "priya@example.com", status: "confirmed", guests: 180, total: 22800, date: "2026-11-02" },
-	{ id: "b4", reference: "BK-4420", venue: "Marlow Hall", customer: "Jonas Berg", customerEmail: "jonas@example.com", status: "cancelled", guests: 60, total: 0, date: "2026-11-09" },
-	{ id: "b5", reference: "BK-4421", venue: "The Old Granary", customer: "Aiko Tanaka", customerEmail: "aiko@example.com", status: "confirmed", guests: 30, total: 2100, date: "2026-11-21" },
-	{ id: "b6", reference: "BK-4422", venue: "Riverside Rooms", customer: "Leo Martins", customerEmail: "leo@example.com", status: "pending", guests: 210, total: 28900, date: "2026-12-05" },
-]
-
-const STATUS = {
-	confirmed: { label: "Confirmed", tone: "success" as const },
-	pending: { label: "Pending", tone: "warning" as const },
-	cancelled: { label: "Cancelled", tone: "destructive" as const },
-}
-
-const FILTERS: FilterConfig[] = [
-	{ key: "q", label: "Search", type: FilterType.SEARCH, placeholder: "Search bookings…", delay: 200 },
-	{
-		key: "status",
-		label: "Status",
-		pluralLabel: "statuses",
-		type: FilterType.MULTI_SELECT,
-		icon: <CircleCheckIcon />,
-		displayConfig: { display: "always", priority: 0 },
-		options: [
-			{ value: "confirmed", label: "Confirmed", icon: <CircleCheckIcon /> },
-			{ value: "pending", label: "Pending", icon: <CircleDashedIcon /> },
-			{ value: "cancelled", label: "Cancelled", icon: <CircleXIcon /> },
-		],
-	},
-	{
-		key: "venue",
-		label: "Venue",
-		pluralLabel: "venues",
-		type: FilterType.MULTI_SELECT,
-		icon: <BuildingIcon />,
-		displayConfig: { priority: 1 },
-		options: [
-			{ value: "Marlow Hall", label: "Marlow Hall" },
-			{ value: "The Old Granary", label: "The Old Granary" },
-			{ value: "Riverside Rooms", label: "Riverside Rooms" },
-		],
-	},
-	{
-		key: "guests",
-		label: "Guests",
-		type: FilterType.RANGE,
-		operator: "gt",
-		displayConfig: { priority: 2 },
-	},
-]
-
-const TABS: FilterTab[] = [
-	{ id: "all", label: "All", presets: [] },
-	{ id: "confirmed", label: "Confirmed", presets: [{ key: "status", value: ["confirmed"] }] },
-	{ id: "attention", label: "Needs attention", presets: [{ key: "status", value: ["pending", "cancelled"] }] },
-]
-
-const PAGE_SIZE = 3
-// Filtering has already run before sorting and paging. DataView still owns the controls.
-const keepPage = ({ data }: { data: readonly Booking[] }) => data as Booking[]
-
-function ResetViewButton({ disabled, onReset }: { disabled: boolean; onReset: () => void }) {
-	const { clearFilters } = useFilters()
-	return <Button tone="neutral" buttonStyle="outline" disabled={disabled}
-		onClick={() => { clearFilters(); onReset() }}>Reset view</Button>
-}
-
 export function DataViewPage() {
-	const [active, setActive] = useState<ActiveFilter[]>([])
-	const [requestState, setRequestState] = useState("ready")
-	const [recoveryFilters, setRecoveryFilters] = useState<ActiveFilter[]>([])
-	const [page, setPage] = useState(1)
-	const [sorting, setSorting] = useState<SortingState>([])
 	const [note, setNote] = useState<string | null>(null)
 	const [tablePage, setTablePage] = useState(1)
-	const updateFilters = (next: ActiveFilter[]) => {
-		setActive(next)
-		setPage(1)
-	}
-	const { rows } = useDataView({ data: BOOKINGS, filtering: {
-		filters: FILTERS, activeFilters: active, onFilterChange: updateFilters,
-	} })
-
-	/* The index's columns: what a reader scans to find a booking. */
-	const indexColumns = useMemo<LegacyColumnDef<Booking, unknown>[]>(
-		() => [
-			{
-				id: "booking",
-				header: "Booking",
-				accessorKey: "venue",
-				cell: ({ row }) => (
-					<ResourceCell
-						title={row.original.venue}
-						subtitle={row.original.reference}
-						fallback={row.original.venue.slice(0, 2).toUpperCase()}
-					/>
-				),
-			},
-			{
-				id: "status",
-				header: "Status",
-				accessorKey: "status",
-				cell: ({ row }) => <StatusCell value={row.original.status} map={STATUS} />,
-			},
-			{
-				id: "guests",
-				header: "Guests",
-				accessorKey: "guests",
-				meta: { align: "end" },
-			},
-			{
-				id: "total",
-				header: "Total",
-				accessorKey: "total",
-				meta: { align: "end" },
-				cell: ({ row }) => <CurrencyCell value={row.original.total} currency="EUR" />,
-			},
-		],
-		[],
-	)
-
-	/* The engine's columns: wider, so the sticky first column and the ready-made cells have work to do. */
-	const tableColumns = useMemo<LegacyColumnDef<Booking, unknown>[]>(
-		() => [
-			{
-				id: "booking",
-				header: "Booking",
-				accessorKey: "venue",
-				cell: ({ row }) => (
-					<ResourceCell
-						title={row.original.venue}
-						subtitle={row.original.reference}
-						href={`#/bookings/${row.original.id}`}
-						fallback={row.original.venue.slice(0, 2).toUpperCase()}
-						badges={row.original.guests > 100 ? [{ label: "Large", tone: "info" }] : undefined}
-					/>
-				),
-			},
-			{
-				id: "customer",
-				header: "Customer",
-				accessorKey: "customer",
-				cell: ({ row }) => (
-					<AvatarCell name={row.original.customer} subtitle={row.original.customerEmail} />
-				),
-			},
-			{
-				id: "status",
-				header: "Status",
-				accessorKey: "status",
-				cell: ({ row }) => <StatusCell value={row.original.status} map={STATUS} />,
-			},
-			{
-				id: "date",
-				header: "Date",
-				accessorKey: "date",
-				cell: ({ row }) => (
-					<DateMetaCell
-						value={row.original.date}
-						secondary={(date) => date.toLocaleDateString(undefined, { weekday: "long" })}
-					/>
-				),
-			},
-			{
-				id: "total",
-				header: "Total",
-				accessorKey: "total",
-				meta: { align: "end" },
-				cell: ({ row }) => <CurrencyCell value={row.original.total} currency="EUR" />,
-			},
-		],
-		[],
-	)
-
-	const sorted = useLegacyTable({
-		data: rows as Booking[], columns: indexColumns, state: { sorting },
-		getCoreRowModel: getCoreRowModel(), getSortedRowModel: getSortedRowModel(),
-	})
-	const pageCount = Math.ceil(rows.length / PAGE_SIZE)
-	const currentPage = Math.min(page, Math.max(1, pageCount))
-	const start = (currentPage - 1) * PAGE_SIZE
-	const pageRows = sorted.getRowModel().rows.slice(start, start + PAGE_SIZE).map((row) => row.original)
-	const summary = pageCount > 1
-		? `${start + 1}–${start + pageRows.length} of ${rows.length} bookings`
-		: `${rows.length} ${rows.length === 1 ? "booking" : "bookings"}`
 
 	return (
 		<ComponentPage
@@ -235,97 +29,14 @@ export function DataViewPage() {
 			]}
 		>
 			<Example
-				id="data-view"
+				example="data-view/data-view"
 				title="An index"
 				description="Search bookings or choose a saved view, then sort and page through the matches. On phones, Filters opens a sheet and saved views become a select. Filtering and sorting run before pagination; changing either returns to the first page."
 				stacked
-				code={`// Filter and sort the complete collection before slicing a page.
-// A server-backed view can pass the returned page and total instead.
-const { rows } = useDataView({ data: bookings, filtering })
-const sorted = useLegacyTable({
-  data: rows, columns, state: { sorting },
-  getCoreRowModel: getCoreRowModel(),
-  getSortedRowModel: getSortedRowModel(),
-})
-const sortedRows = sorted.getRowModel().rows.map((row) => row.original)
-const pageRows = sortedRows.slice((page - 1) * pageSize, page * pageSize)
+			/>
 
-<DataView
-  data={pageRows}
-  columns={columns}
-  filtering={{
-    ...filtering,
-    filterRows: ({ data }) => data, // Already filtered before paging.
-    tabs: savedViews,
-  }}
-  table={{ enableSorting: true, manualSorting: true, sorting, onSortingChange }}
-  slots={{ footer: <DataViewPagination
-    page={page}
-    pageCount={Math.ceil(rows.length / pageSize)}
-    total={resultSummary}
-    onPageChange={setPage}
-  /> }}
-/>`}
-			>
-				<DataView<Booking>
-					data={pageRows}
-					columns={indexColumns}
-					filtering={{
-						filters: FILTERS,
-						activeFilters: active,
-						onFilterChange: updateFilters,
-						filterRows: keepPage,
-						tabs: TABS,
-					}}
-					table={{
-						enableSorting: true,
-						manualSorting: true,
-						sorting,
-						onSortingChange: (next) => { setSorting(next); setPage(1) },
-						enableColumnVisibility: true,
-						getRowId: (row) => row.id,
-						emptyStateMessage: "No bookings match your filters",
-						emptyStateAction: <Button tone="neutral" buttonStyle="outline" onClick={() => updateFilters([])}>Clear filters</Button>,
-					}}
-					slots={{
-						topbarEnd: <ResetViewButton
-							disabled={active.length === 0 && sorting.length === 0 && currentPage === 1}
-							onReset={() => { setSorting([]); setPage(1) }} />,
-						footer: (
-							<DataViewPagination
-								page={currentPage}
-								pageCount={pageCount}
-								total={summary}
-								onPageChange={setPage}
-							/>
-						),
-					}}
-				/>
-			</Example>
-
-			<Example id="data-view-states" title="Pending results and recovery" stacked
-				description="Keep the last rows visible while a filter change is in flight. If matching fails, the view labels its fallback data and keeps the filters available for recovery."
-				code={`<DataView data={bookings} columns={columns} filtering={{
-  filters, activeFilters, onFilterChange,
-  isFiltering: pending,
-  filterRows: matchRows,
-  onError: reportError,
-}} />`}>
-				<Stack direction="horizontal" align="center" gap="sm" wrap>
-					<Text size="sm" type="secondary">Result state</Text>
-					<Select aria-label="Result state" value={requestState} className={styles.featureStateSelect}
-						options={[{ value: "ready", label: "Ready" }, { value: "pending", label: "Updating" }, { value: "error", label: "Failed" }]}
-						onValueChange={(value) => value && setRequestState(value)} />
-					{requestState === "error" && <Button tone="neutral" buttonStyle="outline" onClick={() => setRequestState("ready")}>Restore results</Button>}
-				</Stack>
-				<DataView<Booking> data={BOOKINGS.slice(0, 3)} columns={indexColumns}
-					filtering={{ filters: FILTERS, activeFilters: recoveryFilters, onFilterChange: setRecoveryFilters,
-						tabs: TABS, isFiltering: requestState === "pending",
-						filterRows: requestState === "error" ? () => { throw new Error("Preview matcher failure") } : undefined,
-					}}
-					table={{ getRowId: (row) => row.id, emptyStateMessage: "No bookings match your filters",
-						emptyStateAction: <Button tone="neutral" buttonStyle="outline" onClick={() => setRecoveryFilters([])}>Clear filters</Button> }} />
-			</Example>
+			<Example example="data-view/data-view-states" title="Pending results and recovery" stacked
+				description="Keep the last rows visible while a filter change is in flight. If matching fails, the view labels its fallback data and keeps the filters available for recovery." />
 
 			<Example id="data-view-rules" title="What the data view decides" stacked>
 				<Callout label="Rule">
@@ -427,53 +138,11 @@ const pageRows = sortedRows.slice((page - 1) * pageSize, page * pageSize)
 			</Example>
 
 			<Example
-				id="table-cells"
+				example="data-view/table-cells"
 				title="Cells"
 				description="CellValue formats one column's value; CellStack puts two on one line each. Both accept a tuple — [row.total, “money”, { currency }] says the same thing as a four-key object in a quarter of the space, which matters in a file read far more often than it is written."
 				stacked
-				code={`cell: ({ row }) => (
-  <CellStack values={[
-    row.customer,
-    [row.customerEmail, "email"],
-    row.vip && { value: "VIP", kind: "mono" },
-  ]} />
-)`}
-			>
-				<DataTable<Booking>
-					surface="glass"
-					columns={[
-						{
-							id: "who",
-							header: "Customer",
-							accessorKey: "customer",
-							cell: ({ row }) => (
-								<CellStack
-									values={[
-										row.original.customer,
-										[row.original.customerEmail, "email"],
-									]}
-								/>
-							),
-						},
-						{
-							id: "ref",
-							header: "Reference",
-							accessorKey: "reference",
-							cell: ({ row }) => <CellStack values={[[row.original.reference, "mono"]]} />,
-						},
-						{
-							id: "amount",
-							header: "Total",
-							accessorKey: "total",
-							meta: { align: "end" },
-							cell: ({ row }) => (
-								<CellStack values={[[row.original.total, "money", { currency: "EUR" }]]} />
-							),
-						},
-					]}
-					data={BOOKINGS.slice(0, 3)}
-				/>
-			</Example>
+			/>
 
 			<Example
 				id="table-selection"
@@ -521,15 +190,7 @@ const pageRows = sortedRows.slice((page - 1) * pageSize, page * pageSize)
 				</div>
 			</Example>
 
-			<Example id="table-empty" title="Nothing to show" stacked>
-				<DataTable<Booking>
-					surface="glass"
-					columns={tableColumns.slice(0, 3)}
-					data={[]}
-					emptyStateMessage="No bookings match these filters."
-					emptyStateAction={<Button type="button" tone="neutral" buttonStyle="outline">Clear filters</Button>}
-				/>
-			</Example>
+			<Example example="data-view/table-empty" title="Nothing to show" stacked />
 
 			<Example id="table-rules" title="What the table decides" stacked>
 				<Callout label="Rule">

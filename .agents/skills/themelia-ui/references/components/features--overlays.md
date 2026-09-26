@@ -349,43 +349,195 @@ Preview route: Action overlays — `/action-overlays`
 ### ActionDialog
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ActionDialog
-  title="Rename workspace"
-  trigger={<Button>Rename</Button>}
-  onConfirm={save}
-/>
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { FormField } from "themelia-ui/base/forms"
+import { Input } from "themelia-ui/base/text-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ActionDialog } from "themelia-ui/features/overlays"
+
+import { wait } from "./data"
+
+export default function ActionDialogExample() {
+	const [saved, setSaved] = useState<string | null>(null)
+	const [failure, setFailure] = useState<string | null>(null)
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="lg" wrap>
+				<ActionDialog
+					title="Rename workspace"
+					description="The name appears in the sidebar and in invitations."
+					trigger={<Button tone="neutral" buttonStyle="outline">Plain</Button>}
+					onConfirm={() => setSaved("renamed")}
+				>
+					<FormField label="Name">
+						<Input defaultValue="Northwind Traders" />
+					</FormField>
+				</ActionDialog>
+
+				<ActionDialog
+					title="Publish this release?"
+					description="It becomes visible to every workspace member."
+					tone="warning"
+					emphasis
+					showIcon
+					alertMessage="Members are notified by email as soon as it publishes."
+					trigger={<Button tone="neutral" buttonStyle="outline">Toned</Button>}
+					onConfirm={() => setSaved("published")}
+				/>
+
+				<ActionDialog
+					title="Saving takes a moment"
+					description="The confirm shows a spinner and both buttons disable until it settles."
+					trigger={<Button tone="neutral" buttonStyle="outline">Async confirm</Button>}
+					onAsyncConfirm={async () => {
+						await wait(1200)
+						setSaved("saved after a delay")
+					}}
+				/>
+
+				<ActionDialog
+					title="This one fails"
+					alertMessage={failure}
+					tone="destructive"
+					onOpenChange={() => setFailure(null)}
+					description="A rejection leaves the overlay open and reports through onError — closing it would take the form away at the moment you most need to see what went wrong."
+					trigger={<Button tone="neutral" buttonStyle="outline">Async that rejects</Button>}
+					onAsyncConfirm={async () => {
+						await wait(900)
+						throw new Error("Could not reach the server")
+					}}
+					onError={(error) => { setFailure((error as Error).message); setSaved(`failed: ${(error as Error).message}`) }}
+				/>
+			</Stack>
+			{!!saved && (
+				<Text size="sm" type="secondary">
+					last result: {saved}
+				</Text>
+			)}
+		</>
+	)
+}
 ```
 
 ### ConfirmDialog
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ConfirmDialog
-  destructive
-  title="Delete this invoice?"
-  description="This cannot be undone."
-  trigger={<Button tone="destructive">Delete</Button>}
-  onAsyncConfirm={remove}
-/>
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { ConfirmDialog } from "themelia-ui/features/overlays"
+
+import { wait } from "./data"
+
+export default function ConfirmDialogExample() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap>
+			<ConfirmDialog
+				title="Discard your changes?"
+				description="The draft has unsaved edits."
+				trigger={<Button tone="neutral" buttonStyle="outline">Neutral</Button>}
+			/>
+			<ConfirmDialog
+				destructive
+				title="Delete this invoice?"
+				description="INV-4417 will be removed from the workspace."
+				alertMessage="This cannot be undone."
+				trigger={<Button tone="destructive">Destructive</Button>}
+				onAsyncConfirm={() => wait(900)}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### ActionSheet
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ActionSheet
-  side="inline-end"
-  title="Filters"
-  modality="non-modal"
-  trigger={<Button>Filter</Button>}
-/>
+import { Button } from "themelia-ui/base/buttons"
+import { FormField } from "themelia-ui/base/forms"
+import { Input } from "themelia-ui/base/text-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { ActionSheet } from "themelia-ui/features/overlays"
+
+import { wait } from "./data"
+
+export default function ActionSheetExample() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap>
+			<ActionSheet
+				title="Edit invoice"
+				description="Longer work than a dialog comfortably holds."
+				trigger={<Button tone="neutral" buttonStyle="outline">Modal sheet</Button>}
+				onAsyncConfirm={() => wait(700)}
+			>
+				<Stack gap="md">
+					<FormField label="Reference">
+						<Input defaultValue="INV-4417" />
+					</FormField>
+					<FormField label="Customer">
+						<Input defaultValue="Northwind Traders" />
+					</FormField>
+				</Stack>
+			</ActionSheet>
+
+			<ActionSheet
+				title="Filters"
+				description="The page stays interactive behind it."
+				modality="non-modal"
+				showFooter={false}
+				inset
+				trigger={<Button tone="neutral" buttonStyle="outline">Non-modal inspector</Button>}
+			>
+				<Text size="sm" type="secondary">
+					Scroll and click the page behind this panel — it is not inert.
+				</Text>
+			</ActionSheet>
+		</Stack>
+	)
+}
 ```
 
 ### Driving them from elsewhere
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-const overlays = useOverlayVisibilityGroup(["edit", "remove"], {
-  closeOthersOnOpen: true,
-})
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import {
+	ActionDialog, ConfirmDialog, useOverlayVisibilityGroup,
+} from "themelia-ui/features/overlays"
 
-<Button onClick={overlays.edit.show}>Edit</Button>
-<ActionDialog {...overlays.edit.overlayProps} title="Edit" />
+export default function OverlayVisibility() {
+	const overlays = useOverlayVisibilityGroup(["edit", "remove"] as const, {
+		closeOthersOnOpen: true,
+	})
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="lg" wrap>
+				<Button tone="neutral" buttonStyle="outline" onClick={overlays.edit.show}>
+					Open edit
+				</Button>
+				<Button tone="neutral" buttonStyle="outline" onClick={overlays.remove.show}>
+					Open remove
+				</Button>
+			</Stack>
+
+			<ActionDialog
+				{...overlays.edit.overlayProps}
+				title="Edit"
+				description="Opened from the button beside this one, not from a trigger."
+			/>
+			<ConfirmDialog
+				{...overlays.remove.overlayProps}
+				destructive
+				title="Remove?"
+				description="Opening this one closes the other — closeOthersOnOpen."
+			/>
+		</>
+	)
+}
 ```

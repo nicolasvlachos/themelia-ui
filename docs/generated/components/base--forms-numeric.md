@@ -440,37 +440,153 @@ Preview route: Currency input — `/currency-input`
 ### CurrencyInput
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<CurrencyInput
-  value={amount}
-  onChange={(e) => setAmount(e.target.value)}
-  currency={currency}
-  onCurrencyChange={setCurrency}
-/>
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { CurrencyInput } from "themelia-ui/base/forms-numeric"
+import { Stack } from "themelia-ui/base/structure"
+
+
+export default function Currency() {
+	const [amount, setAmount] = useState("1299.50")
+	const [currency, setCurrency] = useState("EUR")
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Invoice total">
+				<CurrencyInput
+					value={amount}
+					onChange={(event) => setAmount(event.target.value)}
+					currency={currency}
+					onCurrencyChange={setCurrency}
+					currencies={["EUR", "USD", "GBP"]}
+				/>
+			</FormField>
+			<FormField label="Selector at the end">
+				<CurrencyInput defaultValue="49.00" defaultCurrency="USD" currencyPosition="end" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### DecimalInput
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DecimalInput decimalPlaces={2} min={0} max={100} step={0.5} />
+import { FormField } from "themelia-ui/base/forms"
+import { DecimalInput } from "themelia-ui/base/forms-numeric"
+import { Stack } from "themelia-ui/base/structure"
+
+
+export default function Decimal() {
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Plain" helperText="Commas become dots; extra decimals are refused.">
+				<DecimalInput defaultValue="12.5" decimalPlaces={2} />
+			</FormField>
+			<FormField label="With steppers" helperText="Steps snap relative to min, not to zero.">
+				<DecimalInput defaultValue="10" min={5} max={50} step={10} decimalPlaces={0} />
+			</FormField>
+			<FormField label="Bankers' rounding" helperText="half-even, so halves do not accumulate a bias across many rows.">
+				<DecimalInput defaultValue="2.345" decimalPlaces={2} roundingMode="half-even" />
+			</FormField>
+			<FormField label="Invalid" error="Enter an amount.">
+				<DecimalInput aria-invalid defaultValue="" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### RoundingModeSelect
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<RoundingModeSelect value={mode} onValueChange={setMode} />
-<DecimalInput decimalPlaces={2} roundingMode={mode} />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { DecimalInput, RoundingModeSelect, type RoundingMode } from "themelia-ui/base/forms-numeric"
+import { Stack } from "themelia-ui/base/structure"
+
+
+export default function RoundingModeExample() {
+	const [mode, setMode] = useState<RoundingMode>("half-even")
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Rounding" helperText="Applies to the field below.">
+				<RoundingModeSelect
+					value={mode}
+					modes={["floor", "round", "ceil", "half-even"]}
+					onValueChange={(next) => next && setMode(next)}
+				/>
+			</FormField>
+			<FormField label="Amount" helperText="Type 2.345 and blur.">
+				<DecimalInput defaultValue="2.345" decimalPlaces={2} roundingMode={mode} />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### PercentageInput
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PercentageInput defaultValue="21" />
+import { FormField } from "themelia-ui/base/forms"
+import { PercentageInput } from "themelia-ui/base/forms-numeric"
+import { Stack } from "themelia-ui/base/structure"
+
+
+export default function Percentage() {
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="VAT rate">
+				<PercentageInput defaultValue="21" />
+			</FormField>
+			<FormField label="With steppers">
+				<PercentageInput defaultValue="50" step={5} decimalPlaces={0} />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Weight, dimensions, coordinates
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<WeightInput value={weight} onChange={(e) => setWeight(e.target.value)} />
-<DimensionsInput value={dimensions} onValueChange={setDimensions} />
-<CoordinatesInput value={coordinates} onValueChange={setCoordinates} />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import {
+	CoordinatesInput,
+	DimensionsInput,
+	WeightInput,
+	type CoordinatesValue,
+	type DimensionsValue,
+} from "themelia-ui/base/forms-numeric"
+import { Stack } from "themelia-ui/base/structure"
+
+
+export default function Units() {
+	const [weight, setWeight] = useState("2.4")
+	const [dimensions, setDimensions] = useState<DimensionsValue>({ length: "30", width: "20", height: "12" })
+	const [coordinates, setCoordinates] = useState<CoordinatesValue>({ latitude: "52.370216", longitude: "4.895168" })
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+			<FormField label="Shipping weight">
+				<WeightInput
+					value={weight}
+					onChange={(event) => setWeight(event.target.value)}
+					defaultUnit="kg"
+				/>
+			</FormField>
+			<FormField label="Package">
+				<DimensionsInput value={dimensions} onValueChange={setDimensions} defaultUnit="cm" />
+			</FormField>
+			<FormField label="Warehouse" helperText="Latitude is ±90, longitude ±180 — bounded separately.">
+				<CoordinatesInput value={coordinates} onValueChange={setCoordinates} />
+			</FormField>
+		</Stack>
+	)
+}
 ```

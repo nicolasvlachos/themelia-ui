@@ -148,33 +148,134 @@ Preview route: Popover menu — `/popover-menu`
 ### PopoverMenu
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PopoverMenu
-  trigger={<Button buttonStyle="outline">Owner</Button>}
-  items={owners}
-  onSelect={(item) => setOwner(item.value)}
-/>
+import { useState } from "react"
+import { ChevronDownIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { PopoverMenu } from "themelia-ui/base/popover-menu"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+import { OWNERS } from "./_shared"
+
+export default function PopoverMenuExample() {
+	const [owner, setOwner] = useState("jane")
+
+	return (
+		<Stack direction="horizontal" gap="xl" align="center">
+			<PopoverMenu
+				trigger={
+					<Button buttonStyle="outline" tone="neutral">
+						Owner
+						<ChevronDownIcon />
+					</Button>
+				}
+				items={OWNERS.map((item) => ({ ...item, selected: item.value === owner }))}
+				onSelect={(item) => setOwner(item.value)}
+				header={
+					<Text size="xs" type="secondary">
+						Assign to
+					</Text>
+				}
+			/>
+			<PopoverMenu
+				trigger={
+					<Button buttonStyle="outline" tone="neutral">
+						No search
+						<ChevronDownIcon />
+					</Button>
+				}
+				search={false}
+				items={OWNERS.slice(0, 3)}
+				onSelect={() => {}}
+			/>
+			<PopoverMenu
+				trigger={
+					<Button buttonStyle="outline" tone="neutral">
+						Loading
+						<ChevronDownIcon />
+					</Button>
+				}
+				loading
+				items={[]}
+				onSelect={() => {}}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### Error and minimum search
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PopoverMenu
-  trigger={<Button buttonStyle="outline">Owner</Button>}
-  items={owners}
-  error={query.isError}
-  onRetry={query.refetch}
-  onSelect={(item) => setOwner(item.value)}
-/>
+import { useState } from "react"
+import { ChevronDownIcon } from "lucide-react"
 
-<PopoverMenu trigger={trigger} items={owners} minSearchLength={2} onSelect={pick} />
+import { Button } from "themelia-ui/base/buttons"
+import { PopoverMenu } from "themelia-ui/base/popover-menu"
+import { Stack } from "themelia-ui/base/structure"
+
+import { OWNERS } from "./_shared"
+
+export default function PopoverMenuStates() {
+	const [failed, setFailed] = useState(true)
+
+	return (
+		<Stack direction="horizontal" gap="xl" align="center">
+			<PopoverMenu
+				trigger={
+					<Button buttonStyle="outline" tone="neutral">
+						Failed load
+						<ChevronDownIcon />
+					</Button>
+				}
+				items={failed ? [] : OWNERS}
+				error={failed}
+				onRetry={() => setFailed(false)}
+				onSelect={() => setFailed(true)}
+			/>
+			<PopoverMenu
+				trigger={
+					<Button buttonStyle="outline" tone="neutral">
+						Two characters
+						<ChevronDownIcon />
+					</Button>
+				}
+				items={OWNERS}
+				minSearchLength={2}
+				onSelect={() => {}}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### PopoverMenuPanel
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PopoverMenuPanel
-  search={false}
-  items={owners.map((owner) => ({ ...owner, selected: picked.includes(owner.value) }))}
-  onSelect={(item) => toggle(item.value)}
-/>
+import { useState } from "react"
+
+import { PopoverMenuPanel } from "themelia-ui/base/popover-menu"
+
+import { OWNERS } from "./_shared"
+
+export default function PopoverMenuPanelExample() {
+	const [picked, setPicked] = useState<string[]>(["raj"])
+
+	return (
+		<div style={{ maxWidth: "16rem", width: "100%" }}>
+			<PopoverMenuPanel
+				search={false}
+				items={OWNERS.map((item) => ({ ...item, selected: picked.includes(item.value) }))}
+				onSelect={(item) =>
+					setPicked((current) =>
+						current.includes(item.value)
+							? current.filter((value) => value !== item.value)
+							: [...current, item.value],
+					)
+				}
+			/>
+		</div>
+	)
+}
 ```

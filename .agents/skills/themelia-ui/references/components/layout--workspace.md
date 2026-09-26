@@ -268,21 +268,84 @@ Preview route: Workspace record header — `/workspace-header`
 ### WorkspaceRecordHeader
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<WorkspaceRecordHeader
-  title="Invoice #4417"
-  media={<Avatar />}
-  badges={<Badge tone="success" dot>Paid</Badge>}
-  metadata={[{ label: "Owner", value: "Jane McDonald" }]}
-  actions={<Button>Edit</Button>}
-/>
+import { Avatar, AvatarFallback } from "themelia-ui/base/avatar"
+import { Badge } from "themelia-ui/base/badge"
+import { Button } from "themelia-ui/base/buttons"
+import { Card } from "themelia-ui/base/cards"
+import { WorkspaceRecordHeader } from "themelia-ui/layout/workspace"
+import { Money } from "themelia-ui/primitives"
+
+export default function RecordHeader() {
+	return (
+		<Card surface="bordered" style={{ width: "100%" }}>
+			<WorkspaceRecordHeader
+				title="Invoice #4417"
+				description="Northwind Traders — issued 1 September 2026."
+				media={
+					<Avatar size="lg">
+						<AvatarFallback>NT</AvatarFallback>
+					</Avatar>
+				}
+				badges={<Badge tone="success" dot>Paid</Badge>}
+				metadata={[
+					{ label: "Owner", value: "Jane McDonald" },
+					{ label: "Amount", value: <Money amount={1299.5} currency="EUR" /> },
+					{ label: "Terms", value: "Net 30" },
+				]}
+				actions={
+					<>
+						<Button tone="neutral" buttonStyle="outline">Duplicate</Button>
+						<Button>Edit</Button>
+					</>
+				}
+			/>
+		</Card>
+	)
+}
 ```
 
 ### Two tiers of action
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<WorkspaceRecordHeader
-  title="Deployment 41a9c2"
-  actions={<Button>Redeploy</Button>}
-  secondaryActions={<PillRadioGroup options={views} />}
-/>
+import { useState } from "react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Button } from "themelia-ui/base/buttons"
+import { Card } from "themelia-ui/base/cards"
+import { PillRadioGroup } from "themelia-ui/base/choice-inputs"
+import { WorkspaceRecordHeader } from "themelia-ui/layout/workspace"
+
+function ViewSwitch() {
+	const [view, setView] = useState<string | null>("logs")
+	return (
+		<PillRadioGroup
+			value={view}
+			onValueChange={setView}
+			options={[
+				{ value: "logs", label: "Logs" },
+				{ value: "assets", label: "Assets" },
+				{ value: "timing", label: "Timing" },
+			]}
+		/>
+	)
+}
+
+export default function RecordHeaderSecondary() {
+	return (
+		<Card surface="bordered" style={{ width: "100%" }}>
+			<WorkspaceRecordHeader
+				title="Deployment 41a9c2"
+				headingLevel={2}
+				description="main → production, 4 minutes ago."
+				badges={<Badge tone="warning" dot pulse>Building</Badge>}
+				metadata={[
+					{ label: "Branch", value: "main" },
+					{ label: "Author", value: "Raj Patel" },
+				]}
+				actions={<Button tone="neutral" buttonStyle="outline">Cancel</Button>}
+				secondaryActions={<ViewSwitch />}
+			/>
+		</Card>
+	)
+}
 ```

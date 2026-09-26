@@ -579,36 +579,41 @@ the nearest `UIPortalHost`, else `undefined` so the primitive keeps its own defa
 
 ## Preview recipes
 
-Preview route: Dropdown & context menu — `/dropdown-menu`
-
-### Dark by default, decided by the provider
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ overlay: { darkMenus: false } }}>
-  <App />
-</UIProvider>
-```
+Preview route: Form field — `/form-field`
 
 ### Scale
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Scope vars={{ "--density-scale": 0.875 }}>…</Scope>
-```
+import { Stack } from "themelia-ui/base/structure"
+import { Input, NativeSelect } from "themelia-ui/base/text-inputs"
+import { MonoValue } from "themelia-ui/primitives"
+import { Scope } from "themelia-ui/ui-provider"
 
-### Decided once, not per call site
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ defaults: { sheet: { size: "26rem", inset: true } } }}>
-  <App />
-</UIProvider>
-```
-
-### A blurred scrim, when a product wants one
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ overlay: { backdropBlur: 4 } }}>
-  <App />
-</UIProvider>
+export default function FormsScale() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{[1, 0.875, 1.125].map((scale) => (
+				<Scope key={scale} vars={{ "--density-scale": scale }}>
+					<Stack direction="horizontal" gap="md" align="center" justify="start">
+						{/* Widths on the wrappers: Input's style lands on the inner control, not its frame. */}
+						<MonoValue size="xs" style={{ width: "3.5rem", flexShrink: 0, fontSize: "0.75rem" }}>
+							{scale}
+						</MonoValue>
+						{/* Named even in a geometry demo: a placeholder is not a label. */}
+						<div style={{ width: "12rem", flexShrink: 0 }}>
+							<Input placeholder="Field" aria-label={`Example field at density ${scale}`} />
+						</div>
+						<div style={{ width: "9rem", flexShrink: 0 }}>
+							<NativeSelect defaultValue="a" aria-label={`Example select at density ${scale}`}>
+								<option value="a">Option</option>
+							</NativeSelect>
+						</div>
+					</Stack>
+				</Scope>
+			))}
+		</Stack>
+	)
+}
 ```
 
 ### In another language
@@ -627,100 +632,339 @@ import { de } from "date-fns/locale"
 ### The factor
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ scale: 0.875 }}>
-  <Toolbar />
-</UIProvider>
+import { Stack } from "themelia-ui/base/structure"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+import { ControlRow } from "./_shared"
+
+const FACTORS = [0.75, 0.875, 1, 1.125, 1.25] as const
+
+export default function TheFactor() {
+	return (
+		<>
+			{FACTORS.map((scale) => (
+				<UIProvider key={scale} config={{ scale }}>
+					<Stack direction="horizontal" gap="lg" align="center">
+						<code style={{ width: "4rem", fontSize: "var(--text-xs)" }}>{scale}</code>
+						<ControlRow />
+					</Stack>
+				</UIProvider>
+			))}
+		</>
+	)
+}
 ```
 
-### Why not size props
+### Type can override the master factor
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-{/* smaller type, control geometry untouched */}
-<UIProvider config={{ typography: { scale: 0.875 } }}>…</UIProvider>
+import { Button } from "themelia-ui/base/buttons"
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
 
-{/* denser geometry, type held at its default */}
-<UIProvider config={{ scale: 0.875, typography: { scale: 1 } }}>…</UIProvider>
+export default function TypeFactor() {
+	return (
+		<Stack gap="lg">
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">typography.scale 0.875 — type shrinks, control geometry holds</Text>
+				<UIProvider config={{ typography: { scale: 0.875 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">scale 0.875 + typography.scale 1 — geometry shrinks, type holds</Text>
+				<UIProvider config={{ scale: 0.875, typography: { scale: 1 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
 ### Two levels of control
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-/* everything denser */
-<UIProvider config={{ scale: 0.875 }}>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { Scope } from "themelia-ui/ui-provider"
 
-/* heights and rows only — gaps untouched */
-<Scope vars={{ "--density-scale": 0.875 }}>
+import { ControlRow } from "./_shared"
 
-/* gaps and padding only — control heights untouched */
-<Scope vars={{ "--density-scale": 0.875 }}>
-
-/* one measurement, leaving everything else alone */
-<Scope vars={{ "--button-h": "2.75rem" }}>
-
-/* a plain div does NOT work: overriding a factor needs a scope
-   boundary, or the measurements above it have already resolved. */
+export default function FactorChain() {
+	return (
+		<Stack gap="lg">
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">default</Text>
+				<ControlRow />
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--density-scale: 0.8 — heights and rows tighten, gaps hold</Text>
+				<Scope vars={{ "--density-scale": 0.8 }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--density-scale: 1.4 — gaps open, control heights hold</Text>
+				<Scope vars={{ "--density-scale": 1.4 }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--button-h: 2.75rem — one measurement</Text>
+				<Scope vars={{ "--button-h": "2.75rem" }}>
+					<ControlRow />
+				</Scope>
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
-### Why two factors, and no third
+### Nesting
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ scale: 1.125 }}>
-  <Page>
-    <UIProvider config={{ scale: 0.875 }}>
-      <Toolbar />
-    </UIProvider>
-  </Page>
-</UIProvider>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+import { ControlRow } from "./_shared"
+
+export default function Nesting() {
+	return (
+		<UIProvider config={{ scale: 1.125 }}>
+			<Stack gap="lg">
+				<Text type="secondary" size="sm">
+					Outer scope — 1.125
+				</Text>
+				<ControlRow />
+				<UIProvider config={{ scale: 0.8 }}>
+					<Stack gap="md">
+						<Text type="secondary" size="sm">
+							Nested scope — 0.8
+						</Text>
+						<ControlRow />
+					</Stack>
+				</UIProvider>
+			</Stack>
+		</UIProvider>
+	)
+}
 ```
 
 ### Density presets
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ density: "compact" }}>…</UIProvider>
+import { Stack } from "themelia-ui/base/structure"
+import { UIProvider } from "themelia-ui/ui-provider"
 
-{/* or, with no provider at all */}
-<div data-density="compact">…</div>
+import { ControlRow } from "./_shared"
+
+export default function Density() {
+	return (
+		<>
+			{(["compact", "default", "comfortable"] as const).map((density) => (
+				<UIProvider key={density} config={{ density }}>
+					<Stack direction="horizontal" gap="lg" align="center">
+						<code style={{ width: "7rem", fontSize: "var(--text-xs)" }}>{density}</code>
+						<ControlRow />
+					</Stack>
+				</UIProvider>
+			))}
+		</>
+	)
+}
 ```
 
-### Semantic tier
+### Density
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIProvider config={{ theme: { colors: { primary: "oklch(0.55 0.2 25)" } } }}>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { Scope } from "themelia-ui/ui-provider"
+
+import { InvoiceTable } from "./_shared"
+
+export default function TableScale() {
+	return (
+		/*
+		 * Both, captioned. On its own the scoped table just looked like a table —
+		 * the section asserted a difference the page gave the reader no way to see.
+		 */
+		<Stack gap="lg" style={{ width: "100%" }}>
+			<Stack gap="xs" style={{ width: "100%" }}>
+				<Text size="xs" type="secondary">--density-scale: 1</Text>
+				<InvoiceTable />
+			</Stack>
+			<Stack gap="xs" style={{ width: "100%" }}>
+				<Text size="xs" type="secondary">--density-scale: 0.85</Text>
+				<Scope vars={{ "--density-scale": 0.85 }} style={{ width: "100%" }}>
+					<InvoiceTable />
+				</Scope>
+			</Stack>
+		</Stack>
+	)
+}
+```
+
+### Scoped theming
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function ScopedTheming() {
+	return (
+		<div style={{ display: "flex", gap: ".75rem", alignItems: "center", flexWrap: "wrap" }}>
+			<Button>root</Button>
+			<UIProvider config={{ theme: { colors: { primary: "oklch(0.55 0.2 25)" } } }}>
+				<Button>scoped red</Button>
+			</UIProvider>
+			<UIProvider config={{ theme: { colors: { primary: "oklch(0.5 0.2 265)" } } }}>
+				<Button>scoped blue</Button>
+			</UIProvider>
+			<UIProvider config={{ density: "compact" }}>
+				<Button>compact</Button>
+			</UIProvider>
+			<UIProvider config={{ density: "comfortable" }}>
+				<Button>comfortable</Button>
+			</UIProvider>
+		</div>
+	)
+}
 ```
 
 ### A scope is a region
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIScope config={{ density: "compact" }}>
-  <Toolbar />
-</UIScope>
+import { Grid, GridCell } from "themelia-ui/base/structure"
+import { UIScope } from "themelia-ui/ui-provider"
+
+import { Sample } from "./_shared"
+
+export default function UiScopeDensity() {
+	return (
+		<Grid columns={3} gap="lg">
+			{(["compact", "default", "comfortable"] as const).map((density) => (
+				<GridCell key={density}>
+					<UIScope config={{ density }}>
+						<Sample label={`density="${density}"`} />
+					</UIScope>
+				</GridCell>
+			))}
+		</Grid>
+	)
+}
 ```
 
 ### Nesting merges
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIScope config={{ colorScheme: "dark" }}>
-  <UIScope config={{ density: "compact" }}>…</UIScope>
-</UIScope>
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIScope } from "themelia-ui/ui-provider"
+
+import { Sample } from "./_shared"
+
+export default function UiScopeNesting() {
+	return (
+		<UIScope config={{ colorScheme: "dark" }} transparent={false} style={{ padding: "var(--space-xl)", borderRadius: "var(--radius)", background: "var(--background)" }}>
+			<Stack gap="lg">
+				<Text size="xs" type="secondary">
+					outer: colorScheme=&quot;dark&quot;
+				</Text>
+				<UIScope config={{ density: "compact" }}>
+					<Sample label="inner: density=&quot;compact&quot;, theme inherited" />
+				</UIScope>
+			</Stack>
+		</UIScope>
+	)
+}
 ```
 
 ### render decides the element
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIScope render={<aside />} config={{ density: "compact" }}>…</UIScope>
+import { Text } from "themelia-ui/base/typography"
+import { UIScope } from "themelia-ui/ui-provider"
+
+export default function UiScopeRender() {
+	return (
+		<UIScope
+			render={<aside />}
+			transparent={false}
+			config={{ density: "compact" }}
+			style={{ padding: "var(--space-lg)", border: "var(--border-width) solid var(--border)", borderRadius: "var(--radius)" }}
+		>
+			<Text size="xs" type="secondary">
+				This scope is a real &lt;aside&gt;, at compact density.
+			</Text>
+		</UIScope>
+	)
+}
 ```
 
 ### Popups stay inside the scope
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<UIScope config={{ density: "compact" }}>
-  <UIPortalHost>
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<Button>Actions</Button>} />
-      <DropdownMenuContent>
-        <DropdownMenuItem>Duplicate</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </UIPortalHost>
-</UIScope>
+import { Button } from "themelia-ui/base/buttons"
+import {
+	DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "themelia-ui/base/dropdown-menu"
+import { Grid, GridCell, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIPortalHost, UIScope } from "themelia-ui/ui-provider"
+
+/** One menu, rendered twice, so the only difference is whether a host is above it. */
+function ActionsMenu() {
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger render={<Button buttonStyle="outline">Actions</Button>} />
+			<DropdownMenuContent>
+				<DropdownMenuItem>Duplicate</DropdownMenuItem>
+				<DropdownMenuItem>Move to…</DropdownMenuItem>
+				<DropdownMenuItem>Archive</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	)
+}
+
+export default function UiPortalHostExample() {
+	return (
+		<Grid columns={2} gap="lg">
+			<GridCell>
+				<Stack gap="sm">
+					<Text size="xs" type="secondary">
+						Compact scope, no host — the menu portals to the body
+					</Text>
+					<UIScope config={{ density: "compact" }}>
+						<ActionsMenu />
+					</UIScope>
+				</Stack>
+			</GridCell>
+			<GridCell>
+				<Stack gap="sm">
+					<Text size="xs" type="secondary">
+						Compact scope with a host — the menu is compact too
+					</Text>
+					<UIScope config={{ density: "compact" }}>
+						<UIPortalHost>
+							<ActionsMenu />
+						</UIPortalHost>
+					</UIScope>
+				</Stack>
+			</GridCell>
+		</Grid>
+	)
+}
 ```

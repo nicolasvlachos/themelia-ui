@@ -81,15 +81,44 @@ Preview route: Badge — `/badge`
 ### Tones
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Badge tone="success">Paid</Badge>
-<Badge tone="warning" variant="solid">Due</Badge>
-<Badge tone="destructive" variant="outline">Overdue</Badge>
+import { Badge, type BadgeTone } from "themelia-ui/base/badge"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+const TONES: BadgeTone[] = ["neutral", "primary", "secondary", "success", "info", "warning", "destructive"]
+
+export default function BadgeTones() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{(["soft", "solid", "outline"] as const).map((variant) => (
+				<Stack key={variant} gap="xs">
+					<Text size="xs" type="secondary">{variant}</Text>
+					<Stack direction="horizontal" gap="sm" wrap>
+						{TONES.map((tone) => (
+							<Badge key={tone} tone={tone} variant={variant}>{tone}</Badge>
+						))}
+					</Stack>
+				</Stack>
+			))}
+		</Stack>
+	)
+}
 ```
 
 ### Status dot
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Badge tone="success" dot>Live</Badge>
-<Badge tone="warning" dot pending>Queued</Badge>
-<Badge tone="info" dot pulse>Syncing</Badge>
+import { Badge } from "themelia-ui/base/badge"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function BadgeDot() {
+	return (
+		<Stack direction="horizontal" gap="sm" wrap>
+			<Badge tone="success" dot>Live</Badge>
+			<Badge tone="warning" dot pending>Queued</Badge>
+			<Badge tone="info" dot pulse>Syncing</Badge>
+			<Badge tone="destructive" dot>Failed</Badge>
+		</Stack>
+	)
+}
 ```

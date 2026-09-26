@@ -155,56 +155,160 @@ Preview route: Timeline — `/timeline`
 ### An order's progress
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Timeline
-  items={[
-    { id: "placed", title: "Order placed", timestamp: "14 Aug, 09:12", icon: CheckIcon, status: "completed" },
-    { id: "transit", title: "In transit", timestamp: "16 Aug, 06:02", icon: TruckIcon, status: "current" },
-    { id: "delivered", title: "Delivered", timestamp: "Expected 18 Aug", status: "pending" },
-  ]}
-/>
+import { CheckIcon, CreditCardIcon, PackageIcon, TruckIcon } from "lucide-react"
+
+import { Timeline, type TimelineItem } from "themelia-ui/base/timeline"
+
+const ORDER: TimelineItem[] = [
+	{
+		id: "placed",
+		title: "Order placed",
+		description: "Eight items, paid in full.",
+		timestamp: "14 Aug, 09:12",
+		icon: CheckIcon,
+		status: "completed",
+	},
+	{
+		id: "paid",
+		title: "Payment captured",
+		description: "Visa ending 4417.",
+		timestamp: "14 Aug, 09:12",
+		icon: CreditCardIcon,
+		status: "completed",
+	},
+	{
+		id: "packed",
+		title: "Packed",
+		timestamp: "15 Aug, 11:40",
+		icon: PackageIcon,
+		status: "completed",
+	},
+	{
+		id: "transit",
+		title: "In transit",
+		description: "Left the Rotterdam depot.",
+		timestamp: "16 Aug, 06:02",
+		icon: TruckIcon,
+		status: "current",
+	},
+	{
+		id: "delivered",
+		title: "Delivered",
+		timestamp: "Expected 18 Aug",
+		status: "pending",
+	},
+]
+
+export default function TimelineDefault() {
+	return (
+		<Timeline items={ORDER} />
+	)
+}
 ```
 
 ### Statuses
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Timeline items={[{ id: "1", title: "Packed", status: "completed" }]} />
+import { CircleDotIcon } from "lucide-react"
+
+import { Timeline, type TimelineItem } from "themelia-ui/base/timeline"
+
+const STATUSES: TimelineItem[] = [
+	{ id: "completed", title: "completed", description: "It happened, and it went as intended.", status: "completed" },
+	{ id: "current", title: "current", description: "Where the thing is right now.", icon: CircleDotIcon, status: "current" },
+	{ id: "warning", title: "warning", description: "It happened, but it needs a look.", status: "warning" },
+	{ id: "destructive", title: "destructive", description: "It failed. Never \"error\" — the kit has one word for this.", status: "destructive" },
+	{ id: "pending", title: "pending", description: "It has not happened yet, so the dot is unfilled.", status: "pending" },
+	{ id: "neutral", title: "neutral", description: "It happened and carries no judgement. The default.", status: "neutral" },
+]
+
+export default function TimelineStatuses() {
+	return (
+		<Timeline items={STATUSES} />
+	)
+}
 ```
 
 ### Entries that carry more than a line
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Timeline
-  items={[
-    {
-      id: "refund",
-      title: "Refund issued",
-      status: "warning",
-      children: <Badge tone="warning">Partial</Badge>,
-    },
-  ]}
-/>
+import { UndoIcon } from "lucide-react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Stack } from "themelia-ui/base/structure"
+import { Timeline, type TimelineItem } from "themelia-ui/base/timeline"
+
+const WITH_CONTENT: TimelineItem[] = [
+	{
+		id: "refund",
+		title: "Refund issued",
+		timestamp: "17 Aug, 14:20",
+		icon: UndoIcon,
+		status: "warning",
+		children: (
+			<Stack direction="horizontal" gap="sm">
+				<Badge tone="warning">Partial</Badge>
+				<Badge tone="neutral">€ 42.00</Badge>
+			</Stack>
+		),
+	},
+	{
+		id: "note",
+		title: "Note added",
+		timestamp: "17 Aug, 14:26",
+		status: "neutral",
+		// A sentence is a description; `children` is for blocks, and pays a block's gap.
+		description: "Customer reported one damaged item on arrival.",
+	},
+]
+
+export default function TimelineContent() {
+	return (
+		<Timeline items={WITH_CONTENT} />
+	)
+}
 ```
 
-### Props
+### Stepper
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Stepper
-  steps={[
-    { id: "account", label: "Account", hint: "Who you are", status: "completed" },
-    { id: "shipping", label: "Shipping", status: "current" },
-    { id: "review", label: "Review", status: "upcoming" },
-  ]}
-/>
+import { Stack } from "themelia-ui/base/structure"
+import { Stepper } from "themelia-ui/base/timeline"
 
-<Stepper variant="trail" steps={steps} />
+import { WIZARD } from "./data"
+
+export default function StepperDefault() {
+	return (
+		<Stack gap="2xl">
+			<Stepper steps={WIZARD} />
+			<Stepper variant="trail" steps={WIZARD} />
+		</Stack>
+	)
+}
 ```
 
 ### Going back a step
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Stepper
-  variant="trail"
-  steps={steps}
-  onStepClick={(id, index) => setCurrent(index)}
-/>
+import { useState } from "react"
+
+import { Stepper } from "themelia-ui/base/timeline"
+
+import { WIZARD } from "./data"
+
+/* The caller owns the position; a press on a finished step makes it current again. */
+function PressableTrail() {
+	const [current, setCurrent] = useState(2)
+	const steps = WIZARD.map((step, index) => ({
+		...step,
+		status: index < current ? ("completed" as const) : index === current ? ("current" as const) : ("upcoming" as const),
+	}))
+	return <Stepper variant="trail" steps={steps} onStepClick={(_, index) => setCurrent(index)} />
+}
+
+export default function StepperPressable() {
+	return (
+		<PressableTrail />
+	)
+}
 ```

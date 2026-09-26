@@ -343,20 +343,65 @@ Preview route: Header — `/header`
 ### Header
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Header
-  breadcrumbs={[{ label: "Billing", href: "/billing" }, { label: "Invoices" }]}
-  slots={{
-    center: <SearchInput />,
-    right: <><Notifications /><Account /></>,
-  }}
-/>
+import { BellIcon, PlusIcon } from "lucide-react"
+
+import { Avatar, AvatarFallback } from "themelia-ui/base/avatar"
+import { Button } from "themelia-ui/base/buttons"
+import { SearchInput } from "themelia-ui/base/text-inputs"
+import { Header } from "themelia-ui/layout/header"
+
+import { FRAME, FRAME_BODY } from "./data"
+
+export default function HeaderExample() {
+	return (
+		<div style={FRAME}>
+			<Header
+				breadcrumbs={[{ label: "Billing", href: "#/header" }, { label: "Invoices" }]}
+				slots={{
+					center: <SearchInput placeholder="Search invoices…" />,
+					right: (
+						<>
+							<Button tone="neutral" buttonStyle="outline">
+								<PlusIcon />
+								New
+							</Button>
+							<Button iconOnly tone="neutral" buttonStyle="ghost" aria-label="Notifications">
+								<BellIcon />
+							</Button>
+							<Avatar size="sm">
+								<AvatarFallback>JM</AvatarFallback>
+							</Avatar>
+						</>
+					),
+				}}
+			/>
+			<div style={FRAME_BODY} />
+		</div>
+	)
+}
 ```
 
 ### Breadcrumbs are built in
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Header
-  homeCrumb={{ label: "Home", href: "/" }}
-  breadcrumbs={[{ label: "Settings", href: "/settings" }, { label: "Members" }]}
-/>
+import { Header } from "themelia-ui/layout/header"
+
+import { FRAME, FRAME_BODY } from "./data"
+
+export default function HeaderBreadcrumbsExample() {
+	return (
+		<div style={FRAME}>
+			<Header
+				homeCrumb={{ label: "Home", href: "#/header" }}
+				/* A second trail on the page needs a distinct landmark name. */
+				breadcrumbsStrings={{ label: "Settings breadcrumb example" }}
+				breadcrumbs={[
+					{ label: "Settings", href: "#/settings-shell" },
+					{ label: "Members" },
+				]}
+			/>
+			<div style={FRAME_BODY} />
+		</div>
+	)
+}
 ```

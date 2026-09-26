@@ -1,10 +1,3 @@
-import { Avatar, AvatarFallback } from "@/components/base/avatar"
-import {
-	HoverCard, HoverCardContent, HoverCardTrigger,
-} from "@/components/base/hover-card"
-import { Stack } from "@/components/base/structure"
-import { Text, TextLink } from "@/components/base/typography"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
@@ -19,37 +12,11 @@ export function HoverCardPage() {
 			exports={["HoverCard", "HoverCardTrigger", "HoverCardContent"]}
 		>
 			<Example
-				id="hover-card"
+				example="hover-card/hover-card"
 				title="HoverCard"
 				description="A preview that opens on hover. Distinct from Tooltip in what it may CONTAIN: a tooltip is a short string and is not reachable, this is a surface with structure a reader can move into. That is why it has a close delay — the gap between trigger and card is exactly where the pointer travels to read it."
 				stacked
-				code={`<HoverCard>
-  <HoverCardTrigger render={<TextLink href="/people/jane" />}>@jane</HoverCardTrigger>
-  <HoverCardContent>…</HoverCardContent>
-</HoverCard>`}
-			>
-				<Text>
-					Assigned to{" "}
-					<HoverCard>
-						{/* A real link, as the rule below asks: the card previews where it goes. */}
-						<HoverCardTrigger render={<TextLink href="/people/jane" onClick={(event) => event.preventDefault()} />}>
-							@jane
-						</HoverCardTrigger>
-						<HoverCardContent>
-							<Stack direction="horizontal" gap="md" align="start">
-								<Avatar>
-									<AvatarFallback>JM</AvatarFallback>
-								</Avatar>
-								<Stack gap="2xs">
-									<Text weight="medium">Jane McDonald</Text>
-									<Text size="xs" type="secondary">Billing · joined March 2024</Text>
-								</Stack>
-							</Stack>
-						</HoverCardContent>
-					</HoverCard>{" "}
-					on 1 September.
-				</Text>
-			</Example>
+			/>
 
 			<Example id="hover-card-rule" title="Hover is an accelerator" stacked>
 				<Callout label="Rule">

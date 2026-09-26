@@ -1,17 +1,8 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { Stack } from "@/components/base/structure"
-import { ColorInput } from "@/components/base/value-inputs"
-
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function ColorInputPage() {
-	const [color, setColor] = useState("oklch(0.45 0.12 155)")
-
 	return (
 		<ComponentPage
 			title="Color input"
@@ -20,46 +11,18 @@ export function ColorInputPage() {
 			exports={["ColorInput"]}
 		>
 			<Example
-				id="color"
+				example="color-input/color"
 				title="ColorInput"
 				description="The text field holds whatever the design tokens use — any CSS colour. The native picker only speaks hex, so it is a companion rather than the source of truth: what it returns is converted to OKLCH, and what is typed is preserved verbatim."
 				stacked
-				code={`<ColorInput value={color} onValueChange={setColor} />`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="Brand" helperText="The swatch shows the painted colour, so var() and named colours work.">
-						<ColorInput value={color} onValueChange={setColor} />
-					</FormField>
-					<FormField label="Seeded from a token">
-						<ColorInput defaultValue="var(--destructive)" />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="color-formats"
+				example="color-input/color-formats"
 				title="What the picker hands back"
 				description="The native picker only speaks hex. `format` says what to convert that into, because a raw #rrggbb is the odd one out in a token file written in oklch() — and so is an oklch() in one written in hex. Typed text is never rewritten: this only applies to what the swatch's picker returns."
 				stacked
-				code={`<ColorInput format="hex" … />
-<ColorInput format="rgb" … />
-<ColorInput format="hsl" … />`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="oklch (default)" helperText="Pick a colour from the swatch to see the notation change.">
-						<ColorInput defaultValue="oklch(0.45 0.12 155)" />
-					</FormField>
-					<FormField label="hex">
-						<ColorInput format="hex" defaultValue="#2f6f4e" />
-					</FormField>
-					<FormField label="rgb">
-						<ColorInput format="rgb" defaultValue="rgb(47, 111, 78)" />
-					</FormField>
-					<FormField label="hsl">
-						<ColorInput format="hsl" defaultValue="hsl(151, 40%, 31%)" />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="color-input-api" title="API">
 				<PropTable owner="ColorInput"

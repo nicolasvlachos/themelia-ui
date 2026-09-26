@@ -1,14 +1,3 @@
-import { CalendarIcon, InfoIcon, SlidersHorizontalIcon } from "lucide-react"
-
-import { Button } from "@/components/base/buttons"
-import { Checkbox } from "@/components/base/choice-inputs"
-import {
-	Popover, PopoverAnchor, PopoverContent, PopoverDescription, PopoverFooter, PopoverHeader,
-	PopoverTitle, PopoverTrigger,
-} from "@/components/base/popover"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
@@ -26,120 +15,25 @@ export function PopoverPage() {
 			]}
 		>
 			<Example
-				id="popover"
+				example="popover/popover"
 				title="Anatomy"
 				description="Trigger and content, with optional header, title, description and footer inside. The title and description are wired to the panel's accessible name and description, so a panel without them announces as an unnamed group."
 				stacked
-				code={`<Popover>
-  <PopoverTrigger render={<Button>Filters</Button>} />
-  <PopoverContent>
-    <PopoverHeader>
-      <PopoverTitle>Filters</PopoverTitle>
-      <PopoverDescription>Narrow the list.</PopoverDescription>
-    </PopoverHeader>
-    …
-    <PopoverFooter>…</PopoverFooter>
-  </PopoverContent>
-</Popover>`}
-			>
-				<Stack direction="horizontal" gap="lg" wrap>
-					<Popover>
-						<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-							<SlidersHorizontalIcon aria-hidden="true" />
-							Filters
-						</PopoverTrigger>
-						<PopoverContent>
-							<PopoverHeader>
-								<PopoverTitle>Filters</PopoverTitle>
-								<PopoverDescription>Narrow the list to what you are looking for.</PopoverDescription>
-							</PopoverHeader>
-							<Stack gap="sm">
-								<Checkbox label="Unfulfilled" defaultChecked />
-								<Checkbox label="Refunded" />
-								<Checkbox label="On hold" />
-							</Stack>
-							<PopoverFooter>
-								<Button tone="neutral" buttonStyle="ghost">
-									Reset
-								</Button>
-								<Button>Apply</Button>
-							</PopoverFooter>
-						</PopoverContent>
-					</Popover>
-
-					<Popover>
-						<PopoverTrigger render={<Button tone="neutral" buttonStyle="ghost" iconOnly aria-label="About this figure" />}>
-							<InfoIcon aria-hidden="true" />
-						</PopoverTrigger>
-						<PopoverContent width="18rem">
-							<Text size="xs" type="secondary">
-								Blended margin is computed after carrier surcharges and before tax. A panel is
-								the right home for a sentence like this — a tooltip would vanish before it
-								could be read.
-							</Text>
-						</PopoverContent>
-					</Popover>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="popover-placement"
+				example="popover/popover-placement"
 				title="side, align and width"
 				description="`side` and `align` place the panel against its trigger, and it flips when there is no room. `width=&quot;trigger&quot;` matches the control it opened from — what a select-like panel wants — and `auto` sizes to the content up to the space actually available."
 				stacked
-				code={`<PopoverContent side="right" align="start" width="trigger" />`}
-			>
-				<Stack direction="horizontal" gap="lg" wrap>
-					{(["top", "right", "bottom", "left"] as const).map((side) => (
-						<Popover key={side}>
-							<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-								{side}
-							</PopoverTrigger>
-							<PopoverContent side={side}>
-								<Text size="xs">side=&quot;{side}&quot;</Text>
-							</PopoverContent>
-						</Popover>
-					))}
-					<Popover>
-						<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-							width=&quot;trigger&quot;
-						</PopoverTrigger>
-						<PopoverContent width="trigger">
-							<Text size="xs">Matches the control it opened from.</Text>
-						</PopoverContent>
-					</Popover>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="popover-anchor"
+				example="popover/popover-anchor"
 				title="PopoverAnchor"
 				description="Separates what the panel points AT from what opens it. For a panel opened by a toolbar button but anchored to the selection it acts on, or opened by a row's menu and anchored to the row."
 				stacked
-				code={`<Popover>
-  <PopoverAnchor>
-    <Text>The panel points here…</Text>
-  </PopoverAnchor>
-  <PopoverTrigger render={<Button>…but this opens it</Button>} />
-  <PopoverContent>…</PopoverContent>
-</Popover>`}
-			>
-				<Popover>
-					<Stack direction="horizontal" gap="2xl" align="center">
-						<PopoverAnchor>
-							<Text size="xs" type="secondary">
-								<CalendarIcon aria-hidden="true" /> 14–28 August
-							</Text>
-						</PopoverAnchor>
-						<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-							Change the range
-						</PopoverTrigger>
-					</Stack>
-					<PopoverContent>
-						<Text size="xs">Anchored to the date, opened by the button.</Text>
-					</PopoverContent>
-				</Popover>
-			</Example>
+			/>
 
 			<Example id="popover-rule" title="Panel, not dialog" stacked>
 				<Callout label="Rule">

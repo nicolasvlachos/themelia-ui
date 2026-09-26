@@ -1,15 +1,3 @@
-import { CreditCardIcon } from "lucide-react"
-
-import { Badge } from "@/components/base/badge"
-import { Card } from "@/components/base/cards"
-import {
-	Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia,
-	ItemSeparator, ItemTitle,
-} from "@/components/base/item"
-import { Stack } from "@/components/base/structure"
-import { Money, RelativeTime } from "@/components/primitives"
-import { Scope } from "@/lib/ui-provider"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
@@ -25,113 +13,25 @@ export function ItemPage() {
 			]}
 		>
 			<Example
-				id="item"
+				example="item/item"
 				title="Item"
 				description="Every surface below is the same element: a list row, a menu row, a table row. That is why alignment, truncation, and the media-to-first-line rule are decided here once instead of three times — and why a surface prop, not a second component, is what makes one of them quieter."
 				stacked
-				code={`<ItemGroup>
-  <Item>
-    <ItemMedia variant="image"><Avatar /></ItemMedia>
-    <ItemContent>
-      <ItemTitle>Jane McDonald</ItemTitle>
-      <ItemDescription>jane@example.com</ItemDescription>
-    </ItemContent>
-    <ItemActions><Badge>Active</Badge></ItemActions>
-  </Item>
-</ItemGroup>`}
-			>
-				<ItemGroup style={{ width: "100%" }}>
-					{[
-						{ name: "Northwind Traders", detail: "Invoice #4417", amount: 1299.5 },
-						{ name: "Acme Corporation", detail: "Invoice #4418", amount: 84 },
-					].map((row, index) => (
-						<Item key={row.name} surface={index === 0 ? "bordered" : "neutral"}>
-							<ItemMedia variant="icon">
-								<CreditCardIcon />
-							</ItemMedia>
-							<ItemContent>
-								<ItemTitle>{row.name}</ItemTitle>
-								<ItemDescription>
-									{row.detail} · <RelativeTime value="2026-08-20T00:00:00Z" />
-								</ItemDescription>
-							</ItemContent>
-							<ItemActions>
-								<Money amount={row.amount} />
-								<Badge tone="neutral">Paid</Badge>
-							</ItemActions>
-						</Item>
-					))}
-					<ItemSeparator />
-					<Item surface="muted">
-						<ItemContent>
-							<ItemTitle>Muted surface</ItemTitle>
-							<ItemDescription>For a de-emphasised row.</ItemDescription>
-						</ItemContent>
-					</Item>
-				</ItemGroup>
-			</Example>
+			/>
 
 			<Example
-				id="cards-scale"
+				example="item/cards-scale"
 				title="Density"
 				description="Neither Card nor Item takes a size prop. Density is scoped instead, so a dense list can sit inside a normally-scaled card."
 				stacked
-				code={`<Scope vars={{ "--density-scale": 0.85 }}>
-  <ItemGroup>…</ItemGroup>
-</Scope>`}
-			>
-				<Stack gap="lg" style={{ width: "100%" }}>
-					{[1, 0.85].map((scale) => (
-						<Scope key={scale} vars={{ "--density-scale": scale }}>
-							<Card surface="bordered" title={`--density-scale ${scale}`}>
-								<ItemGroup>
-									<Item surface="bordered">
-										<ItemContent>
-											<ItemTitle>First row</ItemTitle>
-											<ItemDescription>Supporting detail.</ItemDescription>
-										</ItemContent>
-									</Item>
-									<Item surface="bordered">
-										<ItemContent>
-											<ItemTitle>Second row</ItemTitle>
-											<ItemDescription>Supporting detail.</ItemDescription>
-										</ItemContent>
-									</Item>
-								</ItemGroup>
-							</Card>
-						</Scope>
-					))}
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="item-ruled"
+				example="item/item-ruled"
 				title="A ruled group"
 				description="A group's default gap is right for a list of independent things — search results, a feed — where each row is its own object. Inside one card it is wrong: at a rem apart, three cart lines or three secrets read as three unrelated blocks, and the card grows a third taller than its content needs. ruled swaps the air for a hairline, and drops a neutral row's own inline padding, which exists to hold a row off a surface it is not drawing. The rule is painted as a positioned pseudo-element, not a border: a row carries a radius for its hover ground, and a border follows the box it is on — the hairline came out with a quarter-arc hooking down at each end."
 				stacked
-				code={`<ItemGroup ruled>
-  <Item>…</Item>
-  <Item>…</Item>
-</ItemGroup>`}
-			>
-				<ItemGroup ruled style={{ width: "100%" }}>
-					{[
-						{ name: "Production", detail: "sk_live_••••0b3d" },
-						{ name: "Staging", detail: "sk_test_••••a771" },
-						{ name: "CI", detail: "sk_ci_••••e145" },
-					].map((row) => (
-						<Item key={row.name}>
-							<ItemMedia variant="icon">
-								<CreditCardIcon />
-							</ItemMedia>
-							<ItemContent>
-								<ItemTitle>{row.name}</ItemTitle>
-								<ItemDescription>{row.detail}</ItemDescription>
-							</ItemContent>
-						</Item>
-					))}
-				</ItemGroup>
-			</Example>
+			/>
 
 			<Example id="item-rule" title="Rows are Items" stacked>
 				<Callout label="Rule">

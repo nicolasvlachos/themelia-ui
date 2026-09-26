@@ -340,63 +340,255 @@ Preview route: Color input — `/color-input`
 ### ColorInput
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ColorInput value={color} onValueChange={setColor} />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { ColorInput } from "themelia-ui/base/value-inputs"
+
+
+export default function Color() {
+	const [color, setColor] = useState("oklch(0.45 0.12 155)")
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Brand" helperText="The swatch shows the painted colour, so var() and named colours work.">
+				<ColorInput value={color} onValueChange={setColor} />
+			</FormField>
+			<FormField label="Seeded from a token">
+				<ColorInput defaultValue="var(--destructive)" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### What the picker hands back
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ColorInput format="hex" … />
-<ColorInput format="rgb" … />
-<ColorInput format="hsl" … />
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { ColorInput } from "themelia-ui/base/value-inputs"
+
+
+export default function ColorFormats() {
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="oklch (default)" helperText="Pick a colour from the swatch to see the notation change.">
+				<ColorInput defaultValue="oklch(0.45 0.12 155)" />
+			</FormField>
+			<FormField label="hex">
+				<ColorInput format="hex" defaultValue="#2f6f4e" />
+			</FormField>
+			<FormField label="rgb">
+				<ColorInput format="rgb" defaultValue="rgb(47, 111, 78)" />
+			</FormField>
+			<FormField label="hsl">
+				<ColorInput format="hsl" defaultValue="hsl(151, 40%, 31%)" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### PhoneInput
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PhoneInput
-  prefix={prefix}
-  onPrefixChange={setPrefix}
-  value={number}
-  onChange={(e) => setNumber(e.target.value)}
-/>
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { PhoneInput } from "themelia-ui/base/value-inputs"
+
+
+export default function Phone() {
+	const [prefix, setPrefix] = useState("+31")
+	const [phone, setPhone] = useState("6 1234 5678")
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+			<FormField label="Mobile" helperText="Leaving the field strips a typed prefix and the trunk zero.">
+				<PhoneInput
+					prefix={prefix}
+					onPrefixChange={setPrefix}
+					prefixes={["NL", "BE", "DE", "GB", "US"]}
+					value={phone}
+					onChange={(event) => setPhone(event.target.value)}
+				/>
+			</FormField>
+			<FormField label="Without the picker">
+				<PhoneInput disablePrefixSelector defaultValue="020 123 4567" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### SliderField
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SliderField value={volume} onValueChange={setVolume} showValue unit="%" />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { SliderField } from "themelia-ui/base/value-inputs"
+
+
+export default function SliderExample() {
+	const [volume, setVolume] = useState(40)
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Volume">
+				<SliderField value={volume} onValueChange={setVolume} showValue unit="%" />
+			</FormField>
+			<FormField label="Steps of 10" helperText="onValueCommitted fires once on release, not on every step.">
+				<SliderField defaultValue={50} step={10} showValue />
+			</FormField>
+			<FormField label="Invalid" error="Pick a value above 60.">
+				<SliderField defaultValue={20} invalid showValue />
+			</FormField>
+			<FormField label="Disabled">
+				<SliderField defaultValue={30} disabled showValue />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Sizes
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SliderField size="sm" />   {/* the default — a row in a form */}
-<SliderField size="md" />   {/* touch, media controls */}
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { SliderField } from "themelia-ui/base/value-inputs"
+
+
+export default function SliderSizes() {
+	const [volume, setVolume] = useState(40)
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="sm — the default">
+				<SliderField value={volume} onValueChange={setVolume} showValue unit="%" />
+			</FormField>
+			<FormField label="md — a larger target">
+				<SliderField size="md" value={volume} onValueChange={setVolume} showValue unit="%" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Vertical, and a range
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SliderField orientation="vertical" value={level} onValueChange={setLevel} />
-<SliderField value={[20, 70]} onValueChange={setRange} />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { SliderField } from "themelia-ui/base/value-inputs"
+
+
+export default function SliderOrientation() {
+	const [volume, setVolume] = useState(40)
+	const [range, setRange] = useState<number[]>([20, 70])
+
+	return (
+		<Stack direction="horizontal" gap="2xl" align="start">
+			<FormField label="Level">
+				<SliderField
+					orientation="vertical"
+					value={volume}
+					onValueChange={setVolume}
+					showValue
+					unit="%"
+				/>
+			</FormField>
+			<div style={{ maxWidth: "26rem", width: "100%" }}>
+				<FormField label="Budget band" helperText="Two handles, one field.">
+					<SliderField value={range} onValueChange={setRange} showValue />
+				</FormField>
+			</div>
+		</Stack>
+	)
+}
 ```
 
 ### Slider
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Slider defaultValue={40} aria-label="Zoom" />
+import { Slider } from "themelia-ui/base/value-inputs"
+
+export default function SliderBare() {
+	return (
+		<div style={{ maxWidth: "20rem" }}>
+			<Slider defaultValue={40} aria-label="Zoom" />
+		</div>
+	)
+}
 ```
 
 ### TagsInput
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TagsInput value={tags} onValueChange={setTags} maxTags={5} showCount showClearAll />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { TagsInput } from "themelia-ui/base/value-inputs"
+
+
+export default function Tags() {
+	const [tags, setTags] = useState(["invoice", "q4"])
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Labels" helperText="Try pasting: alpha, beta, gamma">
+				<TagsInput value={tags} onValueChange={setTags} maxTags={5} showCount showClearAll />
+			</FormField>
+			<FormField label="Validated" helperText="Rejects anything that is not lowercase.">
+				<TagsInput
+					defaultValue={["ok"]}
+					validate={(tag) => tag === tag.toLowerCase()}
+					placeholder="lowercase only…"
+				/>
+			</FormField>
+			<FormField label="Invalid" error="At least one label is required.">
+				<TagsInput invalid placeholder="Add a label…" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### TimePicker and DateTimeInput
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TimePicker value={time} onValueChange={setTime} minuteStep={15} />
-<DateTimeInput value={iso} onValueChange={setIso} />
+import { useState } from "react"
+
+import { TimePicker, type TimeValue } from "themelia-ui/base/date-pickers"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { DateTimeInput } from "themelia-ui/base/value-inputs"
+
+
+export default function Time() {
+	const [time, setTime] = useState<TimeValue>({ hours: 9, minutes: 30 })
+	/* A fixed instant, not `new Date()`, for stable visual baselines. */
+	const [instant, setInstant] = useState<string | undefined>("2026-03-12T09:30:00.000Z")
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+			<FormField label="Start time">
+				<TimePicker value={time} onValueChange={setTime} minuteStep={15} />
+			</FormField>
+			<FormField label="Publish at" helperText="One ISO value; paging the calendar keeps the hour already set.">
+				<DateTimeInput value={instant} onValueChange={setInstant} />
+			</FormField>
+		</Stack>
+	)
+}
 ```

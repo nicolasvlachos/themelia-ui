@@ -1,21 +1,9 @@
-import { useState } from "react"
-
-import { Badge } from "@/components/base/badge"
-import { OverflowTabBar, Tab, TabList, TabPanel, Tabs } from "@/components/base/navigation"
-import { Text } from "@/components/base/typography"
-import { Stack } from "@/components/base/structure"
-import { Switch } from "@/components/base/choice-inputs"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function TabsPage() {
-	const [tab, setTab] = useState("overview")
-	const [bar, setBar] = useState("overview")
-	const [edgeFade, setEdgeFade] = useState(true)
-
 	return (
 		<ComponentPage
 			title="Tabs"
@@ -25,103 +13,20 @@ export function TabsPage() {
 			]}
 		>
 			<Example
-				id="tabs"
+				example="tabs/tabs"
 				title="Tabs"
 				description="Structural variants: a rule with an indicator, or a tinted rail with the active tab lifted out of it — and pill, the chips OverflowTabBar draws. The list scrolls rather than wrapping — a second row of tabs reads as a second level of navigation, which it is not."
 				stacked
-				code={`<Tabs value={tab} onValueChange={setTab}>
-  <TabList label="Sections">
-    <Tab value="overview">Overview</Tab>
-    <Tab value="activity">Activity</Tab>
-  </TabList>
-  <TabPanel value="overview">…</TabPanel>
-</Tabs>`}
-			>
-				<Tabs value={tab} onValueChange={setTab} style={{ width: "100%" }}>
-					<TabList label="Sections">
-						<Tab value="overview">Overview</Tab>
-						<Tab value="activity">Activity</Tab>
-						<Tab value="settings">Settings</Tab>
-						<Tab value="archived" disabled>
-							Archived
-						</Tab>
-					</TabList>
-					<TabPanel value="overview">
-						<Text type="secondary">The overview panel.</Text>
-					</TabPanel>
-					<TabPanel value="activity">
-						<Text type="secondary">The activity panel.</Text>
-					</TabPanel>
-					<TabPanel value="settings">
-						<Text type="secondary">The settings panel.</Text>
-					</TabPanel>
-				</Tabs>
+			/>
 
-				<Tabs defaultValue="day" style={{ width: "100%" }}>
-					<TabList variant="enclosed" label="Range">
-						<Tab value="day">Day</Tab>
-						<Tab value="week">Week</Tab>
-						<Tab value="month">Month</Tab>
-					</TabList>
-					<TabPanel value="day">
-						<Text type="secondary">Enclosed variant.</Text>
-					</TabPanel>
-					<TabPanel value="week">
-						<Text type="secondary">Week.</Text>
-					</TabPanel>
-					<TabPanel value="month">
-						<Text type="secondary">Month.</Text>
-					</TabPanel>
-				</Tabs>
-			</Example>
-
-			<Example id="tabs-scroll" title="Overflowing tabs" description="Scroll arrows appear only when the row overflows. Enable edgeFade to soften the edges with hidden tabs. Changing selection reveals the active tab without moving the page." stacked code={`<Tabs defaultValue="overview">
-  <TabList label="Sections" variant="enclosed" edgeFade>
-    <Tab value="overview">Overview</Tab>
-    <Tab value="activity">Activity</Tab>
-  </TabList>
-</Tabs>`}>
-				<Switch checked={edgeFade} onChange={event => setEdgeFade(event.target.checked)} label="Fade overflowing edges" />
-				<Stack maxWidth="22rem">
-					<Tabs defaultValue="overview">
-						<TabList label="Scrollable sections" variant="enclosed" edgeFade={edgeFade}>
-							{['Overview', 'Activity', 'Settings', 'Billing', 'Members', 'Integrations', 'Audit log'].map(label => <Tab key={label} value={label.toLowerCase()}>{label}</Tab>)}
-						</TabList>
-					</Tabs>
-				</Stack>
-			</Example>
+			<Example example="tabs/tabs-scroll" title="Overflowing tabs" description="Scroll arrows appear only when the row overflows. Enable edgeFade to soften the edges with hidden tabs. Changing selection reveals the active tab without moving the page." stacked />
 
 			<Example
-				id="overflow-tab-bar"
+				example="tabs/overflow-tab-bar"
 				title="OverflowTabBar"
 				description="Tabs as data, in a row that scrolls rather than wrapping. Wrapping onto a second line changes the page's height as the reader switches, which shifts everything below it; the fade at the edge says there is more. Reach for it for a section rail whose labels are not known at build time — the composable Tabs above stay the default."
 				stacked
-				code={`<OverflowTabBar
-  items={[
-    { id: "overview", label: "Overview" },
-    { id: "activity", label: "Activity", badge: <Badge tone="neutral">3</Badge> },
-    { id: "billing", label: "Billing", href: "/billing" },
-  ]}
-  value={tab}
-  onValueChange={setTab}
-/>`}
-			>
-				<OverflowTabBar
-					strings={{ label: "Record sections" }}
-					items={[
-						{ id: "overview", label: "Overview" },
-						{ id: "activity", label: "Activity", badge: <Badge tone="neutral">3</Badge> },
-						{ id: "settings", label: "Settings" },
-						{ id: "billing", label: "Billing" },
-						{ id: "members", label: "Members" },
-						{ id: "integrations", label: "Integrations" },
-						{ id: "audit", label: "Audit log" },
-						{ id: "danger", label: "Danger zone", disabled: true },
-					]}
-					value={bar}
-					onValueChange={setBar}
-				/>
-			</Example>
+			/>
 
 			<Example id="tabs-accessibility" title="Accessibility" stacked>
 				<Callout>

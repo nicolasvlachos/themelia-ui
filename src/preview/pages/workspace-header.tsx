@@ -1,32 +1,7 @@
-import { useState } from "react"
-
-import { Avatar, AvatarFallback } from "@/components/base/avatar"
-import { Badge } from "@/components/base/badge"
-import { Button } from "@/components/base/buttons"
-import { Card } from "@/components/base/cards"
-import { PillRadioGroup } from "@/components/base/choice-inputs"
-import { Money } from "@/components/primitives"
-import { WorkspaceRecordHeader } from "@/components/layout"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-function ViewSwitch() {
-	const [view, setView] = useState<string | null>("logs")
-	return (
-		<PillRadioGroup
-			value={view}
-			onValueChange={setView}
-			options={[
-				{ value: "logs", label: "Logs" },
-				{ value: "assets", label: "Assets" },
-				{ value: "timing", label: "Timing" },
-			]}
-		/>
-	)
-}
 
 export function WorkspaceHeaderPage() {
 	return (
@@ -39,69 +14,18 @@ export function WorkspaceHeaderPage() {
 			]}
 		>
 			<Example
-				id="record-header"
+				example="workspace-header/record-header"
 				title="WorkspaceRecordHeader"
 				description="Media, a status, metadata pairs, and two tiers of action. Each metadata pair is one inline item, label and value together, so a screen reader reads “Owner: Jane McDonald” as one fact rather than two loose strings."
 				stacked
-				code={`<WorkspaceRecordHeader
-  title="Invoice #4417"
-  media={<Avatar />}
-  badges={<Badge tone="success" dot>Paid</Badge>}
-  metadata={[{ label: "Owner", value: "Jane McDonald" }]}
-  actions={<Button>Edit</Button>}
-/>`}
-			>
-				<Card surface="bordered" style={{ width: "100%" }}>
-					<WorkspaceRecordHeader
-						title="Invoice #4417"
-						description="Northwind Traders — issued 1 September 2026."
-						media={
-							<Avatar size="lg">
-								<AvatarFallback>NT</AvatarFallback>
-							</Avatar>
-						}
-						badges={<Badge tone="success" dot>Paid</Badge>}
-						metadata={[
-							{ label: "Owner", value: "Jane McDonald" },
-							{ label: "Amount", value: <Money amount={1299.5} currency="EUR" /> },
-							{ label: "Terms", value: "Net 30" },
-						]}
-						actions={
-							<>
-								<Button tone="neutral" buttonStyle="outline">Duplicate</Button>
-								<Button>Edit</Button>
-							</>
-						}
-					/>
-				</Card>
-			</Example>
+			/>
 
 			<Example
-				id="record-header-secondary"
+				example="workspace-header/record-header-secondary"
 				title="Two tiers of action"
 				description="Primary actions pin to the title row, where they are read as belonging to the record. The secondary row beneath is for controls that change the VIEW of it — a tab bar, a filter, a bulk selection — which belong to the screen rather than to the thing."
 				stacked
-				code={`<WorkspaceRecordHeader
-  title="Deployment 41a9c2"
-  actions={<Button>Redeploy</Button>}
-  secondaryActions={<PillRadioGroup options={views} />}
-/>`}
-			>
-				<Card surface="bordered" style={{ width: "100%" }}>
-					<WorkspaceRecordHeader
-						title="Deployment 41a9c2"
-						headingLevel={2}
-						description="main → production, 4 minutes ago."
-						badges={<Badge tone="warning" dot pulse>Building</Badge>}
-						metadata={[
-							{ label: "Branch", value: "main" },
-							{ label: "Author", value: "Raj Patel" },
-						]}
-						actions={<Button tone="neutral" buttonStyle="outline">Cancel</Button>}
-						secondaryActions={<ViewSwitch />}
-					/>
-				</Card>
-			</Example>
+			/>
 
 			<Example id="record-header-rule" title="A record is not a page" stacked>
 				<Callout label="Rule">

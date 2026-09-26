@@ -287,79 +287,252 @@ Preview route: Form field — `/form-field`
 ### FormField
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FormField
-  label="Email"
-  required
-  hint="We only use this for receipts."
-  error={errors.email}
->
-  <Input type="email" />
-</FormField>
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
+
+
+export default function FormFieldExample() {
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Email" required hint="We only use this for receipts.">
+				<Input type="email" placeholder="you@example.com" />
+			</FormField>
+			<FormField label="Workspace" helperText="Lowercase letters and dashes only.">
+				<Input defaultValue="acme-corp" />
+			</FormField>
+			<FormField label="Card number" error="That card number is not valid.">
+				<Input defaultValue="4242 4242" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Custom control composition
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FormField label="Weight" error={errors.weight}>
-  {(fieldProps) => (
-    <FieldShell {...fieldProps} end="kg">
-      {(controlProps) => <WrappedNumberInput controlProps={controlProps} />}
-    </FieldShell>
-  )}
-</FormField>
+import { FormField } from "themelia-ui/base/forms"
+import { FieldShell, Input } from "themelia-ui/base/text-inputs"
+
+
+export default function FormFieldComposition() {
+	return (
+		<div style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Weight" required hint="Use the packaged weight.">
+				{(fieldProps) => (
+					<FieldShell {...fieldProps} end="kg">
+						{(controlProps) => (
+							<div style={{ display: "contents" }}>
+								<Input type="number" defaultValue="24" {...controlProps} />
+							</div>
+						)}
+					</FieldShell>
+				)}
+			</FormField>
+		</div>
+	)
+}
 ```
 
 ### Horizontal fields
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FormField orientation="horizontal" label="Display name">
-  <Input />
-</FormField>
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
+
+export default function HorizontalFields() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			<FormField orientation="horizontal" label="Display name" hint="Shown on invoices.">
+				<Input defaultValue="Acme Corporation" />
+			</FormField>
+			<FormField orientation="horizontal" label="Billing email" required>
+				<Input type="email" defaultValue="billing@acme.com" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### FieldGroup
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FieldGroup legend="Reporting period" description="Both ends are inclusive.">
-  <FormField label="From"><Input type="date" /></FormField>
-  <FormField label="To"><Input type="date" /></FormField>
-</FieldGroup>
+import { FieldGroup, FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
+
+
+export default function FieldGroupExample() {
+	return (
+		<div style={{ maxWidth: "34rem", width: "100%" }}>
+			<FieldGroup legend="Reporting period" description="Both ends are inclusive.">
+				<Stack direction="horizontal" gap="md">
+					<FormField label="From">
+						<Input type="date" defaultValue="2026-03-01" />
+					</FormField>
+					<FormField label="To">
+						<Input type="date" defaultValue="2026-03-31" />
+					</FormField>
+				</Stack>
+			</FieldGroup>
+		</div>
+	)
+}
 ```
 
 ### FormSection
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FormSection title="Billing" description="Where invoices go." actions={<Button>Edit</Button>}>
-  <FormField label="Company">…</FormField>
-</FormSection>
+import { Button } from "themelia-ui/base/buttons"
+import { FormField, FormSection } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
+import { Text } from "themelia-ui/base/typography"
+
+export default function FormSectionExample() {
+	return (
+		<Stack gap="xl" style={{ maxWidth: "34rem" }}>
+			<FormSection
+				title="Billing"
+				description="Where invoices go. Changing it does not change the shipping address."
+				actions={
+					<Button tone="neutral" buttonStyle="ghost">
+						Edit
+					</Button>
+				}
+				footer={
+					<Text size="xs" type="secondary">
+						VAT is added at checkout.
+					</Text>
+				}
+			>
+				<FormField label="Company">
+					<Input defaultValue="Northwind Traders" />
+				</FormField>
+			</FormSection>
+		</Stack>
+	)
+}
 ```
 
 ### FormActionsBar
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<FormActionsBar leading={<Text size="xs" type="secondary">Saved 2 minutes ago</Text>}>
-  <Button buttonStyle="outline">Discard</Button>
-  <Button>Save</Button>
-</FormActionsBar>
+import { Button } from "themelia-ui/base/buttons"
+import { Card, CardContent } from "themelia-ui/base/cards"
+import { FormActionsBar } from "themelia-ui/base/forms"
+import { Text } from "themelia-ui/base/typography"
+
+export default function FormActions() {
+	return (
+		<Card style={{ maxWidth: "34rem" }}>
+			<CardContent>
+				<FormActionsBar
+					leading={
+						<Text size="xs" type="secondary">
+							Saved 2 minutes ago
+						</Text>
+					}
+				>
+					<Button tone="neutral" buttonStyle="outline">
+						Discard
+					</Button>
+					<Button>Save</Button>
+				</FormActionsBar>
+			</CardContent>
+		</Card>
+	)
+}
 ```
 
 ### ErrorSummary
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ErrorSummary
-  errors={["Name is required.", "Email is not valid."]}
-  action={<Button buttonStyle="outline">Review the first problem</Button>}
-/>
+import { Button } from "themelia-ui/base/buttons"
+import { ErrorSummary } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function FormErrorSummary() {
+	return (
+		<Stack style={{ maxWidth: "34rem" }}>
+			<ErrorSummary
+				errors={[
+					"Name is required.",
+					"Email is not valid.",
+					"VAT number does not match the selected country.",
+				]}
+				action={
+					<Button tone="neutral" buttonStyle="outline">
+						Review the first problem
+					</Button>
+				}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### DirtyStateBanner
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DirtyStateBanner actions={<><Button buttonStyle="outline">Discard</Button><Button>Save</Button></>} />
+import { Button } from "themelia-ui/base/buttons"
+import { DirtyStateBanner } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function FormDirty() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "34rem" }}>
+			{(["neutral", "info", "warning"] as const).map((tone) => (
+				<DirtyStateBanner
+					key={tone}
+					tone={tone}
+					actions={
+						<>
+							<Button tone="neutral" buttonStyle="outline">
+								Discard
+							</Button>
+							<Button>Save</Button>
+						</>
+					}
+				/>
+			))}
+		</Stack>
+	)
+}
 ```
 
 ### SubmitStateButton
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SubmitStateButton state={state} />
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { SubmitStateButton, type SubmitState } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function FormSubmitState() {
+	const [state, setState] = useState<SubmitState>("idle")
+
+	return (
+		<Stack direction="horizontal" gap="lg" wrap align="center">
+			{(["idle", "submitting", "succeeded"] as SubmitState[]).map((s) => (
+				<SubmitStateButton key={s} state={s} />
+			))}
+			<Button
+				tone="neutral"
+				buttonStyle="outline"
+				onClick={() => {
+					setState("submitting")
+					setTimeout(() => setState("succeeded"), 1200)
+					setTimeout(() => setState("idle"), 2600)
+				}}
+			>
+				Run the cycle
+			</Button>
+			<SubmitStateButton state={state} />
+		</Stack>
+	)
+}
 ```

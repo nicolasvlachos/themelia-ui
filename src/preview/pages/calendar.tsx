@@ -1,20 +1,9 @@
-import { useState } from "react"
-import { de } from "date-fns/locale"
-
-import { Calendar, type DateRangeValue } from "@/components/base/date-pickers"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-import { UIProvider } from "@/lib/ui-provider"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const MARCH = new Date("2026-03-01T00:00:00")
-
 export function CalendarPage() {
-	const [range, setRange] = useState<DateRangeValue>({})
-
 	return (
 		<ComponentPage
 			title="Calendar"
@@ -23,45 +12,17 @@ export function CalendarPage() {
 			exports={["Calendar"]}
 		>
 			<Example
-				id="calendar"
+				example="calendar/calendar"
 				title="Calendar"
 				description="The grid on its own. Days are real buttons in a role=grid, so arrow keys walk the month and only one day is a tab stop — forty-two stops per month is what makes a calendar unusable from the keyboard."
 				stacked
-				code={`<Calendar mode="range" value={range} onValueChange={setRange} numberOfMonths={2} />`}
-			>
-				<div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", width: "fit-content" }}>
-					<Calendar
-						mode="range"
-						value={range}
-						onValueChange={(next) => setRange(next as DateRangeValue)}
-						numberOfMonths={2}
-					/>
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="calendar-locale"
+				example="calendar/calendar-locale"
 				title="Another language, another week"
 				description="The month name, the weekday headings, and every day's accessible name come from the scope's date-fns locale. The week start is separate: it is a regional convention rather than a translation, so a Sunday-first calendar in German is a real combination and each is set on its own."
-				code={`import { de } from "date-fns/locale"
-
-<UIProvider config={{ dates: { locale: de, weekStartsOn: 0 } }}>
-  <Calendar mode="single" />
-</UIProvider>`}
-			>
-				<Stack direction="horizontal" gap="2xl" wrap align="start">
-					<Stack gap="xs" align="start">
-						<Text size="xs" type="secondary">built-in, Monday first</Text>
-						<Calendar mode="single" month={MARCH} />
-					</Stack>
-					<Stack gap="xs" align="start">
-						<Text size="xs" type="secondary">dates: {"{ locale: de, weekStartsOn: 0 }"}</Text>
-						<UIProvider config={{ dates: { locale: de, weekStartsOn: 0 } }}>
-							<Calendar mode="single" month={MARCH} />
-						</UIProvider>
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="dates-rule" title="Fixed cells" stacked>
 				<Callout label="Rule">

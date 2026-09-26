@@ -1,36 +1,9 @@
-import { BuildingIcon, CalendarIcon, CreditCardIcon, HashIcon, MailIcon } from "lucide-react"
-
-import { MetadataList, type MetadataInlineListItem, type MetadataListItem } from "@/components/base/display"
-import { Stack } from "@/components/base/structure"
 import { Text } from "@/components/base/typography"
 
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const FACTS: MetadataListItem[] = [
-	{ label: "Reference", value: { kind: "mono", value: "INV-4417" }, icon: HashIcon },
-	{ label: "Customer", value: "Northwind Traders", icon: BuildingIcon },
-	{ label: "Billing email", value: { kind: "email", value: "billing@northwind.test" }, icon: MailIcon },
-	{
-		label: "Amount",
-		value: { kind: "money", value: 48_200, currency: "USD" },
-		icon: CreditCardIcon,
-		tooltip: "Excludes tax and any credit applied at settlement.",
-	},
-	{ label: "Issued", value: { kind: "date", value: "2026-08-14" }, icon: CalendarIcon },
-	{ label: "Paid", value: null, description: "Nothing has been received against this invoice." },
-	{ label: "Status", value: { kind: "badge", value: "Overdue", badgeTone: "destructive" } },
-	{ label: "Portal", value: { kind: "link", href: "https://example.test/inv/4417", value: "View in portal" } },
-]
-
-// Typed for the inline layout, which has no second line to put a description on.
-const SUMMARY: MetadataInlineListItem[] = [
-	{ label: "Created", value: { kind: "date", value: "2026-08-14" } },
-	{ label: "By", value: "Alice Mercer" },
-	{ label: "Version", value: { kind: "mono", value: "v3.2" } },
-]
 
 export function MetadataPage() {
 	return (
@@ -41,54 +14,32 @@ export function MetadataPage() {
 			exports={["MetadataList", "MetadataValue"]}
 		>
 			<Example
-				id="metadata-grid"
+				example="metadata/metadata-grid"
 				title="grid"
 				description="Label above value, flowed into columns. The default, and the right one for a detail panel — the eye scans labels down a column and finds values beside them. columns is a ceiling, not a fixed number: four columns on a phone is four columns of one word each, so the list steps down at the widths where each still holds a readable value."
 				stacked
-				code={`<MetadataList
-  columns={3}
-  items={[
-    { label: "Reference", value: { kind: "mono", value: "INV-4417" } },
-    { label: "Amount", value: { kind: "money", value: 48200, currency: "USD" } },
-    { label: "Status", value: { kind: "badge", value: "Overdue", badgeTone: "destructive" } },
-  ]}
-/>`}
-			>
-				<MetadataList items={FACTS} columns={3} />
-			</Example>
+			/>
 
 			<Example
-				id="metadata-rows"
+				example="metadata/metadata-rows"
 				title="rows"
 				description="A two-column definition list — a real <dl>, so a screen reader announces it as one. For a long list of facts whose labels vary in length, which a grid makes ragged. Labels and values share proportional columns, so they stay aligned while wrapping to fit narrow panels."
 				stacked
-				code={`<MetadataList layout="rows" itemSeparator items={facts} />`}
-			>
-				<MetadataList layout="rows" itemSeparator items={FACTS} />
-			</Example>
+			/>
 
 			<Example
-				id="metadata-inline"
+				example="metadata/metadata-inline"
 				title="inline"
 				description="Label, colon, value, running along one line and wrapping. For the summary strip under a title. The separator between facts is drawn between them and never after the last one — a trailing middle dot reads as a fact that failed to load."
 				stacked
-				code={`<MetadataList layout="inline" itemSeparator items={summary} />`}
-			>
-				<Stack gap="lg">
-					<MetadataList layout="inline" itemSeparator items={SUMMARY} />
-					<MetadataList layout="inline" itemSeparator="—" density="compact" items={SUMMARY} />
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="metadata-density"
+				example="metadata/metadata-density"
 				title="density"
 				description="compact tightens the rhythm and drops the value a size, for a side panel or an inspector where the facts support the content rather than being it."
 				stacked
-				code={`<MetadataList density="compact" columns={2} items={facts} />`}
-			>
-				<MetadataList density="compact" columns={2} items={FACTS.slice(0, 4)} title="Invoice" titleSeparator />
-			</Example>
+			/>
 
 			<Example id="metadata-kinds" title="The value kinds" stacked>
 				<Callout label="Rule">

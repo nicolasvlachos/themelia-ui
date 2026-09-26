@@ -130,25 +130,108 @@ Preview route: Input group — `/input-group`
 ### Attached along the line
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InputGroup>
-  <InputGroupAddon><SearchIcon /></InputGroupAddon>
-  <InputGroupInput placeholder="Search orders" />
-</InputGroup>
+import { ArrowRightIcon, MailIcon, SearchIcon } from "lucide-react"
+
+import {
+	InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText,
+} from "themelia-ui/base/input-group"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function InputGroupInline() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem" }}>
+			<InputGroup>
+				<InputGroupAddon>
+					<SearchIcon aria-hidden="true" />
+				</InputGroupAddon>
+				<InputGroupInput placeholder="Search orders" aria-label="Search orders" />
+			</InputGroup>
+
+			<InputGroup>
+				<InputGroupAddon>
+					<MailIcon aria-hidden="true" />
+				</InputGroupAddon>
+				<InputGroupInput placeholder="name@example.com" aria-label="Email" />
+				<InputGroupAddon align="inline-end">
+					<InputGroupText>@acme.test</InputGroupText>
+				</InputGroupAddon>
+			</InputGroup>
+
+			<InputGroup>
+				<InputGroupInput placeholder="Add a label" aria-label="Label" />
+				<InputGroupAddon align="inline-end">
+					<InputGroupButton size="icon-xs" aria-label="Add">
+						<ArrowRightIcon aria-hidden="true" />
+					</InputGroupButton>
+				</InputGroupAddon>
+			</InputGroup>
+		</Stack>
+	)
+}
 ```
 
 ### Attached above or below
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InputGroup>
-  <InputGroupTextarea placeholder="Write a note" />
-  <InputGroupAddon align="block-end">
-    <InputGroupText>Markdown supported</InputGroupText>
-  </InputGroupAddon>
-</InputGroup>
+import { StarIcon } from "lucide-react"
+
+import {
+	InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea,
+} from "themelia-ui/base/input-group"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function InputGroupBlock() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem" }}>
+			<InputGroup>
+				<InputGroupAddon align="block-start">
+					<InputGroupButton size="icon-xs" aria-label="Favourite">
+						<StarIcon aria-hidden="true" />
+					</InputGroupButton>
+					<InputGroupText>Internal note</InputGroupText>
+				</InputGroupAddon>
+				<InputGroupTextarea placeholder="Write a note" aria-label="Note" rows={3} />
+				<InputGroupAddon align="block-end">
+					<InputGroupText>Markdown supported</InputGroupText>
+				</InputGroupAddon>
+			</InputGroup>
+		</Stack>
+	)
+}
 ```
 
 ### Button sizes inside the shell
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<InputGroupButton size="icon-xs" aria-label="Go"><ArrowRightIcon /></InputGroupButton>
+import { ArrowRightIcon } from "lucide-react"
+
+import {
+	InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput,
+} from "themelia-ui/base/input-group"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function InputGroupButtons() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem" }}>
+			{(["xs", "sm"] as const).map((size) => (
+				<InputGroup key={size}>
+					<InputGroupInput placeholder={`size="${size}"`} aria-label={size} />
+					<InputGroupAddon align="inline-end">
+						<InputGroupButton size={size}>Apply</InputGroupButton>
+					</InputGroupAddon>
+				</InputGroup>
+			))}
+			{(["icon-xs", "icon-sm"] as const).map((size) => (
+				<InputGroup key={size}>
+					<InputGroupInput placeholder={`size="${size}"`} aria-label={size} />
+					<InputGroupAddon align="inline-end">
+						<InputGroupButton size={size} aria-label="Go">
+							<ArrowRightIcon aria-hidden="true" />
+						</InputGroupButton>
+					</InputGroupAddon>
+				</InputGroup>
+			))}
+		</Stack>
+	)
+}
 ```

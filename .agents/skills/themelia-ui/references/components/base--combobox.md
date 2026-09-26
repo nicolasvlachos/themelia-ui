@@ -271,34 +271,242 @@ typeof ComboboxPrimitive.useFilter
 
 Preview route: Combobox — `/combobox`
 
-### The pickers do not filter
+### The parts: one field surface
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ComboboxInputTrigger placeholder="Search…" showClear />
+import { useMemo, useState } from "react"
+
+import {
+	ComboboxEmpty, ComboboxInputTrigger, ComboboxItem, ComboboxList, ComboboxPopup,
+	ComboboxPortal, ComboboxPositioner, ComboboxRoot, useComboboxFilter,
+} from "themelia-ui/base/combobox"
+import { FormField } from "themelia-ui/base/forms"
+import { Input } from "themelia-ui/base/text-inputs"
+import { Stack } from "themelia-ui/base/structure"
+
+import { COUNTRY_NAMES } from "./data"
+
+/* Forwards `id` to the input, so `FormField`'s label reaches the control. */
+function SingleCombobox({ id }: { id?: string }) {
+	const [value, setValue] = useState<string | null>(null)
+	const [query, setQuery] = useState("")
+	const filter = useComboboxFilter()
+	const items = useMemo(
+		() => COUNTRY_NAMES.filter((country) => filter.contains(country, query)),
+		[filter, query],
+	)
+
+	return (
+		<ComboboxRoot
+			value={value}
+			onValueChange={setValue}
+			inputValue={query}
+			onInputValueChange={setQuery}
+			items={items}
+		>
+			{/* Named: a placeholder is not a label. */}
+			<ComboboxInputTrigger
+				id={id}
+				aria-label="Search countries"
+				placeholder="Search countries…"
+				showClear={value != null}
+			/>
+			<ComboboxPortal>
+				<ComboboxPositioner>
+					<ComboboxPopup>
+						<ComboboxEmpty>No country matches “{query}”.</ComboboxEmpty>
+						<ComboboxList>
+							{(country: string) => (
+								<ComboboxItem key={country} value={country}>
+									{country}
+								</ComboboxItem>
+							)}
+						</ComboboxList>
+					</ComboboxPopup>
+				</ComboboxPositioner>
+			</ComboboxPortal>
+		</ComboboxRoot>
+	)
+}
+
+export default function ComboboxField() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Plain input, for comparison">
+				<Input placeholder="A regular text field" />
+			</FormField>
+			<FormField label="Combobox">
+				<SingleCombobox />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Without free text
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ComboboxTrigger>
-  <ComboboxValue placeholder="Choose a country" />
-</ComboboxTrigger>
-<ComboboxPortal>
-  <ComboboxPositioner>
-    <ComboboxPopup>
-      <ComboboxPopupInput aria-label="Search countries" placeholder="Search countries" />
-      <ComboboxEmpty>No country matches.</ComboboxEmpty>
-      <ComboboxList>…</ComboboxList>
-    </ComboboxPopup>
-  </ComboboxPositioner>
-</ComboboxPortal>
+import { useState } from "react"
+
+import {
+	ComboboxEmpty, ComboboxGroup, ComboboxGroupLabel, ComboboxItem, ComboboxList, ComboboxPopup,
+	ComboboxPopupInput, ComboboxPortal, ComboboxPositioner, ComboboxRoot, ComboboxTrigger,
+	ComboboxValue,
+} from "themelia-ui/base/combobox"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+
+import { COUNTRY_NAMES } from "./data"
+
+const REGIONS: Record<string, string[]> = {
+	Europe: ["Austria", "Belgium", "Denmark", "France", "Germany", "Spain", "Sweden"],
+	Americas: ["Argentina", "Brazil", "Canada", "Chile", "Mexico"],
+	"Asia Pacific": ["Australia", "Japan", "New Zealand"],
+}
+
+/* Forwards `id` to the trigger, so `FormField`'s label names it (a combobox is not named by its value). */
+function SelectLikeCombobox({ id }: { id?: string }) {
+	const [value, setValue] = useState<string | null>(null)
+
+	return (
+		<ComboboxRoot value={value} onValueChange={setValue} items={COUNTRY_NAMES.slice(0, 8)}>
+			<ComboboxTrigger id={id}>
+				<ComboboxValue placeholder="Choose a country" />
+			</ComboboxTrigger>
+			<ComboboxPortal>
+				<ComboboxPositioner>
+					<ComboboxPopup>
+						<ComboboxPopupInput placeholder="Search countries" aria-label="Search countries" />
+						<ComboboxEmpty>No country matches.</ComboboxEmpty>
+						<ComboboxList>
+							{(country: string) => (
+								<ComboboxItem key={country} value={country}>
+									{country}
+								</ComboboxItem>
+							)}
+						</ComboboxList>
+					</ComboboxPopup>
+				</ComboboxPositioner>
+			</ComboboxPortal>
+		</ComboboxRoot>
+	)
+}
+
+/* Forwards `id` to the trigger, so `FormField`'s label names it (a combobox is not named by its value). */
+function GroupedCombobox({ id }: { id?: string }) {
+	const [value, setValue] = useState<string | null>(null)
+
+	return (
+		<ComboboxRoot value={value} onValueChange={setValue}>
+			<ComboboxTrigger id={id}>
+				<ComboboxValue placeholder="Choose a country" />
+			</ComboboxTrigger>
+			<ComboboxPortal>
+				<ComboboxPositioner>
+					<ComboboxPopup>
+						<ComboboxPopupInput placeholder="Search countries" aria-label="Search countries" />
+						<ComboboxEmpty>No country matches.</ComboboxEmpty>
+						<ComboboxList>
+							{Object.entries(REGIONS).map(([region, countries]) => (
+								<ComboboxGroup key={region}>
+									<ComboboxGroupLabel>{region}</ComboboxGroupLabel>
+									{countries.map((country) => (
+										<ComboboxItem key={country} value={country}>
+											{country}
+										</ComboboxItem>
+									))}
+								</ComboboxGroup>
+							))}
+						</ComboboxList>
+					</ComboboxPopup>
+				</ComboboxPositioner>
+			</ComboboxPortal>
+		</ComboboxRoot>
+	)
+}
+
+export default function ComboboxSelect() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Country from the list">
+				<SelectLikeCombobox />
+			</FormField>
+			<FormField label="Grouped" helperText="Groups get a caption and their own scroll block.">
+				<GroupedCombobox />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### Multiple
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ComboboxChips>
-  {value.map((item) => <ComboboxChip key={item}>{item}</ComboboxChip>)}
-  <ComboboxChipsInput />
-</ComboboxChips>
+import { useMemo, useState } from "react"
+
+import {
+	ComboboxChip, ComboboxChips, ComboboxChipsInput, ComboboxEmpty, ComboboxItem, ComboboxList,
+	ComboboxPopup, ComboboxPortal, ComboboxPositioner, ComboboxRoot, useComboboxFilter,
+} from "themelia-ui/base/combobox"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+
+import { COUNTRY_NAMES } from "./data"
+
+/* Forwards `id` to the input, so `FormField`'s label reaches the control. */
+function MultiCombobox({ id }: { id?: string }) {
+	const [value, setValue] = useState<string[]>(["France", "Japan"])
+	const [query, setQuery] = useState("")
+	const filter = useComboboxFilter()
+	const items = useMemo(
+		() => COUNTRY_NAMES.filter((country) => filter.contains(country, query)),
+		[filter, query],
+	)
+
+	return (
+		<ComboboxRoot
+			multiple
+			value={value}
+			onValueChange={setValue}
+			inputValue={query}
+			onInputValueChange={setQuery}
+			items={items}
+		>
+			<ComboboxChips>
+				{value.map((country) => (
+					<ComboboxChip key={country}>{country}</ComboboxChip>
+				))}
+				<ComboboxChipsInput
+					id={id}
+					aria-label="Add countries"
+					placeholder={value.length === 0 ? "Add countries…" : undefined}
+				/>
+			</ComboboxChips>
+			<ComboboxPortal>
+				<ComboboxPositioner>
+					<ComboboxPopup>
+						<ComboboxEmpty>Nothing left to add.</ComboboxEmpty>
+						<ComboboxList>
+							{(country: string) => (
+								<ComboboxItem key={country} value={country}>
+									{country}
+								</ComboboxItem>
+							)}
+						</ComboboxList>
+					</ComboboxPopup>
+				</ComboboxPositioner>
+			</ComboboxPortal>
+		</ComboboxRoot>
+	)
+}
+
+export default function ComboboxMultiple() {
+	return (
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Ships to" helperText="Type to filter, Backspace to remove the last chip.">
+				<MultiCombobox />
+			</FormField>
+		</Stack>
+	)
+}
 ```

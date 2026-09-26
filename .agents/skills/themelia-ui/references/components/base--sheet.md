@@ -59,43 +59,172 @@ Exclude<OverlayPlacement, "center">
 
 Preview route: Overlay, dialog & sheet — `/overlay`
 
-### modality
+### Sheet
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OverlayContent placement="inline-end" modality="non-modal" />
+import { Button } from "themelia-ui/base/buttons"
+import { FormField } from "themelia-ui/base/forms"
+import {
+	Overlay, OverlayBody, OverlayClose, OverlayDescription, OverlayFooter, OverlayHeader,
+	OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
 
-{/* the same, as the preset */}
-<SheetContent modality="non-modal" />
-```
-
-### An alert dialog cannot be dismissed by accident
-
-```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Overlay>
-  <OverlayTrigger render={<Button>Edit</Button>} />
-  <SheetContent side="inline-end">
-    <OverlayHeader><OverlayTitle>Edit booking</OverlayTitle></OverlayHeader>
-    <OverlayBody>…</OverlayBody>
-    <OverlayFooter>
-      <OverlayClose render={<Button>Cancel</Button>} />
-      <OverlayClose render={<Button>Save</Button>} />
-    </OverlayFooter>
-  </SheetContent>
-</Overlay>
-
-{/* SheetContent is exactly */}
-<OverlayContent placement="inline-end" size="md" length="full" inset={false}>…</OverlayContent>
+export default function Sheet() {
+	return (
+		<Overlay>
+			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				Open sheet
+			</OverlayTrigger>
+			<SheetContent side="inline-end">
+				<OverlayHeader>
+					<OverlayTitle>Edit booking</OverlayTitle>
+					<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
+				</OverlayHeader>
+				<OverlayBody>
+					<Stack gap="md">
+						<FormField label="Venue">
+							<Input defaultValue="Marlow Hall" />
+						</FormField>
+						<FormField label="Guests">
+							<Input defaultValue="120" inputMode="numeric" />
+						</FormField>
+					</Stack>
+				</OverlayBody>
+				<OverlayFooter>
+					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+						Cancel
+					</OverlayClose>
+					<OverlayClose render={<Button />}>
+						Save
+					</OverlayClose>
+				</OverlayFooter>
+			</SheetContent>
+		</Overlay>
+	)
+}
 ```
 
 ### Size, length, and inset
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-{/* the default: welded to the edge */}
-<SheetContent side="inline-end" size="md" />
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { SheetContent } from "themelia-ui/base/sheet"
+import { Text } from "themelia-ui/base/typography"
 
-{/* a tall dialog from the corner — the offset is the whole shape */}
-<SheetContent side="inline-end" size="28rem" inset />
+export default function SheetShape() {
+	return (
+		<>
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Flush, size=&quot;sm&quot;
+				</OverlayTrigger>
+				<SheetContent side="inline-end" size="sm">
+					<OverlayHeader>
+						<OverlayTitle>Flush</OverlayTitle>
+						<OverlayDescription>Welded to the edge, square outer corners.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">What a sheet has always been.</Text>
+					</OverlayBody>
+				</SheetContent>
+			</Overlay>
 
-{/* shorter still, centred in what the offset left */}
-<SheetContent side="inline-end" size="28rem" length="70%" inset />
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Inset
+				</OverlayTrigger>
+				<SheetContent side="inline-end" size="28rem" inset>
+					<OverlayHeader>
+						<OverlayTitle>Corner-anchored</OverlayTitle>
+						<OverlayDescription>
+							Detached by one offset on all three sides, so the page shows past it.
+						</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">
+							The main view is still there — that is the point of the shape.
+						</Text>
+					</OverlayBody>
+				</SheetContent>
+			</Overlay>
+
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Inset from block-end
+				</OverlayTrigger>
+				<SheetContent side="block-end" size="60%" length="70%" inset="1.5rem">
+					<OverlayHeader>
+						<OverlayTitle>From the bottom</OverlayTitle>
+						<OverlayDescription>
+							size caps the height here and length sets the width — the two swap axes
+							with the side.
+						</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">
+							A bottom sheet sizes to its content, so <code>size</code> is a ceiling rather
+							than a height — that is what keeps a short one from being a tall empty box.
+						</Text>
+					</OverlayBody>
+				</SheetContent>
+			</Overlay>
+		</>
+	)
+}
+```
+
+### Decided once, not per call site
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import {
+	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
+} from "themelia-ui/base/overlay"
+import { SheetContent } from "themelia-ui/base/sheet"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function SheetProvider() {
+	return (
+		<>
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Kit default
+				</OverlayTrigger>
+				<SheetContent>
+					<OverlayHeader>
+						<OverlayTitle>Kit default</OverlayTitle>
+						<OverlayDescription>Flush, three-quarters wide.</OverlayDescription>
+					</OverlayHeader>
+					<OverlayBody>
+						<Text type="secondary">No shape props at the call site.</Text>
+					</OverlayBody>
+				</SheetContent>
+			</Overlay>
+
+			<UIProvider config={{ defaults: { sheet: { size: "26rem", inset: true } } }}>
+				<Overlay>
+					<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+						Under a provider
+					</OverlayTrigger>
+					<SheetContent>
+						<OverlayHeader>
+							<OverlayTitle>Under a provider</OverlayTitle>
+							<OverlayDescription>The same JSX, a different shape — one offset, spent equally on all three sides.</OverlayDescription>
+						</OverlayHeader>
+						<OverlayBody>
+							<Text type="secondary">Decided once for the whole product.</Text>
+						</OverlayBody>
+					</SheetContent>
+				</Overlay>
+			</UIProvider>
+		</>
+	)
+}
 ```

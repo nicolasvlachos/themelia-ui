@@ -175,26 +175,123 @@ Preview route: Toast — `/toast`
 ### Statuses
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-toast.success("Invoice sent")
-toast.error("Could not reach the server")
-toast.loading("Uploading…", { id: "upload" })
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+
+export default function ToastStatuses() {
+	return (
+		<Stack direction="horizontal" gap="sm" wrap>
+			<Button buttonStyle="outline" tone="neutral" onClick={() => toast("Draft saved")}>
+				Neutral
+			</Button>
+			<Button
+				buttonStyle="outline"
+				tone="neutral"
+				onClick={() => toast.success("Invoice sent", { description: "Northwind Traders · $1,299.50" })}
+			>
+				Success
+			</Button>
+			<Button buttonStyle="outline" tone="neutral" onClick={() => toast.info("Two seats left on this plan")}>
+				Info
+			</Button>
+			<Button buttonStyle="outline" tone="neutral" onClick={() => toast.warning("Your card expires next month")}>
+				Warning
+			</Button>
+			<Button
+				buttonStyle="outline"
+				tone="neutral"
+				onClick={() => toast.error("Could not reach the server", { description: "Retrying in 30 seconds." })}
+			>
+				Error
+			</Button>
+		</Stack>
+	)
+}
 ```
 
 ### Actions
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-toast("Invoice deleted", {
-  action: { label: "Undo", onClick: restore },
-  duration: 8000,
-})
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+
+export default function ToastActions() {
+	return (
+		<Stack direction="horizontal" gap="sm" wrap>
+			<Button
+				buttonStyle="outline"
+				tone="neutral"
+				onClick={() =>
+					toast("Invoice deleted", {
+						description: "INV-4420 · Initech",
+						duration: 8000,
+						action: { label: "Undo", onClick: () => toast.success("Invoice restored") },
+					})
+				}
+			>
+				With undo
+			</Button>
+			<Button
+				buttonStyle="outline"
+				tone="neutral"
+				onClick={() =>
+					toast.warning("Discard unsaved changes?", {
+						duration: Number.POSITIVE_INFINITY,
+						action: { label: "Discard", onClick: () => toast("Changes discarded") },
+						cancel: { label: "Keep", onClick: () => {} },
+					})
+				}
+			>
+				Pinned, two actions
+			</Button>
+		</Stack>
+	)
+}
 ```
 
 ### Promise
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-toast.promise(saveInvoice(), {
-  loading: "Saving…",
-  success: (invoice) => `Saved ${invoice.id}`,
-  error: "Could not save",
-})
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { toast } from "themelia-ui/base/toaster"
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+export default function ToastPromise() {
+	return (
+		<Stack direction="horizontal" gap="sm" wrap>
+			<Button
+				buttonStyle="outline"
+				tone="neutral"
+				onClick={() =>
+					void toast.promise(wait(1800), {
+						loading: "Saving invoice…",
+						success: "Invoice saved",
+						error: "Could not save",
+					})
+				}
+			>
+				Resolves
+			</Button>
+			<Button
+				buttonStyle="outline"
+				tone="neutral"
+				onClick={() =>
+					void toast
+						.promise(wait(1800).then(() => Promise.reject(new Error("timeout"))), {
+							loading: "Saving invoice…",
+							success: "Invoice saved",
+							error: (error) => `Could not save: ${(error as Error).message}`,
+						})
+						.catch(() => {})
+				}
+			>
+				Rejects
+			</Button>
+		</Stack>
+	)
+}
 ```

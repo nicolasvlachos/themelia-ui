@@ -922,28 +922,6 @@
 	padding-inline-start: calc(var(--control-h) + var(--space-xs));
 }
 
-/* A bare submit, so the example can drive a form that owns no buttons. */
-.demoSubmit {
-	padding-inline: var(--space-xl);
-	padding-block: var(--space-sm);
-	border: var(--border-width) solid var(--border);
-	border-radius: var(--radius-sm);
-	background-color: var(--card);
-	color: var(--foreground);
-	font: inherit;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	cursor: pointer;
-}
-
-.demoSubmit:hover {
-	background-color: var(--accent);
-}
-/* A demo control, but this site is the kit's most-read example of using itself. */
-.demoSubmit:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
 
 
 /* A map has no intrinsic height, so a docs example has to give it one. */

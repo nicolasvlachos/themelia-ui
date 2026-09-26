@@ -219,78 +219,250 @@ CardStrings
 
 ## Preview recipes
 
-Preview route: Card — `/card`
+Preview route: Action menu & buttons — `/action-menu`
+
+### In a card header
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { LogOutIcon, PencilIcon, TrashIcon } from "lucide-react"
+
+import { Card } from "themelia-ui/base/cards"
+import { Text } from "themelia-ui/base/typography"
+
+export default function MenusInContext() {
+	return (
+		<Card
+			surface="bordered"
+			title="Northwind Traders"
+			description="Customer since 2019"
+			actions={[
+				{ label: "Edit", icon: PencilIcon, onClick: () => {} },
+				{ label: "Sign out of all sessions", icon: LogOutIcon, onClick: () => {}, group: true },
+				{ label: "Delete customer", icon: TrashIcon, onClick: () => {}, tone: "destructive" },
+			]}
+			style={{ maxWidth: "26rem" }}
+		>
+			<Text size="sm" type="secondary">
+				The header menu is an ActionMenu — the card passes its actions straight through.
+			</Text>
+		</Card>
+	)
+}
+```
 
 ### Surfaces
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Card surface="framed" title="Revenue" description="Last 30 days" />
+import { Card, type CardSurface } from "themelia-ui/base/cards"
+import { Grid } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+const SURFACES: CardSurface[] = ["card", "framed", "flat", "bordered"]
+
+export default function CardSurfaces() {
+	return (
+		/* Two columns for four surfaces, so none sits alone on a row. */
+		<Grid columns={{ base: 1, sm: 2 }} gap="lg" style={{ width: "100%" }}>
+			{SURFACES.map((surface) => (
+				<Card key={surface} surface={surface} title={surface} description="Supporting sentence.">
+					<Text type="secondary" size="sm">
+						Card content.
+					</Text>
+				</Card>
+			))}
+		</Grid>
+	)
+}
 ```
 
 ### Slots
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Card
-  icon={<CreditCardIcon />}
-  title="Primary card"
-  titleSuffix={<Badge>Default</Badge>}
-  description="Visa ending 4242"
-  actions={[
-    { label: "Edit", onClick: … },
-    { label: "Remove", onClick: …, tone: "destructive" },
-  ]}
-  footerText="Updated 3 days ago"
-  footerSlot={<Button>Manage</Button>}
-/>
+import { CreditCardIcon, PencilIcon, StarIcon, TrashIcon } from "lucide-react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Button } from "themelia-ui/base/buttons"
+import { Card } from "themelia-ui/base/cards"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+
+export default function CardSlots() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "34rem", width: "100%" }}>
+			<Card
+				icon={<CreditCardIcon />}
+				title="Primary payment method"
+				titleSuffix={<Badge tone="neutral">Default</Badge>}
+				description="Visa ending 4242, expires 09/28"
+				headerDivider
+				actions={[
+					{ label: "Edit", icon: <PencilIcon />, onClick: () => {} },
+					{ label: "Set as default", icon: <StarIcon />, onClick: () => {} },
+					{ label: "Remove", icon: <TrashIcon />, onClick: () => {}, tone: "destructive" },
+				]}
+				footerText="Updated 3 days ago"
+				footerSlot={<Button tone="neutral" buttonStyle="outline">Manage</Button>}
+				footerDivider
+			>
+				<Text type="secondary" size="sm">
+					Charged on the first of each month.
+				</Text>
+			</Card>
+
+			<Card
+				title="With an alert"
+				description="A banner sits between the header and the content."
+				alert="Your card expires next month."
+				alertTone="warning"
+			>
+				<Text type="secondary" size="sm">
+					Content follows the banner.
+				</Text>
+			</Card>
+		</Stack>
+	)
+}
 ```
 
 ### Expandable
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Card expandable title="Terms">…</Card>
+import { Card } from "themelia-ui/base/cards"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+
+export default function CardExpandable() {
+	return (
+		<Card expandable title="Terms of service" style={{ maxWidth: "34rem", width: "100%" }}>
+			<Stack gap="md">
+				{Array.from({ length: 10 }, (_, i) => (
+					<Text key={i} type="secondary" size="sm">
+						Clause {i + 1}. Content that runs past the collapsed height, so the fade has
+						something to fade.
+					</Text>
+				))}
+			</Stack>
+		</Card>
+	)
+}
 ```
 
-### One card primitive
+### Header slots
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Card
-  icon={<CreditCardIcon />}
-  title="Payment method"
-  titleSuffix={<Badge tone="success">Verified</Badge>}
-  tooltip="We store only the last four digits."
-  headerAction={<Button buttonStyle="ghost" tone="neutral">Change</Button>}
-  description="Charged on the first of the month."
-/>
+import { CreditCardIcon } from "lucide-react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { Button } from "themelia-ui/base/buttons"
+import { Card } from "themelia-ui/base/cards"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+
+export default function CardHeaderSlots() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "34rem", width: "100%" }}>
+			<Card
+				icon={<CreditCardIcon />}
+				title="Payment method"
+				titleSuffix={<Badge tone="success">Verified</Badge>}
+				tooltip="We store only the last four digits. The full number never reaches our servers."
+				headerAction={
+					<Button buttonStyle="ghost" tone="neutral">
+						Change
+					</Button>
+				}
+				description="Charged on the first of the month."
+				headerDivider
+				footerText="Next charge 1 April"
+				footerSlot={<Button buttonStyle="outline" tone="neutral">Invoices</Button>}
+				footerDivider
+			>
+				<Text size="sm" type="secondary">
+					Visa ending 4417.
+				</Text>
+			</Card>
+		</Stack>
+	)
+}
 ```
 
 ### Alert band
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Card title="Domain" alert="Verification expires in 3 days." alertTone="warning" />
+import { Card } from "themelia-ui/base/cards"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+
+export default function CardAlert() {
+	return (
+		<Stack gap="lg" style={{ maxWidth: "34rem", width: "100%" }}>
+			<Card title="Domain" alert="Verification expires in 3 days." alertTone="warning">
+				<Text size="sm" type="secondary">
+					acme.com
+				</Text>
+			</Card>
+			<Card title="Billing" alert="Payment failed." alertTone="destructive">
+				<Text size="sm" type="secondary">
+					We will retry in 24 hours.
+				</Text>
+			</Card>
+		</Stack>
+	)
+}
 ```
 
 ### Actions, and the whole card as one
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Card>
-  <CardContent>…</CardContent>
-  <CardFooter>
-    <CardActionStrip actions={[{ id: "open", label: "Open" }, { id: "archive", label: "Archive" }]} />
-  </CardFooter>
-</Card>
+import { Card, CardActionStrip, CardFooter, CardPrimaryAction } from "themelia-ui/base/cards"
+import { Stack } from "themelia-ui/base/structure"
+import { TextLink } from "themelia-ui/base/typography"
 
-// Or the whole card as one link. The card becomes the anchor's containing
-// block on its own, and a control inside it still takes its own clicks.
-<Card title="Northwind Traders">
-  <CardPrimaryAction href="/invoices/4417" label="Open Northwind Traders" />
-  <CardFooter>
-    <TextLink href="/invoices/4417.pdf">View the invoice instead</TextLink>
-  </CardFooter>
-</Card>
+export default function CardActions() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap align="start">
+			<Card style={{ width: "18rem" }} title="Northwind Traders" description="Invoice #4417">
+				<CardFooter>
+					<CardActionStrip
+						actions={[
+							{ id: "open", label: "Open" },
+							{ id: "archive", label: "Archive" },
+						]}
+					/>
+				</CardFooter>
+			</Card>
+			<Card style={{ width: "18rem" }} title="A card that is one link" description="The whole surface is the target.">
+				<CardPrimaryAction href="#card-actions" label="Open Northwind Traders" />
+				{/* An unpositioned TextLink, not a Button (already `position: relative`), so it exercises the lifting rule. */}
+				<CardFooter>
+					<TextLink href="#card-skeleton">View the invoice instead</TextLink>
+				</CardFooter>
+			</Card>
+		</Stack>
+	)
+}
 ```
 
 ### CardSkeleton
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<CardSkeleton surface="bordered" showHeader lines={3} />
+import { CardSkeleton } from "themelia-ui/base/cards"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function CardSkeletonExample() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap align="start">
+			<div style={{ width: "18rem" }}>
+				<CardSkeleton showHeader lines={3} label="Loading invoice" />
+			</div>
+			<div style={{ width: "18rem" }}>
+				<CardSkeleton surface="bordered" lines={2} label="Loading summary" />
+			</div>
+		</Stack>
+	)
+}
 ```

@@ -162,12 +162,93 @@ Preview route: Dropdown & context menu — `/dropdown-menu`
 ### Dropdown menu
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DropdownMenu>
-  <DropdownMenuTrigger render={<Button />}>Open</DropdownMenuTrigger>
-  <DropdownMenuContent>
-    <DropdownMenuItem>Edit</DropdownMenuItem>
-    <DropdownMenuSeparator />
-    <DropdownMenuSub>…</DropdownMenuSub>
-  </DropdownMenuContent>
-</DropdownMenu>
+import { ChevronDownIcon } from "lucide-react"
+import { useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import {
+	DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup,
+	DropdownMenuItem, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
+	DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent,
+	DropdownMenuSubTrigger, DropdownMenuTrigger,
+} from "themelia-ui/base/dropdown-menu"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function DropdownMenuExample() {
+	const [dense, setDense] = useState(false)
+	const [sort, setSort] = useState("date")
+
+	return (
+		<Stack direction="horizontal" gap="lg">
+			<DropdownMenu>
+				<DropdownMenuTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
+					Options <ChevronDownIcon />
+				</DropdownMenuTrigger>
+				<DropdownMenuContent>
+					<DropdownMenuGroup>
+						<DropdownMenuLabel>Document</DropdownMenuLabel>
+						<DropdownMenuItem>
+							Edit <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
+						</DropdownMenuItem>
+						<DropdownMenuItem>Duplicate</DropdownMenuItem>
+					</DropdownMenuGroup>
+					<DropdownMenuSeparator />
+					<DropdownMenuCheckboxItem checked={dense} onCheckedChange={setDense}>
+						Dense rows
+					</DropdownMenuCheckboxItem>
+					<DropdownMenuSeparator />
+					<DropdownMenuSub>
+						<DropdownMenuSubTrigger>Sort by</DropdownMenuSubTrigger>
+						<DropdownMenuSubContent>
+							<DropdownMenuRadioGroup value={sort} onValueChange={setSort}>
+								<DropdownMenuRadioItem value="date">Date</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="amount">Amount</DropdownMenuRadioItem>
+							</DropdownMenuRadioGroup>
+						</DropdownMenuSubContent>
+					</DropdownMenuSub>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</Stack>
+	)
+}
+```
+
+### Dark by default, decided by the provider
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { ChevronDownIcon, CopyIcon, PencilIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import {
+	DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "themelia-ui/base/dropdown-menu"
+import { Stack } from "themelia-ui/base/structure"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function DropdownScheme() {
+	return (
+		<Stack direction="horizontal" gap="lg">
+			<DropdownMenu>
+				<DropdownMenuTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
+					Default <ChevronDownIcon />
+				</DropdownMenuTrigger>
+				<DropdownMenuContent>
+					<DropdownMenuItem icon={<PencilIcon />}>Edit</DropdownMenuItem>
+					<DropdownMenuItem icon={<CopyIcon />}>Duplicate</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+			<UIProvider config={{ overlay: { darkMenus: false } }}>
+				<DropdownMenu>
+					<DropdownMenuTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
+						Follows the page <ChevronDownIcon />
+					</DropdownMenuTrigger>
+					<DropdownMenuContent>
+						<DropdownMenuItem icon={<PencilIcon />}>Edit</DropdownMenuItem>
+						<DropdownMenuItem icon={<CopyIcon />}>Duplicate</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</UIProvider>
+		</Stack>
+	)
+}
 ```

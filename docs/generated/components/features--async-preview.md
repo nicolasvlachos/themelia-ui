@@ -418,19 +418,277 @@ Preview route: Async preview — `/async-preview`
 ### Fetching on open
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<AsyncPreview.Root
-  type="customer"
-  context={{ id }}
-  cacheKey={`customer:${id}\
+import { useRef, useState } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AsyncPreview, clearAsyncPreviewCache } from "themelia-ui/features/async-preview"
+
+import { CustomerCard } from "./_shared"
+import { CUSTOMERS, wait, type Customer } from "./data"
+
+export default function AsyncPreviewBasic() {
+	const [log, setLog] = useState<string[]>([])
+	const callsRef = useRef(0)
+
+	const record = (line: string) => setLog((lines) => [line, ...lines].slice(0, 6))
+
+	const fetchCustomer = async (id: string, signal: AbortSignal, delay = 700) => {
+		callsRef.current += 1
+		record(`request #${callsRef.current} → ${id}`)
+		await wait(delay, signal)
+		return CUSTOMERS[id] ?? null
+	}
+
+	return (
+		<>
+			<Stack direction="horizontal" gap="xl" wrap>
+				{Object.values(CUSTOMERS).map((customer) => (
+					<AsyncPreview.Root<Customer, { id: string }, "customer">
+						key={customer.id}
+						type="customer"
+						context={{ id: customer.id }}
+						cacheKey={`customer:${customer.id}`}
+						onShow={({ context, signal }) => fetchCustomer(context.id, signal)}
+					>
+						<AsyncPreview.Trigger>{customer.name}</AsyncPreview.Trigger>
+						<AsyncPreview.Content>
+							<AsyncPreview.Loading />
+							<AsyncPreview.Error />
+							<AsyncPreview.Empty />
+							<AsyncPreview.Body>
+								{(data) => <CustomerCard customer={data as Customer} />}
+							</AsyncPreview.Body>
+						</AsyncPreview.Content>
+					</AsyncPreview.Root>
+				))}
+			</Stack>
+
+			<Stack gap="sm">
+				<Stack direction="horizontal" gap="sm" align="center">
+					<Button
+						tone="neutral"
+						buttonStyle="outline"
+						onClick={() => {
+							clearAsyncPreviewCache()
+							setLog([])
+							callsRef.current = 0
+						}}
+					>
+						Clear the cache
+					</Button>
+					<Text size="xs" type="secondary">
+						Hover one twice — the second open makes no request.
+					</Text>
+				</Stack>
+				{log.length > 0 && (
+					<Stack gap="none">
+						{log.map((line, index) => (
+							<Text key={`${line}-${index}`} size="xs" type="secondary" numeric>
+								{line}
+							</Text>
+						))}
+					</Stack>
+				)}
+			</Stack>
+		</>
+	)
+}
+```
+
+### The four states
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { useRef } from "react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { AsyncPreview } from "themelia-ui/features/async-preview"
+
+import { CustomerCard } from "./_shared"
+import { CUSTOMERS, wait, type Customer } from "./data"
+
+export default function AsyncPreviewStates() {
+	const failedOnce = useRef(false)
+
+	return (
+		<Stack direction="horizontal" gap="xl" wrap>
+			<AsyncPreview.Root<Customer, null, "slow">
+				type="slow"
+				context={null}
+				onShow={async ({ signal, setLoading }) => {
+					setLoading({ label: "Reaching the billing service…" })
+					await wait(2500, signal)
+					return CUSTOMERS["c-1"]!
+				}}
+			>
+				<AsyncPreview.Trigger>Slow, with its own label</AsyncPreview.Trigger>
+				<AsyncPreview.Content>
+					<AsyncPreview.Loading />
+					<AsyncPreview.Body>
+						{(data) => <CustomerCard customer={data as Customer} />}
+					</AsyncPreview.Body>
+				</AsyncPreview.Content>
+			</AsyncPreview.Root>
+
+			<AsyncPreview.Root<Customer, null, "failing">
+				type="failing"
+				context={null}
+				onShow={async ({ signal }) => {
+					await wait(600, signal)
+					if (!failedOnce.current) {
+						failedOnce.current = true
+						throw new Error("502 from the billing service")
+					}
+					return CUSTOMERS["c-1"]!
+				}}
+			>
+				<AsyncPreview.Trigger>Fails once, then recovers</AsyncPreview.Trigger>
+				<AsyncPreview.Content>
+					<AsyncPreview.Loading />
+					<AsyncPreview.Error />
+					<AsyncPreview.Body>{(data) => <CustomerCard customer={data as Customer} />}</AsyncPreview.Body>
+				</AsyncPreview.Content>
+			</AsyncPreview.Root>
+
+			<AsyncPreview.Root<Customer, null, "failing-custom">
+				type="failing-custom"
+				context={null}
+				onShow={async ({ signal }) => {
+					await wait(600, signal)
+					throw new Error("502 from the billing service")
+				}}
+			>
+				<AsyncPreview.Trigger>Fails, with its own copy</AsyncPreview.Trigger>
+				<AsyncPreview.Content>
+					<AsyncPreview.Loading />
+					<AsyncPreview.Error>
+						{(state) => (
+							<>
+								<Text weight="medium">Billing is unreachable</Text>
+								<Text size="xs" type="secondary">
+									{(state.error as Error).message}
+								</Text>
+								<Button tone="neutral" buttonStyle="outline" onClick={state.refresh}>
+									Try again
+								</Button>
+							</>
+						)}
+					</AsyncPreview.Error>
+					<AsyncPreview.Body>{() => null}</AsyncPreview.Body>
+				</AsyncPreview.Content>
+			</AsyncPreview.Root>
+
+			<AsyncPreview.Root<Customer, null, "missing">
+				type="missing"
+				context={null}
+				onShow={async ({ signal }) => {
+					await wait(500, signal)
+					return null
+				}}
+			>
+				<AsyncPreview.Trigger>Resolves to nothing</AsyncPreview.Trigger>
+				<AsyncPreview.Content>
+					<AsyncPreview.Loading />
+					<AsyncPreview.Empty />
+					<AsyncPreview.Body>{() => null}</AsyncPreview.Body>
+				</AsyncPreview.Content>
+			</AsyncPreview.Root>
+
+			<AsyncPreview.Root<Customer, null, "static">
+				type="static"
+				context={null}
+				data={CUSTOMERS["c-2"]!}
+			>
+				<AsyncPreview.Trigger>Already in hand</AsyncPreview.Trigger>
+				<AsyncPreview.Content>
+					<AsyncPreview.Body>
+						{(data) => <CustomerCard customer={data as Customer} />}
+					</AsyncPreview.Body>
+				</AsyncPreview.Content>
+			</AsyncPreview.Root>
+		</Stack>
+	)
+}
 ```
 
 ### PreviewTriggerCell
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PreviewTriggerCell
-  value={row.customerName}
-  secondary={row.reference}
-  hasPreview={row.customerId !== null}
-  disabledReason="Imported without a customer record"
-/>
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "themelia-ui/base/table"
+import { AsyncPreview, PreviewTriggerCell } from "themelia-ui/features/async-preview"
+
+import { CustomerCard } from "./_shared"
+import { CUSTOMERS, wait, type Customer } from "./data"
+
+const ROWS = [
+	{ id: "c-1", reference: "INV-4417", note: "" },
+	{ id: "c-2", reference: "INV-4418", note: "" },
+	{ id: "c-3", reference: "INV-4419", note: "" },
+	{ id: null, reference: "INV-4420", note: "Imported without a customer record" },
+]
+
+const fetchCustomer = async (id: string, signal: AbortSignal, delay = 700) => {
+	await wait(delay, signal)
+	return CUSTOMERS[id] ?? null
+}
+
+export default function PreviewTriggerCellExample() {
+	return (
+		<Table>
+			<TableHeader>
+				<TableRow>
+					<TableHead>Customer</TableHead>
+					<TableHead>Reference</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{ROWS.map((row) => {
+					const customer = row.id ? CUSTOMERS[row.id] : undefined
+					return (
+						<TableRow key={row.reference}>
+							<TableCell>
+								{customer ? (
+									<AsyncPreview.Root<Customer, { id: string }, "customer">
+										type="customer"
+										context={{ id: customer.id }}
+										cacheKey={`cell:${customer.id}`}
+										onShow={({ context, signal }) => fetchCustomer(context.id, signal, 450)}
+									>
+										<AsyncPreview.Trigger>
+											{() => (
+												<PreviewTriggerCell
+													value={customer.name}
+													secondary={customer.email}
+													badge={{ label: customer.plan }}
+												/>
+											)}
+										</AsyncPreview.Trigger>
+										<AsyncPreview.Content>
+											<AsyncPreview.Loading />
+											<AsyncPreview.Error />
+											<AsyncPreview.Empty />
+											<AsyncPreview.Body>
+												{(data) => <CustomerCard customer={data as Customer} />}
+											</AsyncPreview.Body>
+										</AsyncPreview.Content>
+									</AsyncPreview.Root>
+								) : (
+									<PreviewTriggerCell
+										value={null}
+										hasPreview={false}
+										disabledReason={row.note}
+									/>
+								)}
+							</TableCell>
+							<TableCell>{row.reference}</TableCell>
+						</TableRow>
+					)
+				})}
+			</TableBody>
+		</Table>
+	)
+}
 ```

@@ -921,6 +921,12 @@
           "title": "Accordion",
           "route": "/accordion",
           "page": "Accordion"
+        },
+        {
+          "id": "accordion-surfaces",
+          "title": "Accordion surfaces",
+          "route": "/accordion",
+          "page": "Accordion"
         }
       ]
     },
@@ -1011,8 +1017,8 @@
           "page": "Action menu & buttons"
         },
         {
-          "id": "menus-in-context",
-          "title": "In a card header",
+          "id": "action-buttons",
+          "title": "The same definitions, as buttons",
           "route": "/action-menu",
           "page": "Action menu & buttons"
         },
@@ -1594,6 +1600,14 @@
         {
           "route": "/button",
           "page": "Button"
+        },
+        {
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "route": "/tokens",
+          "page": "Tokens & theming"
         }
       ],
       "recipes": [
@@ -1638,6 +1652,18 @@
           "title": "Separators and text inside a group",
           "route": "/button",
           "page": "Button"
+        },
+        {
+          "id": "type-factor",
+          "title": "Type can override the master factor",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "scoped-theming",
+          "title": "Scoped theming",
+          "route": "/tokens",
+          "page": "Tokens & theming"
         }
       ]
     },
@@ -1788,11 +1814,21 @@
       ],
       "previews": [
         {
+          "route": "/action-menu",
+          "page": "Action menu & buttons"
+        },
+        {
           "route": "/card",
           "page": "Card"
         }
       ],
       "recipes": [
+        {
+          "id": "menus-in-context",
+          "title": "In a card header",
+          "route": "/action-menu",
+          "page": "Action menu & buttons"
+        },
         {
           "id": "card-surfaces",
           "title": "Surfaces",
@@ -1812,8 +1848,8 @@
           "page": "Card"
         },
         {
-          "id": "cards-rule",
-          "title": "One card primitive",
+          "id": "card-header-slots",
+          "title": "Header slots",
           "route": "/card",
           "page": "Card"
         },
@@ -2443,6 +2479,10 @@
           "page": "Radio groups"
         },
         {
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
           "route": "/select",
           "page": "Select"
         },
@@ -2487,6 +2527,12 @@
           "title": "Pills",
           "route": "/radio-group",
           "page": "Radio groups"
+        },
+        {
+          "id": "type-factor",
+          "title": "Type can override the master factor",
+          "route": "/scale",
+          "page": "Scale & density"
         },
         {
           "id": "select",
@@ -2918,8 +2964,8 @@
       ],
       "recipes": [
         {
-          "id": "combobox-rule",
-          "title": "The pickers do not filter",
+          "id": "combobox-field",
+          "title": "The parts: one field surface",
           "route": "/combobox",
           "page": "Combobox"
         },
@@ -3111,6 +3157,12 @@
         {
           "id": "command",
           "title": "Command",
+          "route": "/command",
+          "page": "Command palette"
+        },
+        {
+          "id": "command-dialog",
+          "title": "CommandDialog",
           "route": "/command",
           "page": "Command palette"
         }
@@ -3726,8 +3778,14 @@
       ],
       "recipes": [
         {
-          "id": "overlay-rule",
-          "title": "Three presets, one surface",
+          "id": "dialog",
+          "title": "Dialog",
+          "route": "/overlay",
+          "page": "Overlay, dialog & sheet"
+        },
+        {
+          "id": "overlay-backdrop",
+          "title": "A blurred scrim, when a product wants one",
           "route": "/overlay",
           "page": "Overlay, dialog & sheet"
         }
@@ -4148,6 +4206,12 @@
           "page": "Content block"
         },
         {
+          "id": "direction-slot",
+          "title": "DirectionProvider and Slot",
+          "route": "/content-block",
+          "page": "Content block"
+        },
+        {
           "id": "date-block",
           "title": "DateBlock",
           "route": "/date-block",
@@ -4513,6 +4577,12 @@
         {
           "id": "dropdown-menu",
           "title": "Dropdown menu",
+          "route": "/dropdown-menu",
+          "page": "Dropdown & context menu"
+        },
+        {
+          "id": "dropdown-scheme",
+          "title": "Dark by default, decided by the provider",
           "route": "/dropdown-menu",
           "page": "Dropdown & context menu"
         }
@@ -6493,20 +6563,8 @@
       ],
       "recipes": [
         {
-          "id": "overlay-placement",
-          "title": "placement",
-          "route": "/overlay",
-          "page": "Overlay, dialog & sheet"
-        },
-        {
           "id": "modality",
           "title": "modality",
-          "route": "/overlay",
-          "page": "Overlay, dialog & sheet"
-        },
-        {
-          "id": "overlay-dismissal",
-          "title": "dismissal",
           "route": "/overlay",
           "page": "Overlay, dialog & sheet"
         },
@@ -6541,8 +6599,8 @@
           "page": "Overlay, dialog & sheet"
         },
         {
-          "id": "overlay-rule",
-          "title": "Three presets, one surface",
+          "id": "dialog",
+          "title": "Dialog",
           "route": "/overlay",
           "page": "Overlay, dialog & sheet"
         },
@@ -6553,8 +6611,26 @@
           "page": "Overlay, dialog & sheet"
         },
         {
-          "id": "alert-dialog-rule",
-          "title": "An alert dialog cannot be dismissed by accident",
+          "id": "sheet",
+          "title": "Sheet",
+          "route": "/overlay",
+          "page": "Overlay, dialog & sheet"
+        },
+        {
+          "id": "sheet-shape",
+          "title": "Size, length, and inset",
+          "route": "/overlay",
+          "page": "Overlay, dialog & sheet"
+        },
+        {
+          "id": "sheet-provider",
+          "title": "Decided once, not per call site",
+          "route": "/overlay",
+          "page": "Overlay, dialog & sheet"
+        },
+        {
+          "id": "overlay-backdrop",
+          "title": "A blurred scrim, when a product wants one",
           "route": "/overlay",
           "page": "Overlay, dialog & sheet"
         }
@@ -7179,20 +7255,20 @@
       ],
       "recipes": [
         {
-          "id": "modality",
-          "title": "modality",
-          "route": "/overlay",
-          "page": "Overlay, dialog & sheet"
-        },
-        {
-          "id": "alert-dialog-rule",
-          "title": "An alert dialog cannot be dismissed by accident",
+          "id": "sheet",
+          "title": "Sheet",
           "route": "/overlay",
           "page": "Overlay, dialog & sheet"
         },
         {
           "id": "sheet-shape",
           "title": "Size, length, and inset",
+          "route": "/overlay",
+          "page": "Overlay, dialog & sheet"
+        },
+        {
+          "id": "sheet-provider",
+          "title": "Decided once, not per call site",
           "route": "/overlay",
           "page": "Overlay, dialog & sheet"
         }
@@ -7609,39 +7685,11 @@
       ],
       "previews": [
         {
-          "route": "/app-shell",
-          "page": "App shell"
-        },
-        {
           "route": "/sidebar",
           "page": "Sidebar"
         }
       ],
       "recipes": [
-        {
-          "id": "sidebar-shell",
-          "title": "The shell",
-          "route": "/app-shell",
-          "page": "App shell"
-        },
-        {
-          "id": "sidebar-anatomy",
-          "title": "Anatomy",
-          "route": "/sidebar",
-          "page": "Sidebar"
-        },
-        {
-          "id": "sidebar-variant",
-          "title": "variant",
-          "route": "/sidebar",
-          "page": "Sidebar"
-        },
-        {
-          "id": "sidebar-collapsible",
-          "title": "collapsible",
-          "route": "/sidebar",
-          "page": "Sidebar"
-        },
         {
           "id": "sidebar-controlled",
           "title": "Controlled",
@@ -8013,11 +8061,85 @@
       ],
       "previews": [
         {
+          "route": "/form-field",
+          "page": "Form field"
+        },
+        {
+          "route": "/overlay",
+          "page": "Overlay, dialog & sheet"
+        },
+        {
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "route": "/sidebar",
+          "page": "Sidebar"
+        },
+        {
           "route": "/structure",
           "page": "Stack & grid"
+        },
+        {
+          "route": "/table",
+          "page": "Table"
         }
       ],
       "recipes": [
+        {
+          "id": "forms-scale",
+          "title": "Scale",
+          "route": "/form-field",
+          "page": "Form field"
+        },
+        {
+          "id": "overlay-placement",
+          "title": "placement",
+          "route": "/overlay",
+          "page": "Overlay, dialog & sheet"
+        },
+        {
+          "id": "overlay-dismissal",
+          "title": "dismissal",
+          "route": "/overlay",
+          "page": "Overlay, dialog & sheet"
+        },
+        {
+          "id": "the-factor",
+          "title": "The factor",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "type-factor",
+          "title": "Type can override the master factor",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "factor-chain",
+          "title": "Two levels of control",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "nesting",
+          "title": "Nesting",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "density",
+          "title": "Density presets",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "sidebar-variant",
+          "title": "variant",
+          "route": "/sidebar",
+          "page": "Sidebar"
+        },
         {
           "id": "stack",
           "title": "Stack",
@@ -8053,6 +8175,12 @@
           "title": "Bleed",
           "route": "/structure",
           "page": "Stack & grid"
+        },
+        {
+          "id": "table-scale",
+          "title": "Density",
+          "route": "/table",
+          "page": "Table"
         }
       ]
     },
@@ -8226,24 +8354,6 @@
       ],
       "recipes": [
         {
-          "id": "table",
-          "title": "Table",
-          "route": "/table",
-          "page": "Table"
-        },
-        {
-          "id": "table-selection",
-          "title": "Selection",
-          "route": "/table",
-          "page": "Table"
-        },
-        {
-          "id": "table-scroll",
-          "title": "Overflow",
-          "route": "/table",
-          "page": "Table"
-        },
-        {
           "id": "table-sorting",
           "title": "Sortable columns",
           "route": "/table",
@@ -8413,6 +8523,10 @@
       ],
       "previews": [
         {
+          "route": "/form-field",
+          "page": "Form field"
+        },
+        {
           "route": "/input",
           "page": "Input"
         },
@@ -8426,6 +8540,18 @@
         }
       ],
       "recipes": [
+        {
+          "id": "forms-scale",
+          "title": "Scale",
+          "route": "/form-field",
+          "page": "Form field"
+        },
+        {
+          "id": "shared-surface",
+          "title": "One shared surface",
+          "route": "/input",
+          "page": "Input"
+        },
         {
           "id": "iphone-input-zoom",
           "title": "Optional iPhone zoom prevention",
@@ -8542,8 +8668,8 @@
           "page": "Timeline"
         },
         {
-          "id": "timeline-props",
-          "title": "Props",
+          "id": "stepper-default",
+          "title": "Stepper",
           "route": "/timeline",
           "page": "Timeline"
         },
@@ -8819,30 +8945,20 @@
       ],
       "previews": [
         {
-          "route": "/scale",
-          "page": "Scale & density"
-        },
-        {
           "route": "/toolbar",
           "page": "Toolbar"
         }
       ],
       "recipes": [
         {
-          "id": "the-factor",
-          "title": "The factor",
-          "route": "/scale",
-          "page": "Scale & density"
-        },
-        {
-          "id": "why-two-levels",
-          "title": "Why two factors, and no third",
-          "route": "/scale",
-          "page": "Scale & density"
-        },
-        {
           "id": "toolbar",
           "title": "Formatting controls",
+          "route": "/toolbar",
+          "page": "Toolbar"
+        },
+        {
+          "id": "toolbar-orientation",
+          "title": "Vertical orientation",
           "route": "/toolbar",
           "page": "Toolbar"
         }
@@ -9059,8 +9175,20 @@
       ],
       "previews": [
         {
+          "route": "/action-menu",
+          "page": "Action menu & buttons"
+        },
+        {
           "route": "/rich-text-editor",
           "page": "Rich text editor"
+        },
+        {
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "route": "/table",
+          "page": "Table"
         },
         {
           "route": "/typography",
@@ -9069,10 +9197,46 @@
       ],
       "recipes": [
         {
+          "id": "menus-in-context",
+          "title": "In a card header",
+          "route": "/action-menu",
+          "page": "Action menu & buttons"
+        },
+        {
+          "id": "editor-compact",
+          "title": "compact",
+          "route": "/rich-text-editor",
+          "page": "Rich text editor"
+        },
+        {
           "id": "editor-output",
           "title": "What comes out",
           "route": "/rich-text-editor",
           "page": "Rich text editor"
+        },
+        {
+          "id": "type-factor",
+          "title": "Type can override the master factor",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "factor-chain",
+          "title": "Two levels of control",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "nesting",
+          "title": "Nesting",
+          "route": "/scale",
+          "page": "Scale & density"
+        },
+        {
+          "id": "table-scale",
+          "title": "Density",
+          "route": "/table",
+          "page": "Table"
         },
         {
           "id": "text-roles",
@@ -9319,8 +9483,8 @@
           "page": "File upload"
         },
         {
-          "id": "upload-rule",
-          "title": "Validation is not the dialog's job",
+          "id": "media-upload",
+          "title": "One image: AvatarUpload and ImageUpload",
           "route": "/file-upload",
           "page": "File upload"
         },
@@ -10702,6 +10866,12 @@
           "page": "Async preview"
         },
         {
+          "id": "async-preview-states",
+          "title": "The four states",
+          "route": "/async-preview",
+          "page": "Async preview"
+        },
+        {
           "id": "preview-trigger-cell",
           "title": "PreviewTriggerCell",
           "route": "/async-preview",
@@ -11101,6 +11271,12 @@
         {
           "id": "comments-submit-recovery",
           "title": "Submit failure and retry",
+          "route": "/comments",
+          "page": "Comments"
+        },
+        {
+          "id": "comments-formats",
+          "title": "Three stored formats",
           "route": "/comments",
           "page": "Comments"
         },
@@ -14311,6 +14487,12 @@
           "title": "With none",
           "route": "/resource-assignment",
           "page": "Resource assignment"
+        },
+        {
+          "id": "retry",
+          "title": "Rejected write and retry",
+          "route": "/resource-assignment",
+          "page": "Resource assignment"
         }
       ]
     },
@@ -14631,8 +14813,8 @@
       ],
       "recipes": [
         {
-          "id": "kanban-rule",
-          "title": "Where the handle goes",
+          "id": "sync-range-form",
+          "title": "SyncRangeForm",
           "route": "/kanban",
           "page": "Kanban & sync"
         }
@@ -14982,8 +15164,8 @@
       ],
       "recipes": [
         {
-          "id": "data-view-rules",
-          "title": "What the data view decides",
+          "id": "table",
+          "title": "The table underneath: DataTable",
           "route": "/data-view",
           "page": "Data view & data table"
         },
@@ -14996,6 +15178,12 @@
         {
           "id": "table-selection",
           "title": "Acting on a selection",
+          "route": "/data-view",
+          "page": "Data view & data table"
+        },
+        {
+          "id": "table-empty",
+          "title": "Nothing to show",
           "route": "/data-view",
           "page": "Data view & data table"
         }
@@ -15208,8 +15396,8 @@
           "page": "Form binding"
         },
         {
-          "id": "form-binding-contract",
-          "title": "The contract",
+          "id": "form-binding-rhf",
+          "title": "rhfFormControl",
           "route": "/form-binding",
           "page": "Form binding"
         }
@@ -15323,6 +15511,12 @@
       ],
       "recipes": [
         {
+          "id": "sidebar-shell",
+          "title": "The shell",
+          "route": "/app-shell",
+          "page": "App shell"
+        },
+        {
           "id": "topbar-sidebar-layout",
           "title": "TopbarSidebarLayout",
           "route": "/app-shell",
@@ -15331,6 +15525,12 @@
         {
           "id": "stacked-shell",
           "title": "StackedLayout",
+          "route": "/app-shell",
+          "page": "App shell"
+        },
+        {
+          "id": "composed-workspace",
+          "title": "A workspace inside a shell",
           "route": "/app-shell",
           "page": "App shell"
         }
@@ -15853,8 +16053,14 @@
           "page": "Side nav & section nav"
         },
         {
-          "id": "settings-shell-rule",
-          "title": "One component, named for its shape",
+          "id": "settings-shell",
+          "title": "The rail beside its content: AsideNavShell",
+          "route": "/side-nav",
+          "page": "Side nav & section nav"
+        },
+        {
+          "id": "breadcrumb-progress",
+          "title": "A wizard's position: BreadcrumbProgress",
           "route": "/side-nav",
           "page": "Side nav & section nav"
         }
@@ -15947,10 +16153,6 @@
         {
           "route": "/page",
           "page": "Page & page header"
-        },
-        {
-          "route": "/scale",
-          "page": "Scale & density"
         }
       ],
       "recipes": [
@@ -15971,12 +16173,6 @@
           "title": "Page",
           "route": "/page",
           "page": "Page & page header"
-        },
-        {
-          "id": "why-two-levels",
-          "title": "Why two factors, and no third",
-          "route": "/scale",
-          "page": "Scale & density"
         }
       ]
     },
@@ -16156,6 +16352,12 @@
         }
       ],
       "recipes": [
+        {
+          "id": "sidebar-shell",
+          "title": "The shell",
+          "route": "/app-shell",
+          "page": "App shell"
+        },
         {
           "id": "topbar-sidebar-layout",
           "title": "TopbarSidebarLayout",
@@ -17232,6 +17434,10 @@
       ],
       "previews": [
         {
+          "route": "/form-field",
+          "page": "Form field"
+        },
+        {
           "route": "/primitive-address",
           "page": "Addresses & places"
         },
@@ -17265,6 +17471,12 @@
         }
       ],
       "recipes": [
+        {
+          "id": "forms-scale",
+          "title": "Scale",
+          "route": "/form-field",
+          "page": "Form field"
+        },
         {
           "id": "address",
           "title": "Ordered by country",
@@ -17320,8 +17532,8 @@
           "page": "Dates & times"
         },
         {
-          "id": "date-rule",
-          "title": "date-fns, not hand-rolled Date",
+          "id": "date-range",
+          "title": "DateRange",
           "route": "/primitive-date",
           "page": "Dates & times"
         },
@@ -17338,8 +17550,8 @@
           "page": "Dates & times"
         },
         {
-          "id": "relative-time-rule",
-          "title": "Pass the clock in",
+          "id": "duration",
+          "title": "Duration",
           "route": "/primitive-date",
           "page": "Dates & times"
         },
@@ -17446,8 +17658,8 @@
           "page": "Values & lists"
         },
         {
-          "id": "value-rule",
-          "title": "Absent is a state",
+          "id": "inline-list",
+          "title": "Inline list",
           "route": "/primitive-value",
           "page": "Values & lists"
         },
@@ -17819,16 +18031,8 @@
       ],
       "previews": [
         {
-          "route": "/dropdown-menu",
-          "page": "Dropdown & context menu"
-        },
-        {
           "route": "/form-field",
           "page": "Form field"
-        },
-        {
-          "route": "/overlay",
-          "page": "Overlay, dialog & sheet"
         },
         {
           "route": "/primitive-date",
@@ -17837,6 +18041,10 @@
         {
           "route": "/scale",
           "page": "Scale & density"
+        },
+        {
+          "route": "/table",
+          "page": "Table"
         },
         {
           "route": "/tokens",
@@ -17849,28 +18057,10 @@
       ],
       "recipes": [
         {
-          "id": "dropdown-scheme",
-          "title": "Dark by default, decided by the provider",
-          "route": "/dropdown-menu",
-          "page": "Dropdown & context menu"
-        },
-        {
           "id": "forms-scale",
           "title": "Scale",
           "route": "/form-field",
           "page": "Form field"
-        },
-        {
-          "id": "sheet-provider",
-          "title": "Decided once, not per call site",
-          "route": "/overlay",
-          "page": "Overlay, dialog & sheet"
-        },
-        {
-          "id": "overlay-backdrop",
-          "title": "A blurred scrim, when a product wants one",
-          "route": "/overlay",
-          "page": "Overlay, dialog & sheet"
         },
         {
           "id": "relative-time-locale",
@@ -17885,8 +18075,8 @@
           "page": "Scale & density"
         },
         {
-          "id": "why-not-size-props",
-          "title": "Why not size props",
+          "id": "type-factor",
+          "title": "Type can override the master factor",
           "route": "/scale",
           "page": "Scale & density"
         },
@@ -17897,8 +18087,8 @@
           "page": "Scale & density"
         },
         {
-          "id": "why-two-levels",
-          "title": "Why two factors, and no third",
+          "id": "nesting",
+          "title": "Nesting",
           "route": "/scale",
           "page": "Scale & density"
         },
@@ -17909,8 +18099,14 @@
           "page": "Scale & density"
         },
         {
-          "id": "semantic-tier",
-          "title": "Semantic tier",
+          "id": "table-scale",
+          "title": "Density",
+          "route": "/table",
+          "page": "Table"
+        },
+        {
+          "id": "scoped-theming",
+          "title": "Scoped theming",
           "route": "/tokens",
           "page": "Tokens & theming"
         },

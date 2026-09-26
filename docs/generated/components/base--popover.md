@@ -106,33 +106,122 @@ Preview route: Popover — `/popover`
 ### Anatomy
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Popover>
-  <PopoverTrigger render={<Button>Filters</Button>} />
-  <PopoverContent>
-    <PopoverHeader>
-      <PopoverTitle>Filters</PopoverTitle>
-      <PopoverDescription>Narrow the list.</PopoverDescription>
-    </PopoverHeader>
-    …
-    <PopoverFooter>…</PopoverFooter>
-  </PopoverContent>
-</Popover>
+import { InfoIcon, SlidersHorizontalIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import {
+	Popover, PopoverContent, PopoverDescription, PopoverFooter, PopoverHeader, PopoverTitle,
+	PopoverTrigger,
+} from "themelia-ui/base/popover"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function PopoverExample() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap>
+			<Popover>
+				<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					<SlidersHorizontalIcon aria-hidden="true" />
+					Filters
+				</PopoverTrigger>
+				<PopoverContent>
+					<PopoverHeader>
+						<PopoverTitle>Filters</PopoverTitle>
+						<PopoverDescription>Narrow the list to what you are looking for.</PopoverDescription>
+					</PopoverHeader>
+					<Stack gap="sm">
+						<Checkbox label="Unfulfilled" defaultChecked />
+						<Checkbox label="Refunded" />
+						<Checkbox label="On hold" />
+					</Stack>
+					<PopoverFooter>
+						<Button tone="neutral" buttonStyle="ghost">
+							Reset
+						</Button>
+						<Button>Apply</Button>
+					</PopoverFooter>
+				</PopoverContent>
+			</Popover>
+
+			<Popover>
+				<PopoverTrigger render={<Button tone="neutral" buttonStyle="ghost" iconOnly aria-label="About this figure" />}>
+					<InfoIcon aria-hidden="true" />
+				</PopoverTrigger>
+				<PopoverContent width="18rem">
+					<Text size="xs" type="secondary">
+						Blended margin is computed after carrier surcharges and before tax. A panel is
+						the right home for a sentence like this — a tooltip would vanish before it
+						could be read.
+					</Text>
+				</PopoverContent>
+			</Popover>
+		</Stack>
+	)
+}
 ```
 
 ### side, align and width
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PopoverContent side="right" align="start" width="trigger" />
+import { Button } from "themelia-ui/base/buttons"
+import { Popover, PopoverContent, PopoverTrigger } from "themelia-ui/base/popover"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function PopoverPlacement() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap>
+			{(["top", "right", "bottom", "left"] as const).map((side) => (
+				<Popover key={side}>
+					<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+						{side}
+					</PopoverTrigger>
+					<PopoverContent side={side}>
+						<Text size="xs">side=&quot;{side}&quot;</Text>
+					</PopoverContent>
+				</Popover>
+			))}
+			<Popover>
+				<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					width=&quot;trigger&quot;
+				</PopoverTrigger>
+				<PopoverContent width="trigger">
+					<Text size="xs">Matches the control it opened from.</Text>
+				</PopoverContent>
+			</Popover>
+		</Stack>
+	)
+}
 ```
 
 ### PopoverAnchor
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Popover>
-  <PopoverAnchor>
-    <Text>The panel points here…</Text>
-  </PopoverAnchor>
-  <PopoverTrigger render={<Button>…but this opens it</Button>} />
-  <PopoverContent>…</PopoverContent>
-</Popover>
+import { CalendarIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "themelia-ui/base/popover"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function PopoverAnchorExample() {
+	return (
+		<Popover>
+			<Stack direction="horizontal" gap="2xl" align="center">
+				<PopoverAnchor>
+					<Text size="xs" type="secondary">
+						<CalendarIcon aria-hidden="true" /> 14–28 August
+					</Text>
+				</PopoverAnchor>
+				<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					Change the range
+				</PopoverTrigger>
+			</Stack>
+			<PopoverContent>
+				<Text size="xs">Anchored to the date, opened by the button.</Text>
+			</PopoverContent>
+		</Popover>
+	)
+}
 ```

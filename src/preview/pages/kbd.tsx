@@ -1,7 +1,3 @@
-import { Kbd, KbdGroup } from "@/components/base/display"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
@@ -15,34 +11,11 @@ export function KbdPage() {
 			exports={["Kbd", "KbdGroup"]}
 		>
 			<Example
-				id="kbd"
+				example="kbd/kbd"
 				title="Kbd"
 				description="A key or a chord, as the browser's own <kbd>. Pass a chord as one string rather than nesting three of these — a screen reader announcing “K B D command K B D K” is worse than the plain text."
 				stacked
-				code={`<Kbd>⌘K</Kbd>
-
-// A sequence — pressed one after another — is a group:
-<KbdGroup><Kbd>G</Kbd><Kbd>I</Kbd></KbdGroup>`}
-			>
-				<Stack gap="sm">
-					<Stack direction="horizontal" gap="md" align="center">
-						<Text size="sm" type="secondary">Open the palette with</Text>
-						<Kbd>⌘K</Kbd>
-						<Text size="sm" type="secondary">or</Text>
-						<Kbd>Ctrl K</Kbd>
-						<Text size="sm" type="secondary">· close with</Text>
-						<Kbd>Esc</Kbd>
-					</Stack>
-					<Stack direction="horizontal" gap="md" align="center">
-						<Text size="sm" type="secondary">Go to the inbox with</Text>
-						{/* A sequence: G, then I. The wider gap between caps says "in turn". */}
-						<KbdGroup>
-							<Kbd>G</Kbd>
-							<Kbd>I</Kbd>
-						</KbdGroup>
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="kbd-api" title="API">
 				<PropTable

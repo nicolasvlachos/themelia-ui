@@ -1,10 +1,3 @@
-import {
-	ContentSkeleton, PageSkeleton, Skeleton, TableSkeleton, TwoColumnPageSkeleton,
-} from "@/components/base/skeleton"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-
-import { MEASURE } from "../partials/measures"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
@@ -19,48 +12,18 @@ export function SkeletonPage() {
 			exports={["Skeleton", "ContentSkeleton", "PageSkeleton", "TableSkeleton", "TwoColumnPageSkeleton"]}
 		>
 			<Example
-				id="skeleton"
+				example="skeleton/skeleton"
 				title="Skeleton"
 				description="The primitive is a box you size yourself. Everything below is built from it."
 				stacked
-				code={`<Skeleton style={{ width: "12rem", height: "1rem" }} />`}
-			>
-				<Stack gap="sm" style={MEASURE.field}>
-					<Skeleton style={{ width: "60%", height: "1.25rem" }} />
-					<Skeleton style={{ width: "100%", height: "1rem" }} />
-					<Skeleton style={{ width: "85%", height: "1rem" }} />
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="composed"
+				example="skeleton/composed"
 				title="Composed skeletons"
 				description="Shaped like the thing that is coming. A generic grey rectangle tells the reader only that something is happening; a skeleton in the right geometry tells them what, and stops the page jumping when it resolves."
 				stacked
-				code={`<ContentSkeleton lines={3} />
-<TableSkeleton rows={4} columns={3} />
-<PageSkeleton blocks={2} />
-<TwoColumnPageSkeleton />`}
-			>
-				<Stack gap="2xl" style={{ width: "100%" }}>
-					<Stack gap="xs">
-						<Text size="xs" type="secondary">ContentSkeleton</Text>
-						<ContentSkeleton lines={3} />
-					</Stack>
-					<Stack gap="xs">
-						<Text size="xs" type="secondary">TableSkeleton</Text>
-						<TableSkeleton rows={4} columns={3} />
-					</Stack>
-					<Stack gap="xs">
-						<Text size="xs" type="secondary">PageSkeleton</Text>
-						<PageSkeleton blocks={2} />
-					</Stack>
-					<Stack gap="xs">
-						<Text size="xs" type="secondary">TwoColumnPageSkeleton</Text>
-						<TwoColumnPageSkeleton />
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="skeleton-rule" title="It is announced, not silent" stacked>
 				<Callout label="Rule">

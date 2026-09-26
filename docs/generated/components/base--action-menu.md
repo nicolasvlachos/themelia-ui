@@ -262,54 +262,227 @@ Preview route: Action menu & buttons — `/action-menu`
 ### ActionMenu
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ActionMenu
-  actions={[
-    { label: "Edit", icon: PencilIcon, onClick: … },
-    { label: "Archive", icon: ArchiveIcon, onClick: …, group: true },
-    { label: "Delete", icon: TrashIcon, onClick: …, tone: "destructive" },
-  ]}
-/>
+import { useState } from "react"
+import {
+	ArchiveIcon, ChevronDownIcon, DownloadIcon, PencilIcon, SettingsIcon, ShareIcon, TrashIcon,
+} from "lucide-react"
+
+import { ActionMenu, type ActionDefinition } from "themelia-ui/base/action-menu"
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function ActionMenuExample() {
+	const [showArchived, setShowArchived] = useState(false)
+
+	const actions: ActionDefinition[] = [
+		{ label: "Edit", icon: PencilIcon, onClick: () => {} },
+		{ label: "Duplicate", icon: ShareIcon, onClick: () => {} },
+		{
+			group: "View",
+			label: "Show archived",
+			type: "checkbox",
+			checked: showArchived,
+			onCheckedChange: setShowArchived,
+		},
+		{ label: "Export as CSV", icon: DownloadIcon, onClick: () => {} },
+		{ label: "Archive", icon: ArchiveIcon, onClick: () => {}, group: true },
+		{ label: "Delete", icon: TrashIcon, onClick: () => {}, tone: "destructive" },
+	]
+
+	return (
+		<Stack direction="horizontal" gap="xl" align="center">
+			<ActionMenu actions={actions} />
+			<ActionMenu actions={actions} label="Actions" icon={SettingsIcon} />
+			<ActionMenu
+				actions={actions}
+				renderTrigger={
+					<Button buttonStyle="outline" tone="neutral">
+						Custom trigger
+						<ChevronDownIcon />
+					</Button>
+				}
+			/>
+		</Stack>
+	)
+}
 ```
 
 ### Destructive last
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-const declared = [
-  { label: "Delete", tone: "destructive", onClick: … },
-  { label: "Edit", onClick: … },
-  { label: "Duplicate", onClick: … },
+import { PencilIcon, ShareIcon, TrashIcon } from "lucide-react"
+
+import { ActionMenu, type ActionDefinition } from "themelia-ui/base/action-menu"
+import { Stack } from "themelia-ui/base/structure"
+
+import { Callout } from "../../partials/callout"
+
+/* Delete declared first on purpose: the example shows it moving last. */
+const DESTRUCTIVE_FIRST: ActionDefinition[] = [
+	{ label: "Delete", icon: TrashIcon, onClick: () => {}, tone: "destructive" },
+	{ label: "Edit", icon: PencilIcon, onClick: () => {} },
+	{ label: "Duplicate", icon: ShareIcon, onClick: () => {} },
 ]
 
-<ActionMenu actions={declared} />
-<ActionMenu actions={declared} preserveOrder />
+export default function ActionMenuOrder() {
+	return (
+		<>
+			{/* The same delete-first array: default ordering on the left, `preserveOrder` on the right. */}
+			<Stack direction="horizontal" gap="lg" align="center">
+				<ActionMenu
+					actions={DESTRUCTIVE_FIRST}
+					label="Sorted"
+					buttonProps={{ tone: "neutral", buttonStyle: "outline" }}
+				/>
+				<ActionMenu
+					actions={DESTRUCTIVE_FIRST}
+					preserveOrder
+					label="preserveOrder"
+					buttonProps={{ tone: "neutral", buttonStyle: "outline" }}
+				/>
+			</Stack>
+
+			<Callout label="Rule">
+				One <code>ActionMenu</code> for every overflow in the app — page headers, card
+				headers, table rows. A surface-specific copy is how two menus in the same product
+				end up ordering their delete differently.
+			</Callout>
+		</>
+	)
+}
 ```
 
 ### Width and row slots
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ActionMenu actions={actions} maxWidth="18rem" />
-<ActionMenu actions={actions} width={280} />
-<ActionMenu actions={actions} width="trigger" label="Matches trigger" />
+import {
+	ArchiveIcon, ChevronDownIcon, DownloadIcon, PencilIcon, ShareIcon, TrashIcon,
+} from "lucide-react"
 
-// Rows take slots, so the label is the only part that gives way:
-{ label: "Duplicate", icon: CopyIcon, shortcut: "⌘D" }
-{ label: "Export", description: "CSV, one row per invoice" }
+import { ActionMenu } from "themelia-ui/base/action-menu"
+import { Button } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function ActionMenuWidth() {
+	return (
+		<Stack direction="horizontal" gap="xl" align="center" wrap>
+			<ActionMenu
+				label="Shortcuts"
+				actions={[
+					{ label: "Edit", icon: PencilIcon, shortcut: "⌘E", onClick: () => {} },
+					{ label: "Duplicate", icon: ShareIcon, shortcut: "⌘D", onClick: () => {} },
+					{ label: "Export as CSV", icon: DownloadIcon, shortcut: "⌘⇧E", onClick: () => {} },
+					{ label: "Delete", icon: TrashIcon, shortcut: "⌫", onClick: () => {}, tone: "destructive" },
+				]}
+			/>
+			<ActionMenu
+				label="Descriptions"
+				actions={[
+					{ label: "Edit", icon: PencilIcon, description: "Change the name and the billing address.", onClick: () => {} },
+					{ label: "Export", icon: DownloadIcon, description: "CSV, one row per invoice.", onClick: () => {} },
+					{ label: "Delete", icon: TrashIcon, description: "Permanent. Invoices are kept for seven years.", onClick: () => {}, tone: "destructive" },
+				]}
+				maxWidth="20rem"
+			/>
+			<ActionMenu
+				label="Fixed 280px"
+				width={280}
+				actions={[
+					{ label: "A short one", onClick: () => {} },
+					{ label: "A considerably longer label that would otherwise set the width", onClick: () => {} },
+				]}
+			/>
+			<ActionMenu
+				renderTrigger={
+					<Button buttonStyle="outline" tone="neutral" style={{ width: "16rem" }}>
+						Matches the trigger
+						<ChevronDownIcon />
+					</Button>
+				}
+				width="trigger"
+				actions={[
+					{ label: "Edit", icon: PencilIcon, onClick: () => {} },
+					{ label: "Archive", icon: ArchiveIcon, onClick: () => {} },
+				]}
+			/>
+		</Stack>
+	)
+}
 ```
 
-### In a card header
+### The same definitions, as buttons
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ActionButtons actions={toolbar} max={2} />
+import { ArchiveIcon, DownloadIcon, PencilIcon, ShareIcon, TrashIcon } from "lucide-react"
+
+import { ActionButtons, type ActionDefinition } from "themelia-ui/base/action-menu"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+import { QUIET } from "./data"
+
+const TOOLBAR: ActionDefinition[] = [
+	{ label: "Edit", icon: PencilIcon, onClick: () => {} },
+	{ label: "Duplicate", icon: ShareIcon, ...QUIET, onClick: () => {} },
+	{ label: "Export", icon: DownloadIcon, ...QUIET, onClick: () => {} },
+	{ label: "Archive", icon: ArchiveIcon, ...QUIET, onClick: () => {} },
+	{ label: "Delete", icon: TrashIcon, buttonStyle: "outline", tone: "destructive", onClick: () => {} },
+]
+
+export default function ActionButtonsExample() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{[5, 3, 1].map((max) => (
+				<Stack key={max} gap="xs">
+					<Text size="xs" type="secondary">max={max}</Text>
+					<ActionButtons actions={TOOLBAR} max={max} />
+				</Stack>
+			))}
+		</Stack>
+	)
+}
 ```
 
 ### Actions that depend on a record
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-const actions: ContextAction<Invoice>[] = [
-  { id: "send", label: "Send reminder", visible: (i) => !i.paid, placement: "inline" },
-  { id: "edit", label: "Edit", disabled: (i) => i.locked },
-  { id: "delete", label: "Delete", tone: "destructive", placement: "menu" },
+import { ArchiveIcon, SendIcon, PencilIcon, TrashIcon } from "lucide-react"
+
+import {
+	ActionButtons, resolveContextActions, type ContextAction,
+} from "themelia-ui/base/action-menu"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+import { QUIET } from "./data"
+
+interface Invoice { number: string; paid: boolean; locked: boolean }
+
+/* Declared once against the record type; predicates run per record and handlers receive it. */
+const INVOICE_ACTIONS: ContextAction<Invoice>[] = [
+	{ id: "send", label: "Send reminder", icon: SendIcon, visible: (invoice) => !invoice.paid, placement: "inline" },
+	{ id: "edit", label: "Edit", icon: PencilIcon, disabled: (invoice) => invoice.locked, ...QUIET },
+	{ id: "archive", label: "Archive", icon: ArchiveIcon, ...QUIET },
+	{ id: "delete", label: "Delete", icon: TrashIcon, tone: "destructive", placement: "menu" },
 ]
 
-<ActionButtons actions={resolveContextActions(actions, invoice)} max={2} />
+const INVOICES: Invoice[] = [
+	{ number: "INV-1042", paid: false, locked: false },
+	{ number: "INV-1038", paid: true, locked: true },
+]
+
+export default function ContextActions() {
+	return (
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{INVOICES.map((invoice) => (
+				<Stack key={invoice.number} gap="xs">
+					<Text size="xs" type="secondary">
+						{invoice.number} · {invoice.paid ? "paid, locked" : "unpaid"}
+					</Text>
+					<ActionButtons actions={resolveContextActions(INVOICE_ACTIONS, invoice)} max={2} />
+				</Stack>
+			))}
+		</Stack>
+	)
+}
 ```

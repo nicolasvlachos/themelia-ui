@@ -1,11 +1,3 @@
-import { ArrowRightIcon, MailIcon, SearchIcon, StarIcon } from "lucide-react"
-
-import {
-	InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText,
-	InputGroupTextarea,
-} from "@/components/base/input-group"
-import { Stack } from "@/components/base/structure"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
@@ -23,100 +15,25 @@ export function InputGroupPage() {
 			]}
 		>
 			<Example
-				id="input-group-inline"
+				example="input-group/input-group-inline"
 				title="Attached along the line"
 				description="An addon aligned to either inline edge sits inside the shell, on the control's own line. The group draws one border and one ring; the input inside it draws neither, which is what stops a prefix reading as a second field."
 				stacked
-				code={`<InputGroup>
-  <InputGroupAddon><SearchIcon /></InputGroupAddon>
-  <InputGroupInput placeholder="Search orders" />
-</InputGroup>`}
-			>
-				<Stack gap="lg" style={{ maxWidth: "26rem" }}>
-					<InputGroup>
-						<InputGroupAddon>
-							<SearchIcon aria-hidden="true" />
-						</InputGroupAddon>
-						<InputGroupInput placeholder="Search orders" aria-label="Search orders" />
-					</InputGroup>
-
-					<InputGroup>
-						<InputGroupAddon>
-							<MailIcon aria-hidden="true" />
-						</InputGroupAddon>
-						<InputGroupInput placeholder="name@example.com" aria-label="Email" />
-						<InputGroupAddon align="inline-end">
-							<InputGroupText>@acme.test</InputGroupText>
-						</InputGroupAddon>
-					</InputGroup>
-
-					<InputGroup>
-						<InputGroupInput placeholder="Add a label" aria-label="Label" />
-						<InputGroupAddon align="inline-end">
-							<InputGroupButton size="icon-xs" aria-label="Add">
-								<ArrowRightIcon aria-hidden="true" />
-							</InputGroupButton>
-						</InputGroupAddon>
-					</InputGroup>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="input-group-block"
+				example="input-group/input-group-block"
 				title="Attached above or below"
 				description="A block-aligned addon takes its own row inside the shell — for a toolbar over a textarea, or a counter under one. The shell still owns the border, so the row and the control read as one field rather than as a field with something stacked on it."
 				stacked
-				code={`<InputGroup>
-  <InputGroupTextarea placeholder="Write a note" />
-  <InputGroupAddon align="block-end">
-    <InputGroupText>Markdown supported</InputGroupText>
-  </InputGroupAddon>
-</InputGroup>`}
-			>
-				<Stack gap="lg" style={{ maxWidth: "26rem" }}>
-					<InputGroup>
-						<InputGroupAddon align="block-start">
-							<InputGroupButton size="icon-xs" aria-label="Favourite">
-								<StarIcon aria-hidden="true" />
-							</InputGroupButton>
-							<InputGroupText>Internal note</InputGroupText>
-						</InputGroupAddon>
-						<InputGroupTextarea placeholder="Write a note" aria-label="Note" rows={3} />
-						<InputGroupAddon align="block-end">
-							<InputGroupText>Markdown supported</InputGroupText>
-						</InputGroupAddon>
-					</InputGroup>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="input-group-buttons"
+				example="input-group/input-group-buttons"
 				title="Button sizes inside the shell"
 				description="A control inside a field cannot be a full-height control — it would set the field's height instead of fitting in it. The four sizes here are the ones that fit: two text sizes and their icon-only twins."
 				stacked
-				code={`<InputGroupButton size="icon-xs" aria-label="Go"><ArrowRightIcon /></InputGroupButton>`}
-			>
-				<Stack gap="lg" style={{ maxWidth: "26rem" }}>
-					{(["xs", "sm"] as const).map((size) => (
-						<InputGroup key={size}>
-							<InputGroupInput placeholder={`size="${size}"`} aria-label={size} />
-							<InputGroupAddon align="inline-end">
-								<InputGroupButton size={size}>Apply</InputGroupButton>
-							</InputGroupAddon>
-						</InputGroup>
-					))}
-					{(["icon-xs", "icon-sm"] as const).map((size) => (
-						<InputGroup key={size}>
-							<InputGroupInput placeholder={`size="${size}"`} aria-label={size} />
-							<InputGroupAddon align="inline-end">
-								<InputGroupButton size={size} aria-label="Go">
-									<ArrowRightIcon aria-hidden="true" />
-								</InputGroupButton>
-							</InputGroupAddon>
-						</InputGroup>
-					))}
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="input-group-rule" title="One box, one ring" stacked>
 				<Callout label="Rule">

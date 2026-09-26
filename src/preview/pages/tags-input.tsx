@@ -1,17 +1,8 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { Stack } from "@/components/base/structure"
-import { TagsInput } from "@/components/base/value-inputs"
-
-import { MEASURE } from "../partials/measures"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function TagsInputPage() {
-	const [tags, setTags] = useState(["invoice", "q4"])
-
 	return (
 		<ComponentPage
 			title="Tags input"
@@ -20,28 +11,11 @@ export function TagsInputPage() {
 			exports={["TagsInput"]}
 		>
 			<Example
-				id="tags"
+				example="tags-input/tags"
 				title="TagsInput"
 				description="Chips and the entry field share one surface, so it reads as a field with things in it. Enter commits, Backspace on an empty field removes the last chip, and pasting a comma-separated list splits it."
 				stacked
-				code={`<TagsInput value={tags} onValueChange={setTags} maxTags={5} showCount showClearAll />`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="Labels" helperText="Try pasting: alpha, beta, gamma">
-						<TagsInput value={tags} onValueChange={setTags} maxTags={5} showCount showClearAll />
-					</FormField>
-					<FormField label="Validated" helperText="Rejects anything that is not lowercase.">
-						<TagsInput
-							defaultValue={["ok"]}
-							validate={(tag) => tag === tag.toLowerCase()}
-							placeholder="lowercase only…"
-						/>
-					</FormField>
-					<FormField label="Invalid" error="At least one label is required.">
-						<TagsInput invalid placeholder="Add a label…" />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="tags-input-api" title="API">
 				<PropTable owner="TagsInput"

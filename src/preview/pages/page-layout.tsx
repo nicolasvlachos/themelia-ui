@@ -1,31 +1,7 @@
-import {
-	ArchiveIcon, DownloadIcon, FileTextIcon, PencilIcon, ShareIcon, TrashIcon,
-} from "lucide-react"
-
-import { Button } from "@/components/base/buttons"
-import { Card } from "@/components/base/cards"
-import { Breadcrumbs, PageHeading } from "@/components/base/navigation"
-import { Text } from "@/components/base/typography"
-import { Page, PageActions, PageHeader, type PageAction } from "@/components/layout"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-/* Dashed on the inline edges only: Container's gutter is inline padding. */
-const FRAME = {
-	width: "100%",
-	borderInline: "1px dashed var(--border)",
-} as const
-
-const RECORD_ACTIONS: PageAction[] = [
-	{ label: "Edit", icon: PencilIcon, placement: "inline", onClick: () => {} },
-	{ label: "Duplicate", icon: ShareIcon, buttonStyle: "outline", tone: "neutral", onClick: () => {} },
-	{ label: "Export", icon: DownloadIcon, buttonStyle: "outline", tone: "neutral", onClick: () => {} },
-	{ label: "Archive", icon: ArchiveIcon, onClick: () => {} },
-	{ label: "Delete", icon: TrashIcon, tone: "destructive", placement: "menu", onClick: () => {} },
-]
 
 export function PageLayoutPage() {
 	return (
@@ -36,153 +12,39 @@ export function PageLayoutPage() {
 			exports={["Page", "PageHeader", "PageActions", "PageHeading"]}
 		>
 			<Example
-				id="page-heading"
+				example="page-layout/page-heading"
 				title="PageHeading"
 				description="The base block, and one component rather than loose slots because the ORDER is the convention: breadcrumbs, eyebrow, title with its badges, description, actions aligned to the title row. A screen whose actions sit above its title reads as a different product, and that is exactly what happens when every page assembles this by hand."
 				stacked
-				code={`<PageHeading
-  breadcrumbs={<Breadcrumbs items={trail} />}
-  eyebrow="Workspace"
-  title="Invoices"
-  badges={[{ label: "Live", tone: "success" }]}
-  description="Everything issued in this workspace."
-  actions={<Button>New invoice</Button>}
-  withSeparator
-/>`}
-			>
-				<div style={{ width: "100%" }}>
-					<PageHeading
-						breadcrumbs={
-							<Breadcrumbs items={[{ label: "Billing", href: "#/page" }, { label: "Invoices" }]} />
-						}
-						eyebrow="Workspace"
-						title="Invoices"
-						badges={[{ label: "Live", tone: "success" }]}
-						description="Everything issued in this workspace, newest first."
-						actions={
-							<>
-								<Button tone="neutral" buttonStyle="outline">Export</Button>
-								<Button>New invoice</Button>
-							</>
-						}
-						withSeparator
-					/>
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="page-heading-slots"
+				example="page-layout/page-heading-slots"
 				title="The slots, and why titlePrefix is not leading"
 				description="leading sits left of the whole column, so the description indents with it — right for a back control or an avatar. titlePrefix sits left of the title LINE and the description still starts at the title's edge, which is what a glyph belonging to the title needs. titleSuffix and afterDescription fill in the other two positions."
 				stacked
-				code={`<PageHeading
-  titlePrefix={<FileTextIcon />}
-  title="Invoice #4417"
-  titleSuffix={<Text size="xs" type="secondary">v3</Text>}
-  description="Northwind Traders."
-  afterDescription={<Text size="xs" type="secondary">Updated 3 days ago</Text>}
-/>`}
-			>
-				<div style={{ width: "100%" }}>
-					<PageHeading
-						level={2}
-						titlePrefix={<FileTextIcon aria-hidden />}
-						title="Invoice #4417"
-						titleSuffix={
-							<Text size="xs" type="secondary">
-								v3
-							</Text>
-						}
-						badges={[{ label: "Paid", tone: "success" }]}
-						description="Northwind Traders — the description starts at the title's edge, not the glyph's."
-						afterDescription={
-							<Text size="xs" type="secondary">
-								Updated 3 days ago by Jane McDonald
-							</Text>
-						}
-					/>
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="page-header"
+				example="page-layout/page-header"
 				title="PageHeader"
 				description="PageHeading plus what a routed page needs: a back control, a title icon that may itself be a link, and badges as data. It composes the base rather than reimplementing the spacing, so a heading inside a card and a heading at the top of a route stay the same shape. The back control is a real link when it has an href — middle-clickable, and openable in a new tab — and a button only when it has nowhere to go."
 				stacked
-				code={`<PageHeader
-  backHref="/invoices"
-  titleIcon={FileTextIcon}
-  title="Invoice #4417"
-  titleBadges={[{ label: "Paid", tone: "success" }]}
-  description="Northwind Traders — issued 1 September 2026."
-  actions={<PageActions actions={actions} />}
-/>`}
-			>
-				<div style={{ width: "100%" }}>
-					<PageHeader
-						level={2}
-						backHref="#/page"
-						strings={{ back: "Back to invoices" }}
-						titleIcon={FileTextIcon}
-						title="Invoice #4417"
-						titleBadges={[{ label: "Paid", tone: "success" }, { label: "Net 30" }]}
-						description="Northwind Traders — issued 1 September 2026."
-						actions={<PageActions actions={RECORD_ACTIONS} />}
-						withSeparator
-					/>
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="page-actions"
+				example="page-layout/page-actions"
 				title="PageActions"
 				description="The same ActionDefinition array the kit's menus and toolbars take, plus the one decision a header has to make: how many are buttons and how many collapse. placement pins an entry to a side — inline keeps the primary action visible however narrow it gets, menu keeps a destructive one out of the button row however wide."
 				stacked
-				code={`<PageActions actions={actions} maxInlineActions={3} />
-<PageActions actions={actions} display="menu" />`}
-			>
-				<div style={{ width: "100%", display: "grid", gap: "var(--space-xl)" }}>
-					{[4, 2, 1].map((max) => (
-						<div key={max} style={{ display: "grid", gap: "var(--space-xs)" }}>
-							<Text size="xs" type="secondary">maxInlineActions={max}</Text>
-							<PageActions actions={RECORD_ACTIONS} display="inline" maxInlineActions={max} />
-						</div>
-					))}
-					<div style={{ display: "grid", gap: "var(--space-xs)" }}>
-						<Text size="xs" type="secondary">display="menu"</Text>
-						<PageActions actions={RECORD_ACTIONS} display="menu" />
-					</div>
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="page"
+				example="page-layout/page"
 				title="Page"
 				description="Container for the measure, PageHeader for the title block, a body beneath. It exists because that arrangement was rebuilt by hand on every screen and the hand-built ones drift — one gutters at md and the next at lg, one puts 32px under the heading and the next 24."
 				stacked
-				code={`<Page
-  maxWidth="xl"
-  header={{ title: "Invoices", description: "Newest first." }}
->
-  <Card title="September" />
-</Page>`}
-			>
-				<div style={FRAME}>
-					<Page
-						maxWidth="md"
-						gutter="sm"
-						header={{
-							title: "Invoices",
-							description: "The dashed edges are the container's gutter. It is inline only — vertical rhythm belongs to the shell around the page, not to the container.",
-							actions: <Button>New</Button>,
-						}}
-					>
-						<Card surface="bordered" title="September" description="24 invoices, 3 overdue.">
-							<Text size="sm" type="secondary">The body region.</Text>
-						</Card>
-					</Page>
-				</div>
-			</Example>
+			/>
 
 			<Example id="page-rule" title="A page does not scroll itself" stacked>
 				<Callout label="Rule">

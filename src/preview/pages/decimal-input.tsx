@@ -1,18 +1,9 @@
-import { useState } from "react"
-
-import { FormField } from "@/components/base/forms"
-import { DecimalInput, RoundingModeSelect, type RoundingMode } from "@/components/base/forms-numeric"
-import { Stack } from "@/components/base/structure"
-
-import { MEASURE } from "../partials/measures"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function DecimalInputPage() {
-	const [mode, setMode] = useState<RoundingMode>("half-even")
-
 	return (
 		<ComponentPage
 			title="Decimal input"
@@ -21,49 +12,18 @@ export function DecimalInputPage() {
 			exports={["DecimalInput", "RoundingModeSelect", "applyRounding", "formatDecimal"]}
 		>
 			<Example
-				id="decimal"
+				example="decimal-input/decimal"
 				title="DecimalInput"
 				description="A text input, not type=number: the native spinner is unstyleable, its scroll-wheel behaviour changes values a reader is only scrolling past, and it reports an empty string for anything it considers invalid — losing what was actually typed."
 				stacked
-				code={`<DecimalInput decimalPlaces={2} min={0} max={100} step={0.5} />`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="Plain" helperText="Commas become dots; extra decimals are refused.">
-						<DecimalInput defaultValue="12.5" decimalPlaces={2} />
-					</FormField>
-					<FormField label="With steppers" helperText="Steps snap relative to min, not to zero.">
-						<DecimalInput defaultValue="10" min={5} max={50} step={10} decimalPlaces={0} />
-					</FormField>
-					<FormField label="Bankers' rounding" helperText="half-even, so halves do not accumulate a bias across many rows.">
-						<DecimalInput defaultValue="2.345" decimalPlaces={2} roundingMode="half-even" />
-					</FormField>
-					<FormField label="Invalid" error="Enter an amount.">
-						<DecimalInput aria-invalid defaultValue="" />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="rounding-mode"
+				example="decimal-input/rounding-mode"
 				title="RoundingModeSelect"
 				description="The policies as a control, so a product that lets the reader choose does not hand-write the list. The modes are the ones DecimalInput accepts, which is the point — a select offering a mode the input cannot apply is worse than no select. Change it and the field below rounds by the new rule."
 				stacked
-				code={`<RoundingModeSelect value={mode} onValueChange={setMode} />
-<DecimalInput decimalPlaces={2} roundingMode={mode} />`}
-			>
-				<Stack gap="xl" style={MEASURE.field}>
-					<FormField label="Rounding" helperText="Applies to the field below.">
-						<RoundingModeSelect
-							value={mode}
-							modes={["floor", "round", "ceil", "half-even"]}
-							onValueChange={(next) => next && setMode(next)}
-						/>
-					</FormField>
-					<FormField label="Amount" helperText="Type 2.345 and blur.">
-						<DecimalInput defaultValue="2.345" decimalPlaces={2} roundingMode={mode} />
-					</FormField>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="numeric-rule" title="Never one string" stacked>
 				<Callout label="Rule">

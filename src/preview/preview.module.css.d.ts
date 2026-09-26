@@ -10,7 +10,6 @@ declare const styles: {
 	readonly code: string
 	readonly codeWrap: string
 	readonly copyButton: string
-	readonly demoSubmit: string
 	readonly densityField: string
 	readonly example: string
 	readonly exampleBleed: string

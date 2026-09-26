@@ -2,8 +2,6 @@ import { Text } from "@/components/base/typography"
 import { Stack } from "@/components/base/structure"
 import { Money } from "@/components/primitives"
 import { Accordion } from "@/components/base/accordion"
-import { Button } from "@/components/base/buttons"
-import { ThemeScope, createTheme } from "@/components/features/theme-tweaker"
 
 import { ComponentPage } from "../partials/component-page"
 import { AppThemeEditor } from "../partials/app-theme-editor"
@@ -33,15 +31,11 @@ export function ThemeTweakerPage() {
 							{ name: "ThemeScope", api: "@/components/features/theme-tweaker#ThemeScope", type: "theme / mode / children", description: "Apply a theme to an intentionally isolated subtree. The app editor uses the shared root instead." },
 							{ name: "UIConfigSettings", api: "@/components/features/theme-tweaker#UIConfigSettings", type: "config / onChange", description: "Provider settings editor, included under Provider above. Connect its controlled config to your root UIProvider to update mounted consumers." },
 						]} />
-						<Example id="isolated-theme-scope" title="Isolated theme scopes"
+						<Example
+							example="theme-tweaker/isolated-theme-scope"
+							title="Isolated theme scopes"
 							description="Use a scope only when one region should deliberately differ from the app theme."
-							code={`<ThemeScope theme={createTheme({ shared: { "--radius": "0.875rem" } })}>
-  <Button>Scoped radius</Button>
-</ThemeScope>`}>
-							<ThemeScope theme={createTheme({ shared: { "--radius": "0.875rem" } })}>
-								<Button>Scoped radius</Button>
-							</ThemeScope>
-						</Example>
+						/>
 					</Stack>,
 				}]} />
 			</Stack>

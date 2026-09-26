@@ -382,77 +382,274 @@ Preview route: Alert — `/alert`
 ### Alert
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Alert tone="warning">
-  <AlertTitle>Approaching your limit</AlertTitle>
-  <AlertDescription>You have used 90% of your quota.</AlertDescription>
-</Alert>
+import { Alert, AlertDescription, AlertTitle, type AlertTone } from "themelia-ui/base/feedback"
+
+const TONES: AlertTone[] = ["neutral", "primary", "secondary", "info", "success", "warning", "destructive"]
+
+export default function AlertExample() {
+	return (
+		<>
+			{TONES.map((tone) => (
+				<Alert key={tone} tone={tone}>
+					<AlertTitle>{tone} alert</AlertTitle>
+					<AlertDescription>
+						Supporting detail that explains what happened and what to do.
+					</AlertDescription>
+				</Alert>
+			))}
+		</>
+	)
+}
 ```
 
 ### Alert layout
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Alert tone="destructive" icon={<TriangleAlertIcon />}>
-  <AlertTitle>Payment failed</AlertTitle>
-  <AlertDescription>…</AlertDescription>
-  <AlertAction><Button>Retry</Button></AlertAction>
-</Alert>
+import { SearchXIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "themelia-ui/base/feedback"
+
+export default function AlertLayout() {
+	return (
+		<>
+			<Alert tone="destructive" icon={<SearchXIcon />}>
+				<AlertTitle>With a leading icon</AlertTitle>
+				<AlertDescription>The grid becomes two columns automatically.</AlertDescription>
+			</Alert>
+			<Alert tone="info">
+				<AlertTitle>With an action</AlertTitle>
+				<AlertDescription>Inline space is reserved on the trailing edge.</AlertDescription>
+				<AlertAction>
+					<Button tone="neutral" buttonStyle="ghost">
+						Undo
+					</Button>
+				</AlertAction>
+			</Alert>
+			<Alert>
+				<AlertTitle>Neither — single column</AlertTitle>
+				<AlertDescription>No icon, no action, no reserved space.</AlertDescription>
+			</Alert>
+		</>
+	)
+}
 ```
 
 ### Empty
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Empty
-  media={<InboxIcon />}
-  mediaVariant="icon"
-  title="No invoices yet"
-  description="Invoices appear here once a customer is billed."
-  action={<Button>Create invoice</Button>}
-/>
+import { InboxIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+import { Empty } from "themelia-ui/base/feedback"
+
+export default function EmptyExample() {
+	return (
+		<Empty
+			media={<InboxIcon />}
+			mediaVariant="icon"
+			title="No invoices yet"
+			description="Invoices appear here once a customer is billed. Nothing has been sent on this account."
+			action={
+				<>
+					<Button>Create invoice</Button>
+					<Button tone="neutral" buttonStyle="outline">
+						Import
+					</Button>
+				</>
+			}
+			footer="Imported invoices keep their original numbering."
+		/>
+	)
+}
 ```
 
 ### How the media is dressed
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Empty mediaVariant="icon" media={<SearchIcon />} … />
-<Empty mediaVariant="illustration" media={<SearchGlassIllustration />} … />
+import { SearchIcon } from "lucide-react"
+
+import { Empty, SearchGlassIllustration } from "themelia-ui/base/feedback"
+import { Grid } from "themelia-ui/base/structure"
+
+export default function EmptyMedia() {
+	return (
+		<Grid columns={{ base: 1, md: 3 }} gap="xl">
+			<Empty
+				padding="sm"
+				border
+				mediaVariant="icon"
+				media={<SearchIcon />}
+				title="icon"
+				description="A glyph in a muted tile."
+			/>
+			<Empty
+				padding="sm"
+				border
+				mediaVariant="icon-soft"
+				media={<SearchIcon />}
+				title="icon-soft"
+				description="The same tile, quieter."
+			/>
+			<Empty
+				padding="sm"
+				border
+				mediaVariant="illustration"
+				media={<SearchGlassIllustration />}
+				title="illustration"
+				description="No chrome, and room below."
+			/>
+		</Grid>
+	)
+}
 ```
 
 ### The illustration set
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-import { StackedCardsIllustration } from "themelia-ui/base/feedback"
+import {
+	DocumentStackIllustration,
+	InboxCleanIllustration,
+	SearchGlassIllustration,
+	StackedCardsIllustration,
+	UsersCircleIllustration,
+} from "themelia-ui/base/feedback"
+import { Grid, Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
 
-<Empty
-  mediaVariant="illustration"
-  media={<StackedCardsIllustration />}
-  title="No products yet"
-/>
+const ILLUSTRATIONS = [
+	{ name: "StackedCardsIllustration", Component: StackedCardsIllustration, use: "no records" },
+	{ name: "DocumentStackIllustration", Component: DocumentStackIllustration, use: "invoices, reports, files" },
+	{ name: "UsersCircleIllustration", Component: UsersCircleIllustration, use: "people" },
+	{ name: "InboxCleanIllustration", Component: InboxCleanIllustration, use: "all caught up" },
+	{ name: "SearchGlassIllustration", Component: SearchGlassIllustration, use: "nothing matches" },
+]
+
+export default function EmptyIllustrations() {
+	return (
+		<Grid columns={{ base: 1, sm: 2, lg: 3 }} gap="2xl">
+			{ILLUSTRATIONS.map(({ name, Component, use }) => (
+				<Stack key={name} gap="md" align="center">
+					<Component />
+					<Stack gap="none" align="center">
+						<Text size="sm" weight="medium">{name}</Text>
+						<Text size="xs" type="secondary">{use}</Text>
+					</Stack>
+				</Stack>
+			))}
+		</Grid>
+	)
+}
 ```
 
 ### padding and border
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Empty padding="sm" border title="No filters" description="…" />
+import { InboxIcon } from "lucide-react"
+
+import { Empty } from "themelia-ui/base/feedback"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function EmptyBorder() {
+	return (
+		<Stack gap="xl">
+			<Empty padding="sm" border media={<InboxIcon />} mediaVariant="icon" title="padding=&quot;sm&quot;" description="A side panel, a table cell, a card body." />
+			<Empty padding="lg" media={<InboxIcon />} mediaVariant="icon" title="padding=&quot;lg&quot;" description="A whole page, with no border." />
+		</Stack>
+	)
+}
 ```
 
 ### LoadingState and ErrorState
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<LoadingState />
-<ErrorState onRetry={refetch} />
+import { Card, CardContent } from "themelia-ui/base/cards"
+import { ErrorState, LoadingState } from "themelia-ui/base/feedback"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function FormStates() {
+	return (
+		<Stack gap="lg">
+			<Card>
+				<CardContent>
+					<LoadingState />
+				</CardContent>
+			</Card>
+			<Card>
+				<CardContent>
+					<ErrorState onRetry={() => {}} />
+				</CardContent>
+			</Card>
+			<Card>
+				<CardContent>
+					<ErrorState
+						title="That report is no longer available"
+						description="It was scheduled for deletion after 90 days."
+					/>
+				</CardContent>
+			</Card>
+		</Stack>
+	)
+}
 ```
 
 ### Progress
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Progress value={64} label="Upload" />
-<Progress label="Working" />           {/* indeterminate */}
+import { Progress } from "themelia-ui/base/feedback"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function ProgressExample() {
+	return (
+		// Captioned: `label` is the accessible name and renders nothing.
+		<Stack gap="lg" style={{ width: "100%" }}>
+			{[
+				{ value: 24, tone: undefined, caption: "value={24}" },
+				{ value: 64, tone: "info" as const, caption: 'value={64} tone="info"' },
+				{ value: 100, tone: "success" as const, caption: 'value={100} tone="success"' },
+				{ value: 92, tone: "warning" as const, caption: 'value={92} tone="warning"' },
+				{ value: undefined, tone: undefined, caption: "no value — indeterminate" },
+			].map((row) => (
+				<Stack key={row.caption} gap="2xs">
+					<Text size="xs" type="secondary">{row.caption}</Text>
+					<Progress value={row.value} tone={row.tone} label={row.caption} />
+				</Stack>
+			))}
+		</Stack>
+	)
+}
 ```
 
 ### ProgressCircle
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ProgressCircle value={72} tone="warning" label="Title length">
-  <Text tag="span" size="xs" weight="semibold" numeric>72%</Text>
-</ProgressCircle>
+import { ProgressCircle } from "themelia-ui/base/feedback"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function ProgressCircleExample() {
+	return (
+		<Stack direction="horizontal" gap="lg" wrap>
+			{[
+				{ value: 24, tone: undefined },
+				{ value: 60, tone: "info" as const },
+				{ value: 72, tone: "warning" as const },
+				{ value: 100, tone: "success" as const },
+				{ value: 12, tone: "destructive" as const },
+			].map((row) => (
+				<ProgressCircle
+					key={row.value}
+					value={row.value}
+					tone={row.tone}
+					label={`${row.value} percent`}
+				>
+					<Text tag="span" size="xs" weight="semibold" numeric lineHeight="none">
+						{row.value}%
+					</Text>
+				</ProgressCircle>
+			))}
+		</Stack>
+	)
+}
 ```

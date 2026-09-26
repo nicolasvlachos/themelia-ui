@@ -124,23 +124,50 @@ Preview route: Containers — `/containers`
 ### The four blocks
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PageViewport>
-  <Container maxWidth="xl" gutter="md">
-    <Section>
-      <PageHeading title="Invoices" />
-      <Card>…</Card>
-    </Section>
-  </Container>
-</PageViewport>
+import { Card } from "themelia-ui/base/cards"
+import { Text } from "themelia-ui/base/typography"
+import { Container, Section } from "themelia-ui/layout/containers"
+
+export default function Blocks() {
+	return (
+		// Dashed on the inline edges only: the gutter is inline padding.
+		<Container maxWidth="md" gutter="sm" style={{ borderInline: "1px dashed var(--border)" }}>
+			<Section>
+				<Card surface="bordered" title="Section" description="A group, with the rhythm between its children.">
+					<Text size="sm" type="secondary">
+						Container centres this at the reading measure and owns the gutter you can
+						see as the dashed edge.
+					</Text>
+				</Card>
+				<Card surface="bordered" title="Second group" />
+			</Section>
+		</Container>
+	)
+}
 ```
 
 ### TwoColumnLayout
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TwoColumnLayout
-  main={<InvoiceForm />}
-  aside={<SummaryCard />}
-  asidePosition="end"
-  stickyAside
-/>
+import { Card } from "themelia-ui/base/cards"
+import { Text } from "themelia-ui/base/typography"
+import { TwoColumnLayout } from "themelia-ui/layout/containers"
+
+export default function TwoColumn() {
+	return (
+		<TwoColumnLayout
+			style={{ width: "100%" }}
+			main={
+				<Card surface="bordered" title="main" description="Primary detail, form, or index content.">
+					<Text size="sm" type="secondary">Takes the wider column.</Text>
+				</Card>
+			}
+			aside={
+				<Card surface="bordered" title="aside" description="Summary, support, or an action rail.">
+					<Text size="sm" type="secondary">Second in the DOM, always.</Text>
+				</Card>
+			}
+		/>
+	)
+}
 ```

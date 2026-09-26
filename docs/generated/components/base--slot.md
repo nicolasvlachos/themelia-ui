@@ -41,13 +41,29 @@ Preview route: Content block — `/content-block`
 ### DirectionProvider and Slot
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DirectionProvider direction="rtl">
-  <Stack>…</Stack>
-</DirectionProvider>
+import { ContentBlock } from "themelia-ui/base/display"
+import { DirectionProvider } from "themelia-ui/base/direction"
+import { Slot } from "themelia-ui/base/slot"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
 
-// Consumers normally use a component’s render prop.
-// Slot is the lower-level merge helper for wrapper authors:
-<Slot data-context="example">
-  <Text>Props are merged onto this child.</Text>
-</Slot>
+export default function DirectionSlot() {
+	return (
+		<Stack gap="lg">
+			<DirectionProvider direction="rtl">
+				<ContentBlock surface="card" title="اتجاه من اليمين إلى اليسار">
+					<Text size="xs" type="secondary">
+						Every inset, gap and border in this block is a logical property, so the whole
+						region mirrors from one prop rather than from a stylesheet per direction.
+					</Text>
+				</ContentBlock>
+			</DirectionProvider>
+			<Slot className={undefined}>
+				<Text size="xs" type="secondary">
+					Slot renders its child, merged. There is nothing of its own on the page.
+				</Text>
+			</Slot>
+		</Stack>
+	)
+}
 ```

@@ -373,41 +373,164 @@ Preview route: Repeater — `/repeater`
 ### Repeater
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Repeater
-  items={contacts}
-  getKey={(contact) => contact.id}
-  onAdd={() => setContacts([...contacts, blank()])}
-  onRemove={(index) => setContacts(contacts.filter((_, i) => i !== index))}
-  onMove={move}
-  rowVariant="card"
->
-  {(contact, { index }) => (
-    <Stack direction="horizontal" gap="md">
-      <Input value={contact.name} onChange={…} aria-label="Name" />
-      <Input value={contact.email} onChange={…} aria-label="Email" />
-    </Stack>
-  )}
-</Repeater>
+import { useState } from "react"
+
+import { Input } from "themelia-ui/base/text-inputs"
+import { FormField } from "themelia-ui/base/forms"
+import { Repeater } from "themelia-ui/base/repeaters"
+import { Stack } from "themelia-ui/base/structure"
+
+
+type Contact = { id: string; name: string; email: string }
+
+export default function RepeaterExample() {
+	const [contacts, setContacts] = useState<Contact[]>([
+		{ id: "a", name: "Jamie Moreau", email: "jamie@acme.com" },
+		{ id: "b", name: "Rin Fujita", email: "rin@acme.com" },
+	])
+
+	const move = (from: number, to: number) =>
+		setContacts((current) => {
+			if (to < 0 || to >= current.length) return current
+			const next = [...current]
+			next.splice(to, 0, ...next.splice(from, 1))
+			return next
+		})
+
+	return (
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
+			<FormField htmlFor={false} label="Contacts" helperText="Drag a handle, or focus it and press ↑ / ↓.">
+				<Repeater
+					items={contacts}
+					getKey={(contact) => contact.id}
+					rowVariant="card"
+					strings={{ add: "Add contact" }}
+					onAdd={() =>
+						setContacts((current) => [
+							...current,
+							{ id: String(current.length + 1), name: "", email: "" },
+						])
+					}
+					onRemove={(index) => setContacts((current) => current.filter((_, i) => i !== index))}
+					onMove={move}
+				>
+					{(contact, { index }) => (
+						<Stack direction="horizontal" gap="md" style={{ width: "100%" }}>
+							<Input
+								value={contact.name}
+								aria-label="Name"
+								placeholder="Name"
+								onChange={(event) =>
+									setContacts((current) =>
+										current.map((row, i) =>
+											i === index ? { ...row, name: event.target.value } : row,
+										),
+									)
+								}
+							/>
+							<Input
+								value={contact.email}
+								aria-label="Email"
+								placeholder="name@example.com"
+								onChange={(event) =>
+									setContacts((current) =>
+										current.map((row, i) =>
+											i === index ? { ...row, email: event.target.value } : row,
+										),
+									)
+								}
+							/>
+						</Stack>
+					)}
+				</Repeater>
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### StringRepeater
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<StringRepeater value={domains} onValueChange={setDomains} sortable />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { StringRepeater } from "themelia-ui/base/repeaters"
+import { Stack } from "themelia-ui/base/structure"
+
+
+export default function StringRepeaterExample() {
+	const [domains, setDomains] = useState(["acme.com", "acme.dev"])
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField htmlFor={false} label="Allowed domains" helperText="Drag the handle, or focus it and press ↑ / ↓.">
+				<StringRepeater
+					value={domains}
+					onValueChange={setDomains}
+					placeholder="example.com"
+					sortable
+					aria-label="Domain"
+				/>
+			</FormField>
+			<FormField htmlFor={false} label="Empty" helperText="With a cap of three.">
+				<StringRepeater value={[]} onValueChange={() => {}} maxItems={3} />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### KeyValueEditor
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<KeyValueEditor value={headers} onValueChange={setHeaders} sortable />
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { KeyValueEditor, type KeyValuePair } from "themelia-ui/base/repeaters"
+import { Stack } from "themelia-ui/base/structure"
+
+
+export default function KeyValue() {
+	const [headers, setHeaders] = useState<KeyValuePair[]>([
+		{ key: "X-Api-Version", value: "2026-01" },
+		{ key: "X-Trace", value: "on" },
+	])
+
+	return (
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
+			<FormField htmlFor={false} label="Request headers" helperText="Try entering the same key twice.">
+				<KeyValueEditor value={headers} onValueChange={setHeaders} sortable />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### LocalizedStringField
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<LocalizedStringField
-  locales={[{ value: "en", label: "English" }, { value: "nl", label: "Nederlands" }]}
-  value={name}
-  onValueChange={setName}
-/>
+import { useState } from "react"
+
+import { FormField } from "themelia-ui/base/forms"
+import { LocalizedStringField, type LocalizedValue } from "themelia-ui/base/repeaters"
+import { Stack } from "themelia-ui/base/structure"
+
+
+const LOCALES = [
+	{ value: "en", label: "English" },
+	{ value: "nl", label: "Nederlands" },
+]
+
+export default function Localized() {
+	const [name, setName] = useState<LocalizedValue>({ en: "Invoice", nl: "Factuur" })
+
+	return (
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField htmlFor={false} label="Display name" helperText="Switch locale — the value follows.">
+				<LocalizedStringField locales={LOCALES} value={name} onValueChange={setName} />
+			</FormField>
+		</Stack>
+	)
+}
 ```

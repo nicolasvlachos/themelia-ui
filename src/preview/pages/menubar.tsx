@@ -1,8 +1,3 @@
-import {
-	DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut,
-} from "@/components/base/dropdown-menu"
-import { Menubar, MenubarTrigger } from "@/components/base/menubar"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
@@ -16,49 +11,11 @@ export function MenubarPage() {
 			exports={["Menubar", "MenubarTrigger"]}
 		>
 			<Example
-				id="menubar"
+				example="menubar/menubar"
 				title="Menubar"
 				description="A row of menus where moving sideways opens the next without a second click — that behaviour is the whole component, and the reason it is not several dropdowns in a flex row. Each menu is the dropdown menu's own — a DropdownMenu root, a MenubarTrigger for its word in the bar, and DropdownMenuContent with its rows — so a menu here matches one anywhere. Reach for it for an editor; an admin screen almost always wants a toolbar and an ActionMenu."
 				stacked
-				code={`<Menubar>
-  <DropdownMenu>
-    <MenubarTrigger>File</MenubarTrigger>
-    <DropdownMenuContent>
-      <DropdownMenuItem>New <DropdownMenuShortcut>⌘N</DropdownMenuShortcut></DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-</Menubar>`}
-			>
-				<Menubar>
-					<DropdownMenu>
-						<MenubarTrigger>File</MenubarTrigger>
-						<DropdownMenuContent>
-							<DropdownMenuItem>
-								New <DropdownMenuShortcut>⌘N</DropdownMenuShortcut>
-							</DropdownMenuItem>
-							<DropdownMenuItem>Open…</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem>
-								Save <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-					<DropdownMenu>
-						<MenubarTrigger>Edit</MenubarTrigger>
-						<DropdownMenuContent>
-							<DropdownMenuItem>Undo</DropdownMenuItem>
-							<DropdownMenuItem>Redo</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-					<DropdownMenu>
-						<MenubarTrigger>View</MenubarTrigger>
-						<DropdownMenuContent>
-							<DropdownMenuItem>Zoom in</DropdownMenuItem>
-							<DropdownMenuItem>Zoom out</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</Menubar>
-			</Example>
+			/>
 
 			<Example id="menubar-api" title="API">
 				<PropTable

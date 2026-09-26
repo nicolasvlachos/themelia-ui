@@ -1,5 +1,3 @@
-import { Breadcrumbs } from "@/components/base/navigation"
-
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
@@ -13,27 +11,11 @@ export function BreadcrumbsPage() {
 			exports={["Breadcrumbs"]}
 		>
 			<Example
-				id="breadcrumbs"
+				example="breadcrumbs/breadcrumbs"
 				title="Breadcrumbs"
 				description="The current page is a span, not a link. Linking to the page you are already on is a dead control, and assistive technology announces it as somewhere to go."
 				stacked
-				code={`<Breadcrumbs
-  items={[
-    { label: "Home", href: "/" },
-    { label: "Orders", href: "/orders" },
-    { label: "Order 4417" },
-  ]}
-/>`}
-			>
-				<Breadcrumbs
-					items={[
-						{ label: "Home", href: "#" },
-						{ label: "Orders", href: "#" },
-						{ label: "Customers", href: "#" },
-						{ label: "Order 4417" },
-					]}
-				/>
-			</Example>
+			/>
 
 			<Example id="breadcrumbs-api" title="API">
 				<PropTable owner="Breadcrumbs"

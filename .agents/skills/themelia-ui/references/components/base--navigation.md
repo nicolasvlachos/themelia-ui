@@ -420,98 +420,288 @@ Preview route: Breadcrumbs — `/breadcrumbs`
 ### Breadcrumbs
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Breadcrumbs
-  items={[
-    { label: "Home", href: "/" },
-    { label: "Orders", href: "/orders" },
-    { label: "Order 4417" },
-  ]}
-/>
+import { Breadcrumbs } from "themelia-ui/base/navigation"
+
+export default function BreadcrumbsExample() {
+	return (
+		<Breadcrumbs
+			items={[
+				{ label: "Home", href: "#" },
+				{ label: "Orders", href: "#" },
+				{ label: "Customers", href: "#" },
+				{ label: "Order 4417" },
+			]}
+		/>
+	)
+}
 ```
 
 ### PageHeading
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PageHeading
-  breadcrumbs={<Breadcrumbs items={trail} />}
-  eyebrow="Workspace"
-  title="Invoices"
-  badges={[{ label: "Live", tone: "success" }]}
-  description="Everything issued in this workspace."
-  actions={<Button>New invoice</Button>}
-  withSeparator
-/>
+import { Button } from "themelia-ui/base/buttons"
+import { Breadcrumbs, PageHeading } from "themelia-ui/base/navigation"
+
+export default function PageHeadingExample() {
+	return (
+		<div style={{ width: "100%" }}>
+			<PageHeading
+				breadcrumbs={
+					<Breadcrumbs items={[{ label: "Billing", href: "#/page" }, { label: "Invoices" }]} />
+				}
+				eyebrow="Workspace"
+				title="Invoices"
+				badges={[{ label: "Live", tone: "success" }]}
+				description="Everything issued in this workspace, newest first."
+				actions={
+					<>
+						<Button tone="neutral" buttonStyle="outline">Export</Button>
+						<Button>New invoice</Button>
+					</>
+				}
+				withSeparator
+			/>
+		</div>
+	)
+}
 ```
 
 ### The slots, and why titlePrefix is not leading
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<PageHeading
-  titlePrefix={<FileTextIcon />}
-  title="Invoice #4417"
-  titleSuffix={<Text size="xs" type="secondary">v3</Text>}
-  description="Northwind Traders."
-  afterDescription={<Text size="xs" type="secondary">Updated 3 days ago</Text>}
-/>
+import { FileTextIcon } from "lucide-react"
+
+import { PageHeading } from "themelia-ui/base/navigation"
+import { Text } from "themelia-ui/base/typography"
+
+export default function PageHeadingSlots() {
+	return (
+		<div style={{ width: "100%" }}>
+			<PageHeading
+				level={2}
+				titlePrefix={<FileTextIcon aria-hidden />}
+				title="Invoice #4417"
+				titleSuffix={
+					<Text size="xs" type="secondary">
+						v3
+					</Text>
+				}
+				badges={[{ label: "Paid", tone: "success" }]}
+				description="Northwind Traders — the description starts at the title's edge, not the glyph's."
+				afterDescription={
+					<Text size="xs" type="secondary">
+						Updated 3 days ago by Jane McDonald
+					</Text>
+				}
+			/>
+		</div>
+	)
+}
 ```
 
 ### Pagination
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Pagination page={page} total={128} onPageChange={setPage} />
+import { useState } from "react"
+
+import { Pagination } from "themelia-ui/base/navigation"
+
+export default function PaginationExample() {
+	const [page, setPage] = useState(3)
+
+	return (
+		<>
+			<Pagination page={page} total={128} onPageChange={setPage} />
+			{/* Named, because two navigation landmarks called "Pagination" are two a reader
+			    cannot tell apart — which is what `strings.label` is for. */}
+			<Pagination
+				page={2}
+				total={5}
+				onPageChange={() => {}}
+				strings={{ label: "Short pagination example" }}
+			/>
+		</>
+	)
+}
 ```
 
 ### Arrows, and what they are made of
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Pagination labels="text" … />
-<Pagination labels="icon" … />
-<Pagination numbers={false} page={3} total={12} … />
+import { useState } from "react"
+
+import { Pagination } from "themelia-ui/base/navigation"
+
+export default function PaginationShapes() {
+	const [page, setPage] = useState(3)
+
+	return (
+		<>
+			<Pagination
+				page={page}
+				total={128}
+				onPageChange={setPage}
+				labels="text"
+				strings={{ label: "Worded pagination example" }}
+			/>
+			<Pagination
+				page={page}
+				total={128}
+				onPageChange={setPage}
+				labels="icon"
+				strings={{ label: "Icon pagination example" }}
+			/>
+			<Pagination
+				page={page}
+				total={128}
+				onPageChange={setPage}
+				numbers={false}
+				strings={{ label: "Arrows-only pagination example" }}
+			/>
+		</>
+	)
+}
 ```
 
 ### A pager is navigation
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Pagination
-  page={page}
-  total={128}
-  onPageChange={setPage}
-  renderLink={(page, props) => <Link href={`?page=${page}\
+import { useState } from "react"
+
+import { Pagination } from "themelia-ui/base/navigation"
+
+export default function PaginationLinks() {
+	const [page, setPage] = useState(3)
+
+	return (
+		<Pagination
+			page={page}
+			total={12}
+			onPageChange={setPage}
+			strings={{ label: "Linked pagination example" }}
+			renderLink={(target, linkProps) => (
+				<a
+					href={`#/pagination?page=${target}`}
+					{...linkProps}
+					onClick={(event) => {
+						event.preventDefault()
+						linkProps.onClick(event)
+					}}
+				/>
+			)}
+		/>
+	)
+}
 ```
 
 ### Tabs
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Tabs value={tab} onValueChange={setTab}>
-  <TabList label="Sections">
-    <Tab value="overview">Overview</Tab>
-    <Tab value="activity">Activity</Tab>
-  </TabList>
-  <TabPanel value="overview">…</TabPanel>
-</Tabs>
+import { useState } from "react"
+
+import { Tab, TabList, TabPanel, Tabs } from "themelia-ui/base/navigation"
+import { Text } from "themelia-ui/base/typography"
+
+export default function TabsExample() {
+	const [tab, setTab] = useState("overview")
+
+	return (
+		<>
+			<Tabs value={tab} onValueChange={setTab} style={{ width: "100%" }}>
+				<TabList label="Sections">
+					<Tab value="overview">Overview</Tab>
+					<Tab value="activity">Activity</Tab>
+					<Tab value="settings">Settings</Tab>
+					<Tab value="archived" disabled>
+						Archived
+					</Tab>
+				</TabList>
+				<TabPanel value="overview">
+					<Text type="secondary">The overview panel.</Text>
+				</TabPanel>
+				<TabPanel value="activity">
+					<Text type="secondary">The activity panel.</Text>
+				</TabPanel>
+				<TabPanel value="settings">
+					<Text type="secondary">The settings panel.</Text>
+				</TabPanel>
+			</Tabs>
+
+			<Tabs defaultValue="day" style={{ width: "100%" }}>
+				<TabList variant="enclosed" label="Range">
+					<Tab value="day">Day</Tab>
+					<Tab value="week">Week</Tab>
+					<Tab value="month">Month</Tab>
+				</TabList>
+				<TabPanel value="day">
+					<Text type="secondary">Enclosed variant.</Text>
+				</TabPanel>
+				<TabPanel value="week">
+					<Text type="secondary">Week.</Text>
+				</TabPanel>
+				<TabPanel value="month">
+					<Text type="secondary">Month.</Text>
+				</TabPanel>
+			</Tabs>
+		</>
+	)
+}
 ```
 
 ### Overflowing tabs
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Tabs defaultValue="overview">
-  <TabList label="Sections" variant="enclosed" edgeFade>
-    <Tab value="overview">Overview</Tab>
-    <Tab value="activity">Activity</Tab>
-  </TabList>
-</Tabs>
+import { useState } from "react"
+
+import { Switch } from "themelia-ui/base/choice-inputs"
+import { Tab, TabList, Tabs } from "themelia-ui/base/navigation"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function TabsScroll() {
+	const [edgeFade, setEdgeFade] = useState(true)
+
+	return (
+		<>
+			<Switch checked={edgeFade} onChange={event => setEdgeFade(event.target.checked)} label="Fade overflowing edges" />
+			<Stack maxWidth="22rem">
+				<Tabs defaultValue="overview">
+					<TabList label="Scrollable sections" variant="enclosed" edgeFade={edgeFade}>
+						{["Overview", "Activity", "Settings", "Billing", "Members", "Integrations", "Audit log"].map(label => <Tab key={label} value={label.toLowerCase()}>{label}</Tab>)}
+					</TabList>
+				</Tabs>
+			</Stack>
+		</>
+	)
+}
 ```
 
 ### OverflowTabBar
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<OverflowTabBar
-  items={[
-    { id: "overview", label: "Overview" },
-    { id: "activity", label: "Activity", badge: <Badge tone="neutral">3</Badge> },
-    { id: "billing", label: "Billing", href: "/billing" },
-  ]}
-  value={tab}
-  onValueChange={setTab}
-/>
+import { useState } from "react"
+
+import { Badge } from "themelia-ui/base/badge"
+import { OverflowTabBar } from "themelia-ui/base/navigation"
+
+export default function OverflowTabBarExample() {
+	const [bar, setBar] = useState("overview")
+
+	return (
+		<OverflowTabBar
+			strings={{ label: "Record sections" }}
+			items={[
+				{ id: "overview", label: "Overview" },
+				{ id: "activity", label: "Activity", badge: <Badge tone="neutral">3</Badge> },
+				{ id: "settings", label: "Settings" },
+				{ id: "billing", label: "Billing" },
+				{ id: "members", label: "Members" },
+				{ id: "integrations", label: "Integrations" },
+				{ id: "audit", label: "Audit log" },
+				{ id: "danger", label: "Danger zone", disabled: true },
+			]}
+			value={bar}
+			onValueChange={setBar}
+		/>
+	)
+}
 ```

@@ -1,13 +1,7 @@
-import { Button } from "@/components/base/buttons"
-import { Stack } from "@/components/base/structure"
-import { toast } from "@/components/base/toaster"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export function ToastPage() {
 	return (
@@ -18,123 +12,25 @@ export function ToastPage() {
 			exports={["toast", "Toaster", "createToastStore"]}
 		>
 			<Example
-				id="toast-statuses"
+				example="toast/toast-statuses"
 				title="Statuses"
 				description="One surface, six glyphs. The pill stays inverse in every case: a coloured surface for every status turns a notification layer into a traffic light, and the status is already carried by the icon and the wording."
 				stacked
-				code={`toast.success("Invoice sent")
-toast.error("Could not reach the server")
-toast.loading("Uploading…", { id: "upload" })`}
-			>
-				<Stack direction="horizontal" gap="sm" wrap>
-					<Button buttonStyle="outline" tone="neutral" onClick={() => toast("Draft saved")}>
-						Neutral
-					</Button>
-					<Button
-						buttonStyle="outline"
-						tone="neutral"
-						onClick={() => toast.success("Invoice sent", { description: "Northwind Traders · $1,299.50" })}
-					>
-						Success
-					</Button>
-					<Button buttonStyle="outline" tone="neutral" onClick={() => toast.info("Two seats left on this plan")}>
-						Info
-					</Button>
-					<Button buttonStyle="outline" tone="neutral" onClick={() => toast.warning("Your card expires next month")}>
-						Warning
-					</Button>
-					<Button
-						buttonStyle="outline"
-						tone="neutral"
-						onClick={() => toast.error("Could not reach the server", { description: "Retrying in 30 seconds." })}
-					>
-						Error
-					</Button>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="toast-actions"
+				example="toast/toast-actions"
 				title="Actions"
 				description="A toast with an action is the undo affordance for anything destructive that already happened. Hovering or focusing the region pauses every timer, so the action is still there when the reader reaches for it."
 				stacked
-				code={`toast("Invoice deleted", {
-  action: { label: "Undo", onClick: restore },
-  duration: 8000,
-})`}
-			>
-				<Stack direction="horizontal" gap="sm" wrap>
-					<Button
-						buttonStyle="outline"
-						tone="neutral"
-						onClick={() =>
-							toast("Invoice deleted", {
-								description: "INV-4420 · Initech",
-								duration: 8000,
-								action: { label: "Undo", onClick: () => toast.success("Invoice restored") },
-							})
-						}
-					>
-						With undo
-					</Button>
-					<Button
-						buttonStyle="outline"
-						tone="neutral"
-						onClick={() =>
-							toast.warning("Discard unsaved changes?", {
-								duration: Number.POSITIVE_INFINITY,
-								action: { label: "Discard", onClick: () => toast("Changes discarded") },
-								cancel: { label: "Keep", onClick: () => {} },
-							})
-						}
-					>
-						Pinned, two actions
-					</Button>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
-				id="toast-promise"
+				example="toast/toast-promise"
 				title="Promise"
 				description="One toast changing state rather than three stacking. Passing the same id is what makes the loading toast become the outcome in place."
 				stacked
-				code={`toast.promise(saveInvoice(), {
-  loading: "Saving…",
-  success: (invoice) => \`Saved \${invoice.id}\`,
-  error: "Could not save",
-})`}
-			>
-				<Stack direction="horizontal" gap="sm" wrap>
-					<Button
-						buttonStyle="outline"
-						tone="neutral"
-						onClick={() =>
-							void toast.promise(wait(1800), {
-								loading: "Saving invoice…",
-								success: "Invoice saved",
-								error: "Could not save",
-							})
-						}
-					>
-						Resolves
-					</Button>
-					<Button
-						buttonStyle="outline"
-						tone="neutral"
-						onClick={() =>
-							void toast
-								.promise(wait(1800).then(() => Promise.reject(new Error("timeout"))), {
-									loading: "Saving invoice…",
-									success: "Invoice saved",
-									error: (error) => `Could not save: ${(error as Error).message}`,
-								})
-								.catch(() => {})
-						}
-					>
-						Rejects
-					</Button>
-				</Stack>
-			</Example>
+			/>
 
 			<Example id="toast-rule" title="Where the queue lives" stacked>
 				<Callout label="Rule">

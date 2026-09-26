@@ -403,7 +403,24 @@ Preview route: Calendar — `/calendar`
 ### Calendar
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Calendar mode="range" value={range} onValueChange={setRange} numberOfMonths={2} />
+import { useState } from "react"
+
+import { Calendar, type DateRangeValue } from "themelia-ui/base/date-pickers"
+
+export default function CalendarExample() {
+	const [range, setRange] = useState<DateRangeValue>({})
+
+	return (
+		<div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", width: "fit-content" }}>
+			<Calendar
+				mode="range"
+				value={range}
+				onValueChange={(next) => setRange(next as DateRangeValue)}
+				numberOfMonths={2}
+			/>
+		</div>
+	)
+}
 ```
 
 ### Another language, another week
@@ -411,31 +428,139 @@ Preview route: Calendar — `/calendar`
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
 import { de } from "date-fns/locale"
 
-<UIProvider config={{ dates: { locale: de, weekStartsOn: 0 } }}>
-  <Calendar mode="single" />
-</UIProvider>
+import { Calendar } from "themelia-ui/base/date-pickers"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+const MARCH = new Date("2026-03-01T00:00:00")
+
+export default function CalendarLocale() {
+	return (
+		<Stack direction="horizontal" gap="2xl" wrap align="start">
+			<Stack gap="xs" align="start">
+				<Text size="xs" type="secondary">built-in, Monday first</Text>
+				<Calendar mode="single" month={MARCH} />
+			</Stack>
+			<Stack gap="xs" align="start">
+				<Text size="xs" type="secondary">dates: {"{ locale: de, weekStartsOn: 0 }"}</Text>
+				<UIProvider config={{ dates: { locale: de, weekStartsOn: 0 } }}>
+					<Calendar mode="single" month={MARCH} />
+				</UIProvider>
+			</Stack>
+		</Stack>
+	)
+}
 ```
 
 ### DatePicker
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<DatePicker value={day} onValueChange={setDay} clearable />
-const { weekStartsOn } = useDatesConfig()
-const presets = useMemo(() => createRangePresets({ weekStartsOn }), [weekStartsOn])
-<DatePicker mode="range" value={range} onValueChange={setRange} presets={presets} />
+import { useMemo, useState } from "react"
+
+import { DatePicker, createRangePresets, type DateRangeValue } from "themelia-ui/base/date-pickers"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { useDatesConfig } from "themelia-ui/ui-provider"
+
+
+export default function DatePickerExample() {
+	/* A fixed day, so the example reads the same on every visit. */
+	const [day, setDay] = useState<Date | undefined>(new Date("2026-03-12T00:00:00"))
+	const [range, setRange] = useState<DateRangeValue>({})
+	const [days, setDays] = useState<Date[]>([])
+	/* The presets agree with the calendar's week because both read the provider's. */
+	const { weekStartsOn } = useDatesConfig()
+	const presets = useMemo(() => createRangePresets({ weekStartsOn }), [weekStartsOn])
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<FormField label="Due date">
+				<DatePicker value={day} onValueChange={(next) => setDay(next as Date)} clearable />
+			</FormField>
+			<FormField label="Reporting period" helperText="Two months side by side, with shortcuts down the side.">
+				<DatePicker
+					mode="range"
+					value={range}
+					onValueChange={(next) => setRange(next as DateRangeValue)}
+					presets={presets}
+					placeholder="Choose a range"
+				/>
+			</FormField>
+			<FormField label="Blackout dates" helperText="Multiple: beyond two, the trigger shows a count.">
+				<DatePicker
+					mode="multiple"
+					value={days}
+					onValueChange={(next) => setDays(next as Date[])}
+					placeholder="Choose dates"
+				/>
+			</FormField>
+			<FormField label="Invalid" error="Choose a date.">
+				<DatePicker invalid placeholder="Choose a date" />
+			</FormField>
+		</Stack>
+	)
+}
 ```
 
 ### One picker, four fixed modes
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<SingleDatePicker value={day} onValueChange={setDay} />
-<RangeDatePicker value={range} onValueChange={setRange} />
-<MonthYearPicker value={month} onValueChange={setMonth} />
+import { useState } from "react"
+
+import {
+	MonthYearPicker,
+	MultipleDatePicker,
+	RangeDatePicker,
+	SingleDatePicker,
+	type DateRangeValue,
+	type MonthYearValue,
+} from "themelia-ui/base/date-pickers"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function DatePickerModes() {
+	/* A fixed day, so the example reads the same on every visit. */
+	const [day, setDay] = useState<Date | undefined>(new Date("2026-03-12T00:00:00"))
+	const [range, setRange] = useState<DateRangeValue>({})
+	const [days, setDays] = useState<Date[]>([])
+	const [month, setMonth] = useState<MonthYearValue | undefined>(undefined)
+
+	return (
+		<Stack direction="horizontal" gap="lg" wrap align="start">
+			<SingleDatePicker value={day} onValueChange={setDay} />
+			<RangeDatePicker value={range} onValueChange={setRange} />
+			<MultipleDatePicker value={days} onValueChange={setDays} />
+			<MonthYearPicker value={month} onValueChange={setMonth} />
+		</Stack>
+	)
+}
 ```
 
 ### TimePicker and DateTimeInput
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TimePicker value={time} onValueChange={setTime} minuteStep={15} />
-<DateTimeInput value={iso} onValueChange={setIso} />
+import { useState } from "react"
+
+import { TimePicker, type TimeValue } from "themelia-ui/base/date-pickers"
+import { FormField } from "themelia-ui/base/forms"
+import { Stack } from "themelia-ui/base/structure"
+import { DateTimeInput } from "themelia-ui/base/value-inputs"
+
+
+export default function Time() {
+	const [time, setTime] = useState<TimeValue>({ hours: 9, minutes: 30 })
+	/* A fixed instant, not `new Date()`, for stable visual baselines. */
+	const [instant, setInstant] = useState<string | undefined>("2026-03-12T09:30:00.000Z")
+
+	return (
+		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+			<FormField label="Start time">
+				<TimePicker value={time} onValueChange={setTime} minuteStep={15} />
+			</FormField>
+			<FormField label="Publish at" helperText="One ISO value; paging the calendar keeps the hour already set.">
+				<DateTimeInput value={instant} onValueChange={setInstant} />
+			</FormField>
+		</Stack>
+	)
+}
 ```

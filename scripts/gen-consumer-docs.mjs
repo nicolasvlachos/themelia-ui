@@ -9,6 +9,7 @@ import { apiExportsFor } from './lib/api-exports.mjs'
 import { typesFor } from './lib/export-targets.mjs'
 import { recipeFamilies, validateGuidance } from './lib/component-discovery.mjs'
 import { mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs'
+import ts from 'typescript'
 import { writeIfChanged } from './lib/write-if-changed.mjs'
 import { readManifest } from './lib/read-architecture-manifest.mjs'
 import { publicComponents, publicSymbols } from './lib/public-symbols.mjs'
@@ -186,8 +187,9 @@ writeIfChanged(`${OUT}/profiles.md`, profileLines.join('\n'))
 
 /* ── recipes.json ────────────────────────────────────────────────────────────────── */
 /*
- * Recipes are the preview pages' own `<Example code={…}>` blocks, attributed by the public
- * symbols they use, so a shared page cannot assign an example to every family on it.
+ * Recipes are the preview pages' examples — an `<Example example="page/id">` reads its file in
+ * src/preview/examples, an `<Example code={…}>` its string — attributed by the public symbols
+ * they use, so a shared page cannot assign an example to every family on it.
  * `routeOfPage` parses routes.ts by regex like lib/preview-routes.mjs — keep the formats.
  */
 
@@ -205,19 +207,41 @@ const routeOfPage = (() => {
   return out
 })()
 
+/** The page's `<Example>` elements, parsed rather than matched: `title`, `id`, `example` and `code`. */
+function examplesIn(file, text) {
+  const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const attribute = (tag, name) => {
+    const found = tag.attributes.properties.find((property) => ts.isJsxAttribute(property) && property.name.getText(source) === name)
+    const value = found?.initializer
+    if (!value) return undefined
+    if (ts.isStringLiteral(value)) return value.text
+    const expression = ts.isJsxExpression(value) ? value.expression : undefined
+    if (expression && (ts.isStringLiteral(expression) || ts.isNoSubstitutionTemplateLiteral(expression))) return expression.text
+    if (expression && ts.isTemplateExpression(expression)) return expression.getText(source).slice(1, -1)
+    return undefined
+  }
+  const found = []
+  const visit = (node) => {
+    const tag = ts.isJsxSelfClosingElement(node) ? node : ts.isJsxElement(node) ? node.openingElement : undefined
+    if (tag && tag.tagName.getText(source) === 'Example') {
+      found.push({ title: attribute(tag, 'title'), id: attribute(tag, 'id'), example: attribute(tag, 'example'), code: attribute(tag, 'code') })
+    }
+    ts.forEachChild(node, visit)
+  }
+  visit(source)
+  return found
+}
+
 const recipes = []
 for (const file of readdirSync('src/preview/pages').sort()) {
   const text = readFileSync(`src/preview/pages/${file}`, 'utf8')
   const route = routeOfPage.get(file)
   if (!route) continue
-  for (const block of text.matchAll(
-    /<Example\b([\s\S]*?)code=\{`([\s\S]*?)`\}/g,
-  )) {
-    const attrs = block[1]
-    const id = attrs.match(/\bid="([^"]+)"/)?.[1]
-    const title = attrs.match(/\btitle="([^"]+)"/)?.[1]
-    if (!id || !title) continue
-    const code = block[2].replace(/\\`/g, '`').replace(/\\\$\{/g, '${').replace(/(?<!\\)\\n/g, '\n')
+  for (const entry of examplesIn(file, text)) {
+    const id = entry.example ? entry.example.split('/').pop() : entry.id
+    const code = entry.example ? readFileSync(`src/preview/examples/${entry.example}.tsx`, 'utf8').trimEnd() : entry.code
+    const title = entry.title
+    if (!id || !title || !code) continue
     const usedFamilies = recipeFamilies(code, text, records)
     /* The page's own exports, and a merged page's further families (`alsoImports`). */
     const claimed = [...text.matchAll(/exports=\{\[([\s\S]*?)\]\}|exports:\s*\[([\s\S]*?)\]/g)].flatMap((match) => [...(match[1] ?? match[2]).matchAll(/"([A-Za-z0-9]+)"/g)].map((symbol) => symbol[1]))

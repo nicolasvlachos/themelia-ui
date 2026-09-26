@@ -207,59 +207,241 @@ Preview route: Button — `/button`
 ### Tone × style
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Button tone="destructive" buttonStyle="ghost">Delete</Button>
+import { Button, type ButtonStyle, type ButtonTone } from "themelia-ui/base/buttons"
+
+const TONES: ButtonTone[] = [
+	"neutral", "primary", "secondary", "info", "success", "warning", "destructive",
+]
+
+const STYLES: ButtonStyle[] = ["solid", "outline", "ghost"]
+
+export default function ToneStyle() {
+	return (
+		<>
+			{STYLES.map((buttonStyle) => (
+				<div key={buttonStyle} style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
+					{TONES.map((tone) => (
+						<Button key={tone} tone={tone} buttonStyle={buttonStyle}>
+							{tone}
+						</Button>
+					))}
+				</div>
+			))}
+		</>
+	)
+}
 ```
 
 ### Scale, not size
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-{/* not this */}
-<Button>Save</Button>
+import { PlusIcon } from "lucide-react"
 
-{/* this — the whole region stays in proportion */}
-<UIProvider config={{ scale: 0.875 }}>
-  <Toolbar />
-</UIProvider>
+import { Button } from "themelia-ui/base/buttons"
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { MonoValue } from "themelia-ui/primitives"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function Scale() {
+	return (
+		<>
+			{([0.875, 1, 1.125] as const).map((scale) => (
+				<UIProvider key={scale} config={{ scale }}>
+					<div style={{ display: "flex", gap: ".75rem", alignItems: "center", flexWrap: "wrap" }}>
+						{/* A fixed column and type size: the caption sits inside the scaled scope. */}
+						<MonoValue
+							size="xs"
+							style={{ width: "5.5rem", flexShrink: 0, fontSize: "0.75rem" }}
+						>
+							scale {scale}
+						</MonoValue>
+						<Button>Save</Button>
+						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+						<Button iconOnly aria-label="Add"><PlusIcon /></Button>
+						<Checkbox label="Also this" defaultChecked />
+					</div>
+				</UIProvider>
+			))}
+		</>
+	)
+}
 ```
 
 ### State
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Button>Save changes</Button>
-<Button loading>Save changes</Button>
-<Button disabled>Disabled</Button>
+import { Button } from "themelia-ui/base/buttons"
+
+export default function State() {
+	return (
+		<>
+			<Button>Save changes</Button>
+			<Button loading>Save changes</Button>
+			<Button disabled>Disabled</Button>
+			<Button tone="neutral" buttonStyle="outline" loading>
+				Loading
+			</Button>
+		</>
+	)
+}
 ```
 
 ### Icon only
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<Button iconOnly aria-label="Settings">⚙</Button>
+import { PlusIcon } from "lucide-react"
+
+import { Button } from "themelia-ui/base/buttons"
+
+export default function IconOnly() {
+	return (
+		<>
+			<Button iconOnly aria-label="Add"><PlusIcon /></Button>
+			<Button tone="neutral" buttonStyle="outline" iconOnly aria-label="Edit">✎</Button>
+			<Button tone="destructive" buttonStyle="ghost" iconOnly aria-label="Delete">🗑</Button>
+		</>
+	)
+}
 ```
 
 ### Group
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ButtonGroup>
-  <Button buttonStyle="outline" tone="neutral">Day</Button>
-  <Button buttonStyle="outline" tone="neutral">Week</Button>
-</ButtonGroup>
+import { Button, ButtonGroup } from "themelia-ui/base/buttons"
+
+export default function Group() {
+	return (
+		<>
+			<ButtonGroup>
+				<Button tone="neutral" buttonStyle="outline">Day</Button>
+				<Button tone="neutral" buttonStyle="outline">Week</Button>
+				<Button tone="neutral" buttonStyle="outline">Month</Button>
+			</ButtonGroup>
+			<ButtonGroup orientation="vertical">
+				<Button tone="neutral" buttonStyle="outline">Top</Button>
+				<Button tone="neutral" buttonStyle="outline">Bottom</Button>
+			</ButtonGroup>
+		</>
+	)
+}
 ```
 
 ### Three buttons that are not styles
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<TextButton onClick={undo}>Undo</TextButton>
-<LoaderButton onClick={async () => save()}>Save</LoaderButton>
-<TooltipButton tooltip="Archive" iconOnly><ArchiveIcon /></TooltipButton>
+import { LoaderButton, TextButton, TooltipButton } from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+
+export default function ButtonVariants() {
+	return (
+		<Stack direction="horizontal" gap="xl" wrap align="center">
+			<Text size="xs" type="secondary">
+				Changed your mind? <TextButton>Undo the import</TextButton>
+			</Text>
+			<LoaderButton
+				tone="neutral"
+				buttonStyle="outline"
+				onClick={() => new Promise((resolve) => setTimeout(resolve, 1200))}
+			>
+				Save and wait
+			</LoaderButton>
+			<TooltipButton tooltip="Archive this order" tone="neutral" buttonStyle="outline">
+				Archive
+			</TooltipButton>
+		</Stack>
+	)
+}
 ```
 
 ### Separators and text inside a group
 
 ```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
-<ButtonGroup>
-  <Button>Day</Button>
-  <ButtonGroupSeparator />
-  <ButtonGroupText>of</ButtonGroupText>
-  <Button>Week</Button>
-</ButtonGroup>
+import {
+	Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText,
+} from "themelia-ui/base/buttons"
+import { Stack } from "themelia-ui/base/structure"
+
+export default function ButtonGroupParts() {
+	return (
+		<Stack direction="horizontal" gap="xl" wrap align="center">
+			<ButtonGroup>
+				<Button tone="neutral" buttonStyle="outline">Day</Button>
+				<ButtonGroupSeparator />
+				<Button tone="neutral" buttonStyle="outline">Week</Button>
+				<ButtonGroupSeparator />
+				<Button tone="neutral" buttonStyle="outline">Month</Button>
+			</ButtonGroup>
+			<ButtonGroup>
+				<ButtonGroupText>Show</ButtonGroupText>
+				<Button tone="neutral" buttonStyle="outline">All</Button>
+				<Button tone="neutral" buttonStyle="outline">Open</Button>
+			</ButtonGroup>
+		</Stack>
+	)
+}
+```
+
+### Type can override the master factor
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { Checkbox } from "themelia-ui/base/choice-inputs"
+import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function TypeFactor() {
+	return (
+		<Stack gap="lg">
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">typography.scale 0.875 — type shrinks, control geometry holds</Text>
+				<UIProvider config={{ typography: { scale: 0.875 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">scale 0.875 + typography.scale 1 — geometry shrinks, type holds</Text>
+				<UIProvider config={{ scale: 0.875, typography: { scale: 1 } }}>
+					<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Text>Body copy at this factor.</Text>
+						<Button>Save</Button>
+						<Checkbox label="Check" defaultChecked />
+					</Stack>
+				</UIProvider>
+			</Stack>
+		</Stack>
+	)
+}
+```
+
+### Scoped theming
+
+```tsx fragment — excerpt from the live preview; surrounding values are supplied by the application
+import { Button } from "themelia-ui/base/buttons"
+import { UIProvider } from "themelia-ui/ui-provider"
+
+export default function ScopedTheming() {
+	return (
+		<div style={{ display: "flex", gap: ".75rem", alignItems: "center", flexWrap: "wrap" }}>
+			<Button>root</Button>
+			<UIProvider config={{ theme: { colors: { primary: "oklch(0.55 0.2 25)" } } }}>
+				<Button>scoped red</Button>
+			</UIProvider>
+			<UIProvider config={{ theme: { colors: { primary: "oklch(0.5 0.2 265)" } } }}>
+				<Button>scoped blue</Button>
+			</UIProvider>
+			<UIProvider config={{ density: "compact" }}>
+				<Button>compact</Button>
+			</UIProvider>
+			<UIProvider config={{ density: "comfortable" }}>
+				<Button>comfortable</Button>
+			</UIProvider>
+		</div>
+	)
+}
 ```
