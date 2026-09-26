@@ -14,7 +14,6 @@ export function TagsInputPage() {
 				example="tags-input/tags"
 				title="TagsInput"
 				description="Chips and the entry field share one surface, so it reads as a field with things in it. Enter commits, Backspace on an empty field removes the last chip, and pasting a comma-separated list splits it."
-				stacked
 			/>
 
 			<Example id="tags-input-api" title="API">

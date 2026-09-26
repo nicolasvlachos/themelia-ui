@@ -15,10 +15,9 @@ export function LabelPage() {
 				example="label/label"
 				title="Label"
 				description="A real <label>, wired by htmlFor. Clicking it focuses the control, which is the behaviour a styled <span> silently loses."
-				stacked
 			/>
 
-			<Example id="label-rule" title="Prefer FormField" stacked>
+			<Example id="label-rule" title="Prefer FormField">
 				<Callout label="Rule">
 					Reach for <code>FormField</code> first. It supplies the label, the single
 					supporting line, the error, and the wiring between them — which is four things

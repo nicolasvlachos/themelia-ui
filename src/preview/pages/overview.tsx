@@ -15,7 +15,7 @@ const FEATURES = [
 	{
 		icon: <LayersIcon />,
 		title: "Cascade layers, not class merging",
-		body: "Component rules compile into @layer components, so a consumer's unlayered CSS always wins. That is the whole job tailwind-merge was doing, done by the cascade at no runtime cost.",
+		body: "Component rules compile into @layer components, so a consumer's unlayered CSS always wins. That is the job tailwind-merge does at runtime, done by the cascade at no cost.",
 	},
 	{
 		icon: <PaletteIcon />,
@@ -29,8 +29,8 @@ const FEATURES = [
 	},
 	{
 		icon: <ZapIcon />,
-		title: "Three tiers of tokens",
-		body: "Primitives carry no meaning, semantics carry no value, and the theming layer computes everything else. Swapping semantics rethemes components; swapping primitives rethemes modes.",
+		title: "Three levels of tokens",
+		body: "The palette carries no meaning, semantic tokens carry no value, and the theming layer computes everything else. Swapping semantic tokens rethemes components; swapping the palette rethemes modes.",
 	},
 ]
 
@@ -78,9 +78,9 @@ export function OverviewPage() {
 						</Text>
 					))}
 					<Callout>
-						There is no vendored layer. In the kit this is modelled on, <code>ui/</code> held
-						copied-in shadcn files that were off-limits to edit. Nothing is vendored here, so
-						nothing needs a wrapper to become usable.
+						There is no vendored layer: no directory of copied-in files that are off-limits
+						to edit. Every component is the kit's own, so nothing needs a wrapper to become
+						usable.
 					</Callout>
 				</Stack>
 			</section>

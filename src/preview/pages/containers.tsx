@@ -15,17 +15,15 @@ export function ContainersPage() {
 				example="containers/blocks"
 				title="The four blocks"
 				description="PageViewport owns page scroll and the page container query. Container owns the reading measure and the gutter. Section owns the rhythm between groups. TwoColumnLayout owns the main/aside grid. Nothing else in the kit claims any of those four jobs."
-				stacked
 			/>
 
 			<Example
 				example="containers/two-column"
 				title="TwoColumnLayout"
 				description="The aside is second in the DOM at every width, so a reader tabbing through meets the primary content first. When the columns stack, the grid reorders them — the element never moves, which is what keeps that promise true. asidePosition moves the column, not the element, for the same reason."
-				stacked
 			/>
 
-			<Example id="containers-rule" title="One owner per job" stacked>
+			<Example id="containers-rule" title="One owner per job">
 				<Callout label="Rule">
 					Exactly one <code>PageViewport</code> per page, and it is the only thing that
 					scrolls. A second scroll container inside it produces a page with two

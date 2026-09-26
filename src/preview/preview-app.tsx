@@ -15,6 +15,7 @@ import type { ColorScheme, Density } from "@/lib/ui-provider"
 import { SiteSearch } from "./partials/site-search"
 import { SiteSidebar } from "./partials/site-sidebar"
 import { NotFoundPage } from "./partials/not-found"
+import { ExampleFrame } from "./partials/example-frame"
 import { SiteToc } from "./partials/site-toc"
 import styles from "./preview.module.css"
 import { MOVED_ROUTES, ROUTES } from "./routes"
@@ -47,7 +48,7 @@ function Header({
 	const isDark = scheme === "dark" || (scheme === "system" && systemDark)
 
 	return (
-		<header className={styles.header}>
+		<header className={styles.header} data-site-header>
 			{/* The kit's own Button: the docs site is its first consumer. */}
 			<Button
 				iconOnly
@@ -141,6 +142,7 @@ function Shell({
 						{Object.entries(MOVED_ROUTES).map(([from, to]) => (
 							<Route key={from} path={from} element={<Navigate to={to} replace />} />
 						))}
+						<Route path="/example/:page/:id" element={<ExampleFrame />} />
 						{/* An unknown address gets a not-found page, not an empty main. */}
 						<Route path="*" element={<NotFoundPage />} />
 					</Routes>
@@ -151,19 +153,27 @@ function Shell({
 	)
 }
 
-function AppContent() {
+function Site() {
 	const { appliedConfig, updateConfig } = useAppTheme()
 	return (
 		<>
-			<HashRouter>
-				<Shell
-					density={appliedConfig.density ?? "default"}
-					setDensity={density => updateConfig({ ...appliedConfig, density })}
-					scheme={appliedConfig.colorScheme ?? "system"}
-					setScheme={colorScheme => updateConfig({ ...appliedConfig, colorScheme })}
-				/>
-			</HashRouter>
+			<Shell
+				density={appliedConfig.density ?? "default"}
+				setDensity={density => updateConfig({ ...appliedConfig, density })}
+				scheme={appliedConfig.colorScheme ?? "system"}
+				setScheme={colorScheme => updateConfig({ ...appliedConfig, colorScheme })}
+			/>
 			<AppThemeLauncher />
+		</>
+	)
+}
+
+function AppContent() {
+	return (
+		<>
+			<HashRouter>
+				<Site />
+			</HashRouter>
 			<Toaster />
 		</>
 	)

@@ -3,11 +3,12 @@ import { DialogContent } from "themelia-ui/base/dialog"
 import {
 	Overlay, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function OverlayBackdrop() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Default scrim
@@ -33,6 +34,6 @@ export default function OverlayBackdrop() {
 					</DialogContent>
 				</Overlay>
 			</UIProvider>
-		</>
+		</Stack>
 	)
 }

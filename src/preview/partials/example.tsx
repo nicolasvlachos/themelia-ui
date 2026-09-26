@@ -21,7 +21,6 @@ export function Example({
 	title,
 	description,
 	code,
-	stacked = false,
 	bleed = false,
 	overflowing = false,
 	children,
@@ -32,7 +31,6 @@ export function Example({
 	description?: ReactNode
 	/** Page-authored source for a section without an example file. */
 	code?: string
-	stacked?: boolean
 	/** Lets the preview run past the reading measure, for whole-page layouts. */
 	bleed?: boolean
 	/** Lets an overlay that does not portal (e.g. the mentions panel) escape the clipped frame. */
@@ -54,7 +52,7 @@ export function Example({
 				{!!description && <Text type="secondary">{withCodeSpans(description)}</Text>}
 			</div>
 
-			<div className={cx(styles.example, bleed && styles.exampleBleed)}>
+			<div className={cx(styles.example, bleed && styles.exampleBleed)} data-example={entry?.key}>
 				{!!source && (
 					<div className={styles.exampleTabs} role="group" aria-label="Example view">
 						<button
@@ -78,7 +76,7 @@ export function Example({
 
 				{/* Hidden rather than unmounted on the Code tab, so a demo keeps its state. */}
 				<div
-					className={cx("example--preview", styles.preview, stacked && styles.previewStacked)}
+					className={cx("example--preview", styles.preview)}
 					hidden={tab === "code" && !!source}
 				>
 					{entry ? <entry.Demo /> : children}

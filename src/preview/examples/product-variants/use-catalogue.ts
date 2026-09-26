@@ -1,9 +1,9 @@
-/** A working catalogue behind the Commerce demos, so edits to options change the variant grid. */
+/** The app's catalogue store in miniature: editing the options changes the variant grid. */
 import { useCallback, useMemo, useState } from "react"
 
 import type {
 	ProductOptionEditDraft, ProductOptionGroup, ProductOptionValue, ProductVariantRow,
-} from "@/components/features"
+} from "themelia-ui/features/products"
 
 /** Every combination the current options describe, in option order. */
 function combinations(options: ProductOptionGroup[]): { ids: Record<string, string>; labels: string[] }[] {

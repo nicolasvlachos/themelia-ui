@@ -26,7 +26,6 @@ export function OverlayPage() {
 				example="overlay/overlay-placement"
 				title="placement"
 				description="Centre reads as a dialog; an edge reads as a sheet or a drawer. The word is the only difference between them — there is no second component for the edge case. DialogContent is this setting fixed at centre, and SheetContent is this setting at an edge with a default shape."
-				stacked
 			/>
 
 			<Example
@@ -39,14 +38,12 @@ export function OverlayPage() {
 				example="overlay/overlay-dismissal"
 				title="dismissal"
 				description="Both routes out are separately switchable. A decision the reader must answer turns off the backdrop; destructive or in-progress work turns off Escape. Turning both off leaves the footer's own control as the only way out, which is a deliberate choice and not a default — it is the one AlertDialogContent makes."
-				stacked
 			/>
 
 			<Example
 				example="overlay/overlay-controlled"
 				title="Controlled"
 				description="`open` and `onOpenChange` on the root, for a surface opened by something other than its own trigger — a row action, a keyboard shortcut, a route."
-				stacked
 			/>
 
 			<Example
@@ -73,12 +70,12 @@ export function OverlayPage() {
 				description="A modal overlay lives in the browser's top layer and makes the rest of the page inert, so a menu or select portalled to the body would paint underneath it and ignore every click. The overlay hosts its own portal target, so popups opened inside it render inside it — stacked above it, reachable by keyboard, and closed one layer at a time by Escape. The same holds in every preset."
 			/>
 
-			<Example id="overlay-rule" title="Three presets, one surface" stacked>
+			<Example id="overlay-rule" title="Three presets, one surface">
 				<Callout label="Rule">
 					A preset is a content part, not a second implementation: it is{" "}
 					<code>OverlayContent</code> with settings filled in, placed inside Overlay's own
 					root beside Overlay's trigger, and holding Overlay's title, description, body and
-					close. A preset family exports only the parts that set something. Use one when its
+					close. A preset module exports only the parts that set something. Use one when its
 					name says what you mean — <code>&lt;AlertDialogContent&gt;</code> tells the next
 					reader more than a <code>dismissal</code> object does. For a combination none of
 					them names, configure <code>OverlayContent</code> rather than building a fourth modal.
@@ -103,7 +100,7 @@ export function OverlayPage() {
 				</Text>
 				<Text size="sm" type="secondary">
 					When the footer is always the same — cancel, confirm, perhaps an async save — the
-					features layer generates it: <TextLink href="#/action-overlays">Action overlays</TextLink>{" "}
+					Features tier generates it: <TextLink href="#/action-overlays">Action overlays</TextLink>{" "}
 					are ActionDialog, ActionSheet and ConfirmDialog, and they render through this same
 					surface.
 				</Text>
@@ -121,7 +118,7 @@ export function OverlayPage() {
 				description="The same centred surface with both dismissal routes off, no corner close, and role=alertdialog: the backdrop and Escape do not decide for the reader. Nothing closes it but an answer — which is the whole difference from a dialog, so the two cannot drift in shell, header, footer or scrolling."
 			/>
 
-			<Example id="alert-dialog-rule" title="An alert dialog cannot be dismissed by accident" stacked>
+			<Example id="alert-dialog-rule" title="An alert dialog cannot be dismissed by accident">
 				<Callout label="Rule">
 					An alert dialog turns off backdrop and Escape dismissal. Every other overlay
 					leaves both on — but this one exists precisely because the answer matters, and
@@ -170,7 +167,7 @@ export function OverlayPage() {
 						{ name: "OverlayContent strings", type: "Partial<OverlayStrings>", description: "The accessible name the corner dismiss control carries." },
 						{ name: "OverlayHeader / OverlayBody / OverlayFooter", type: "component", description: "The three regions. Header and footer hold their edge while the body scrolls, so a long surface never scrolls its own title away." },
 						{ name: "OverlayTitle / OverlayDescription", type: "component", description: "Wired to the dialog's accessible name and description — a surface without a title has neither." },
-						{ name: "OverlayTrigger / OverlayClose", type: "component", description: "Render a bare button by default; `render` hands the behaviour to your own control instead, so the trigger is a kit Button rather than something this family styles." },
+						{ name: "OverlayTrigger / OverlayClose", type: "component", description: "Render a bare button by default; `render` hands the behaviour to your own control instead, so the trigger is a kit Button rather than something this module styles." },
 						{ name: "OverlayDismissArea", type: "component", description: "Any button inside dismisses — for a footer whose every control should close. Wrapping each button individually is where the wiring gets forgotten; keep OverlayClose per action when only some of them close." },
 					]}
 				/>

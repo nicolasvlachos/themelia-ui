@@ -20,10 +20,9 @@ export function FiltersPage() {
 				example="filters/filters"
 				title="The bar"
 				description="On phones, search stays visible and Filters opens a sheet with applied values, comparisons, and individual clear controls. On larger screens, each pill keeps its edit, comparison, and clear actions."
-				stacked
 			/>
 
-			<Example id="filters-rules" title="What the filters decide" stacked>
+			<Example id="filters-rules" title="What the filters decide">
 				<Callout label="Rule">
 					The provider is <strong>controlled, always</strong>. It holds no filter state of its
 					own, because the only place filters really live is the URL — and a provider with its
@@ -75,7 +74,7 @@ export function FiltersPage() {
 						{ name: "FilterErrorBoundary", type: "component", description: "Keeps one broken filter from taking the page with it. A filter\u2019s editor is the most consumer-owned surface in the feature, so it is the one most likely to throw." },
 						{ name: "useFilterGroups", type: "hook", description: "Partitions the filter list into the four groups a bar draws differently. Exported so a consumer laying out their own bar does not have to re-derive \u201cwhich filters belong behind the add button\u201d \u2014 a rule that is easy to get subtly wrong and impossible to notice when you do." },
 						{ name: "useAsyncOptions", type: "hook", description: "The fetch, debounce and cache behind AsyncFilterEditor, for a caller supplying their own editor against the same lifecycle." },
-						{ name: "createFilterCache", type: "() => FilterCache", description: "The async option and label cache. FilterProvider makes one per mount, which is the isolating default: two roots on a page, or two users in a session, never see each other's results. Create one and pass it as FilterProvider's cache when results and pill labels should survive a navigation. It was a Map at module scope, which is one cache for the whole realm — so an embedded widget was served the host application's options, and signing in as somebody else kept the first user's labels." },
+						{ name: "createFilterCache", type: "() => FilterCache", description: "The async option and label cache. FilterProvider makes one per mount, which is the isolating default: two roots on a page, or two users in a session, never see each other's results. Create one and pass it as FilterProvider's cache when results and pill labels should survive a navigation. A Map at module scope would be one cache for the whole realm — an embedded widget would be served the host application's options, and signing in as somebody else would keep the first user's labels." },
 						{ name: "useFilterCache", type: "() => FilterCache | null", description: "The cache in scope, or null outside a provider. For a caller writing their own editor that wants to read or seed the same store useAsyncOptions uses." },
 						{ name: "FilterOperator / FilterType", type: "const object", description: "The two vocabularies, exported as values rather than types alone so a consumer can build a filter definition without spelling the strings and can switch on them exhaustively." },
 					]}

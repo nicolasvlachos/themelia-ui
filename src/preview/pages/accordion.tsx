@@ -14,14 +14,12 @@ export function AccordionPage() {
 				example="accordion/accordion"
 				title="Accordion"
 				description="Pass items for the canonical icon, title, badge, description row. Pass children instead when a section needs a structure the bounded row cannot express."
-				stacked
 			/>
 
 			<Example
 				example="accordion/accordion-surfaces"
 				title="Accordion surfaces"
 				description="Bordered is one shell with dividers; card gives each section its own panel; flat has no chrome at all."
-				stacked
 			/>
 
 			<Example id="accordion-api" title="API">

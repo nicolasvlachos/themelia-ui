@@ -1,0 +1,4 @@
+/* A bounded height, so the sticky header has something to stick inside. */
+.bounded {
+	max-height: 14rem;
+}

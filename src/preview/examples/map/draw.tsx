@@ -8,7 +8,6 @@ import {
 	MapZoomControl,
 } from "themelia-ui/features/map"
 
-import styles from "../../preview.module.css"
 import { MARLOW } from "./data"
 
 export default function Draw() {
@@ -16,22 +15,20 @@ export default function Draw() {
 
 	return (
 		<>
-			<div className={styles.mapFrame}>
-				<Map center={MARLOW} zoom={13}>
-					<MapTileLayer />
-					<MapZoomControl />
-					<MapDrawControl onLayersChange={(group) => setShapes(group.getLayers().length)}>
-						<MapDrawMarker />
-						<MapDrawPolyline />
-						<MapDrawPolygon />
-						<MapDrawRectangle />
-						<MapDrawCircle />
-						<MapDrawEdit />
-						<MapDrawDelete />
-						<MapDrawUndo />
-					</MapDrawControl>
-				</Map>
-			</div>
+			<Map center={MARLOW} zoom={13} height="26rem">
+				<MapTileLayer />
+				<MapZoomControl />
+				<MapDrawControl onLayersChange={(group) => setShapes(group.getLayers().length)}>
+					<MapDrawMarker />
+					<MapDrawPolyline />
+					<MapDrawPolygon />
+					<MapDrawRectangle />
+					<MapDrawCircle />
+					<MapDrawEdit />
+					<MapDrawDelete />
+					<MapDrawUndo />
+				</MapDrawControl>
+			</Map>
 			<Text size="sm" type="secondary">
 				shapes drawn: <Badge tone="neutral">{shapes}</Badge>
 			</Text>

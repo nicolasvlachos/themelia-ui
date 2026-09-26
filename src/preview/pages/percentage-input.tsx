@@ -14,7 +14,6 @@ export function PercentageInputPage() {
 				example="percentage-input/percentage"
 				title="PercentageInput"
 				description="Bounded to 0–100 with a trailing sign. The suffix is a field affordance, not part of the value — nothing downstream has to strip a symbol before parsing."
-				stacked
 			/>
 
 			<Example id="percentage-input-api" title="API">

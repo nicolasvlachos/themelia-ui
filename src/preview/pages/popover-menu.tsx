@@ -15,24 +15,21 @@ export function PopoverMenuPage() {
 				example="popover-menu/popover-menu"
 				title="PopoverMenu"
 				description="Trigger, optional header, search, list, optional footer. The picker shape behind filter facets, operator selects, and assignee menus. `search={false}` drops the field for a list short enough to read at a glance; `loading` puts a strip where the list goes, because an async picker with no state reads as an empty one."
-				stacked
 			/>
 
 			<Example
 				example="popover-menu/popover-menu-states"
 				title="Error and minimum search"
 				description="`error` stands where the rows would — `true` for `strings.error`, or a node of your own — and `onRetry` puts a control under it. It gives way to `loading`, so a retry in flight never shows beside the failure it is answering. `minSearchLength` keeps an empty field browsable and shows `strings.formatTypeToSearch` for one character up to the minimum."
-				stacked
 			/>
 
 			<Example
 				example="popover-menu/popover-menu-panel"
 				title="PopoverMenuPanel"
 				description="The same header, search, rows, states and footer without the popover, for a surface something else already owns — one step of a two-step popup, a sheet, a pill whose popover anchors to the whole pill. It owns no selection and closes nothing; the host decides both. The filter editors are built on it."
-				stacked
 			/>
 
-			<Example id="popover-menu-composition" title="What it is made of" stacked>
+			<Example id="popover-menu-composition" title="What it is made of">
 				<Callout label="Two components, five regions">
 					A <code>Popover</code> at <code>inset="flush"</code> with a <code>Command</code>{" "}
 					inside it. Flush is what lets the header and footer run edge to edge, and it is why
@@ -54,7 +51,7 @@ export function PopoverMenuPage() {
 				</Callout>
 			</Example>
 
-			<Example id="popover-menu-which" title="Which of the five" stacked>
+			<Example id="popover-menu-which" title="Which of the five">
 				<Callout label="It answers a question">
 					<strong>PopoverMenu</strong> picks a value from a button.{" "}
 					<strong>Select</strong> picks a value in a form — the field is the control, and it has

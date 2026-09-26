@@ -14,7 +14,6 @@ export function UnitInputsPage() {
 				example="unit-inputs/units"
 				title="Weight, dimensions, coordinates"
 				description="Same idea, other units. The dimension boxes carry captions because three identical boxes say nothing, and the separator sits on the field row so it lines up with the boxes rather than the captions."
-				stacked
 			/>
 
 			<Example id="unit-inputs-api" title="API">
@@ -28,7 +27,7 @@ export function UnitInputsPage() {
 						{ name: "showHeight", api: "DimensionsInput.showHeight", type: "boolean", default: "true", description: "Drops the third dimension box, for a value that is a plane rather than a solid." },
 						{ name: "min / max / step / decimalPlaces", type: "number", description: "Bounds and precision, applied to every part of the field." },
 						{ name: "invalid", type: "boolean", description: "The error surface. The message stays on the FormField." },
-						{ name: "strings", type: "Partial<UnitInputStrings> | Partial<DimensionsInputStrings> | Partial<CoordinatesInputStrings>", description: "Overrides each field's own copy — the unit selector, and the axis names that used to be a `labels` prop. They are strings like every other piece of copy, and partially overridable now." },
+						{ name: "strings", type: "Partial<UnitInputStrings> | Partial<DimensionsInputStrings> | Partial<CoordinatesInputStrings>", description: "Overrides each field's own copy — the unit selector and the axis names. They are strings like every other piece of copy, so each one can be overridden on its own." },
 					]}
 				/>
 			</Example>

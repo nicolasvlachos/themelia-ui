@@ -14,7 +14,6 @@ export function BreadcrumbsPage() {
 				example="breadcrumbs/breadcrumbs"
 				title="Breadcrumbs"
 				description="The current page is a span, not a link. Linking to the page you are already on is a dead control, and assistive technology announces it as somewhere to go."
-				stacked
 			/>
 
 			<Example id="breadcrumbs-api" title="API">

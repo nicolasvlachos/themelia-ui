@@ -1,5 +1,6 @@
 import { Button } from "themelia-ui/base/buttons"
 import { useCopyToClipboard } from "themelia-ui/base/copyable"
+import { Stack } from "themelia-ui/base/structure"
 
 /** The hook on its own, driving an affordance `Copyable` does not offer. */
 function ShareLink() {
@@ -19,6 +20,8 @@ function ShareLink() {
 
 export default function UseCopyToClipboard() {
 	return (
-		<ShareLink />
+		<Stack direction="horizontal">
+			<ShareLink />
+		</Stack>
 	)
 }

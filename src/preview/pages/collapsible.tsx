@@ -14,7 +14,6 @@ export function CollapsiblePage() {
 				example="collapsible/collapsible"
 				title="Collapsible"
 				description="Animates to the content's own height using grid-template-rows 0fr to 1fr — height: auto is not an animatable value, and this reaches the same result without measuring anything in JavaScript."
-				stacked
 			/>
 
 			<Example id="collapsible-api" title="API">

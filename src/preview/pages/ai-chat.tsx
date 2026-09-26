@@ -1,102 +1,9 @@
-import { useRef, useState } from "react"
-import {
-	CodeIcon, DatabaseIcon, FileTextIcon, GlobeIcon, SearchIcon,
-} from "lucide-react"
-
-import { Button } from "@/components/base/buttons"
-import { Stack } from "@/components/base/structure"
-import { Text } from "@/components/base/typography"
-import {
-	AiArtifact, AiAttachment, AiChat, AiCodeBlock, AiMessageBubble, AiShimmer, AiSources,
-	type AiChatAttachment, type AiChatMessageData,
-} from "@/components/features"
-
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const SAMPLE_CODE = `export function total(lines: Line[]) {
-	return lines.reduce((sum, line) => sum + line.amount, 0)
-}
-
-// Rounds once, at the end — not per line.
-export function formatTotal(lines: Line[]) {
-	return new Intl.NumberFormat("en-IE", {
-		style: "currency",
-		currency: "EUR",
-	}).format(total(lines) / 100)
-}`
-
-const SOURCES = [
-	{ id: "s1", title: "Rounding money in JavaScript", publisher: "developer.mozilla.org", snippet: "Floating point cannot represent 0.1 exactly, so money is held in the smallest unit." },
-	{ id: "s2", title: "Intl.NumberFormat currency options", publisher: "tc39.es" },
-	{ id: "s3", title: "Invoice totals — internal note", publisher: "wiki.internal" },
-]
-
-const MESSAGES: AiChatMessageData[] = [
-	{
-		id: "m1",
-		role: "user",
-		authorName: "You",
-		timestamp: "09:12",
-		parts: [{ type: "text", content: "Why is the invoice total off by a cent on some orders?" }],
-	},
-	{
-		id: "m2",
-		role: "assistant",
-		authorName: "Atlas",
-		timestamp: "09:12",
-		parts: [
-			{
-				type: "reasoning",
-				content:
-					"The totals are summed as floats. 0.1 + 0.2 is 0.30000000000000004, and rounding each line before summing compounds the error.",
-				durationSeconds: 4,
-			},
-			{
-				type: "tool",
-				name: "search_codebase",
-				status: "success",
-				icon: SearchIcon,
-				durationMs: 820,
-				args: '{ "query": "invoice total", "path": "src/billing" }',
-				result: "3 matches — invoice.ts:41, totals.ts:12, order.ts:88",
-			},
-			{
-				type: "text",
-				content:
-					"Each line is rounded to two decimals before the sum, so the error compounds. Hold amounts in cents and round once, at the end.",
-			},
-			{ type: "code", code: SAMPLE_CODE, language: "TypeScript", filename: "totals.ts", showLineNumbers: true, highlightLines: [2, 8] },
-			{ type: "sources", items: SOURCES },
-		],
-	},
-]
-
-const SUGGESTIONS = [
-	{ id: "q1", label: "Show me the failing orders", icon: DatabaseIcon },
-	{ id: "q2", label: "Write a migration", icon: CodeIcon },
-	{ id: "q3", label: "Explain the rounding rule", icon: GlobeIcon },
-]
-
-const STAGED: AiChatAttachment[] = [
-	{ id: "a1", name: "invoice-9921.pdf", meta: "412 KB", kind: "document" },
-	{ id: "a2", name: "totals.ts", meta: "2.1 KB", kind: "code" },
-	{ id: "a3", name: "upload.csv", meta: "uploading", kind: "document", progress: 0.62 },
-]
-
 export function AiChatPage() {
-	const [input, setInput] = useState("")
-	const [log, setLog] = useState<string[]>([])
-	const [attachments, setAttachments] = useState(STAGED)
-	const [streaming, setStreaming] = useState(false)
-	const [messages, setMessages] = useState<AiChatMessageData[]>(MESSAGES)
-	const [activeResponseId, setActiveResponseId] = useState<string | null>(null)
-	const messageSequence = useRef(0)
-
-	const note = (line: string) => setLog((lines) => [line, ...lines].slice(0, 4))
-
 	return (
 		<ComponentPage
 			title="AI chat"
@@ -107,203 +14,43 @@ export function AiChatPage() {
 			]}
 		>
 			<Example
-				id="chat"
+				example="ai-chat/chat"
 				title="The chat"
 				description="One assistant turn here is reasoning, then a tool call, then text, then the code it wrote, then the sources it read — in that order. That is why a message is a list of parts rather than a content field: the mix and the order are both real, and neither survives a single string."
-				stacked
 				bleed
-				code={`<AiChat
-  messages={messages}
-  inputValue={input}
-  onInputChange={setInput}
-  onSubmit={({ text, attachments }) => send(text, attachments)}
-  onStop={() => abort()}
-  streaming={isStreaming}
-  agent={{ name: "Atlas", subtitle: "model-large", status: "thinking" }}
-  suggestions={suggestions}
-  onPickSuggestion={(s) => setInput(String(s.label))}
-/>`}
-			>
-				<div style={{ height: "40rem" }}>
-					<AiChat
-						messages={messages}
-						inputValue={input}
-						onInputChange={setInput}
-						onSubmit={({ text }) => {
-							messageSequence.current += 1
-							const sequence = messageSequence.current
-							const responseId = `demo-response-${sequence}`
-							setMessages((current) => [
-								...current,
-								{
-									id: `demo-user-${sequence}`,
-									role: "user",
-									authorName: "You",
-									parts: [{ type: "text", content: text }],
-								},
-								{
-									id: responseId,
-									role: "assistant",
-									authorName: "Atlas",
-									parts: [],
-									pending: true,
-								},
-							])
-							note(`sent: ${text}`)
-							setInput("")
-							setActiveResponseId(responseId)
-							setStreaming(true)
-						}}
-						onStop={() => {
-							setMessages((current) =>
-								current.map((message) =>
-									message.id === activeResponseId
-										? {
-											...message,
-											pending: false,
-											parts: [{ type: "text", content: "Generation stopped." }],
-										}
-										: message,
-								),
-							)
-							note("stopped generation")
-							setActiveResponseId(null)
-							setStreaming(false)
-						}}
-						streaming={streaming}
-						agent={{
-							name: "Atlas",
-							subtitle: "model-large",
-							status: streaming ? "working" : "idle",
-						}}
-						headerActions={
-							<Button type="button" tone="neutral" buttonStyle="ghost" onClick={() => note("settings")}>
-								Settings
-							</Button>
-						}
-						suggestions={SUGGESTIONS}
-						onPickSuggestion={(suggestion) => setInput(String(suggestion.label))}
-						onAttach={() => note("attach")}
-						onMessageCopy={(message) => note(`copied ${message.id}`)}
-						onMessageRegenerate={(message) => note(`regenerate ${message.id}`)}
-						queue={[
-							{ id: "q1", label: "Backfill the 2025 invoices", status: "running" },
-							{ id: "q2", label: "Run the billing tests" },
-						]}
-						onCancelQueueItem={(id) => note(`cancelled ${id}`)}
-					/>
-				</div>
-			</Example>
+			/>
 
 			<Example
-				id="turn"
+				example="ai-chat/turn"
 				title="A turn"
 				description="Text goes inside the bubble; everything else goes below it. A tool call, an artifact and a code block already carry their own border and header — put inside a bubble they are a box in a box, and the bubble's padding pushes them off the transcript's grid."
-				stacked
-				code={`<AiMessageBubble role="assistant" authorName="Atlas" onRegenerate={retry}>
-  The totals are summed as floats.
-</AiMessageBubble>
-
-<AiShimmer>Thinking…</AiShimmer>`}
-			>
-				<Stack gap="lg">
-					<AiMessageBubble
-						role="user"
-						authorName="You"
-						timestamp="09:12"
-					>
-						Why is the invoice total off by a cent on some orders?
-					</AiMessageBubble>
-					<AiMessageBubble
-						role="assistant"
-						authorName="Atlas"
-						timestamp="09:12"
-						plainText="Each line is rounded before the sum, so the error compounds."
-						onRegenerate={() => note("regenerate")}
-					>
-						Each line is rounded before the sum, so the error compounds.
-					</AiMessageBubble>
-					<AiMessageBubble role="system">
-						Atlas switched to model-large.
-					</AiMessageBubble>
-					<AiShimmer />
-				</Stack>
-			</Example>
+			/>
 
 			<Example
 				example="ai-chat/thinking"
 				title="Reasoning and plans"
 				description="Two shapes for two things a model emits. Reasoning is free-form text that streams — it opens while it is arriving and closes when it stops, because nobody rereads a trace. A chain of thought is structured steps, so it stays open and marks where the work has got to."
-				stacked
 			/>
 
 			<Example
 				example="ai-chat/tools"
 				title="Tool calls"
 				description="Every state a call passes through, and the one rule that matters: with no arguments and no result there is nothing behind the header, so it is a plain row rather than a disclosure that opens onto an empty panel."
-				stacked
 			/>
 
 			<Example
-				id="output"
+				example="ai-chat/output"
 				title="What it produced"
 				description="Code, an artifact wrapping it, the sources behind it, and the files on a turn. No syntax highlighting — that means shipping a grammar per language, and a chat can be handed any of them; what is here is the chrome, so a consumer who wants colour runs their own highlighter and passes the result in."
-				stacked
-				code={`<AiArtifact title="totals.ts" subtitle="TypeScript" copyText={code} onDownload={save}>
-  <AiCodeBlock code={code} language="TypeScript" showLineNumbers highlightLines={[2, 8]} />
-</AiArtifact>
-
-<AiSources sources={sources} defaultExpanded />
-<AiSources sources={sources} variant="avatars" />`}
-			>
-				<Stack gap="lg">
-					<AiArtifact
-						title="totals.ts"
-						subtitle="TypeScript · 11 lines"
-						icon={FileTextIcon}
-						copyText={SAMPLE_CODE}
-						onDownload={() => note("download")}
-						onOpen={() => note("open artifact")}
-					>
-						<AiCodeBlock
-							code={SAMPLE_CODE}
-							language="TypeScript"
-							showLineNumbers
-							highlightLines={[2, 8]}
-							hideHeader
-						/>
-					</AiArtifact>
-
-					<AiSources sources={SOURCES} defaultExpanded />
-					<AiSources sources={SOURCES} variant="avatars" />
-
-					<Stack direction="horizontal" gap="md" wrap>
-						{attachments.map((attachment) => (
-							<AiAttachment
-								key={attachment.id}
-								name={attachment.name}
-								meta={attachment.meta}
-								kind={attachment.kind}
-								progress={attachment.progress}
-								onOpen={() => note(`open ${attachment.name}`)}
-								onRemove={() =>
-									setAttachments((current) => current.filter((item) => item.id !== attachment.id))
-								}
-							/>
-						))}
-						<AiAttachment name="broken.zip" meta="upload failed" kind="archive" errored />
-					</Stack>
-				</Stack>
-			</Example>
+			/>
 
 			<Example
 				example="ai-chat/approval"
 				title="Asking first"
 				description="The one surface here that blocks the agent, so it is a polite live region: it appears after the reader has stopped watching the transcript, and a screen reader has to be told. Once answered the action row is replaced by the outcome rather than left disabled."
-				stacked
 			/>
 
-			<Example id="ai-chat-rules" title="Three rules" stacked>
+			<Example id="ai-chat-rules" title="Three rules">
 				<Callout label="Enter sends, unless it is composing">
 					<code>event.nativeEvent.isComposing</code> is the whole reason the key handler is
 					not a one-liner. Mid-composition, Enter <strong>commits the candidate</strong> — and
@@ -322,13 +69,6 @@ export function AiChatPage() {
 					that setting is for. The fallback restores a real colour as well as stopping the
 					animation — a transparent fill with no sweep is invisible text.
 				</Callout>
-				{log.length > 0 && (
-					<Stack gap="none">
-						{log.map((line, index) => (
-							<Text key={`${line}-${index}`} size="xs" type="secondary">{line}</Text>
-						))}
-					</Stack>
-				)}
 			</Example>
 
 			<Example id="ai-chat-api" title="API">

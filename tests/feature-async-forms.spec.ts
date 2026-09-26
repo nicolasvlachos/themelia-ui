@@ -154,7 +154,10 @@ test("schema form validates, resets invalid JSON and retries a failed save", asy
 	await expect(demo.getByRole("alert")).toHaveCount(0)
 	await demo.getByRole("switch", { name: "Self-service booking" }).press("Space")
 	await expect(demo.getByRole("textbox", { name: "Cut-off (hours before)" })).toBeVisible()
-	await page.locator("#cards-layout").getByRole("button", { name: "Save settings" }).click()
+	const cards = page.locator("#cards-layout")
+	await cards.getByRole("button", { name: "Save settings" }).click()
 	const axe = await new AxeBuilder({ page }).include("main").analyze()
 	expect(axe.violations).toEqual([])
+	/* The cards layout reports its own save. */
+	await expect(cards.getByText(/^submitted:/)).toBeVisible()
 })

@@ -1,8 +1,10 @@
 /*
  * Applied only while tests/visual.spec.ts captures (`stylePath`). The floating theme launcher
- * is the docs site's own control, not a component page.
+ * is the docs site's own control, not a component page, and the sticky header would cover the
+ * top of an example the capture scrolled to.
  */
-[data-app-theme-launcher] {
+[data-app-theme-launcher],
+[data-site-header] {
 	visibility: hidden !important;
 }
 

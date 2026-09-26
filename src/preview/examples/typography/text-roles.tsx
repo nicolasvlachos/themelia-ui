@@ -1,6 +1,6 @@
 import { Text, type TextType } from "themelia-ui/base/typography"
 
-import styles from "../../preview.module.css"
+import styles from "./text-roles.module.css"
 
 const ROLES: TextType[] = ["main", "secondary", "error", "success", "primary"]
 
@@ -13,7 +13,7 @@ export default function TextRoles() {
 				</Text>
 			))}
 			{/* inverse on the page background is invisible, which is the whole point of it. */}
-			<div className={styles.inverseSwatch}>
+			<div className={styles.inverseSurface}>
 				<Text type="inverse">inverse — the role picks the token.</Text>
 			</div>
 		</>

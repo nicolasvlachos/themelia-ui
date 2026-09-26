@@ -17,7 +17,6 @@ export function PrimitiveNumberPage() {
 				id="number"
 				title="Number and percent"
 				description="Tabular figures throughout, so a column of numbers aligns on the decimal point without a monospace face. Percent takes a FRACTION — 0.214 renders as 21.4% — because that is what a rate is stored as."
-				stacked
 				code={`<Number value={1234567.891} />
 <Number value={-42} />
 <Percent value={0.214} />
@@ -42,7 +41,6 @@ export function PrimitiveNumberPage() {
 				id="range"
 				title="Range"
 				description="Intl.NumberFormat.formatRange owns the separator and the spacing around it — English writes 10–50 with an en dash and no spaces, and puts spaces around it once a currency is involved. Equal ends are formatted as a single value here rather than through formatRange, which returns ~£10.00: ICU reads a collapsed range as an approximation, and a product costing exactly £10 is not approximately £10."
-				stacked
 				code={`<Range from={10} to={50} />
 <Range from={10} to={50} currency="GBP" />
 <Range from={2} to={5} unit="day" />`}
@@ -65,7 +63,6 @@ export function PrimitiveNumberPage() {
 				id="ratio"
 				title="Ratio"
 				description="A count against its total, kept together. A bare 3 beside a progress bar is a number nobody can size. The fraction form exists for columns, where 'of' repeated down the page is mostly noise."
-				stacked
 				code={`<Ratio value={3} total={10} />
 <Ratio value={3} total={10} format="fraction" />
 <Ratio value={3} />`}
@@ -87,7 +84,6 @@ export function PrimitiveNumberPage() {
 				id="rating"
 				title="Rating"
 				description="The scale stays visible by default: 4.5 on its own could be out of five or out of ten. A whole score reads as 4, not 4.0 — the instrument does not have that precision."
-				stacked
 				code={`<Rating value={4.5} />
 <Rating value={4} hideMax />`}
 			>

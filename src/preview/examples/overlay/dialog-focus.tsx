@@ -13,31 +13,33 @@ export default function DialogFocus() {
 	const nameRef = useRef<HTMLInputElement>(null)
 
 	return (
-		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
-				New workspace
-			</OverlayTrigger>
-			<OverlayContent initialFocusRef={nameRef}>
-				<OverlayHeader>
-					<OverlayTitle>New workspace</OverlayTitle>
-				</OverlayHeader>
-				<OverlayBody>
-					<Stack gap="md">
-						<FormField label="Name">
-							<Input ref={nameRef} placeholder="Acme design" />
-						</FormField>
-						<FormField label="Slug" hint="Used in URLs.">
-							<Input placeholder="acme-design" />
-						</FormField>
-					</Stack>
-				</OverlayBody>
-				<OverlayFooter>
-					<OverlayDismissArea>
-						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
-						<Button>Create</Button>
-					</OverlayDismissArea>
-				</OverlayFooter>
-			</OverlayContent>
-		</Overlay>
+		<Stack direction="horizontal">
+			<Overlay>
+				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					New workspace
+				</OverlayTrigger>
+				<OverlayContent initialFocusRef={nameRef}>
+					<OverlayHeader>
+						<OverlayTitle>New workspace</OverlayTitle>
+					</OverlayHeader>
+					<OverlayBody>
+						<Stack gap="md">
+							<FormField label="Name">
+								<Input ref={nameRef} placeholder="Acme design" />
+							</FormField>
+							<FormField label="Slug" hint="Used in URLs.">
+								<Input placeholder="acme-design" />
+							</FormField>
+						</Stack>
+					</OverlayBody>
+					<OverlayFooter>
+						<OverlayDismissArea>
+							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button>Create</Button>
+						</OverlayDismissArea>
+					</OverlayFooter>
+				</OverlayContent>
+			</Overlay>
+		</Stack>
 	)
 }

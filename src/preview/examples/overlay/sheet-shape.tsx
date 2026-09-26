@@ -3,11 +3,12 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
 import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function SheetShape() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Flush, size=&quot;sm&quot;
@@ -62,6 +63,6 @@ export default function SheetShape() {
 					</OverlayBody>
 				</SheetContent>
 			</Overlay>
-		</>
+		</Stack>
 	)
 }

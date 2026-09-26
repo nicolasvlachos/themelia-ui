@@ -15,7 +15,6 @@ export function CalendarPage() {
 				example="calendar/calendar"
 				title="Calendar"
 				description="The grid on its own. Days are real buttons in a role=grid, so arrow keys walk the month and only one day is a tab stop — forty-two stops per month is what makes a calendar unusable from the keyboard."
-				stacked
 			/>
 
 			<Example
@@ -24,7 +23,7 @@ export function CalendarPage() {
 				description="The month name, the weekday headings, and every day's accessible name come from the scope's date-fns locale. The week start is separate: it is a regional convention rather than a translation, so a Sunday-first calendar in German is a real combination and each is set on its own."
 			/>
 
-			<Example id="dates-rule" title="Fixed cells" stacked>
+			<Example id="dates-rule" title="Fixed cells">
 				<Callout label="Rule">
 					The grid is seven columns of fixed square cells and always six whole weeks.
 					Content-width columns resize between months — February beside a 31-day month is

@@ -5,13 +5,14 @@ import {
 	Overlay, OverlayBody, OverlayClose, OverlayContent, OverlayDescription, OverlayFooter,
 	OverlayHeader, OverlayTitle,
 } from "themelia-ui/base/overlay"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 
 export default function Modality() {
 	const [nonModal, setNonModal] = useState(false)
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Button tone="neutral" buttonStyle="outline" onClick={() => setNonModal(true)}>
 				Open non-modal
 			</Button>
@@ -34,6 +35,6 @@ export default function Modality() {
 					</OverlayFooter>
 				</OverlayContent>
 			</Overlay>
-		</>
+		</Stack>
 	)
 }

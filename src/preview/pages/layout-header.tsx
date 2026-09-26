@@ -17,17 +17,15 @@ export function LayoutHeaderPage() {
 				example="layout-header/header"
 				title="Header"
 				description="Slot-driven, because every product puts something different up here. What it owns is the arrangement: the centre slot shrinks before the right cluster does, so a search field gives up width rather than an icon button truncating into uselessness."
-				stacked
 			/>
 
 			<Example
 				example="layout-header/header-breadcrumbs"
 				title="Breadcrumbs are built in"
 				description="They are the one region whose position is not negotiable: a trail that moves between screens stops being a trail. homeCrumb prepends a root that is not part of the route — and passing null omits it, which is different from not passing it at all. A shell with no home destination should say so rather than get a default one."
-				stacked
 			/>
 
-			<Example id="header-rule" title="What gives way" stacked>
+			<Example id="header-rule" title="What gives way">
 				<Callout label="Rule">
 					The centre slot shrinks; the right cluster never does. Put anything that can be
 					narrower — a search field, a filter summary — in the centre, and anything whose

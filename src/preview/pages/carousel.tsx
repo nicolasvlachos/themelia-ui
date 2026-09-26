@@ -15,24 +15,21 @@ export function CarouselPage() {
 				example="carousel/carousel"
 				title="Carousel"
 				description="The browser already does momentum, touch, and rubber-banding better than JS can, and a scroll container is keyboard-scrollable and readable by assistive technology for free. Slide width is a CSS length, so a track can show one card or five."
-				stacked
 			/>
 
 			<Example
 				example="carousel/controls"
 				title="Control placement"
 				description="outside keeps the buttons clear of the content, which is right when slides have their own edges. overlay floats them over the track for full-bleed slides, where outside controls would push the track narrower than the viewport."
-				stacked
 			/>
 
 			<Example
 				example="carousel/sizes"
 				title="Slide width"
 				description="size is the width the slide takes in the track — a percentage for a fixed number per view, a length for a fixed card. Mixed widths are allowed; snapping follows whatever each slide occupies."
-				stacked
 			/>
 
-			<Example id="carousel-rule" title="The scroll is the source of truth" stacked>
+			<Example id="carousel-rule" title="The scroll is the source of truth">
 				<Callout label="Rule">
 					The carousel reads its position from the scroll rather than mirroring it in
 					state. A mirror drifts the moment anything else moves the track — a focused

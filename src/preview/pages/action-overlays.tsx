@@ -37,10 +37,9 @@ export function ActionOverlaysPage() {
 				example="action-overlays/overlay-visibility"
 				title="Driving them from elsewhere"
 				description="An overlay is uncontrolled while it hangs off its own trigger and controlled the moment something else opens it — a row action, a route, a shortcut. useOverlayVisibilityGroup keys several by name, and closeOthersOnOpen is what stops the second landing on top of the first."
-				stacked
 			/>
 
-			<Example id="overlays-rule" title="Which confirm path runs" stacked>
+			<Example id="overlays-rule" title="Which confirm path runs">
 				<Callout label="Rule">
 					Exactly one, resolved in order: <code>formId</code> submits that form and
 					neither callback fires; otherwise <code>onConfirm</code> runs and the overlay

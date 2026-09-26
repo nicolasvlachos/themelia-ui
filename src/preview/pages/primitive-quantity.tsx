@@ -20,7 +20,6 @@ export function PrimitiveQuantityPage() {
 				id="quantity"
 				title="Quantity"
 				description="Intl.PluralRules picks the form and the caller supplies the words, because person/people is not derivable and no amount of suffixing gets there. English selects 'one' for exactly 1, so 0 and 1.5 both take the plural — which a count === 1 check gets right by accident and gets wrong in half the languages it will run in."
-				stacked
 				code={`<Quantity value={1} unit={{ one: "item", other: "items" }} />
 <Quantity value={0} unit={ITEM} zeroLabel="no items" />`}
 			>
@@ -42,7 +41,6 @@ export function PrimitiveQuantityPage() {
 				id="measure"
 				title="Measure"
 				description="The unit identifier goes to Intl, which owns both the abbreviation and where it sits — English writes 2.5 kg and French writes 2,5 kg, and neither is a string to assemble here. A unit Intl does not know degrades to the bare number rather than throwing."
-				stacked
 				code={`<Measure value={2.5} unit="kilogram" />
 <Measure value={2.5} unit="kilogram" unitDisplay="long" />`}
 			>
@@ -64,7 +62,6 @@ export function PrimitiveQuantityPage() {
 				id="dimensions"
 				title="Dimensions"
 				description="The parts stay separate all the way to the render, so a shipping calculation reads numbers rather than parsing back out of “30 × 20 × 12 cm”. Only the display joins them."
-				stacked
 				code={`<Dimensions width={30} height={20} unit="cm" />
 <Dimensions width={30} height={20} depth={12} unit="cm" />
 <Dimensions width={1920} height={1080} unit="px" />
@@ -84,7 +81,6 @@ export function PrimitiveQuantityPage() {
 				id="file-size"
 				title="File size"
 				description="The unit is chosen from the magnitude and the precision from the unit, which is the pair that hand-written formatters get half right. from names the unit the value ARRIVES in, for an API that already reports kilobytes."
-				stacked
 				code={`<FileSize value={512} />
 <FileSize value={1_100_000} />
 <FileSize value={85_800_000} />
@@ -107,7 +103,6 @@ export function PrimitiveQuantityPage() {
 				id="file-size-base"
 				title="Which megabyte"
 				description="A file size has a base and a set of labels, and only some pairings mean anything. binary — the default — divides by 1024 and labels it MB: not correct under either standard, and what Windows and most file managers show, so the number matches the one beside it in the reader's own file browser. decimal is SI-correct and what macOS, iOS and every storage vendor use. iec is strictly correct and reads as a typo to almost everyone outside engineering. Same file, three true answers."
-				stacked
 				code={`<FileSize value={1_100_000} />                    {/* 1 MB */}
 <FileSize value={1_100_000} base="decimal" />    {/* 1.1 MB */}
 <FileSize value={1_100_000} base="iec" />        {/* 1 MiB */}`}

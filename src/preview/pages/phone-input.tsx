@@ -15,10 +15,9 @@ export function PhoneInputPage() {
 				example="phone-input/phone"
 				title="PhoneInput"
 				description="The dial code and the number are separate fields. One combined field has to guess where the prefix ends, and it guesses wrong on every number pasted with its own formatting."
-				stacked
 			/>
 
-			<Example id="value-inputs-rule" title="One field surface" stacked>
+			<Example id="value-inputs-rule" title="One field surface">
 				<Callout label="Rule">
 					Every control here wears the shared field surface — the chips container and the
 					phone number field carry <code>data-field-shell</code> and{" "}

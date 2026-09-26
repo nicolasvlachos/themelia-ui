@@ -22,29 +22,31 @@ function ActionsMenu() {
 
 export default function UiPortalHostExample() {
 	return (
-		<Grid columns={2} gap="lg">
-			<GridCell>
-				<Stack gap="sm">
-					<Text size="xs" type="secondary">
-						Compact scope, no host — the menu portals to the body
-					</Text>
-					<UIScope config={{ density: "compact" }}>
-						<ActionsMenu />
-					</UIScope>
-				</Stack>
-			</GridCell>
-			<GridCell>
-				<Stack gap="sm">
-					<Text size="xs" type="secondary">
-						Compact scope with a host — the menu is compact too
-					</Text>
-					<UIScope config={{ density: "compact" }}>
-						<UIPortalHost>
+		<Stack direction="horizontal">
+			<Grid columns={2} gap="lg">
+				<GridCell>
+					<Stack gap="sm">
+						<Text size="xs" type="secondary">
+							Compact scope, no host — the menu portals to the body
+						</Text>
+						<UIScope config={{ density: "compact" }}>
 							<ActionsMenu />
-						</UIPortalHost>
-					</UIScope>
-				</Stack>
-			</GridCell>
-		</Grid>
+						</UIScope>
+					</Stack>
+				</GridCell>
+				<GridCell>
+					<Stack gap="sm">
+						<Text size="xs" type="secondary">
+							Compact scope with a host — the menu is compact too
+						</Text>
+						<UIScope config={{ density: "compact" }}>
+							<UIPortalHost>
+								<ActionsMenu />
+							</UIPortalHost>
+						</UIScope>
+					</Stack>
+				</GridCell>
+			</Grid>
+		</Stack>
 	)
 }

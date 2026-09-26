@@ -31,13 +31,12 @@ export function TokensPage() {
 	return (
 		<ComponentPage
 			title="Tokens & theming"
-			summary="Three tiers: primitives carry no meaning, semantics carry no value, and the theming layer computes everything else from them."
+			summary="Three levels: the palette carries no meaning, semantic tokens carry no value, and the theming layer computes everything else from them."
 		>
 			<Example
-				id="semantic-tier"
-				title="Semantic tier"
-				description="What components reference. A semantic carries meaning and resolves through a primitive — never a literal."
-				stacked
+				id="semantic-tokens"
+				title="Semantic tokens"
+				description="What components reference. A semantic token carries meaning and resolves through a palette step — never a literal."
 			>
 				<div className={styles.swatchGrid}>
 					{SEMANTIC.map((token) => (
@@ -47,10 +46,9 @@ export function TokensPage() {
 			</Example>
 
 			<Example
-				id="primitive-tier"
-				title="Primitive tier"
-				description="Raw ramps with no meaning attached. Nothing outside the theme references these directly — a component that reaches for `--neutral-200` has skipped the semantic tier and will not follow a retheme."
-				stacked
+				id="palette"
+				title="Palette"
+				description="Raw ramps with no meaning attached. Nothing outside the theme references these directly — a component that reaches for `--neutral-200` has skipped the semantic tokens and will not follow a retheme."
 			>
 				<div className={styles.swatchGrid}>
 					{PALETTE.map((token) => (
@@ -63,17 +61,16 @@ export function TokensPage() {
 				example="tokens/scoped-theming"
 				title="Scoped theming"
 				description="A nested provider re-derives the whole system from whatever it overrides. This works because derived tokens are declared at every scope boundary rather than at :root — see styles/SCOPES.md."
-				stacked
 			/>
 
 			<Example
-				id="the-tiers"
-				title="The tiers" stacked>
+				id="the-levels"
+				title="The levels">
 				<Heading level={3} size="base">Why three</Heading>
 				<Text type="secondary">
 					A semantic layer decouples what a value <em>means</em> from what colour it{" "}
-					<em>is</em>. Swapping semantics rethemes every component; swapping primitives
-					rethemes every mode. Without the primitive tier, dark mode has to restate every
+					<em>is</em>. Swapping semantic tokens rethemes every component; swapping the palette
+					rethemes every mode. Without the palette, dark mode has to restate every
 					value by hand and two tokens that should track each other can silently drift.
 				</Text>
 			</Example>

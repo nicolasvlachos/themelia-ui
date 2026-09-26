@@ -16,17 +16,15 @@ export function ChartPage() {
 				example="chart/chart"
 				title="Chart"
 				description="Recharts owns the geometry; the container owns the chrome. Each series key becomes a CSS variable, so a colour is declared once in the config and referenced as `var(--color-revenue)` rather than repeated at every Bar and Line."
-				stacked
 			/>
 
 			<Example
 				example="chart/chart-sparkline"
 				title="Sparkline"
 				description="The shape of a series at a glance — no axes, no grid, no tooltip. Sized to sit inside a metric tile or a table cell, so it fills its box and the caller sizes the box. Animation is off by default: a screenful of tiles all drawing themselves at once reads as the page malfunctioning rather than as motion."
-				stacked
 			/>
 
-			<Example id="data-viz-rule" title="Colour comes from the theme" stacked>
+			<Example id="data-viz-rule" title="Colour comes from the theme">
 				<Callout label="Rule">
 					A series colour should be <code>var(--chart-1)</code> … <code>var(--chart-5)</code>,
 					never a literal. Those tokens already flip with light and dark, so a chart

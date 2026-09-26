@@ -29,10 +29,9 @@ export function ActionsPage() {
 				example="actions/actions"
 				title="One definition, many surfaces"
 				description="Register once with useRegisterActions, then read the same action from each surface. Both controls below drive the same definition with different payloads, and both open the same confirm dialog through the outlet."
-				stacked
 			/>
 
-			<Example id="actions-rule" title="Behaviour lives in callbacks" stacked>
+			<Example id="actions-rule" title="Behaviour lives in callbacks">
 				<Callout label="Rule">
 					The service imports no router, no data layer, no toast package, and no auth.
 					An action's <code>run</code> is a callback the application supplies — which is

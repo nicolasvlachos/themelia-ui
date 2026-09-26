@@ -20,7 +20,6 @@ export function PrimitiveValuePage() {
 				id="value"
 				title="Value"
 				description="Every primitive below is a Value underneath, which is why they all agree on what an empty value looks like."
-				stacked
 				code={`<Value>Northwind Traders</Value>
 <SecondaryValue>Supporting detail</SecondaryValue>
 <MutedValue>Quieter still</MutedValue>
@@ -38,7 +37,7 @@ export function PrimitiveValuePage() {
 				/>
 			</Example>
 
-			<Example id="value-rule" title="Absent is a state" stacked>
+			<Example id="value-rule" title="Absent is a state">
 				<Callout label="Rule">
 					A primitive given <code>null</code> or <code>undefined</code> renders the empty
 					mark, not an empty string. A blank cell and a cell whose value is genuinely
@@ -51,7 +50,6 @@ export function PrimitiveValuePage() {
 				id="inline-list"
 				title="Inline list"
 				description="Intl.ListFormat knows where the conjunction goes and whether a comma precedes it. Spanish switches y to e before an /i/ sound; Japanese uses a particle. Three places in this kit joined user-visible lists with .join(', '), which is correct in no locale including English."
-				stacked
 				code={`<InlineList items={["Alice", "Bob", "Carol"]} />
 <InlineList items={["red", "green", "blue"]} join="or" />
 <InlineList items={items} max={2} />`}
@@ -73,7 +71,6 @@ export function PrimitiveValuePage() {
 				id="inline-list-locale"
 				title="The same list, three locales"
 				description="Nothing about the component changes between these — the separator, the conjunction and the serial comma are all the locale's decision."
-				stacked
 				code={`<InlineList items={names} locale="en-GB" />
 <InlineList items={names} locale="es-ES" />
 <InlineList items={names} locale="ja-JP" />`}

@@ -1,0 +1,38 @@
+/* The example's own editor: a plain contenteditable implementing MentionEditorHandle. */
+
+/* The anchor the inline suggestion panel positions itself against. */
+.anchor {
+	position: relative;
+}
+
+.editor {
+	min-height: calc(var(--control-h) * 2.5);
+	padding: var(--space-lg);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--background);
+	line-height: var(--leading-relaxed);
+}
+
+.editor:focus-visible {
+	outline: none;
+	border-color: var(--ring);
+	box-shadow: var(--focus-ring);
+}
+
+/* A contenteditable has no placeholder attribute, so the empty state is drawn. */
+.editor:empty::before {
+	content: attr(data-placeholder);
+	color: var(--muted-foreground);
+	pointer-events: none;
+}
+
+/* Stored markup shown as markup — wrapped, because a body is longer than a line. */
+.source {
+	display: block;
+	padding: var(--space-md);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-40);
+	font-family: var(--font-mono);
+	overflow-wrap: anywhere;
+}

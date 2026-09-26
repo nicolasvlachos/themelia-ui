@@ -7,9 +7,9 @@ import { Text } from "themelia-ui/base/typography"
 import { DataView } from "themelia-ui/features/data-view"
 import type { ActiveFilter } from "themelia-ui/features/filters"
 
-import styles from "../../preview.module.css"
 import { FILTERS, indexColumns } from "./_shared"
 import { BOOKINGS, TABS, type Booking } from "./data"
+import styles from "./data-view-states.module.css"
 
 export default function DataViewStates() {
 	const [requestState, setRequestState] = useState("ready")
@@ -19,7 +19,7 @@ export default function DataViewStates() {
 		<>
 			<Stack direction="horizontal" align="center" gap="sm" wrap>
 				<Text size="sm" type="secondary">Result state</Text>
-				<Select aria-label="Result state" value={requestState} className={styles.featureStateSelect}
+				<Select aria-label="Result state" value={requestState} className={styles.stateSelect}
 					options={[{ value: "ready", label: "Ready" }, { value: "pending", label: "Updating" }, { value: "error", label: "Failed" }]}
 					onValueChange={(value) => value && setRequestState(value)} />
 				{requestState === "error" && <Button tone="neutral" buttonStyle="outline" onClick={() => setRequestState("ready")}>Restore results</Button>}

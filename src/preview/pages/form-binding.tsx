@@ -15,10 +15,9 @@ export function FormBindingPage() {
 				example="form-binding/form-binding-state"
 				title="useStateFormControl"
 				description="The zero-dependency default. It holds the values in React state and returns a FormControl, so a form needs no library at all until it needs one."
-				stacked
 			/>
 
-			<Example id="form-binding-contract" title="The contract" stacked>
+			<Example id="form-binding-contract" title="The contract">
 				<Callout>
 					A <code>FormControl</code> is one method: <code>useField(name)</code> returning a{" "}
 					<code>FieldState</code>. That is the entire surface a form library has to satisfy,
@@ -34,7 +33,6 @@ export function FormBindingPage() {
 				id="form-binding-rhf"
 				title="rhfFormControl"
 				description="The react-hook-form adapter. It delegates to useController, so registration, validation and dirty tracking keep working — it adds a shape, not a second source of truth."
-				stacked
 				code={`import { rhfFormControl } from "themelia-ui/forms-rhf"
 
 const form = useForm({ defaultValues: { email: "" } })

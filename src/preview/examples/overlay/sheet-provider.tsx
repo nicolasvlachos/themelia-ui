@@ -3,12 +3,13 @@ import {
 	Overlay, OverlayBody, OverlayDescription, OverlayHeader, OverlayTitle, OverlayTrigger,
 } from "themelia-ui/base/overlay"
 import { SheetContent } from "themelia-ui/base/sheet"
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function SheetProvider() {
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Overlay>
 				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
 					Kit default
@@ -40,6 +41,6 @@ export default function SheetProvider() {
 					</SheetContent>
 				</Overlay>
 			</UIProvider>
-		</>
+		</Stack>
 	)
 }

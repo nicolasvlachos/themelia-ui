@@ -1,11 +1,11 @@
 import { useState } from "react"
 
+import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
 import {
 	Map, MapSearchControl, MapTileLayer, MapZoomControl, PlaceAutocomplete, type PlaceFeature,
 } from "themelia-ui/features/map"
 
-import styles from "../../preview.module.css"
 import { MARLOW } from "./data"
 
 export default function PlaceAutocompleteExample() {
@@ -13,9 +13,9 @@ export default function PlaceAutocompleteExample() {
 
 	return (
 		<>
-			<div className={styles.mapSearch}>
+			<Stack maxWidth="24rem">
 				<PlaceAutocomplete limit={5} onPlaceSelect={setPlace} />
-			</div>
+			</Stack>
 			{!!place && (
 				<Text size="sm" type="secondary" numeric>
 					{place.properties.name} — {place.geometry.coordinates[1].toFixed(4)},{" "}
@@ -23,13 +23,11 @@ export default function PlaceAutocompleteExample() {
 				</Text>
 			)}
 
-			<div className={styles.mapFrame}>
-				<Map center={MARLOW} zoom={13}>
-					<MapTileLayer />
-					<MapSearchControl position="top-left" limit={5} />
-					<MapZoomControl position="top-right" />
-				</Map>
-			</div>
+			<Map center={MARLOW} zoom={13} height="26rem">
+				<MapTileLayer />
+				<MapSearchControl position="top-left" limit={5} />
+				<MapZoomControl position="top-right" />
+			</Map>
 		</>
 	)
 }

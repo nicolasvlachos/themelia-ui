@@ -28,24 +28,21 @@ export function MapPage() {
 				example="map/map"
 				title="A map with controls"
 				description="Zoom, layers, fullscreen, locate, and search — each an ordinary child positioned over the tiles, built from the kit's own Button and DropdownMenu rather than Leaflet's hand-built control DOM. The default basemap is OpenStreetMap's own, because it is the only one that renders with no key — and in dark mode it is inverted, since there is no key-less dark basemap to pair with it."
-				stacked
 			/>
 
 			<Example
 				example="map/draw"
 				title="Drawing"
 				description="One shape per press: the tool disarms as soon as the shape lands, because staying armed means the next click draws another. Edit and Delete stay disabled until something is drawn, and leaving either mode commits — leaflet-draw stages changes until save() runs."
-				stacked
 			/>
 
 			<Example
 				example="map/place-autocomplete"
 				title="Place autocomplete"
 				description="A field that turns typing into places, backed by Photon — free, key-less, and OpenStreetMap-derived, which makes it the only geocoder that works with no configuration. It is also rate-limited, which is what searchUrl is for."
-				stacked
 			/>
 
-			<Example id="map-rules" title="What the map decides" stacked>
+			<Example id="map-rules" title="What the map decides">
 				<Callout label="Rule">
 					Leaflet and its plugins are <strong>optional peers</strong>, imported only when a map
 					mounts — they are around 200KB and they touch <code>window</code> at import time, and

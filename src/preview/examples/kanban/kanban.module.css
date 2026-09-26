@@ -1,0 +1,28 @@
+/* The board's lanes and cards are the consumer's to draw; the kit owns the geometry and drag states. */
+
+/* Lanes keep a minimum measure; on a phone the board scrolls on its own. */
+.board {
+	grid-template-columns: repeat(3, minmax(var(--adaptive-grid-min-md), 1fr));
+}
+
+.column {
+	gap: var(--space-md);
+	padding: var(--space-md);
+	border: var(--border-width) solid var(--border-60);
+	background-color: var(--muted-20);
+}
+
+/* An item inside the column's --space-md inset takes the item radius, concentric with the column. */
+.card {
+	border-radius: var(--radius-sm);
+}
+
+.cardTitle {
+	flex: 1;
+	min-width: 0;
+}
+
+/* Aligned under the title: clears the drag handle and the row's --space-xs gap. */
+.cardMeta {
+	padding-inline-start: calc(var(--control-h) + var(--space-xs));
+}

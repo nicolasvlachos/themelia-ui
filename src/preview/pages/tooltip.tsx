@@ -15,10 +15,9 @@ export function TooltipPage() {
 				example="tooltip/tooltip"
 				title="Tooltip"
 				description="The trigger has to be a real focusable element, so the tip opens on keyboard focus and not only on hover."
-				stacked
 			/>
 
-			<Example id="tooltip-rule" title="Never the only copy" stacked>
+			<Example id="tooltip-rule" title="Never the only copy">
 				<Callout label="Rule">
 					A tooltip cannot be opened on a touch screen and disappears the moment the
 					pointer moves, so nothing a reader NEEDS may live only here. It is for the

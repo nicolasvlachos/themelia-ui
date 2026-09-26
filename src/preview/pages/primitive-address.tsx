@@ -17,28 +17,24 @@ export function PrimitiveAddressPage() {
 				example="primitive-address/address"
 				title="Ordered by country"
 				description="Germany puts the postcode before the city, Britain puts it last and alone, the United States runs city, state and ZIP together on one line. There is no Intl for this, so the kit ships three orderings keyed by country and takes an explicit order for anything else — rather than pretending to know every country and being wrong quietly, in someone else's."
-				stacked
 			/>
 
 			<Example
 				example="primitive-address/address-inline"
 				title="Inline, for a cell"
 				description="The same ordering on one line. Both forms come from one function, so a city that moves line in the block form moves position here too and the two cannot disagree."
-				stacked
 			/>
 
 			<Example
 				example="primitive-address/address-partial"
 				title="Missing fields"
 				description="An empty field drops out, and a line left with nothing drops with it — so a missing line2 never leaves a blank row in the middle of an address."
-				stacked
 			/>
 
 			<Example
 				id="coordinates"
 				title="Coordinates"
 				description="A decimal degree is about 111km, so the decimals carry all the meaning. Five is the default because that is where the number stops being a neighbourhood and starts being a place — and because storing more than five and showing all of it is how 48.858370000000004 ends up on a page."
-				stacked
 				code={`<Coordinates latitude={48.85837} longitude={2.29448} />
 <Coordinates latitude={48.85837} longitude={2.29448} format="dms" />`}
 			>

@@ -14,7 +14,6 @@ export function TextareaPage() {
 				example="textarea/textarea"
 				title="Textarea"
 				description="The same surface as Input, so a form that mixes the two does not step between two field treatments."
-				stacked
 			/>
 
 			<Example id="textarea-api" title="API">

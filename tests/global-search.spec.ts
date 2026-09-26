@@ -60,6 +60,8 @@ test("global search moves through results, loading, empty, recent and palette st
 	await expect(dialog.locator('[data-slot="global-search-result-row"]')).toHaveCount(3)
 	await dialog.locator('[data-slot="global-search-result-row"]').first().click()
 	await expect(dialog).not.toBeVisible()
+	/* The palette's example reports the row it opened. */
+	await expect(page.locator("#dialog").getByText("opened: Marlow Hall — autumn showcase", { exact: true })).toBeVisible()
 })
 
 test("on a phone the figures move inline and nothing overflows", async ({ page }) => {

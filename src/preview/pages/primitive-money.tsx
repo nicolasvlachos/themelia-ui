@@ -20,7 +20,6 @@ export function PrimitiveMoneyPage() {
 				id="money"
 				title="Money"
 				description="The amount and the currency stay in separate channels all the way to the render — joining them into a string is where a EUR total ends up printed with a dollar sign. The decimal count comes from the currency's own Intl convention, which is why JPY has none and the others have two."
-				stacked
 				code={`<Money amount={1299.5} currency="EUR" />
 <Money amount={1299.5} currency="USD" />
 <Money amount={-42} currency="GBP" />
@@ -43,7 +42,6 @@ export function PrimitiveMoneyPage() {
 				id="money-unit"
 				title="Minor units"
 				description="A great many APIs store money in minor units to avoid float error. Dividing by a hundred at the call site is where a currency with a different exponent goes wrong: JPY has no minor unit, so its scale is 1, and KWD has three digits, so its scale is 1000. The DISPLAYED decimal count is separate again — it comes from the currency's own Intl convention, which is why the yen below shows none."
-				stacked
 				code={`<Money amount={129950} currency="EUR" unit="minor" />
 <Money amount={1299} currency="JPY" unit="minor" minorUnitScale={1} />
 <Money amount={129950} currency="KWD" unit="minor" minorUnitScale={1000} />`}
@@ -62,7 +60,6 @@ export function PrimitiveMoneyPage() {
 				id="money-format"
 				title="How the amount is written"
 				description="Three shapes for the same number. with-symbol uses Intl's own placement, which differs by locale and by currency and is exactly the thing a hand-rolled formatter gets wrong."
-				stacked
 				code={`<Money amount={1299.5} currency="EUR" formatMode="with-symbol" />
 <Money amount={1299.5} currency="EUR" formatMode="with-code" />
 <Money amount={1299.5} currency="EUR" formatMode="decimal" />`}
@@ -81,7 +78,6 @@ export function PrimitiveMoneyPage() {
 				id="money-dual"
 				title="Two currencies"
 				description="A converted value beside the first, for a store that prices in one currency and settles in another. Passing `secondary` is the request; the emphasis decides how loud the second value is, and the layout decides whether it sits beside or under."
-				stacked
 				code={`<Money
   amount={1299.5}
   currency="EUR"
@@ -122,7 +118,6 @@ export function PrimitiveMoneyPage() {
 				id="money-provider"
 				title="Decided once, not per amount"
 				description="A store's currency policy is one decision, and every price on the page follows it. The provider carries the default code, the display code, the format mode, and the layout — so a call site passes an amount and a conversion, never a policy."
-				stacked
 				code={`<UIProvider
   config={{
     formatting: { locale: "de-DE" },
@@ -174,7 +169,7 @@ export function PrimitiveMoneyPage() {
 				</Text>
 			</Example>
 
-			<Example id="money-rule" title="Policy narrows, never widens" stacked>
+			<Example id="money-rule" title="Policy narrows, never widens">
 				<Callout label="Rule">
 					A scope can hide a second value, restyle it, or move it. It cannot conjure one:
 					<code>secondary</code> is an amount the caller converted, and there is nothing for

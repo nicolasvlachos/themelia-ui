@@ -14,7 +14,6 @@ export function CheckboxPage() {
 				example="checkbox/checkbox"
 				title="Checkbox"
 				description="The label is part of the target, and a label that wraps keeps the box on the first line instead of floating into the middle of the paragraph."
-				stacked
 			/>
 
 			<Example id="checkbox-api" title="API">

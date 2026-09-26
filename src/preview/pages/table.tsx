@@ -16,21 +16,18 @@ export function TablePage() {
 				example="table/table"
 				title="Table"
 				description="The parts map one-to-one onto the HTML elements, so the semantics are the browser's. A plain string cell is wrapped in Text; a node is left exactly as passed."
-				stacked
 			/>
 
 			<Example
 				example="table/table-selection"
 				title="Selection"
 				description="A row marks itself with `data-state=&quot;selected&quot;`. The checkbox column drops its trailing inset so the control lines up with the header above it."
-				stacked
 			/>
 
 			<Example
 				id="table-scroll"
 				title="Overflow"
 				description="The scroll container is focusable, so a wide table can be scrolled from the keyboard. That is also why it takes a visible focus ring — a tab stop with no ring is a trap."
-				stacked
 			>
 				<Callout label="Rule">
 					Cells are <code>white-space: nowrap</code> by default and the container scrolls.
@@ -43,21 +40,18 @@ export function TablePage() {
 				example="table/table-scale"
 				title="Density"
 				description="Density is scoped, not a prop. A region can be denser than the page around it."
-				stacked
 			/>
 
 			<Example
 				example="table/table-sorting"
 				title="Sortable columns"
 				description="The whole label is the target, not a small chevron beside it, and the neutral state still shows an icon — a sortable column that looks identical to a fixed one until hovered is undiscoverable by touch and by keyboard alike. aria-sort lives on the th, so the order is announced rather than only drawn."
-				stacked
 			/>
 
 			<Example
 				example="table/table-empty"
 				title="Empty and sticky"
 				description="A table that renders an empty tbody looks broken rather than empty — the header hangs over nothing. A sticky header needs a bounded container to stick inside, and a background of its own, or the rows scroll underneath and both are drawn."
-				stacked
 			/>
 
 			<Example id="table-api" title="API">

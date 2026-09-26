@@ -29,10 +29,9 @@ export function AsyncPreviewPage() {
 				example="async-preview/preview-trigger-cell"
 				title="PreviewTriggerCell"
 				description="The trigger shaped for a table cell. It renders a button only when there is a preview to open — the last row has no customer, so it keeps the column's rhythm with no caret, no pointer, and no popup ARIA. A column where nine rows are clickable and the tenth only looks clickable is a column a reader stops trusting."
-				stacked
 			/>
 
-			<Example id="async-preview-rule" title="What the hook handles for you" stacked>
+			<Example id="async-preview-rule" title="What the hook handles for you">
 				<Callout label="Rule">
 					Three things, and they are the reason this is not a <code>useEffect</code> in a
 					popover. <strong>Abort</strong>: the preview closes or changes record, the request is cancelled,

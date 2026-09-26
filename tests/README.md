@@ -40,7 +40,7 @@ code they cover.
 | `theme-tweaker-live.spec.ts` | The theme tweaker: overflowing tab rails, the panel's fixed chrome, corner presets, locale input, exported themes and accessible panels. | runs under `npm test` |
 | `tokens.spec.ts` | The theming contract: every `var()` resolves, scope boundaries keep an explicit theme, density and text scale, and the type ladder holds its order under every factor. | runs under `npm test` |
 | `ux-polish.spec.ts` | Upload pickers, rejection messages and touch affordances, plus DataView debounce, paging, sorting and empty recovery. | runs under `npm test` |
-| `visual.spec.ts` | Local screenshots, one per component page per theme, compared with baselines recorded on this machine. | `npm run screenshots` |
+| `visual.spec.ts` | Local screenshots, one per preview example per theme, compared with baselines recorded on this machine. | `npm run screenshots` |
 
 Playwright projects: `chromium`, `tailwind`, `firefox`, `webkit`, `visual`, `audit`.
 
@@ -198,7 +198,7 @@ harness pages of their own. `tests/routes.ts` reads the route table out of
 | `npm test` | Chromium and the Tailwind fixture — before a commit |
 | `npm run test:engines` | Firefox and WebKit on the specs where engines differ: keyboard and focus, popups, editing |
 | `npm run test:all` | All four projects; the release gate runs the same set |
-| `npm run screenshots` | Local screenshots, one per page per theme. Baselines are git-ignored: record them with `npm run screenshots -- --update-snapshots`, then later runs compare against them |
+| `npm run screenshots` | Local screenshots, one per preview example per theme, each rendered alone at `#/example/<page>/<id>`. Baselines are git-ignored: record them with `npm run screenshots -- --update-snapshots`, then later runs compare against them |
 | `npm run audit` | `tests/audit/`: on-demand sweeps (sub-pixel circles and radii, welded or near-miss spacing, literal values on every page). Run it before accepting a broad visual change; it is not a gate |
 
 Install the engines once with `npx playwright install chromium firefox webkit`. WebKit

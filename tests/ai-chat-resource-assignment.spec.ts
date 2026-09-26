@@ -26,7 +26,8 @@ test("chat send, stop, and recovery keep the composer usable", async ({ page }) 
 	await demo.getByRole("button", { name: "Send message", exact: true }).click()
 	await expect(demo.getByText("Try again with cents", { exact: true })).toBeVisible()
 	await expect(demo.getByText("Working", { exact: true })).toBeVisible()
-	await expect(page.locator("#ai-chat-rules")).toContainText("stopped generation")
+	/* The example's own log records the stop. */
+	await expect(demo.getByText("stopped generation", { exact: true })).toBeVisible()
 })
 
 test("a rejected assignment keeps its selection and retries on a narrow screen", async ({ page }) => {

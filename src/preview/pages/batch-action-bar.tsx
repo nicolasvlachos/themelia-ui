@@ -17,21 +17,18 @@ export function BatchActionBarPage() {
 				example="batch-action-bar/floating"
 				title="Floating"
 				description="Docks to the bottom centre of the viewport, so it stays reachable however far the list has scrolled. This is the default."
-				stacked
 			/>
 
 			<Example
 				example="batch-action-bar/inline"
 				title="Inline"
 				description="Sits in flow instead. Use it inside a panel that scrolls its own body, where a fixed element would escape the container it belongs to."
-				stacked
 			/>
 
 			<Example
 				id="api"
 				title="API"
 				description="The summary takes both counts because the sentence differs per language — that is why it is a function rather than a template the component assembles."
-				stacked
 			>
 				<Stack gap="lg" style={{ width: "100%" }}>
 					<Callout>

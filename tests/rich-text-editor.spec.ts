@@ -59,7 +59,8 @@ test("source mode keeps one live editor and formatting works after repeated swit
 	await source.click()
 	await demo.getByRole("textbox", { name: "HTML source" }).fill("<ul><li><p>First item</p></li><li><p>Second item</p></li></ul>")
 	await source.click()
-	const rendered = page.locator("#editor-output")
+	/* The same example renders the emitted HTML back through RichText. */
+	const rendered = demo.locator(".rich-text--component")
 	await expect(rendered.locator("li")).toHaveText(["First item", "Second item"])
 })
 

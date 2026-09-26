@@ -1,0 +1,5 @@
+/* A state control above a feed: a fixed measure, so the row does not reflow with the choice. */
+.stateSelect {
+	width: 12rem;
+	max-width: 100%;
+}

@@ -1,47 +1,11 @@
-import { useState } from "react"
-import { PlusIcon, UtensilsIcon, WrenchIcon } from "lucide-react"
-
 import { Text } from "@/components/base/typography"
-import {
-	EventCalendar,
-	type CalendarEvent, type CalendarViewMode, type EventCategory,
-} from "@/components/features"
 
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-/* A fixed month, so the page looks the same every day it is opened. */
-const MONTH = new Date(2026, 8, 1)
-const on = (day: number, hour = 9) => new Date(2026, 8, day, hour, 0)
-
-const CATEGORIES: EventCategory[] = [
-	{ id: "events", label: "Events", colorToken: "info", icon: <UtensilsIcon /> },
-	{ id: "maintenance", label: "Maintenance", colorToken: "warning", icon: <WrenchIcon /> },
-	{ id: "closed", label: "Closed", colorToken: "destructive" },
-]
-
-const EVENTS: CalendarEvent[] = [
-	{
-		id: "e1", title: "Okonkwo wedding", category: "events", startDate: on(5, 14),
-		metadata: { customerName: "Marla Okonkwo", guestCount: 120, serviceName: "Main hall + bar", cellTitle: "Okonkwo" },
-	},
-	{ id: "e2", title: "Corporate away day", category: "events", startDate: on(5, 9), metadata: { guestCount: 40 } },
-	{ id: "e3", title: "Autumn showcase", category: "events", startDate: on(12, 19), metadata: { customerName: "Riverside Rooms", guestCount: 180 } },
-	{ id: "e4", title: "Rehearsal", category: "events", startDate: on(11, 18) },
-	{ id: "e5", title: "Floor resurfacing", category: "maintenance", startDate: on(15), endDate: new Date(2026, 8, 17), allDay: true },
-	{ id: "e6", title: "Boiler service", category: "maintenance", startDate: on(23, 8) },
-	{ id: "e7", title: "Bank holiday", category: "closed", startDate: on(28), allDay: true },
-	{ id: "e8", title: "Marlow anniversary", category: "events", startDate: on(5, 20) },
-	{ id: "e9", title: "Deep clean", category: "maintenance", startDate: on(5, 7) },
-]
-
 export function EventCalendarPage() {
-	const [view, setView] = useState<CalendarViewMode>("month")
-	const [picked, setPicked] = useState<string | null>(null)
-	const [visible, setVisible] = useState<string[]>([])
-
 	return (
 		<ComponentPage
 			title="Event calendar"
@@ -52,78 +16,24 @@ export function EventCalendarPage() {
 			]}
 		>
 			<Example
-				id="month"
+				example="event-calendar/month"
 				title="The grid"
 				description="Switch the view from the header, jump to a month with the calendar button beside the heading, and press a chip to open its event. The legend filters: press a category and it leaves the grid, which is the same data pipeline running with one category dropped."
-				stacked
-				code={`<EventCalendar
-  events={events}
-  categories={categories}
-  enableCategoryFilter
-  onEventClick={(event) => open(event.id)}
-  onDayClick={(date, events) => setDay({ date, events })}
-/>`}
-			>
-				<EventCalendar
-					events={EVENTS}
-					categories={CATEGORIES}
-					defaultDate={MONTH}
-					viewMode={view}
-					onViewModeChange={setView}
-					enableCategoryFilter
-					visibleCategories={visible}
-					onVisibleCategoriesChange={setVisible}
-					maxEventsPerDay={2}
-					actions={[{ id: "new", label: "New booking", icon: PlusIcon, onClick: () => setPicked("new booking") }]}
-					onEventClick={(event) => setPicked(event.title)}
-					onDayClick={(date, events) =>
-						setPicked(`${date.toDateString()} — ${events.length} event${events.length === 1 ? "" : "s"}`)
-					}
-				/>
-				{!!picked && <Text size="sm" type="secondary">picked: {picked}</Text>}
-			</Example>
+			/>
 
 			<Example
-				id="agenda"
+				example="event-calendar/agenda"
 				title="The agenda"
-				description="Only the days that have something on them, each with its full cards. The source offered this mode in the switcher and then drew the same seven-column grid — an agenda that looked exactly like the month view."
-				stacked
-				code={`<EventCalendar viewMode="agenda" events={events} categories={categories} />`}
-			>
-				<EventCalendar
-					events={EVENTS}
-					categories={CATEGORIES}
-					defaultDate={MONTH}
-					viewMode="agenda"
-					showLegend={false}
-					onEventClick={(event) => setPicked(event.title)}
-				/>
-			</Example>
+				description="Only the days that have something on them, each with its full cards. An agenda is a list, not a grid — drawn as seven columns it would look exactly like the month view."
+			/>
 
 			<Example
-				id="week"
+				example="event-calendar/week"
 				title="A week, and a range"
 				description="`minDate` and `maxDate` stop the navigation and grey out the days beyond them; `disabledDates` takes dates, a predicate, or both. A disabled day still draws — a hole in a calendar reads as a loading failure."
-				stacked
-				code={`<EventCalendar
-  viewMode="week"
-  minDate={new Date(2026, 8, 1)}
-  maxDate={new Date(2026, 8, 30)}
-  disabledDates={(date) => date.getDay() === 0}
-/>`}
-			>
-				<EventCalendar
-					events={EVENTS}
-					categories={CATEGORIES}
-					defaultDate={new Date(2026, 8, 14)}
-					viewMode="week"
-					showLegend={false}
-					disabledDates={(date) => date.getDay() === 0}
-					onEventClick={(event) => setPicked(event.title)}
-				/>
-			</Example>
+			/>
 
-			<Example id="calendar-rules" title="What the calendar decides" stacked>
+			<Example id="calendar-rules" title="What the calendar decides">
 				<Callout label="Rule">
 					An event names a <code>category</code> and the category names a{" "}
 					<code>colorToken</code> — two indirections where one would do, and both earn it. A
@@ -136,7 +46,7 @@ export function EventCalendarPage() {
 					The day key is <strong>local</strong>, not UTC. The obvious key —{" "}
 					<code>date.toISOString().slice(0, 10)</code> — is wrong for half the world: local
 					midnight in any timezone ahead of UTC serialises to the previous day, so every event
-					in Athens landed on the cell before its own.
+					in Athens would land on the cell before its own.
 				</Text>
 				<Text size="sm" type="secondary">
 					A day cell is not a button. It holds the event chips, which are real buttons, and a

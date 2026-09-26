@@ -23,24 +23,21 @@ export function MentionsPage() {
 				title="Typing a mention"
 				overflowing
 				description="Type @ for a person, # for a booking, ! for an incident. Arrow keys move through suggestions, Enter inserts, and Escape dismisses. The editor keeps focus while the panel follows the caret query. All three kinds are searched at once, so typing “mar” shows counts on every tab and jumps to the one that actually matched."
-				stacked
 			/>
 
 			<Example
 				example="mentions/mention-content"
 				title="Rendering a stored body"
 				description="MentionContent preserves paragraphs, lists, and inline formatting while replacing references with live chips — with the current label, a working link, and a hover state. A reference the record does not know about renders as its stored markup rather than vanishing, because dropping it would take a name out of the middle of a sentence."
-				stacked
 			/>
 
 			<Example
 				example="mentions/mention-tones"
 				title="Chips"
 				description="A chip inherits the size of the line it sits in — em, not rem — and aligns to the baseline rather than the line's middle, so it reads as a word rather than a badge dropped into a sentence. There is no neutral tone: a mention is a reference, and a neutral chip in body copy is a slightly grey word."
-				stacked
 			/>
 
-			<Example id="mention-html" title="What gets stored" stacked>
+			<Example id="mention-html" title="What gets stored">
 				<Callout label="Rule">
 					A mention is stored <strong>twice</strong>: as a span in the body, and as a record
 					in the mention list. The HTML is the <em>position</em>; the list is the{" "}

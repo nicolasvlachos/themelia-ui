@@ -1,0 +1,6 @@
+/* A full-bleed slide: the content stays clear of the edges the overlay controls float over. */
+.slide {
+	min-height: 7rem;
+	border-radius: var(--radius);
+	background-color: var(--muted-40);
+}

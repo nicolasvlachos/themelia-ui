@@ -9,8 +9,8 @@ import {
 	type MentionEditorHandle,
 } from "themelia-ui/features/mentions"
 
-import styles from "../../preview.module.css"
 import { RESOURCES, type Kind } from "./data"
+import styles from "./mention-inline.module.css"
 
 /**
  * The four methods `MentionEditorHandle` asks for, over a plain contenteditable.
@@ -79,7 +79,7 @@ function MiniEditor({
 				onInput(event.currentTarget.innerHTML)
 				onCaretChange()
 			}}
-			className={styles.miniEditor}
+			className={styles.editor}
 		/>
 	)
 }
@@ -107,7 +107,7 @@ export default function MentionInline() {
 
 	return (
 		<>
-			<div className={styles.mentionAnchor}>
+			<div className={styles.anchor}>
 				<MiniEditor
 					handleRef={editorRef}
 					onCaretChange={mentions.handleCaretChange}
@@ -173,7 +173,7 @@ export default function MentionInline() {
 			)}
 
 			{!!html && (
-				<Text size="xs" type="secondary" className={styles.mentionSource}>
+				<Text size="xs" type="secondary" className={styles.source}>
 					{html}
 				</Text>
 			)}

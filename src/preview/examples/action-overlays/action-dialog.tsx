@@ -2,8 +2,8 @@ import { useState } from "react"
 
 import { Button } from "themelia-ui/base/buttons"
 import { FormField } from "themelia-ui/base/forms"
-import { Input } from "themelia-ui/base/text-inputs"
 import { Stack } from "themelia-ui/base/structure"
+import { Input } from "themelia-ui/base/text-inputs"
 import { Text } from "themelia-ui/base/typography"
 import { ActionDialog } from "themelia-ui/features/overlays"
 
@@ -14,7 +14,7 @@ export default function ActionDialogExample() {
 	const [failure, setFailure] = useState<string | null>(null)
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Stack direction="horizontal" gap="lg" wrap>
 				<ActionDialog
 					title="Rename workspace"
@@ -67,6 +67,6 @@ export default function ActionDialogExample() {
 					last result: {saved}
 				</Text>
 			)}
-		</>
+		</Stack>
 	)
 }

@@ -15,17 +15,15 @@ export function ProgressPage() {
 				example="progress/progress"
 				title="Progress"
 				description="Determinate by default. Without a value it becomes a travelling band, because a bar frozen at some width reads as stalled progress rather than unknown progress."
-				stacked
 			/>
 
 			<Example
 				example="progress/progress-circle"
 				title="ProgressCircle"
 				description="The same measurement as a ring, with the figure inside it. A bar is right when it has a row to itself and a label beside it; a ring is right in a tile or a grid of small measures, where a bar would need a caption to say what it was measuring and the caption is the only thing there is room for. The hole is masked rather than covered by a smaller disc, because a base component cannot know what surface it was dropped onto. Size comes from `--progress-circle`, not a prop."
-				stacked
 			/>
 
-			<Example id="progress-accessibility" title="Accessibility" stacked>
+			<Example id="progress-accessibility" title="Accessibility">
 				<Callout>
 					Progress reports its real bounds, and drops the ARIA value attributes entirely
 					when indeterminate: announcing 0% when the number is unknown is worse than

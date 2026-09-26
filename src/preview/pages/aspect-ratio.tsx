@@ -14,7 +14,6 @@ export function AspectRatioPage() {
 				example="aspect-ratio/aspect-ratio"
 				title="AspectRatio"
 				description="The CSS property, given a name — and the rule that makes it useful: the direct child is stretched to fill and told to cover. Without that an image keeps its intrinsic size and simply overflows, which looks like the ratio doing nothing."
-				stacked
 			/>
 
 			<Example id="aspect-ratio-api" title="API">

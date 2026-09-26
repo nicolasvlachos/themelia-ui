@@ -70,7 +70,7 @@ export function ReviewPage() {
 		<div className={styles.review}>
 			<Heading level={1}>Review</Heading>
 			<Text type="secondary">
-				Every component, densely, so inconsistencies between families are visible.
+				Every component, densely, so inconsistencies between modules are visible.
 			</Text>
 
 			<Block title="typography">

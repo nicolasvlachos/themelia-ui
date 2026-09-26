@@ -17,28 +17,25 @@ export function AppShellPage() {
 				example="app-shell/sidebar-shell"
 				title="The shell"
 				description="SidebarInsetLayout mounts the provider itself — it is the thing that owns the open state, and asking every consumer to remember the wrapper is how half a product's screens end up without it. AppSidebar takes navigation data and a currentUrl; everything active follows from those."
-				stacked
 			/>
 
 			<Example
 				example="app-shell/topbar-sidebar-layout"
 				title="TopbarSidebarLayout"
 				description="A full-width header with navigation and independently scrolling content below it. Move the navigation to either side, collapse it to icons, and try it on a phone. Search and filter the sample invoices."
-				stacked
 			/>
 
 			<Example
 				example="app-shell/stacked-shell"
 				title="StackedLayout"
 				description="Navigation across the top leaves the page its full width. The header wraps on narrow screens. Switch sections and save a workspace name; changes stay in this local demo."
-				stacked
 			/>
 
-			<Example example="app-shell/composed-workspace" title="A workspace inside a shell" description="Compose record navigation and forms inside the same full-width shell. The shell owns scrolling; WorkspaceLayout owns the inner columns." stacked />
+			<Example example="app-shell/composed-workspace" title="A workspace inside a shell" description="Compose record navigation and forms inside the same full-width shell. The shell owns scrolling; WorkspaceLayout owns the inner columns." />
 
-			<Example id="sidebar-routing" title="The router seam" stacked>
+			<Example id="sidebar-routing" title="The router seam">
 				<Callout label="Rule">
-					This layer never imports a router. Navigation goes through{" "}
+					This tier never imports a router. Navigation goes through{" "}
 					<code>renderLink</code>, so the same shell works under React Router, Next,
 					Inertia, TanStack, or plain anchors — and the kit does not pick one. What it
 					does own is the matching: <code>isPathMatch</code> keeps a parent lit while a
@@ -47,7 +44,7 @@ export function AppShellPage() {
 				</Callout>
 			</Example>
 
-			<Example id="sidebar-two-boxes" title="Why the panel is two elements" stacked>
+			<Example id="sidebar-two-boxes" title="Why the panel is two elements">
 				<Callout label="Rule">
 					The desktop shell renders a <code>gap</code> element and a fixed{" "}
 					<code>container</code>. The container is out of flow so it can span the viewport

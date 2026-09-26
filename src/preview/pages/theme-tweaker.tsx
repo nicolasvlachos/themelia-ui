@@ -34,7 +34,7 @@ export function ThemeTweakerPage() {
 						<Example
 							example="theme-tweaker/isolated-theme-scope"
 							title="Isolated theme scopes"
-							description="Use a scope only when one region should deliberately differ from the app theme."
+							description="Use a scope only when one region should deliberately differ from the app theme. The scope carries a whole theme: here both radii, because a container reads `--radius` and the controls inside it read `--radius-sm`, and a mode, which is light unless the theme names another."
 						/>
 					</Stack>,
 				}]} />

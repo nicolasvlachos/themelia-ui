@@ -1,199 +1,11 @@
-import { useState } from "react"
-import { BuildingIcon, CreditCardIcon, SettingsIcon } from "lucide-react"
-
-import { Checkbox } from "@/components/base/choice-inputs"
 import { Text } from "@/components/base/typography"
-import { SchemaForm, type SchemaFormSchema, type SchemaFormValues } from "@/components/features"
 
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const VENUE_SCHEMA: SchemaFormSchema = {
-	title: "Venue details",
-	description: "What appears on the booking confirmation.",
-	sections: [
-		{ id: "identity", title: "Identity", icon: <BuildingIcon />, columns: 2 },
-		{
-			id: "commercial",
-			title: "Commercial",
-			description: "Only the deposit is shown to the customer.",
-			icon: <CreditCardIcon />,
-			columns: 2,
-		},
-		{ id: "advanced", title: "Advanced", icon: <SettingsIcon />, columns: 1 },
-	],
-	fields: [
-		{
-			key: "name",
-			label: "Venue name",
-			sectionId: "identity",
-			required: true,
-			placeholder: "Marlow Hall",
-			defaultValue: "Marlow Hall",
-		},
-		{
-			key: "email",
-			type: "email",
-			label: "Bookings email",
-			sectionId: "identity",
-			required: true,
-			placeholder: "bookings@example.com",
-			defaultValue: "bookings@marlowhall.example",
-			validate: (value) =>
-				typeof value === "string" && value.includes("@") ? true : "That is not an email address.",
-		},
-		{
-			key: "address",
-			type: "textarea",
-			label: "Address",
-			sectionId: "identity",
-			width: "full",
-			rows: 2,
-			defaultValue: "14 Bridge Street, Marlow",
-		},
-		{
-			key: "capacity",
-			type: "integer",
-			label: "Seated capacity",
-			sectionId: "commercial",
-			min: 0,
-			step: 10,
-			defaultValue: 180,
-		},
-		{
-			key: "deposit",
-			type: "decimal",
-			label: "Deposit",
-			sectionId: "commercial",
-			decimalPlaces: 2,
-			min: 0,
-			defaultValue: 300,
-			helperText: "Charged when the booking is confirmed.",
-		},
-		{
-			key: "tier",
-			type: "radio-cards",
-			label: "Rate card",
-			sectionId: "commercial",
-			width: "full",
-			columns: 3,
-			defaultValue: "standard",
-			options: [
-				{ value: "standard", label: "Standard", description: "The published rate." },
-				{ value: "partner", label: "Partner", description: "15% off, invoiced monthly." },
-				{ value: "internal", label: "Internal", description: "No charge." },
-			],
-		},
-		{
-			key: "amenities",
-			type: "checkbox-cards",
-			label: "Included",
-			sectionId: "commercial",
-			width: "full",
-			columns: 3,
-			defaultValue: ["bar"],
-			options: [
-				{ value: "bar", label: "Bar" },
-				{ value: "kitchen", label: "Kitchen" },
-				{ value: "parking", label: "Parking" },
-			],
-		},
-		{
-			key: "tags",
-			type: "tags",
-			label: "Tags",
-			sectionId: "advanced",
-			maxTags: 5,
-			recommendations: ["wedding", "conference", "accessible", "late licence"],
-			defaultValue: ["wedding"],
-		},
-		{
-			key: "selfService",
-			type: "switch",
-			switchStyle: "card",
-			label: "Self-service booking",
-			description: "Customers can book without an operator.",
-			sectionId: "advanced",
-			defaultValue: false,
-		},
-		{
-			key: "cutoffHours",
-			type: "integer",
-			label: "Cut-off (hours before)",
-			sectionId: "advanced",
-			min: 0,
-			defaultValue: 48,
-			// Only meaningful once self-service is on — the whole reason the predicate form exists.
-			hidden: (values) => values.selfService !== true,
-		},
-		{
-			key: "metadata",
-			type: "json",
-			label: "Integration metadata",
-			sectionId: "advanced",
-			rows: 4,
-			defaultValue: { externalId: "MRL-1", region: "south" },
-			helperText: "Sent verbatim to the booking provider.",
-		},
-	],
-}
-
-const SETTINGS_SCHEMA: SchemaFormSchema = {
-	sections: [
-		{ id: "notify", title: "Notifications", columns: 1 },
-		{ id: "billing", title: "Billing", columns: 2 },
-	],
-	fields: [
-		{
-			key: "digest",
-			type: "switch",
-			label: "Daily digest",
-			description: "One email at 08:00 with yesterday's bookings.",
-			sectionId: "notify",
-			defaultValue: true,
-		},
-		{
-			key: "channel",
-			type: "select",
-			label: "Escalation channel",
-			sectionId: "notify",
-			allowClear: true,
-			placeholder: "None",
-			options: [
-				{ value: "email", label: "Email" },
-				{ value: "sms", label: "SMS" },
-				{ value: "webhook", label: "Webhook" },
-			],
-		},
-		{
-			key: "vat",
-			label: "VAT number",
-			sectionId: "billing",
-			placeholder: "GB123456789",
-		},
-		{
-			key: "terms",
-			type: "integer",
-			label: "Payment terms (days)",
-			sectionId: "billing",
-			defaultValue: 30,
-			min: 0,
-		},
-	],
-}
-
 export function SchemaFormPage() {
-	const [submitted, setSubmitted] = useState<string | null>(null)
-	const [failSave, setFailSave] = useState(false)
-
-	const submit = async (values: SchemaFormValues) => {
-		await new Promise((resolve) => setTimeout(resolve, 600))
-		if (failSave) throw new Error("Preview save failed")
-		setSubmitted(JSON.stringify(values))
-	}
-
 	return (
 		<ComponentPage
 			title="Schema form"
@@ -204,50 +16,18 @@ export function SchemaFormPage() {
 			]}
 		>
 			<Example
-				id="form-layout"
+				example="schema-form/form-layout"
 				title="One surface"
 				description="Submit with the email emptied, or the name — validation runs on submit, and each message clears the moment its own field changes. Turn on self-service and a field appears: `hidden` takes a predicate over the whole value set, and hidden or disabled fields do not block submission. Failed saves keep every value for retry; pending saves disable editing and reset."
-				stacked
-				code={`<SchemaForm
-  schema={{
-    sections: [{ id: "identity", title: "Identity", columns: 2 }],
-    fields: [
-      { key: "name", label: "Venue name", sectionId: "identity", required: true },
-      { key: "cutoff", type: "integer", label: "Cut-off",
-        hidden: (values) => values.selfService !== true },
-    ],
-  }}
-  onSubmit={(values) => api.save(values)}
-  onReset={() => undefined}
-/>`}
-			>
-				<Checkbox label="Make the save fail" checked={failSave} onChange={(event) => setFailSave(event.target.checked)} />
-				<SchemaForm
-					schema={VENUE_SCHEMA}
-					onSubmit={(values) => submit(values)}
-					onReset={() => setSubmitted(null)}
-				/>
-				{!!submitted && (
-					<Text size="xs" type="secondary" numeric>submitted: {submitted}</Text>
-				)}
-			</Example>
+			/>
 
 			<Example
-				id="cards-layout"
+				example="schema-form/cards-layout"
 				title="One surface per section"
 				description="The same schema shape in the layout a long settings page wants. Nothing about the fields changes — only where the borders are."
-				stacked
-				code={`<SchemaForm schema={schema} layout="cards" onSubmit={save} />`}
-			>
-				<SchemaForm
-					schema={SETTINGS_SCHEMA}
-					layout="cards"
-					submitLabel="Save settings"
-					onSubmit={(values) => submit(values)}
-				/>
-			</Example>
+			/>
 
-			<Example id="schema-form-rules" title="What the schema decides" stacked>
+			<Example id="schema-form-rules" title="What the schema decides">
 				<Callout label="Rule">
 					A field's <code>type</code> decides which control renders <strong>and</strong> which
 					extra keys are meaningful — <code>options</code> belongs to a select,{" "}

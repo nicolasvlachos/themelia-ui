@@ -19,24 +19,21 @@ export function ResourceAssignmentPage() {
 				example="resource-assignment/assigned"
 				title="With a resource"
 				description="Press Change: the dialog opens on what is currently assigned, the summary restates the pending choice above the buttons, and confirming waits for the write before it closes. The body here comes from sections — data, which is what a screen assembling its panel from a config actually has."
-				stacked
 			/>
 
 			<Example
 				example="resource-assignment/empty"
 				title="With none"
 				description="`resource === null` is the only empty state — the card never tracks “assigned” separately from the thing itself. Without a picker the empty state says so plainly and offers nothing; with one it offers the assign action, and the label switches from Change to Assign on its own."
-				stacked
 			/>
 
 			<Example
 				example="resource-assignment/retry"
 				title="Rejected write and retry"
 				description="The first confirmation rejects. The dialog stays open, the selected venue remains visible, and the same confirmation can be retried successfully. The error is surfaced through onError in the card's existing alert seam."
-				stacked
 			/>
 
-			<Example id="assignment-rules" title="Two types, and where the choice comes from" stacked>
+			<Example id="assignment-rules" title="Two types, and where the choice comes from">
 				<Callout label="Rule">
 					<code>TResource</code> is what is <strong>persisted</strong>; <code>TSuggestion</code> is
 					what the picker offers. They are separate because the round trip is: pick a suggestion,

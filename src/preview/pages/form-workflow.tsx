@@ -18,45 +18,39 @@ export function FormWorkflowPage() {
 				example="form-workflow/form-section"
 				title="FormSection"
 				description="A titled group of fields, with room for controls on the title line and a footer under them. `surface=&quot;flat&quot;` drops the chrome for a section that already sits inside a card — which is most of them, and the reason the prop exists rather than a second component."
-				stacked
 			/>
 
 			<Example
 				example="form-workflow/form-actions"
 				title="FormActionsBar"
 				description="The row a form ends on. `leading` carries status — a last-saved time, a count of unsaved changes — so the bar answers &quot;can I leave?&quot; as well as offering the way out. `sticky` pins it to the foot of its scrolling ancestor, for a form longer than the viewport."
-				stacked
 			/>
 
 			<Example
 				example="form-workflow/form-error-summary"
 				title="ErrorSummary"
 				description="What a failed submission puts at the top of the form. It counts the problems in its own heading, because &quot;3 problems&quot; is the fact a reader needs before reading any of them — and it takes an action, so the summary can move focus to the first field rather than leaving the reader to hunt."
-				stacked
 			/>
 
 			<Example
 				example="form-workflow/form-dirty"
 				title="DirtyStateBanner"
 				description="The banner a form shows while it holds unsaved work. Its tone is limited to neutral, info and warning on purpose — unsaved work is not an error and not a success, and letting it take `destructive` would make every half-finished form look broken."
-				stacked
 			/>
 
 			<Example
 				example="form-workflow/form-submit-state"
 				title="SubmitStateButton"
 				description="A submit button that says what it is doing. The LABEL changes rather than the button vanishing behind a spinner, because &quot;Saving…&quot; is the answer to the question the reader is actually asking. It stays disabled while submitting, so a second click cannot double-submit."
-				stacked
 			/>
 
 			<Example
 				example="form-workflow/form-states"
 				title="LoadingState and ErrorState"
 				description="What a region shows instead of its content. Both are regions, not overlays — they take the space the content would have taken, so nothing reflows when the data lands. ErrorState renders its retry control only when a retry is wired: without a handler there is nothing to offer, and a dead button is worse than none."
-				stacked
 			/>
 
-			<Example id="form-workflow-rule" title="Around the fields, not in them" stacked>
+			<Example id="form-workflow-rule" title="Around the fields, not in them">
 				<Callout label="Rule">
 					These wrap a form; they do not validate one. Validation state belongs to{" "}
 					<code>FormField</code>, which owns the label, the control and the message as one

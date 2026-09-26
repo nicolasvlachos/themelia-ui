@@ -11,7 +11,7 @@ import {
 	type KanbanValue,
 } from "themelia-ui/features/kanban"
 
-import styles from "../../preview.module.css"
+import styles from "./kanban.module.css"
 
 interface Card_ {
 	id: string
@@ -70,28 +70,28 @@ export default function KanbanExample() {
 					},
 				]}
 			>
-				<KanbanBoard className={styles.kanbanBoard}>
+				<KanbanBoard className={styles.board}>
 					{COLUMNS.map((column) => (
-						<KanbanColumn key={column.id} value={column.id} className={styles.kanbanColumn}>
-							<div className={styles.kanbanColumnHeader}>
+						<KanbanColumn key={column.id} value={column.id} className={styles.column}>
+							<Stack direction="horizontal" align="center" justify="between" gap="sm">
 								<DisplayLabel>{column.title}</DisplayLabel>
 								<Badge tone="neutral">{board[column.id]?.length ?? 0}</Badge>
-							</div>
+							</Stack>
 							<KanbanColumnContent value={column.id}>
 								{(board[column.id] ?? []).map((card) => (
 									<KanbanItem key={card.id} value={card.id}>
-										<Card className={styles.kanbanCard}>
-											<div className={styles.kanbanCardTop}>
+										<Card className={styles.card}>
+											<Stack direction="horizontal" align="start" gap="xs">
 												<KanbanItemHandle />
-												<Text size="sm" weight="medium" className={styles.kanbanCardTitle}>
+												<Text size="sm" weight="medium" className={styles.cardTitle}>
 													{card.title}
 												</Text>
 												<KanbanItemActions<Card_> />
-											</div>
-											<div className={styles.kanbanCardMeta}>
+											</Stack>
+											<Stack direction="horizontal" align="baseline" justify="between" gap="sm" className={styles.cardMeta}>
 												<Text size="xs" type="secondary">{card.owner}</Text>
 												<Text size="xs" type="secondary" numeric>{card.value}</Text>
-											</div>
+											</Stack>
 										</Card>
 									</KanbanItem>
 								))}

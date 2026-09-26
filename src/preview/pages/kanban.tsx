@@ -19,10 +19,9 @@ export function KanbanPage() {
 				example="kanban/kanban"
 				title="The board"
 				description="Drag a card by its handle, or move one with the keyboard — tab to a handle, press space, and use the arrow keys. Every move is announced, which is the whole reason the keyboard path is usable at all. The value is a plain Record<columnId, item[]>, because that is what a board is and it serialises without a thought."
-				stacked
 			/>
 
-			<Example id="kanban-rule" title="Where the handle goes" stacked>
+			<Example id="kanban-rule" title="Where the handle goes">
 				<Callout label="Rule">
 					A card with no <code>KanbanItemHandle</code> is dragged by its whole surface,
 					which is right for a board of plain cards. A card <strong>with</strong> one must
@@ -40,7 +39,6 @@ export function KanbanPage() {
 				example="kanban/sync-range-form"
 				title="SyncRangeForm"
 				description="The body of a “reconcile the last N hours” dialog. It renders no buttons: the overlay owns the footer, and formId is the join — the form carries the id, the footer's submit carries form={id}, and native validation runs before this sees a submit."
-				stacked
 			/>
 
 			<Example id="kanban-api" title="API">

@@ -15,21 +15,18 @@ export function TimelinePage() {
 				example="timeline/timeline-default"
 				title="An order's progress"
 				description="Each entry carries a status, and the connector below it takes the same tone — so a run of completed steps reads as one finished stretch rather than as separate dots on a neutral thread."
-				stacked
 			/>
 
 			<Example
 				example="timeline/timeline-statuses"
 				title="Statuses"
 				description="Progress states first, then outcomes. `pending` is the only one that describes an absence, which is why it is the only unfilled dot."
-				stacked
 			/>
 
 			<Example
 				example="timeline/timeline-content"
 				title="Entries that carry more than a line"
 				description="`children` hangs anything under the description — a badge row, a diff, an action. The rail keeps its geometry regardless of how tall an entry grows, because the connector fills the space rather than being offset into it."
-				stacked
 			/>
 
 			<Example
@@ -61,7 +58,6 @@ export function TimelinePage() {
 				example="timeline/stepper-default"
 				title="Stepper"
 				description="A numbered sequence the reader is partway through: a numeral that becomes a tick, a connector to the next step, a label and an optional hint. StepsBar and BreadcrumbProgress both draw with it, so the markers, the connectors and the state rules are decided once. `bar` sets the label under a ringed marker in an equal column; `trail` sets it beside a filled marker and folds it away below lg."
-				stacked
 				bleed
 			/>
 
@@ -69,7 +65,6 @@ export function TimelinePage() {
 				example="timeline/stepper-pressable"
 				title="Going back a step"
 				description="`onStepClick` turns each step into a button. Finished steps and the current one are reachable; upcoming ones are disabled, because a wizard that lets you skip ahead past a step you have not filled in is not a wizard. The caller owns the position — the stepper only reports the press."
-				stacked
 			/>
 
 			<Example

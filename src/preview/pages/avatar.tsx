@@ -15,14 +15,12 @@ export function AvatarPage() {
 				example="avatar/avatar"
 				title="Avatar"
 				description="The fallback is not a spinner or a blank disc — a missing photograph is the normal case, not a loading state, and initials identify the person while the image is absent."
-				stacked
 			/>
 
 			<Example
 				example="avatar/stacked"
 				title="StackedAvatars"
 				description="An overlapping row capped at max, with the remainder as a count. The cap is a prop rather than a CSS truncation because the overflow number has to be correct, not merely hidden."
-				stacked
 			/>
 
 			<Example id="avatar-api" title="API">

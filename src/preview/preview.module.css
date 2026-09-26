@@ -477,20 +477,16 @@
 	background-color: currentColor;
 }
 
+/*
+ * One column at full width; an example lays out its own row. It does not wrap, because a
+ * wrapping column gives container-sized children no definite width.
+ */
 .preview {
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: column;
 	gap: var(--space-lg);
-	align-items: center;
 	padding: var(--space-2xl);
 	background-color: var(--card);
-}
-
-/* `nowrap`: a wrapping column container gives container-sized children no definite width. */
-.previewStacked {
-	flex-direction: column;
-	flex-wrap: nowrap;
-	align-items: stretch;
 }
 
 /* ── Code ─────────────────────────────────────────────────────────────────────── */
@@ -761,28 +757,6 @@
 	gap: var(--space-lg);
 }
 
-/* A bounded height, so the sticky-header demo has something to stick inside. */
-.stickyDemo {
-	max-height: 14rem;
-}
-
-/* A full-bleed slide for the overlay-controls example: content stays clear of the edges. */
-.bleedSlide {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 7rem;
-	border-radius: var(--radius);
-	background-color: var(--muted-40);
-}
-
-/* A dark strip, so `type="inverse"` has the surface it exists for. */
-.inverseSwatch {
-	padding: var(--space-md) var(--space-lg);
-	border-radius: var(--radius);
-	background-color: var(--foreground);
-}
-
 /* Specimen list, the primitives' demo shape: each call beside the value it renders. */
 .specimens {
 	display: grid;
@@ -833,34 +807,7 @@
 	}
 }
 
-/* ── Mentions demo ────────────────────────────────────────────────────────────── */
-
-/* The anchor the inline suggestion panel positions itself against. */
-.mentionAnchor {
-	position: relative;
-}
-
-.miniEditor {
-	min-height: calc(var(--control-h) * 2.5);
-	padding: var(--space-lg);
-	border: var(--border-width) solid var(--border);
-	border-radius: var(--radius);
-	background-color: var(--background);
-	line-height: var(--leading-relaxed);
-}
-
-.miniEditor:focus-visible {
-	outline: none;
-	border-color: var(--ring);
-	box-shadow: var(--focus-ring);
-}
-
-/* A contenteditable has no placeholder attribute, so the empty state is drawn. */
-.miniEditor:empty::before {
-	content: attr(data-placeholder);
-	color: var(--muted-foreground);
-	pointer-events: none;
-}
+/* ── Mentions page ────────────────────────────────────────────────────────────── */
 
 /* Stored markup shown as markup — wrapped, because a body is longer than a line. */
 .mentionSource {
@@ -872,87 +819,7 @@
 	overflow-wrap: anywhere;
 }
 
-/* ── Kanban demo ──────────────────────────────────────────────────────────────── */
-
-.kanbanBoard {
-	/* Lanes keep a minimum measure; on a phone the board scrolls on its own. */
-	grid-template-columns: repeat(3, minmax(var(--adaptive-grid-min-md), 1fr));
-}
-
-.kanbanColumn {
-	gap: var(--space-md);
-	padding: var(--space-md);
-	border: var(--border-width) solid var(--border-60);
-	background-color: var(--muted-20);
-}
-
-.kanbanColumnHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-sm);
-}
-
-/* No padding: `Card` wraps bare children in `CardContent`, which pays the inset. */
-/* An item in the column's `--space-md` inset, so the item radius: concentric with the column. */
-.kanbanCard {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-sm);
-	border-radius: var(--radius-sm);
-}
-
-.kanbanCardTop {
-	display: flex;
-	align-items: start;
-	gap: var(--space-xs);
-}
-
-.kanbanCardTitle {
-	flex: 1;
-	min-width: 0;
-}
-
-.kanbanCardMeta {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: var(--space-sm);
-	/* Aligned under the title: clears the drag handle and the row's --space-xs gap. */
-	padding-inline-start: calc(var(--control-h) + var(--space-xs));
-}
-
-
-
-/* A map has no intrinsic height, so a docs example has to give it one. */
-.mapFrame {
-	height: 26rem;
-	min-width: 0;
-	border-radius: var(--radius-sm);
-	overflow: hidden;
-}
-
-.mapSearch {
-	max-width: 24rem;
-}
-
-/* State and presentation controls above interactive feature examples. */
-.featureStateSelect {
-	width: 12rem;
-	max-width: 100%;
-}
-
-/* The ThemeScope demo needs a surface of its own to show the theme it carries. */
-:global(.preview-theme-scope) {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-xs);
-	padding: var(--surface-py) var(--surface-px);
-	border: var(--border-width) solid var(--border);
-	border-radius: var(--radius);
-	background-color: var(--card);
-	color: var(--card-foreground);
-}
+/* ── Site chrome ──────────────────────────────────────────────────────────────── */
 
 /* The group toggle: a chrome-less, full-width button that looks like the heading. */
 .navGroupToggle {

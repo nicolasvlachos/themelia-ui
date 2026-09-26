@@ -17,31 +17,27 @@ export function MetadataPage() {
 				example="metadata/metadata-grid"
 				title="grid"
 				description="Label above value, flowed into columns. The default, and the right one for a detail panel — the eye scans labels down a column and finds values beside them. columns is a ceiling, not a fixed number: four columns on a phone is four columns of one word each, so the list steps down at the widths where each still holds a readable value."
-				stacked
 			/>
 
 			<Example
 				example="metadata/metadata-rows"
 				title="rows"
 				description="A two-column definition list — a real <dl>, so a screen reader announces it as one. For a long list of facts whose labels vary in length, which a grid makes ragged. Labels and values share proportional columns, so they stay aligned while wrapping to fit narrow panels."
-				stacked
 			/>
 
 			<Example
 				example="metadata/metadata-inline"
 				title="inline"
 				description="Label, colon, value, running along one line and wrapping. For the summary strip under a title. The separator between facts is drawn between them and never after the last one — a trailing middle dot reads as a fact that failed to load."
-				stacked
 			/>
 
 			<Example
 				example="metadata/metadata-density"
 				title="density"
 				description="compact tightens the rhythm and drops the value a size, for a side panel or an inspector where the facts support the content rather than being it."
-				stacked
 			/>
 
-			<Example id="metadata-kinds" title="The value kinds" stacked>
+			<Example id="metadata-kinds" title="The value kinds">
 				<Callout label="Rule">
 					A value is a <strong>node</strong> or a <strong>descriptor</strong>. A descriptor
 					names the kind — <code>text</code>, <code>mono</code>, <code>email</code>,{" "}

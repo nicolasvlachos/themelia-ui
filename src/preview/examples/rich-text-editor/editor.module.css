@@ -1,0 +1,9 @@
+/* Stored markup shown as markup — wrapped, because a body is longer than a line. */
+.source {
+	display: block;
+	padding: var(--space-md);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-40);
+	font-family: var(--font-mono);
+	overflow-wrap: anywhere;
+}

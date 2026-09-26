@@ -1,145 +1,11 @@
-import { useMemo, useState } from "react"
-import {
-	BuildingIcon, CalendarIcon, FileTextIcon, HashIcon, MapPinIcon, ReceiptIcon,
-} from "lucide-react"
-
-import { Switch } from "@/components/base/choice-inputs"
-import { Button } from "@/components/base/buttons"
-import { Stack } from "@/components/base/structure"
 import { Text } from "@/components/base/typography"
-import {
-	GlobalSearch, GlobalSearchDialog,
-	type GlobalSearchIdleSection, type GlobalSearchResult,
-} from "@/components/features/global-search"
 
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-type Group = "people" | "bookings" | "invoices" | "files"
-
-const GROUP_LABELS: Record<Group, string> = {
-	people: "People",
-	bookings: "Bookings",
-	invoices: "Invoices",
-	files: "Files",
-}
-
-const RESULTS: GlobalSearchResult<Group>[] = [
-	{
-		id: "p-1",
-		group: "people",
-		title: "Marlow Chen",
-		subtitle: "Operations",
-		avatar: { initials: "MC" },
-		meta: [{ icon: <MapPinIcon />, label: "Sattersby" }],
-		timestamp: "seen 2h ago",
-	},
-	{
-		id: "p-2",
-		group: "people",
-		title: "Marla Okonkwo",
-		subtitle: "Finance",
-		avatar: { initials: "MO" },
-		badge: { label: "Admin", tone: "neutral" },
-	},
-	{
-		id: "b-1",
-		group: "bookings",
-		title: "Marlow Hall — autumn showcase",
-		subtitle: "180 seated",
-		thumbnail: { icon: <BuildingIcon /> },
-		meta: [
-			{ icon: <CalendarIcon />, label: "14 Oct" },
-			{ icon: <HashIcon />, label: "BK-4417", mono: true },
-		],
-		badge: { label: "Confirmed", tone: "success" },
-		rightValue: "€12,400",
-		rightLabel: "Total",
-	},
-	{
-		id: "b-2",
-		group: "bookings",
-		title: "Marlow Hall — rehearsal",
-		thumbnail: { icon: <BuildingIcon />, tone: "neutral" },
-		meta: [{ icon: <CalendarIcon />, label: "13 Oct" }],
-		badge: { label: "Pending", tone: "warning" },
-		rightValue: "€300",
-		rightLabel: "Deposit",
-	},
-	{
-		id: "i-1",
-		group: "invoices",
-		title: "INV-2291 — Marlow Hall",
-		subtitle: "Issued 2 Sep",
-		thumbnail: { icon: <ReceiptIcon /> },
-		meta: [{ label: "Net 30" }],
-		badge: { label: "Overdue", tone: "destructive" },
-		rightValue: "€12,400",
-		rightLabel: "Due",
-	},
-	{
-		id: "f-1",
-		group: "files",
-		title: "marlow-floorplan.pdf",
-		subtitle: "Uploaded by Alice",
-		thumbnail: { icon: <FileTextIcon />, tone: "neutral" },
-		tags: ["floorplan", "venue"],
-		timestamp: "3 days ago",
-	},
-]
-
-const IDLE: GlobalSearchIdleSection[] = [
-	{
-		id: "recent",
-		label: "Recent",
-		items: [
-			{ id: "r-1", label: "overdue invoices" },
-			{ id: "r-2", label: "Marlow Hall" },
-		],
-	},
-	{
-		id: "suggestions",
-		label: "Suggestions",
-		items: [
-			{ id: "s-1", label: "Bookings this week" },
-			{ id: "s-2", label: "Unassigned venues" },
-		],
-	},
-]
-
-/** Stands in for the app's search endpoint. */
-function match(query: string): GlobalSearchResult<Group>[] {
-	const needle = query.trim().toLowerCase()
-	if (needle.length < 2) return []
-	return RESULTS.filter((result) =>
-		`${result.title} ${result.subtitle ?? ""}`.toLowerCase().includes(needle),
-	)
-}
-
 export function GlobalSearchPage() {
-	const [query, setQuery] = useState("marlow")
-	const [dialogQuery, setDialogQuery] = useState("")
-	const [open, setOpen] = useState(false)
-	const [loading, setLoading] = useState(false)
-	const [chosen, setChosen] = useState<string | null>(null)
-
-	const results = useMemo(() => match(query), [query])
-	const dialogResults = useMemo(() => match(dialogQuery), [dialogQuery])
-
-	const idle = useMemo<GlobalSearchIdleSection[]>(
-		() =>
-			IDLE.map((section) => ({
-				...section,
-				items: section.items.map((item) => ({
-					...item,
-					onSelect: () => setQuery(String(item.label)),
-				})),
-			})),
-		[],
-	)
-
 	return (
 		<ComponentPage
 			title="Global search"
@@ -150,68 +16,18 @@ export function GlobalSearchPage() {
 			]}
 		>
 			<Example
-				id="panel"
+				example="global-search/panel"
 				title="The panel"
 				description="Type in the field, then use ↑ ↓ and Enter — the pointer moves the same highlight the keys do, so Enter always opens the row under the cursor. Results bucket by their group key; the tab strip and the group headings are both generated from what came back."
-				stacked
-				code={`<GlobalSearch<Group>
-  query={query}
-  onQueryChange={setQuery}
-  results={results}
-  loading={isFetching}
-  groupLabels={{ people: "People", bookings: "Bookings" }}
-  idleSections={recentAndSuggested}
-  onResultSelect={(result) => navigate(result.data.href)}
-/>`}
-			>
-				<Switch label="Simulate loading" checked={loading} onChange={event => setLoading(event.target.checked)} />
-				<GlobalSearch<Group>
-					loading={loading}
-					query={query}
-					onQueryChange={setQuery}
-					results={results}
-					groupLabels={GROUP_LABELS}
-					idleSections={idle}
-					onResultSelect={(result) => setChosen(result.title)}
-				/>
-				{!!chosen && (
-					<Text size="sm" type="secondary">opened: {chosen}</Text>
-				)}
-			</Example>
+			/>
 
 			<Example
-				id="dialog"
+				example="global-search/dialog"
 				title="The palette"
-				description="The same panel in the kit's modal surface: focus lands in the field, Escape closes, and the backdrop dismisses. The dialog carries no chrome of its own — the panel already draws the card, and stacking both put a border inside a border."
-				stacked
-				code={`<GlobalSearchDialog
-  open={open}
-  onOpenChange={setOpen}
-  query={query}
-  onQueryChange={setQuery}
-  results={results}
-  onResultSelect={(result) => navigate(result.id)}
-/>`}
-			>
-				<Stack direction="horizontal" gap="md" align="center">
-					<Button type="button" onClick={() => setOpen(true)}>Open the palette</Button>
-					<Text size="sm" type="secondary">Then press Escape, or click outside it.</Text>
-				</Stack>
-				<GlobalSearchDialog<Group>
-					open={open}
-					onOpenChange={setOpen}
-					query={dialogQuery}
-					onQueryChange={setDialogQuery}
-					results={dialogResults}
-					groupLabels={GROUP_LABELS}
-					idleSections={IDLE.map(section => ({ ...section, items: section.items.map(item => ({ ...item, onSelect: () => setDialogQuery(String(item.label)) })) }))}
-					onResultSelect={(result) => {
-						setChosen(result.title)
-					}}
-				/>
-			</Example>
+				description="The same panel in the kit's modal surface: focus lands in the field, Escape closes, and the backdrop dismisses. The dialog carries no chrome of its own — the panel already draws the card, and stacking both would put a border inside a border."
+			/>
 
-			<Example id="search-rules" title="Where the regions come from" stacked>
+			<Example id="search-rules" title="Where the regions come from">
 				<Callout label="Rule">
 					Exactly one of <strong>idle / loading / empty / results</strong> shows, resolved in
 					that order. Idle holds until the query is longer than one character, because a single

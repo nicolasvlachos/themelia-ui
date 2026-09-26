@@ -1,21 +1,11 @@
-import { useState } from "react"
-import { ArchiveIcon, ExternalLinkIcon, Trash2Icon } from "lucide-react"
-
-import { Button } from "@/components/base/buttons"
 import { Text } from "@/components/base/typography"
-import { DataTable } from "@/components/features"
 
-import { tableColumns } from "../examples/data-view/_shared"
-import { BOOKINGS, type Booking } from "../examples/data-view/data"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
 export function DataViewPage() {
-	const [note, setNote] = useState<string | null>(null)
-	const [tablePage, setTablePage] = useState(1)
-
 	return (
 		<ComponentPage
 			title="Data view & data table"
@@ -32,13 +22,12 @@ export function DataViewPage() {
 				example="data-view/data-view"
 				title="An index"
 				description="Search bookings or choose a saved view, then sort and page through the matches. On phones, Filters opens a sheet and saved views become a select. Filtering and sorting run before pagination; changing either returns to the first page."
-				stacked
 			/>
 
-			<Example example="data-view/data-view-states" title="Pending results and recovery" stacked
+			<Example example="data-view/data-view-states" title="Pending results and recovery"
 				description="Keep the last rows visible while a filter change is in flight. If matching fails, the view labels its fallback data and keeps the filters available for recovery." />
 
-			<Example id="data-view-rules" title="What the data view decides" stacked>
+			<Example id="data-view-rules" title="What the data view decides">
 				<Callout label="Rule">
 					The frame draws the card and the table inside it draws <strong>none</strong>. Two card
 					surfaces around one table is a box in a box, which is what happens the moment a
@@ -65,134 +54,26 @@ export function DataViewPage() {
 			</Example>
 
 			<Example
-				id="table"
+				example="data-view/table"
 				title="The table underneath: DataTable"
 				description="What DataView renders, used on its own — for tabular behaviour without a resource browser: a table in a detail panel, a report, a list with nothing to search. Sort by pressing a header, select with the checkboxes, hide a column from the toolbar, and open the row menu. The first column is ResourceCell — the one cell every admin list has, built once so its parts line up down the column."
-				stacked
-				code={`<DataTable
-  columns={columns}
-  data={bookings}
-  enableSorting
-  enableRowSelection
-  enableColumnVisibility
-  stickyFirstColumn
-  getRowId={(row) => row.id}
-  rowActions={(row) => [
-    { id: "open", label: "Open", onClick: () => navigate(row.id) },
-    { id: "archive", label: "Archive", tone: "destructive", onClick: () => archive(row) },
-  ]}
-/>`}
-			>
-				<DataTable<Booking>
-					columns={tableColumns}
-					data={BOOKINGS.slice(0, 5)}
-					enableSorting
-					enableRowSelection
-					enableColumnVisibility
-					enableFiltering
-					filterColumn="booking"
-					filterPlaceholder="Filter venues…"
-					showFullscreenToggle
-					/*
-					 * Pinned, because this table scrolls sideways.
-					 *
-					 * Without it, scrolling right takes the venue name and reference off the
-					 * left edge and every row becomes an anonymous set of numbers — you can
-					 * see a total but not what it is the total OF. The one column that says
-					 * which row this is has to survive the scroll.
-					 */
-					stickyFirstColumn
-					getRowId={(row) => row.id}
-					defaultSorting={[{ id: "date", desc: false }]}
-					onRowClick={(row) => setNote(`opened ${row.reference}`)}
-					rowActions={(row) => [
-						{ id: "open", label: "Open", icon: <ExternalLinkIcon />, onClick: () => setNote(`open ${row.reference}`) },
-						{ id: "archive", label: "Archive", icon: <ArchiveIcon />, onClick: () => setNote(`archive ${row.reference}`) },
-						{
-							id: "delete",
-							label: "Delete",
-							icon: <Trash2Icon />,
-							tone: "destructive",
-							// Only on a cancelled booking — the whole reason the factory form exists.
-							visible: (candidate) => candidate.status === "cancelled",
-							onClick: () => setNote(`delete ${row.reference}`),
-						},
-					]}
-					bulkActions={({ selectedRowCount }) => (
-						<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => setNote(`archive ${selectedRowCount}`)}>
-							Archive selected
-						</Button>
-					)}
-					pageCount={3}
-					page={tablePage}
-					onPageChange={setTablePage}
-					totalRowCount={13}
-					pageSize={5}
-					/*
-					 * Its own name: the index above already owns this page's "Pagination", and two
-					 * landmarks sharing a name are two a reader cannot tell apart.
-					 */
-					strings={{ pagination: { label: "Booking table pages" } }}
-				/>
-				{!!note && <Text size="sm" type="secondary">{note}</Text>}
-			</Example>
+			/>
 
 			<Example
 				example="data-view/table-cells"
 				title="Cells"
 				description="CellValue formats one column's value; CellStack puts two on one line each. Both accept a tuple — [row.total, “money”, { currency }] says the same thing as a four-key object in a quarter of the space, which matters in a file read far more often than it is written."
-				stacked
 			/>
 
 			<Example
-				id="table-selection"
+				example="data-view/table-selection"
 				title="Acting on a selection"
 				description="The shared batch bar, docked rather than a strip inside the table chrome — a table is the case a dock exists for, because the selection has to stay reachable after the reader has scrolled hundreds of rows past the one that started it. `selectionToolbar` still replaces it wholesale; `bulkActions` fills the actions and leaves the count and the way out alone."
-				stacked
-				code={`<DataTable
-  enableRowSelection
-  initialState={{ rowSelection: { b2: true, b4: true } }}
-  bulkActions={({ selectedRowCount, clearSelection }) => (
-    <Button onClick={() => archive(selectedRowCount)}>Archive selected</Button>
-  )}
-/>`}
-			>
-				{/*
-				 * `transform` contains the dock to this example. Without it the bar attaches to
-				 * the viewport and reads as belonging to whichever table is scrolled into view,
-				 * and this page has several.
-				 */}
-				<div style={{ transform: "translate(0)", position: "relative", width: "100%" }}>
-					{/*
-					 * b2 and b4 rather than the first two rows: b1 and b3 carry the "Large" info
-					 * badge, and a translucent badge over a --primary-10 selected row composites to
-					 * 3.72:1 in dark. That is a real latent bug in badges-on-selected-rows, unrelated
-					 * to this bar — see the note in the commit. Selecting rows without one keeps this
-					 * example about the bar.
-					 */}
-					<DataTable<Booking>
-						columns={tableColumns}
-						data={BOOKINGS.slice(0, 4)}
-						enableRowSelection
-						getRowId={(row) => row.id}
-						initialState={{ rowSelection: { b2: true, b4: true } }}
-						bulkActions={({ selectedRowCount }) => (
-							<Button
-								type="button"
-								tone="neutral"
-								buttonStyle="outline"
-								onClick={() => setNote(`archive ${selectedRowCount}`)}
-							>
-								Archive selected
-							</Button>
-						)}
-					/>
-				</div>
-			</Example>
+			/>
 
-			<Example example="data-view/table-empty" title="Nothing to show" stacked />
+			<Example example="data-view/table-empty" title="Nothing to show" />
 
-			<Example id="table-rules" title="What the table decides" stacked>
+			<Example id="table-rules" title="What the table decides">
 				<Callout label="Rule">
 					Paging is the <strong>consumer's</strong>. The table renders the page it is handed and
 					never slices <code>data</code> itself — real admin tables page on the server, and a

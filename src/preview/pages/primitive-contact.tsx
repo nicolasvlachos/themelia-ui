@@ -17,7 +17,6 @@ export function PrimitiveContactPage() {
 				id="email"
 				title="Email"
 				description="The address is the label and the href, so what is read aloud, what is copied, and what is dialled are the same string. An absent address renders as an empty value rather than as a link to nowhere."
-				stacked
 				code={`<Email value="jane@northwind.example" />
 <Email value="raj@northwind.example" display="Raj Patel" />
 <Email value={null} />`}
@@ -35,7 +34,6 @@ export function PrimitiveContactPage() {
 				id="phone"
 				title="Phone"
 				description="Spaces and dashes help a reader and break a dialler, so the href is stripped to what a phone can actually call while the text keeps its grouping. Writing the anchor by hand is where those two quietly become the same string."
-				stacked
 				code={`<Phone value="+31 6 1234 5678" />
 <Phone value="+1 (555) 010-4417" />
 <Phone value={null} />`}
@@ -53,7 +51,6 @@ export function PrimitiveContactPage() {
 				id="url"
 				title="URL"
 				description="external adds the target and the rel that has to accompany it. A link opening a new tab without rel=noopener hands the opened page a reference back to yours."
-				stacked
 				code={`<Url value="https://northwind.example/invoices/4417" />
 <Url value="https://northwind.example/invoices/4417" external />
 <Url value="https://northwind.example" display="Northwind" />

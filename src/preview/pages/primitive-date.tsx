@@ -34,7 +34,6 @@ export function PrimitiveDatePage() {
 				id="date"
 				title="Dates and times"
 				description="Each renders a <time dateTime> so the value is machine-readable regardless of how it is displayed — which is what makes a formatted date still sortable, copyable, and parseable."
-				stacked
 				code={`<DatePrimitive value={WHEN} />
 <Time value={WHEN} />
 <DateTime value={WHEN} />
@@ -56,7 +55,6 @@ export function PrimitiveDatePage() {
 				id="date-locale"
 				title="Localised names"
 				description="date-fns translates month and weekday names from a LOCALE OBJECT, not from a BCP-47 tag. It cannot be derived from `formatting.locale`, because the locales are modules and importing all of them to look one up by tag would put every language in every bundle — so the consumer imports the one it needs and puts it on the provider. NAMES is the whole of it: the pattern owns the order and the punctuation, so `EEEE d MMMM yyyy` under `de` gives “Donnerstag 12 März 2026” where German writes “Donnerstag, 12. März 2026”, and under `ja` it gives day-month-year where Japanese writes year-month-day. That is the intended trade — one date shape across a product is usually what an admin app wants, and `dates.format` is where it lives — but a product that follows each reader’s conventions sets the pattern per locale as well as the locale."
-				stacked
 				code={`import { de } from "date-fns/locale"
 
 <UIProvider config={{ formatting: { locale: "de-DE" }, dates: { locale: de } }}>
@@ -89,7 +87,7 @@ export function PrimitiveDatePage() {
 				/>
 			</Example>
 
-			<Example id="date-rule" title="date-fns, not hand-rolled Date" stacked>
+			<Example id="date-rule" title="date-fns, not hand-rolled Date">
 				<Callout label="Rule">
 					Formatting, parsing, and arithmetic go through <code>date-fns</code>. Native{" "}
 					<code>Date</code> arithmetic is where month-end, daylight saving, and the
@@ -103,7 +101,6 @@ export function PrimitiveDatePage() {
 				id="date-range"
 				title="DateRange"
 				description="Same month collapses to 3–7 March; same year keeps both months; across years keeps everything. A format string cannot express that, because which parts are redundant depends on the two values."
-				stacked
 				code={`<DateRange start={MARCH_3} end={MARCH_7} />
 <DateRange start={MARCH_3} end={APRIL_2} />
 <DateRange start={MARCH_3} end={NEXT_JAN} />
@@ -125,7 +122,6 @@ export function PrimitiveDatePage() {
 				id="relative-time"
 				title="RelativeTime"
 				description="A relative label answers “is this recent?” at a glance and answers nothing else — so the exact timestamp stays in the time element's dateTime rather than being thrown away for it."
-				stacked
 				code={`<RelativeTime value={HOURS_AGO} now={NOW} />
 <RelativeTime value={DAYS_AGO} now={NOW} />
 <RelativeTime value={MONTHS_AGO} now={NOW} />
@@ -145,7 +141,6 @@ export function PrimitiveDatePage() {
 				id="relative-time-shape"
 				title="Suffix and precision"
 				description="The suffix is on by default: a bare duration beside a row of dates reads as a length rather than a moment. includeSeconds separates “less than a minute” from something more precise, which only matters for a feed measured in seconds."
-				stacked
 				code={`<RelativeTime value={date} now={now} addSuffix={false} />
 <RelativeTime value={date} now={now} includeSeconds />`}
 			>
@@ -163,7 +158,6 @@ export function PrimitiveDatePage() {
 				id="relative-time-locale"
 				title="In another language"
 				description="Two levels. A date-fns locale on the provider translates the wording date-fns already knows; formatRelativeTime replaces it entirely, for a product whose own catalogue already has these strings — relative time is not a format string in any language, since it pluralises and several languages inflect the unit by the number."
-				stacked
 				code={`import { de } from "date-fns/locale"
 
 <UIProvider config={{ dates: { locale: de } }}>…</UIProvider>
@@ -206,7 +200,7 @@ export function PrimitiveDatePage() {
 				/>
 			</Example>
 
-			<Example id="relative-time-rule" title="Pass the clock in" stacked>
+			<Example id="relative-time-rule" title="Pass the clock in">
 				<Callout label="Rule">
 					<code>now</code> exists so the comparison point can be supplied. A component that
 					reads the clock itself renders differently on the server and the client, produces
@@ -220,7 +214,6 @@ export function PrimitiveDatePage() {
 				id="duration"
 				title="Duration"
 				description="Separate from the date primitives on purpose: a duration has no timezone, no calendar, and no daylight saving, and the moment it is modelled as a Date it acquires all three."
-				stacked
 				code={`<Duration value={45} />
 <Duration value={4520} />
 <Duration value={90} from="minutes" />

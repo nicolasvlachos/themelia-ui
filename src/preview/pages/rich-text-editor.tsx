@@ -1,20 +1,9 @@
-import { useState } from "react"
-
-import { Stack } from "@/components/base/structure"
-import { RichText, Text } from "@/components/base/typography"
-import { RichTextEditor } from "@/components/features"
-
-import styles from "../preview.module.css"
 import { Callout } from "../partials/callout"
 import { ComponentPage } from "../partials/component-page"
 import { Example } from "../partials/example"
 import { PropTable } from "../partials/prop-table"
 
-const SEED = "<p>Select some text and press <strong>B</strong>. The toolbar reports what the caret is inside, so the buttons light up as you move through the document.</p><ul><li>Lists work.</li><li>So does <em>emphasis</em>.</li></ul>"
-
 export function RichTextEditorPage() {
-	const [body, setBody] = useState(SEED)
-
 	return (
 		<ComponentPage
 			title="Rich text editor"
@@ -24,50 +13,18 @@ export function RichTextEditorPage() {
 			]}
 		>
 			<Example
-				id="editor"
-				title="The editor"
-				description="Format selected text, move between paragraphs and lists, and undo or redo changes. Formatting buttons follow the current selection; history buttons become available when there is a change to undo or redo."
-				stacked
-				code={`<RichTextEditor
-  value={body}
-  onValueChange={setBody}
-  showCounts
-  maxLength={280}
-  placeholder="Write something…"
-/>`}
-			>
-				<RichTextEditor
-					value={body}
-					onValueChange={setBody}
-					placeholder="Write something…"
-					showCounts
-					maxLength={280}
-				/>
-				<Text size="xs" type="secondary" className={styles.mentionSource}>
-					{body || "(empty)"}
-				</Text>
-			</Example>
+				example="rich-text-editor/editor"
+				title="The editor and what comes out"
+				description="Format selected text, move between paragraphs and lists, and undo or redo changes. Formatting buttons follow the current selection; history buttons become available when there is a change to undo or redo. Below the editor is the HTML it emits, then that HTML rendered through RichText. TipTap normalizes its output to its schema: paragraphs, headings, lists, quotes, code, links, supported marks and atomic mentions; unsupported tags are removed or converted. Render stored HTML through RichText, which sanitizes on every render — the editor schema is not an application security boundary."
+			/>
 
 			<Example
 				example="rich-text-editor/editor-compact"
 				title="compact"
 				description="A shorter body for a comment box rather than a page. The submit control goes in footerSlot, under the body and inside the same frame, so it sits where CommentComposer puts it and where a reader finishing a draft looks for it. toolbarTrailing is still there for a control that belongs with the formatting buttons."
-				stacked
 			/>
 
-			<Example
-				id="editor-output"
-				title="What comes out"
-				description="TipTap emits HTML normalized to its schema: paragraphs, headings, lists, quotes, code, links, supported marks and atomic mentions. Unsupported tags are removed or converted. Render stored HTML through RichText, which sanitizes on every render; the editor schema is not an application security boundary."
-				stacked
-				code={`<RichText html={body} />`}
-			>
-				<Stack gap="md">
-					<RichText html={body} />
-				</Stack>
-			</Example>
-
-			<Example id="editor-rule" title="TipTap by default" stacked
+			<Example id="editor-rule" title="TipTap by default"
 				code={`npm install @tiptap/core @tiptap/pm @tiptap/starter-kit`}
 			>
 				<Callout label="Installation">
@@ -83,7 +40,6 @@ export function RichTextEditorPage() {
 				id="rich-text-engine"
 				title="Custom engines"
 				description="The default needs no engine prop. Use the exact TipTap factory import when configuring a custom schema. A supplied engine remains caller-owned: the shell mounts and unmounts its view, and the caller destroys it when finished. Custom extensions replace the default schema, including mentions."
-				stacked
 				code={`// Default: StarterKit and atomic mentions.
 <RichTextEditor value={html} onValueChange={setHtml} />
 

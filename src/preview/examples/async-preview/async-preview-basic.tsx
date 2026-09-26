@@ -22,7 +22,7 @@ export default function AsyncPreviewBasic() {
 	}
 
 	return (
-		<>
+		<Stack direction="horizontal" gap="lg" wrap align="center">
 			<Stack direction="horizontal" gap="xl" wrap>
 				{Object.values(CUSTOMERS).map((customer) => (
 					<AsyncPreview.Root<Customer, { id: string }, "customer">
@@ -72,6 +72,6 @@ export default function AsyncPreviewBasic() {
 					</Stack>
 				)}
 			</Stack>
-		</>
+		</Stack>
 	)
 }
