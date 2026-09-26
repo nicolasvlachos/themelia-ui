@@ -1,0 +1,720 @@
+/*
+ * Structure — Stack, Grid, GridCell, AdaptiveGrid.
+ *
+ * ── How responsive props work here ───────────────────────────────────────────────────
+ * Each prop writes one custom property per breakpoint it specifies, and every breakpoint
+ * has a media query that reads its own variable and falls back through EVERY breakpoint
+ * below it. So `gap={{ base: "sm", lg: "xl" }}` sets two variables, and the `lg` query
+ * picks up the second while everything below keeps the first.
+ *
+ * ── Why every chain is written out in full ───────────────────────────────────────────
+ * `var()` fallbacks nest rather than cascade: there is no way to express "the nearest
+ * defined breakpoint at or below this one" other than by chaining all of them. The chains
+ * used to be truncated — `lg` fell back to `md` and then straight to `base`, skipping
+ * `sm` — so a value set at `sm` applied up to 64rem and then silently reverted to the base
+ * value on a wide screen, which is the opposite of what a mobile-first responsive prop
+ * means. `flex-wrap` was missing from the two widest queries entirely, and the grid's
+ * `row-gap`, `column-gap` and `align-items` had no responsive rules at all.
+ *
+ * That is why this file is GENERATED-shaped: every property appears in every query, every
+ * variable is reset so it cannot inherit, and `verify responsive` fails the build if
+ * either stops being true.
+ */
+
+/*
+ * ── Why every variable is reset to `initial` ─────────────────────────────────────────
+ * Custom properties INHERIT. A `<Stack direction="horizontal">` writes
+ * `--stack-direction-base: row` as an inline style, and every Stack nested inside it —
+ * one that asked for nothing — read that value and turned itself into a row too. A column
+ * of fields inside a horizontal toolbar silently became a second toolbar.
+ *
+ * Resetting here breaks the inheritance without breaking the prop: an inline style
+ * outranks a class rule, so a Stack that sets its own value keeps it, and a Stack that
+ * does not falls back to the component's default instead of to its parent's choice.
+ */
+
+.stack {
+	--stack-max-width-base: initial;
+	--stack-max-width-sm: initial;
+	--stack-max-width-md: initial;
+	--stack-max-width-lg: initial;
+	--stack-max-width-xl: initial;
+	--stack-max-width-2xl: initial;
+	display: flex;
+	--stack-direction-base: initial;
+	--stack-direction-sm: initial;
+	--stack-direction-md: initial;
+	--stack-direction-lg: initial;
+	--stack-direction-xl: initial;
+	--stack-direction-2xl: initial;
+	--stack-gap-base: initial;
+	--stack-gap-sm: initial;
+	--stack-gap-md: initial;
+	--stack-gap-lg: initial;
+	--stack-gap-xl: initial;
+	--stack-gap-2xl: initial;
+	--stack-align-base: initial;
+	--stack-align-sm: initial;
+	--stack-align-md: initial;
+	--stack-align-lg: initial;
+	--stack-align-xl: initial;
+	--stack-align-2xl: initial;
+	--stack-justify-base: initial;
+	--stack-justify-sm: initial;
+	--stack-justify-md: initial;
+	--stack-justify-lg: initial;
+	--stack-justify-xl: initial;
+	--stack-justify-2xl: initial;
+	--stack-wrap-base: initial;
+	--stack-wrap-sm: initial;
+	--stack-wrap-md: initial;
+	--stack-wrap-lg: initial;
+	--stack-wrap-xl: initial;
+	--stack-wrap-2xl: initial;
+
+	flex-direction: var(--stack-direction-base, column);
+	gap: var(--stack-gap-base, var(--space-md));
+	align-items: var(--stack-align-base, stretch);
+	justify-content: var(--stack-justify-base, flex-start);
+	flex-wrap: var(--stack-wrap-base, nowrap);
+	max-width: var(--stack-max-width-base, none);
+	min-width: 0;
+}
+
+@media (--bp-sm) {
+	.stack {
+		flex-direction: var(--stack-direction-sm, var(--stack-direction-base, column));
+		gap: var(--stack-gap-sm, var(--stack-gap-base, var(--space-md)));
+		align-items: var(--stack-align-sm, var(--stack-align-base, stretch));
+		justify-content: var(--stack-justify-sm, var(--stack-justify-base, flex-start));
+		max-width: var(--stack-max-width-sm, var(--stack-max-width-base, none));
+		flex-wrap: var(--stack-wrap-sm, var(--stack-wrap-base, nowrap));
+	}
+}
+
+@media (--bp-md) {
+	.stack {
+		flex-direction: var(--stack-direction-md, var(--stack-direction-sm, var(--stack-direction-base, column)));
+		gap: var(--stack-gap-md, var(--stack-gap-sm, var(--stack-gap-base, var(--space-md))));
+		align-items: var(--stack-align-md, var(--stack-align-sm, var(--stack-align-base, stretch)));
+		justify-content: var(--stack-justify-md, var(--stack-justify-sm, var(--stack-justify-base, flex-start)));
+		max-width: var(--stack-max-width-md, var(--stack-max-width-sm, var(--stack-max-width-base, none)));
+		flex-wrap: var(--stack-wrap-md, var(--stack-wrap-sm, var(--stack-wrap-base, nowrap)));
+	}
+}
+
+@media (--bp-lg) {
+	.stack {
+		flex-direction: var(--stack-direction-lg, var(--stack-direction-md, var(--stack-direction-sm, var(--stack-direction-base, column))));
+		gap: var(--stack-gap-lg, var(--stack-gap-md, var(--stack-gap-sm, var(--stack-gap-base, var(--space-md)))));
+		align-items: var(--stack-align-lg, var(--stack-align-md, var(--stack-align-sm, var(--stack-align-base, stretch))));
+		justify-content: var(--stack-justify-lg, var(--stack-justify-md, var(--stack-justify-sm, var(--stack-justify-base, flex-start))));
+		max-width: var(--stack-max-width-lg, var(--stack-max-width-md, var(--stack-max-width-sm, var(--stack-max-width-base, none))));
+		flex-wrap: var(--stack-wrap-lg, var(--stack-wrap-md, var(--stack-wrap-sm, var(--stack-wrap-base, nowrap))));
+	}
+}
+
+@media (--bp-xl) {
+	.stack {
+		flex-direction: var(--stack-direction-xl, var(--stack-direction-lg, var(--stack-direction-md, var(--stack-direction-sm, var(--stack-direction-base, column)))));
+		gap: var(--stack-gap-xl, var(--stack-gap-lg, var(--stack-gap-md, var(--stack-gap-sm, var(--stack-gap-base, var(--space-md))))));
+		align-items: var(--stack-align-xl, var(--stack-align-lg, var(--stack-align-md, var(--stack-align-sm, var(--stack-align-base, stretch)))));
+		justify-content: var(--stack-justify-xl, var(--stack-justify-lg, var(--stack-justify-md, var(--stack-justify-sm, var(--stack-justify-base, flex-start)))));
+		max-width: var(--stack-max-width-xl, var(--stack-max-width-lg, var(--stack-max-width-md, var(--stack-max-width-sm, var(--stack-max-width-base, none)))));
+		flex-wrap: var(--stack-wrap-xl, var(--stack-wrap-lg, var(--stack-wrap-md, var(--stack-wrap-sm, var(--stack-wrap-base, nowrap)))));
+	}
+}
+
+@media (--bp-2xl) {
+	.stack {
+		flex-direction: var(--stack-direction-2xl, var(--stack-direction-xl, var(--stack-direction-lg, var(--stack-direction-md, var(--stack-direction-sm, var(--stack-direction-base, column))))));
+		gap: var(--stack-gap-2xl, var(--stack-gap-xl, var(--stack-gap-lg, var(--stack-gap-md, var(--stack-gap-sm, var(--stack-gap-base, var(--space-md)))))));
+		align-items: var(--stack-align-2xl, var(--stack-align-xl, var(--stack-align-lg, var(--stack-align-md, var(--stack-align-sm, var(--stack-align-base, stretch))))));
+		justify-content: var(--stack-justify-2xl, var(--stack-justify-xl, var(--stack-justify-lg, var(--stack-justify-md, var(--stack-justify-sm, var(--stack-justify-base, flex-start))))));
+		max-width: var(--stack-max-width-2xl, var(--stack-max-width-xl, var(--stack-max-width-lg, var(--stack-max-width-md, var(--stack-max-width-sm, var(--stack-max-width-base, none))))));
+		flex-wrap: var(--stack-wrap-2xl, var(--stack-wrap-xl, var(--stack-wrap-lg, var(--stack-wrap-md, var(--stack-wrap-sm, var(--stack-wrap-base, nowrap))))));
+	}
+}
+
+/* ── Grid ─────────────────────────────────────────────────────────────────────── */
+
+.grid {
+	--grid-max-width-base: initial;
+	--grid-max-width-sm: initial;
+	--grid-max-width-md: initial;
+	--grid-max-width-lg: initial;
+	--grid-max-width-xl: initial;
+	--grid-max-width-2xl: initial;
+	display: grid;
+	--grid-columns-base: initial;
+	--grid-columns-sm: initial;
+	--grid-columns-md: initial;
+	--grid-columns-lg: initial;
+	--grid-columns-xl: initial;
+	--grid-columns-2xl: initial;
+	--grid-gap-base: initial;
+	--grid-gap-sm: initial;
+	--grid-gap-md: initial;
+	--grid-gap-lg: initial;
+	--grid-gap-xl: initial;
+	--grid-gap-2xl: initial;
+	--grid-row-gap-base: initial;
+	--grid-row-gap-sm: initial;
+	--grid-row-gap-md: initial;
+	--grid-row-gap-lg: initial;
+	--grid-row-gap-xl: initial;
+	--grid-row-gap-2xl: initial;
+	--grid-column-gap-base: initial;
+	--grid-column-gap-sm: initial;
+	--grid-column-gap-md: initial;
+	--grid-column-gap-lg: initial;
+	--grid-column-gap-xl: initial;
+	--grid-column-gap-2xl: initial;
+	--grid-align-base: initial;
+	--grid-align-sm: initial;
+	--grid-align-md: initial;
+	--grid-align-lg: initial;
+	--grid-align-xl: initial;
+	--grid-align-2xl: initial;
+
+	grid-template-columns: repeat(var(--grid-columns-base, 1), minmax(0, 1fr));
+	gap: var(--grid-gap-base, var(--space-xl));
+	row-gap: var(--grid-row-gap-base, var(--grid-gap-base, var(--space-xl)));
+	column-gap: var(--grid-column-gap-base, var(--grid-gap-base, var(--space-xl)));
+	align-items: var(--grid-align-base, stretch);
+	max-width: var(--grid-max-width-base, none);
+	min-width: 0;
+}
+
+@media (--bp-sm) {
+	.grid {
+		grid-template-columns: repeat(var(--grid-columns-sm, var(--grid-columns-base, 1)), minmax(0, 1fr));
+		gap: var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)));
+		row-gap: var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))));
+		column-gap: var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))));
+		max-width: var(--grid-max-width-sm, var(--grid-max-width-base, none));
+		align-items: var(--grid-align-sm, var(--grid-align-base, stretch));
+	}
+}
+
+@media (--bp-md) {
+	.grid {
+		grid-template-columns: repeat(var(--grid-columns-md, var(--grid-columns-sm, var(--grid-columns-base, 2))), minmax(0, 1fr));
+		gap: var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl))));
+		row-gap: var(--grid-row-gap-md, var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))));
+		column-gap: var(--grid-column-gap-md, var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))));
+		max-width: var(--grid-max-width-md, var(--grid-max-width-sm, var(--grid-max-width-base, none)));
+		align-items: var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch)));
+	}
+}
+
+@media (--bp-lg) {
+	.grid {
+		grid-template-columns: repeat(var(--grid-columns-lg, var(--grid-columns-md, var(--grid-columns-sm, var(--grid-columns-base, 2)))), minmax(0, 1fr));
+		gap: var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))));
+		row-gap: var(--grid-row-gap-lg, var(--grid-row-gap-md, var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))));
+		column-gap: var(--grid-column-gap-lg, var(--grid-column-gap-md, var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))));
+		max-width: var(--grid-max-width-lg, var(--grid-max-width-md, var(--grid-max-width-sm, var(--grid-max-width-base, none))));
+		align-items: var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch))));
+	}
+}
+
+@media (--bp-xl) {
+	.grid {
+		grid-template-columns: repeat(var(--grid-columns-xl, var(--grid-columns-lg, var(--grid-columns-md, var(--grid-columns-sm, var(--grid-columns-base, 2))))), minmax(0, 1fr));
+		gap: var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl))))));
+		row-gap: var(--grid-row-gap-xl, var(--grid-row-gap-lg, var(--grid-row-gap-md, var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))))));
+		column-gap: var(--grid-column-gap-xl, var(--grid-column-gap-lg, var(--grid-column-gap-md, var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))))));
+		max-width: var(--grid-max-width-xl, var(--grid-max-width-lg, var(--grid-max-width-md, var(--grid-max-width-sm, var(--grid-max-width-base, none)))));
+		align-items: var(--grid-align-xl, var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch)))));
+	}
+}
+
+@media (--bp-2xl) {
+	.grid {
+		grid-template-columns: repeat(var(--grid-columns-2xl, var(--grid-columns-xl, var(--grid-columns-lg, var(--grid-columns-md, var(--grid-columns-sm, var(--grid-columns-base, 2)))))), minmax(0, 1fr));
+		gap: var(--grid-gap-2xl, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))));
+		row-gap: var(--grid-row-gap-2xl, var(--grid-row-gap-xl, var(--grid-row-gap-lg, var(--grid-row-gap-md, var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-2xl, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))))))));
+		column-gap: var(--grid-column-gap-2xl, var(--grid-column-gap-xl, var(--grid-column-gap-lg, var(--grid-column-gap-md, var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-2xl, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))))))));
+		max-width: var(--grid-max-width-2xl, var(--grid-max-width-xl, var(--grid-max-width-lg, var(--grid-max-width-md, var(--grid-max-width-sm, var(--grid-max-width-base, none))))));
+		align-items: var(--grid-align-2xl, var(--grid-align-xl, var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch))))));
+	}
+}
+
+/*
+ * ── The same ladder, keyed to a CONTAINER ────────────────────────────────────────────
+ *
+ * A Grid's width comes from its parent, not from its contents, so the honest question is
+ * "how much room am I in" — and until now the answer came from the viewport. A Grid in a
+ * 327px rail at a 1440px viewport resolved the column count of a full-width page, which is
+ * why a card holding three facts had to be told `columns={2}` by hand, and why a hand-set
+ * count could not know how many items it would receive.
+ *
+ * These rules are INERT by default: an @container query matches nothing unless an ancestor
+ * declares `container-type`. The first block, `(min-width: 0)`, is true of ANY container,
+ * so the moment one appears it resets to the base values and the ladder below rebuilds
+ * from the container's own width — the viewport ladder above is overridden in full rather
+ * than partially, which is what would happen if only the matching steps were restated.
+ *
+ * A Grid can never be its own container: `container-type` on the element would make its
+ * columns depend on a width its columns determine, and `verify container-queries` fails on
+ * exactly that. The container is always an ancestor.
+ *
+ * ── The thresholds are NOT the viewport's ──────────────────────────────────────────
+ *
+ * A container is always narrower than the screen holding it, so reusing 40/48/64/80/96rem
+ * makes every step unreachable: a 700px panel never meets `md` at 768px, and a Grid told
+ * `{ base: 1, md: 2 }` collapsed to one column inside a container wide enough for three.
+ * Measured that way first — /resource grew 357px and every two-column grid in it became
+ * one.
+ *
+ * 24 / 32 / 40 / 52 / 64rem instead. The prop keeps its meaning — `md` is a medium amount
+ * of ROOM, which is what an author writing `md: 2` meant — and the same value now answers
+ * the space the grid is actually in.
+ *
+ * The upper steps are round container widths rather than scaled-down viewport ones: a
+ * 700px panel is the commonest main-content column in this kit, and at 44rem it missed
+ * `lg` by four pixels and lost a column it had no reason to lose.
+ *
+ * The step VALUES are generated from the @media ladder above so the two cannot drift; only
+ * the thresholds differ.
+ */
+@container (min-width: 0) {
+	.grid {
+		grid-template-columns: repeat(var(--grid-columns-base, 1), minmax(0, 1fr));
+		gap: var(--grid-gap-base, var(--space-xl));
+		row-gap: var(--grid-row-gap-base, var(--grid-gap-base, var(--space-xl)));
+		column-gap: var(--grid-column-gap-base, var(--grid-gap-base, var(--space-xl)));
+		align-items: var(--grid-align-base, stretch);
+		max-width: var(--grid-max-width-base, none);
+	}
+}
+
+@container (min-width: 24rem) {
+	.grid {
+			grid-template-columns: repeat(var(--grid-columns-sm, var(--grid-columns-base, 1)), minmax(0, 1fr));
+			gap: var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)));
+			row-gap: var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))));
+			column-gap: var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))));
+			max-width: var(--grid-max-width-sm, var(--grid-max-width-base, none));
+			align-items: var(--grid-align-sm, var(--grid-align-base, stretch));
+	}
+}
+
+@container (min-width: 32rem) {
+	.grid {
+			grid-template-columns: repeat(var(--grid-columns-md, var(--grid-columns-sm, var(--grid-columns-base, 2))), minmax(0, 1fr));
+			gap: var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl))));
+			row-gap: var(--grid-row-gap-md, var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))));
+			column-gap: var(--grid-column-gap-md, var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))));
+			max-width: var(--grid-max-width-md, var(--grid-max-width-sm, var(--grid-max-width-base, none)));
+			align-items: var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch)));
+	}
+}
+
+@container (min-width: 40rem) {
+	.grid {
+			grid-template-columns: repeat(var(--grid-columns-lg, var(--grid-columns-md, var(--grid-columns-sm, var(--grid-columns-base, 2)))), minmax(0, 1fr));
+			gap: var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))));
+			row-gap: var(--grid-row-gap-lg, var(--grid-row-gap-md, var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))));
+			column-gap: var(--grid-column-gap-lg, var(--grid-column-gap-md, var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))));
+			max-width: var(--grid-max-width-lg, var(--grid-max-width-md, var(--grid-max-width-sm, var(--grid-max-width-base, none))));
+			align-items: var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch))));
+	}
+}
+
+@container (min-width: 52rem) {
+	.grid {
+			grid-template-columns: repeat(var(--grid-columns-xl, var(--grid-columns-lg, var(--grid-columns-md, var(--grid-columns-sm, var(--grid-columns-base, 2))))), minmax(0, 1fr));
+			gap: var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl))))));
+			row-gap: var(--grid-row-gap-xl, var(--grid-row-gap-lg, var(--grid-row-gap-md, var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))))));
+			column-gap: var(--grid-column-gap-xl, var(--grid-column-gap-lg, var(--grid-column-gap-md, var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))))));
+			max-width: var(--grid-max-width-xl, var(--grid-max-width-lg, var(--grid-max-width-md, var(--grid-max-width-sm, var(--grid-max-width-base, none)))));
+			align-items: var(--grid-align-xl, var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch)))));
+	}
+}
+
+@container (min-width: 64rem) {
+	.grid {
+			grid-template-columns: repeat(var(--grid-columns-2xl, var(--grid-columns-xl, var(--grid-columns-lg, var(--grid-columns-md, var(--grid-columns-sm, var(--grid-columns-base, 2)))))), minmax(0, 1fr));
+			gap: var(--grid-gap-2xl, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))));
+			row-gap: var(--grid-row-gap-2xl, var(--grid-row-gap-xl, var(--grid-row-gap-lg, var(--grid-row-gap-md, var(--grid-row-gap-sm, var(--grid-row-gap-base, var(--grid-gap-2xl, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))))))));
+			column-gap: var(--grid-column-gap-2xl, var(--grid-column-gap-xl, var(--grid-column-gap-lg, var(--grid-column-gap-md, var(--grid-column-gap-sm, var(--grid-column-gap-base, var(--grid-gap-2xl, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))))))))));
+			max-width: var(--grid-max-width-2xl, var(--grid-max-width-xl, var(--grid-max-width-lg, var(--grid-max-width-md, var(--grid-max-width-sm, var(--grid-max-width-base, none))))));
+			align-items: var(--grid-align-2xl, var(--grid-align-xl, var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch))))));
+	}
+}
+
+.cell {
+	--cell-span-base: initial;
+	--cell-span-sm: initial;
+	--cell-span-md: initial;
+	--cell-span-lg: initial;
+	--cell-span-xl: initial;
+	--cell-span-2xl: initial;
+
+	grid-column: span var(--cell-span-base, 1) / span var(--cell-span-base, 1);
+	min-width: 0;
+}
+
+@media (--bp-sm) {
+	.cell {
+		grid-column: span var(--cell-span-sm, var(--cell-span-base, 1)) / span var(--cell-span-sm, var(--cell-span-base, 1));
+	}
+}
+
+@media (--bp-md) {
+	.cell {
+		grid-column: span var(--cell-span-md, var(--cell-span-sm, var(--cell-span-base, 1))) / span var(--cell-span-md, var(--cell-span-sm, var(--cell-span-base, 1)));
+	}
+}
+
+@media (--bp-lg) {
+	.cell {
+		grid-column: span var(--cell-span-lg, var(--cell-span-md, var(--cell-span-sm, var(--cell-span-base, 1)))) / span var(--cell-span-lg, var(--cell-span-md, var(--cell-span-sm, var(--cell-span-base, 1))));
+	}
+}
+
+@media (--bp-xl) {
+	.cell {
+		grid-column: span var(--cell-span-xl, var(--cell-span-lg, var(--cell-span-md, var(--cell-span-sm, var(--cell-span-base, 1))))) / span var(--cell-span-xl, var(--cell-span-lg, var(--cell-span-md, var(--cell-span-sm, var(--cell-span-base, 1)))));
+	}
+}
+
+@media (--bp-2xl) {
+	.cell {
+		grid-column: span var(--cell-span-2xl, var(--cell-span-xl, var(--cell-span-lg, var(--cell-span-md, var(--cell-span-sm, var(--cell-span-base, 1)))))) / span var(--cell-span-2xl, var(--cell-span-xl, var(--cell-span-lg, var(--cell-span-md, var(--cell-span-sm, var(--cell-span-base, 1))))));
+	}
+}
+
+/*
+ * Auto-fit rather than a column count: the grid adds a track whenever one more fits at
+ * the minimum width. Needs no breakpoints at all, which is why it is a separate component
+ * rather than a Grid variant.
+ */
+.adaptive {
+	display: grid;
+	--grid-columns-base: initial;
+	--grid-columns-sm: initial;
+	--grid-columns-md: initial;
+	--grid-columns-lg: initial;
+	--grid-columns-xl: initial;
+	--grid-columns-2xl: initial;
+	--grid-gap-base: initial;
+	--grid-gap-sm: initial;
+	--grid-gap-md: initial;
+	--grid-gap-lg: initial;
+	--grid-gap-xl: initial;
+	--grid-gap-2xl: initial;
+	--grid-row-gap-base: initial;
+	--grid-row-gap-sm: initial;
+	--grid-row-gap-md: initial;
+	--grid-row-gap-lg: initial;
+	--grid-row-gap-xl: initial;
+	--grid-row-gap-2xl: initial;
+	--grid-column-gap-base: initial;
+	--grid-column-gap-sm: initial;
+	--grid-column-gap-md: initial;
+	--grid-column-gap-lg: initial;
+	--grid-column-gap-xl: initial;
+	--grid-column-gap-2xl: initial;
+	--grid-align-base: initial;
+	--grid-align-sm: initial;
+	--grid-align-md: initial;
+	--grid-align-lg: initial;
+	--grid-align-xl: initial;
+	--grid-align-2xl: initial;
+
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--adaptive-min, var(--adaptive-grid-min-md))), 1fr));
+	gap: var(--grid-gap-base, var(--space-xl));
+	align-items: var(--grid-align-base, stretch);
+	min-width: 0;
+}
+
+/*
+ * ── Split ────────────────────────────────────────────────────────────────────────────
+ *
+ * One column until the collapse breakpoint, two after it. The fixed column is a `minmax`
+ * with the requested width as its MAXIMUM, so a narrow viewport shrinks the rail rather
+ * than squeezing the content beside it to nothing.
+ *
+ * `side="start"` moves the rail visually without touching the DOM: the first child is the
+ * main content on both settings, so a reader tabbing through reaches it first either way.
+ */
+.split {
+	--split-width-base: initial;
+	--split-width-sm: initial;
+	--split-width-md: initial;
+	--split-width-lg: initial;
+	--split-width-xl: initial;
+	--split-width-2xl: initial;
+	--split-gap-base: initial;
+	--split-gap-sm: initial;
+	--split-gap-md: initial;
+	--split-gap-lg: initial;
+	--split-gap-xl: initial;
+	--split-gap-2xl: initial;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--split-gap-base, var(--space-md));
+	--split-w: var(--split-width-base, 18rem);
+	--split-cols: minmax(0, 1fr) minmax(0, var(--split-w));
+}
+
+.split[data-side="start"] {
+	--split-cols: minmax(0, var(--split-w)) minmax(0, 1fr);
+}
+
+/* `never` is expanded at every width, so it is set outside the queries. */
+.split[data-collapse="never"] {
+	grid-template-columns: var(--split-cols);
+}
+
+.split[data-collapse="never"][data-side="start"] > :first-child {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+.split[data-collapse="never"][data-side="start"] > :last-child {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+@media (--bp-sm) {
+	.split {
+		gap: var(--split-gap-sm, var(--split-gap-base, var(--space-md)));
+		--split-w: var(--split-width-sm, var(--split-width-base, 18rem));
+	}
+
+	.split[data-collapse="sm"] {
+		grid-template-columns: var(--split-cols);
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :first-child {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :last-child {
+		grid-column: 1;
+		grid-row: 1;
+	}
+}
+
+@media (--bp-md) {
+	.split {
+		gap: var(--split-gap-md, var(--split-gap-sm, var(--split-gap-base, var(--space-md))));
+		--split-w: var(--split-width-md, var(--split-width-sm, var(--split-width-base, 18rem)));
+	}
+
+	.split[data-collapse="sm"],
+	.split[data-collapse="md"] {
+		grid-template-columns: var(--split-cols);
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :first-child,
+	.split[data-collapse="md"][data-side="start"] > :first-child {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :last-child,
+	.split[data-collapse="md"][data-side="start"] > :last-child {
+		grid-column: 1;
+		grid-row: 1;
+	}
+}
+
+@media (--bp-lg) {
+	.split {
+		gap: var(--split-gap-lg, var(--split-gap-md, var(--split-gap-sm, var(--split-gap-base, var(--space-md)))));
+		--split-w: var(--split-width-lg, var(--split-width-md, var(--split-width-sm, var(--split-width-base, 18rem))));
+	}
+
+	.split[data-collapse="sm"],
+	.split[data-collapse="md"],
+	.split[data-collapse="lg"] {
+		grid-template-columns: var(--split-cols);
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :first-child,
+	.split[data-collapse="md"][data-side="start"] > :first-child,
+	.split[data-collapse="lg"][data-side="start"] > :first-child {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :last-child,
+	.split[data-collapse="md"][data-side="start"] > :last-child,
+	.split[data-collapse="lg"][data-side="start"] > :last-child {
+		grid-column: 1;
+		grid-row: 1;
+	}
+}
+
+@media (--bp-xl) {
+	.split {
+		gap: var(--split-gap-xl, var(--split-gap-lg, var(--split-gap-md, var(--split-gap-sm, var(--split-gap-base, var(--space-md))))));
+		--split-w: var(--split-width-xl, var(--split-width-lg, var(--split-width-md, var(--split-width-sm, var(--split-width-base, 18rem)))));
+	}
+
+	.split[data-collapse="sm"],
+	.split[data-collapse="md"],
+	.split[data-collapse="lg"],
+	.split[data-collapse="xl"] {
+		grid-template-columns: var(--split-cols);
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :first-child,
+	.split[data-collapse="md"][data-side="start"] > :first-child,
+	.split[data-collapse="lg"][data-side="start"] > :first-child,
+	.split[data-collapse="xl"][data-side="start"] > :first-child {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :last-child,
+	.split[data-collapse="md"][data-side="start"] > :last-child,
+	.split[data-collapse="lg"][data-side="start"] > :last-child,
+	.split[data-collapse="xl"][data-side="start"] > :last-child {
+		grid-column: 1;
+		grid-row: 1;
+	}
+}
+
+@media (--bp-2xl) {
+	.split {
+		gap: var(--split-gap-2xl, var(--split-gap-xl, var(--split-gap-lg, var(--split-gap-md, var(--split-gap-sm, var(--split-gap-base, var(--space-md)))))));
+		--split-w: var(--split-width-2xl, var(--split-width-xl, var(--split-width-lg, var(--split-width-md, var(--split-width-sm, var(--split-width-base, 18rem))))));
+	}
+
+	.split[data-collapse="sm"],
+	.split[data-collapse="md"],
+	.split[data-collapse="lg"],
+	.split[data-collapse="xl"] {
+		grid-template-columns: var(--split-cols);
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :first-child,
+	.split[data-collapse="md"][data-side="start"] > :first-child,
+	.split[data-collapse="lg"][data-side="start"] > :first-child,
+	.split[data-collapse="xl"][data-side="start"] > :first-child {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.split[data-collapse="sm"][data-side="start"] > :last-child,
+	.split[data-collapse="md"][data-side="start"] > :last-child,
+	.split[data-collapse="lg"][data-side="start"] > :last-child,
+	.split[data-collapse="xl"][data-side="start"] > :last-child {
+		grid-column: 1;
+		grid-row: 1;
+	}
+}
+
+
+/*
+ * ── Bleed ────────────────────────────────────────────────────────────────────────────
+ *
+ * A negative margin on the chosen axis, sized from the spacing scale so it cancels a
+ * padding that came from the same scale. Both move together under a density change, which
+ * is the whole reason the amount is a step rather than a length.
+ */
+.bleed {
+	--bleed-amount-base: initial;
+	--bleed-amount-sm: initial;
+	--bleed-amount-md: initial;
+	--bleed-amount-lg: initial;
+	--bleed-amount-xl: initial;
+	--bleed-amount-2xl: initial;
+	--bleed: var(--bleed-amount-base, 0px);
+}
+
+.bleed[data-axis="inline"] {
+	margin-inline: calc(-1 * var(--bleed));
+}
+
+.bleed[data-axis="block"] {
+	margin-block: calc(-1 * var(--bleed));
+}
+
+.bleed[data-axis="both"] {
+	margin: calc(-1 * var(--bleed));
+}
+
+@media (--bp-sm) {
+	.bleed {
+		--bleed: var(--bleed-amount-sm, var(--bleed-amount-base, 0px));
+	}
+}
+
+@media (--bp-md) {
+	.bleed {
+		--bleed: var(--bleed-amount-md, var(--bleed-amount-sm, var(--bleed-amount-base, 0px)));
+	}
+}
+
+@media (--bp-lg) {
+	.bleed {
+		--bleed: var(--bleed-amount-lg, var(--bleed-amount-md, var(--bleed-amount-sm, var(--bleed-amount-base, 0px))));
+	}
+}
+
+@media (--bp-xl) {
+	.bleed {
+		--bleed: var(--bleed-amount-xl, var(--bleed-amount-lg, var(--bleed-amount-md, var(--bleed-amount-sm, var(--bleed-amount-base, 0px)))));
+	}
+}
+
+@media (--bp-2xl) {
+	.bleed {
+		--bleed: var(--bleed-amount-2xl, var(--bleed-amount-xl, var(--bleed-amount-lg, var(--bleed-amount-md, var(--bleed-amount-sm, var(--bleed-amount-base, 0px))))));
+	}
+}
+
+/*
+ * AdaptiveGrid's breakpoint rules, which it shipped without.
+ *
+ * It takes the same responsive `gap` and `align` props as Grid and writes the same
+ * variables, and `.adaptive` read only the `-base` one — so
+ * `gap={{ base: "sm", lg: "xl" }}` set `--grid-gap-lg` and nothing ever looked at it. The
+ * prop typechecked, the value was in the DOM, and the layout never moved.
+ *
+ * `verify responsive` did not catch it because its contract list named `stack`, `grid` and
+ * `cell`; `.adaptive` is in that list now, along with the three components added beside
+ * it, so the next one cannot ship the same way.
+ */
+@media (--bp-sm) {
+	.adaptive {
+		gap: var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)));
+		align-items: var(--grid-align-sm, var(--grid-align-base, stretch));
+	}
+}
+
+@media (--bp-md) {
+	.adaptive {
+		gap: var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl))));
+		align-items: var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch)));
+	}
+}
+
+@media (--bp-lg) {
+	.adaptive {
+		gap: var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))));
+		align-items: var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch))));
+	}
+}
+
+@media (--bp-xl) {
+	.adaptive {
+		gap: var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl))))));
+		align-items: var(--grid-align-xl, var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch)))));
+	}
+}
+
+@media (--bp-2xl) {
+	.adaptive {
+		gap: var(--grid-gap-2xl, var(--grid-gap-xl, var(--grid-gap-lg, var(--grid-gap-md, var(--grid-gap-sm, var(--grid-gap-base, var(--space-xl)))))));
+		align-items: var(--grid-align-2xl, var(--grid-align-xl, var(--grid-align-lg, var(--grid-align-md, var(--grid-align-sm, var(--grid-align-base, stretch))))));
+	}
+}

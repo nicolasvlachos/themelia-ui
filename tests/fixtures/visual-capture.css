@@ -1,0 +1,18 @@
+/*
+ * Applied only while tests/visual.spec.ts captures (`stylePath`). The floating theme launcher
+ * has its own light and dark baselines in theme-tweaker-live.
+ */
+[data-app-theme-launcher] {
+	visibility: hidden !important;
+}
+
+/*
+ * A native date or time field's text is drawn in the operating system's locale, which a
+ * test cannot pin (Playwright's `locale` reaches Intl, not the platform widget). Its width
+ * follows the same pattern: a content-sized date field was 141px on macOS 26 and 148px on
+ * Linux. So the text is removed, not hidden, and a baseline does not depend on the machine
+ * that recorded it. The field and its picker button stay.
+ */
+input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"])::-webkit-datetime-edit {
+	display: none !important;
+}

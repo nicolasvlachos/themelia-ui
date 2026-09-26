@@ -1,0 +1,245 @@
+/*
+ * Text inputs. The field surface comes from `[data-field-control]` and the shell chrome
+ * from `[data-field-shell]` (styles/fields.css); only control-specific rules live here.
+ */
+
+/* A textarea grows with its content and sets a floor rather than a fixed height. */
+.textarea {
+	height: auto;
+	min-height: calc(4rem * var(--scale));
+	field-sizing: content;
+	padding-block: var(--space-md);
+	resize: vertical;
+}
+
+/* The textarea's frame: its count and clear sit in the bottom corner, not a centred lane. */
+.textareaFrame {
+	position: relative;
+	display: block;
+	width: 100%;
+}
+
+/* Room for the corner affordance, so the last line of text never runs under it. */
+.textareaFrame[data-trailing] .textarea {
+	padding-bottom: calc(var(--space-md) + var(--size-icon) + var(--space-2xs));
+}
+
+/* Compound, so it outranks `.affordance` (declared later), which centres a single-line lane. */
+.affordance.affordanceTextareaEnd {
+	position: absolute;
+	top: auto;
+	translate: none;
+	inset-inline-end: var(--control-px-sm);
+	bottom: var(--space-md);
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	/* The resize handle lives in this corner too; let it stay grabbable. */
+	pointer-events: none;
+}
+
+.affordanceTextareaEnd > * {
+	pointer-events: auto;
+}
+
+.addon {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	color: var(--muted-foreground);
+}
+
+.addon svg:not([data-sized]) {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* The reveal control sits inside the shell, so it needs no field chrome of its own. */
+.revealButton {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	padding: 0;
+	background: none;
+	color: var(--muted-foreground);
+	cursor: pointer;
+	/* A glyph button takes the item radius, like every control. */
+	border-radius: var(--radius-sm);
+}
+
+.revealButton svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.revealButton:hover:not(:disabled) {
+	color: var(--foreground);
+}
+
+.revealButton:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/*
+ * Select. The UA arrow cannot be recoloured, so it is replaced by an icon (`.selectChevron`)
+ * in a trailing lane the padding reserves.
+ */
+.selectFrame {
+	position: relative;
+	display: block;
+	width: 100%;
+	min-width: 0;
+}
+
+.select {
+	appearance: none;
+	padding-inline-end: var(--field-icon-lane);
+	cursor: pointer;
+}
+
+/* Sits in the trailing lane the padding above reserves. */
+.selectChevron {
+	position: absolute;
+	top: 50%;
+	inset-inline-end: var(--control-px-sm);
+	translate: 0 -50%;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	color: var(--muted-foreground);
+	pointer-events: none;
+}
+
+.selectFrame:has(> [data-field-control]:disabled) .selectChevron {
+	opacity: var(--disabled-opacity);
+}
+
+/* The placeholder option reads as placeholder text, not as a chosen value. */
+.select:has(option[value=""]:checked) {
+	color: var(--muted-foreground);
+}
+
+/* The native search clear cannot be styled; the frame draws its own. */
+.search::-webkit-search-decoration,
+.search::-webkit-search-cancel-button,
+.search::-webkit-search-results-button {
+	appearance: none;
+}
+
+/* ══ Inline affordances ════════════════════════════════════════════════════════════
+ *
+ * Icons, prefix/suffix, clear, spinner and count each occupy a lane inside the frame; the
+ * control's padding widens by that lane via `--field-pad-start` / `--field-pad-end`.
+ */
+
+.frame {
+	position: relative;
+	/* Flex, so a stretched frame (inside a shell) centres the control instead of baseline-aligning it. */
+	display: flex;
+	width: 100%;
+	min-width: 0;
+
+	--field-pad-start: var(--control-px-sm);
+	--field-pad-end: var(--control-px-sm);
+}
+
+/* Inside a field shell the shell owns the inline inset; the frame pads only for an affordance. */
+[data-field-shell] .frame {
+	--field-pad-start: 0px;
+	--field-pad-end: 0px;
+}
+
+.frame[data-start-icon] { --field-pad-start: var(--field-icon-lane); }
+.frame[data-start-addon] { --field-pad-start: var(--field-addon-lane); }
+.frame[data-end-icon] { --field-pad-end: var(--field-icon-lane); }
+.frame[data-end-addon] { --field-pad-end: var(--field-addon-lane); }
+.frame[data-count] { --field-pad-end: round(calc(3rem * var(--density-scale, var(--scale))), 1px); }
+
+.frame > [data-field-control] {
+	padding-inline: var(--field-pad-start) var(--field-pad-end);
+}
+
+/*
+ * Positioned, so the control keeps its full width. `pointer-events: none` lets a click on
+ * the lane land in the field; a button inside opts back in.
+ */
+.affordance {
+	position: absolute;
+	top: 50%;
+	translate: 0 -50%;
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	color: var(--muted-foreground);
+	pointer-events: none;
+}
+
+.affordanceStart { inset-inline-start: var(--space-md); }
+.affordanceEnd { inset-inline-end: var(--space-md); }
+
+.affordance > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+}
+
+/* A text prefix or suffix reads as part of the value, so it takes the addon colour. */
+.affordanceText {
+	white-space: nowrap;
+	color: var(--muted-foreground);
+}
+
+.clear {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 0;
+	/* A glyph button takes the item radius, like every control. */
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted-foreground);
+	cursor: pointer;
+	pointer-events: auto;
+	transition: var(--transition-control);
+}
+
+.clear svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.clear:hover:not(:disabled) {
+	background-color: var(--accent);
+	color: var(--foreground);
+}
+
+.clear:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.clear:disabled,
+.revealButton:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+.spinner {
+	animation: var(--animate-spin);
+}
+
+.count {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-variant-numeric: tabular-nums;
+	color: var(--muted-foreground);
+	white-space: nowrap;
+}
+
+/* Over the limit the count is the only warning, so it carries the colour. */
+.countOver {
+	color: var(--destructive);
+}

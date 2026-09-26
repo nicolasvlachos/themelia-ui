@@ -1,0 +1,21 @@
+/*
+ * Layout — page-container tokens. Page-level measurements scale off the global factors,
+ * not a component family's. Derived tokens: declared at every scope boundary (styles/SCOPES.md).
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+
+	/* The gap between main and aside, and the aside's floor before the columns stack. */
+	--layout-column-gap: round(calc(2rem * var(--density-scale, var(--scale))), 1px);
+	--layout-aside-min: calc(18rem * var(--scale));
+
+	/* The shell's top bar — header, toolbar and stacked header are one height. */
+	--shell-header-h: round(calc(var(--shell-header-height) * var(--density-scale, var(--scale))), 1px);
+
+	/* ── Resource shells ──────────────────────────────────────────────────────── */
+	--resource-media: round(calc(var(--avatar) * 1.5 * var(--density-scale, var(--scale))), 1px);
+}

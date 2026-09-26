@@ -1,0 +1,1009 @@
+/*
+ * Analytics blocks: metric surfaces, the heatmap, the ruler. One module, because the parts
+ * style one another (a Metric in a MetricBar cell joins the strip's subgrid).
+ * Every break is a container query: a KPI row may sit in a drawer or a split view.
+ */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/* Set inline from JS per element; declared with a resting value so `verify wiring` sees them. */
+	--heatmap-weeks: 0;
+	--heatmap-week: 0;
+	--ruler-now: 0;
+	--micro-bar: 0%;
+	--micro-dot: 0px;
+	--micro-pie: none;
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/* ── Heatmap ────────────────────────────────────────────────────────────────── */
+
+	/* Month labels sit at `week * pitch`; change the cell and pitch together. */
+	--heatmap-cell: calc(0.75rem * var(--scale));
+	--heatmap-pitch: calc(var(--heatmap-cell) + var(--space-2xs));
+	/* The weekday label lane, sized from the type; the month row is offset by the same lane. */
+	--heatmap-day-lane: calc(var(--text-xs) * 2.5);
+
+}
+
+/* ══ Metric ════════════════════════════════════════════════════════════════════════ */
+
+.metric {
+	min-width: 0;
+}
+
+.metricError {
+	align-items: center;
+	justify-content: center;
+}
+
+/* Pins the curve to the tile's foot so sparklines share a baseline across equal-height cells. */
+.metricSpark {
+	margin-block-start: auto;
+}
+
+.metricTile {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+	height: 100%;
+}
+
+.metricLabelGroup {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+	color: var(--muted-foreground);
+}
+
+.metricLabelIcon {
+	flex-shrink: 0;
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+/*
+ * Baseline-aligned (centring a 20px figure beside a 16px chip leaves a half-pixel step).
+ * Wraps so a long currency figure pushes the chip down instead of clipping it.
+ */
+.metricValueRow {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-xs) var(--space-lg);
+	min-width: 0;
+}
+
+/* ── card ─────────────────────────────────────────────────────────────────────── */
+
+/* Stretches so the curve's `margin-block-start: auto` can align sparklines across a row. */
+.metricCard > [data-slot="card-content"] {
+	flex: 1;
+}
+
+/* Label, figure and delta read as one block, a step tighter than the card's own rhythm. */
+.metricCardBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+/* The delta and its caption share a line, and wrap together when the card is narrow. */
+.metricDelta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-xs) var(--space-sm);
+	min-width: 0;
+}
+
+/* The info affordance on the label line: a real button, the glyph at the label's icon size. */
+.metricInfo {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted-foreground);
+	cursor: help;
+}
+
+.metricInfo > svg {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+.metricInfo:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* ── minimal ──────────────────────────────────────────────────────────────────── */
+
+.metricMinimal {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--space-sm);
+}
+
+/* ── compact ──────────────────────────────────────────────────────────────────── */
+
+.metricCompact {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+/* The gap keeps the label's descenders off the figure's cap height (`layout-faults`). */
+.metricCompactBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+	flex: 1;
+}
+
+/* ── panel: bordered and colored share the box, and differ only in what fills it ── */
+
+/* The surface is `ContentBlock surface="card"`; a tile only tightens the block's gap. */
+.metricPanel {
+	--content-block-gap: var(--space-sm);
+}
+
+.metricHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.metricDot {
+	flex-shrink: 0;
+	width: var(--space-md);
+	height: var(--space-md);
+	border-radius: var(--radius-pill);
+	background-color: var(--foreground);
+}
+
+.metricSegments {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+}
+
+.metricSegment {
+	flex: 1;
+	min-width: calc(0.375rem * var(--scale));
+	height: var(--size-icon-lg);
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground-20);
+}
+
+.metricSegment[data-filled] {
+	background-color: var(--foreground);
+}
+
+/* A tone marks the border, dot and segments; the surface stays a card. */
+.metricPanel[data-tone="primary"] {
+	border-color: var(--primary-30);
+}
+
+.metricPanel[data-tone="primary"] .metricDot,
+.metricPanel[data-tone="primary"] .metricSegment[data-filled] {
+	background-color: var(--primary);
+}
+
+.metricPanel[data-tone="info"] {
+	border-color: var(--info-30);
+}
+
+.metricPanel[data-tone="info"] .metricDot,
+.metricPanel[data-tone="info"] .metricSegment[data-filled] {
+	background-color: var(--info);
+}
+
+.metricPanel[data-tone="success"] {
+	border-color: var(--success-30);
+}
+
+.metricPanel[data-tone="success"] .metricDot,
+.metricPanel[data-tone="success"] .metricSegment[data-filled] {
+	background-color: var(--success);
+}
+
+.metricPanel[data-tone="warning"] {
+	border-color: var(--warning-40);
+}
+
+.metricPanel[data-tone="warning"] .metricDot,
+.metricPanel[data-tone="warning"] .metricSegment[data-filled] {
+	background-color: var(--warning-accent);
+}
+
+.metricPanel[data-tone="destructive"] {
+	border-color: var(--destructive-30);
+}
+
+.metricPanel[data-tone="destructive"] .metricDot,
+.metricPanel[data-tone="destructive"] .metricSegment[data-filled] {
+	background-color: var(--destructive);
+}
+
+/* ── accent: an inverse surface, with the curve bled to its foot ───────────────── */
+
+/*
+ * A dark scope (`data-theme="dark"`), not hand-picked `--inverse-*` colours: every token,
+ * including a child chip's tone, re-derives to its dark value inside it.
+ */
+.metricAccent {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border-radius: var(--radius);
+	background-color: var(--card);
+	color: var(--card-foreground);
+	box-shadow: var(--shadow-sm);
+}
+
+.metricAccentBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	padding: var(--space-xl);
+}
+
+/* ══ Trend chip ════════════════════════════════════════════════════════════════════ */
+
+.trendChip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	min-width: 0;
+	color: var(--muted-foreground);
+}
+
+.trendChipIcon {
+	flex-shrink: 0;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.trendChip[data-tone="positive"] {
+	color: var(--success);
+}
+
+.trendChip[data-tone="negative"] {
+	color: var(--destructive-accent);
+}
+
+/* The badge form adds the chip; the others are bare so they sit inside running text. */
+.trendChip[data-variant="badge"] {
+	padding-inline: var(--space-md);
+	padding-block: var(--space-2xs);
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground-8);
+}
+
+.trendChip[data-variant="badge"][data-tone="positive"] {
+	background-color: var(--success-10);
+}
+
+.trendChip[data-variant="badge"][data-tone="negative"] {
+	background-color: var(--destructive-10);
+}
+
+/* ══ Skeleton ══════════════════════════════════════════════════════════════════════ */
+
+.metricSkeleton {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.metricSkeleton[data-variant="minimal"] {
+	flex-direction: row;
+	align-items: baseline;
+	gap: var(--space-sm);
+}
+
+/* Placeholder geometry sized like the resolved content, so the tile keeps its height. */
+.skeletonLabel {
+	width: 40%;
+	height: var(--space-lg);
+}
+
+.skeletonValue {
+	width: 60%;
+	height: var(--size-icon-lg);
+}
+
+.skeletonSpark {
+	margin-block-start: auto;
+	width: 100%;
+	height: var(--size-icon-xl);
+}
+
+/* ══ MetricGrid ════════════════════════════════════════════════════════════════════ */
+
+/* The root is the container and the grid reacts: an element cannot query itself. */
+.metricGridRoot {
+	container-type: inline-size;
+	container-name: metric-grid;
+	min-width: 0;
+}
+
+.metricGrid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--space-xl);
+	min-width: 0;
+}
+
+/* Five and six start paired, so a phone shows two columns rather than a six-tile column. */
+.metricGrid[data-columns="6"] {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@container metric-grid (--cq-sm) {
+
+	.metricGrid[data-columns="2"],
+	.metricGrid[data-columns="3"],
+	.metricGrid[data-columns="4"] {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.metricGrid[data-columns="6"] {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@container metric-grid (--cq-md) {
+
+	.metricGrid[data-columns="3"] {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@container metric-grid (--cq-2xl) {
+
+	.metricGrid[data-columns="6"] {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+}
+
+/* Four across only once a quarter can hold a currency figure; below that, two by two. */
+@container metric-grid (--cq-3xl) {
+
+	.metricGrid[data-columns="4"] {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+/* ══ MetricBar ═════════════════════════════════════════════════════════════════════ */
+
+/* Surface and clipping come from the block; the strip adds its container and width. */
+.metricBar {
+	container-type: inline-size;
+	container-name: metric-bar;
+	--content-block-gap: 0;
+	width: 100%;
+}
+
+.metricBarRow {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+/*
+ * The period is a band above the cells at every width, never a column, so every figure
+ * gets its full share.
+ */
+.metricBarPeriod {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	padding: var(--space-md);
+	border-block-end: var(--border-width) solid var(--border-60);
+	/* A `--space-md` inset parks the button in the card's corner, where `--radius-sm` is concentric. */
+	--button-radius: var(--radius-sm);
+}
+
+.metricBarCells {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+/* Hairlines on the leading edge of every cell but the first: no outer double rule. */
+.metricBarCell {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	padding-inline: var(--surface-px);
+	padding-block: var(--space-lg);
+	border-block-start: var(--border-width) solid var(--border-60);
+}
+
+.metricBarCells > .metricBarCell:first-child {
+	border-block-start: 0;
+}
+
+.metricBarFooter {
+	padding-inline: var(--surface-px);
+	padding-block: var(--row-py);
+	border-block-start: var(--border-width) solid var(--border-60);
+}
+
+@container metric-bar (--cq-xl) {
+
+	/*
+	 * One grid for the strip: six rows (label, figure, delta, caption, curve, footnote)
+	 * shared through `subgrid`, so figures stay on one baseline. `row-gap: 0` because a gap
+	 * applies to empty tracks too; each part pays its own leading space.
+	 */
+	.metricBarCells {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(0, 1fr);
+		grid-template-rows: repeat(6, auto);
+		row-gap: 0;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.metricBarCell {
+		display: grid;
+		grid-row: 1 / -1;
+		grid-template-rows: subgrid;
+		border-block-start: 0;
+		border-inline-start: var(--border-width) solid var(--border-60);
+	}
+
+	.metricBarCells > .metricBarCell:first-child {
+		border-inline-start: 0;
+	}
+
+	.metricBarCell > .metricTile {
+		display: grid;
+		grid-row: 1 / -1;
+		grid-template-rows: subgrid;
+		gap: 0;
+		height: auto;
+	}
+
+	.metricBarCell .tileLabel { grid-row: 1; }
+	.metricBarCell .tileValue { grid-row: 2; }
+	.metricBarCell .tileChange { grid-row: 3; }
+	.metricBarCell .tileSubtitle { grid-row: 4; }
+	.metricBarCell .metricSpark { grid-row: 5; align-self: end; }
+	.metricBarCell .tileFooter { grid-row: 6; }
+
+	.metricBarCell .tileValue,
+	.metricBarCell .tileChange,
+	.metricBarCell .tileSubtitle,
+	.metricBarCell .metricSpark,
+	.metricBarCell .tileFooter {
+		margin-block-start: var(--space-sm);
+	}
+}
+
+/* ══ MetricComparison ══════════════════════════════════════════════════════════════ */
+
+.comparison {
+	container-type: inline-size;
+	container-name: metric-comparison;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.comparisonPeriods {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-sm);
+}
+
+.comparisonPair {
+	display: grid;
+	grid-template-columns: 1fr;
+	align-items: stretch;
+	gap: var(--space-md);
+}
+
+/* The surface is the block's; the pair of readings inside it sits tighter than a region. */
+.comparisonBox {
+	--content-block-gap: var(--space-2xs);
+}
+
+/* The previous period is context, so it sits back on the page's own ground. */
+.comparisonBoxPrevious {
+	background-color: var(--muted-50);
+}
+
+.comparisonArrow {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--muted-foreground);
+}
+
+.comparisonArrowWide {
+	display: none;
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.comparisonArrowNarrow {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.comparisonDelta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+	padding: var(--space-lg);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+}
+
+.comparisonChip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	padding-inline: var(--space-md);
+	padding-block: var(--space-2xs);
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+	color: var(--muted-foreground);
+}
+
+.comparisonChipIcon {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* A toned delta carries its ink; the chip and the percentage (type="inherit") take it. */
+.comparisonDelta[data-tone="positive"] {
+	background-color: var(--success-10);
+	color: var(--success);
+}
+
+.comparisonDelta[data-tone="negative"] {
+	background-color: var(--destructive-10);
+	color: var(--destructive-accent);
+}
+
+.comparisonDelta:is([data-tone="positive"], [data-tone="negative"]) .comparisonChip {
+	color: inherit;
+}
+
+@container metric-comparison (--cq-md) {
+
+	.comparisonPair {
+		grid-template-columns: 1fr auto 1fr;
+	}
+
+	.comparisonArrowWide {
+		display: block;
+	}
+
+	.comparisonArrowNarrow {
+		display: none;
+	}
+}
+
+/* ══ ChartCard ═════════════════════════════════════════════════════════════════════ */
+
+.chartCardChart {
+	width: 100%;
+}
+
+.chartCardFooter {
+	margin-block-start: var(--space-lg);
+}
+
+/* ══ ActivityHeatmap ═══════════════════════════════════════════════════════════════ */
+
+.heatmap {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+/* A year is 53 columns; on a narrow panel it scrolls rather than squashing its cells. */
+.heatmapScroll {
+	/* Contains absolutely positioned descendants. */
+	position: relative;
+	overflow-x: auto;
+	min-width: 0;
+}
+
+.heatmapMonths {
+	position: relative;
+	height: var(--space-xl);
+	margin-inline-start: var(--heatmap-day-lane);
+	width: calc(var(--heatmap-weeks) * var(--heatmap-pitch));
+}
+
+/* Placed at `week * pitch`: a month spans no fixed number of columns, so no track fits. */
+.heatmapMonth {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: calc(var(--heatmap-week) * var(--heatmap-pitch));
+	white-space: nowrap;
+}
+
+.heatmapBody {
+	display: flex;
+}
+
+.heatmapDays {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	flex-shrink: 0;
+	width: var(--heatmap-day-lane);
+}
+
+.heatmapDay {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	height: var(--heatmap-cell);
+	padding-inline-end: var(--space-2xs);
+}
+
+.heatmapWeeks {
+	display: flex;
+	gap: var(--space-2xs);
+}
+
+.heatmapWeek {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+.heatmapCell {
+	display: block;
+	flex-shrink: 0;
+	width: var(--heatmap-cell);
+	height: var(--heatmap-cell);
+	border-radius: calc(var(--radius-sm) / 4);
+	background-color: var(--muted);
+}
+
+/* The padding cells of a short final week hold the column's height and draw nothing. */
+.heatmapCell[data-empty] {
+	background-color: transparent;
+}
+
+/* Activity is data, not a status: the ramp is the first chart series at a rising strength. */
+.heatmapCell:is([data-level="1"], [data-level="2"], [data-level="3"], [data-level="4"]) {
+	background-color: color-mix(in oklab, var(--chart-1) var(--heatmap-strength), transparent);
+}
+
+.heatmapCell[data-level="1"] {
+	--heatmap-strength: 20%;
+}
+
+.heatmapCell[data-level="2"] {
+	--heatmap-strength: 40%;
+}
+
+.heatmapCell[data-level="3"] {
+	--heatmap-strength: 65%;
+}
+
+.heatmapCell[data-level="4"] {
+	--heatmap-strength: 100%;
+}
+
+.heatmapLegend {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-sm);
+}
+
+/* ══ TimeRuler ═════════════════════════════════════════════════════════════════════ */
+
+.ruler {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.rulerBar {
+	position: relative;
+	display: flex;
+	gap: var(--border-width);
+	overflow: hidden;
+	height: var(--size-icon-xl);
+	border-radius: var(--radius-sm);
+}
+
+.rulerHour {
+	flex: 1;
+	background-color: var(--muted);
+}
+
+.rulerHour[data-band="1"] {
+	background-color: var(--primary-25);
+}
+
+.rulerHour[data-band="2"] {
+	background-color: var(--primary-40);
+}
+
+.rulerHour[data-band="3"] {
+	background-color: var(--primary);
+}
+
+/* Inset, so ringing the peak does not widen the bar or shift the hour beside it. */
+.rulerHour[data-peak] {
+	box-shadow: inset 0 0 0 var(--border-width) var(--primary);
+}
+
+/* Placed by hour so it lands on the leading edge of its hour. */
+.rulerMarker {
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: calc(var(--ruler-now) / 24 * 100%);
+	width: calc(var(--border-width) * 2);
+	background-color: var(--destructive);
+}
+
+.rulerTicks {
+	display: flex;
+}
+
+.rulerTick {
+	flex: 1;
+	text-align: center;
+	min-width: 0;
+}
+
+.rulerLegend {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-lg);
+}
+
+.rulerLegendItem {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+.rulerSwatch {
+	width: var(--space-lg);
+	height: var(--space-sm);
+	border-radius: var(--radius-pill);
+	background-color: var(--muted);
+}
+
+.rulerSwatch[data-band="1"] {
+	background-color: var(--primary-25);
+}
+
+.rulerSwatch[data-band="2"] {
+	background-color: var(--primary-40);
+}
+
+.rulerSwatch[data-band="3"] {
+	background-color: var(--primary);
+}
+
+.rulerMarkerSwatch {
+	width: calc(var(--border-width) * 2);
+	height: var(--space-lg);
+	background-color: var(--destructive);
+}
+
+/* ══ MetricMicroGrid ═══════════════════════════════════════════════════════════════ */
+
+/* The root is the container and the grid reacts: an element cannot query itself. */
+.microGridRoot {
+	container-type: inline-size;
+	container-name: micro-grid;
+	min-width: 0;
+}
+
+.microGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--border-width);
+	/* The ground shows through the 1px gaps as dividers. */
+	background-color: var(--border-60);
+}
+
+.microCell {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	min-width: 0;
+	padding: var(--space-lg);
+	background-color: var(--card);
+}
+
+.microBars {
+	display: flex;
+	align-items: flex-end;
+	gap: var(--space-2xs);
+	height: var(--size-icon-lg);
+}
+
+/* A pill: --radius-sm at this height would be neither square nor round. */
+.microBar {
+	flex: 1;
+	height: var(--micro-bar);
+	border-radius: var(--radius-pill);
+	background-color: var(--chart-1);
+}
+
+.microDots {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-around;
+	height: var(--size-icon-lg);
+}
+
+.microDot {
+	width: var(--space-sm);
+	height: var(--space-sm);
+	margin-block-end: var(--micro-dot);
+	border-radius: var(--radius-pill);
+	background-color: var(--chart-1);
+}
+
+/* Progress, with the series hue and a micro-cell height. */
+.microProgress {
+	height: var(--space-sm);
+	--progress-fill: var(--chart-1);
+}
+
+/* A row of its own: a circle at a fractional offset rasterises lopsided. */
+.microMarkRow {
+	display: flex;
+	align-items: flex-start;
+	height: var(--size-icon-lg);
+}
+
+.microPie {
+	display: block;
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+	border-radius: var(--radius-pill);
+	background-image: var(--micro-pie);
+}
+
+.microSvg {
+	display: block;
+	width: 100%;
+	height: var(--size-icon-lg);
+}
+
+.microLine {
+	fill: none;
+	stroke: var(--chart-1);
+	stroke-width: 1.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.microArea {
+	fill: var(--chart-1);
+	fill-opacity: 0.35;
+	stroke: none;
+}
+
+@container micro-grid (--cq-xl) {
+
+	.microGrid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@container micro-grid (--cq-3xl) {
+
+	.microGrid {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+}
+
+/* ══ MetricGradient ════════════════════════════════════════════════════════════════ */
+
+/* The ramp uses two adjacent categorical chart colours, never state tokens. */
+.gradient {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	overflow: hidden;
+	padding: var(--space-xl);
+	border-radius: var(--radius);
+	background-color: var(--background);
+	/* 52% keeps the composited ground dark enough for the copy's contrast. */
+	background-image: linear-gradient(
+		135deg,
+		color-mix(in oklab, var(--ramp-from) 52%, transparent),
+		color-mix(in oklab, var(--ramp-to) 52%, transparent)
+	);
+	color: var(--foreground);
+	box-shadow: var(--shadow-sm);
+
+	/* Each named ramp is an adjacent pair of chart colours, composited over the dark-scope ground. */
+	--ramp-from: var(--chart-2);
+	--ramp-to: var(--chart-3);
+}
+
+/* Teal into blue. */
+.gradient[data-theme-ramp="ocean"] {
+	--ramp-from: var(--chart-1);
+	--ramp-to: var(--chart-2);
+}
+
+/* Violet into magenta. */
+.gradient[data-theme-ramp="violet"] {
+	--ramp-from: var(--chart-3);
+	--ramp-to: var(--chart-4);
+}
+
+/* Magenta into amber. */
+.gradient[data-theme-ramp="warm"] {
+	--ramp-from: var(--chart-4);
+	--ramp-to: var(--chart-5);
+}
+
+.gradientHead {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.gradientHeadText {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.gradientChip {
+	flex-shrink: 0;
+}
+
+/* An opaque ground (out-ranking the badge's translucent tone wash); the tone stays on the text. */
+.gradientChip[data-variant][data-tone] {
+	background-color: var(--card);
+}
+
+.gradientPlot {
+	position: relative;
+	height: calc(var(--size-icon-2xl) * 2.5);
+}

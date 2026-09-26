@@ -1,0 +1,36 @@
+/* Onboarding blocks. The checklist's chrome is `base/accordion`'s; this sizes the status medallion. */
+
+.checklist {
+	min-width: 0;
+}
+
+/* A smaller IconBadge, via its own token, to fit the accordion's one-icon media column. */
+.indicator {
+	--icon-badge-size: var(--size-icon-lg);
+}
+
+.checklistRoot {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+	min-width: 0;
+}
+
+.checklistProgress {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.checklistProgressHead {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-md);
+}
+
+/* A finished step's title recedes. */
+.titleDone {
+	color: var(--muted-foreground);
+	font-weight: var(--weight-normal);
+}

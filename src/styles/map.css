@@ -1,0 +1,142 @@
+/*
+ * Leaflet's chrome, retuned. Unlayered because leaflet.css is: its unlayered rules would
+ * beat anything in `@layer components`. Every rule is qualified by a kit class for
+ * specificity, so none needs `!important`. Only what Leaflet paints lives here.
+ */
+
+.map--component.leaflet-container {
+	background-color: var(--muted);
+	font-family: var(--font-sans);
+}
+
+/*
+ * The map takes keyboard focus (the arrow keys pan it), so it draws the kit's ring, inset over
+ * the tiles. The browser's default ring sits outside, where the frame around a map clips it.
+ */
+.map--component.leaflet-container:focus-visible {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: calc(-1 * var(--focus-ring-width));
+}
+
+/*
+ * Dark mode without a dark basemap: invert the light tiles, hue-rotate the hues back,
+ * trim the glare. Only the tile pane, so markers are untouched; a `darkUrl` removes it.
+ */
+.map--component[data-tile-filter="invert"] .leaflet-tile-pane {
+	filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.9);
+}
+
+/* ── The panes Leaflet paints itself ──────────────────────────────────────────── */
+
+.map--component .leaflet-popup-content-wrapper {
+	border-radius: var(--radius);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
+	box-shadow: var(--popover-shadow);
+}
+
+.map--component .leaflet-popup-content {
+	margin: var(--surface-py) var(--surface-px);
+	font-family: var(--font-sans);
+	font-size: var(--text-sm);
+	line-height: var(--leading-normal);
+}
+
+/* The tip is a rotated square; it matches the wrapper it points from. */
+.map--component .leaflet-popup-tip {
+	background-color: var(--popover);
+	box-shadow: none;
+}
+
+.map--component .leaflet-popup-close-button {
+	color: var(--muted-foreground);
+}
+
+.map--component .leaflet-popup-close-button:hover {
+	color: var(--foreground);
+}
+
+/* Chrome removed: the component draws its own tooltip and arrow on the side it chooses. */
+.map--component .leaflet-tooltip {
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+}
+
+.map--component .leaflet-tooltip::before {
+	display: none;
+}
+
+/* ── Attribution ──────────────────────────────────────────────────────────────── */
+
+.map--component.leaflet-container .leaflet-control-attribution {
+	border-radius: var(--radius-sm) 0 0 0;
+	background-color: var(--background-80);
+	color: var(--muted-foreground);
+	font-family: var(--font-sans);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.map--component .leaflet-control-attribution a {
+	color: var(--link-color);
+}
+
+/* ── leaflet-draw's toolbar ───────────────────────────────────────────────────── */
+
+/* Hidden: the kit renders its own draw controls as Buttons. */
+.map--component .leaflet-draw-toolbar,
+.map--component .leaflet-draw-actions {
+	display: none;
+}
+
+/* The on-map instruction tooltip stays, drawn as the kit's inverse Tooltip. */
+.map--component .leaflet-draw-tooltip {
+	border: var(--border-width) solid var(--foreground);
+	border-radius: var(--radius-sm);
+	padding-block: var(--space-sm);
+	padding-inline: var(--control-px);
+	background-color: var(--foreground);
+	color: var(--background);
+	font-family: var(--font-sans);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+/* Physical on purpose: Leaflet positions this arrow in physical terms. */
+.map--component .leaflet-draw-tooltip::before {
+	border-right-color: var(--foreground);
+}
+
+/* leaflet-draw's second line: the tooltip's ink, receded. */
+.map--component .leaflet-draw-tooltip-subtext {
+	color: var(--background-70);
+}
+
+/* ── Marker clusters ──────────────────────────────────────────────────────────── */
+
+/* The default cluster (no `icon` passed), themed in place of MarkerCluster.Default.css, which the kit does not import. */
+.map--component .marker-cluster {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--radius-pill);
+	background-color: var(--primary-20);
+	color: var(--primary-accent);
+	font-family: var(--font-sans);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-semibold);
+}
+
+.map--component .marker-cluster div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	border-radius: var(--radius-pill);
+	background-color: var(--primary-10);
+}

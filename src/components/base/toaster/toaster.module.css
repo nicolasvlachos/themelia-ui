@@ -1,0 +1,219 @@
+/*
+ * Toaster. The surface is inverse (flipping with the theme), so a toast never reads as part
+ * of the page. One fixed viewport region: one live region, one hover target for pausing.
+ */
+
+.viewport {
+	position: fixed;
+	z-index: var(--z-toast);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	/* Percentages, not vw: they follow a transformed scoped host as well as the viewport. */
+	width: min(92%, 24rem);
+	max-width: calc(100% - 2 * var(--space-xl));
+	/* Clicks beside a toast reach the page; toasts opt back in below. */
+	pointer-events: none;
+}
+
+.viewport > * {
+	pointer-events: auto;
+}
+
+/* Vertical edge, clear of the safe area. */
+.top { top: calc(var(--space-xl) + env(safe-area-inset-top, 0px)); }
+/* Bottom stacks grow upward via flex direction, keeping the DOM in chronological order. */
+.bottom {
+	bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
+	flex-direction: column-reverse;
+}
+
+/* Horizontal edge. */
+.start { inset-inline-start: var(--space-xl); }
+.end { inset-inline-end: var(--space-xl); }
+
+/* Auto margins between both insets centre the sized viewport in either direction. */
+.center {
+	inset-inline: 0;
+	margin-inline: auto;
+}
+
+.toast {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	min-height: round(calc(2.75rem * var(--density-scale, var(--scale))), 1px);
+	padding: var(--space-lg);
+	/* Room for the absolutely positioned close button. */
+	padding-inline-end: calc(var(--control-h-2xs) + 2 * var(--space-lg));
+	border: var(--border-width) solid var(--inverse-border);
+	border-radius: var(--radius);
+	background-color: var(--inverse-background);
+	color: var(--inverse-foreground);
+	box-shadow: var(--shadow-lg);
+	transition:
+		opacity var(--duration-fast) var(--ease-out),
+		translate var(--duration-fast) var(--ease-out);
+}
+
+/*
+ * A toast enters from its docked edge. `@starting-style`, not a rAF-cleared class: rAF does
+ * not run in a background tab, which would leave the toast invisible.
+ */
+@starting-style {
+	.toast {
+		opacity: 0;
+	}
+
+	.top .toast {
+		translate: 0 calc(-1 * var(--space-xl));
+	}
+
+	.bottom .toast {
+		translate: 0 var(--space-xl);
+	}
+}
+
+/* The exit is set synchronously by `dismiss()`; the store keeps the record for the transition. */
+.toast[data-leaving] {
+	opacity: 0;
+}
+
+.top .toast[data-leaving] {
+	translate: 0 calc(-1 * var(--space-xl));
+}
+
+.bottom .toast[data-leaving] {
+	translate: 0 var(--space-xl);
+}
+
+.icon {
+	display: flex;
+	flex-shrink: 0;
+	align-self: center;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+	color: var(--inverse-muted);
+}
+
+.icon > svg {
+	width: 100%;
+	height: 100%;
+}
+
+/* Status colours lifted toward the inverse ink, so they stay legible on the inverse surface. */
+.statusSuccess .icon { color: color-mix(in oklab, var(--success) 60%, var(--inverse-foreground)); }
+.statusInfo .icon { color: color-mix(in oklab, var(--info) 60%, var(--inverse-foreground)); }
+.statusWarning .icon { color: color-mix(in oklab, var(--warning) 60%, var(--inverse-foreground)); }
+.statusError .icon { color: color-mix(in oklab, var(--destructive) 60%, var(--inverse-foreground)); }
+
+.spinner {
+	animation: var(--animate-spin);
+}
+
+.content {
+	display: grid;
+	min-width: 0;
+	gap: var(--space-2xs);
+}
+
+.title {
+	font-size: var(--text-sm);
+	font-weight: var(--weight-medium);
+	line-height: var(--text-sm--line-height);
+	color: var(--inverse-foreground);
+}
+
+.description {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--inverse-muted);
+	text-wrap: pretty;
+}
+
+.actions {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-xs);
+	margin-inline-start: auto;
+}
+
+.action,
+.cancel {
+	display: inline-flex;
+	align-items: center;
+	height: var(--control-h-2xs);
+	padding-inline: var(--control-px-2xs);
+	border: 0;
+	border-radius: var(--radius-sm);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-medium);
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.action {
+	background-color: var(--inverse-foreground);
+	color: var(--inverse-background);
+}
+
+.cancel {
+	background-color: var(--inverse-surface);
+	color: var(--inverse-foreground);
+}
+
+.action:hover {
+	background-color: color-mix(in oklab, var(--inverse-foreground) 86%, var(--inverse-background));
+}
+
+.cancel:hover {
+	background-color: var(--inverse-surface-strong);
+}
+
+.action:focus-visible,
+.cancel:focus-visible,
+.close:focus-visible {
+	outline: none;
+	/* An inverse-surface ring: --focus-ring bakes in --background, so it is composed here. */
+	box-shadow: 0 0 0 var(--focus-ring-offset) var(--inverse-background),
+		0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--inverse-foreground);
+}
+
+.close {
+	position: absolute;
+	inset-inline-end: var(--space-lg);
+	top: 50%;
+	translate: 0 -50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--control-h-2xs);
+	height: var(--control-h-2xs);
+	padding: 0;
+	border: var(--border-width) solid var(--inverse-border);
+	border-radius: var(--radius-sm);
+	background-color: transparent;
+	color: var(--inverse-foreground);
+	opacity: 0.6;
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		opacity var(--duration-fast) var(--ease-out);
+}
+
+.close:hover,
+.close:focus-visible {
+	background-color: var(--inverse-surface);
+	opacity: 1;
+}
+
+.close > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}

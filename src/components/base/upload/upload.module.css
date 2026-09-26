@@ -1,0 +1,621 @@
+/*
+ * Upload — dropzone, file rows, avatar and image pickers. Each target is a real file input
+ * inside a labelled region, so browsing works from the keyboard; drag-and-drop is extra.
+ */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	--dropzone-bg: transparent;
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+
+	--upload-avatar: round(calc(5rem * var(--density-scale, var(--scale))), 1px);
+}
+
+.dropzone {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-md);
+	padding: var(--space-2xl);
+	/* The field boundary, dashed while idle so it reads as a target. */
+	border: var(--border-width) dashed var(--control-border);
+	border-radius: var(--radius);
+	background-color: var(--dropzone-bg);
+	text-align: center;
+	cursor: pointer;
+	transition:
+		border-color var(--duration-fast) var(--ease-out),
+		background-color var(--duration-fast) var(--ease-out);
+}
+
+.dropzoneCompact {
+	flex-direction: row;
+	padding: var(--space-lg);
+	text-align: start;
+}
+
+.dropzone:hover {
+	background-color: var(--accent-50);
+}
+
+/*
+ * Keyed on the file input inside, and on its `:focus-visible`: the input covers the region,
+ * so a pointer click focuses it too and `:focus-within` would light the ring on every click.
+ */
+.dropzone:has(> .dropzoneInput:focus-visible) {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--focus-ring);
+}
+
+.dropzone[data-dragging] {
+	border-style: solid;
+	border-color: var(--primary);
+	background-color: var(--primary-5);
+}
+
+.dropzone[data-invalid] {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+/* Focus wins the ring; invalid keeps the border, as on fields. */
+.dropzone[data-invalid]:has(> .dropzoneInput:focus-visible) {
+	border-color: var(--invalid-ring-border);
+}
+
+.dropzone[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+/* The input covers the region at zero opacity, so a click anywhere opens the browse dialog. */
+.dropzoneInput {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.dropzoneInput:disabled {
+	cursor: not-allowed;
+}
+
+.dropzoneIcon {
+	width: var(--size-icon-xl);
+	height: var(--size-icon-xl);
+	flex-shrink: 0;
+	color: var(--muted-foreground);
+}
+
+.dropzoneCopy {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-2xs);
+}
+
+.dropzoneCompact .dropzoneCopy {
+	align-items: flex-start;
+}
+
+.dropzoneText {
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+.dropzoneHint {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+	text-wrap: pretty;
+}
+
+/* ── File rows ────────────────────────────────────────────────────────────────── */
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.row {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	padding: var(--row-py) var(--row-px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+}
+
+/* Inside a card a row steps down to the control radius so the curves nest. */
+:global([data-slot="card"]) .row {
+	border-radius: var(--radius-sm);
+}
+
+/* Retry and remove on a failed row sit together, as one cluster, not a row-gap apart. */
+.rowActions {
+	display: inline-flex;
+	flex-shrink: 0;
+	gap: var(--space-2xs);
+}
+
+/* A row is at least two lines, so the glyph aligns with the filename, as Item's media does. */
+.row > .thumb,
+.row > .statusIcon {
+	align-self: flex-start;
+	transform: translateY(var(--item-media-offset));
+}
+
+.thumb {
+	display: flex;
+	flex-shrink: 0;
+	width: var(--size-medallion);
+	height: var(--size-medallion);
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+}
+
+.thumb > img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.rowBody {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+}
+
+.rowName {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.rowMeta {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+}
+
+.progress {
+	width: 100%;
+	height: var(--space-xs);
+	margin-top: var(--space-md);
+	overflow: hidden;
+	border-radius: var(--radius-pill);
+	/* The control-track wash, like Progress and the slider. */
+	background-color: var(--foreground-20);
+}
+
+.progressFill {
+	height: 100%;
+	border-radius: inherit;
+	background-color: var(--primary);
+	transition: width var(--duration-normal) var(--ease-out);
+}
+
+/* The FileUpload root: zone, then the rejections, then the queue. */
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+}
+
+/* Alerts, stacked tight — they are one message broken into lines, not a list of items. */
+.rejections {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+/* ── Avatar and image ─────────────────────────────────────────────────────────── */
+
+.mediaRoot {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-sm);
+}
+
+.mediaPicker {
+	position: relative;
+	isolation: isolate;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	/* The field boundary, dashed, as on the dropzone. */
+	border: var(--border-width) dashed var(--control-border);
+	background-color: var(--dropzone-bg);
+	cursor: pointer;
+	transition:
+		border-color var(--duration-fast) var(--ease-out),
+		background-color var(--duration-fast) var(--ease-out);
+}
+
+/* The native input must remain the hit target above both the image and edit scrim. */
+.mediaPicker > .dropzoneInput {
+	z-index: var(--z-raised);
+}
+
+.mediaPicker:has(> .dropzoneInput:focus-visible) {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--focus-ring);
+}
+
+.mediaPicker[data-invalid] {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.mediaPicker[data-invalid]:has(> .dropzoneInput:focus-visible) {
+	border-color: var(--invalid-ring-border);
+}
+
+.mediaPicker[data-dragging] {
+	border-style: solid;
+	border-color: var(--primary);
+	background-color: var(--primary-5);
+}
+
+.mediaPicker[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+/* A filled picker has an image to show, so the dashed target treatment is redundant. */
+.mediaPicker[data-filled] {
+	border-style: solid;
+}
+
+/* An empty picker's hover, like Dropzone's; the scrim below is only for a chosen image. */
+.mediaPicker:hover:not([data-filled]):not([data-disabled]) {
+	background-color: var(--accent-50);
+}
+
+.avatarPicker {
+	width: var(--upload-avatar);
+	height: var(--upload-avatar);
+	border-radius: 50%;
+}
+
+.imagePicker {
+	width: 100%;
+	height: calc(10rem * var(--scale));
+	border-radius: var(--radius);
+}
+
+.mediaPreview {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Shown on hover or focus, and only over a chosen image (never over the empty prompt). */
+.mediaOverlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-2xs);
+	/* Dark enough for the white label over any photograph. */
+	background-color: color-mix(in oklab, var(--shadow-ink) 62%, transparent);
+	color: var(--inverse-foreground);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	opacity: 0;
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.mediaPicker[data-filled]:hover .mediaOverlay,
+.mediaPicker[data-filled]:focus-within .mediaOverlay,
+.mediaPicker[data-filled][data-dragging] .mediaOverlay {
+	opacity: 1;
+}
+
+.mediaOverlay > svg {
+	width: var(--size-icon-xl);
+	height: var(--size-icon-xl);
+}
+
+.mediaEmpty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding: var(--space-md);
+	text-align: center;
+	color: var(--muted-foreground);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	pointer-events: none;
+}
+
+/* Touch users get a persistent edit strip without covering the whole image. */
+@media (hover: none) {
+	.mediaPicker[data-filled]:not([data-disabled]) .mediaOverlay {
+		inset-block-start: auto;
+		flex-direction: row;
+		padding: var(--space-sm);
+		opacity: 1;
+	}
+
+	.mediaOverlay > svg {
+		width: var(--size-icon);
+		height: var(--size-icon);
+	}
+}
+
+.mediaEmpty > svg {
+	width: var(--size-icon-xl);
+	height: var(--size-icon-xl);
+}
+
+/* ══ Queue tray ════════════════════════════════════════════════════════════════ */
+
+.tray {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+}
+
+.trayToolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.trayCounts {
+	display: flex;
+	flex: 1;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.statusIcon {
+	display: flex;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+.statusIcon > svg {
+	width: 100%;
+	height: 100%;
+}
+
+.statusQueued { color: var(--muted-foreground); }
+.statusUploading { color: var(--primary-accent); }
+.statusDone { color: var(--success); }
+.statusError { color: var(--destructive); }
+.statusCancelled { color: var(--muted-foreground); }
+
+/* The spinner only turns while the row is actually transferring. */
+.statusUploading > svg {
+	animation: var(--animate-spin);
+}
+
+.rowError {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--destructive);
+}
+
+/* ══ Media gallery ═════════════════════════════════════════════════════════════ */
+
+.gallery {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(calc(7rem * var(--scale)), 1fr));
+	gap: var(--space-lg);
+}
+
+.tile {
+	position: relative;
+	aspect-ratio: 1;
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+}
+
+.tile[data-dragging] {
+	opacity: var(--repeater-dragging-opacity);
+}
+
+/* The insertion point while a tile is dragged over this one. */
+.tile[data-drop] {
+	outline: var(--border-width-strong) solid var(--primary);
+	outline-offset: calc(var(--border-width-strong) * -1);
+}
+
+.tileImage {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* The glyph that stands in for a picture that would not load. */
+.tileFallback {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	margin: auto;
+	color: var(--muted-foreground);
+}
+
+/* The whole tile is the drag handle. `grab` rather than `move`: nothing leaves the grid. */
+.tileHandle {
+	position: absolute;
+	inset: 0;
+	border: 0;
+	padding: 0;
+	background: none;
+	cursor: grab;
+	border-radius: inherit;
+}
+
+.tileHandle:active {
+	cursor: grabbing;
+}
+
+/* Inset: the tile's `overflow: hidden` would clip an outer ring. */
+.tileHandle:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring-inset);
+}
+
+/* In the tile's corner, concentric with it: the tile's radius less this inset. */
+.tileRemove {
+	--button-radius: calc(var(--radius-sm) - var(--space-xs));
+	position: absolute;
+	top: var(--space-xs);
+	inset-inline-end: var(--space-xs);
+	z-index: var(--z-raised);
+	opacity: 0;
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+/* Revealed on hover, and on keyboard focus — otherwise it cannot be reached at all. */
+.tile:hover .tileRemove,
+.tile:focus-within .tileRemove {
+	opacity: 1;
+}
+
+/* An opaque inverse chip: a translucent badge would take its contrast from the image. */
+.tileCover {
+	position: absolute;
+	bottom: var(--space-sm);
+	inset-inline-start: var(--space-sm);
+	z-index: var(--z-raised);
+	pointer-events: none;
+	border-color: transparent;
+	background-color: var(--inverse-background);
+	color: var(--inverse-foreground);
+}
+
+/* The add tile matches a thumbnail's footprint so the grid stays even. */
+.galleryAdd {
+	position: relative;
+	display: flex;
+	aspect-ratio: 1;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-2xs);
+	/* The field boundary, dashed, as on the dropzone. */
+	border: var(--border-width) dashed var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: var(--dropzone-bg);
+	color: var(--muted-foreground);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	text-align: center;
+	cursor: pointer;
+	transition:
+		border-color var(--duration-fast) var(--ease-out),
+		background-color var(--duration-fast) var(--ease-out);
+}
+
+.galleryAdd:hover {
+	background-color: var(--accent-50);
+}
+
+.galleryAdd:has(input:focus-visible) {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--focus-ring);
+}
+
+.galleryAdd[data-dragging] {
+	border-style: solid;
+	border-color: var(--primary);
+	background-color: var(--primary-5);
+}
+
+.galleryAdd[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.galleryAdd > svg {
+	width: var(--size-icon-xl);
+	height: var(--size-icon-xl);
+}
+
+/* ══ FilePickerInput ═══════════════════════════════════════════════════════════════
+ *
+ * A file field shaped like an Input; the native input covers the shell at zero opacity.
+ */
+
+.pickerShell {
+	position: relative;
+	gap: var(--space-lg);
+	cursor: pointer;
+}
+
+.pickerIcon {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+	color: var(--muted-foreground);
+}
+
+.pickerLabel {
+	min-width: 0;
+	flex: 1;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.pickerEmpty {
+	color: var(--muted-foreground);
+}
+
+.pickerMeta {
+	flex-shrink: 0;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+}
+
+/* Above the covering input, so it is clickable. */
+.pickerClear {
+	position: relative;
+	z-index: var(--z-raised);
+	flex-shrink: 0;
+}
+
+/* Controls under the drop target, outside the label — see the note in dropzone.tsx. */
+.dropzoneFooter {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	margin-block-start: var(--space-sm);
+}

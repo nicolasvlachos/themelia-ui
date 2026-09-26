@@ -1,0 +1,35 @@
+/*
+ * Breakpoints and container sizes, as @custom-media because a media condition cannot read
+ * `var()`. Resolved at build time by the plugin in vite.config.ts. Values are Tailwind v4's.
+ *
+ *   @media (--bp-md) { .root { … } }
+ *   @container card-header (--cq-xl) { .title { … } }
+ */
+
+/* Viewport — min-width, mobile-first. */
+@custom-media --bp-sm (min-width: 40rem);
+@custom-media --bp-md (min-width: 48rem);
+@custom-media --bp-lg (min-width: 64rem);
+@custom-media --bp-xl (min-width: 80rem);
+@custom-media --bp-2xl (min-width: 96rem);
+
+/* Viewport — max-width, offset so the ranges never overlap. */
+@custom-media --bp-max-sm (max-width: 39.999rem);
+@custom-media --bp-max-md (max-width: 47.999rem);
+@custom-media --bp-max-lg (max-width: 63.999rem);
+
+/* The one off-scale breakpoint, named. */
+@custom-media --bp-compact-grid (min-width: 30rem);
+
+/* Container sizes (Tailwind's scale), used with a named container: `@container metric-bar (--cq-xl)`. */
+@custom-media --cq-3xs (min-width: 16rem);
+@custom-media --cq-2xs (min-width: 18rem);
+@custom-media --cq-xs (min-width: 20rem);
+@custom-media --cq-sm (min-width: 24rem);
+@custom-media --cq-md (min-width: 28rem);
+@custom-media --cq-lg (min-width: 32rem);
+@custom-media --cq-xl (min-width: 36rem);
+@custom-media --cq-2xl (min-width: 42rem);
+@custom-media --cq-3xl (min-width: 48rem);
+@custom-media --cq-4xl (min-width: 56rem);
+@custom-media --cq-5xl (min-width: 64rem);

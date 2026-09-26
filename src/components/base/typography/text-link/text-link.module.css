@@ -1,0 +1,25 @@
+.root {
+	color: var(--link-color);
+	text-decoration-line: underline;
+	text-underline-offset: var(--link-underline-offset);
+	border-radius: var(--radius-sm);
+}
+
+.root:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.root:hover {
+	text-decoration-thickness: 2px;
+}
+
+/* A link that reads as body copy until hovered — for links inside dense prose. */
+.subtle {
+	color: inherit;
+	text-decoration-line: none;
+}
+
+.subtle:hover {
+	text-decoration-line: underline;
+}

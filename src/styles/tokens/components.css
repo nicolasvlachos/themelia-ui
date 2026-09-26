@@ -1,0 +1,22 @@
+/*
+ * Component-level knobs: package-owned row, surface and scrim inputs shared by more than
+ * one family.
+ */
+
+:root {
+	/* Rows */
+	--row-x: 0.75rem; /* Shared inline inset for list, menu, and command rows; table cells use the surface inset. */
+	--row-y: 0.5rem; /* Default vertical row inset with an 8px breathing floor. */
+
+	/* Surface insets; theming/sizing.css derives the scaled steps. */
+	--surface-x: 1rem; /* Default inline inset for cards and multi-content surfaces. */
+	--surface-y: 1rem; /* Default block inset for cards and multi-content surfaces. */
+
+	/* Read by Item and by Upload's rows and tiles, which load without Item or Repeater. */
+	--item-media-offset: 0.125rem; /* Media nudge that aligns a glyph with a row's first line. */
+	--repeater-dragging-opacity: 0.4; /* The row or tile being dragged. */
+
+	/* Modal scrim */
+	--overlay-backdrop: oklch(0 0 0 / 0.5); /* Shared tint behind dialog, alert dialog, sheet, and drawer surfaces. */
+
+}

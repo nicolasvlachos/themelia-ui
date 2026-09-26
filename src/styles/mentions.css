@@ -1,0 +1,111 @@
+/*
+ * Mention chips — the one global component look. The same chip is rendered by a React
+ * component and by serialised HTML in a contenteditable, and the two must match. Keyed on
+ * `data-ref-id` because `sanitizeHtml` strips `class`. Layered `components` so consumer
+ * unlayered CSS wins.
+ */
+@layer components {
+	:is(span, a)[data-ref-id] {
+		/* `inline-block`, not `inline-flex`, so it sits on the baseline like a word. */
+		display: inline-block;
+		/* Chip geometry, in em so it follows whatever line it lands in. */
+		padding: 0.0625em 0.375em;
+		/* The badge's corner, not a pill, to match badges and chips. */
+		border-radius: var(--radius-sm);
+		/* The line's own size: a name in a sentence is a word of it. */
+		font-size: 1em;
+		font-weight: var(--weight-medium);
+		line-height: 1.35;
+		white-space: nowrap;
+		vertical-align: baseline;
+		text-decoration: none;
+		/* Untoned: a chip that is a reference and nothing more. */
+		background-color: var(--foreground-8);
+		color: var(--foreground);
+		box-shadow: inset 0 0 0 var(--border-width) var(--foreground-10);
+		transition: background-color var(--duration-fast) var(--ease-out);
+		/* A click selects the whole chip; with `contenteditable="false"` this makes it atomic in an editor. */
+		user-select: all;
+		-webkit-user-select: all;
+	}
+
+	/* Only a chip with a destination answers the pointer, as a linked soft Badge: its hue at 20%. */
+	a[data-ref-id]:hover {
+		background-color: color-mix(in oklab, var(--foreground) 20%, transparent);
+	}
+
+	/* A chip with no destination is a label, so it does not pretend to be clickable. */
+	span[data-ref-id] {
+		cursor: default;
+	}
+
+	a[data-ref-id] {
+		cursor: pointer;
+	}
+
+	/*
+	 * Each hued tone re-points one hue and one ink; the recipe below is Badge soft's
+	 * arithmetic on it: a 10% wash, a 30% edge, a 20% hover. An unknown tone matches none of
+	 * these and keeps the untoned chip.
+	 */
+	:is(span, a)[data-ref-id][data-ref-tone="primary"] {
+		--ref-hue: var(--primary);
+		--ref-ink: var(--primary-accent);
+	}
+
+	:is(span, a)[data-ref-id][data-ref-tone="info"] {
+		--ref-hue: var(--info);
+		--ref-ink: var(--info);
+	}
+
+	:is(span, a)[data-ref-id][data-ref-tone="success"] {
+		--ref-hue: var(--success);
+		--ref-ink: var(--success);
+	}
+
+	/* Warning ink is the accent step, and its edge the warning line step (40%), as on Badge. */
+	:is(span, a)[data-ref-id][data-ref-tone="warning"] {
+		--ref-hue: var(--warning);
+		--ref-ink: var(--warning-accent);
+		--ref-line: 40%;
+	}
+
+	:is(span, a)[data-ref-id][data-ref-tone="destructive"] {
+		--ref-hue: var(--destructive);
+		--ref-ink: var(--destructive-accent);
+	}
+
+	:is(span, a)[data-ref-id]:is([data-ref-tone="primary"], [data-ref-tone="info"], [data-ref-tone="success"], [data-ref-tone="warning"], [data-ref-tone="destructive"]) {
+		background-color: color-mix(in oklab, var(--ref-hue) 10%, transparent);
+		color: var(--ref-ink);
+		box-shadow: inset 0 0 0 var(--border-width) color-mix(in oklab, var(--ref-hue) var(--ref-line, 30%), transparent);
+	}
+
+	a[data-ref-id]:is([data-ref-tone="primary"], [data-ref-tone="info"], [data-ref-tone="success"], [data-ref-tone="warning"], [data-ref-tone="destructive"]):hover {
+		background-color: color-mix(in oklab, var(--ref-hue) 20%, transparent);
+	}
+
+	/* Secondary is neutral: the untoned fill with supporting ink. */
+	:is(span, a)[data-ref-id][data-ref-tone="secondary"] {
+		background-color: var(--foreground-8);
+		color: var(--muted-foreground);
+		box-shadow: inset 0 0 0 var(--border-width) var(--foreground-10);
+	}
+
+	/* Badge secondary's hover: its supporting ink at 20%. */
+	a[data-ref-id][data-ref-tone="secondary"]:hover {
+		background-color: color-mix(in oklab, var(--muted-foreground) 20%, transparent);
+	}
+
+	/*
+	 * The React chip's leading glyph. `inline-block` overrides the base reset's `block`
+	 * for replaced elements, which would push the name onto a second line.
+	 */
+	:is(span, a)[data-ref-id] > svg {
+		display: inline-block;
+		width: 1em;
+		height: 1em;
+		vertical-align: -0.15em;
+		margin-inline-end: 0.25em;
+	}
+}

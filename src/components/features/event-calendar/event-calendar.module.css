@@ -1,0 +1,570 @@
+/*
+ * EventCalendar.
+ *
+ * A category's colour token maps once, via `[data-token]`, to `--cal-fill`, `--cal-soft`,
+ * `--cal-line` and `--cal-hover`; dot, chip, border, hover and legend swatch all read them.
+ * A new token is one line.
+ */
+
+.root {
+	container-type: inline-size;
+	container-name: event-calendar;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--space-2xl);
+}
+
+/* ── The token map ─────────────────────────────────────────────────────────────── */
+
+/*
+ * `--cal-fill` is the mark (dot and swatch), so warning draws in its accent ink; the soft
+ * chip, its line and its hover step read the tone itself. Success and info have no 20 step.
+ */
+[data-token="neutral"] { --cal-fill: var(--muted-foreground); --cal-soft: var(--foreground-8); --cal-line: var(--border); --cal-hover: var(--accent); }
+[data-token="destructive"] { --cal-fill: var(--destructive); --cal-soft: var(--destructive-10); --cal-line: var(--destructive-30); --cal-hover: var(--destructive-20); }
+/* `amber` and `yellow` are accepted names for the warning set. */
+[data-token="warning"], [data-token="amber"], [data-token="yellow"] { --cal-fill: var(--warning-accent); --cal-soft: var(--warning-10); --cal-line: var(--warning-40); --cal-hover: var(--warning-20); }
+[data-token="success"] { --cal-fill: var(--success); --cal-soft: var(--success-10); --cal-line: var(--success-30); --cal-hover: color-mix(in oklab, var(--success) 20%, transparent); }
+[data-token="info"] { --cal-fill: var(--info); --cal-soft: var(--info-10); --cal-line: var(--info-30); --cal-hover: color-mix(in oklab, var(--info) 20%, transparent); }
+[data-token="primary"] { --cal-fill: var(--primary); --cal-soft: var(--primary-10); --cal-line: var(--primary-30); --cal-hover: var(--primary-20); }
+
+.dot {
+	display: inline-block;
+	flex: none;
+	width: var(--space-md);
+	height: var(--space-md);
+	border-radius: var(--radius-pill);
+	background-color: var(--cal-fill, var(--muted-foreground));
+}
+
+.swatch {
+	display: inline-block;
+	flex: none;
+	width: var(--space-md);
+	height: var(--space-md);
+	border-radius: var(--radius-pill);
+	background-color: var(--cal-fill, var(--muted-40));
+}
+
+/* ── The header ────────────────────────────────────────────────────────────────── */
+
+/* Only the container: container queries match descendants, so the layout lives on `.headerInner`. */
+.header {
+	container-type: inline-size;
+	container-name: event-calendar-header;
+	min-width: 0;
+}
+
+.headerInner {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.headerTitle {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.headerControls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.headerActions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.headerSeparator {
+	display: none;
+	width: var(--border-width);
+	height: var(--space-xl);
+	background-color: var(--border);
+}
+
+/* A menu's inset: the picker inside sits concentric with the popover. */
+.jumpPopover {
+	padding: var(--space-md);
+}
+
+.viewSelect {
+	width: 100%;
+}
+
+@container event-calendar-header (width >= 30rem) {
+	.headerInner {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-xl);
+	}
+
+	.headerControls {
+		flex: 1;
+		justify-content: flex-end;
+	}
+
+	.headerSeparator {
+		display: block;
+	}
+
+	.viewSelect {
+		width: 7rem;
+	}
+}
+
+/* ── The legend ────────────────────────────────────────────────────────────────── */
+
+.legend {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.chip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	padding: var(--space-2xs) var(--space-md);
+	border: var(--border-width) solid var(--border);
+	/* The control radius, not a pill, to match the toolbar controls above. */
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+	color: inherit;
+}
+
+.chipButton {
+	border-color: var(--control-border);
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.chipButton:hover {
+	background-color: var(--accent);
+}
+
+.chipButton:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* Dashed and unfilled: the category is hidden. */
+.chipButton[data-off] {
+	border-style: dashed;
+	border-color: var(--control-border);
+	background-color: transparent;
+}
+
+.legendIcon {
+	display: inline-flex;
+	flex: none;
+	color: var(--muted-foreground);
+}
+
+.legendIcon > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* ── The grid ──────────────────────────────────────────────────────────────────── */
+
+.grid {
+	--surface-ground: var(--card);
+
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	overflow: hidden;
+}
+
+.weekdays,
+.days {
+	display: grid;
+	grid-template-columns: repeat(var(--calendar-columns, 7), minmax(0, 1fr));
+}
+
+/*
+ * Grid lines are the gap showing the border colour through, not per-cell borders: the
+ * column count is a custom property, and `:nth-child()` cannot take `var()`.
+ */
+.days {
+	/* Every week as tall as the busiest one. */
+	grid-auto-rows: 1fr;
+	gap: var(--border-width);
+	background-color: var(--border);
+}
+
+.weekday {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--space-2xl);
+	color: var(--muted-foreground);
+}
+
+.weekdays[data-variant="bordered"] {
+	border-bottom: var(--border-width) solid var(--border);
+}
+
+/* Keeps the grid's gap line from running into the weekday strip. */
+.weekdays {
+	padding-bottom: var(--border-width);
+	background-color: var(--card);
+}
+
+.weekdays[data-variant="bordered"] .weekday {
+	color: var(--foreground);
+}
+
+.weekdays[data-variant="tinted"] {
+	background-color: var(--muted-50);
+}
+
+.weekdays[data-variant="accent"] {
+	background-color: var(--primary-10);
+}
+
+.weekdays[data-variant="accent"] .weekday {
+	color: var(--primary-accent);
+}
+
+/* ── One day ───────────────────────────────────────────────────────────────────── */
+
+/* Each day is a container: chip content adapts to the cell's width, not the calendar's. */
+.dayWrap {
+	container-type: inline-size;
+	container-name: event-calendar-day;
+	display: flex;
+	min-width: 0;
+	background-color: var(--card);
+}
+
+.dayWrap[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.cell {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-xs);
+	width: 100%;
+	min-height: round(calc(6rem * var(--density-scale, var(--scale))), 1px);
+	padding: var(--space-sm);
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.cell:hover {
+	background-color: var(--accent-50);
+}
+
+.cell[data-compact] {
+	min-height: round(calc(5rem * var(--density-scale, var(--scale))), 1px);
+	padding: var(--space-2xs);
+}
+
+/* Today inks its number, as the agenda does, and leaves the cell's fill to hover. */
+.cell[data-today] .dayNumber {
+	color: var(--primary-accent);
+}
+
+/* Outside-month days mute only the number: an opacity wash fails contrast, and a tint would read as a state. */
+.cell[data-outside] .dayNumber {
+	color: var(--muted-foreground);
+}
+
+/*
+ * A fixed square, so its box (and the corner drawn from it) doesn't follow the digits' font;
+ * the digits keep the start edge the event chips below them share.
+ */
+.dayNumber {
+	display: inline-grid;
+	place-items: center start;
+	inline-size: var(--size-icon-lg);
+	block-size: var(--size-icon-lg);
+	padding: 0;
+	border: 0;
+	/* A glyph button takes the item radius, like every control. */
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	cursor: pointer;
+	line-height: var(--leading-none);
+}
+
+.dayNumber:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.cellEvents {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	width: 100%;
+	min-width: 0;
+}
+
+/* ── One chip ──────────────────────────────────────────────────────────────────── */
+
+.badge {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	width: 100%;
+	min-width: 0;
+	/* Content-height, on the same inset as `Badge`, so the two read as one family. */
+	padding: var(--space-2xs) var(--space-sm);
+	border: var(--border-width) solid var(--cal-line, var(--border-60));
+	border-radius: var(--radius-sm);
+	background-color: var(--cal-soft, var(--card));
+	color: inherit;
+	text-align: start;
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* A compact cell keeps the type step and drops the padding. */
+.badge[data-compact] {
+	padding-block: 0;
+}
+
+/* Hover deepens the chip's own tone rather than a neutral fill. */
+.badge:hover {
+	background-color: var(--cal-hover, var(--accent));
+}
+
+.badge:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.badgeTitle {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.badgeTime {
+	flex: none;
+	white-space: nowrap;
+}
+
+/* The time goes first; the title identifies the event. */
+@container event-calendar-day (width < 9rem) {
+	.badgeTime {
+		display: none;
+	}
+}
+
+/* Below ~5rem only the centred dot remains. */
+@container event-calendar-day (width < 5rem) {
+	.badge {
+		height: var(--space-md);
+		justify-content: center;
+		gap: 0;
+		padding: 0;
+		border-color: transparent;
+		background-color: transparent;
+	}
+
+	.badgeTitle {
+		display: none;
+	}
+}
+
+/* Aligned with a chip's dot (chip inset + border). */
+.overflow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	padding-inline: calc(var(--space-sm) + var(--border-width));
+}
+
+.overflow [data-overflow-label="compact"] {
+	display: none;
+}
+
+.overflowDots {
+	display: inline-flex;
+	align-items: center;
+}
+
+.overflowDots > .dot + .dot {
+	margin-inline-start: calc(var(--space-2xs) * -1);
+	box-shadow: 0 0 0 var(--border-width) var(--surface-ground, var(--background));
+}
+
+/* Narrow cells show the compact count; the full phrase stays in the accessibility tree. */
+@container event-calendar-day (width < 5rem) {
+	.overflow {
+		justify-content: center;
+		width: 100%;
+		padding-inline: 0;
+		white-space: nowrap;
+	}
+
+	.overflowDots,
+	.overflow [data-overflow-label="full"] {
+		display: none;
+	}
+
+	.overflow [data-overflow-label="compact"] {
+		display: inline;
+	}
+}
+
+/* ── The event card ────────────────────────────────────────────────────────────── */
+
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	width: 100%;
+	min-width: 0;
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	text-align: start;
+}
+
+.cardButton {
+	cursor: pointer;
+	color: inherit;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* A clickable Card's hover: the edge firms and the card lifts. */
+.cardButton:hover {
+	border-color: var(--foreground-20);
+	box-shadow: var(--shadow-sm);
+}
+
+.cardButton:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.cardHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.cardTitleGroup {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+.cardCategory {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+.cardFacts {
+	display: grid;
+	gap: var(--space-md);
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.cardFact {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.cardGlyph {
+	flex: none;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	color: var(--muted-foreground);
+}
+
+.cardWhen {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	padding-top: var(--space-sm);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+@container event-calendar (width >= 34rem) {
+	.cardFacts {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+/* ── The agenda ────────────────────────────────────────────────────────────────── */
+
+.agenda {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+/* A fixed-width date rail, so every day's events start at the same x. */
+.agendaDay {
+	display: grid;
+	grid-template-columns: 3rem minmax(0, 1fr);
+	gap: var(--space-lg);
+	align-items: start;
+	min-width: 0;
+}
+
+.agendaDate {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding-top: var(--space-sm);
+}
+
+.agendaDay[data-today] .agendaDate {
+	color: var(--primary-accent);
+}
+
+.agendaEvents {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+}

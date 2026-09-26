@@ -1,0 +1,90 @@
+/*
+ * Toggle — a button that stays pressed. Control height and radius, so it lines up with
+ * buttons and fields; no tone system, since its colour is the pressed state.
+ */
+.toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-sm);
+	min-width: var(--control-h);
+	height: var(--control-h);
+	padding-inline: var(--control-px);
+	border: var(--border-width) solid transparent;
+	border-radius: var(--radius-sm);
+	background-color: transparent;
+	color: var(--foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out);
+}
+
+.toggle[data-variant="outline"] {
+	border-color: var(--control-border);
+}
+
+/* The control hover every button shares. */
+.toggle:hover:not(:disabled):not([data-pressed]) {
+	background-color: var(--accent);
+}
+
+/*
+ * Pressed is a fill and a boundary: the hover fill plus the stronger control edge, which
+ * hover never draws, so a pressed outline toggle still differs from a hovered one.
+ */
+.toggle[data-pressed] {
+	background-color: var(--accent);
+	border-color: var(--control-border-hover);
+	color: var(--foreground);
+}
+
+.toggle:disabled {
+	opacity: var(--disabled-opacity);
+	cursor: not-allowed;
+}
+
+.toggle:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+	/* Above its neighbours, so a joined group does not clip the ring. */
+	z-index: var(--z-raised);
+}
+
+.toggle > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* ══ ToggleGroup ═══════════════════════════════════════════════════════════════════ */
+
+.group {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+/*
+ * Attached: one framed control, one control row tall; the frame's padding and border come
+ * out of the items, so they are shorter than a standalone toggle.
+ */
+.group[data-attached] {
+	gap: var(--space-2xs);
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	padding: var(--space-2xs);
+}
+.group[data-attached] .toggle {
+	height: calc(var(--control-h) - var(--space-2xs) * 2 - var(--border-width) * 2);
+	min-width: calc(var(--control-h) - var(--space-2xs) * 2 - var(--border-width) * 2);
+	border-color: transparent;
+	/* Concentric with the frame: its radius less the inset. */
+	border-radius: calc(var(--radius-sm) - var(--space-2xs));
+}
+.group[data-attached] .toggle[data-pressed] {
+	border-color: var(--control-border-hover);
+}

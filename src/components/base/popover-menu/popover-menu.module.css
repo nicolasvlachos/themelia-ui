@@ -1,0 +1,91 @@
+/*
+ * PopoverMenu. The list is Command's; only the bands (header, footer, loading, status) are
+ * here. The popover is `inset="flush"`, so each band carries its own inline inset.
+ */
+.content {
+	width: calc(13rem * var(--scale));
+}
+
+/* Header and footer bands on the rows' rhythm, so text starts on the row inset. */
+.band {
+	padding: var(--menu-row-py) var(--row-px);
+}
+
+.header {
+	/* Clearance below the rule for a search field under it. */
+	margin-bottom: var(--space-md);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.footer {
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+.list {
+	/* The Command root already carries the container inset. */
+	padding: 0;
+	border-radius: var(--radius-sm);
+}
+
+/*
+ * The list takes focus only without a search field; cmdk highlights a row before focus
+ * arrives, so the list shows a ring — inset, since the flush surface would clip an outer one.
+ */
+.list:focus-visible {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: calc(var(--focus-ring-width) * -1);
+}
+
+.loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-md);
+	padding-block: var(--space-sm);
+	color: var(--muted-foreground);
+}
+
+.loadingIcon {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	animation: var(--animate-spin);
+}
+
+/* The too-short hint and the error stand where rows would, measured like Command's `.empty`. */
+.status {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-sm);
+	padding: var(--space-2xl) var(--row-px);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	text-align: center;
+}
+
+.icon {
+	display: inline-flex;
+	flex-shrink: 0;
+	color: var(--muted-foreground);
+}
+
+/* The selected row's leading glyph carries the accent — the row itself stays quiet. */
+.item[data-checked] .icon {
+	color: var(--primary-accent);
+}
+
+.body {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+	line-height: var(--leading-tight);
+}
+
+
+.description {
+	margin-top: var(--space-2xs);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}

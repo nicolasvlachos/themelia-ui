@@ -1,0 +1,56 @@
+/*
+ * The action overlays' own chrome (tone glyph, notice band, footer row); the surfaces come
+ * from base/dialog, base/sheet and base/alert-dialog.
+ */
+
+.titleRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+/* Fixed-size, so a long title truncates rather than squeezing the glyph. */
+.toneIcon {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+.toneIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.toneIcon[data-tone="neutral"] { color: var(--muted-foreground); }
+.toneIcon[data-tone="destructive"] { color: var(--destructive); }
+.toneIcon[data-tone="warning"] { color: var(--warning-accent); }
+.toneIcon[data-tone="info"] { color: var(--info); }
+.toneIcon[data-tone="success"] { color: var(--success); }
+
+.titleText {
+	min-width: 0;
+}
+
+/* Inside the scroll region, so the notice scrolls with what it warns about. */
+.notice {
+	padding-block-end: var(--space-lg);
+}
+
+/* Trailing-aligned; stacks (primary on top) below `sm` so labels are not truncated. */
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-md);
+	width: 100%;
+}
+
+@media (--bp-max-sm) {
+	.actions {
+		flex-direction: column-reverse;
+		align-items: stretch;
+	}
+}

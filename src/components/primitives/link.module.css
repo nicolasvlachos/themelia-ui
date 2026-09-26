@@ -1,0 +1,19 @@
+/* The link itself is TextLink's; this sheet holds only what a value adds to it. */
+
+/* The absent state, in the full muted foreground (as `EmptyValue`) so it stays legible. */
+.empty {
+	color: var(--muted-foreground);
+}
+
+/* The new-tab announcement, visually hidden. A local copy: `primitives/` may not import `base/`. */
+.newTab {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border-width: 0;
+}

@@ -1,0 +1,193 @@
+/*
+ * ThemeTweaker: the two-column split, field rhythm and export code blocks (the rest is kit
+ * components). Keyed to its container, since it runs in drawers as often as pages.
+ */
+
+.root {
+	container-type: inline-size;
+	container-name: theme-tweaker;
+	min-width: 0;
+}
+
+/* The scoped form paints its own ground, because it carries its own theme. */
+.rootScoped {
+	background-color: var(--background);
+	color: var(--foreground);
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--space-xl);
+	min-width: 0;
+}
+
+.controls {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+	min-width: 0;
+}
+
+.preview {
+	align-self: start;
+	min-width: 0;
+}
+
+.minWidth {
+	min-width: 0;
+}
+
+@container theme-tweaker (width >= 60rem) {
+	.layoutWithPreview {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+/* ── Toolbar ───────────────────────────────────────────────────────────────────── */
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+/* ── One variable ──────────────────────────────────────────────────────────────── */
+
+.fields {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+/* Ruled between rather than around: a border per field would make each a card. */
+.field {
+	min-width: 0;
+	padding-block: var(--row-py);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+.field:first-child {
+	border-top: 0;
+}
+
+.fieldLabel {
+	display: flex;
+	flex: 1;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+
+.controlRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+.controlInput {
+	flex: 1;
+	min-width: 0;
+}
+
+.monoInput {
+	font-family: var(--font-mono);
+}
+
+.numberInput {
+	width: 7rem;
+	font-family: var(--font-mono);
+	font-variant-numeric: tabular-nums;
+}
+
+.empty {
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) dashed var(--border);
+	border-radius: var(--radius);
+}
+
+/* ── The provider panel ────────────────────────────────────────────────────────── */
+
+.providerSettings {
+	min-width: 0;
+}
+
+.settingsGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+@container theme-tweaker (width >= 40rem) {
+	.settingsGrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+/* ── The export dialog ─────────────────────────────────────────────────────────── */
+
+.exportFooter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	gap: var(--space-md);
+}
+
+.exportBlock {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.exportBlockHeader {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+@container theme-tweaker (width >= 30rem) {
+	.exportBlockHeader {
+		flex-direction: row;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+}
+
+.exportCode {
+	max-height: 18rem;
+	min-width: 0;
+	margin: 0;
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	position: relative;
+	overflow: auto;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--muted-50);
+	color: var(--foreground);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: var(--leading-relaxed);
+}
+
+.exportCode:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.previewCheck {
+	flex: none;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	color: var(--success);
+}

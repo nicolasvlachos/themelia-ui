@@ -1,0 +1,48 @@
+/*
+ * Modal scrims — native `::backdrop` of `showModal()` dialogs, so one rule covers every
+ * modal surface and no scrim is trapped by a clipping ancestor. Unlayered so component
+ * modules cannot outrank it. Consumers retune the tint through --overlay-backdrop.
+ */
+
+dialog::backdrop {
+	background-color: var(--overlay-backdrop);
+	/*
+	 * No blur by default: `backdrop-filter` re-rasterises the page every frame and makes
+	 * the open/close animation drop frames. Opt in with
+	 * `UIProvider config={{ overlay: { backdropBlur: 4 } }}`. The default is `none`, not
+	 * `blur(0)`, which would still create the costly filter layer.
+	 */
+	backdrop-filter: var(--overlay-backdrop-filter);
+
+	/* Top layer: transitioning `overlay`/`display` with allow-discrete keeps it there to animate out. */
+	opacity: 0;
+
+	/* The surface's exit timing (overlay.module.css). */
+	transition:
+		opacity var(--overlay-duration-exit) var(--ease-out),
+		overlay var(--overlay-duration-exit) allow-discrete,
+		display var(--overlay-duration-exit) allow-discrete;
+}
+
+dialog[open]::backdrop {
+	opacity: 1;
+
+	/* Enters on the surface's own timing so the two read as one gesture. */
+	transition:
+		opacity var(--duration-normal) var(--ease-out),
+		overlay var(--duration-normal) allow-discrete,
+		display var(--duration-normal) allow-discrete;
+}
+
+@starting-style {
+	dialog[open]::backdrop {
+		opacity: 0;
+	}
+}
+
+/* The softer modalities leave the page usable, so they are never scrimmed. */
+dialog[data-modality="trap-focus"]::backdrop,
+dialog[data-modality="non-modal"]::backdrop {
+	background-color: transparent;
+	backdrop-filter: none;
+}

@@ -1,0 +1,471 @@
+/*
+ * Calendar and date pickers. The trigger wears the shared field surface
+ * (styles/fields.css); this file owns the grid, its cells and the time segments.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	--calendar-nav-size: round(calc(1.75rem * var(--density-scale, var(--scale))), 1px);
+
+	/* Fixed square cell, so the grid keeps its shape from month to month. */
+	--calendar-cell: round(calc(2.25rem * var(--density-scale, var(--scale))), 1px);
+
+}
+
+
+.calendar {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding: var(--space-lg);
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+}
+
+.caption {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	border: 0;
+	background: none;
+	padding: 0 var(--space-2xs);
+	border-radius: var(--radius-sm);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+	color: inherit;
+	cursor: pointer;
+}
+
+.caption:hover {
+	background-color: var(--accent);
+}
+
+.caption:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.caption > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* A multi-month header names the span rather than a single month. */
+.captionRange {
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+}
+
+.monthColumn {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+/* Each grid's own caption, so the second month in a range view is not anonymous. */
+.monthCaption {
+	text-align: center;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+}
+
+.navButton {
+	display: inline-flex;
+	width: var(--calendar-nav-size);
+	height: var(--calendar-nav-size);
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	cursor: pointer;
+}
+
+.navButton:hover:not(:disabled) {
+	background-color: var(--accent);
+	color: var(--accent-foreground);
+}
+
+.navButton:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.navButton:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+.navButton > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(7, var(--calendar-cell));
+	/* No gap, so a selected range reads as one continuous band. */
+	gap: 0;
+}
+
+/*
+ * Weeks exist for ARIA: gridcells need a `row` parent, but cells must stay direct grid
+ * items of `.grid`, so the row has no box.
+ */
+.row {
+	display: contents;
+}
+
+.weekday {
+	display: flex;
+	height: var(--calendar-cell);
+	align-items: center;
+	justify-content: center;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-medium);
+	color: var(--muted-foreground);
+}
+
+.cell {
+	position: relative;
+	display: flex;
+	width: var(--calendar-cell);
+	height: var(--calendar-cell);
+	align-items: center;
+	justify-content: center;
+}
+
+.day {
+	position: relative;
+	z-index: var(--z-raised);
+	display: inline-flex;
+	width: 100%;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	border: var(--border-width) solid transparent;
+	/* Inner element: tighter than the popup around it. */
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-variant-numeric: tabular-nums;
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out);
+}
+
+.day:hover:not(:disabled):not([aria-disabled="true"]):not([data-selected]) {
+	background-color: var(--accent);
+	color: var(--accent-foreground);
+}
+
+.day:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* Today is outlined, not filled, so it doesn't compete with the selection. */
+.day[data-today] {
+	border-color: var(--primary);
+}
+
+.day[data-selected] {
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+	font-weight: var(--weight-medium);
+}
+
+/*
+ * Neighbouring-month days fill six rows. `:not([data-selected])` because this rule follows
+ * the selected rule at equal specificity; ranges crossing a month would lose their ink.
+ */
+.day[data-outside]:not([data-selected]) {
+	/* Full muted-foreground: outside days are still readable, clickable dates. */
+	color: var(--muted-foreground);
+}
+
+/*
+ * Disabled days use `aria-disabled`, so arrow keys pass over them and screen readers
+ * announce them as unavailable.
+ */
+.day:disabled,
+.day[aria-disabled="true"] {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+.day:disabled:hover,
+.day[aria-disabled="true"]:hover {
+	background: none;
+}
+
+/* The range band is painted on the cell, behind the day, so a week joins into one strip. */
+.cell[data-in-range]::before {
+	content: "";
+	position: absolute;
+	inset-block: var(--space-2xs);
+	inset-inline: 0;
+	/* Quieter than the ends; 15% is the lowest step where the hue still reads. */
+	background-color: var(--primary-15);
+}
+
+.cell[data-range-start]::before { border-start-start-radius: var(--radius-sm); border-end-start-radius: var(--radius-sm); }
+.cell[data-range-end]::before { border-start-end-radius: var(--radius-sm); border-end-end-radius: var(--radius-sm); }
+
+/* ── Month and year grids ─────────────────────────────────────────────────────── */
+
+.monthGrid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--space-sm);
+}
+
+.monthCell {
+	display: inline-flex;
+	height: var(--calendar-cell);
+	align-items: center;
+	justify-content: center;
+	border: var(--border-width) solid transparent;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	cursor: pointer;
+}
+
+.monthCell:hover:not(:disabled):not([data-selected]) {
+	background-color: var(--accent);
+	color: var(--accent-foreground);
+}
+
+.monthCell:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.monthCell[data-selected] {
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
+.monthCell[data-today] {
+	border-color: var(--primary);
+}
+
+/* ── Surrounds ────────────────────────────────────────────────────────────────── */
+
+.body {
+	display: flex;
+	align-items: stretch;
+	min-width: 0;
+}
+
+/* Presets rail: full-width, start-aligned buttons scan as a list. */
+.presets {
+	display: flex;
+	width: calc(9rem * var(--scale));
+	flex-shrink: 0;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding: var(--space-lg);
+	border-inline-end: var(--border-width) solid var(--border-60);
+}
+
+.presets > button {
+	width: 100%;
+	justify-content: flex-start;
+}
+
+/* The rail scrolls rather than stretching the calendar to match. */
+.presets {
+	max-height: inherit;
+	overflow-y: auto;
+}
+
+/* A rule between months, so two seven-column grids don't read as one of fourteen. */
+.months {
+	display: flex;
+	gap: var(--space-xl);
+}
+
+.months > * + * {
+	padding-inline-start: var(--space-xl);
+	border-inline-start: var(--border-width) solid var(--border-60);
+}
+
+/* Narrow screens: stack the months and put the presets above the grid. */
+@media (--bp-max-sm) {
+	.months {
+		flex-direction: column;
+	}
+
+	.months > * + * {
+		padding-inline-start: 0;
+		padding-block-start: var(--space-xl);
+		border-inline-start: 0;
+		border-block-start: var(--border-width) solid var(--border-60);
+	}
+
+	.body {
+		flex-direction: column;
+	}
+
+	.presets {
+		width: auto;
+		flex-direction: row;
+		flex-wrap: wrap;
+		border-inline-end: 0;
+		border-block-end: var(--border-width) solid var(--border-60);
+	}
+
+	.presets > button {
+		width: auto;
+	}
+}
+
+/* ── Time ─────────────────────────────────────────────────────────────────────── */
+
+.time {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+/* Width goes on the field frame, not the inner input (see text-inputs/input.tsx). */
+.time > :global([data-slot="input-frame"]) {
+	flex: none;
+	width: calc(3rem * var(--scale));
+}
+
+.timeSegment {
+	width: 100%;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+
+.timeSeparator {
+	color: var(--muted-foreground);
+	user-select: none;
+}
+
+/* Holds the trigger and the clear control (see date-picker.tsx). */
+.triggerFrame {
+	position: relative;
+	display: block;
+	width: 100%;
+	min-width: 0;
+}
+
+.trigger {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-sm);
+	text-align: start;
+	cursor: default;
+}
+
+/*
+ * Reserve exactly the clear's lane: the trigger is `space-between`, so this padding also
+ * places the calendar glyph right beside the clear.
+ */
+.triggerFrameClearable > .trigger {
+	padding-inline-end: calc(var(--space-md) + var(--size-icon) + var(--space-sm));
+}
+
+.triggerClear {
+	position: absolute;
+	top: 50%;
+	inset-inline-end: var(--space-md);
+	translate: 0 -50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	/* Same token the trigger's padding reserves. */
+	width: var(--size-icon);
+	height: var(--size-icon);
+	padding: 0;
+	border: 0;
+	/* A glyph button takes the item radius, like every control. */
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted-foreground);
+	cursor: pointer;
+}
+
+/* Its own control inside the field's lane, so it draws its own ring. */
+.triggerClear:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.triggerClear:hover {
+	background-color: var(--accent);
+	color: var(--foreground);
+}
+
+.triggerClear > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.triggerPlaceholder {
+	color: var(--muted-foreground);
+}
+
+.triggerIcon {
+	flex-shrink: 0;
+	color: var(--muted-foreground);
+}
+
+.triggerIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* ══ Header and footer bands ═══════════════════════════════════════════════════════
+ * One shape for both, so header and footer padding can't diverge.
+ */
+
+.band {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	padding: var(--space-lg);
+	min-width: 0;
+}
+
+.bandText {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.bandActions {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-sm);
+	margin-inline-start: auto;
+}

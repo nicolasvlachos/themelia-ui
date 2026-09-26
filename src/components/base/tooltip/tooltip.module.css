@@ -1,0 +1,97 @@
+/*
+ * Tooltip — an inverse surface, so it reads as an annotation above the page. The arrow's
+ * --tooltip-arrow-size lives in styles/theming/overlay.css (the map's tooltip draws one too).
+ */
+
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+	--tooltip-arrow-inset: calc(var(--tooltip-arrow-size) / -2);
+}
+
+/* Enter/exit as Popover, but the exit fades and zooms in place: only the enter slides. */
+.positioner {
+	isolation: isolate;
+	z-index: var(--z-tooltip);
+}
+
+.content {
+	z-index: var(--z-tooltip);
+	width: fit-content;
+	max-width: 20rem;
+	padding-inline: var(--control-px);
+	padding-block: var(--space-sm);
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground);
+	color: var(--background);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	transform-origin: var(--transform-origin);
+
+	--enter-opacity: 0;
+	--enter-scale: 0.95;
+	--exit-opacity: 0;
+	--exit-scale: 0.95;
+
+	animation: var(--animate-exit);
+}
+
+.content[data-open] {
+	animation: var(--animate-enter);
+}
+
+.content[data-side="bottom"] { --enter-translate-y: calc(var(--slide-nudge) * -1); }
+.content[data-side="top"] { --enter-translate-y: var(--slide-nudge); }
+.content[data-side="left"],
+.content[data-side="inline-start"] { --enter-translate-x: var(--slide-nudge); }
+.content[data-side="right"],
+.content[data-side="inline-end"] { --enter-translate-x: calc(var(--slide-nudge) * -1); }
+
+/* Base UI positions the arrow; these rules tuck it half under the correct edge per side. */
+.arrow {
+	z-index: var(--z-tooltip);
+	width: var(--tooltip-arrow-size);
+	height: var(--tooltip-arrow-size);
+	/* An arrow tip softens by a quarter of the item radius. */
+	border-radius: calc(var(--radius-sm) / 4);
+	background-color: var(--foreground);
+	fill: var(--foreground);
+	transform: rotate(45deg);
+}
+
+.arrow[data-side="top"] {
+	bottom: var(--tooltip-arrow-inset);
+}
+
+.arrow[data-side="bottom"] {
+	top: var(--tooltip-arrow-inset);
+}
+
+/* Physical (`left`) and logical (`inline-start`) sides need different offsets in RTL. */
+.arrow[data-side="left"] {
+	top: 50%;
+	right: var(--tooltip-arrow-inset);
+	transform: translateY(-50%) rotate(45deg);
+}
+
+.arrow[data-side="inline-start"] {
+	top: 50%;
+	inset-inline-end: var(--tooltip-arrow-inset);
+	transform: translateY(-50%) rotate(45deg);
+}
+
+.arrow[data-side="right"] {
+	top: 50%;
+	left: var(--tooltip-arrow-inset);
+	transform: translateY(-50%) rotate(45deg);
+}
+
+.arrow[data-side="inline-end"] {
+	top: 50%;
+	inset-inline-start: var(--tooltip-arrow-inset);
+	transform: translateY(-50%) rotate(45deg);
+}

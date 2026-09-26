@@ -1,0 +1,289 @@
+/* Workspace: the frame one record is edited in, its header, section nav and locale strip. */
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/* ── WorkspaceLayout ───────────────────────────────────────────────────────── */
+	--workspace-rail-w: round(calc(20rem * var(--density-scale, var(--scale))), 1px);
+}
+
+/*
+ * WorkspaceRecordHeader: identifies a record (media, status, metadata, two tiers of
+ * action), unlike PageHeading, which titles a page. Any part may be absent.
+ */
+.recordHeader {
+	min-width: 0;
+}
+
+/* Badges and status never shrink; the title does. */
+.titleSuffix {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.actions {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	flex-shrink: 0;
+	margin-inline-start: auto;
+}
+
+/* A description list, so each pair is announced as term and value. */
+.metadata {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-sm) var(--space-xl);
+	margin: 0;
+	min-width: 0;
+}
+
+.secondary {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	flex-wrap: wrap;
+	min-width: 0;
+}
+
+/* ══ WorkspaceNav ══════════════════════════════════════════════════════════════════
+ * A record's sections with their progress; the status glyph is derived from completion.
+ */
+
+.nav {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+	height: 100%;
+}
+
+.navGroups {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-xl);
+	min-height: 0;
+}
+
+.navGroup {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+.navGroupHead {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding-inline: var(--space-xs);
+}
+
+.navItems {
+	gap: var(--space-xs);
+}
+
+.navItem {
+	border-radius: var(--radius-sm);
+	text-align: start;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.navItem:is(button, a) {
+	cursor: pointer;
+}
+
+.navItem:is(button, a):hover:not([data-active]):not([aria-disabled]) {
+	background-color: var(--accent-50);
+}
+
+.navItem[data-active] {
+	background-color: var(--accent);
+}
+
+/* Disabled: dimmed and non-interactive. */
+.navItem[aria-disabled] {
+	opacity: var(--disabled-opacity);
+	cursor: not-allowed;
+}
+
+/* The status glyph keeps its own colour over the row's tint. */
+.navStatusIcon {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.navItem[data-status="complete"] .navStatusIcon { color: var(--success); }
+.navItem[data-status="current"] .navStatusIcon { color: var(--primary-accent); }
+.navItem[data-status="attention"] .navStatusIcon { color: var(--warning-accent); }
+.navItem[data-status="idle"] .navStatusIcon { color: var(--muted-foreground); }
+.navItem[data-status="disabled"] .navStatusIcon { color: var(--muted-foreground); }
+
+.navProgress {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	margin-block-start: var(--space-xs);
+}
+
+.navProgress > :first-child {
+	flex: 1;
+}
+
+.navFooter {
+	flex-shrink: 0;
+}
+
+/* ══ WorkspaceLayout ═══════════════════════════════════════════════════════════════
+ * Sits inside an app shell, so it bounds itself to its parent and scrolls its own content.
+ */
+
+.layout {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--background);
+	color: var(--foreground);
+}
+
+.layoutHeader {
+	flex-shrink: 0;
+	border-bottom: var(--border-width) solid var(--border);
+}
+
+.layoutBody {
+	display: grid;
+	flex: 1;
+	min-height: 0;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+@media (--bp-lg) {
+	.layout[data-has-sidebar] .layoutBody {
+		grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+	}
+
+	.layout[data-has-rail] .layoutBody {
+		grid-template-columns: minmax(0, 1fr) var(--workspace-rail-w);
+	}
+
+	.layout[data-has-sidebar][data-has-rail] .layoutBody {
+		grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--workspace-rail-w);
+	}
+}
+
+/* Each column scrolls on its own, so the section nav stays in view. */
+.layoutSidebar,
+.layoutContent,
+.layoutRail {
+	min-width: 0;
+	min-height: 0;
+	overflow-y: auto;
+	padding: var(--space-xl);
+}
+
+.layoutSidebar {
+	border-inline-end: var(--border-width) solid var(--border);
+}
+
+.layoutRail {
+	border-inline-start: var(--border-width) solid var(--border);
+}
+
+/* Below lg the side columns stack above the content rather than squeezing it. */
+@media (--bp-max-lg) {
+	.layoutSidebar,
+	.layoutRail {
+		border-inline: 0;
+		border-block-end: var(--border-width) solid var(--border);
+		overflow-y: visible;
+	}
+}
+
+.layoutMeasure {
+	margin-inline: auto;
+	width: 100%;
+	max-width: var(--workspace-content-max-w);
+}
+
+.layout[data-content-width="default"] { --workspace-content-max-w: 58rem; }
+.layout[data-content-width="wide"] { --workspace-content-max-w: 86rem; }
+.layout[data-content-width="full"] { --workspace-content-max-w: none; }
+
+/* ══ WorkspaceLocaleStrip ══════════════════════════════════════════════════════════ */
+
+.strip {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+/* Scrolls rather than wraps, so the frame's height stays fixed above the form. */
+.stripList {
+	display: flex;
+	flex: 1;
+	gap: var(--space-sm);
+	min-width: 0;
+	/* Contains absolutely positioned descendants. */
+	position: relative;
+	overflow-x: auto;
+}
+
+.stripItem {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	flex-shrink: 0;
+	min-width: round(calc(11rem * var(--density-scale, var(--scale))), 1px);
+	padding: var(--space-sm) var(--space-md);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+	color: inherit;
+	text-align: start;
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out);
+}
+
+.stripItem:hover:not(:disabled):not([data-active]) {
+	background-color: var(--accent);
+}
+
+.stripItem[data-active] {
+	border-color: var(--primary);
+	background-color: var(--primary-5);
+}
+
+.stripItem:disabled {
+	opacity: var(--disabled-opacity);
+	cursor: not-allowed;
+}
+
+.stripItem:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.stripHead {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.stripActions {
+	flex-shrink: 0;
+}

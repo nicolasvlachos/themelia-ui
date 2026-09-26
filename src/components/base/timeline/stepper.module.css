@@ -1,0 +1,255 @@
+/*
+ * Stepper — numbered markers, connectors and a label per step. Each item holds a TARGET
+ * (a button when pressable, else a span), so the geometry never changes with interactivity.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/* A label narrower than this wraps to three lines and the bar's rhythm breaks down. */
+	--stepper-item-min: calc(7rem * var(--scale));
+
+}
+
+.stepper {
+	margin: 0;
+	padding: 0;
+	min-width: 0;
+	list-style: none;
+}
+
+/* Contains the visually hidden text, which would otherwise widen the document. */
+.step {
+	position: relative;
+	min-width: 0;
+}
+
+.stepMarker {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--radius-pill);
+}
+
+/* The bar marker's ring weight, so a finished stretch reads as one line. */
+.stepLine {
+	flex: 1;
+	height: var(--border-width-strong);
+	background-color: var(--border);
+}
+
+/* ── Pressable steps ─────────────────────────────────────────────────────────────── */
+
+.stepButton {
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.stepButton:hover:not(:disabled) {
+	background-color: var(--accent-50);
+}
+
+/* Not `opacity`: an upcoming step is unreachable, not faded out. */
+.stepButton:disabled {
+	cursor: default;
+}
+
+.stepButton:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* ══ bar ═══════════════════════════════════════════════════════════════════════════ */
+
+/*
+ * Three rows (rail, label, hint) shared by every step through subgrid, so hints stay on one
+ * line when a label wraps. `fit-content`: the bar does not scroll itself — a caller wraps
+ * it in a scroller, as StepsBar does.
+ */
+.stepper[data-variant="bar"] {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(var(--stepper-item-min), 1fr);
+	grid-template-rows: auto auto auto;
+	min-width: fit-content;
+}
+
+/* `stretch`: boxes fill the column and the text is centred. The target joins the subgrid too. */
+.stepper[data-variant="bar"] .step,
+.stepper[data-variant="bar"] .stepTarget {
+	display: grid;
+	grid-row: 1 / -1;
+	grid-template-rows: subgrid;
+	justify-items: stretch;
+	min-width: 0;
+}
+
+/* Its children are the rows, so the wrapper must not be a box of its own. */
+.stepper[data-variant="bar"] .stepText {
+	display: contents;
+}
+
+/* The marker sits between two half-connectors, so the ends need no clipping. */
+.stepper[data-variant="bar"] .stepRail {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.stepper[data-variant="bar"] .stepMarker {
+	width: var(--size-icon-2xl);
+	height: var(--size-icon-2xl);
+	border: var(--border-width-strong) solid var(--border);
+	background-color: var(--surface-ground, var(--background));
+	color: var(--muted-foreground);
+}
+
+.stepper[data-variant="bar"] .stepCheck {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* The travelled line, finished marks and current one share one tone (see TimelineStatus). */
+.stepper[data-variant="bar"] .stepLine[data-filled] {
+	background-color: var(--primary);
+}
+
+/* The outer half at each end has nothing to connect to, but keeps the marker centred. */
+.stepper[data-variant="bar"] .stepLine[data-hidden] {
+	background-color: transparent;
+}
+
+/* Only the current step is filled; a finished step keeps the tone in its ring. */
+.stepper[data-variant="bar"] .step[data-status="completed"] .stepMarker {
+	border-color: var(--primary);
+	background-color: var(--primary-10);
+	color: var(--primary-accent);
+}
+
+.stepper[data-variant="bar"] .step[data-status="current"] .stepMarker {
+	border-color: var(--primary);
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
+/* Two lines, then ellipsis — a long step name must not make the whole row taller. */
+.stepper[data-variant="bar"] .stepLabel,
+.stepper[data-variant="bar"] .stepHint {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	padding-inline: var(--space-sm);
+	text-align: center;
+}
+
+.stepper[data-variant="bar"] .stepLabel {
+	margin-block-start: var(--space-md);
+}
+
+.stepper[data-variant="bar"] .stepHint {
+	margin-block-start: var(--space-2xs);
+}
+
+/* ══ trail ═════════════════════════════════════════════════════════════════════════ */
+
+.stepper[data-variant="trail"] {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+/* Equal shares, so markers keep their places whatever the label lengths. */
+.stepper[data-variant="trail"] .step {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.stepper[data-variant="trail"] .stepTarget {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+	padding: var(--space-2xs) var(--space-md);
+	border-radius: var(--radius-sm);
+}
+
+.stepper[data-variant="trail"] .stepRail {
+	display: inline-flex;
+}
+
+/* The marker carries the state — a tick, a number, a ring. */
+.stepper[data-variant="trail"] .stepMarker {
+	width: var(--space-2xl);
+	height: var(--space-2xl);
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+}
+
+.stepper[data-variant="trail"] .stepCheck {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.stepper[data-variant="trail"] .step[data-status="completed"] .stepMarker {
+	background-color: var(--success);
+	color: var(--success-foreground);
+}
+
+/* The ring is what separates "here" from "done" at a glance. */
+.stepper[data-variant="trail"] .step[data-status="current"] .stepMarker {
+	background-color: var(--primary);
+	box-shadow: 0 0 0 var(--space-xs) var(--primary-20);
+	color: var(--primary-foreground);
+}
+
+/* Below `lg` the labels are visually hidden (not removed), so each step keeps its name. */
+.stepper[data-variant="trail"] .stepText {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+@media (--bp-lg) {
+	.stepper[data-variant="trail"] .stepText {
+		position: static;
+		display: flex;
+		flex-direction: column;
+		/* The primary-to-secondary line gap, as in Item. */
+		gap: var(--space-2xs);
+		width: auto;
+		height: auto;
+		min-width: 0;
+		margin: 0;
+		overflow: visible;
+		clip-path: none;
+		white-space: normal;
+	}
+}
+
+.stepper[data-variant="trail"] .stepLine {
+	height: var(--border-width);
+}
+
+.stepper[data-variant="trail"] .stepLine[data-filled] {
+	background-color: var(--success);
+}

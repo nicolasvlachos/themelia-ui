@@ -1,0 +1,68 @@
+/*
+ * The marks inside stored HTML. They cannot carry classes, so descendant element selectors
+ * are the tool here, scoped by the module's root class.
+ */
+.root > :first-child {
+	margin-block-start: 0;
+}
+
+.root > :last-child {
+	margin-block-end: 0;
+}
+
+.root p,
+.root ul,
+.root ol,
+.root blockquote,
+.root pre {
+	margin-block: var(--rich-text-block-gap);
+}
+
+.root ul,
+.root ol {
+	padding-inline-start: var(--rich-text-list-indent);
+}
+
+.root li {
+	margin-block: var(--rich-text-item-gap);
+}
+
+/* Document-model editors wrap list text in paragraphs. Keep the list rhythm. */
+.root li > p:first-child { margin-block-start: 0; }
+.root li > p:last-child { margin-block-end: 0; }
+
+.root a {
+	color: var(--link-color);
+	text-decoration: underline;
+	text-underline-offset: var(--link-underline-offset);
+}
+
+.root code {
+	padding: 0.1em 0.32em;
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+	font-family: var(--font-mono);
+	font-size: 0.875em;
+}
+
+.root pre {
+	padding: var(--space-lg);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+	position: relative;
+	overflow-x: auto;
+}
+
+.root pre code {
+	padding: 0;
+	background: none;
+}
+
+/* A rule and an indent, not an accent stripe. */
+.root blockquote {
+	padding-inline-start: var(--rich-text-quote-indent);
+	border-inline-start: var(--border-width-strong) solid var(--border);
+	color: var(--muted-foreground);
+}
+
+/* `mark` is styled once, in base.css. */

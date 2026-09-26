@@ -1,0 +1,48 @@
+/*
+ * Spinner — a ring with one coloured quarter (one element, no SVG). Keyframes live in
+ * theming/animation.css.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	--spinner-size-sm: round(var(--size-icon-sm), 1px);
+	--spinner-size-md: round(var(--size-icon), 1px);
+	--spinner-size-lg: round(var(--size-icon-lg), 1px);
+}
+
+.root {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.ring {
+	display: block;
+	flex-shrink: 0;
+	border-radius: 50%;
+	border: var(--border-width-strong) solid var(--muted);
+	border-top-color: currentColor;
+	/*
+	 * Via the variable: CSS Modules would scope a bare keyframes name. The duration is a
+	 * longhand after the shorthand (see styles/theming/animation.css).
+	 */
+	animation: var(--animate-spin);
+	animation-duration: 0.7s;
+	width: var(--spinner-size-md);
+	height: var(--spinner-size-md);
+}
+
+.sizeSm .ring { width: var(--spinner-size-sm); height: var(--spinner-size-sm); }
+.sizeLg .ring { width: var(--spinner-size-lg); height: var(--spinner-size-lg); }
+
+/* Tones borrow the button contract so a spinner beside an action matches it. */
+.toneNeutral { color: var(--muted-foreground); }
+.tonePrimary { color: var(--primary-accent); }
+.toneInfo { color: var(--info); }
+.toneSuccess { color: var(--success); }
+.toneWarning { color: var(--warning-accent); }
+.toneDestructive { color: var(--destructive); }

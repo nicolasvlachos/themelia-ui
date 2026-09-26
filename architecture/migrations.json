@@ -1,0 +1,675 @@
+{
+  "note": "Recorded, not derived: a rename is only knowable from history. gen-migration-map.mjs renders these into docs/generated/migration.md and docs/generated/migration-codemod.json, and scripts/consumer/codemod.mjs applies the mechanical ones — subpath moves, and the `tokens` and `classes` maps on CSS entries (a null target means removed with no successor: reported, never guessed). verify migrations checks every `to` exists, every `from` is gone, and every custom property in architecture/token-surface.json is either still declared or mapped here.",
+  "moves": [
+    {
+      "kind": "subpath",
+      "from": "themelia-ui/blocks/analytics",
+      "to": "themelia-ui/patterns/analytics",
+      "mechanical": true,
+      "why": "`blocks/` became `patterns/`, and the admin domains moved under `admin/patterns/`. The layer kept its position above features; only the name changed."
+    },
+    {
+      "kind": "subpath",
+      "from": "themelia-ui/blocks/onboarding",
+      "to": "themelia-ui/patterns/onboarding",
+      "mechanical": true,
+      "why": "See above."
+    },
+    {
+      "kind": "subpath",
+      "from": "themelia-ui/blocks/timelines",
+      "to": "themelia-ui/patterns/timelines",
+      "mechanical": true,
+      "why": "See above."
+    },
+    {
+      "kind": "subpath",
+      "from": "themelia-ui/blocks/access",
+      "to": "themelia-ui/admin/patterns/access",
+      "mechanical": true,
+      "why": "Admin domains moved into the admin profile, which may build on general families but never the reverse."
+    },
+    {
+      "kind": "subpath",
+      "from": "themelia-ui/blocks/commerce",
+      "to": "themelia-ui/admin/patterns/commerce",
+      "mechanical": true,
+      "why": "See above."
+    },
+    {
+      "kind": "subpath",
+      "from": "@/services/actions",
+      "to": "themelia-ui/features/actions",
+      "mechanical": true,
+      "why": "The action registry was never published; it lived at a source alias no consumer could resolve. It is a family now."
+    },
+    {
+      "kind": "subpath",
+      "from": "themelia-ui/features/suggestions",
+      "to": "themelia-ui/features/combobox",
+      "mechanical": true,
+      "why": "The entry point only re-exported SuggestionsCombobox, useSuggestions, defaultSuggestionsStrings and their types (MaybePromise, SuggestionsComboboxProps, SuggestionsErrorContext, SuggestionsFetchContext, SuggestionsStrings, UseSuggestionsConfig, UseSuggestionsResult) from features/combobox, where they live. Every name is published there unchanged, so this is a pure specifier rewrite; themelia-ui/features/suggestions.css goes too, and themelia-ui/features/combobox.css styles the picker."
+    }
+  ],
+  "provider": [
+    {
+      "kind": "behaviour",
+      "from": "<UIProvider> writes theme and density onto the document",
+      "to": "<UIRoot documentTarget=\"documentElement\">",
+      "mechanical": false,
+      "why": "Reaching outside the React tree is the one thing here that re-rendering cannot undo, so it is opt-in. `UIProvider` still composes UIRoot and UIScope and behaves as it always did; only new code needs the narrower pieces.",
+      "action": "Add `documentTarget=\"documentElement\"` to the root provider if your application relies on the theme reaching <html>. If it does not, nothing changes."
+    },
+    {
+      "kind": "behaviour",
+      "from": "<UIProvider> renders a wrapper element",
+      "to": "<UIRoot> renders nothing",
+      "mechanical": false,
+      "why": "A box at the top of every application that used one is a layout node nobody asked for, and it broke flex and grid parents expecting their real child.",
+      "action": "Remove any CSS that targeted the provider's wrapper. If you need an element, use <UIScope transparent={false}>."
+    },
+    {
+      "kind": "behaviour",
+      "from": "16px shared fields at all viewport widths below 768px",
+      "to": "UIConfig.forms.preventIPhoneZoom",
+      "mechanical": false,
+      "why": "Narrow panes on desktop, Android, and iPad should retain the normal field typography.",
+      "action": "Enable forms.preventIPhoneZoom explicitly to apply a 16px minimum to native fields on iPhones. The default is false; nested Providers can opt out."
+    },
+    {
+      "kind": "provider",
+      "phase": "2.0.0",
+      "from": "UIConfig.theme.radius as the base every corner derived from",
+      "to": "UIConfig.theme.radius (--radius) and UIConfig.theme.radiusSm (--radius-sm), two independent values",
+      "mechanical": false,
+      "why": "--radius-sm is no longer derived, so a provider that sets only radius changes containers and leaves controls on the default inner corner.",
+      "action": "Set radiusSm beside radius when you want controls to change with containers."
+    }
+  ],
+  "props": [
+    {
+      "kind": "prop",
+      "from": "asChild",
+      "to": "render",
+      "mechanical": false,
+      "why": "One idea had two spellings. `render` takes the element as a value, so it can be built conditionally or defaulted, and it does not overload `children`. See docs/adr/0005-polymorphic-render-contract.md.",
+      "action": "`<Button asChild><a href=\"/x\">Go</a></Button>` becomes `<Button render={<a href=\"/x\" />}>Go</Button>`. The children move out of the wrapped element and stay on the component. Move it by hand: a codemod cannot decide which children belong to the element and which stay as content. Affects Badge and BadgeProps, Button and ButtonProps, OverlayTrigger and OverlayClose (so DialogTrigger, DialogClose, SheetTrigger and SheetClose, which alias them), PopoverTrigger, PopoverAnchor, SidebarMenuButton, SidebarMenuSubButton, TooltipTrigger, AlertDialogAction and AlertDialogCancel. `asChild` is removed, not deprecated: passing it now reaches the DOM as an unknown attribute and React warns."
+    },
+    {
+      "kind": "prop",
+      "from": "contentAs",
+      "to": "contentRender",
+      "mechanical": true,
+      "why": "One idea in two vocabularies. Every other polymorphic seam in the kit is `render`, and this one shipped as `contentAs` — a string union naming an element rather than an element to render. `verify api-vocabulary` exists to catch exactly this and its regex only matched `as?: ElementType`, so the single instance of the drift outlived the rule against it.",
+      "action": "`contentAs=\"div\"` becomes `contentRender={<div />}`. Mechanical: the value goes from an element NAME to an element, so `\"section\"` becomes `<section />`."
+    },
+    {
+      "kind": "prop",
+      "from": "FormFieldProps htmlFor: string",
+      "to": "FormFieldProps htmlFor: string | false",
+      "mechanical": true,
+      "why": "`false` is how a caller says the field wraps a GROUP of controls rather than one — a radio set, a segmented control, a pair of date inputs. There is no single element for a label to point at, so `FormField` stops inventing an id and describes the group instead. Widening an optional input prop: every call site passing a string, and every call site omitting it, is unaffected.",
+      "action": "Nothing to change when passing a string or omitting the prop. Only a consumer who reads the type back out is affected — `const id: string | undefined = props.htmlFor` becomes `string | false | undefined`. Widen the annotation, or narrow with `htmlFor || undefined`."
+    },
+    {
+      "kind": "prop",
+      "from": "fifteen unread default strings keys",
+      "to": "removed",
+      "mechanical": false,
+      "why": "Each of these was declared in a `default*Strings` object and in its exported interface, and read by NOTHING. Overriding one did exactly nothing, silently, which is the worst shape an API can take — the caller has no way to tell it did not work. They accumulated the same way each time: the component owned a label, the design moved that copy to a prop the caller supplies or the feature went away, and the key stayed behind. Removed: `OrderCustomerStrings.viewCustomer`, `OrderSummaryStrings.formatItemCount`, `PaymentMethodStrings.holder`, `SeoStrings.scoreLabel`, `OverflowTabBarStrings.scrollHint`, `AiChatPromptInputStrings.modelPickerAria`, `CommentsStrings.moreActionsLabel`, `DataViewPaginationStrings.morePages`, `FilterStrings.selectDateRange`, `GlobalSearchStrings.idleRecent`, `GlobalSearchStrings.idleSuggestions`, `MediaLibraryStrings.retry`, `MediaLibraryStrings.usedIn`, `ProductVariantBulkTableStrings.optionLabel`, `SideNavStrings.toggleGroup`.",
+      "action": "Delete the override. The copy it appeared to control is either supplied by you already — a `sections[].label`, a slot, an item field — or is no longer rendered. Two keys from the same sweep went the other way and are NOT removed: `CredentialListStrings.copyLabel` now names each row's copy button, and `AiConfirmationStrings.detailsLabel` now names the confirmation's details region; both were unread for the opposite reason, and both are worth setting."
+    },
+    {
+      "kind": "prop",
+      "from": "HeaderNotificationsStrings without unreadItem",
+      "to": "HeaderNotificationsStrings.unreadItem",
+      "mechanical": true,
+      "why": "Unread was drawn as a tint and a dot, and neither reaches a screen reader — colour alone is not a state — so the row also carried the word. It was a literal `<VisuallyHidden>Unread</VisuallyHidden>`, which no `strings` override could reach and no consumer could translate.",
+      "action": "Nothing to change when passing a partial, which is what the `strings` prop takes. Only code that builds a COMPLETE `HeaderNotificationsStrings` object — a translation table, typically — must add `unreadItem`. The English default is \"Unread\"."
+    },
+    {
+      "kind": "prop",
+      "from": "typography written into JSX",
+      "to": "CommentsStrings.formatQuoteAttribution and MentionInlineSuggestionsStrings.formatQuery",
+      "mechanical": true,
+      "why": "The em dash before a quoted block's attribution, and the curly quotes around a search term, were written into the JSX. Neither is punctuation every language shares — German sets „…“ and French « … » — so a consumer could translate every key in both interfaces and still be left with English convention.",
+      "action": "Nothing to change when passing a partial, which is what both `strings` props take. Only code that builds a COMPLETE strings object must add the formatter. Defaults: `(caption) => `— ${caption}`` and `(query) => `“${query}”``."
+    },
+    {
+      "kind": "behaviour",
+      "from": "RichTextEditor default engine; TiptapEngineOptions.extensions",
+      "to": "themelia-ui/features/rich-text-editor/tiptap",
+      "mechanical": false,
+      "phase": "TipTap default (1.0.2)",
+      "why": "The default RichTextEditor now uses TipTap StarterKit with atomic mentions. TiptapEngineOptions.extensions now uses the public Extensions type; the previous conditional type incorrectly resolved to never with the installed optional constructor options.",
+      "action": "Install @tiptap/core, @tiptap/pm and @tiptap/starter-kit when importing RichTextEditor, comments or activities. Existing props and refs remain supported. HTML is normalized to the active schema; supply custom extensions to retain other content. Custom extension arrays replace StarterKit and the default mention node. Existing calls without extensions remain valid; consumers can now pass real TipTap extensions without a cast. The legacy createExecCommandEngine export remains available for explicit integrations."
+    },
+    {
+      "kind": "prop",
+      "from": "Complete FilterStrings and ActivitiesStrings translation maps",
+      "to": "FilterStrings.applying / savedViews / customView and ActivitiesStrings.refreshing / error / refreshError / retry",
+      "mechanical": false,
+      "phase": "Feature interaction states (1.0.2)",
+      "why": "Pending filters, saved-view selects, and activity loading/retry states now expose their copy through the owning family's strings contract.",
+      "action": "Partial strings overrides continue to work without changes. Complete FilterStrings maps must add applying (Updating results…), savedViews (Saved views), and customView (Custom view). Complete ActivitiesStrings maps must add refreshing (Updating activity…), error (Could not load activity), refreshError (Could not update activity), and retry (Try again). Spread the respective default strings before overrides to retain fallback copy. DataView's new optional strings.filterError controls its own matching-failure warning."
+    },
+    {
+      "kind": "behaviour",
+      "from": "MediaLibrary table view rendered a compact list",
+      "to": "MediaLibrary view=\"table\" renders metadata columns; view=\"list\" retains compact rows",
+      "mechanical": false,
+      "why": "Asset management needs both dense browsing and comparable metadata.",
+      "action": "Use view=\"list\" for compact rows. Supply onUpload to show the upload tab, use helpers.files IDs for progress, and applyItemPatch when accessors read a custom record shape. New MediaLibraryStrings keys are optional for existing complete translations."
+    },
+    {
+      "kind": "typing",
+      "phase": "Base and primitives quality (1.0.2)",
+      "from": "Slider, SliderField, SliderProps, SliderFieldProps and SliderChangeEvent with never-valued callbacks or scalar-only events",
+      "to": "Generic slider props and events inferred from scalar or range values",
+      "mechanical": false,
+      "why": "The previous callback type hid every value as never, and range onChange events were incorrectly typed as number. Runtime payload shapes remain the same; declarations now describe them accurately.",
+      "action": "Ordinary JSX with numeric or array state still infers its handlers. Explicitly typed wrappers should use SliderFieldProps<number> / SliderProps<number> for single values, or SliderFieldProps<number[]> / SliderProps<number[]> for ranges. Type range events as SliderChangeEvent<number[]> and single events as SliderChangeEvent (or SliderChangeEvent<number>). Remove casts that treated range event.target.value as a number."
+    },
+    {
+      "kind": "typing",
+      "phase": "2.0.0",
+      "from": "ChartLegend and ComboboxPortal as const aliases; SwitchCardProps declared on its own; CoordinatesInputProps, DimensionsInputProps and WeightInputProps with no field-wiring contract; TableProps.containerLabel (added earlier in the 2.0 cycle)",
+      "to": "ChartLegend and ComboboxPortal as function components; SwitchCardProps as Omit<ToggleFieldProps, …> with label: string; the three unit-input props extending ClusterFieldWiring; TableProps.strings.scrollRegion",
+      "mechanical": false,
+      "why": "Each is a declaration that changed shape without losing anything. ChartLegend now forwards its series order and ComboboxPortal its container, so both became functions. SwitchCard is now a preset over ToggleField, and its props are declared as ToggleField's minus the four it fixes — the same members as before, plus icon and hint that it already took. The unit inputs gained the aria-labelledby / aria-describedby / aria-invalid wiring FormField passes, which they used to drop. TableProps.containerLabel was added and withdrawn within the 2.0 cycle: a name the table announces is copy, and copy goes through strings.",
+      "action": "Nothing to change. Code that referenced the old declarations by structure still type-checks; code that imported the types by name gets the same members, and the unit inputs' new members are optional. If you adopted containerLabel from a pre-release build, pass strings={{ scrollRegion }} instead."
+    },
+    {
+      "kind": "typing",
+      "phase": "2.0.0",
+      "from": "TableAction, KanbanItemAction and ActivityAction declared on their own; PageAction.placement as an inline union; OverflowTabBarProps accepting the div's defaultValue; BreadcrumbProgressStrings.step taking (index, label); TabListProps.variant as \"underline\" | \"enclosed\"; CommentsProps extending CommentsAccessors and CommentsSlots",
+      "to": "TableAction, KanbanItemAction and ActivityAction extending ContextAction; PageAction.placement as ActionPlacement; OverflowTabBarProps without defaultValue; BreadcrumbProgressStrings.step taking an optional third status argument; TabListProps.variant adding \"pill\"; CommentsProps also extending CommentThreadOptions",
+      "mechanical": false,
+      "why": "Row, card, activity and page actions were four declarations of one idea, and a predicate or a placement meant something slightly different in each. They now extend the shared ContextAction from base/action-menu, keeping the members each already had. ActionPlacement is the same three-word union PageAction spelled inline. OverflowTabBar now renders Tabs, whose own defaultValue would have collided with the div attribute it used to pass through, which never did anything on a tab bar. BreadcrumbProgress now tells its strings whether a step is completed, so the default can say so. OverflowTabBar drew its selected tab as a filled chip with its own CSS; now that it renders TabList, that look is TabList's pill variant, open to any tab list. Comments became a social thread: CommentThreadOptions (commentActions, maxVisibleReplies, clampLines, maxVisibleAttachments, reactionChoices) is shared by Comments, CommentTimeline and CommentItem, every member optional with a default.",
+      "action": "Nothing to change for ordinary use: every member these types had is still there and optional members stay optional. Drop a defaultValue passed to OverflowTabBar (it was ignored); choose the tab with value. A custom BreadcrumbProgressStrings.step keeps working with two parameters; take the third to word a finished step yourself. Code that switches exhaustively over TabListProps[\"variant\"] needs a pill case. Comments needs nothing; its new options are optional and default to the thread's new behaviour (the last three replies shown, bodies folded after six lines, three attachments before 'Show more'). Pass maxVisibleReplies={0}, clampLines={0} or maxVisibleAttachments={0} to show everything as before."
+    },
+    {
+      "kind": "export",
+      "phase": "2.0.0",
+      "from": "Names that were only another kit component under a second name: Dialog, DialogTrigger, DialogClose, DialogBody, DialogTitle, DialogDescription, DialogDismissArea and the DialogProps type from base/dialog; Sheet, SheetTrigger, SheetClose, SheetBody, SheetTitle and SheetDescription from base/sheet; AlertDialog, AlertDialogTrigger, AlertDialogBody, AlertDialogTitle and AlertDialogDescription from base/alert-dialog; MenubarMenu, MenubarContent, MenubarItem, MenubarCheckboxItem, MenubarRadioGroup, MenubarRadioItem, MenubarLabel, MenubarGroup, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubTrigger, MenubarSubContent and MenubarPortal from base/menubar; SettingsShell and the SettingsShellProps type from layout/settings; ToggleGroupItem and the ToggleGroupItemProps type from base/toggle; DialogHeader and DialogFooter from base/dialog, SheetHeader and SheetFooter from base/sheet, and AlertDialogHeader and AlertDialogFooter from base/alert-dialog, which only added a class hook no stylesheet read; CommandDialogProps declared against Dialog",
+      "to": "The component each one always was, under its own name: Overlay, OverlayTrigger, OverlayClose, OverlayBody, OverlayTitle, OverlayDescription, OverlayDismissArea and OverlayRootProps from base/overlay (for every Dialog*, Sheet* and AlertDialog* name above, and DialogProps); OverlayHeader and OverlayFooter from base/overlay (for every *Header and *Footer above); DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuLabel, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent and DropdownMenuPortal from base/dropdown-menu, around MenubarTrigger; AsideNavShell and AsideNavShellProps from layout/settings; Toggle and ToggleProps from base/toggle; CommandDialogProps declared against OverlayRootProps (the same members)",
+      "mechanical": false,
+      "why": "Each removed name was `export const X = Y` of another kit component (or `type X = Y`): the same function under a second name, so there were two names to learn for one thing and every page documented it twice. A preset family now exports only the parts that set something. DialogContent fixes placement; SheetContent fixes an edge and a default shape; AlertDialogContent fixes role and dismissal, and AlertDialogAction and AlertDialogCancel name the answers; AlertDialogMedia is the media slot; MenubarTrigger draws a menu's word in the bar. The root, trigger, close, body, title and description around them are Overlay's own parts, and a menubar's menus are the dropdown menu's. The header and footer parts were OverlayHeader and OverlayFooter with an extra class (dialog--header, sheet--footer, …) that no stylesheet in the kit read, so they went with the aliases.",
+      "action": "Import the replacement under its own name; props and behaviour are identical because it was always the same component. `import { Dialog, DialogTrigger, DialogContent, DialogTitle } from \"themelia-ui/base/dialog\"` becomes `import { Overlay, OverlayTrigger, OverlayTitle } from \"themelia-ui/base/overlay\"` beside `import { DialogContent } from \"themelia-ui/base/dialog\"`, and `<Dialog>` becomes `<Overlay>`, `<DialogTitle>` `<OverlayTitle>`, and so on; Sheet* and AlertDialog* names map the same way (Sheet → Overlay, SheetClose → OverlayClose, AlertDialogBody → OverlayBody), and DialogDismissArea is OverlayDismissArea. In a Menubar, wrap each menu in `DropdownMenu` instead of `MenubarMenu`, keep `MenubarTrigger`, and swap every other `Menubar<Part>` for `DropdownMenu<Part>` from themelia-ui/base/dropdown-menu; import themelia-ui/base/dropdown-menu.css beside base/menubar.css, since the menubar sheet no longer pulls it in. `SettingsShell` becomes `AsideNavShell` and `ToggleGroupItem` becomes `Toggle` (give it the same `value`), both from the same subpath. `DialogHeader`, `SheetHeader` and `AlertDialogHeader` become `OverlayHeader`, and the three footers `OverlayFooter`; a stylesheet of your own that targeted `.dialog--header`, `.sheet--footer` or the alert-dialog pair should target `.overlay--header` / `.overlay--footer` inside `.dialog--component`, `.sheet--component` or `.alert-dialog--component` instead. Type annotations: DialogProps → OverlayRootProps, SettingsShellProps → AsideNavShellProps, ToggleGroupItemProps → ToggleProps. Code that typed CommandDialogProps needs nothing."
+    },
+    {
+      "kind": "typing",
+      "phase": "2.0.0",
+      "from": "TextType including \"discrete\", Text type=\"discrete\", and the --text-role-discrete role token; --text-role-secondary resolving to --foreground-80",
+      "to": "TextType without \"discrete\" — use type=\"secondary\"; --text-role-secondary resolving to --muted-foreground; no --text-role-discrete",
+      "mechanical": true,
+      "why": "Supporting text had four greys in play: Text secondary (--foreground-80), Text discrete, the modules' --muted-foreground and --foreground-80 set directly. A description and the metadata beside it came out rgb 84 against 99 in light and 204 against 161 in dark, which read as a mismatch rather than a hierarchy. Text now has two colours: the main one and --muted-foreground for everything supporting.",
+      "action": "Replace type=\"discrete\" with type=\"secondary\" (the same grey now). A stylesheet that read --text-role-discrete should read --text-role-secondary or --muted-foreground. A surface that re-pointed --text-role-discrete for an inverse panel only needs --text-role-secondary."
+    },
+    {
+      "kind": "prop",
+      "phase": "2.0.0",
+      "from": "NavigationMenuContent side, sideOffset and container",
+      "to": "NavigationMenu side, sideOffset, align and container",
+      "mechanical": true,
+      "why": "Every NavigationMenuContent built its own portal, positioner and popup, so a bar of three entries mounted three panels: moving between entries swapped surfaces instead of resizing one, and each idle entry left a 0x0 popup whose ring shadow painted a dot. The bar now owns one shared panel and each content block is drawn into it, so placement is a property of the bar.",
+      "action": "Move side, sideOffset and container from each <NavigationMenuContent> to the <NavigationMenu> root. align (new) defaults to \"start\"."
+    },
+    {
+      "kind": "typing",
+      "phase": "2.0.0",
+      "from": "ResolvedUIConfig with an optional overlay slice",
+      "to": "ResolvedUIConfig.overlay required, as OverlayConfig & { darkMenus: boolean }",
+      "mechanical": false,
+      "why": "The provider decides whether menus render dark (overlay.darkMenus, default true), so the resolved config always carries the answer. The overlay slice also merges per field now: a scope that set backdropBlur used to replace its parent's whole slice.",
+      "action": "Only code that BUILDS a ResolvedUIConfig is affected — a custom context value or a test fixture. Spread DEFAULT_UI_CONFIG, or add overlay: { darkMenus: true }. Reading the config is unchanged; useOverlayConfig() reads the slice."
+    },
+    {
+      "kind": "typing",
+      "phase": "2.0.0",
+      "from": "UIConfigSettingsStrings without labels.darkMenus and darkMenusDescription",
+      "to": "UIConfigSettingsStrings with labels.darkMenus and darkMenusDescription",
+      "mechanical": false,
+      "why": "The provider settings panel gained a \"Dark menus\" toggle for overlay.darkMenus, and its label and description are copy.",
+      "action": "A complete translation of UIConfigSettingsStrings adds labels.darkMenus and darkMenusDescription. Spreading defaultUIConfigSettingsStrings before your overrides keeps English for anything you have not translated."
+    },
+    {
+      "kind": "export",
+      "phase": "2.0.0",
+      "from": "RANGE_PRESETS from base/date-pickers",
+      "to": "createRangePresets({ strings, weekStartsOn }) from base/date-pickers",
+      "mechanical": false,
+      "why": "Deprecated in 1.x with removal promised at 2.0. The constant was English and computed once on date-fns's Sunday week, so \"This week\" selected Sunday to Saturday beside a calendar drawn Monday to Sunday under the provider's default.",
+      "action": "Build presets inside the component that renders the picker: `const { weekStartsOn } = useDatesConfig(); const presets = useMemo(() => createRangePresets({ weekStartsOn }), [weekStartsOn])`, and pass `strings` for a language other than English."
+    },
+    {
+      "kind": "prop",
+      "phase": "2.0.0",
+      "from": "Textarea className and the textarea--component hook on the frame around the field",
+      "to": "Textarea className and textarea--component on the <textarea>; the frame is data-slot=\"textarea-frame\", as Input's is input-frame",
+      "mechanical": false,
+      "why": "Input put className on the control and Textarea put it on the frame, so a caller could not reach the textarea's own resize, rows or font.",
+      "action": "A class you passed to style the box now lands on the textarea itself; select the box with [data-slot=\"textarea-frame\"]. CSS written against .textarea--component now matches the control."
+    },
+    {
+      "kind": "prop",
+      "phase": "2.0.0",
+      "from": "PopoverContent onOpenAutoFocus and onInteractOutside",
+      "to": "removed — Base UI's initialFocus/finalFocus and onOpenChange (reason \"outside-press\", with cancel()) cover both",
+      "mechanical": false,
+      "why": "Both props were accepted and never wired, so a handler passed to either never ran.",
+      "action": "Move focus logic to initialFocus/finalFocus; handle an outside press in onOpenChange by its reason."
+    },
+    {
+      "kind": "prop",
+      "phase": "2.0.0",
+      "from": "CommandStrings.empty; StackedAvatarsStrings.overflow read by nothing",
+      "to": "CommandStrings without empty (CommandEmpty renders its children); StackedAvatarsStrings.overflow supplies the +N chip text",
+      "mechanical": false,
+      "why": "Neither key was read, so a translation of either changed nothing.",
+      "action": "Drop empty from a CommandStrings translation. overflow now receives the hidden count and returns the chip text (default \"+N\")."
+    },
+    {
+      "kind": "typing",
+      "phase": "2.0.0",
+      "from": "MotionConfig.durations.slow",
+      "to": "MotionConfig.durations without slow",
+      "mechanical": false,
+      "why": "The provider wrote --duration-slow, which no stylesheet declares or reads, so the setting did nothing.",
+      "action": "Remove durations.slow from your provider config."
+    }
+  ],
+  "css": [
+    {
+      "kind": "css",
+      "from": "themelia-ui/style.css",
+      "to": "one self-contained sheet per family",
+      "mechanical": false,
+      "why": "One stylesheet meant every consumer shipped every component's rules. The split means you ship what you import.",
+      "action": "Import each family's stylesheet beside its components; the family sheet imports `core.css` and its cascade layer order itself. `docs/generated/imports.md` lists every exact path. `style.css` still exists as the deduplicated union if you would rather not track them."
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--radius-surface, --radius-popup, --radius-control, --radius-inner, --radius-md, --radius-lg, --radius-xl, --radius-2xl, --radius-3xl and --radius-4xl; --radius-sm as calc(var(--radius) * 0.375)",
+      "to": "--radius (1rem) for containers and --radius-sm (0.5rem) for what sits inside them, two plain values declared once at :root; --radius-pill unchanged",
+      "mechanical": true,
+      "why": "There were thirteen radius names — a ladder, four roles and a derived one — and components picked between them case by case, so a tooltip and the menu beside it disagreed. Two values cover every case. They are complementary rather than derived: a container holding --radius-sm items insets them by the difference (--space-md at the defaults), so outer = inner + inset.",
+      "action": "The codemod renames the tokens and the rounded-surface, -popup, -control and -inner utilities. It reports rounded-md, rounded-lg and larger without changing them: the bridge no longer re-points those names, so they now take Tailwind's own radius — use rounded-(--radius) or rounded-sm where you meant the kit's. A theme that sets --radius should set --radius-sm too; nothing derives it.",
+      "tokens": {
+        "--radius-surface": "--radius",
+        "--radius-popup": "--radius",
+        "--radius-lg": "--radius",
+        "--radius-xl": "--radius",
+        "--radius-2xl": "--radius",
+        "--radius-3xl": "--radius",
+        "--radius-4xl": "--radius",
+        "--radius-control": "--radius-sm",
+        "--radius-inner": "--radius-sm",
+        "--radius-md": "--radius-sm"
+      },
+      "classes": {
+        "rounded-surface": "rounded-(--radius)",
+        "rounded-popup": "rounded-(--radius)",
+        "rounded-control": "rounded-sm",
+        "rounded-inner": "rounded-sm"
+      },
+      "reviewClasses": {
+        "rounded-md": "Tailwind's own default now, no longer the kit radius",
+        "rounded-lg": "Tailwind's own default now, no longer the kit radius",
+        "rounded-xl": "Tailwind's own default now, no longer the kit radius",
+        "rounded-2xl": "Tailwind's own default now, no longer the kit radius",
+        "rounded-3xl": "Tailwind's own default now, no longer the kit radius",
+        "rounded-4xl": "Tailwind's own default now, no longer the kit radius"
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--text-role-discrete and --foreground-80",
+      "to": "--text-role-secondary (the supporting-text role, --muted-foreground by default) and --muted-foreground",
+      "mechanical": true,
+      "why": "Text had four greys in play — --foreground-80, the discrete role, --muted-foreground and hand-set mixes — so the same caption read in three different greys across the kit. There are two text colours now: --foreground and --muted-foreground.",
+      "action": "The codemod replaces --text-role-discrete with --text-role-secondary, so a surface that re-pointed the role keeps working, and --foreground-80 with --muted-foreground.",
+      "tokens": {
+        "--text-role-discrete": "--text-role-secondary",
+        "--foreground-80": "--muted-foreground"
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--menu-surface-p, --menu-row-px, --field-h, --field-px, --text-xxs and --text-xxs--line-height",
+      "to": "--space-md (a popup's inset, the gap between the two radii), --row-px, --control-h, --control-px-sm, --text-xs and --text-xs--line-height",
+      "mechanical": true,
+      "why": "Each restated another token's value under a second name: --menu-row-px was --space-lg, --field-h was --control-h, --field-px was --control-px-sm and --text-xxs was --text-xs to the digit. --menu-surface-p was --space-xs, and the popup inset it named is now --space-md so rows sit concentric in a 1rem popup.",
+      "action": "The codemod renames each token, and the text-xxs utility to text-xs — the Tailwind bridge no longer emits text-xxs.",
+      "tokens": {
+        "--menu-surface-p": "--space-md",
+        "--menu-row-px": "--row-px",
+        "--field-h": "--control-h",
+        "--field-px": "--control-px-sm",
+        "--text-xxs": "--text-xs",
+        "--text-xxs--line-height": "--text-xs--line-height"
+      },
+      "classes": {
+        "text-xxs": "text-xs"
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--heading-fg, --heading-sub-fg, --display-label-fg and --link-fg",
+      "to": "--text-role-main (headings and labels), --text-role-secondary (subtitles) and --link-color (links)",
+      "mechanical": true,
+      "why": "Four role names restated the two text colours and the link colour, and a surface that inverts its text re-pointed seven names where three do the job. The Tailwind bridge's link-foreground colour went with --link-fg.",
+      "action": "Where you re-pointed these on an inverted or tinted surface, re-point --text-role-main, --text-role-secondary and --link-color instead.",
+      "tokens": {
+        "--heading-fg": "--text-role-main",
+        "--display-label-fg": "--text-role-main",
+        "--heading-sub-fg": "--text-role-secondary",
+        "--link-fg": "--link-color"
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--height-action with --action, --action-sm and --action-2xs; --height-control with --control-h",
+      "to": "--height-control with one ladder: --control-h, --control-h-sm and --control-h-2xs",
+      "mechanical": true,
+      "why": "Two raw inputs held the same 2.125rem and derived two ladders that were the same heights under two names. A button beside a field in a toolbar has to match it; two knobs only let a theme break that.",
+      "action": "Replace --height-action with --height-control, --action with --control-h, --action-sm with --control-h-sm and --action-2xs with --control-h-2xs. A theme that set both raw inputs keeps one.",
+      "tokens": {
+        "--height-action": "--height-control",
+        "--action": "--control-h",
+        "--action-sm": "--control-h-sm",
+        "--action-2xs": "--control-h-2xs"
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--shell-sidebar-width, --shell-sidebar-w (app shell), --workspace-sidebar-w (workspace) and Sidebar's own --sidebar-width; --shell-toolbar-h and the app shell's --shell-header-h literal",
+      "to": "--sidebar-width (16rem, at :root, unscaled) for Sidebar and every shell; --shell-header-height (3.5rem) with its density-scaled --shell-header-h for every top bar",
+      "mechanical": true,
+      "why": "The sidebar width had four names and the shells restated 16rem, so the theme knob moved no shell. The header knob was 4.5rem while the shell hard-coded 3.5rem, so it moved nothing and a scroll margin offset by it landed 16px off; the toolbar and the stacked header used a third token for the same bar.",
+      "action": "The codemod renames the width and toolbar tokens. Set --shell-header-height (3.5rem by default now) for the top bar. The sidebarWidth and headerHeight props are unchanged.",
+      "tokens": {
+        "--shell-sidebar-width": "--sidebar-width",
+        "--shell-sidebar-w": "--sidebar-width",
+        "--workspace-sidebar-w": "--sidebar-width",
+        "--shell-toolbar-h": "--shell-header-h"
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--medallion-base with --accordion-medallion, --choice-card-icon-box and --choice-card-row-icon; --switch-track-h; --menu-shadow and --menu-ring-width; --sidebar-group-action-size and --sidebar-menu-action-size; --button-px, --button-px-icon, --button-gap, --button-icon, --button-text, --toast-icon, --sidebar-menu-text, --accordion-media-gap; --badge-destructive-bg and the --destructive-60 alpha step only it read",
+      "to": "--size-medallion (IconBadge's --icon-badge-size defaults to it); --choice-size; --popover-shadow and --border-width; --size-icon-lg; --control-px, --control-px-sm (for --button-px-icon), --space-sm, --size-icon, --text-sm, --size-icon-lg and --space-lg read directly; --badge-destructive-bg and --destructive-60 removed (nothing read them); use color-mix(in oklab, var(--destructive) 60%, transparent) if you relied on the step",
+      "mechanical": true,
+      "why": "Each restated another token's derivation under a family name: the medallion four times from one base, the switch track the checkbox box, the dropdown menu the popover's shadow and hairline, two sidebar actions one size, and the button, toast, sidebar and accordion renamed kit steps with a bare var(). One name per value.",
+      "action": "Replace each name with its target where you override it. To retune the medallion everywhere, set --size-medallion; IconBadge alone still takes --icon-badge-size.",
+      "tokens": {
+        "--medallion-base": "--size-medallion",
+        "--accordion-medallion": "--size-medallion",
+        "--choice-card-icon-box": "--size-medallion",
+        "--choice-card-row-icon": "--size-medallion",
+        "--switch-track-h": "--choice-size",
+        "--menu-shadow": "--popover-shadow",
+        "--menu-ring-width": "--border-width",
+        "--sidebar-group-action-size": "--size-icon-lg",
+        "--sidebar-menu-action-size": "--size-icon-lg",
+        "--button-px": "--control-px",
+        "--button-px-icon": "--control-px-sm",
+        "--button-gap": "--space-sm",
+        "--button-icon": "--size-icon",
+        "--button-text": "--text-sm",
+        "--toast-icon": "--size-icon-lg",
+        "--sidebar-menu-text": "--text-sm",
+        "--accordion-media-gap": "--space-lg",
+        "--badge-destructive-bg": null,
+        "--destructive-60": null
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--ai-avatar-size, --ai-shimmer-base, --badge-destructive-ink, --choice-list-marker, --header-px, --item-media-image and --upload-thumb; --destructive-50, --field-py, --slide-panel, --steps-item-min and --steps-line",
+      "to": "--size-avatar-sm, --muted-foreground, --destructive-accent, --choice-size, --space-xl and --size-medallion read directly; the last five removed with nothing reading them",
+      "mechanical": true,
+      "why": "Each restated a kit value under a component name, so a theme that retuned the kit's value left these behind: the AI avatar had a 28px size of its own, the upload and item thumbnails were two 40px boxes that happened to match the medallion, and the badge's destructive ink was --destructive-accent spelled out. The other five were read in one place each, and those readers changed: single-line fields take their height from --control-h, panels slide by their own size, the horizontal steps bar is a Stepper, and the invalid ring uses the destructive accent.",
+      "action": "The codemod renames the first seven. It reports the last five without editing them: use color-mix(in oklab, var(--destructive) 50%, transparent) for the step, --control-h for a field's height, and your own length where you used --slide-panel or the steps tokens.",
+      "tokens": {
+        "--ai-avatar-size": "--size-avatar-sm",
+        "--ai-shimmer-base": "--muted-foreground",
+        "--badge-destructive-ink": "--destructive-accent",
+        "--choice-list-marker": "--choice-size",
+        "--header-px": "--space-xl",
+        "--item-media-image": "--size-medallion",
+        "--upload-thumb": "--size-medallion",
+        "--destructive-50": null,
+        "--field-py": null,
+        "--slide-panel": null,
+        "--steps-item-min": null,
+        "--steps-line": null
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--table-cell-py, --aside-nav-px, --auth-brand-gap, --repeater-gap, --calendar-months-gap and --skeleton-block-gap — and every other spacing between two ladder steps",
+      "to": "--space-lg, --space-md, --space-md, --space-lg, --space-xl and --space-xl — spacing on the --space-* ladder (2, 4, 6, 8, 12, 16, 24px)",
+      "mechanical": true,
+      "why": "About two dozen spacings sat between two steps of the ladder — 10, 14, 18 and 20px — each a second rhythm no density preset or theme could reach as one. They are on the step their peers use now: table cells 12px (rows 4px taller, close to the 48px head), aside navigation rows on the sidebar's 8px inset, toggles and pill radios on the control inset, a select's group label on its own rows' inset (it sat 2px left of them), and Item rows at 12px.",
+      "action": "The codemod renames the six tokens. Rows and insets move by 2–4px; if a layout of yours was measured against the old table row height, re-check it.",
+      "tokens": {
+        "--table-cell-py": "--space-lg",
+        "--aside-nav-px": "--space-md",
+        "--auth-brand-gap": "--space-md",
+        "--repeater-gap": "--space-lg",
+        "--calendar-months-gap": "--space-xl",
+        "--skeleton-block-gap": "--space-xl"
+      }
+    },
+    {
+      "kind": "css",
+      "phase": "2.0.0",
+      "from": "--space-scale (gaps and padding) beside --density-scale (heights and rows), both derived at every boundary from --density-preset-scale; density-scaled lengths left fractional",
+      "to": "--density-scale alone: a raw input like --text-scale, set on :root, by a data-density preset or on a boundary, read as var(--density-scale, var(--scale)); every density-scaled length rounded to a whole pixel; control heights 34, 30 and 24px",
+      "mechanical": true,
+      "why": "The two factors were declared identically, and because both were re-derived at every boundary, setting either on :root did nothing inside a UIProvider — the documented knob and the Theme Tweaker's slider were inert. Unrounded, the ladder sat between pixels: 30.2px and 22.67px controls at the default, 7.53px gaps under compact.",
+      "action": "The codemod renames --space-scale; a rule that set both factors now sets --density-scale twice and the later one wins. Navigation-menu triggers are 34px (were 36), menubar triggers 30px (were 28) and toast actions 24px.",
+      "tokens": {
+        "--space-scale": "--density-scale",
+        "--density-preset-scale": "--density-scale"
+      }
+    },
+    {
+      "kind": "css",
+      "from": "--card-framed-bg, --alert-description-fg, --alert-link-hover, --alert-meta-label-fg, --mention-destructive-fg, --menu-item-destructive-bg-hover and --segmented-chip-bg",
+      "to": "--card, --text-role-secondary, --text-role-main, --text-role-secondary, --destructive-accent, --destructive-10 and --popover, read directly",
+      "mechanical": true,
+      "why": "Each was one family's colour for a role the kit already names, and several carried a dark value of their own. The framed Card lifted itself to --popover in dark while every other card-like surface sat on --card; the inverse Alert kept three names for its text where re-pointing the text roles does the job; the destructive mention and menu highlight mixed their own ink and wash. Each role has one token now: cards paint --card, destructive ink is --destructive-accent, its soft fill --destructive-10, and the raised segmented chip --popover.",
+      "action": "The codemod renames each read. A declaration that restyled one family now sets a shared name, so move it onto that component's element rather than a scope or :root. A dark lift for cards belongs in the theme's --card.",
+      "tokens": {
+        "--card-framed-bg": "--card",
+        "--alert-description-fg": "--text-role-secondary",
+        "--alert-link-hover": "--text-role-main",
+        "--alert-meta-label-fg": "--text-role-secondary",
+        "--mention-destructive-fg": "--destructive-accent",
+        "--menu-item-destructive-bg-hover": "--destructive-10",
+        "--segmented-chip-bg": "--popover"
+      },
+      "phase": "2.0.1"
+    },
+    {
+      "kind": "css",
+      "from": "--aside-nav-item-h, --avatar-group-ring-width, --item-title-underline-offset, --product-thumb-size, --stepper-line, --timeline-dot-icon and --tooltip-arrow-radius",
+      "to": "--control-h-sm, --border-width-strong, --link-underline-offset, --size-medallion, --border-width-strong and --size-icon-sm, read directly; --tooltip-arrow-radius removed, since an arrow tip is calc(var(--radius-sm) / 4)",
+      "mechanical": true,
+      "why": "Each restated a kit length under a component name, or was a third radius. SideNav and SectionNav rows had a 30px literal that is the small control height at the defaults; the avatar group ring and the Stepper line are the strong border width; the product thumbnail is the head-of-row medallion; the item title's 4px underline offset joins the one link offset; the Timeline dot's icon is the small icon; and the tooltip arrow kept a radius the two-radius system has no room for.",
+      "action": "The codemod renames each read. --tooltip-arrow-radius is reported, not renamed: write calc(var(--radius-sm) / 4) where you read it.",
+      "tokens": {
+        "--aside-nav-item-h": "--control-h-sm",
+        "--avatar-group-ring-width": "--border-width-strong",
+        "--item-title-underline-offset": "--link-underline-offset",
+        "--product-thumb-size": "--size-medallion",
+        "--stepper-line": "--border-width-strong",
+        "--timeline-dot-icon": "--size-icon-sm",
+        "--tooltip-arrow-radius": null
+      },
+      "phase": "2.0.1"
+    },
+    {
+      "kind": "css",
+      "from": "--primary-12, --success-15, --info-15, --info-40, --warning-50, --muted-30, --muted-35, --border-50 and --border-70",
+      "to": "--primary-10, --success-10, --info-10, --info-30, --warning-10, --muted-50, --muted-20, --border-60 and --border, read directly",
+      "mechanical": true,
+      "why": "Each alpha step had a handful of readers that were drifting copies of another role. Soft tone washes are the 10% step in every hue; the muted ladder is a recessed well (--muted-50) and a faint stripe (--muted-20); and an edge is either the full --border or the soft --border-60 divider. The 12%, 15% and 50% washes, the 30% and 35% wells and the 50% and 70% edges had no role of their own.",
+      "action": "The codemod renames each read. The mapping keeps the role, not the exact alpha: a 12-15% wash becomes 10%, a 50% warning fill becomes the 10% wash, and a 70% edge becomes the full border. If you relied on the old step, write color-mix(in oklab, var(--<colour>) <n>%, transparent) where you read it.",
+      "tokens": {
+        "--primary-12": "--primary-10",
+        "--success-15": "--success-10",
+        "--info-15": "--info-10",
+        "--info-40": "--info-30",
+        "--warning-50": "--warning-10",
+        "--muted-30": "--muted-50",
+        "--muted-35": "--muted-20",
+        "--border-50": "--border-60",
+        "--border-70": "--border"
+      },
+      "phase": "2.0.1"
+    },
+    {
+      "kind": "css",
+      "from": "--sidebar-action-size and --picker-clear-size",
+      "to": "--size-icon-lg and --size-icon, read directly",
+      "mechanical": true,
+      "why": "Glyph buttons below the smallest control came in four sizes. There are two now: a button inside a field's own lane is the icon size (16px at the defaults), and every other glyph button is the large icon size (20px). The Sidebar's group and menu actions already rendered 20px through a literal of their own, and the date picker's clear button 16px through a sum.",
+      "action": "The codemod renames each read. Retune the sizes kit-wide with --icon, or set width and height on the button itself.",
+      "tokens": {
+        "--sidebar-action-size": "--size-icon-lg",
+        "--picker-clear-size": "--size-icon"
+      },
+      "phase": "2.0.1"
+    }
+  ],
+  "behaviour": [
+    {
+      "kind": "behaviour",
+      "from": "deriveThemePalette picks a foreground by OKLCH lightness threshold",
+      "to": "deriveThemePalette measures WCAG contrast and picks the more readable candidate",
+      "mechanical": false,
+      "why": "A lightness threshold is a guess about contrast, not contrast. It also understood only `#rrggbb` and `oklch()`, so an `hsl()`, an `rgb()` or a named colour fell through to whatever `mode` said. Sweeping lightness across six hues finds 52 colours where the threshold chose the LESS readable of the two foregrounds.",
+      "action": "Nothing to change; the signature is identical. But `--primary-foreground` MOVES for brand colours in the mid-lightness band, and always towards the more readable answer: #3b82f6 went from white at 3.52:1 (fails WCAG AA) to dark at 5.11:1, and #ef4444 from 3.60:1 to 5.00:1. If you had compensated for the old choice by overriding `--primary-foreground` yourself, drop the override. `readableForeground` from `themelia-ui/theming` reports the ratio it achieved and whether it clears AA, so a seed where neither candidate does — #6366f1 tops out at 4.28:1 — says so instead of passing quietly."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "NavigationMenuIndicator rendering the primitive bare, with no glyph unless one was passed",
+      "to": "NavigationMenuIndicator rendering a chevron that turns while its panel is open; children replace the glyph",
+      "mechanical": false,
+      "why": "The part that tells an entry which opens a panel from a link in the same bar drew nothing.",
+      "action": "If you passed your own glyph as children, nothing changes. If you rendered <NavigationMenuIndicator /> empty and relied on it drawing nothing, remove it."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "TableSkeleton drawing bare rows with no edge",
+      "to": "TableSkeleton drawing the table's edge and corner by default (framed), with ragged per-column measures",
+      "mechanical": false,
+      "why": "Every cell was a pill filling its track, so the placeholder read as a striped block rather than a table. The frame, the column measures and the short head labels are what make it read as rows and columns.",
+      "action": "Where the skeleton stands in for a table inside a card that already draws an edge, pass framed={false}."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "<mark> left to the user agent (and three different component treatments)",
+      "to": "<mark> styled once in the base layer: an amber wash under full ink, with no corner and no shift in the text",
+      "mechanical": false,
+      "why": "Global search, the combobox and rich text each marked a match differently, so one query lit up three ways on one screen.",
+      "action": "Nothing, unless your own <mark> relied on the browser's yellow. The rule is in @layer base, so any unlayered rule of yours wins."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "Slot: the child element's props replaced the slot's (className, handlers)",
+      "to": "Slot merges props: classes join, both handlers run (the child's first), the child's style wins",
+      "mechanical": false,
+      "why": "A render element with its own className dropped the component's classes, and its onClick replaced the component's.",
+      "action": "Nothing, unless you relied on a render element's className or handler replacing the component's."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "useCopyToClipboard confirmation window 1600ms (Copyable used 2000ms)",
+      "to": "2000ms for both",
+      "mechanical": false,
+      "why": "Two confirmation windows for one idea.",
+      "action": "Pass a duration to the hook if you depended on 1600ms."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "PageActions collapsing at or below a 1040px window",
+      "to": "collapsing below the kit's lg breakpoint, 1024px",
+      "mechanical": false,
+      "why": "1040px was on no breakpoint the kit uses anywhere else.",
+      "action": "Pass breakpoint={1040} to keep the old width."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "A dialog capped at 90vw; ActionDialog width \"full\" therefore 90vw",
+      "to": "A dialog capped at the viewport less the kit's overlay edge inset on each side; \"full\" is that width",
+      "mechanical": false,
+      "why": "Sheets inset by --overlay-edge-inset while dialogs used 90vw, so the two overlays sat at different distances from the screen edge, and \"full\" could not be wider than 90vw.",
+      "action": "Nothing, unless a layout of yours assumed the 90vw cap on phones."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "InputGroup addon padding hooks for .border-b and .border-t classes, and a combobox-content rule",
+      "to": "removed",
+      "mechanical": false,
+      "why": "They matched classes no component renders — leftovers from the Tailwind source kit.",
+      "action": "If you passed border-b or border-t to an addon for its padding, set the padding yourself."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "Theme Tweaker export (serializeTheme, defaultThemeSelectors) writing shared values to :root, light to :root and .light, dark to .dark",
+      "to": "shared values at every scope boundary; light and dark at their explicit selectors (class or data-theme, and the boundaries inside) plus prefers-color-scheme blocks; ThemeSelectors gains systemLight and systemDark",
+      "mechanical": false,
+      "why": "Semantic and type tokens are re-derived at each scope boundary, so an exported --primary or --text-sm stopped at the first UIProvider, and the dark block never applied under the provider's data-theme=\"dark\" or the OS preference.",
+      "action": "Re-export the theme. Custom ThemeSelectors keep working; add systemLight/systemDark to cover the OS preference."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "DatePicker trigger as a plain button, named by the date it shows",
+      "to": "DatePicker trigger as role=\"combobox\" with aria-haspopup=\"dialog\", named by its label (the placeholder copy when unlabelled) with the date as its value",
+      "mechanical": false,
+      "why": "A button may not carry aria-required, so a required date field announced nothing — and FormField put aria-required on it anyway, an ARIA violation. A combobox is what Select's trigger already is: a field that opens a picker, which may be required and invalid.",
+      "action": "In tests, find the trigger with getByRole(\"combobox\", { name: <label> }) instead of getByRole(\"button\", { name: <date> })."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "DataTable size=\"sm\" and \"lg\" cell insets of 6px and 10px (lg smaller than the 12px default), read through undeclared --row-y-sm / --row-y-lg hooks",
+      "to": "sm 8px, md 12px, lg 16px — --space-md, --space-lg and --space-xl, following density",
+      "mechanical": false,
+      "why": "The two sizes sat off the spacing ladder, ignored density, and lg came out denser than md.",
+      "action": "Remove any --row-y-sm or --row-y-lg you set; size the rows with size or density."
+    },
+    {
+      "kind": "behaviour",
+      "phase": "2.0.0",
+      "from": "Carousel previous/next and the current-slide index in RTL",
+      "to": "working in RTL, with the arrows mirrored",
+      "mechanical": false,
+      "why": "The carousel scrolled to a slide's offsetLeft, which RTL clamps to 0, so next did nothing; the index compared offsets that only increase in LTR.",
+      "action": "Nothing; RTL carousels now navigate."
+    }
+  ]
+}

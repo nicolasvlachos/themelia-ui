@@ -1,0 +1,148 @@
+/*
+ * MetadataList. The label style comes from DisplayLabel; the layouts differ only in
+ * arrangement.
+ */
+
+.root {
+	min-width: 0;
+}
+
+.title {
+	display: block;
+	margin-bottom: var(--space-sm);
+}
+
+.titleSeparator {
+	margin-bottom: var(--space-md);
+}
+
+/* ── Shared parts ──────────────────────────────────────────────────────────────── */
+
+.label {
+	text-align: start;
+	overflow-wrap: anywhere;
+}
+
+.labelWrap {
+	min-width: 0;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.itemIcon {
+	flex-shrink: 0;
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+	color: var(--muted-foreground);
+}
+
+.value {
+	font-size: var(--text-sm);
+	line-height: var(--leading-tight);
+}
+
+/* No compact value size: density changes gaps and row inset, not type. */
+
+.description {
+	text-wrap: pretty;
+}
+
+/* Pulled back by its inline padding so the hit area doesn't push the colon off the label. */
+.infoTrigger {
+	--button-h: var(--size-icon-lg);
+	flex-shrink: 0;
+	margin-inline: calc(var(--space-2xs) * -1);
+	color: var(--muted-foreground);
+	cursor: help;
+}
+
+.infoTrigger svg {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+.tooltip {
+	max-width: 20rem;
+}
+
+/* ── Grid ──────────────────────────────────────────────────────────────────────── */
+
+.gridItem {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.gridLabel {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+/* ── Rows ──────────────────────────────────────────────────────────────────────── */
+
+.rows {
+	margin: 0;
+}
+
+/* Rules between rows only, never at the ends. */
+.rowsDivided > * + * {
+	/* Quieter than a table rule: these separate facts, not records. */
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/* Proportional tracks align values without a label min-width that would crowd phones. */
+.row {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+	align-items: baseline;
+	gap: var(--space-sm) var(--space-xl);
+	padding-block: var(--row-py);
+}
+
+.rows[data-row-density="compact"] .row {
+	padding-block: round(calc(var(--row-py) * 0.75), 1px);
+}
+
+.rowLabel {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+	margin: 0;
+}
+
+.rowValue {
+	min-width: 0;
+	margin: 0;
+	overflow-wrap: break-word;
+}
+
+/* ── Inline ────────────────────────────────────────────────────────────────────── */
+
+.inline {
+	min-width: 0;
+}
+
+.inlineItem {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+/* No gap: label, trigger and colon are one token (see metadata-list.tsx). */
+.inlineLabel {
+	display: inline-flex;
+	align-items: baseline;
+	min-width: 0;
+	max-width: 100%;
+	flex-shrink: 0;
+}
+
+.inlineSeparator {
+	user-select: none;
+}

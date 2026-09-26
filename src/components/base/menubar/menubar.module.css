@@ -1,0 +1,35 @@
+/* Menubar — a quiet strip: one rule underneath is its only chrome. */
+.bar {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding-block-end: var(--space-2xs);
+	border-bottom: var(--border-width) solid var(--border);
+}
+
+.trigger {
+	display: inline-flex;
+	align-items: center;
+	height: var(--control-h-sm);
+	padding-inline: var(--control-px-sm);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.trigger:hover,
+/* Open reads as hover, so crossing the bar with a menu open feels continuous. */
+.trigger[data-popup-open] {
+	background-color: var(--accent);
+}
+
+.trigger:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}

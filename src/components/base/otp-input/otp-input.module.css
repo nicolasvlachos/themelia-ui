@@ -1,0 +1,57 @@
+/* OtpInput — one box per character; these styles only draw the cells. */
+.root {
+	display: flex;
+	align-items: center;
+	/* Wider between groups than within, so "123 456" reads as two runs of three. */
+	gap: var(--space-xl);
+}
+
+.group {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.slot {
+	width: round(calc(2.75rem * var(--density-scale, var(--scale))), 1px);
+	height: round(calc(3rem * var(--density-scale, var(--scale))), 1px);
+	padding: 0;
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: var(--field-bg);
+	color: var(--foreground);
+	font-size: var(--text-lg);
+	line-height: var(--text-lg--line-height);
+	font-variant-numeric: tabular-nums;
+	text-align: center;
+	transition:
+		border-color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.slot:focus {
+	outline: none;
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--field-focus-ring);
+	/* Above its neighbours, so the ring is not clipped by the next box's border. */
+	z-index: var(--z-raised);
+}
+
+.slot:hover:not(:focus):not([aria-invalid="true"]):not([data-disabled]) {
+	border-color: var(--control-border-hover);
+}
+
+/* As the fields draw it: focus takes the ring, invalid keeps the border. */
+.root[data-invalid] .slot {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.root[data-invalid] .slot:focus {
+	box-shadow: var(--field-focus-ring);
+}
+
+.root[data-disabled] .slot {
+	opacity: var(--disabled-opacity);
+	cursor: not-allowed;
+}

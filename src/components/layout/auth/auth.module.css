@@ -1,0 +1,282 @@
+/*
+ * Auth shells: the layouts a sign-in surface uses. Layout only; the form, providers and
+ * flow belong to the application.
+ */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/* The panel's track. Wide enough for a testimonial, capped so the form keeps the page. */
+	--auth-panel-min: 24rem;
+	--auth-panel-max: 34rem;
+}
+
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/* The card's width. .sizeSm and .sizeLg re-point it, so it stays a variable. */
+	--auth-width: calc(24rem * var(--scale));
+
+}
+
+/* The page. The shell inside it centres; this owns the canvas and the full height. */
+.root {
+	container: auth / inline-size;
+	display: flex;
+	/* Inline containment removes intrinsic width; a shell used as a flex child still fills its region. */
+	width: 100%;
+	min-width: 0;
+	min-height: 100dvh;
+	flex-direction: column;
+	background-color: var(--muted-50);
+	color: var(--foreground);
+}
+
+/*
+ * AuthShell: one centred surface on a full-height canvas. Flex growth carries the root's
+ * min-height (a percentage cannot); auto margins centre a short form and collapse for a tall one.
+ */
+.shell {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-2xl);
+	padding: var(--space-2xl);
+}
+
+.shellAlignStart > .surface {
+	margin-block: 0;
+}
+
+.surface {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xl);
+	width: 100%;
+	max-width: var(--auth-width);
+	margin-block: auto;
+	flex-shrink: 0;
+}
+
+.sizeSm { --auth-width: calc(20rem * var(--scale)); }
+.sizeLg { --auth-width: calc(28rem * var(--scale)); }
+
+.brand {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-md);
+	text-align: center;
+}
+
+.brand a {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-md);
+	border-radius: var(--radius-sm);
+	color: inherit;
+	text-decoration: none;
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.brand a:hover {
+	opacity: 0.8;
+}
+
+.brandLogo {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+}
+
+.brandText {
+	display: inline-flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	text-align: start;
+}
+
+/* Everything under the card: the sign-up prompt, the switcher, the link rows. */
+.belowCard {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-lg);
+	text-align: center;
+}
+
+/* ── AuthCard ─────────────────────────────────────────────────────────────────────
+ * A Card with a wider inset, a heavier shadow and a wrapping page-scale title, reached
+ * through Card's public hooks (`card--title`).
+ */
+.card {
+	--card-px: calc(var(--space-xl) * 2);
+	--card-py: calc(var(--space-xl) * 2);
+}
+
+/* Framed card only: this outranks Card's flat surface. */
+.card:not([data-surface="bare"]) {
+	box-shadow: var(--shadow-lg);
+}
+
+/* `bare` keeps the header/body/footer rhythm and drops both the frame and its inset. */
+.card[data-surface="bare"] {
+	--card-px: 0px;
+	--card-py: var(--space-2xl);
+}
+
+.card :global(.card--title) {
+	font-size: var(--text-xl);
+	line-height: var(--leading-tight);
+	white-space: normal;
+	overflow: visible;
+}
+
+/* A page-scale title needs more air above the description than Card gives. */
+.card :global(.card--description) {
+	margin-top: var(--space-xs);
+}
+
+.cardMedia {
+	min-height: calc(3rem * var(--scale));
+	border-bottom: var(--border-width) solid var(--border-60);
+	background-color: var(--muted-50);
+}
+
+/* ── AuthFooterLinks ── separated by a dot ──────────────────────────────────────── */
+.links {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-md);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+}
+
+.linksIcon {
+	display: inline-flex;
+	align-items: center;
+	color: inherit;
+}
+
+.link + .link::before {
+	content: "·";
+	margin-inline-end: var(--space-md);
+}
+.link,
+.linkButton {
+	border-radius: var(--radius-sm);
+}
+
+/* A link-styled button draws no ring of its own. */
+.link:focus-visible,
+.linkButton:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+
+.link a,
+.linkButton {
+	color: inherit;
+	text-decoration: none;
+}
+
+.link a:hover,
+.linkButton:hover {
+	color: var(--foreground);
+	text-decoration: underline;
+	text-underline-offset: var(--link-underline-offset);
+}
+
+.linkButton {
+	border: 0;
+	padding: 0;
+	background: none;
+	font: inherit;
+	cursor: pointer;
+}
+
+/* ── Split ────────────────────────────────────────────────────────────────────────
+ * Form and panel side by side. The form is first in the DOM at every width; which side the
+ * panel is drawn on is a grid decision. A container query: the shell may be embedded.
+ */
+.splitContainer {
+	container: auth / inline-size;
+	display: flex;
+	min-width: 0;
+	min-height: 100%;
+	flex-direction: column;
+}
+
+.split {
+	display: grid;
+	min-width: 0;
+	flex: 1;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+/* The query owner is outside the grid, so both tracks answer the same available width. */
+@container auth (--cq-4xl) {
+	.split[data-panel] {
+		grid-template-columns: minmax(0, 1fr) minmax(var(--auth-panel-min), var(--auth-panel-max));
+	}
+
+	.split[data-panel="start"] {
+		grid-template-columns: minmax(var(--auth-panel-min), var(--auth-panel-max)) minmax(0, 1fr);
+	}
+
+	.split[data-panel="start"] > .splitPanel {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	/* A class, not `main`: the shell's element is the caller's choice. */
+	.split[data-panel="start"] > .shell,
+	.split[data-panel="start"] > .splitForm {
+		grid-column: 2;
+		grid-row: 1;
+	}
+}
+
+.splitForm {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	justify-content: center;
+	padding: var(--space-2xl);
+}
+
+/*
+ * Hidden below the split threshold unless the caller asks. The panel stays dark in both
+ * themes: the aside is a `data-theme="dark"` scope, so every token inside re-derives to its
+ * dark value — the text roles, links and any control the caller drops in.
+ */
+.splitPanel {
+	display: none;
+	min-width: 0;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: var(--space-2xl);
+	padding: calc(var(--space-2xl) * 2);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
+}
+
+.splitPanelStacked {
+	display: flex;
+}
+
+@container auth (--cq-4xl) {
+	.splitPanel {
+		display: flex;
+	}
+}

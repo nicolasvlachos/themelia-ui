@@ -1,0 +1,80 @@
+/*
+ * Foundation tokens: fonts, the scale factors and the type ramp. Package-owned
+ * primitives, not part of the swappable theme.
+ */
+
+:root {
+	/* Fonts */
+	--font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; /* Primary interface and body font stack. */
+	--font-serif: Merriweather, ui-serif, serif; /* Editorial serif stack for consumer-authored rich content. */
+	--font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; /* Monospace stack for code, identifiers, and fixed-width values. */
+
+	/*
+	 * Multipliers. --scale drives every derived measurement (geometry and type); a denser
+	 * region is a scope with a smaller scale, not per-component size props:
+	 *
+	 *   <UIProvider config={{ scale: 0.875 }}>…</UIProvider>
+	 *
+	 * typography.scale overrides only the type part. See styles/FACTORS.md.
+	 */
+	--scale: 1;
+	/*
+	 * Density factor: spacing and control geometry. Set directly or by a data-density
+	 * preset; `initial` until set, so every length falls back to --scale.
+	 */
+	--density-scale: initial;
+
+	/*
+	 * Type factor, set by UIProvider typography.scale. `initial` until set, so each scope
+	 * falls back to its own --scale; once set, it inherits through nested boundaries.
+	 */
+	--text-scale: initial;
+
+	/* Type-ramp line heights: unitless ratios (Tailwind's defaults) that follow the scaled sizes. */
+	--text-xs--line-height: calc(1 / 0.75); /* Compact metadata. */
+	--text-pxs--line-height: calc(1.125 / 0.8125); /* Dense admin text. */
+	--text-sm--line-height: calc(1.25 / 0.875); /* Default body text. */
+	--text-base--line-height: calc(1.5 / 1); /* Deliberate 16px text. */
+	--text-lg--line-height: calc(1.75 / 1.125); /* Small headings. */
+	--text-xl--line-height: calc(1.75 / 1.25); /* Prominent headings. */
+	--text-2xl--line-height: calc(2 / 1.5); /* Page headings. */
+}
+
+
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md, verify scoping). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+	/* Defaults to the UI sans stack, and follows a scope that overrides it. */
+	--font-heading: var(--font-sans);
+
+	/* Type ramp. The default body size is `sm` (14px); `base` (16px) is a deliberate step up. */
+	--text-xs: calc(0.75rem * var(--text-scale, var(--scale))); /* Compact metadata, hints, and secondary row descriptions. */
+	--text-pxs: calc(0.8125rem * var(--text-scale, var(--scale))); /* Dense admin-control and table text at 13px by default. */
+	--text-sm: calc(0.875rem * var(--text-scale, var(--scale))); /* Default application body and control text at 14px. */
+	--text-base: calc(1rem * var(--text-scale, var(--scale))); /* Deliberate shell hierarchy and explicitly enlarged body copy at 16px. */
+	--text-lg: calc(1.125rem * var(--text-scale, var(--scale))); /* Small section and card heading scale. */
+	--text-xl: calc(1.25rem * var(--text-scale, var(--scale))); /* Prominent section heading scale. */
+	--text-2xl: calc(1.5rem * var(--text-scale, var(--scale))); /* Page-heading scale for standard application shells. */
+}
+
+/*
+ * Density presets change geometry only; the type ramp follows --scale. They follow the
+ * boundary block above so the preset wins at the same element.
+ */
+[data-density="compact"] {
+	/* 34px controls resolve to 32px. */
+	--density-scale: 0.9411764706;
+}
+
+[data-density="default"] {
+	/* Reset a preset inherited from an outer scope. */
+	--density-scale: initial;
+}
+
+[data-density="comfortable"] {
+	--density-scale: 1.075;
+}

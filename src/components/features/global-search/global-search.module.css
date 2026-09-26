@@ -1,0 +1,210 @@
+/* GlobalSearch owns the panel regions; Item, Badge, Avatar and Input own their parts. */
+.root {
+	container-type: inline-size;
+	container-name: global-search;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	width: 100%;
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	box-shadow: none;
+}
+
+.inputRow {
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+.input {
+	border-color: transparent;
+	background-color: transparent;
+	box-shadow: none;
+}
+.input:focus-within,
+.input:focus-visible {
+	border-color: transparent;
+	box-shadow: none;
+	outline: none;
+}
+/*
+ * Focus on the search row is a rule beneath it, not a ring: the field is focused whenever
+ * the palette opens, and a ring would frame the row for the whole session.
+ */
+.inputRow:has([data-field-control]:focus-visible) {
+	border-bottom-color: var(--focus-ring-color);
+	box-shadow: inset 0 calc(var(--border-width) * -1) 0 0 var(--focus-ring-color);
+}
+
+/* The magnifier also firms from muted to full ink. */
+.inputRow:has([data-field-control]:focus-visible) [data-slot="input-frame"] svg {
+	color: var(--foreground);
+}
+
+/* A strip of chips, at half the block inset so the field leads. */
+.tabs {
+	padding: var(--space-xs) var(--surface-px-xs);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+.tabCount { font-variant-numeric: tabular-nums; }
+
+.scroll {
+	min-height: 0;
+	max-height: min(32rem, 50dvh);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+.loading { padding: var(--surface-py) var(--surface-px); }
+.results,
+.idle { padding: var(--surface-py-xs) var(--surface-px-xs); }
+.group + .group { margin-top: var(--space-md); }
+/* On the rows' inline inset, so headings, row media and the magnifier share one edge. */
+.groupHeader,
+.idleHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	padding: var(--space-xs) var(--space-md);
+}
+/* The support step, so the "See all" button beside it inherits the same size. */
+.groupHeader {
+	justify-content: space-between;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.row,
+.idleItem {
+	width: 100%;
+	flex-wrap: nowrap;
+	padding: var(--space-sm) var(--space-md);
+	gap: var(--space-md);
+	text-align: start;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background-color: transparent;
+	color: inherit;
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+.row:hover,
+.idleItem:hover { background-color: var(--accent-50); }
+.row[data-active],
+.idleItem:focus-visible { background-color: var(--accent); }
+.row:focus-visible,
+.idleItem:focus-visible { box-shadow: var(--focus-ring-inset); }
+.rowContent { min-width: 0; gap: var(--space-xs); }
+.resultTitle { -webkit-line-clamp: 2; overflow-wrap: anywhere; }
+
+.rowContent .secondaryLine {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	column-gap: var(--space-md);
+	row-gap: var(--space-xs);
+	overflow: visible;
+	-webkit-line-clamp: unset;
+}
+.rowContent .secondaryLine > * { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+/* A status badge sits at the fact line's height, so rows with one keep the list's rhythm. */
+.rowContent .secondaryLine :global([data-slot="badge"]) { white-space: normal; padding-block: 0; }
+.meta {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+.metaMono { font-family: var(--font-mono); }
+.metaIcon { display: inline-flex; flex: none; }
+.metaIcon > svg { width: var(--size-icon-sm); height: var(--size-icon-sm); }
+
+/* The amount: its own line on narrow rows, a trailing column on wide ones. */
+.inlineFigure { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+.figure { display: none; }
+.figureValue { font-variant-numeric: tabular-nums; }
+.chevron {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	color: var(--muted-foreground);
+	opacity: 0;
+}
+.chevron > svg { width: var(--size-icon); height: var(--size-icon); }
+.row:hover .chevron,
+.row:focus-visible .chevron,
+.row[data-active] .chevron { opacity: 1; }
+@container global-search (width >= 36rem) {
+	.figure {
+		display: flex;
+		flex: none;
+		flex-direction: column;
+		align-items: flex-end;
+		min-width: 7rem;
+		max-width: 30%;
+		gap: var(--space-2xs);
+		text-align: end;
+		overflow-wrap: anywhere;
+	}
+	.inlineFigure { display: none; }
+}
+
+.avatar[data-tone="neutral"] { --gs-avatar-bg: var(--foreground-8); --gs-avatar-fg: var(--foreground); }
+.avatar[data-tone="primary"] { --gs-avatar-bg: var(--primary-10); --gs-avatar-fg: var(--primary-accent); }
+.avatar[data-tone="success"] { --gs-avatar-bg: var(--success-10); --gs-avatar-fg: var(--success); }
+.avatar[data-tone="warning"] { --gs-avatar-bg: var(--warning-10); --gs-avatar-fg: var(--warning-accent); }
+.avatar[data-tone="destructive"] { --gs-avatar-bg: var(--destructive-10); --gs-avatar-fg: var(--destructive-accent); }
+.avatar[data-tone="info"] { --gs-avatar-bg: var(--info-10); --gs-avatar-fg: var(--info); }
+.thumbnail { --icon-badge-size: var(--size-avatar); }
+.imageThumbnail { border-radius: var(--radius-sm); }
+.imageThumbnail svg { width: var(--size-icon); height: var(--size-icon); }
+.avatarFallback {
+	background-color: var(--gs-avatar-bg, var(--muted));
+	color: var(--gs-avatar-fg, var(--muted-foreground));
+	font-weight: var(--weight-semibold);
+}
+
+.idle { display: flex; flex-direction: column; gap: var(--space-lg); }
+.idleIcon { display: inline-flex; flex: none; color: var(--muted-foreground); }
+/* Sized to the support-step label beside it. */
+.idleIcon > svg { width: var(--size-icon-sm); height: var(--size-icon-sm); }
+.idleItem { justify-content: flex-start; }
+.footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	padding: var(--space-md) var(--surface-px-xs);
+	border-top: var(--border-width) solid var(--border-60);
+	background-color: var(--muted-20);
+}
+.shortcuts { display: flex; flex-wrap: wrap; gap: var(--space-lg); }
+.shortcut { display: inline-flex; align-items: center; gap: var(--space-xs); }
+.footerTrailing { flex: none; white-space: nowrap; margin-inline-start: auto; }
+
+.dialogSurface {
+	margin-block: min(18dvh, 8rem) auto;
+	overflow: hidden;
+	padding: 0;
+	border: 0;
+	background-color: transparent;
+	box-shadow: none;
+}
+.dialogContent { padding: 0; min-height: 0; }
+.dialogContent .root {
+	background-color: var(--popover);
+	box-shadow: var(--shadow-xl);
+}

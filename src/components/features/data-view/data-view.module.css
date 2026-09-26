@@ -1,0 +1,115 @@
+/*
+ * DataView — the frame around DataTable and FilterLayout, plus two plain shells with the
+ * same rhythm for custom compositions.
+ */
+
+.shell {
+	container-type: inline-size;
+	container-name: data-view;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.shellRegion {
+	min-width: 0;
+}
+
+.shellContent {
+	min-width: 0;
+}
+
+/* ── The standalone toolbar ────────────────────────────────────────────────────── */
+
+.toolbar {
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	--surface-ground: var(--card);
+	box-shadow: none;
+}
+
+.toolbarInner {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.toolbarLeading {
+	flex: 1;
+	min-width: 0;
+}
+
+.toolbarActions {
+	flex: none;
+}
+
+@container data-view (width >= 42rem) {
+	.toolbarInner {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: space-between;
+	}
+}
+
+/* ── The frame ─────────────────────────────────────────────────────────────────── */
+
+/* The frame draws the card; the table inside renders `surface="flat"`. */
+.frame {
+	container-type: inline-size;
+	container-name: data-view;
+	min-width: 0;
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	--surface-ground: var(--card);
+	box-shadow: none;
+}
+
+.frameToolbar {
+	padding: var(--surface-py) var(--surface-px);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.frameContent {
+	min-width: 0;
+}
+
+.frameFooter {
+	padding: var(--row-py) var(--surface-px);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/* ── Inside the table's topbar ─────────────────────────────────────────────────── */
+
+/* A flex item in the table's wrapping topbar: `flex: 1` stops it collapsing to zero width. */
+.topbar {
+	flex: 1;
+	width: 100%;
+	min-width: 0;
+}
+
+.filters {
+	width: 100%;
+	min-width: 0;
+}
+
+.viewSelect {
+	width: 12rem;
+}
+
+/* ── Pagination ────────────────────────────────────────────────────────────────── */
+
+.pagination {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	min-width: 0;
+}

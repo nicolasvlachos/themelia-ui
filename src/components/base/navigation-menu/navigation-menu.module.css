@@ -1,0 +1,105 @@
+/*
+ * NavigationMenu — a bar of entries and the one panel they share, which resizes between
+ * entries (the primitive's viewport); panel styles live on the popup, not on each content.
+ */
+.root {
+	position: relative;
+}
+
+.list {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.trigger,
+.link {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	height: var(--control-h);
+	padding-inline: var(--control-px);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.trigger:hover,
+.link:hover,
+.trigger[data-popup-open] {
+	background-color: var(--accent);
+}
+
+/* The caret sits a step quieter than the word, and turns while its panel is open. */
+.indicator {
+	display: inline-flex;
+	margin-inline-end: calc(var(--space-2xs) * -1);
+	color: var(--muted-foreground);
+	transition: rotate var(--duration-fast) var(--ease-out);
+}
+
+.indicator > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.indicator[data-popup-open] {
+	rotate: 180deg;
+}
+
+.trigger:focus-visible,
+.link:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.positioner {
+	z-index: var(--z-popover);
+}
+
+.popup {
+	border-radius: var(--radius);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
+	box-shadow: var(--popover-shadow);
+	/* Animates its size between entries; `overflow: hidden` clips the outgoing panel. */
+	overflow: hidden;
+	transition:
+		width var(--duration-normal) var(--ease-out),
+		height var(--duration-normal) var(--ease-out),
+		opacity var(--duration-fast) var(--ease-out);
+}
+
+.popup[data-starting-style],
+.popup[data-ending-style] {
+	opacity: 0;
+}
+
+.viewport {
+	position: relative;
+}
+
+/* A panel is a list of destinations, one per row. */
+.content {
+	display: grid;
+	gap: var(--space-2xs);
+	min-width: 12rem;
+	padding: var(--space-md);
+}
+
+/* A panel row: the whole width is the target. */
+.content .link {
+	justify-content: flex-start;
+	width: 100%;
+	border-radius: var(--radius-sm);
+}

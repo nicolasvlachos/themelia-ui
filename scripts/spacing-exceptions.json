@@ -1,0 +1,9 @@
+{
+	"note": "Spacing set from a raw length instead of a --space-* step. A ceiling, not a target: this list may SHRINK and may never grow. A new entry is reported as unexpected and fails; an entry that stops matching is reported as stale and also fails, so a fixed one cannot be left behind as slack for the next author.",
+	"why": "Reviewed 2026-09-23: every package spacing value is on the --space-* ladder, a control or row inset, or arithmetic over the geometry it clears. What is left is page-level rhythm above the ladder's top step: the main/aside column gap (--layout-column-gap, 32px, a documented layout knob) and the preview site's own section and pager margins.",
+	"findings": [
+		"off-ladder-space-token|src/styles/theming/layout.css|.dark|--layout-column-gap|round(calc(2rem * var(--density-scale, var(--scale))), 1px)",
+		"literal-space|src/preview/preview.module.css|.pager|margin-top|4rem",
+		"literal-space|src/preview/preview.module.css|.section|margin-top|5rem"
+	]
+}

@@ -1,0 +1,259 @@
+/*
+ * Dropdown menu — component variables. The popup carries the global `dark` class unless
+ * `overlay.darkMenus` is false, so styles read the popover tokens and the class flips them.
+ */
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+	--menu-sub-shadow: 0 0 0 var(--border-width) var(--foreground-10), var(--shadow-lg);
+}
+
+/*
+ * Base UI supplies `--available-height`, `--available-width` and `--transform-origin` at
+ * runtime; `verify wiring` allowlists them. Enter/exit animation matches Popover.
+ */
+
+.positioner {
+	isolation: isolate;
+	z-index: var(--z-popover);
+	outline: none;
+}
+
+.content {
+	z-index: var(--z-popover);
+	max-height: var(--available-height);
+	/* Sized by content, not the trigger: anchor width is a Select behaviour. */
+	width: max-content;
+	min-width: calc(8rem * var(--scale));
+	/*
+	 * Capped at a reading measure so one long label wraps instead of widening every row.
+	 * DropdownMenuContent's `width` and `maxWidth` override per menu.
+	 */
+	max-width: min(20rem, var(--available-width));
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding: var(--space-md);
+	border-radius: var(--radius);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
+	box-shadow: var(--popover-shadow);
+	outline: none;
+	transform-origin: var(--transform-origin);
+	--surface-ground: var(--popover);
+
+	--enter-opacity: 0;
+	--enter-scale: 0.95;
+	--exit-opacity: 0;
+	--exit-scale: 0.95;
+
+	animation: var(--animate-exit);
+	animation-duration: var(--duration-instant);
+}
+
+.content[data-open] {
+	animation: var(--animate-enter);
+	animation-duration: var(--duration-instant);
+}
+
+/* A closing menu must not show a scrollbar while it shrinks. */
+.content[data-closed] {
+	overflow: hidden;
+}
+
+.content[data-side="bottom"] { --enter-translate-y: calc(var(--slide-nudge) * -1); }
+.content[data-side="top"] { --enter-translate-y: var(--slide-nudge); }
+.content[data-side="left"],
+.content[data-side="inline-start"] { --enter-translate-x: var(--slide-nudge); }
+.content[data-side="right"],
+.content[data-side="inline-end"] { --enter-translate-x: calc(var(--slide-nudge) * -1); }
+
+/* A submenu is sized by its own content, not by the parent row it hangs off. */
+.subContent {
+	width: auto;
+	min-width: 6rem;
+	max-height: none;
+	box-shadow: var(--menu-sub-shadow);
+}
+
+/* ── Rows ─────────────────────────────────────────────────────────────────────── */
+
+.item {
+	position: relative;
+	display: flex;
+	/* Rows don't wrap; a label that hits the width cap truncates (.itemLabel). */
+	white-space: nowrap;
+	cursor: default;
+	align-items: center;
+	gap: var(--space-md);
+	min-height: var(--menu-row-min-h);
+	padding-inline: var(--row-px);
+	padding-block: var(--menu-row-py);
+	border-radius: var(--radius-sm);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	outline: none;
+	user-select: none;
+}
+
+.item svg {
+	pointer-events: none;
+	flex-shrink: 0;
+}
+
+.item svg:not([data-sized]) {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* Base UI highlights via :focus on the row, covering both keyboard and pointer. */
+.item:focus,
+.item[data-popup-open],
+.item[data-open] {
+	background-color: var(--accent);
+	color: var(--accent-foreground);
+}
+
+/* Icons follow the row's foreground, except on a destructive row (below). */
+.item:not([data-variant="destructive"]):focus * {
+	color: var(--accent-foreground);
+}
+
+.item[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+/* Aligns an iconless row with icon rows: row inset + icon column + gap. */
+.item[data-inset] {
+	padding-inline-start: calc(var(--row-px) + var(--size-icon) + var(--space-md));
+}
+
+.item[data-variant="destructive"] {
+	color: var(--destructive-accent);
+}
+
+.item[data-variant="destructive"]:focus {
+	background-color: var(--destructive-10);
+	color: var(--destructive-accent);
+}
+
+.item[data-variant="destructive"] > svg {
+	color: var(--destructive-accent);
+}
+
+/* Checkbox and radio rows reserve trailing space so the indicator never overlaps the label. */
+.choiceItem {
+	padding-inline-end: calc(var(--size-icon) + var(--row-px) * 2);
+	padding-inline-start: var(--row-px);
+}
+
+.indicator {
+	pointer-events: none;
+	position: absolute;
+	inset-inline-end: var(--row-px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* ── Chrome ───────────────────────────────────────────────────────────────────── */
+
+/* The caption aligns with the row's edge; `data-inset` aligns it with the label column. */
+.label {
+	padding-inline: var(--row-px);
+	padding-block: var(--space-sm);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-medium);
+	color: var(--muted-foreground);
+}
+
+/* The label column: row inset + icon + gap, as for `.item[data-inset]`. */
+.label[data-inset] {
+	padding-inline-start: calc(var(--row-px) + var(--size-icon) + var(--space-md));
+}
+
+/* The rule bleeds into the menu's own padding so it spans the full surface. */
+.separator {
+	height: var(--border-width);
+	margin-inline: calc(var(--space-md) * -1);
+	margin-block: var(--space-xs);
+	background-color: var(--border-60);
+}
+
+/* The label gives way first, so icon, shortcut and indicator keep their space. */
+.itemLabel {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* A row carrying a second line stops being a single centred line. */
+.itemWithDescription {
+	align-items: flex-start;
+}
+
+.itemBody {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+.itemDescription {
+	overflow: hidden;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+	text-overflow: ellipsis;
+	white-space: normal;
+}
+
+/* With a description, the icon aligns to the first line, not the block's centre. */
+.itemWithDescription .itemIcon {
+	margin-top: calc((1lh - var(--size-icon)) / 2);
+	align-self: flex-start;
+}
+
+/*
+ * Fixed-width glyph column, so rows with an icon, ActionMenu's placeholder or nothing
+ * all start their labels at the same x.
+ */
+.itemIcon {
+	display: inline-flex;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+.itemTrailing {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-md);
+	margin-inline-start: auto;
+}
+
+.shortcut {
+	flex-shrink: 0;
+	margin-inline-start: auto;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	letter-spacing: var(--tracking-widest);
+	color: var(--muted-foreground);
+}
+
+.item:focus .shortcut {
+	color: var(--accent-foreground);
+}
+
+.subTriggerIcon {
+	margin-inline-start: auto;
+}

@@ -1,0 +1,17 @@
+/*
+ * Feedback — Empty, Alert and Progress tokens.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+
+	/* Empty state illustration height. */
+	--empty-art-h: round(calc(6rem * var(--density-scale, var(--scale))), 1px);
+
+	/* Progress bar fill; the .tone* classes re-point it. */
+	--progress-fill: var(--primary);
+
+}

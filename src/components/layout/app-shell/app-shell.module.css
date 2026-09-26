@@ -1,0 +1,232 @@
+/*
+ * App shells: the frame a page sits in. The sidebar handles its own column; these add the
+ * toolbar and the content well around it.
+ */
+.toolbar {
+	position: sticky;
+	top: 0;
+	z-index: var(--z-sticky);
+	display: flex;
+	min-height: var(--shell-header-h);
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-lg);
+	flex-wrap: wrap;
+	padding-block: var(--space-sm);
+	padding-inline: var(--space-xl);
+	background-color: var(--background);
+}
+
+/* Ruled only when the content sits on the same plane; an inset shell is already a card. */
+.toolbarRuled {
+	border-bottom: var(--border-width) solid var(--border);
+}
+
+.toolbarStart,
+.toolbarEnd {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: var(--space-lg);
+}
+
+.toolbarStart {
+	flex: 1;
+}
+
+.content {
+	min-width: 0;
+	min-height: 0;
+	overflow: auto;
+	flex: 1;
+	padding: var(--space-2xl);
+}
+
+/* Caps the measure on wide screens. */
+.contentBounded {
+	width: 100%;
+	max-width: var(--content-width-xl);
+	margin-inline: auto;
+}
+
+/* ── Stacked ──────────────────────────────────────────────────────────────────── */
+
+.stacked {
+	display: flex;
+	min-height: 100svh;
+	flex-direction: column;
+	background-color: var(--background);
+}
+
+.stackedHeader {
+	position: sticky;
+	top: 0;
+	z-index: var(--z-sticky);
+	display: flex;
+	min-height: var(--shell-header-h);
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-lg);
+	flex-wrap: wrap;
+	padding-block: var(--space-sm);
+	padding-inline: var(--space-xl);
+	border-bottom: var(--border-width) solid var(--border);
+	background-color: var(--background);
+}
+
+/* The sticky bars frost like Header: opaque unless the browser can blur behind them. */
+@supports (backdrop-filter: blur(1px)) {
+	.toolbar,
+	.stackedHeader {
+		background-color: var(--background-70);
+		backdrop-filter: blur(12px);
+	}
+}
+
+/*
+ * A contained shell scrolls its content in a region of its own, so nothing passes behind its
+ * bars: they stay opaque, and no blur layer escapes the rounded frame that clips the shell.
+ */
+:where([data-contained]) :is(.toolbar, .stackedHeader) {
+	background-color: var(--background);
+	backdrop-filter: none;
+}
+
+.stacked[data-contained] {
+	min-height: 0;
+	height: 100%;
+	overflow: hidden;
+}
+
+.stacked[data-bounded] .stackedContent {
+	max-width: var(--content-width-lg);
+}
+
+.stackedContent {
+	min-height: 0;
+	flex: 1;
+	overflow: auto;
+	width: 100%;
+	margin-inline: auto;
+	padding: var(--space-2xl);
+}
+
+/* ══ TopbarSidebarLayout ═══════════════════════════════════════════════════════════
+ * Header across the top; sidebar and content share the height below it.
+ */
+
+.topbar {
+	width: 100%;
+	height: 100svh;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+	background-color: var(--background);
+	color: var(--foreground);
+}
+
+.topbar[data-contained] {
+	height: 100%;
+}
+
+.topbarHeader {
+	z-index: var(--z-sticky);
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-lg);
+	flex-wrap: wrap;
+	padding-block: var(--space-sm);
+	min-height: var(--shell-header-h);
+	padding-inline: var(--space-xl);
+	border-bottom: var(--border-width) solid var(--border);
+	background-color: var(--background);
+}
+
+.topbarTrigger,
+.topbarLogo,
+.topbarStart {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	min-width: 0;
+}
+
+/* The only region that gives up width; hidden below md. */
+.topbarCenter {
+	display: none;
+	flex: 1;
+	align-items: center;
+	min-width: 0;
+}
+
+@media (--bp-md) {
+	.topbarCenter {
+		display: flex;
+	}
+}
+
+.topbarEnd {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-xs);
+	margin-inline-start: auto;
+}
+
+.topbarBody {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	/* Lets the body shrink below its content, so the sidebar and content can scroll. */
+	min-height: 0;
+}
+
+.topbarSidebar {
+	position: relative;
+	flex: 0 0 auto;
+	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
+	background-color: var(--sidebar);
+	color: var(--sidebar-foreground);
+}
+
+/* The same content inset as the other shells. */
+.topbarContent {
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	/* Contains absolutely positioned descendants. */
+	position: relative;
+	overflow: auto;
+	padding: var(--space-2xl);
+}
+
+/* The sidebar column exists from md up; below it, `drawer` mode opens the rail as a sheet. */
+@media (--bp-md) {
+	.topbarBody {
+		flex-direction: row;
+	}
+
+	/* Custom navigation gets the configured width; Sidebar reserves its own through its gap. */
+	.topbarSidebar:not(:has([data-slot="sidebar-gap"])) {
+		width: var(--sidebar-width);
+	}
+
+	.topbar[data-sidebar-side="right"] .topbarSidebar {
+		order: 2;
+	}
+}
+
+.topbar[data-mobile-sidebar="drawer"] .topbarSidebar {
+	/* Native dialogs stay in the DOM: display:none on an ancestor hides even an open sheet. */
+	display: contents;
+}
+
+@media (--bp-md) {
+	.topbar[data-mobile-sidebar="drawer"] .topbarSidebar {
+		display: block;
+	}
+}

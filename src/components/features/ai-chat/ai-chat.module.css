@@ -1,0 +1,1439 @@
+/*
+ * AI chat.
+ *
+ * `--ai-shimmer-duration` is a raw input (also written inline from the `duration` prop),
+ * so it is declared at :root only (styles/SCOPES.md).
+ *
+ * Disclosure-style surfaces (reasoning, tool call, artifact, code, sources) share the
+ * `.disclosure*` chrome; only their content differs.
+ */
+:root {
+	--ai-shimmer-duration: 2.4s;
+}
+
+/* ── Shared ────────────────────────────────────────────────────────────────────────── */
+
+.grow {
+	flex: 1;
+	min-width: 0;
+}
+
+
+.numeric {
+	font-variant-numeric: tabular-nums;
+}
+
+.preWrap {
+	white-space: pre-wrap;
+}
+
+.copiedIcon {
+	color: var(--success);
+}
+
+/* Every icon that reports live work turns; nothing else does. */
+[data-spin] {
+	animation: var(--animate-spin);
+}
+
+/* ── Shimmer ───────────────────────────────────────────────────────────────────────── */
+
+/* Gradient clipped to the glyphs; sized to twice the box so the highlight can travel. */
+.shimmer {
+	display: inline-block;
+	background-image: linear-gradient(
+		110deg,
+		var(--muted-foreground) 30%,
+		var(--foreground) 50%,
+		var(--muted-foreground) 70%
+	);
+	background-size: 200% 100%;
+	background-clip: text;
+	color: transparent;
+	/* Slower than a spinner: it runs under words being read. */
+	animation: shimmer-sweep var(--ai-shimmer-duration, 2.4s) linear infinite;
+}
+
+/* Reduced motion: stop the sweep and restore a real fill, or the text is invisible. */
+@media (prefers-reduced-motion: reduce) {
+	.shimmer {
+		background-image: none;
+		color: var(--muted-foreground);
+		animation: none;
+	}
+}
+
+/* ── Turn ──────────────────────────────────────────────────────────────────────────── */
+
+.turn {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-md);
+	width: 100%;
+	min-width: 0;
+}
+
+/* The reader's own turns are mirrored, so speakers differ by position. */
+.turn[data-role="user"] {
+	flex-direction: row-reverse;
+}
+
+.avatar {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-avatar-sm);
+	height: var(--size-avatar-sm);
+	border-radius: var(--radius-pill);
+	background-color: var(--foreground-8);
+	color: var(--muted-foreground);
+}
+
+.avatar svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.avatar[data-variant="card"] {
+	width: var(--size-avatar);
+	height: var(--size-avatar);
+}
+
+.avatar[data-role="assistant"],
+.avatar[data-tone="primary"] {
+	background-color: var(--primary-10);
+	color: var(--primary-accent);
+}
+
+.avatar[data-tone="success"] {
+	background-color: var(--success-10);
+	color: var(--success);
+}
+
+.avatar[data-tone="warning"] {
+	background-color: var(--warning-10);
+	color: var(--warning-accent);
+}
+
+.avatar[data-tone="destructive"] {
+	background-color: var(--destructive-10);
+	color: var(--destructive-accent);
+}
+
+.avatar[data-tone="info"] {
+	background-color: var(--info-10);
+	color: var(--info);
+}
+
+.turnBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	/* A turn should not run the full width of a wide transcript. */
+	max-width: 44rem;
+	min-width: 0;
+}
+
+.turnMeta {
+	display: flex;
+	align-items: baseline;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.turn[data-role="user"] .turnMeta,
+.turn[data-role="user"] .turnActions {
+	justify-content: flex-end;
+}
+
+/* Inner radius everywhere, matching the stepped-down transcript boxes beside it. */
+.bubble {
+	padding: var(--space-md) var(--space-lg);
+	border: var(--border-width) solid var(--border-60);
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+	min-width: 0;
+}
+
+.bubble[data-role="user"] {
+	border-color: transparent;
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
+/* Dashed, because a system note is not something anybody said. */
+.bubble[data-role="system"] {
+	border-style: dashed;
+	background-color: var(--muted-50);
+}
+
+.bubble[data-loading] {
+	animation: var(--animate-pulse);
+}
+
+.bubbleParts {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.turnActions {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+/* ── Disclosure chrome, shared by reasoning, tool calls, and sources ───────────────── */
+
+.disclosure,
+.tool,
+.sources,
+.chain,
+.artifact,
+.code,
+.task {
+	--surface-ground: var(--card);
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	min-width: 0;
+}
+
+/*
+ * Standalone these keep the structural radius; inside the chat shell they step down. The
+ * agent card and the confirmation outrank this rule, so they step down after their own.
+ */
+.chat :where(
+	.disclosure,
+	.tool,
+	.sources,
+	.chain,
+	.artifact,
+	.code,
+	.task
+) {
+	border-radius: var(--radius-sm);
+}
+
+.disclosureTrigger {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	width: 100%;
+	padding: var(--space-sm) var(--surface-px);
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+.disclosureTrigger:hover {
+	background-color: var(--accent-50);
+}
+
+.disclosureTrigger:focus-visible {
+	outline: none;
+	/* Inset: the disclosure box clips an outer ring. */
+	box-shadow: var(--focus-ring-inset);
+}
+
+.disclosureIcon {
+	flex: none;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	color: var(--muted-foreground);
+}
+
+/* One rotating glyph, not two swapped icons: a swap is announced as new content. */
+.disclosureChevron {
+	flex: none;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	color: var(--muted-foreground);
+	transform: rotate(-90deg);
+	transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.disclosureChevron[data-expanded] {
+	transform: rotate(0deg);
+}
+
+.disclosureBody {
+	padding: var(--surface-py) var(--surface-px);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/* ── Chain of thought ──────────────────────────────────────────────────────────────── */
+
+.chainHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	padding: var(--space-sm) var(--surface-px);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.chainHint {
+	margin-inline-start: auto;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.chainSteps {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	margin: 0;
+	padding: var(--surface-py) var(--surface-px);
+	list-style: none;
+}
+
+/* The rail is each step's ::before, from under its marker to the next, so it fits any step height. */
+.chainStep {
+	position: relative;
+	display: flex;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.chainStep:not(:last-child)::before {
+	content: "";
+	position: absolute;
+	top: var(--space-2xl);
+	bottom: calc(-1 * var(--space-lg));
+	/* Logical, so the connector follows the glyph in RTL. */
+	inset-inline-start: calc(var(--space-2xl) / 2);
+	width: var(--border-width);
+	background-color: var(--border);
+}
+
+.chainMarker {
+	position: relative;
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--space-2xl);
+	height: var(--space-2xl);
+	border: var(--border-width) solid var(--border-60);
+	border-radius: var(--radius-pill);
+	background-color: var(--card);
+	color: var(--muted-foreground);
+}
+
+.chainMarker svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.chainMarker[data-status="active"] {
+	border-color: var(--primary-30);
+	background-color: var(--primary-5);
+	color: var(--primary-accent);
+}
+
+.chainMarker[data-status="completed"] {
+	border-color: transparent;
+	background-color: var(--success);
+	color: var(--success-foreground);
+}
+
+.chainMarker[data-status="failed"] {
+	border-color: transparent;
+	background-color: var(--destructive);
+	color: var(--destructive-foreground);
+}
+
+/* Centres the first line on the marker. */
+.chainStepBody {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding-top: calc((var(--space-2xl) - 1lh) / 2);
+	min-width: 0;
+}
+
+.chainStepExtra {
+	margin-top: var(--space-sm);
+	min-width: 0;
+}
+
+/* ── Tool call ─────────────────────────────────────────────────────────────────────── */
+
+/* A border, not a wash: the "Failed" badge tint is calibrated against the card and fails contrast on a wash. */
+.tool[data-status="error"] {
+	border-color: var(--destructive-40);
+}
+
+/*
+ * Same strip geometry as the reasoning and sources triggers, so stacked disclosures match.
+ * `flex-end` keeps status and chevron at the trailing edge when the row wraps.
+ */
+.toolHeader {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-md);
+	width: 100%;
+	padding: var(--space-sm) var(--surface-px);
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	min-width: 0;
+}
+
+button.toolHeader {
+	cursor: pointer;
+}
+
+button.toolHeader:hover {
+	background-color: var(--accent-50);
+}
+
+button.toolHeader:focus-visible {
+	outline: none;
+	/* Inset: `.tool` clips an outer ring. */
+	box-shadow: var(--focus-ring-inset);
+}
+
+.toolName {
+	flex: 1 1 8rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
+.toolMeta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.toolDuration {
+	display: inline-flex;
+	flex: none;
+	align-items: baseline;
+	gap: var(--space-2xs);
+}
+
+/* The card fill; the panes inside carry the tint. */
+.toolBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding: var(--surface-py) var(--surface-px);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+.toolDetail {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.pre {
+	/* Positioned so absolute descendants scroll and clip with it. */
+	position: relative;
+	overflow-x: auto;
+	max-width: 100%;
+	margin: 0;
+	padding: var(--space-md);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: var(--leading-relaxed);
+}
+
+.pre:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.pre[data-tone="destructive"] {
+	color: var(--destructive-accent);
+}
+
+/* ── Task ──────────────────────────────────────────────────────────────────────────── */
+
+/* A column: the title line (toggle, status glyph, badge centred on it), then the step's extras. */
+.taskRow {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	padding: var(--space-sm) var(--surface-px);
+	/* `--ai-task-depth` is depth × `indent`, a multiplier of `--space-xl`. */
+	padding-inline-start: calc(var(--surface-px) + var(--ai-task-depth, 0) * var(--space-xl));
+	min-width: 0;
+}
+
+.taskRow[data-nested] {
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+.taskToggle,
+.taskToggleSpacer {
+	flex: none;
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.taskToggle svg {
+	transform: rotate(-90deg);
+	transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.taskToggle svg[data-expanded] {
+	transform: rotate(0deg);
+}
+
+.taskIcon {
+	flex: none;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	color: var(--muted-foreground);
+}
+
+.taskIcon[data-status="running"] {
+	color: var(--primary-accent);
+}
+
+.taskIcon[data-status="completed"] {
+	color: var(--success);
+}
+
+.taskIcon[data-status="failed"] {
+	color: var(--destructive);
+}
+
+.taskTitleRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.taskTitle {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
+/* Struck through: grey alone does not say "cancelled". */
+.taskTitle[data-status="cancelled"] {
+	text-decoration: line-through;
+}
+
+/* Under the title, past the toggle and the glyph. */
+.taskExtra {
+	padding-inline-start: calc(var(--size-icon) + var(--size-icon-sm) + var(--space-md) * 2);
+	min-width: 0;
+}
+
+/* ── Agent ─────────────────────────────────────────────────────────────────────────── */
+
+.agent {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.agent[data-variant="card"] {
+	display: flex;
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+}
+
+.agentText {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+/* Hugs its content, so name and status read as one chip in a stretching column. */
+.agent[data-variant="inline"] .agentText {
+	flex: 0 1 auto;
+	flex-direction: row;
+	align-items: baseline;
+	gap: var(--space-md);
+}
+
+/* In a narrow header the subtitle truncates before the name. */
+.agent[data-variant="inline"] .agentNameRow {
+	flex-shrink: 0;
+	max-width: 100%;
+}
+
+.agentNameRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.agentTrailing {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: var(--space-2xs);
+	margin-inline-start: auto;
+}
+
+/* ── Confirmation ──────────────────────────────────────────────────────────────────── */
+
+.confirmation {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	min-width: 0;
+}
+
+.confirmation[data-tone="primary"] {
+	border-color: var(--primary-30);
+	background-color: var(--primary-5);
+}
+
+.confirmation[data-tone="warning"] {
+	border-color: var(--warning-40);
+	background-color: var(--warning-10);
+}
+
+.confirmation[data-tone="destructive"] {
+	border-color: var(--destructive-30);
+	background-color: var(--destructive-5);
+}
+
+.confirmation[data-tone="info"] {
+	border-color: var(--info-30);
+	background-color: var(--info-5);
+}
+
+/*
+ * Standalone a box takes the outer edge; inside the chat shell it is nested and takes the
+ * inner one. After the confirmation rule so it wins; tone and status rules still win.
+ */
+.chat :where(
+	.disclosure,
+	.tool,
+	.sources,
+	.chain,
+	.artifact,
+	.code,
+	.task,
+	.confirmation
+) {
+	border-color: var(--border-60);
+}
+
+.chat .agent[data-variant="card"] {
+	border-color: var(--border-60);
+	border-radius: var(--radius-sm);
+}
+
+.chat .confirmation {
+	border-radius: var(--radius-sm);
+}
+
+.confirmationHeader {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.confirmationText {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.confirmationDetails {
+	margin-top: var(--space-sm);
+	min-width: 0;
+}
+
+.confirmationFooter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	padding-top: var(--space-md);
+	/* The box's own edge colour, so a toned confirmation is not ruled in neutral grey. */
+	border-top: var(--border-width) solid;
+	border-top-color: inherit;
+	min-width: 0;
+}
+
+.confirmationActions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-md);
+	margin-inline-start: auto;
+}
+
+.outcome {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+}
+
+.outcome svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* ── Code block ────────────────────────────────────────────────────────────────────── */
+
+/* Separated by a rule, no fill: a tint would drop the filename below contrast in dark. */
+.codeHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	padding: var(--space-2xs) var(--space-md);
+	border-bottom: var(--border-width) solid var(--border-60);
+	min-width: 0;
+}
+
+.codeLabel {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
+/* Caps for a language label only; a filename is case-sensitive. */
+.codeLabel[data-caps] {
+	text-transform: uppercase;
+	letter-spacing: var(--tracking-widest);
+}
+
+.codeLanguage {
+	flex: none;
+	text-transform: lowercase;
+}
+
+.codeLanguage::before {
+	content: "·";
+	margin-inline-end: var(--space-sm);
+}
+
+.codeActions {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: var(--space-2xs);
+	margin-inline-start: auto;
+}
+
+.codeScroll {
+	/* Positioned so absolute descendants scroll and clip with it. */
+	position: relative;
+	overflow: auto;
+	max-width: 100%;
+	max-height: 24rem;
+	min-width: 0;
+}
+
+.codeScroll:focus-visible {
+	outline: none;
+	/* Inset: `.code` clips three sides of an outer ring. */
+	box-shadow: var(--focus-ring-inset);
+}
+
+.codePlain,
+.codeNumbered {
+	margin: 0;
+	padding: var(--space-md);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: var(--leading-relaxed);
+}
+
+.codePlain code {
+	display: block;
+	white-space: pre;
+	font: inherit;
+}
+
+/* A grid, not a table: fixed gutter and full-width line highlights without table semantics. */
+.codeNumbered {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	padding-inline: 0;
+}
+
+.codeNumbered > span {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+}
+
+.codeNumbered > span[data-highlight] {
+	background-color: var(--warning-10);
+}
+
+.codeGutter {
+	padding-inline: var(--space-md);
+	color: var(--muted-foreground);
+	font-variant-numeric: tabular-nums;
+	text-align: end;
+	user-select: none;
+}
+
+.codeLine {
+	padding-inline-end: var(--space-md);
+	white-space: pre;
+}
+
+/* ── Artifact ──────────────────────────────────────────────────────────────────────── */
+
+/* Separated by a rule, like the code block's header. */
+.artifactHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	padding: var(--surface-py) var(--surface-px);
+	border-bottom: var(--border-width) solid var(--border-60);
+	min-width: 0;
+}
+
+.artifactText {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.artifactActions {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: var(--space-2xs);
+}
+
+/* Bare body so content sits flush; a nested code block drops its own frame to avoid double edges. */
+.artifactBody {
+	min-width: 0;
+}
+
+.artifactBody > .code {
+	border: 0;
+	border-radius: 0;
+}
+
+/* ── Sources ───────────────────────────────────────────────────────────────────────── */
+
+.sourceStrip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+/* Overlapped, so favicons read as one group. */
+.sourceStack {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+}
+
+.sourceStack > * + * {
+	margin-inline-start: calc(var(--space-sm) * -1);
+}
+
+.sourceFace {
+	display: inline-flex;
+	overflow: hidden;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+	border: var(--border-width) solid var(--surface-ground, var(--background));
+	border-radius: var(--radius-pill);
+	outline: var(--border-width) solid var(--border-60);
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+}
+
+.sourceFaceButton {
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	border-radius: var(--radius-pill);
+}
+
+.sourceFaceButton:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.sourceImage {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.sourceGlobe {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* Inline inset = trigger's minus the row's, so row numbers align under the favicons. */
+.sourceList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	margin: 0;
+	padding: var(--space-sm) calc(var(--surface-px) - var(--space-sm));
+	border-top: var(--border-width) solid var(--border-60);
+	list-style: none;
+}
+
+.sourceRow {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-md);
+	width: 100%;
+	padding: var(--space-2xs) var(--space-sm);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	text-decoration: none;
+	min-width: 0;
+}
+
+a.sourceRow,
+button.sourceRow {
+	cursor: pointer;
+}
+
+a.sourceRow:hover,
+button.sourceRow:hover {
+	background-color: var(--accent-50);
+}
+
+a.sourceRow:focus-visible,
+button.sourceRow:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* Numbered, because a model's prose cites them by number. */
+.sourceIndex {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+	border-radius: var(--radius-pill);
+	background-color: var(--foreground-8);
+}
+
+.sourceText {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.sourceExternal {
+	display: inline;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	margin-inline-start: var(--space-2xs);
+	color: var(--muted-foreground);
+	vertical-align: -0.125em;
+}
+
+.sourceSnippet {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+/* ── Attachment ────────────────────────────────────────────────────────────────────── */
+
+.attachment {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-md);
+	max-width: 100%;
+	padding: var(--space-2xs) var(--space-sm);
+	border: var(--border-width) solid var(--border-60);
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+	min-width: 0;
+}
+
+.attachment[data-errored] {
+	border-color: var(--destructive-30);
+	background-color: var(--destructive-5);
+}
+
+.attachmentOpen {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: var(--space-md);
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	min-width: 0;
+}
+
+button.attachmentOpen {
+	cursor: pointer;
+}
+
+button.attachmentOpen:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.attachmentThumb,
+.attachmentIcon {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	width: var(--control-h);
+	height: var(--control-h);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+	background-size: cover;
+	background-position: center;
+}
+
+.attachmentIcon {
+	background-color: var(--foreground-8);
+}
+
+.attachmentIcon[data-errored] {
+	background-color: var(--destructive-10);
+	color: var(--destructive-accent);
+}
+
+.attachmentIcon svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.attachmentText {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.attachmentTrack {
+	display: block;
+	overflow: hidden;
+	height: var(--space-xs);
+	border-radius: var(--radius-pill);
+	background-color: var(--foreground-20);
+}
+
+.attachmentBar {
+	display: block;
+	width: var(--ai-progress, 0%);
+	height: 100%;
+	border-radius: var(--radius-pill);
+	background-color: var(--primary);
+	transition: width var(--duration-fast) var(--ease-out);
+}
+
+/* Secondary ink until hovered; two classes to outrank the ghost button's colour. */
+.attachment .dismiss,
+.queueRow .dismiss {
+	flex: none;
+	color: var(--muted-foreground);
+}
+
+.attachment .dismiss:is(:hover, :focus-visible),
+.queueRow .dismiss:is(:hover, :focus-visible) {
+	color: var(--foreground);
+}
+
+/* ── Chat shell ────────────────────────────────────────────────────────────────────── */
+
+.chat {
+	display: flex;
+	overflow: hidden;
+	flex-direction: column;
+	height: 100%;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--background);
+	min-height: 0;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	flex: none;
+	padding: var(--surface-py) var(--surface-px);
+	border-bottom: var(--border-width) solid var(--border-60);
+	background-color: var(--card);
+	min-width: 0;
+}
+
+.headerActions {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	margin-inline-start: auto;
+}
+
+/* `min-height: 0` lets the transcript scroll instead of pushing the composer off-page. */
+.conversation {
+	position: relative;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.transcript {
+	flex: 1;
+	overflow-y: auto;
+	padding: var(--surface-py) var(--surface-px);
+	min-height: 0;
+}
+
+.transcript:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring-inset);
+}
+
+.transcriptIntro {
+	margin-bottom: var(--space-xl);
+}
+
+.transcriptFooter {
+	margin-top: var(--space-xl);
+}
+
+.messages {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	min-width: 0;
+}
+
+.sentinel {
+	height: var(--border-width);
+}
+
+.jump {
+	display: flex;
+	flex: none;
+	justify-content: center;
+	padding: var(--space-sm) var(--space-md);
+	border-top: var(--border-width) solid var(--border-60);
+	background-color: var(--background);
+}
+
+.message {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+/* Indented past the avatar to line up with the message text. */
+.messageBelow {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding-inline-start: calc(var(--size-avatar-sm) + var(--space-md));
+	min-width: 0;
+}
+
+.message[data-role="user"] .messageBelow {
+	padding-inline-start: 0;
+	padding-inline-end: calc(var(--size-avatar-sm) + var(--space-md));
+	align-items: flex-end;
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-md);
+	height: 100%;
+	text-align: center;
+}
+
+.emptyBelow {
+	width: 100%;
+	max-width: 42rem;
+}
+
+/* ── Footer strips ─────────────────────────────────────────────────────────────────── */
+
+.footer {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding: var(--surface-py) var(--surface-px);
+	border-top: var(--border-width) solid var(--border-60);
+	background-color: var(--card);
+	min-width: 0;
+}
+
+.strip {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+/*
+ * Same box as the tool call, with ruled rows. The rule is drawn (::before), not a border,
+ * so it stays straight to the box edge (as in `ItemGroup ruled`).
+ */
+.queue {
+	display: flex;
+	overflow: hidden;
+	flex-direction: column;
+	border: var(--border-width) solid var(--border-60);
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+	min-width: 0;
+}
+
+/* Aligned with the row labels. */
+.queueHeader {
+	padding: var(--space-sm) var(--space-md) 0;
+}
+
+.queueList {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	min-width: 0;
+}
+
+/* The cancel control sets the height; the end inset is smaller because the control pads its glyph. */
+.queueRow {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-md) var(--space-xs);
+	min-width: 0;
+	/* The cancel control sits concentric with the queue's corner. */
+	--button-radius: calc(var(--radius-sm) - var(--space-xs));
+}
+
+.queueRow + .queueRow::before {
+	content: "";
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+	height: var(--border-width);
+	background-color: var(--border-60);
+}
+
+.suggestions {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.suggestionsHeader {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: var(--space-sm);
+	color: var(--muted-foreground);
+}
+
+.suggestionsHeader svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* Scrollbar hidden: the strip is one row tall. */
+.suggestionsScroll {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: var(--space-sm);
+	/* Positioned so absolute descendants scroll and clip with it. */
+	position: relative;
+	overflow-x: auto;
+	padding-block: var(--space-2xs);
+	scrollbar-width: none;
+	min-width: 0;
+}
+
+.suggestionsScroll::-webkit-scrollbar {
+	display: none;
+}
+
+/* A control: control border, inner radius and hover, like an outline button. */
+.suggestion {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: var(--space-sm);
+	padding: var(--space-2xs) var(--space-md);
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: transparent;
+	color: inherit;
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.suggestion svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	color: var(--muted-foreground);
+}
+
+.suggestion:hover {
+	background-color: var(--accent);
+}
+
+.suggestion:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* ── Composer ──────────────────────────────────────────────────────────────────────── */
+
+/* One field: the textarea and its toolbar inside a single control border. */
+.composer {
+	display: flex;
+	flex-direction: column;
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: var(--field-bg);
+	transition: border-color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
+	min-width: 0;
+}
+
+.composer:hover:not(:focus-within) {
+	border-color: var(--control-border-hover);
+}
+
+/* The composer carries the focus ring; the inner field has no chrome. */
+.composer:focus-within {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--field-focus-ring);
+}
+
+.composer[data-disabled] {
+	opacity: var(--disabled-opacity);
+	pointer-events: none;
+}
+
+.composerAttachments {
+	padding: var(--space-md) var(--space-md) 0;
+}
+
+/* Strips the Textarea frame so the composer reads as one control. */
+.composerField {
+	border: 0;
+	background: none;
+	box-shadow: none;
+}
+
+.composerField [data-slot="textarea"] {
+	resize: none;
+}
+
+/* Suppresses the field shell's own focus ring (the composer draws it); one class heavier than the shell rule. */
+.composer .composerField:has([data-field-control]:focus-visible) {
+	box-shadow: none;
+}
+
+/* Named container so a narrow composer can drop the keyboard hint. */
+.composerBar {
+	container: ai-composer-bar / inline-size;
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding: var(--space-2xs) var(--space-sm) var(--space-sm);
+	min-width: 0;
+}
+
+.composerBarEnd {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	margin-inline-start: auto;
+	min-width: 0;
+}
+
+.stopGlyph {
+	fill: currentcolor;
+}
+
+.composerHint {
+	min-width: 0;
+}
+
+@container ai-composer-bar (width < 24rem) {
+	.composerHint {
+		display: none;
+	}
+}

@@ -1,0 +1,159 @@
+/* Badge — component variables. */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/*
+	 * A whole, even pixel size, so the flex-centred circle lands on whole pixels instead of
+	 * rasterising oval. Deliberately unscaled: below ~6px a dot stops being legible.
+	 */
+	--badge-dot: 0.5rem;
+}
+
+/* Only a badge rendered as an anchor gets hover; `render` makes the tag variable, hence `a.variant*`. */
+
+/* No `overflow`: a scroll container would scroll content instead of letting it size the badge. */
+.root {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: fit-content;
+	flex-shrink: 0;
+	gap: var(--space-xs);
+	padding-inline: var(--control-px-2xs);
+	padding-block: var(--space-2xs);
+	border: var(--border-width) solid transparent;
+	/*
+	 * The control radius, shared with buttons and fields so a badge beside them reads as the
+	 * same family. The status dot keeps `--radius-pill`.
+	 */
+	border-radius: var(--radius-sm);
+	font-size: var(--text-xs);
+	line-height: var(--leading-12);
+	font-weight: var(--weight-medium);
+	white-space: nowrap;
+	transition: color var(--duration-fast) var(--ease-in-out),
+		box-shadow var(--duration-fast) var(--ease-in-out);
+}
+
+.root:focus-visible {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--focus-ring);
+}
+
+.root[aria-invalid="true"] {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.root > svg {
+	pointer-events: none;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/*
+ * ── Tones ────────────────────────────────────────────────────────────────────────
+ * Each tone sets three variables; the variants below decide which of them paint. A tone
+ * whose defaults do not fit also re-points the edge step or the solid hover's mix target.
+ */
+.toneNeutral {
+	--badge-hue: var(--foreground);
+	--badge-ink: var(--foreground);
+	--badge-on-solid: var(--background);
+	/* The hue is the ink, so a linked solid badge mixes toward the page on hover instead. */
+	--badge-solid-hover-toward: var(--background);
+}
+
+.tonePrimary {
+	--badge-hue: var(--primary);
+	--badge-ink: var(--primary-accent);
+	--badge-on-solid: var(--primary-foreground);
+}
+
+.toneSecondary {
+	--badge-hue: var(--muted-foreground);
+	--badge-ink: var(--foreground);
+	--badge-on-solid: var(--background);
+}
+
+.toneSuccess {
+	--badge-hue: var(--success);
+	--badge-ink: var(--success);
+	--badge-on-solid: var(--success-foreground);
+}
+
+.toneInfo {
+	--badge-hue: var(--info);
+	--badge-ink: var(--info);
+	--badge-on-solid: var(--info-foreground);
+}
+
+.toneWarning {
+	/*
+	 * `--warning-foreground` is ink for a solid warning fill; on a tint use `--warning-accent`,
+	 * which holds contrast in dark.
+	 */
+	--badge-hue: var(--warning);
+	--badge-ink: var(--warning-accent);
+	--badge-on-solid: var(--warning-foreground);
+	/* Amber needs the stronger edge step to hold a visible line. */
+	--badge-line: 40%;
+}
+
+.toneDestructive {
+	--badge-hue: var(--destructive);
+	/* The accent ink stays legible on muted rows in both themes. */
+	--badge-ink: var(--destructive-accent);
+	--badge-on-solid: var(--destructive-foreground);
+}
+
+/* ── Variants ─────────────────────────────────────────────────────────────────── */
+
+/* The tone ladder's soft step (10%) and line step (30%, warning 40%). */
+.variantSoft {
+	background-color: color-mix(in oklab, var(--badge-hue) 10%, transparent);
+	border-color: color-mix(in oklab, var(--badge-hue) var(--badge-line, 30%), transparent);
+	color: var(--badge-ink);
+}
+
+.variantSolid {
+	background-color: var(--badge-hue);
+	color: var(--badge-on-solid);
+}
+
+.variantOutline {
+	border-color: color-mix(in oklab, var(--badge-hue) var(--badge-line, 30%), transparent);
+	color: var(--badge-ink);
+}
+
+a.variantSoft:hover {
+	background-color: color-mix(in oklab, var(--badge-hue) 20%, transparent);
+}
+
+a.variantSolid:hover {
+	background-color: color-mix(in oklab, var(--badge-hue) 88%, var(--badge-solid-hover-toward, var(--foreground)));
+}
+
+a.variantOutline:hover {
+	background-color: color-mix(in oklab, var(--badge-hue) 10%, transparent);
+}
+
+/* ── Dot ──────────────────────────────────────────────────────────────────────── */
+
+.dot {
+	flex-shrink: 0;
+	width: var(--badge-dot);
+	height: var(--badge-dot);
+	border: var(--border-width-strong) solid var(--badge-ink);
+	border-radius: var(--radius-pill);
+	background-color: var(--badge-ink);
+}
+
+/* Hollow, thinner ring: pending, not failed; at 2px it reads as a bold "o". */
+.dotPending {
+	border-width: var(--border-width);
+	background-color: transparent;
+}
+
+.dotPulse {
+	animation: var(--animate-pulse);
+}

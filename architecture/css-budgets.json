@@ -1,0 +1,38 @@
+{
+  "note": "Budgets for the representative recipes and the catalogue. `target` is what the build must hold; `hard` is the architectural maximum, kept separate so a future maintainer cannot silently redefine the target as the ceiling.",
+  "recipes": [
+    {
+      "name": "Button + Input + Stack + UIRoot",
+      "budgetKb": 32,
+      "families": [
+        "base/buttons",
+        "base/text-inputs",
+        "base/structure"
+      ]
+    },
+    {
+      "name": "DataView + filters + table",
+      "budgetKb": 48,
+      "families": [
+        "features/data-view",
+        "features/filters",
+        "features/table"
+      ]
+    },
+    {
+      "name": "Admin resource index recipe",
+      "budgetKb": 58,
+      "families": [
+        "admin/patterns/commerce",
+        "features/table",
+        "layout/app-shell"
+      ]
+    }
+  ],
+  "catalogue": {
+    "sheet": "dist/style.css",
+    "targetGzipBytes": 75776,
+    "hardGzipBytes": 76800,
+    "targetReason": "74 KiB since 2.0.0; it was 72 KiB when the catalogue was 71,814 bytes. The 2.0 components took it to 76,557. Shorter class names, the browser-floor CSS target and joining the token layer once brought it back to 74,393; the rest is rules those components need."
+  }
+}

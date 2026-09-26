@@ -1,0 +1,186 @@
+/*
+ * Form field chrome — the label, the control, and one supporting line.
+ */
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.label {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	color: var(--foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+	/* The label is a click target for its control, so it must not stretch the full row. */
+	width: fit-content;
+}
+
+.required {
+	color: var(--destructive);
+}
+
+/* Horizontal: the label beside the control, for settings rows. */
+/*
+ * Wraps: the body keeps a floor of one label column and drops under the label, with the
+ * vertical gap, when both don't fit.
+ */
+.fieldHorizontal {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: start;
+	column-gap: var(--space-xl);
+	row-gap: var(--space-sm);
+}
+
+.fieldHorizontal .label {
+	flex-shrink: 0;
+	width: var(--field-label-width);
+	/* Centred on the control's first line. */
+	margin-top: calc((var(--control-h) - 1lh) / 2);
+}
+
+.fieldHorizontalBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	flex: 1 1 var(--field-label-width);
+	min-width: 0;
+}
+
+/* A fieldset groups related fields under one legend without the UA's default chrome. */
+.group {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+	border: 0;
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+}
+
+.groupLegend {
+	padding: 0;
+	margin-bottom: var(--space-xs);
+}
+
+/* ══ Workflow ══════════════════════════════════════════════════════════════════════ */
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+}
+
+/*
+ * Two elements: the outer one is both the query container (an element can't match its
+ * own container query) and the sticky box — a sticky child of an auto-height wrapper has
+ * nowhere to travel.
+ */
+.actionsBar {
+	container-type: inline-size;
+}
+
+.actionsBarSticky {
+	position: sticky;
+	bottom: 0;
+	z-index: var(--z-sticky);
+}
+
+.actionsRow {
+	padding: var(--surface-py) var(--surface-px);
+	border-top: var(--border-width) solid var(--border);
+	/* Opaque unless the browser can blur behind a translucent bar (below), the header's recipe. */
+	background-color: var(--background);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+	.actionsRow {
+		background-color: var(--background-70);
+		backdrop-filter: blur(12px);
+	}
+}
+
+.actionsLayout {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: var(--space-lg);
+}
+
+@container (min-width: 32rem) {
+	.actionsLayout {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: center;
+	}
+}
+
+.actionsLeading {
+	min-width: 0;
+	flex: 1;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+}
+
+.actionsTrailing {
+	display: flex;
+	width: 100%;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-md);
+}
+
+@container (min-width: 32rem) {
+	.actionsTrailing {
+		width: auto;
+		margin-inline-start: auto;
+	}
+}
+
+/* A real `<ul>`; the indent lines markers up under the alert's text column. */
+.summaryList {
+	margin: 0;
+	padding-inline-start: var(--space-xl);
+	list-style: disc;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+/* Separate entries so lines don't weld together (layout-faults.spec.ts, WELDED). */
+.summaryList > li + li {
+	margin-block-start: var(--space-2xs);
+}
+
+/* The summary takes focus after a failed submit; ring only for :focus-visible. */
+.errorSummary:focus {
+	outline: none;
+}
+
+.errorSummary:focus-visible {
+	box-shadow: var(--focus-ring);
+}
+
+/* An item that links to its field reads as a link, in the summary's own colour. */
+.summaryList a {
+	color: inherit;
+	text-decoration-line: underline;
+	text-underline-offset: var(--link-underline-offset);
+	border-radius: var(--radius-sm);
+}
+
+.summaryList a:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.submitSpinner {
+	animation: var(--animate-spin);
+}

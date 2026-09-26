@@ -1,0 +1,696 @@
+/*
+ * MediaLibrary: the controls are the kit's own; this styles the browser (grid, workspace,
+ * tiles). Keyed to a container, since it runs in a dialog as often as in a page.
+ */
+
+.root {
+	container-type: inline-size;
+	container-name: media-library;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+/* The start slot sits above the ContentBlock heading, which carries the end slot on its title line. */
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.libraryTabs {
+	gap: var(--space-md);
+}
+
+.libraryTabList {
+	align-self: stretch;
+}
+
+.libraryTabPanel {
+	padding-top: 0;
+}
+
+/* ── Toolbar ───────────────────────────────────────────────────────────────────── */
+
+.toolbar {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.toolbarPrimary,
+.toolbarSecondary,
+.toolbarFilters,
+.toolbarEnd {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.toolbarPrimary {
+	align-items: flex-start;
+}
+
+.toolbarSecondary {
+	justify-content: space-between;
+}
+
+.toolbarSearch {
+	display: flex;
+	flex: 1 1 20rem;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 12rem;
+}
+
+.toolbarTypes {
+	flex: none;
+}
+
+/* A live query tints the field: nothing else says the grid below is filtered. */
+.toolbarField[data-active] {
+	border-color: var(--primary-30);
+	background-color: var(--primary-5);
+}
+
+.toolbarQuery {
+	display: flex;
+	padding-inline: var(--space-xs);
+	min-width: 0;
+}
+
+.queryTerm {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
+.toolbarSelect {
+	width: 10rem;
+}
+
+.toolbarEnd {
+	margin-inline-start: auto;
+}
+
+/*
+ * Segmented control: a muted track with a raised chip on the active segment, so both
+ * options stay visible and the pair reads as one switch.
+ */
+.segmented {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	height: var(--control-h);
+	padding: var(--space-2xs);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+}
+
+/* The segment gives back the track's padding, so the pair stays one control-height row. */
+.segment {
+	--button-h: calc(var(--control-h) - var(--space-2xs) * 2);
+	/* Concentric with the track: its radius less the inset. */
+	--button-radius: calc(var(--radius-sm) - var(--space-2xs));
+
+	box-shadow: none;
+}
+
+/*
+ * The chip is the raised popover ground, not primary: a view switch is not the main action.
+ * The hover selector outranks the ghost Button's own hover, so the chip holds its fill.
+ */
+.segment[data-active],
+.segmented .segment[data-active]:hover:not(:disabled) {
+	background-color: var(--popover);
+	color: var(--foreground);
+	box-shadow: var(--shadow-xs);
+}
+
+/* Four text filters need two rows in an embedded phone-width browser. */
+@container media-library (width < 28rem) {
+	.segmented[role="tablist"] {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		width: 100%;
+		height: auto;
+	}
+}
+
+/* ── The browse region ─────────────────────────────────────────────────────────── */
+
+.browse {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.workspace {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.results {
+	min-width: 0;
+}
+
+/*
+ * The detail becomes a column once there is room and stacks under the grid otherwise; an
+ * overlay would hide the grid while editing several assets in a row.
+ */
+@container media-library (width >= 44rem) {
+	.workspace[data-detail] {
+		grid-template-columns: minmax(0, 1fr) 20rem;
+		align-items: start;
+	}
+}
+
+/* ── The grid ──────────────────────────────────────────────────────────────────── */
+
+/* `auto-fill` with a minimum: the column count follows the panel width without breakpoints. */
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.grid[data-media-density="compact"] {
+	grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+	gap: var(--space-md);
+}
+
+/* ── One card ──────────────────────────────────────────────────────────────────── */
+
+.card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+.cardTile {
+	position: relative;
+	display: block;
+	width: 100%;
+	aspect-ratio: 1;
+	padding: 0;
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+	cursor: pointer;
+	transition:
+		border-color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.cardTile:hover {
+	box-shadow: var(--shadow-sm);
+}
+
+.cardTile:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* Selection is a ring, not a fill: tinting the asset changes what the reader is judging. */
+.card[data-selected] .cardTile {
+	border-color: var(--primary);
+	box-shadow: 0 0 0 var(--focus-ring-width) var(--primary-40);
+}
+
+.card[data-selected] .cardTile:focus-visible { box-shadow: var(--focus-ring); }
+
+.cardTileWrap { position: relative; display: block; }
+
+/* One state marker, with a solid ground over any artwork. The tile owns selection. */
+.cardCheck {
+ position: absolute;
+ top: var(--space-sm);
+ inset-inline-start: var(--space-sm);
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ width: var(--size-icon-lg);
+ height: var(--size-icon-lg);
+ border: var(--border-width) solid var(--control-border);
+ /* A checkbox's corner: the item radius. */
+ border-radius: var(--radius-sm);
+ background: var(--background);
+ color: var(--primary-foreground);
+ box-shadow: var(--shadow-sm);
+ pointer-events: none;
+ opacity: 0;
+ transition: opacity var(--duration-fast) var(--ease-out);
+}
+.cardCheck > svg { width: var(--size-icon); height: var(--size-icon); }
+.cardCheck[data-selected] { background: var(--primary); border-color: var(--primary); }
+.card:hover .cardCheck,
+.card:focus-within .cardCheck,
+.cardCheck[data-selected] { opacity: 1; }
+
+.cardBody {
+	display: flex;
+	flex-direction: column;
+	/* Keep a gap so the filename and its detail line read as two lines. */
+	gap: var(--space-2xs);
+	min-width: 0;
+	line-height: var(--leading-tight);
+}
+
+
+/* Revealed on hover or focus INSIDE the card, so a keyboard reaches it too. */
+.cardDetails {
+	position: absolute;
+	top: var(--space-sm);
+	inset-inline-end: var(--space-sm);
+	background: var(--background);
+	box-shadow: var(--shadow-sm);
+	opacity: 0;
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.card:hover .cardDetails,
+.card:focus-within .cardDetails {
+	opacity: 1;
+}
+
+.preview {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.previewFallback {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+}
+
+.previewFallback > svg {
+	width: var(--size-icon-2xl);
+	height: var(--size-icon-2xl);
+}
+
+/*
+ * A tinted stand-in derives its glyph from the item's runtime tint (a deeper shade), so it
+ * stays legible on any colour. The fallbacks cover the frame before the inline value lands.
+ */
+.previewFallback[data-tinted] {
+	background-color: var(--media-tint, var(--muted));
+	color: color-mix(in oklab, var(--media-tint, var(--muted-foreground)) 50%, var(--shadow-ink));
+}
+
+/* ── The table view ────────────────────────────────────────────────────────────── */
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	min-width: 0;
+}
+
+.row {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+	padding: var(--space-xs);
+	border: var(--border-width) solid transparent;
+	border-radius: var(--radius-sm);
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.row:hover {
+	background-color: var(--accent-50);
+}
+
+/* Selection outranks hover. */
+.row[data-selected],
+.row[data-selected]:hover {
+	border-color: transparent;
+	background-color: var(--primary-10);
+}
+
+.rowMain {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	text-align: start;
+	cursor: pointer;
+	border-radius: var(--radius-sm);
+}
+
+.rowMain:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.rowPreview {
+	flex: none;
+	width: var(--size-icon-2xl);
+	height: var(--size-icon-2xl);
+	border-radius: var(--radius-sm);
+}
+
+.rowBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+	line-height: var(--leading-tight);
+}
+
+.rowSize {
+	flex: none;
+}
+
+/* ── The detail column ─────────────────────────────────────────────────────────── */
+
+.detail {
+	scroll-margin-block-start: calc(var(--shell-header-h) + var(--space-md));
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+}
+
+.detailHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	min-width: 0;
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.detailBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+}
+
+.detailPreview {
+	aspect-ratio: 4 / 3;
+	max-height: 14rem;
+	object-fit: contain;
+	border-radius: var(--radius-sm);
+}
+
+.detailFooter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/* ── Upload ────────────────────────────────────────────────────────────────────── */
+
+.upload {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.uploadOptions {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+}
+
+.uploadOptionsGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--space-md);
+}
+
+@container media-library (width >= 42rem) {
+	.uploadOptionsGrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.stagedList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.staged {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+	padding: var(--space-xs) var(--space-md);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+}
+
+.stagedIcon {
+	display: inline-flex;
+	flex: none;
+	color: var(--muted-foreground);
+}
+
+.stagedIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.stagedBody {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.uploadActions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────────── */
+
+.footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+/* `bare` drops both, for a shell that already draws its own footer rule. */
+.footer[data-chrome="section"] {
+	padding-top: var(--space-lg);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+.footerSummary {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+/*
+ * Stacked, the DOM order (Cancel first) is reversed so the primary action sits on top, and
+ * the pair spans the width. From 28rem it is a trailing row.
+ */
+.footerActions {
+	display: flex;
+	flex: 1 1 100%;
+	flex-direction: column-reverse;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+@container media-library (min-width: 28rem) {
+	.footerActions {
+		flex: 0 1 auto;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+	}
+}
+
+/* ── The resource gallery ──────────────────────────────────────────────────────── */
+
+.gallery {
+	container-type: inline-size;
+	container-name: media-gallery;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.galleryActions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.galleryList {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+	gap: var(--space-md);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	min-width: 0;
+}
+
+.galleryList[data-media-density="compact"] {
+	grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+	gap: var(--space-sm);
+}
+
+/* A single row that scrolls, for a gallery sitting inside a form field. */
+.galleryList[data-layout="field"] {
+	display: flex;
+	position: relative;
+	overflow-x: auto;
+}
+
+.galleryList[data-layout="field"] > li {
+	flex: none;
+	width: 8rem;
+}
+
+.galleryList[data-layout="list"] {
+	display: flex;
+	flex-direction: column;
+}
+
+.galleryItem {
+	position: relative;
+	aspect-ratio: 1;
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+}
+
+.galleryItem[data-primary] {
+	border-color: var(--primary);
+	box-shadow: 0 0 0 var(--focus-ring-width) var(--primary-40);
+}
+
+.galleryPreview {
+	width: 100%;
+	height: 100%;
+}
+
+/* Solid, not the soft badge tint: it sits on arbitrary artwork. */
+.galleryBadge {
+	position: absolute;
+	top: var(--space-xs);
+	inset-inline-start: var(--space-xs);
+	/* Concentric with the tile's corner, like the controls opposite. */
+	border-radius: calc(var(--radius-sm) - var(--space-xs));
+	border-color: transparent;
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
+/* Controls on the asset get their own ground and appear on hover or focus. */
+.galleryControls {
+	position: absolute;
+	inset-inline-end: var(--space-xs);
+	bottom: var(--space-xs);
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding: var(--space-2xs);
+	/* Concentric: the tile's radius less this inset, and the buttons' less theirs. */
+	border-radius: calc(var(--radius-sm) - var(--space-xs));
+	background-color: var(--background);
+	box-shadow: var(--shadow-sm);
+	opacity: 0;
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.galleryItem:hover .galleryControls,
+.galleryItem:focus-within .galleryControls {
+	opacity: 1;
+}
+
+/* Tile-sized buttons: four at control height overflow an 8rem tile. */
+.galleryControls > button {
+	--button-h: var(--control-h-2xs);
+	--button-radius: calc(var(--radius-sm) - var(--space-xs) - var(--space-2xs));
+}
+
+/* Inset ring: the tile's clip cuts an outer one. */
+.galleryControls > button:focus-visible {
+	box-shadow: var(--focus-ring-inset);
+}
+
+/* Stands in for the grid, so it holds a minimum height and filtering does not jump the page. */
+.emptyState {
+	min-height: 16rem;
+	background-color: var(--muted-20);
+}
+
+@media (hover: none), (pointer: coarse) {
+ .cardCheck, .cardDetails, .galleryControls { opacity: 1; }
+}
+.rowPreview.previewFallback > svg { width: var(--size-icon-lg); height: var(--size-icon-lg); }
+.table { min-width: 0; border: var(--border-width) solid var(--border); border-radius: var(--radius); }
+.tableName { justify-content: flex-start; min-width: 12rem; max-width: 20rem; height: auto; padding: var(--space-xs); }
+.selectionBar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-md); min-height: var(--control-h); }
+@container media-library (width < 44rem) {
+ .workspace[data-detail] .detail { grid-row: 1; }
+}
+
+@container media-library (width < 32rem) {
+	.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+	/* The two selects share one row. */
+	.toolbarFilters { flex: 1 1 100%; }
+	.toolbarSelect { flex: 1 1 auto; width: auto; }
+}

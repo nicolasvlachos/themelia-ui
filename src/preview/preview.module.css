@@ -1,0 +1,1143 @@
+/*
+ * Documentation site shell: navigation, content and an on-this-page rail at desktop.
+ * The content column is capped at a reading measure rather than fluid.
+ */
+
+.shell {
+	min-height: 100dvh;
+	background-color: var(--background);
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────────── */
+
+.header {
+	position: sticky;
+	top: 0;
+	z-index: var(--z-sticky);
+	display: flex;
+	align-items: center;
+	gap: var(--space-xl);
+	height: 3.5rem;
+	padding-inline: var(--space-xl);
+	border-bottom: var(--border-width) solid var(--border);
+	background-color: color-mix(in oklab, var(--background) 85%, transparent);
+	backdrop-filter: blur(12px);
+}
+
+.brand {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	text-decoration: none;
+	color: inherit;
+	flex-shrink: 0;
+}
+
+.brandMark {
+	display: grid;
+	place-items: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground);
+	color: var(--background);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-bold);
+}
+
+.headerSpacer {
+	flex: 1;
+}
+
+.headerActions {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+/* A lone header field has nothing to align with, so drop FormField's label column. */
+.densityField {
+	--field-label-width: auto;
+	gap: var(--space-sm);
+}
+
+/* Only reachable below lg, where the sidebar is collapsed. */
+.navToggle {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--control-h-sm);
+	height: var(--control-h-sm);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	cursor: pointer;
+}
+
+.navToggle:hover {
+	background-color: var(--accent);
+}
+
+@media (--bp-max-lg) {
+	.navToggle {
+		display: inline-flex;
+	}
+	/* Opened from the header, the rail is an overlay. Targets the sticky wrapper: it is the grid child. */
+	.body[data-nav-open] .sidebarSticky {
+		display: block;
+		position: fixed;
+		top: 3.5rem;
+		inset-inline-start: 0;
+		width: 16rem;
+		z-index: var(--z-docked);
+		background-color: var(--background);
+		box-shadow: var(--shadow-lg);
+	}
+}
+
+@media (--bp-max-md) {
+	.header {
+		gap: var(--space-sm);
+		padding-inline: var(--space-md);
+	}
+	/* Search is the only flexible region here; a flexible spacer would split its room. */
+	.headerSpacer {
+		display: none;
+	}
+	.brand > [data-typography] {
+		display: none;
+	}
+	.densityField {
+		display: none;
+	}
+	.search {
+		min-width: 0;
+		width: auto;
+		flex: 1;
+	}
+	.searchHint {
+		display: none;
+	}
+	.headerActions {
+		gap: 0;
+	}
+}
+
+/* ── Search ───────────────────────────────────────────────────────────────────── */
+
+.search {
+	width: min(20rem, 40vw);
+}
+
+.searchTrigger {
+	width: 100%;
+	justify-content: flex-start;
+	color: var(--muted-foreground);
+}
+
+.searchTriggerLabel {
+	min-width: 0;
+	flex: 1;
+	overflow: hidden;
+	text-align: start;
+	text-overflow: ellipsis;
+}
+
+.searchHint {
+	pointer-events: none;
+	padding: 0 var(--space-xs);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--background);
+	color: var(--muted-foreground);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: 1.4;
+}
+
+.searchDialog {
+	width: min(36rem, calc(100vw - var(--space-2xl)));
+}
+
+.searchItemMeta {
+	margin-inline-start: auto;
+	white-space: nowrap;
+}
+
+.galleryLayerSelect {
+	display: none;
+}
+
+@media (--bp-max-md) {
+	.galleryLayerPills {
+		display: none;
+	}
+
+	.galleryLayerSelect {
+		display: block;
+		width: 100%;
+	}
+}
+
+/* ── Layout ───────────────────────────────────────────────────────────────────── */
+
+.body {
+	display: grid;
+	grid-template-columns: 15rem minmax(0, 1fr);
+	align-items: start;
+}
+
+@media (--bp-xl) {
+	.body {
+		grid-template-columns: 15rem minmax(0, 1fr) 14rem;
+	}
+
+	/* A page with no headings drops the empty contents rail and gives the content its room. */
+	.toc:not(:has(.tocLink)) {
+		display: none;
+	}
+
+	.body:not(:has(.tocLink)) {
+		grid-template-columns: 15rem minmax(0, 1fr);
+	}
+
+	/* Such a page is an index (cards, filters), not prose, so it outgrows the 52rem measure. */
+	.body:not(:has(.tocLink)) .main {
+		max-width: 72rem;
+	}
+}
+
+@media (--bp-max-lg) {
+	.body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.sidebarSticky {
+		display: none;
+	}
+}
+
+/*
+ * The wrapper is sticky and bounded; the ScrollArea inside it scrolls. ScrollArea sets
+ * `position: relative` on its root, so the root itself cannot be the sticky element.
+ */
+.sidebarSticky {
+	position: sticky;
+	top: 3.5rem;
+	height: calc(100dvh - 3.5rem);
+	border-inline-end: var(--border-width) solid var(--border);
+}
+
+.sidebarScroll {
+	height: 100%;
+}
+
+.sidebar {
+	padding: var(--space-xl) var(--space-lg);
+}
+
+.navGroup + .navGroup {
+	margin-top: var(--space-xl);
+}
+
+/* The group label out-ranks its entries; colour and weight come from its Text. */
+.navGroupLabel {
+	display: block;
+	margin: 0 0 var(--space-xs);
+	padding-inline: var(--space-md);
+	letter-spacing: 0.05em;
+}
+
+/*
+ * A labelled run inside a group ("Text" and "Choice" inside Forms), set on the links'
+ * inset so it reads as a caption. Only runs after the first pay a gap.
+ */
+.navSection + .navSection {
+	margin-top: var(--space-md);
+}
+
+.navSectionLabel {
+	display: block;
+	padding-block: var(--space-xs) var(--space-2xs);
+	padding-inline: var(--space-xl) var(--space-md);
+}
+
+/* The group's page count, beside the chevron: how much a closed group holds. */
+.navGroupCount {
+	flex: none;
+	font-variant-numeric: tabular-nums;
+}
+
+
+
+.navLink {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-sm);
+	/* Indented past the group heading so entries read as its children. */
+	padding-block: var(--space-xs);
+	padding-inline: var(--space-xl) var(--space-md);
+	border-radius: var(--radius-sm);
+	color: var(--muted-foreground);
+	text-decoration: none;
+	font-size: var(--text-sm);
+	line-height: var(--leading-normal);
+}
+
+.navLink:hover {
+	background-color: var(--accent-50);
+	color: var(--foreground);
+}
+
+.navLinkActive {
+	background-color: var(--accent);
+	color: var(--foreground);
+	font-weight: var(--weight-medium);
+}
+
+.navBadge {
+	padding: 0 var(--space-xs);
+	border-radius: var(--radius-sm);
+	background-color: var(--primary-10);
+}
+
+/* Centred in its track: the measure cap is narrower than the track on large screens. */
+.main {
+	min-width: 0;
+	/* Auto margins on a grid item disable `stretch`; `width: 100%` keeps it filling the track. */
+	width: 100%;
+	margin-inline: auto;
+	padding: var(--space-2xl) var(--space-2xl) 6rem;
+	max-width: 52rem;
+}
+
+/* ── On this page ─────────────────────────────────────────────────────────────── */
+
+.toc {
+	display: none;
+	position: sticky;
+	top: 3.5rem;
+	max-height: calc(100dvh - 3.5rem);
+	overflow-y: auto;
+	padding: var(--space-2xl) var(--space-lg);
+}
+
+@media (--bp-xl) {
+	.toc {
+		display: block;
+	}
+}
+
+.tocLabel {
+	display: block;
+	margin-bottom: var(--space-md);
+}
+
+.tocLink {
+	display: block;
+	padding: var(--space-2xs) 0;
+	border-inline-start: var(--border-width-strong) solid var(--border);
+	padding-inline-start: var(--space-md);
+	margin-inline-start: calc(var(--space-2xs) * -1);
+	color: var(--muted-foreground);
+	text-decoration: none;
+	font-size: var(--text-xs);
+	line-height: var(--leading-relaxed);
+}
+
+.tocLink:hover {
+	color: var(--foreground);
+}
+
+.tocLinkActive {
+	border-inline-start-color: var(--primary-accent);
+	color: var(--foreground);
+}
+
+/* ── Page ─────────────────────────────────────────────────────────────────────── */
+
+.breadcrumb {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	margin-bottom: var(--space-md);
+}
+
+.pageHeader {
+	margin-bottom: var(--space-2xl);
+}
+
+.pageTitle {
+	margin-bottom: var(--space-sm);
+}
+
+/* The import line wraps (a list of names to copy); code examples scroll to keep indentation. */
+.importLine {
+	margin-top: var(--space-xl);
+}
+
+.importLine .code {
+	overflow-x: visible;
+	white-space: pre-wrap;
+	/* A name should break between names, not mid-identifier. */
+	overflow-wrap: break-word;
+}
+
+.section {
+	scroll-margin-top: 5rem;
+	margin-top: var(--space-2xl);
+}
+
+.sectionHeader {
+	margin-bottom: var(--space-lg);
+}
+
+/* ── Example: preview / code tabs ─────────────────────────────────────────────── */
+
+.example {
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	overflow: hidden;
+}
+
+/* See `overflowing` in example.tsx: unclipped only for overlays that do not portal. */
+.sectionOverflowing .example {
+	overflow: visible;
+}
+
+/* Concentric with the frame, so an unclipped example keeps its corners too. */
+.example > :first-child {
+	border-start-start-radius: calc(var(--radius) - var(--border-width));
+	border-start-end-radius: calc(var(--radius) - var(--border-width));
+}
+
+.example > :last-child {
+	border-end-start-radius: calc(var(--radius) - var(--border-width));
+	border-end-end-radius: calc(var(--radius) - var(--border-width));
+}
+
+/* See `bleed` in example.tsx: a whole-page example scrolls rather than widening the page. */
+.exampleBleed > [class*="preview"] {
+	/* Contains absolutely positioned descendants. */
+	position: relative;
+	overflow-x: auto;
+}
+
+.exampleTabs {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	padding-inline: var(--space-lg);
+	border-bottom: var(--border-width) solid var(--border);
+	background-color: var(--muted-20);
+}
+/* The Preview/Code pair is the control a reader uses on every page of this site. */
+.exampleTab:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+
+.exampleTab {
+	position: relative;
+	padding: var(--space-sm) var(--space-xs);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	/* Not --muted-foreground: it fails contrast on the tinted strip in dark. The active tab is marked by its underline. */
+	color: var(--foreground);
+	font: inherit;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-medium);
+	cursor: pointer;
+}
+
+.exampleTab::after {
+	content: "";
+	position: absolute;
+	inset-inline: var(--space-xs);
+	inset-block-end: -1px;
+	height: var(--border-width-strong);
+	border-radius: var(--radius-pill);
+	background-color: transparent;
+}
+
+.exampleTab:hover {
+	color: var(--foreground);
+}
+
+.exampleTabActive {
+	color: var(--foreground);
+}
+
+.exampleTabActive::after {
+	background-color: currentColor;
+}
+
+.preview {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-lg);
+	align-items: center;
+	padding: var(--space-2xl);
+	background-color: var(--card);
+}
+
+/* `nowrap`: a wrapping column container gives container-sized children no definite width. */
+.previewStacked {
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: stretch;
+}
+
+/* ── Code ─────────────────────────────────────────────────────────────────────── */
+
+.codeWrap {
+	position: relative;
+	background-color: var(--inverse-background);
+}
+
+.code {
+	margin: 0;
+	padding: var(--space-xl);
+	/* Contains absolutely positioned descendants. */
+	position: relative;
+	overflow-x: auto;
+	color: var(--inverse-foreground);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: var(--leading-relaxed);
+	tab-size: 2;
+}
+
+.copyButton {
+	position: absolute;
+	top: var(--space-md);
+	right: var(--space-md);
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	height: var(--control-h-2xs);
+	padding-inline: var(--space-sm);
+	border: var(--border-width) solid var(--inverse-border);
+	border-radius: var(--radius-sm);
+	background-color: var(--inverse-surface);
+	color: var(--inverse-foreground);
+	font: inherit;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+/* Revealed on hover or focus so it does not compete with the code. */
+.codeWrap:hover .copyButton,
+.copyButton:focus-visible {
+	opacity: 1;
+}
+
+/* ── Prop table ───────────────────────────────────────────────────────────────── */
+
+.tableWrap {
+	/* Contains absolutely positioned descendants. */
+	position: relative;
+	overflow-x: auto;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+}
+
+/* Fixed layout, so a long union in Type wraps instead of squeezing Description. */
+.table {
+	width: 100%;
+	/* Scroll on phones instead of squeezing four API columns into word fragments. */
+	min-width: 40rem;
+	table-layout: fixed;
+	border-collapse: collapse;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+/* Default (column 3) is sized to fit the longest default literal unbroken, `"var(--scale)"`. */
+.table th:nth-child(1) { width: 24%; }
+.table th:nth-child(2) { width: 24%; }
+.table th:nth-child(3) { width: 16%; }
+.table th:nth-child(4) { width: 36%; }
+
+/* Only Type may break mid-word: a union has no spaces, but prop names wrap at theirs. */
+.table td:nth-child(2) {
+	overflow-wrap: anywhere;
+}
+
+/* The rest break a long unspaced run only when it would overflow the cell. */
+.table td:nth-child(1),
+.table td:nth-child(3),
+.table td:nth-child(4) {
+	overflow-wrap: break-word;
+}
+
+.table th,
+.table td {
+	padding: var(--space-md) var(--space-lg);
+	text-align: left;
+	vertical-align: top;
+}
+
+.table thead th {
+	border-bottom: var(--border-width) solid var(--border);
+	background-color: var(--muted-50);
+	font-weight: var(--weight-medium);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	white-space: nowrap;
+}
+
+.table tbody tr + tr td {
+	border-top: var(--border-width) solid var(--border);
+}
+
+/* No `nowrap`: in a fixed-layout table it overflows into the next cell. */
+.tableCode {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	overflow-wrap: anywhere;
+}
+
+.tableType {
+	color: var(--primary-accent);
+}
+
+/* ── Callout ──────────────────────────────────────────────────────────────────── */
+
+/* A plain tinted block with a label; deliberately no accent edge stripe. */
+.callout {
+	padding: var(--space-lg);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-40);
+}
+
+.calloutLabel {
+	display: block;
+	margin-bottom: var(--space-xs);
+}
+
+/* ── Prev / next ──────────────────────────────────────────────────────────────── */
+
+.pager {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--space-lg);
+	margin-top: 4rem;
+	padding-top: var(--space-2xl);
+	border-top: var(--border-width) solid var(--border);
+}
+
+.pagerLink {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding: var(--space-lg);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	color: inherit;
+	text-decoration: none;
+	min-width: 0;
+}
+
+.pagerLink:hover {
+	background-color: var(--accent-50);
+}
+
+.pagerNext {
+	margin-inline-start: auto;
+	text-align: right;
+}
+
+/* ── Landing ──────────────────────────────────────────────────────────────────── */
+
+/* The hero starts where every other page's content starts. */
+.hero {
+	padding-block: var(--space-2xl);
+	max-width: 42rem;
+}
+
+.heroActions {
+	display: flex;
+	gap: var(--space-md);
+	flex-wrap: wrap;
+	margin-top: var(--space-2xl);
+}
+
+/* Two columns, not auto-fit: four cards must not split three plus one. */
+.featureGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--space-lg);
+	margin-top: var(--space-2xl);
+}
+
+@media (--bp-max-sm) {
+	.featureGrid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.feature {
+	padding: var(--space-xl);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+}
+
+.featureIcon {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	margin-bottom: var(--space-md);
+	border-radius: var(--radius-sm);
+	background-color: var(--primary-10);
+	color: var(--primary-accent);
+}
+
+.swatchGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+	gap: var(--space-md);
+	width: 100%;
+}
+
+/* Two columns on a phone keep the ramp scannable. */
+@media (--bp-max-sm) {
+	.swatchGrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.swatch {
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	overflow: hidden;
+}
+
+.swatchChip {
+	height: 3rem;
+}
+
+.swatchMeta {
+	padding: var(--space-sm) var(--space-md);
+}
+
+/* ── Review surface ───────────────────────────────────────────────────────────── */
+
+.review {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xl);
+	padding-bottom: var(--space-2xl);
+}
+
+.reviewBlock {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding-top: var(--space-lg);
+	border-top: var(--border-width) solid var(--border);
+}
+
+.reviewLabel {
+	font-family: var(--font-mono);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.reviewBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+}
+
+/* A bounded height, so the sticky-header demo has something to stick inside. */
+.stickyDemo {
+	max-height: 14rem;
+}
+
+/* A full-bleed slide for the overlay-controls example: content stays clear of the edges. */
+.bleedSlide {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 7rem;
+	border-radius: var(--radius);
+	background-color: var(--muted-40);
+}
+
+/* A dark strip, so `type="inverse"` has the surface it exists for. */
+.inverseSwatch {
+	padding: var(--space-md) var(--space-lg);
+	border-radius: var(--radius);
+	background-color: var(--foreground);
+}
+
+/* Specimen list, the primitives' demo shape: each call beside the value it renders. */
+.specimens {
+	display: grid;
+	align-items: baseline;
+	grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+	column-gap: var(--space-2xl);
+	row-gap: var(--space-sm);
+	width: 100%;
+}
+
+.specimenCode {
+	overflow-wrap: anywhere;
+	color: var(--muted-foreground);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.specimenValue {
+	min-width: 0;
+}
+
+/*
+ * A narrow numeric column so decimals line up. Alignment belongs to the container, not
+ * the primitive, which is as often a span in running text.
+ */
+.specimensNumeric {
+	grid-template-columns: minmax(0, 20rem) minmax(0, 8rem);
+}
+
+.specimensNumeric .specimenValue {
+	text-align: end;
+}
+
+/* Stacked below sm: two columns of 20rem do not fit, and the code column wins the squeeze. */
+@media (--bp-max-sm) {
+	.specimens {
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: var(--space-xs);
+	}
+
+	.specimensNumeric {
+		grid-template-columns: minmax(0, 12rem);
+	}
+
+	.specimenValue {
+		margin-block-end: var(--space-sm);
+	}
+}
+
+/* ── Mentions demo ────────────────────────────────────────────────────────────── */
+
+/* The anchor the inline suggestion panel positions itself against. */
+.mentionAnchor {
+	position: relative;
+}
+
+.miniEditor {
+	min-height: calc(var(--control-h) * 2.5);
+	padding: var(--space-lg);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--background);
+	line-height: var(--leading-relaxed);
+}
+
+.miniEditor:focus-visible {
+	outline: none;
+	border-color: var(--ring);
+	box-shadow: var(--focus-ring);
+}
+
+/* A contenteditable has no placeholder attribute, so the empty state is drawn. */
+.miniEditor:empty::before {
+	content: attr(data-placeholder);
+	color: var(--muted-foreground);
+	pointer-events: none;
+}
+
+/* Stored markup shown as markup — wrapped, because a body is longer than a line. */
+.mentionSource {
+	display: block;
+	padding: var(--space-md);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-40);
+	font-family: var(--font-mono);
+	overflow-wrap: anywhere;
+}
+
+/* ── Kanban demo ──────────────────────────────────────────────────────────────── */
+
+.kanbanBoard {
+	/* Lanes keep a minimum measure; on a phone the board scrolls on its own. */
+	grid-template-columns: repeat(3, minmax(var(--adaptive-grid-min-md), 1fr));
+}
+
+.kanbanColumn {
+	gap: var(--space-md);
+	padding: var(--space-md);
+	border: var(--border-width) solid var(--border-60);
+	background-color: var(--muted-20);
+}
+
+.kanbanColumnHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-sm);
+}
+
+/* No padding: `Card` wraps bare children in `CardContent`, which pays the inset. */
+/* An item in the column's `--space-md` inset, so the item radius: concentric with the column. */
+.kanbanCard {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	border-radius: var(--radius-sm);
+}
+
+.kanbanCardTop {
+	display: flex;
+	align-items: start;
+	gap: var(--space-xs);
+}
+
+.kanbanCardTitle {
+	flex: 1;
+	min-width: 0;
+}
+
+.kanbanCardMeta {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-sm);
+	/* Aligned under the title: clears the drag handle and the row's --space-xs gap. */
+	padding-inline-start: calc(var(--control-h) + var(--space-xs));
+}
+
+/* A bare submit, so the example can drive a form that owns no buttons. */
+.demoSubmit {
+	padding-inline: var(--space-xl);
+	padding-block: var(--space-sm);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+	color: var(--foreground);
+	font: inherit;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	cursor: pointer;
+}
+
+.demoSubmit:hover {
+	background-color: var(--accent);
+}
+/* A demo control, but this site is the kit's most-read example of using itself. */
+.demoSubmit:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+
+/* A map has no intrinsic height, so a docs example has to give it one. */
+.mapFrame {
+	height: 26rem;
+	min-width: 0;
+	border-radius: var(--radius-sm);
+	overflow: hidden;
+}
+
+.mapSearch {
+	max-width: 24rem;
+}
+
+/* State and presentation controls above interactive feature examples. */
+.featureStateSelect {
+	width: 12rem;
+	max-width: 100%;
+}
+
+/* The ThemeScope demo needs a surface of its own to show the theme it carries. */
+:global(.preview-theme-scope) {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	color: var(--card-foreground);
+}
+
+/* The group toggle: a chrome-less, full-width button that looks like the heading. */
+.navGroupToggle {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: var(--space-xs);
+	border: 0;
+	padding: 0;
+	background: none;
+	cursor: pointer;
+	text-align: start;
+	border-radius: var(--radius-sm);
+}
+
+/* The label takes the room, which puts the chevron after it at the far end. */
+.navGroupToggle .navGroupLabel {
+	flex: 1;
+}
+
+.navGroupToggle:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* The chevron rotates rather than swapping glyph. */
+.navGroupChevron {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	flex: none;
+	color: var(--muted-foreground);
+	transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.navGroupChevron[data-open] {
+	transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.navGroupChevron {
+		transition: none;
+	}
+}
+
+/* The layer label: quieter than `navBadge`, with no fill, so the rail stays a list of names. */
+.navLayer {
+	flex: none;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.02em;
+	opacity: 0.75;
+}
+
+.navLink:hover .navLayer,
+.navLinkActive .navLayer {
+	opacity: 1;
+}
+
+/* A gallery card: the whole card is the link, so the anchor owns padding and border. */
+.galleryCard {
+	display: block;
+	padding: var(--space-lg);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	color: inherit;
+	text-decoration: none;
+	transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.galleryCard:hover {
+	border-color: var(--primary-40);
+}
+
+.galleryCard:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.galleryCard {
+		transition: none;
+	}
+}
+
+/* The name takes the room; the layer chip sits at the end, as it does in the rail. */
+.galleryCardHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-sm);
+}
+
+/* Icons size from the ladder here, never a `size` prop (`verify composition` rejects it). */
+.featureIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.breadcrumb > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	color: var(--muted-foreground);
+}
+
+.copyButton svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* A persistent app utility, reachable without returning to the header. */
+.themeLauncher:global(.button--component) {
+	position: fixed;
+	inset-inline-end: max(var(--space-lg), env(safe-area-inset-right));
+	bottom: max(var(--space-lg), env(safe-area-inset-bottom));
+	z-index: var(--z-docked);
+	width: calc(var(--control-h) + var(--space-lg));
+	height: calc(var(--control-h) + var(--space-lg));
+	border-radius: var(--radius-pill);
+	background-color: var(--background);
+	box-shadow: var(--shadow-lg);
+}
+
+.themePanel {
+	/* Reserve the launcher and its outer gaps without feeding popup resize measurements back into its height. */
+	max-height: min(42rem, calc(100dvh - var(--control-h) - var(--space-lg) * 3));
+	gap: 0;
+	overflow: hidden;
+}
+
+/* Fixed chrome surrounds the shared scroll owner; typography stays with the components. */
+.themePanelHeader {
+	flex: none;
+	padding: calc(var(--surface-py) * 0.75) var(--surface-px);
+}
+
+.themePanelTabs {
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.themePanelNavigation {
+	flex: none;
+	margin-inline: var(--surface-px);
+	margin-bottom: var(--space-md);
+}
+
+.themePanelNavigation > :global(.tabs--tab) {
+	flex: 1;
+}
+
+.themePanelBody {
+	flex: 1;
+	min-height: 0;
+	padding: 0 var(--surface-px) var(--surface-py);
+}
+
+.themePanelFooter {
+	flex: none;
+	justify-content: space-between;
+}
+
+.themePanelView {
+	/* The ScrollArea owns the body inset for both panels. */
+	padding-top: 0;
+}

@@ -1,0 +1,187 @@
+/*
+ * The shared field surface: height, border, radius, focus, invalid and disabled states for
+ * every text control. A control opts in with `data-field-control` and styles only what is
+ * its own (a textarea's resize, a select's chevron). Layered as `components` so consumer
+ * unlayered CSS wins, as with a module.
+ */
+@layer components {
+	[data-field-control] {
+		width: 100%;
+		min-width: 0;
+		height: var(--control-h);
+		padding-inline: var(--control-px-sm);
+		padding-block: var(--space-xs);
+		border: var(--border-width) solid var(--control-border);
+		border-radius: var(--radius-sm);
+		background-color: var(--field-bg);
+		color: var(--foreground);
+		font: inherit;
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--line-height);
+		box-shadow: none;
+		outline: none;
+		transition:
+			color var(--duration-fast) var(--ease-in-out),
+			border-color var(--duration-fast) var(--ease-in-out),
+			box-shadow var(--duration-fast) var(--ease-in-out);
+	}
+
+	/*
+	 * iPhone focus-zoom guard; the provider detects the device and sets the attribute at
+	 * each scope so a nested opt-out wins. A fixed 16px: it must not scale with density.
+	 */
+	[data-iphone-input-zoom="true"] {
+		--field-min-font-size: 16px;
+	}
+	[data-iphone-input-zoom="false"] {
+		--field-min-font-size: 0px;
+	}
+	:is(input, textarea, select)[data-field-control] {
+		font-size: max(var(--text-sm), var(--field-min-font-size, 0px));
+		line-height: max(var(--text-sm--line-height), calc(var(--field-min-font-size, 0px) * 1.25));
+	}
+
+	[data-field-control]::placeholder {
+		color: var(--muted-foreground);
+	}
+
+	[data-field-control]:hover:not(:disabled):not([data-disabled]):not(:focus-visible):not(
+			[aria-invalid="true"]
+		):not(:is(input, textarea):read-only) {
+		border-color: var(--control-border-hover);
+	}
+
+	/*
+	 * Read-only: full ink and focus ring (the value can still be read and copied), a quiet
+	 * plate, no hover. Scoped to text controls because a <button> trigger matches `:read-only`.
+	 */
+	:is(input, textarea)[data-field-control]:read-only:not(:disabled) {
+		background-color: var(--foreground-8);
+	}
+
+	[data-field-control]:focus-visible {
+		border-color: var(--focus-ring-color);
+		box-shadow: var(--field-focus-ring);
+	}
+
+	/* Keyed on `aria-invalid` so the styling and the announcement cannot disagree. */
+	[data-field-control][aria-invalid="true"] {
+		border-color: var(--invalid-ring-border);
+		box-shadow: var(--invalid-ring);
+	}
+
+	/*
+	 * Focus wins the ring; invalid keeps the border. Needed because the invalid rule above
+	 * would otherwise take the box-shadow and hide focus (tests/interaction.spec.ts).
+	 */
+	[data-field-control][aria-invalid="true"]:focus-visible {
+		box-shadow: var(--field-focus-ring);
+	}
+
+	[data-field-control]:disabled {
+		cursor: not-allowed;
+		opacity: var(--disabled-opacity);
+	}
+
+	/*
+	 * Chrome repaints autofilled backgrounds; an opaque --card inset (forms sit on cards)
+	 * covers it. Focused, the ring is restated beside the inset, which would replace it.
+	 * `:is()` forgives whichever spelling a browser lacks; a plain list would drop the rule.
+	 */
+	[data-field-control]:is(:autofill, :-webkit-autofill) {
+		-webkit-text-fill-color: var(--foreground);
+		box-shadow: inset 0 0 0 100px var(--card);
+	}
+
+	[data-field-control]:is(:autofill, :-webkit-autofill):focus-visible {
+		box-shadow: inset 0 0 0 100px var(--card), var(--field-focus-ring);
+	}
+
+	/*
+	 * ── The shell ───────────────────────────────────────────────────────────────
+	 * Wears the field surface for the control inside it, so icons and actions read as part
+	 * of one field. Used by FieldShell and the combobox chips container. InputGroup keeps
+	 * its own copy (edge-to-edge addons); its control padding relies on source order beating
+	 * this sheet's `padding-inline: 0`.
+	 */
+	[data-field-shell] {
+		display: flex;
+		align-items: center;
+		/* Inline affordances — a leading icon, a trailing action, a unit suffix. */
+		gap: var(--space-sm);
+		min-height: var(--control-h);
+		padding-inline: var(--control-px-sm);
+		border: var(--border-width) solid var(--control-border);
+		border-radius: var(--radius-sm);
+		background-color: var(--field-bg);
+		box-shadow: none;
+		transition:
+			border-color var(--duration-fast) var(--ease-in-out),
+			box-shadow var(--duration-fast) var(--ease-in-out);
+	}
+
+	/* `:has()` on the control, not `:focus-within`: a focused trailing button must not light the field. */
+	[data-field-shell]:has([data-field-control]:focus-visible) {
+		border-color: var(--focus-ring-color);
+		box-shadow: var(--field-focus-ring);
+	}
+
+	[data-field-shell]:hover:not(:has([data-field-control]:disabled)):not(
+			:has([data-field-control][data-disabled])
+		):not(:has([data-field-control]:focus-visible)):not(
+			:has([data-field-control][aria-invalid="true"])
+		):not([aria-invalid="true"]):not(:has(:is(input, textarea)[data-field-control]:read-only)) {
+		border-color: var(--control-border-hover);
+	}
+
+	[data-field-shell]:has(:is(input, textarea)[data-field-control]:read-only:not(:disabled)) {
+		background-color: var(--foreground-8);
+	}
+
+	[data-field-shell]:has([data-field-control][aria-invalid="true"]),
+	[data-field-shell][aria-invalid="true"] {
+		border-color: var(--invalid-ring-border);
+		box-shadow: var(--invalid-ring);
+	}
+
+	/* The same rule for a shell, which wears the ring on its control's behalf. */
+	[data-field-shell]:has([data-field-control][aria-invalid="true"]):has(
+			[data-field-control]:focus-visible
+		),
+	[data-field-shell][aria-invalid="true"]:has([data-field-control]:focus-visible) {
+		box-shadow: var(--field-focus-ring);
+	}
+
+	[data-field-shell]:has([data-field-control]:disabled) {
+		cursor: not-allowed;
+		opacity: var(--disabled-opacity);
+	}
+
+	/* A control inside a field shell gives up its own chrome; the shell wears it. */
+	[data-field-shell] [data-field-control] {
+		height: auto;
+		border: 0;
+		border-radius: 0;
+		background: none;
+		box-shadow: none;
+		padding-inline: 0;
+	}
+
+	[data-field-shell] [data-field-control]:focus-visible,
+	[data-field-shell] [data-field-control][aria-invalid="true"] {
+		box-shadow: none;
+	}
+
+	/* The shell takes the autofill surface and the bare inner input matches it. */
+	[data-field-shell]:has([data-field-control]:autofill) {
+		background-color: var(--card);
+	}
+
+	[data-field-shell] [data-field-control]:is(:autofill, :-webkit-autofill) {
+		box-shadow: inset 0 0 0 100px var(--card);
+	}
+
+	[data-field-shell] :is(input, textarea)[data-field-control]:read-only:not(:disabled) {
+		background: none;
+	}
+}

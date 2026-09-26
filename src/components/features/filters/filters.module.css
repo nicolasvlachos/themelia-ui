@@ -1,0 +1,376 @@
+/* Filters: the pill (a segmented control with no base primitive) and the bar it sits in. */
+
+.layout {
+	container-type: inline-size;
+	container-name: filter-layout;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+	min-width: 0;
+}
+
+.layout[data-variant="compact"] {
+	gap: var(--space-lg);
+}
+
+.bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.layout[data-variant="compact"] .bar {
+	gap: var(--space-sm);
+}
+
+/* Dimmed and inert while busy, not hidden, so the reader keeps their place. */
+.bar[data-busy] {
+	pointer-events: none;
+}
+
+.applying {
+	flex-direction: row;
+	justify-content: flex-start;
+	padding: 0;
+}
+
+.viewSelect {
+	width: 12rem;
+	max-width: 100%;
+}
+
+.tabs {
+	min-width: 0;
+}
+
+/*
+ * The search shares the bar's row with the chips. The cap goes on the input frame (the flex
+ * item), not the input; a basis rather than a width, so the search shrinks first.
+ */
+.bar > [data-slot="input-frame"] {
+	flex: 1 1 16rem;
+	max-width: 24rem;
+}
+
+.searchInput {
+	max-width: 24rem;
+}
+
+.bar[data-mobile] {
+	flex-wrap: nowrap;
+}
+
+.bar[data-mobile] > [data-slot="input-frame"] {
+	flex: 1;
+	min-width: 0;
+}
+
+.bar[data-mobile] .searchInput {
+	max-width: none;
+}
+
+.mobileSheet {
+	max-height: 80dvh;
+	overflow: visible;
+}
+
+.mobileBody {
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	min-height: 0;
+}
+
+.mobileFilters {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.mobileFilterRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+.mobileValue {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--space-xs);
+}
+
+.mobileFilters .mobileFilter {
+	flex-wrap: nowrap;
+	padding: var(--menu-row-py) var(--row-px);
+	min-height: var(--control-h);
+	width: 100%;
+	text-align: start;
+	cursor: pointer;
+	border: 0;
+	background: none;
+}
+
+.mobileFilter:hover { background-color: var(--accent); }
+.mobileFilter:disabled { opacity: var(--disabled-opacity); cursor: not-allowed; }
+.mobileFilter:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.mobileFilter > svg { width: var(--size-icon); height: var(--size-icon); color: var(--muted-foreground); }
+
+.mobileEditor { min-width: 0; }
+.mobileOperator { display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs) var(--row-px); }
+
+.clear {
+	margin-inline-start: auto;
+}
+
+.loadingChip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	height: var(--control-h);
+	padding-inline: var(--control-px);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+}
+
+/* ── The pill ──────────────────────────────────────────────────────────────────── */
+
+/* The chrome is on the group; segments paint none, so the pill reads as one object. */
+.pill {
+	position: relative;
+	display: inline-flex;
+	align-items: stretch;
+	height: var(--control-h);
+	min-width: 0;
+	max-width: 100%;
+	overflow: hidden;
+	/* The control edge, matching the fields and outline buttons beside it. */
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: var(--field-bg);
+}
+
+.pill[data-active] {
+	border-color: var(--primary-30);
+	background-color: var(--primary-5);
+}
+
+/* Mirrors the pill's bounds for popup positioning; clicks pass through to the segments. */
+.pillAnchor {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.segment {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: var(--space-sm);
+	padding-inline: var(--control-px);
+	border: 0;
+	background: none;
+	color: inherit;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.segment:hover {
+	background-color: var(--accent);
+}
+
+/* Inset: the pill clips an outer ring. */
+.segment:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring-inset);
+}
+
+.segmentClear {
+	color: var(--muted-foreground);
+	padding-inline: var(--space-sm);
+}
+
+.segmentClear:hover {
+	color: var(--foreground);
+}
+
+.segmentGlyph {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.pillIcon {
+	display: inline-flex;
+	flex: none;
+	color: var(--muted-foreground);
+}
+
+.pillIcon > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* Segments paint no borders, so dividers are explicit: inner rules, softer than the pill's frame. */
+.pillDivider {
+	flex: none;
+	width: var(--border-width);
+	align-self: stretch;
+	background-color: var(--border-60);
+}
+
+/* A button; `.segment` supplies the rest. */
+.pillValue {
+	display: inline-flex;
+	flex: 1;
+	align-items: center;
+	min-width: 0;
+	padding-inline: var(--control-px);
+}
+
+.operatorStatic {
+	display: inline-flex;
+	align-items: center;
+	padding-inline: var(--control-px);
+	white-space: nowrap;
+}
+
+/* ── The value segment ─────────────────────────────────────────────────────────── */
+
+.valueDisplay {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+
+.valueGlyph {
+	flex: none;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	color: var(--muted-foreground);
+}
+
+/* Overlapped, so icons read as a set. */
+.valueIcons {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+}
+
+.valueIcon,
+.valueIconCount {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	border: var(--border-width) solid var(--surface-ground, var(--background));
+	border-radius: var(--radius-pill);
+	background-color: var(--surface-ground, var(--background));
+}
+
+/* Size the svg too: lucide's default 24px would overflow the disc. */
+.valueIcon > svg,
+.valueIconCount > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.valueIcon + .valueIcon,
+.valueIcon + .valueIconCount {
+	margin-inline-start: calc(var(--space-sm) * -1);
+}
+
+.valueIconCount {
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+}
+
+/* ── The editors ───────────────────────────────────────────────────────────────── */
+
+.editorPopover {
+	width: 18rem;
+	max-width: var(--available-width);
+	padding: 0;
+	gap: 0;
+	overflow: hidden;
+}
+
+.editor {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.editorHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+
+.editorBody {
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+}
+
+.rangeBody {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--space-sm);
+}
+
+/*
+ * PopoverMenuPanel takes no list class, so the cap goes through Command's list slot. Same
+ * height as the add-filter list, so the popup keeps its height between them.
+ */
+.editorList,
+.editor [data-slot="command-list"] {
+	max-height: 16rem;
+}
+
+.editorFooter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/* A label over a description, inside a Command row. */
+.optionBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+	line-height: var(--leading-tight);
+}
+
+/* The error boundary's message: tinted, so it reads as a failure rather than another filter. */
+.errorBoundary {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--destructive-30);
+	border-radius: var(--radius-sm);
+	background-color: var(--destructive-5);
+	color: var(--destructive-accent);
+	min-width: 0;
+}
+
+.errorBoundaryHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.errorBoundaryDetail {
+	overflow-wrap: anywhere;
+}

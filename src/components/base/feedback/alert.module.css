@@ -1,0 +1,198 @@
+/*
+ * Alert. Each tone is a tinted surface; text stays --card-foreground in every tone and
+ * only the leading icon takes the hue, so no tone needs its own readable ink in both
+ * themes (warning fails that in dark).
+ */
+
+/*
+ * Layout follows content, not props: a leading `<svg>` adds an icon column, and an
+ * AlertAction adds a trailing column.
+ */
+
+.root {
+	position: relative;
+	display: grid;
+	width: 100%;
+	gap: var(--space-2xs);
+	padding-inline: var(--surface-px);
+	padding-block: round(calc(var(--surface-py) * 0.75), 1px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	text-align: start;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	color: var(--card-foreground);
+}
+
+/* Inside a card an alert steps down to the item radius so the curves nest. */
+:global([data-slot="card"]) .root {
+	border-radius: var(--radius-sm);
+}
+
+.root:has(> svg) {
+	grid-template-columns: auto minmax(0, 1fr);
+	column-gap: var(--space-lg);
+}
+
+/* Pin every non-icon child to column 2, or auto-placement drops later children under the icon. */
+.root:has(> svg) > *:not(svg) {
+	grid-column: 2;
+}
+
+/* Only the first direct svg is the icon; any other lands visibly in the content column. */
+.root > svg:first-of-type {
+	grid-column: 1;
+	/* Aligned to the first line of text. */
+	grid-row: 1;
+	align-self: start;
+	/* The only toned part. Neutral sets its own value so a bare alert's icon isn't full-contrast. */
+	color: var(--alert-icon-fg, currentColor);
+	transform: translateY(0.125rem);
+}
+
+.root:has(> svg) > svg:not(:first-of-type) {
+	grid-column: 2;
+}
+
+.root > svg:not([data-sized]) {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* The action is a real grid column, so long labels never overlap the text. */
+.root:has(> [data-slot="alert-action"]) {
+	grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.root:has(> svg):has(> [data-slot="alert-action"]) {
+	grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+/* ── Tones ───────────────────────────────────────────────────────────────────────
+ * Surface only; the ink is set once on .root.
+ */
+
+.toneNeutral {
+	border-color: var(--border);
+	background-color: var(--card);
+	--alert-icon-fg: var(--muted-foreground);
+}
+
+.tonePrimary {
+	border-color: var(--primary-30);
+	background-color: var(--primary-5);
+	--alert-icon-fg: var(--primary-accent);
+}
+
+.toneSecondary {
+	border-color: var(--border);
+	background-color: var(--muted-50);
+	--alert-icon-fg: var(--secondary-foreground);
+}
+
+.toneInfo {
+	border-color: var(--info-30);
+	background-color: var(--info-5);
+	--alert-icon-fg: var(--info);
+}
+
+.toneSuccess {
+	border-color: var(--success-30);
+	background-color: var(--success-5);
+	--alert-icon-fg: var(--success);
+}
+
+.toneWarning {
+	border-color: var(--warning-40);
+	background-color: var(--warning-10);
+	/* The accent, not the fill: pale amber lacks contrast on its own tint. */
+	--alert-icon-fg: var(--warning-accent);
+}
+
+.toneDestructive {
+	border-color: var(--destructive-30);
+	background-color: var(--destructive-5);
+	--alert-icon-fg: var(--destructive-accent);
+}
+
+/*
+ * Inverse: a dark slab in both themes that replaces the tone surface; `tone` still states
+ * the intent. It re-points the text roles, so every Text and link inside follows.
+ */
+.variantInverse {
+	border-color: var(--inverse-background);
+	background-color: var(--inverse-background);
+	color: var(--inverse-foreground);
+	--alert-icon-fg: var(--inverse-foreground);
+	--text-role-main: var(--inverse-foreground);
+	--text-role-secondary: var(--inverse-muted);
+	--text-role-inverse: var(--inverse-background);
+	--link-color: var(--inverse-foreground);
+}
+
+/* ── Parts ────────────────────────────────────────────────────────────────────── */
+
+/* The title's ink comes from .root (type="inherit"); its weight is the Text's prop. */
+.root:has(> svg) .title {
+	grid-column-start: 2;
+}
+
+.description {
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	text-wrap: balance;
+}
+
+@media (--bp-md) {
+	.description {
+		text-wrap: pretty;
+	}
+}
+
+.description p:not(:last-child) {
+	margin-bottom: var(--space-xl);
+}
+
+.title a,
+.description a {
+	text-decoration-line: underline;
+	text-underline-offset: var(--link-underline-offset);
+}
+
+.title a:hover,
+.description a:hover {
+	color: var(--text-role-main);
+}
+
+/*
+ * Last column, spanning title and description, first line aligned with the title.
+ * `.root > .action` outranks the column-2 rule above.
+ */
+.root > .action {
+	grid-column: -2 / -1;
+	grid-row: 1 / span 2;
+	align-self: start;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+	margin-inline-start: var(--space-md);
+	margin-block-start: calc((var(--text-sm--line-height) - var(--control-h)) / 2);
+}
+
+/* Narrow screens: the action drops under the copy. */
+@media (--bp-max-sm) {
+	.root:has(> [data-slot="alert-action"]) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.root:has(> svg):has(> [data-slot="alert-action"]) {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	.root > .action {
+		grid-row: auto;
+		margin-inline-start: 0;
+		margin-block-start: var(--space-sm);
+	}
+}

@@ -1,0 +1,424 @@
+/*
+ * DataTable shell: surface, toolbar band, selection bar, sticky panes and full screen.
+ * The `<table>`, cell rhythm, sort control and scroll container come from base/table.
+ * `data-size` changes row padding only, never type size.
+ * Derived tokens: declared at every scope boundary (styles/SCOPES.md).
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+	/* The selection column's width (checkbox plus two cell insets); the pinned column beside it offsets by this. */
+	--table-selection-w: calc(var(--space-xl) * 2 + var(--choice-size));
+}
+
+.root {
+	container-type: inline-size;
+	container-name: data-table;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.root[data-surface="card"] {
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	--surface-ground: var(--card);
+	box-shadow: none;
+}
+
+/* Hairline outline, no fill: for a table inside another card. */
+.root[data-surface="glass"] {
+	overflow: hidden;
+	border: var(--border-width) solid var(--border-60);
+	border-radius: var(--radius-sm);
+}
+
+.rootFill {
+	height: 100%;
+	min-height: 0;
+}
+
+/* Covers the whole viewport, so the component also sets `role="dialog"` and traps focus. */
+.root[data-fullscreen] {
+	position: fixed;
+	inset: 0;
+	z-index: var(--z-modal, 50);
+	height: 100%;
+	min-height: 0;
+	padding: var(--surface-py) var(--surface-px);
+	border: 0;
+	border-radius: 0;
+	background-color: var(--background);
+	--surface-ground: var(--background);
+	overflow: hidden;
+}
+
+/* ── Density ───────────────────────────────────────────────────────────────────── */
+
+/* Cell insets on the spacing ladder: 8, 12 (the base table's) and 16px. */
+.root[data-size="sm"] .table :is(td, th) {
+	padding-block: var(--space-md);
+}
+
+.root[data-size="lg"] .table :is(td, th) {
+	padding-block: var(--space-xl);
+}
+
+/* ── The topbar ────────────────────────────────────────────────────────────────── */
+
+.topbar {
+	position: relative;
+	flex: none;
+}
+
+.topbarSticky {
+	position: sticky;
+	top: 0;
+	z-index: var(--z-docked);
+	background-color: var(--surface-ground, var(--background));
+}
+
+.topbarGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--space-lg);
+	padding: var(--row-py) var(--surface-px);
+}
+
+.topbarStart {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.topbarEnd {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-md);
+}
+
+.filterInput {
+	max-width: 20rem;
+}
+
+@container data-table (width >= 42rem) {
+	.topbarGrid {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: end;
+	}
+}
+
+/* One bordered group holding the table's own controls. */
+.toolbar {
+	display: flex;
+	align-items: center;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+	overflow: hidden;
+}
+
+.toolbarDivider {
+	width: var(--border-width);
+	height: var(--space-lg);
+	background-color: var(--border);
+}
+
+/* ── The table area ────────────────────────────────────────────────────────────── */
+
+.tableArea {
+	min-height: 0;
+}
+
+.tableAreaScrolls {
+	flex: 1;
+	overflow: hidden;
+}
+
+.table {
+	position: relative;
+}
+
+.tableContainer:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring-inset);
+}
+
+.tableContainerScrolls {
+	height: 100%;
+	min-height: 0;
+	position: relative;
+	overflow: auto;
+}
+
+.tableContainerBounded {
+	max-height: var(--data-table-body-max-height);
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────────── */
+
+.header {
+	background-color: transparent;
+}
+
+/* The tint sits on the cells, so a pinned header cell layers it over its own opaque ground. */
+.header > tr:not(.groupRow) > th {
+	background-image: linear-gradient(var(--muted-50), var(--muted-50));
+}
+
+.header.headerTransparent > tr > th {
+	background-image: none;
+}
+
+/* The band above the columns: a softer fill than the header row so the two read as a hierarchy. */
+.groupRow {
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.groupHead {
+	border-inline-end: var(--border-width) solid var(--border-60);
+	background-color: var(--muted-20);
+	color: var(--muted-foreground);
+}
+
+.groupHead:last-child {
+	border-inline-end: 0;
+}
+
+/* ── Rows ──────────────────────────────────────────────────────────────────────── */
+
+.row {
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.row[data-clickable] {
+	cursor: pointer;
+}
+
+.row:hover {
+	background-color: var(--accent-50);
+}
+
+/* Selected outranks hover. */
+.row[data-state="selected"],
+.row[data-state="selected"]:hover {
+	background-color: var(--primary-10);
+}
+
+/* Zebra striping sits under both hover and selection. */
+tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover) {
+	background-color: var(--muted-20);
+}
+
+/*
+ * A pinned column needs its own fill so the columns scrolling under it do not show: the
+ * ground it sits on, with the row's state layered over it as an image.
+ */
+.stickyColumn {
+	position: sticky;
+	inset-inline-start: 0;
+	z-index: var(--z-sticky);
+	background-color: var(--surface-ground, var(--background));
+}
+
+/*
+ * The identity column pinned beside the checkbox. Only the last pinned column draws the
+ * edge shadow; with no selection column the first one gets it back.
+ */
+.stickyColumnNext {
+	position: sticky;
+	inset-inline-start: var(--table-selection-w);
+	z-index: var(--z-sticky);
+	background-color: var(--surface-ground, var(--background));
+	box-shadow: var(--table-sticky-edge);
+}
+
+.row:hover > :is(.stickyColumn, .stickyColumnNext) {
+	background-image: linear-gradient(var(--accent-50), var(--accent-50));
+}
+
+.row[data-state="selected"] > :is(.stickyColumn, .stickyColumnNext),
+.row[data-state="selected"]:hover > :is(.stickyColumn, .stickyColumnNext) {
+	background-image: linear-gradient(var(--primary-10), var(--primary-10));
+}
+
+tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover) > :is(.stickyColumn, .stickyColumnNext) {
+	background-image: linear-gradient(var(--muted-20), var(--muted-20));
+}
+
+.stickyColumn:not(:has(~ .stickyColumnNext)) {
+	box-shadow: var(--table-sticky-edge);
+}
+
+/* The pinned edge faces the scrolling content: right in LTR, left in RTL. */
+.stickyColumnNext,
+.stickyColumn {
+	--table-sticky-edge: var(--border-width) 0 0 0 var(--border-60);
+}
+
+.stickyColumnNext:dir(rtl),
+.stickyColumn:dir(rtl) {
+	--table-sticky-edge: calc(var(--border-width) * -1) 0 0 0 var(--border-60);
+}
+
+/* Above both the sticky column (`--z-sticky`) and the sticky topbar (`--z-docked`). */
+.stickyCorner {
+	z-index: calc(var(--z-docked) + 1);
+}
+
+.emptyRow:hover {
+	background-color: transparent;
+}
+
+.emptyCell {
+	padding: 0;
+	text-align: center;
+}
+
+.rowActions {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-xs);
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────────── */
+
+.footer {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	padding: var(--row-py) var(--surface-px);
+}
+
+/* ── Cells ─────────────────────────────────────────────────────────────────────── */
+
+/* Columns stay readable when a cell keeps to one line; `wrap` opts a column out. */
+.nowrap {
+	white-space: nowrap;
+}
+
+/* Two lines in one cell, at tight leading so the row keeps its neighbours' height. */
+.cellStack {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-2xs);
+	min-width: 0;
+	line-height: var(--leading-tight);
+}
+
+.cluster {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+.iconCell {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.iconCellTop {
+	align-items: flex-start;
+}
+
+.cellIcon {
+	display: inline-flex;
+	flex: none;
+	color: var(--muted-foreground);
+}
+
+.cellIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* ── The index cell ────────────────────────────────────────────────────────────── */
+
+/*
+ * The media aligns to the title line: centring against a multi-line block floats it and
+ * can land a circle on a half pixel, where it blurs. The avatar cell aligns the same way.
+ */
+.avatarCell,
+.resourceCell {
+	display: inline-flex;
+	align-items: flex-start;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.resourceMedia {
+	flex: none;
+}
+
+.resourceBody {
+	display: inline-flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+/* The title and its chips stay on one line: a table cell truncates, it does not grow. */
+.resourceTitleLine {
+	display: inline-flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+/* The chips keep their size; the title is what gives way. */
+.resourceTitleLine > :not(.resourceLink) {
+	flex-shrink: 0;
+}
+
+/* Dotted underline: the title is the row's identity first and a link second. */
+.resourceLink {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-style: dotted;
+	text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+	text-underline-offset: var(--link-underline-offset);
+	border-radius: var(--radius-sm);
+}
+
+.resourceLink:hover {
+	text-decoration-color: var(--link-color);
+}
+
+.resourceLink:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.resourceFacts {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	min-width: 0;
+}
+
+.resourceFact {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--space-xs);
+	margin-inline-end: var(--space-xs);
+}

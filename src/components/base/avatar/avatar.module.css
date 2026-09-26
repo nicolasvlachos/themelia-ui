@@ -1,0 +1,208 @@
+/* Avatar — component variables. Sizes resolve through the --size-avatar* scale. */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	--avatar-badge-size-sm: 0.5rem;
+	--avatar-badge-size: 0.625rem;
+	--avatar-badge-size-lg: 0.75rem;
+}
+
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+	--avatar-badge-icon: round(calc(var(--size-icon-sm) * 2 / 3), 1px);
+
+	/* The hairline darkens on light surfaces; the dark blocks below flip it. */
+	--avatar-outline-blend: darken;
+}
+
+/* Every dark signal: class, attribute, and nested scopes. */
+:global(.dark),
+[data-theme="dark"],
+:is(:global(.dark), [data-theme="dark"]) :is([data-ui-scope], [data-density]):not(:global(.light), [data-theme="light"]) {
+	--avatar-outline-blend: lighten;
+}
+
+/* The same under the OS preference, for system-driven dark. */
+@media (prefers-color-scheme: dark) {
+	:root:not(:global(.light), [data-theme="light"]),
+	[data-ui-scope]:not(:global(.light), [data-theme="light"], :where(:global(.light), [data-theme="light"]) *),
+	[data-density]:not(:global(.light), [data-theme="light"], :where(:global(.light), [data-theme="light"]) *) {
+		--avatar-outline-blend: lighten;
+	}
+}
+
+/*
+ * Avatar and its parts. `data-size` on the root reaches every part by descendant
+ * selector; AvatarGroupCount sizes itself from a sibling avatar via `:has()`.
+ */
+
+.root {
+	position: relative;
+	display: flex;
+	flex-shrink: 0;
+	user-select: none;
+	width: var(--size-avatar);
+	height: var(--size-avatar);
+	border-radius: 50%;
+}
+
+.root[data-size="sm"] {
+	width: var(--size-avatar-sm);
+	height: var(--size-avatar-sm);
+}
+
+.root[data-size="lg"] {
+	width: var(--size-avatar-lg);
+	height: var(--size-avatar-lg);
+}
+
+/*
+ * A hairline over the image so light photos still read as a disc; the blend mode flips
+ * per theme to darken on light and lighten on dark.
+ */
+.root::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border: var(--border-width) solid var(--border);
+	border-radius: 50%;
+	mix-blend-mode: var(--avatar-outline-blend);
+}
+
+.image {
+	width: 100%;
+	height: 100%;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	border-radius: 50%;
+}
+
+.fallback {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	/* A foreground wash keeps the disc distinct on page, card and dark surfaces. */
+	background-color: var(--foreground-8);
+	/* Main ink: initials are the identity, and muted grey loses contrast on tinted rows. */
+	color: var(--foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+.root[data-size="sm"] .fallback {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+/* ── Presence badge ───────────────────────────────────────────────────────────── */
+
+.badge {
+	position: absolute;
+	inset-inline-end: 0;
+	bottom: 0;
+	z-index: var(--z-raised);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background-color: var(--primary);
+	background-blend-mode: color;
+	color: var(--primary-foreground);
+	user-select: none;
+	box-shadow: 0 0 0 var(--border-width-strong) var(--surface-ground, var(--background));
+	width: var(--avatar-badge-size);
+	height: var(--avatar-badge-size);
+}
+
+.badge > svg {
+	width: var(--avatar-badge-icon);
+	height: var(--avatar-badge-icon);
+}
+
+.root[data-size="sm"] .badge {
+	width: var(--avatar-badge-size-sm);
+	height: var(--avatar-badge-size-sm);
+}
+
+/* Too small to carry a glyph at the smallest size. */
+.root[data-size="sm"] .badge > svg {
+	display: none;
+}
+
+.root[data-size="lg"] .badge {
+	width: var(--avatar-badge-size-lg);
+	height: var(--avatar-badge-size-lg);
+}
+
+/* ── Group ────────────────────────────────────────────────────────────────────── */
+
+.group {
+	display: flex;
+}
+
+/* A cut-out ring in the ground's colour separates each avatar from the one it overlaps. */
+.group > :global([data-slot="avatar"]) {
+	box-shadow: 0 0 0 var(--border-width-strong) var(--surface-ground, var(--background));
+}
+
+/* Group initials take the smaller step so the overlap below doesn't clip them. */
+.group :global([data-slot="avatar-fallback"]) {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	/* Opaque in a group: the translucent wash doubles up where discs overlap. */
+	background-color: color-mix(in oklab, var(--foreground) 8%, var(--surface-ground, var(--background)));
+}
+
+.group > :global([data-slot="avatar"]) + :global([data-slot="avatar"]),
+.group > :global([data-slot="avatar"]) ~ .count {
+	/* The overlap leaves room for two initials, not just a disc edge. */
+	margin-inline-start: calc(var(--space-sm) * -1);
+}
+
+.count {
+	position: relative;
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-avatar);
+	height: var(--size-avatar);
+	border-radius: 50%;
+	background-color: color-mix(in oklab, var(--foreground) 8%, var(--surface-ground, var(--background)));
+	color: var(--muted-foreground);
+	/* The initials' step, so the count reads as part of the row. */
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	box-shadow: 0 0 0 var(--border-width-strong) var(--surface-ground, var(--background));
+}
+
+.count > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* The count matches the size of the avatars beside it. */
+.group:has([data-size="sm"]) .count {
+	width: var(--size-avatar-sm);
+	height: var(--size-avatar-sm);
+}
+.group:has([data-size="sm"]) .count > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.group:has([data-size="lg"]) .count {
+	width: var(--size-avatar-lg);
+	height: var(--size-avatar-lg);
+}
+.group:has([data-size="lg"]) .count > svg {
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+}

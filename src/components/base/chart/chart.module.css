@@ -1,0 +1,187 @@
+/*
+ * Chart. Series colours should reference `--chart-1` … `--chart-5` (themes/default.css),
+ * which flip with the theme, rather than literals.
+ */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/* Plot aspect; the chart sizes from its width. Override per surface for strips or tiles. */
+	--chart-aspect: 16 / 9;
+	--chart-indicator-line-w: 2px;
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+
+	/* The series swatch in a tooltip or legend. */
+	--chart-indicator: round(calc(0.625rem * var(--density-scale, var(--scale))), 1px);
+
+	/* Sparkline stroke default; tones below override it. */
+	--sparkline-stroke: var(--muted-foreground);
+}
+
+/*
+ * Recharts hard-codes strokes and fills (`#ccc`, `#fff`) with no props for most; the
+ * `:global` selectors pin those literals and map them to tokens.
+ */
+
+.container {
+	display: flex;
+	width: 100%;
+	min-width: 0;
+	justify-content: center;
+	aspect-ratio: var(--chart-aspect);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.container :global(.recharts-cartesian-axis-tick text) {
+	fill: var(--muted-foreground);
+}
+
+.container :global(.recharts-cartesian-grid line[stroke="#ccc"]) {
+	stroke: var(--border-60);
+}
+
+.container :global(.recharts-curve.recharts-tooltip-cursor) {
+	stroke: var(--border);
+}
+
+.container :global(.recharts-rectangle.recharts-tooltip-cursor) {
+	fill: var(--muted);
+}
+
+.container :global(.recharts-reference-line [stroke="#ccc"]) {
+	stroke: var(--border);
+}
+
+.container :global(.recharts-polar-grid [stroke="#ccc"]) {
+	stroke: var(--border);
+}
+
+.container :global(.recharts-radial-bar-background-sector) {
+	fill: var(--muted);
+}
+
+/* Recharts' white halo reads as a gap on non-white surfaces; make it transparent. */
+.container :global(.recharts-dot[stroke="#fff"]),
+.container :global(.recharts-sector[stroke="#fff"]) {
+	stroke: transparent;
+}
+
+/* Recharts focuses its own layers, which have no visible bounds. */
+.container :global(.recharts-layer),
+.container :global(.recharts-sector),
+.container :global(.recharts-surface) {
+	outline: none;
+	border-radius: var(--radius-sm);
+}
+
+/* The plot surface takes keyboard focus (arrow keys walk the tooltip), so it needs a ring. */
+.container :global(.recharts-surface:focus-visible) {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: var(--focus-ring-width);
+}
+
+/* ── Tooltip ──────────────────────────────────────────────────────────────────── */
+
+.tooltip {
+	display: grid;
+	min-width: calc(8rem * var(--scale));
+	gap: var(--space-sm);
+	padding: var(--space-md) var(--space-lg);
+	border-radius: var(--radius);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
+	box-shadow: var(--popover-shadow);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.tooltipLabel {
+	font-weight: var(--weight-medium);
+}
+
+.tooltipRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+}
+
+.tooltipName {
+	min-width: 0;
+	flex: 1;
+	color: var(--muted-foreground);
+}
+
+.tooltipValue {
+	font-variant-numeric: tabular-nums;
+	font-weight: var(--weight-medium);
+}
+
+/* ── Indicators ───────────────────────────────────────────────────────────────── */
+
+.indicator {
+	flex-shrink: 0;
+	width: var(--chart-indicator);
+	height: var(--chart-indicator);
+	border-radius: var(--radius-pill);
+	/* Per-series data colour set by the row; falls back to the row's text colour. */
+	background-color: var(--chart-indicator-color, currentColor);
+}
+
+.indicatorLine {
+	width: var(--chart-indicator-line-w);
+	border-radius: 0;
+}
+
+.indicatorDashed {
+	width: 0;
+	height: 0;
+	border-radius: 0;
+	background: none;
+	border-top: var(--chart-indicator-line-w) dashed var(--chart-indicator-color, currentColor);
+	align-self: center;
+	min-width: var(--chart-indicator);
+}
+
+/* ── Legend ───────────────────────────────────────────────────────────────────── */
+
+.legend {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-xl);
+	padding-block: var(--space-lg);
+}
+
+.legendItem {
+	display: flex;
+	align-items: center;
+	/* A whole-pixel line height, so the swatch centres on a whole pixel. */
+	line-height: var(--leading-12);
+	gap: var(--space-sm);
+	color: var(--muted-foreground);
+}
+
+/* ══ Sparkline ═════════════════════════════════════════════════════════════════════
+ * The shape alone, no axes or tooltip; fills its box.
+ */
+
+.sparkline {
+	width: 100%;
+	height: var(--size-icon-xl);
+	min-width: 0;
+}
+
+.sparkline[data-tone="primary"] { --sparkline-stroke: var(--primary-accent); }
+.sparkline[data-tone="secondary"] { --sparkline-stroke: var(--secondary-foreground); }
+.sparkline[data-tone="info"] { --sparkline-stroke: var(--info); }
+.sparkline[data-tone="success"] { --sparkline-stroke: var(--success); }
+.sparkline[data-tone="warning"] { --sparkline-stroke: var(--warning-accent); }
+.sparkline[data-tone="destructive"] { --sparkline-stroke: var(--destructive-accent); }

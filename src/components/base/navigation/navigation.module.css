@@ -1,0 +1,511 @@
+/*
+ * Navigation — Tabs, Breadcrumbs, Pagination.
+ */
+/* ── Tabs ─────────────────────────────────────────────────────────────────────── */
+
+.tabs {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.tabRail {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	min-width: 0;
+	flex: none;
+}
+
+.tabScroll {
+	flex: none;
+}
+
+.tabScroll:dir(rtl) > svg {
+	transform: rotate(180deg);
+}
+
+.tabRail > .tabList {
+	flex: 1;
+}
+
+/*
+ * Scrolls rather than wrapping: a second row of tabs reads as a second level of navigation.
+ * The rule is an inset shadow, not a border — a scroll container clips both axes, so the
+ * rule and the indicator (at `bottom: 0`) must both paint inside the padding box.
+ */
+.tabList {
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	position: relative;
+	overflow-x: auto;
+	scrollbar-width: none;
+	/* The fade's width, read back by the reveal so a selected tab never lands under it. */
+	scroll-padding-inline: var(--space-2xl);
+	box-shadow: inset 0 calc(var(--border-width) * -1) 0 var(--border);
+}
+
+.tabList::-webkit-scrollbar {
+	display: none;
+}
+
+/* Fade only the scrolling track, not the arrows. A mask works on any surface. */
+.tabList[data-fade-start]:dir(ltr),
+.tabList[data-fade-end]:dir(rtl) {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+}
+
+.tabList[data-fade-end]:dir(ltr),
+.tabList[data-fade-start]:dir(rtl) {
+	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+}
+
+.tabList[data-fade-start][data-fade-end] {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
+}
+
+/*
+ * Underline variant: the first tab's label aligns with the panel text below it. The list
+ * clips, so the focus ring is inset; two ring widths of start padding, taken back out of the
+ * margin, keep the ring off the first letter. Enclosed and pill tabs keep their inset.
+ */
+.tabList:not(.tabListEnclosed, .tabsPill) {
+	margin-inline-start: calc(var(--focus-ring-width) * -2);
+}
+
+.tabList:not(.tabListEnclosed, .tabsPill) > .tab:first-child {
+	padding-inline-start: calc(var(--focus-ring-width) * 2);
+}
+
+.tab {
+	position: relative;
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-sm);
+	height: var(--control-h);
+	padding-inline: var(--control-px);
+	border: 0;
+	background: none;
+	color: var(--muted-foreground);
+	font: inherit;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+	white-space: nowrap;
+	cursor: pointer;
+	transition: color var(--duration-fast) var(--ease-in-out);
+	border-radius: var(--radius-sm);
+}
+
+.tab > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+}
+
+.tab:hover:not(:disabled) {
+	color: var(--foreground);
+}
+
+.tab:focus-visible {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: calc(var(--focus-ring-width) * -1);
+}
+
+/*
+ * A tab is a <button> (tab set) or an <a> (nav), so both disabled spellings share one rule.
+ * pointer-events is what blocks the anchor.
+ */
+.tab:disabled,
+.tab[aria-disabled="true"] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+/* A selected tab and NavigationTabs' current link (`aria-current="page"`) are drawn alike. */
+.tab[aria-current="page"],
+.tab[aria-selected="true"] {
+	color: var(--foreground);
+}
+
+/* The indicator overlaps the list's rule, so the two read as one line. */
+.tab[aria-current="page"]::after,
+.tab[aria-selected="true"]::after {
+	content: "";
+	position: absolute;
+	inset-inline: 0;
+	bottom: 0;
+	height: var(--border-width-strong);
+	background-color: var(--primary);
+}
+
+/* Enclosed variant — a tinted rail with the active tab lifted out of it. */
+.tabListEnclosed {
+	gap: 0;
+	padding: var(--space-2xs);
+	box-shadow: none;
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+}
+
+/*
+ * The tabs give the rail's inset back, so the rail is one control tall; concentric with
+ * it: its radius less the inset.
+ */
+.tabListEnclosed .tab {
+	height: calc(var(--control-h) - var(--space-2xs) * 2);
+	border-radius: calc(var(--radius-sm) - var(--space-2xs));
+}
+
+/*
+ * `--popover`, the raised surface, so the tab lifts in both themes; `--background` is
+ * darker than the rail in dark and would read as pressed in.
+ */
+.tabListEnclosed .tab[aria-selected="true"] {
+	background-color: var(--popover);
+	box-shadow: var(--shadow-xs);
+}
+
+.tabListEnclosed .tab[aria-selected="true"]::after {
+	display: none;
+}
+
+/*
+ * Pill variant: no rule, the selected tab a filled chip — for a row that filters one list
+ * rather than switching panels. A class on either track: OverflowTabBar draws it for tabs
+ * and routes alike.
+ */
+.tabsPill {
+	box-shadow: none;
+}
+
+.tabsPill .tab {
+	transition:
+		color var(--duration-fast) var(--ease-in-out),
+		background-color var(--duration-fast) var(--ease-in-out);
+}
+
+.tabsPill .tab[aria-current="page"],
+.tabsPill .tab[aria-selected="true"] {
+	background-color: var(--accent);
+}
+
+.tabsPill .tab[aria-current="page"]::after,
+.tabsPill .tab[aria-selected="true"]::after {
+	display: none;
+}
+
+.tabPanel {
+	min-width: 0;
+	padding-top: var(--space-lg);
+	border-radius: var(--radius-sm);
+}
+
+.tabPanel:focus-visible {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: calc(var(--focus-ring-width) * -1);
+}
+
+/* ── Breadcrumbs ──────────────────────────────────────────────────────────────── */
+
+/* A real <ol> (announced as a list of N), so reset the UA indent and markers. */
+.breadcrumb {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--space-md);
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.breadcrumbItem {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.breadcrumbLink {
+	color: var(--muted-foreground);
+	text-decoration: none;
+	border-radius: var(--radius-sm);
+	/* Long titles truncate rather than pushing the current page off the row. */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.breadcrumbLink:hover {
+	color: var(--foreground);
+	text-decoration: underline;
+	text-underline-offset: var(--link-underline-offset);
+}
+
+.breadcrumbLink:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* The current page truncates like the links do. */
+.breadcrumbCurrent {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.breadcrumbSeparator {
+	flex-shrink: 0;
+	display: inline-flex;
+	color: var(--muted-foreground);
+}
+
+/* Sizes the default chevron; direct children only, since `separator` is a caller slot. */
+.breadcrumbSeparator > svg {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+/* ── Pagination ───────────────────────────────────────────────────────────────── */
+
+/*
+ * One row: page cells shrink to the small action size before anything wraps, so an arrow
+ * never lands alone on a second line. Only the always-worded pager wraps.
+ */
+.pagination {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	flex-wrap: nowrap;
+}
+
+.pagination[data-labels="text"] {
+	flex-wrap: wrap;
+}
+
+.pagination > :not(:first-child, :last-child) {
+	flex-shrink: 1;
+	min-width: var(--control-h-sm);
+}
+
+/*
+ * `labels="responsive"`: the arrow's word shows from `sm` up. `display: none` is safe —
+ * the button carries the same string as its accessible name.
+ */
+.paginationArrowWord {
+	display: none;
+}
+
+@media (--bp-sm) {
+	.paginationArrowWord {
+		display: inline;
+	}
+}
+
+/* With its word hidden, the arrow is a square cell like the numbers. */
+@media (--bp-max-sm) {
+	.pagination[data-labels="responsive"] > :is(:first-child, :last-child) {
+		width: var(--control-h);
+		padding-inline: 0;
+	}
+}
+
+/* Fixed square cells so the row does not reflow as the page number gains a digit. */
+.paginationEllipsis {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--control-h);
+	height: var(--control-h);
+	color: var(--muted-foreground);
+}
+
+/* ══ PageHeading ═══════════════════════════════════════════════════════════════════
+ *
+ * Breadcrumbs, eyebrow, title with badges, description and actions, in a fixed order.
+ */
+
+.pageHeading {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+}
+
+.pageHeadingCrumbs {
+	margin-bottom: var(--space-xl);
+}
+
+.pageHeadingRow {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-xl);
+}
+
+.pageHeadingLeading {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-md);
+	/* Nudges a leading control onto the title's optical line rather than the block's top. */
+	padding-top: var(--space-xs);
+}
+
+.pageHeadingMain {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+/* A grid, so the prefix centres on the title line and the description aligns with the title. */
+.pageHeadingGrid {
+	display: grid;
+	width: 100%;
+	align-items: center;
+	grid-template-columns: minmax(0, 1fr);
+	/* The title-prefix to title rhythm, set without opening the gap under the title. */
+	column-gap: var(--space-md);
+	row-gap: var(--space-xs);
+}
+
+.pageHeadingGrid[data-has-prefix] {
+	grid-template-columns: auto minmax(0, 1fr);
+}
+
+/* The prefix sizes its glyph to match PageHeader's title icon. */
+.pageHeadingPrefix {
+	display: inline-flex;
+	flex-shrink: 0;
+	/* Match the title’s first baseline even when badges or actions wrap. */
+	align-self: first baseline;
+	align-items: center;
+	color: var(--muted-foreground);
+}
+
+.pageHeadingPrefix > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.pageHeadingGrid[data-has-prefix] > .pageHeadingBlock {
+	grid-column-start: 2;
+}
+
+/* A headline with actions is button-tall, so the description needs the wider gap. */
+.pageHeadingHeadline:has(.pageHeadingActions) + .pageHeadingBlock {
+	margin-top: var(--space-md);
+}
+
+/* The title row and the actions, side by side once there is room for both. */
+.pageHeadingHeadline {
+	align-self: first baseline;
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: var(--space-xl);
+}
+
+@media (--bp-sm) {
+	.pageHeadingHeadline {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+}
+
+.pageHeadingTitleRow {
+	display: flex;
+	min-width: 0;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.pageHeadingTitle {
+	min-width: 0;
+}
+
+.pageHeadingBadges {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-sm);
+}
+
+.pageHeadingActions {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.pageHeadingBlock {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+/* Capped at a reading measure. */
+.pageHeadingDescription {
+	max-width: 42rem;
+	text-wrap: pretty;
+}
+
+.pageHeadingChildren {
+	margin-top: var(--space-xl);
+}
+
+.pageHeadingSeparator {
+	margin-top: var(--space-xl);
+}
+
+/* ══ NavigationTabs track ══════════════════════════════════════════════════════════
+ *
+ * Scrolls rather than wrapping, so the row's height never changes as tabs switch.
+ */
+
+.tabBar {
+	position: relative;
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: var(--space-xs);
+	overflow-x: auto;
+	scrollbar-width: none;
+	scroll-snap-type: x proximity;
+	/* The fade's width: snapping, and the reveal after a key press, land clear of it. */
+	scroll-padding-inline: var(--space-2xl);
+}
+
+.tabBar::-webkit-scrollbar {
+	display: none;
+}
+
+.tabBarWrap {
+	position: relative;
+	min-width: 0;
+}
+
+/* A fade at each edge with more tabs past it: a mask, as on the tab list, so any surface works. */
+.tabBarWrap[data-fade-start] > .tabBar:dir(ltr),
+.tabBarWrap[data-fade-end] > .tabBar:dir(rtl) {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+}
+
+.tabBarWrap[data-fade-end] > .tabBar:dir(ltr),
+.tabBarWrap[data-fade-start] > .tabBar:dir(rtl) {
+	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+}
+
+.tabBarWrap[data-fade-start][data-fade-end] > .tabBar {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
+}
+

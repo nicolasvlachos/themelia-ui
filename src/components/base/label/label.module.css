@@ -1,0 +1,23 @@
+/*
+ * Label. Two disabled paths: an ancestor `[data-disabled="true"]` (a disabled field group),
+ * and a preceding sibling control carrying the global `.peer` marker class.
+ */
+.root {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	font-size: var(--text-sm);
+	/* FormField's caption line box, so wrapped labels match it. */
+	line-height: var(--text-sm--line-height);
+	user-select: none;
+}
+
+:global([data-disabled="true"]) .root {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+:global(.peer):disabled ~ .root {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}

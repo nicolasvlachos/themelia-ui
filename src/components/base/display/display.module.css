@@ -1,0 +1,543 @@
+/*
+ * Display — Separator, Collapsible, ScrollArea, BooleanIndicator, VisuallyHidden,
+ * IconBadge, ContentBlock, DateBlock, PlaceholderPattern, Kbd, InlineStat.
+ */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/* Optional ContentBlock inset override; unset falls back to the surface axes. */
+	--content-block-p: initial;
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+
+	/* ── Separator ───────────────────────────────────────────────────────────────── */
+	/* A hairline; the `thickness` prop overrides it inline per rule. */
+	--separator-thickness: var(--border-width);
+
+	/* ── IconBadge ───────────────────────────────────────────────────────────────── */
+	--icon-badge-size: var(--size-medallion);
+
+	/* ── ContentBlock ────────────────────────────────────────────────────────────── */
+	--content-block-gap: var(--space-md);
+
+
+}
+
+/* ── Separator ────────────────────────────────────────────────────────────────── */
+
+.separator {
+	flex-shrink: 0;
+	background-color: var(--border);
+}
+
+.separator[data-orientation="horizontal"] {
+	width: 100%;
+	height: var(--separator-thickness);
+}
+
+/* A vertical rule stretches to its flex parent rather than declaring a height. */
+.separator[data-orientation="vertical"] {
+	width: var(--separator-thickness);
+	align-self: stretch;
+}
+
+/*
+ * Dashed and dotted rules are borders on a zero-size cross axis: a background fill has
+ * no dash pattern.
+ */
+.separator[data-variant="dashed"],
+.separator[data-variant="dotted"] {
+	background-color: transparent;
+	border-color: var(--border);
+}
+
+.separator[data-variant="dashed"] { border-style: dashed; }
+.separator[data-variant="dotted"] { border-style: dotted; }
+
+.separator[data-variant="dashed"][data-orientation="horizontal"],
+.separator[data-variant="dotted"][data-orientation="horizontal"] {
+	height: 0;
+	border-top-width: var(--separator-thickness);
+}
+
+.separator[data-variant="dashed"][data-orientation="vertical"],
+.separator[data-variant="dotted"][data-orientation="vertical"] {
+	width: 0;
+	border-inline-start-width: var(--separator-thickness);
+}
+
+/* A labelled rule: the label sits in a gap between two pseudo-element lines. */
+.separatorLabelled {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	background: none;
+	height: auto;
+}
+
+.separatorLabelled::before,
+.separatorLabelled::after {
+	content: "";
+	flex: 1;
+	height: var(--separator-thickness);
+	background-color: var(--border);
+}
+
+/* ── Collapsible ──────────────────────────────────────────────────────────────── */
+
+/* `grid-template-rows: 0fr → 1fr` animates to natural height without JS measurement. */
+.collapsibleContent {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows var(--duration-fast) var(--ease-out);
+}
+
+.collapsibleContent[data-open] {
+	grid-template-rows: 1fr;
+}
+
+/* The inner element must clip, or content spills out of the collapsed track. */
+.collapsibleInner {
+	overflow: hidden;
+	min-height: 0;
+}
+
+.collapsibleTrigger {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	background: none;
+	border: 0;
+	padding: 0;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+	transition: color var(--duration-fast) var(--ease-out);
+	border-radius: var(--radius-sm);
+}
+
+.collapsibleTrigger:hover {
+	color: var(--primary-accent);
+}
+
+/* A stripped button loses the UA focus ring; the shared ring draws outward, clear of the text. */
+.collapsibleTrigger:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.collapsibleIcon {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+	transition: rotate var(--duration-fast) var(--ease-out);
+}
+
+.collapsibleTrigger[aria-expanded="true"] .collapsibleIcon {
+	rotate: 90deg;
+}
+
+/* ── ScrollArea ───────────────────────────────────────────────────────────────── */
+
+.scrollArea {
+	position: relative;
+	overflow: auto;
+	overscroll-behavior: contain;
+	border-radius: var(--radius-sm);
+}
+
+.scrollArea:focus-visible {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: calc(var(--focus-ring-width) * -1);
+}
+
+/*
+ * Chromium ignores ::-webkit-scrollbar once a standard scrollbar-* property is set, so
+ * the standard pair is Firefox-only. Elsewhere the thumb is inset by a transparent border
+ * and the track stops --radius-sm short of each end, clear of a rounded frame's corners.
+ */
+@supports not selector(::-webkit-scrollbar) {
+	.scrollArea {
+		scrollbar-width: thin;
+		scrollbar-color: var(--muted-foreground-40) transparent;
+	}
+}
+
+.scrollArea::-webkit-scrollbar {
+	width: calc(var(--space-md) + var(--space-2xs) * 2);
+	height: calc(var(--space-md) + var(--space-2xs) * 2);
+}
+
+.scrollArea::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.scrollArea::-webkit-scrollbar-track:vertical {
+	margin-block: var(--radius-sm);
+}
+
+.scrollArea::-webkit-scrollbar-track:horizontal {
+	margin-inline: var(--radius-sm);
+}
+
+.scrollArea::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+	border: var(--space-2xs) solid transparent;
+	border-radius: var(--radius-pill);
+	/* Darker than the frame's border so a thin thumb is findable on a white card. */
+	background-color: var(--muted-foreground-40);
+	background-clip: padding-box;
+}
+
+.scrollArea::-webkit-scrollbar-thumb:hover {
+	background-color: var(--muted-foreground-70);
+}
+
+/* ── BooleanIndicator ─────────────────────────────────────────────────────────── */
+
+.indicator {
+	display: inline-flex;
+	align-items: center;
+	/* A whole-pixel line height so the 8px dot centres on a whole pixel. */
+	line-height: 1.25rem;
+	gap: var(--space-md);
+}
+
+/* `Text` sets its own leading; inherit the row's so the height stays deterministic. */
+.indicator > * {
+	line-height: inherit;
+}
+
+.indicatorDot {
+	flex-shrink: 0;
+	width: var(--space-md);
+	height: var(--space-md);
+	border-radius: 50%;
+	background-color: var(--muted-foreground-40);
+}
+
+.indicatorDotTrue {
+	background-color: var(--success);
+}
+
+/* ── VisuallyHidden ───────────────────────────────────────────────────────────── */
+
+/* Hidden from view but kept in the accessibility tree, unlike `display: none`. */
+.visuallyHidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+/* ══ IconBadge ═════════════════════════════════════════════════════════════════════
+ * A glyph in a tinted medallion: low-alpha tone fill, full-strength glyph.
+ */
+
+.iconBadge {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: var(--icon-badge-size);
+	height: var(--icon-badge-size);
+	border-radius: var(--radius-sm);
+	background-color: var(--icon-badge-bg);
+	color: var(--icon-badge-fg);
+}
+
+.iconBadgeCircle {
+	border-radius: 50%;
+}
+
+.iconBadgeBordered {
+	box-shadow: inset 0 0 0 var(--border-width) var(--border-60);
+}
+
+.iconBadge > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* Each tone sets fill and glyph together, so the pair cannot mix. */
+/* Neutral matches the avatar fallback's foreground wash, so the two agree in both themes. */
+.toneNeutral { --icon-badge-bg: var(--foreground-8); --icon-badge-fg: var(--muted-foreground); }
+.tonePrimary { --icon-badge-bg: var(--primary-10); --icon-badge-fg: var(--primary-accent); }
+.toneSuccess { --icon-badge-bg: var(--success-10); --icon-badge-fg: var(--success); }
+.toneWarning { --icon-badge-bg: var(--warning-10); --icon-badge-fg: var(--warning-accent); }
+.toneDestructive { --icon-badge-bg: var(--destructive-10); --icon-badge-fg: var(--destructive-accent); }
+.toneInfo { --icon-badge-bg: var(--info-10); --icon-badge-fg: var(--info); }
+
+.iconBadgeSolid.toneNeutral { --icon-badge-bg: var(--foreground); --icon-badge-fg: var(--background); }
+.iconBadgeSolid.tonePrimary { --icon-badge-bg: var(--primary); --icon-badge-fg: var(--primary-foreground); }
+.iconBadgeSolid.toneSuccess { --icon-badge-bg: var(--success); --icon-badge-fg: var(--success-foreground); }
+.iconBadgeSolid.toneWarning { --icon-badge-bg: var(--warning); --icon-badge-fg: var(--warning-foreground); }
+.iconBadgeSolid.toneDestructive { --icon-badge-bg: var(--destructive); --icon-badge-fg: var(--destructive-foreground); }
+.iconBadgeSolid.toneInfo { --icon-badge-bg: var(--info); --icon-badge-fg: var(--info-foreground); }
+
+/* ══ ContentBlock ══════════════════════════════════════════════════════════════════ */
+
+/*
+ * A query container, so a Grid inside resolves columns against the block, not the
+ * viewport. `inline-size` leaves height to content; it also makes this the containing
+ * block for absolutely positioned descendants.
+ */
+.contentBlock {
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	gap: var(--content-block-gap);
+}
+
+.contentBlockBordered {
+	padding: var(--content-block-p, var(--surface-py)) var(--content-block-p, var(--surface-px));
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+}
+
+.contentBlockMuted {
+	padding: var(--content-block-p, var(--surface-py)) var(--content-block-p, var(--surface-px));
+	border-radius: var(--radius);
+	background-color: var(--muted-50);
+}
+
+/* `bordered` on its own ground (--card) rather than letting the page show through. */
+.contentBlockCard {
+	padding: var(--content-block-p, var(--surface-py)) var(--content-block-p, var(--surface-px));
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+}
+
+/* Inside a card a block steps down to the item radius so the curves nest. */
+:global([data-slot="card"]) .contentBlockBordered,
+:global([data-slot="card"]) .contentBlockMuted,
+:global([data-slot="card"]) .contentBlockCard {
+	border-radius: var(--radius-sm);
+}
+
+/* Content to the edge; clips so a child's own ground cannot square off the corners. */
+.contentBlockFlush {
+	padding: 0;
+	overflow: hidden;
+}
+
+.contentBlockHeader {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: var(--content-block-gap);
+}
+
+.contentBlockTitle {
+	min-width: 0;
+	flex: 1;
+	font-size: var(--text-base);
+	line-height: var(--leading-tight);
+}
+
+/* Spaces a title suffix (e.g. a badge) from the text. */
+.contentBlockTitle[data-suffixed] {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-sm);
+}
+
+.contentBlockDescription {
+	text-wrap: pretty;
+}
+
+.contentBlockIcon {
+	display: inline-flex;
+	flex-shrink: 0;
+	color: var(--muted-foreground);
+}
+
+.contentBlockIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* ══ DateBlock ═════════════════════════════════════════════════════════════════════
+ * A calendar-leaf date rendered as `<time datetime>`.
+ */
+
+
+/*
+ * Markup keeps the spoken order ("Sun 16 Aug"); stacked layouts lift the month with
+ * `order` so screen readers don't hear a reordered date. The gap is load-bearing: three
+ * tight lines with none weld together (layout-faults.spec.ts, WELDED).
+ */
+.dateBlock {
+	display: inline-grid;
+	justify-items: center;
+	align-content: center;
+	gap: var(--space-2xs);
+	min-width: calc(3.5rem * var(--scale));
+	line-height: var(--leading-tight);
+	text-align: center;
+}
+
+.dateBlock:not(.dateBlockInline) .dateBlockMonth { order: -1; }
+.dateBlock:not(.dateBlockInline) .dateBlockWeekday { order: 1; }
+.dateBlock:not(.dateBlockInline) .dateBlockYear { order: 2; }
+.dateBlock:not(.dateBlockInline) .dateBlockTime { order: 3; }
+
+.dateBlockBoxed {
+	gap: 0;
+	overflow: hidden;
+	padding-block-end: var(--space-sm);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--card);
+}
+
+/* Without a month band the day needs its own top inset. */
+.dateBlockBoxed:not(:has(.dateBlockMonth)) {
+	padding-block-start: var(--space-sm);
+}
+
+/* The month band: stretched across the leaf and the only filled part. */
+.dateBlockBoxed .dateBlockMonth {
+	justify-self: stretch;
+	margin-block-end: var(--space-xs);
+	padding: var(--space-2xs) var(--space-sm);
+	border-block-end: var(--border-width) solid var(--border-60);
+	background-color: var(--muted);
+	font-weight: var(--weight-semibold);
+}
+
+.dateBlockBoxed > :not(.dateBlockMonth) {
+	padding-inline: var(--space-sm);
+}
+
+/* Inline: a phrase in a line of text, so every part takes the line's size. */
+.dateBlockInline {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--space-xs);
+	min-width: 0;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+.dateBlock.dateBlockInline > * {
+	font-size: inherit;
+	line-height: inherit;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
+.dateBlockDay {
+	font-size: var(--text-xl);
+	line-height: var(--text-xl--line-height);
+	font-weight: var(--weight-semibold);
+	font-variant-numeric: tabular-nums;
+}
+
+.dateBlockWeekday,
+.dateBlockMonth {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-medium);
+	text-transform: uppercase;
+	letter-spacing: var(--tracking-widest);
+	color: var(--muted-foreground);
+}
+
+/* Year and time: quiet context under the weekday. */
+.dateBlockYear,
+.dateBlockTime {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+	font-variant-numeric: tabular-nums;
+}
+
+/* ══ PlaceholderPattern ════════════════════════════════════════════════════════════
+ * Hatching for a deliberately empty region; a flat grey box would read as loading.
+ */
+
+.placeholderPattern {
+	width: 100%;
+	height: 100%;
+	border-radius: var(--radius);
+	/* Full border colour: lighter hatching disappears on light surfaces. */
+	background-image: repeating-linear-gradient(
+		45deg,
+		var(--border) 0,
+		var(--border) 2px,
+		transparent 2px,
+		transparent 8px
+	);
+	box-shadow: inset 0 0 0 var(--border-width) var(--border-60);
+}
+
+/* ══ Kbd ═══════════════════════════════════════════════════════════════════════════ */
+
+.kbd {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-2xs);
+	min-width: round(calc(1.25rem * var(--density-scale, var(--scale))), 1px);
+	height: round(calc(1.25rem * var(--density-scale, var(--scale))), 1px);
+	padding-inline: var(--space-sm);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	/* The page ground, not a tint: muted-on-muted fails contrast in dark. */
+	background-color: var(--background);
+	color: var(--muted-foreground);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: var(--leading-none);
+	white-space: nowrap;
+}
+
+.kbdGroup {
+	display: inline-flex;
+	align-items: center;
+	/* Wider than a cap's inner gap, so a sequence doesn't read as one chord. */
+	gap: var(--space-xs);
+}
+
+/* ══ InlineStat ════════════════════════════════════════════════════════════════════
+ * One label, one value; layouts differ only in how the space between is spent.
+ */
+
+/* Baseline-aligned: label and value sit on different type steps. */
+.inlineStat {
+	display: flex;
+	align-items: baseline;
+	gap: var(--space-xl);
+	min-width: 0;
+}
+
+.inlineStat[data-layout="between"] {
+	justify-content: space-between;
+}
+
+/* Tighter, so the pair reads as one unit among other facts. */
+.inlineStat[data-layout="inline"] {
+	gap: var(--space-sm);
+}
+
+.inlineStat[data-layout="stacked"] {
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--space-2xs);
+}

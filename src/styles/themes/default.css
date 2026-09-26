@@ -1,0 +1,164 @@
+/*
+ * Theme — the swappable palette.
+ *
+ * GENERATED from scripts/theme-manifest.mjs by scripts/gen-theme.mjs.
+ * Do not hand-edit; edit the manifest and re-run `npm run tokens:theme`.
+ *
+ * This file owns only the shadcn-compatible contract: palette, radius, shadows, sidebar
+ * palette, and charts. Package state, layout, density, and component knobs live in
+ * styles/tokens/* and styles/theming/*.
+ *
+ * Every colour resolves through a primitive in styles/tokens/palette.css — there are no
+ * colour literals here — so a rebrand moves the ramp, not forty separate values.
+ */
+/*
+ * Raw inputs — `:root` ONLY, so a consumer's override inherits everywhere
+ * instead of being restated (and overwritten) at each scope boundary.
+ */
+:root {
+	--radius: 1rem; /* The container radius — cards, dialogs, popovers, menus. */
+	--radius-sm: 0.5rem; /* Everything inside a container or smaller than one — controls, rows, chips, badges, tooltips. */
+	--border-width: 1px; /* Default hairline weight for dividers, outlines, and control borders. */
+	--border-width-strong: 2px; /* Emphasized rail weight for quote bars and active navigation indicators. */
+	--radius-pill: 999px; /* Fully rounded ends for pills, switches, tracks, and status dots. True circles (avatars, radios) use 50%. */
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+	color-scheme: light;
+	--background: var(--neutral-0); /* Application canvas and default page background. */
+	--foreground: var(--neutral-800); /* Primary text and icon color on the application canvas. */
+	--card: var(--neutral-0); /* Card and framed content-surface background. */
+	--card-foreground: var(--neutral-800); /* Primary text and icons on card surfaces. */
+	--popover: var(--background); /* Popover, menu, select, and transient-surface background. */
+	--popover-foreground: var(--foreground); /* Primary text and icons on popover surfaces. */
+	--primary: var(--brand-600); /* Brand and primary-action color. */
+	--primary-foreground: var(--neutral-50); /* Text and icons on solid primary fills. */
+	--secondary: var(--neutral-100); /* Neutral secondary-control and supporting-surface fill. */
+	--secondary-foreground: var(--neutral-900); /* Text and icons on secondary fills. */
+	--muted: var(--neutral-100); /* Subdued backgrounds for passive regions and skeletons. */
+	--muted-foreground: var(--neutral-550); /* Secondary text, metadata, and passive icons. */
+	--accent: var(--neutral-100); /* Hover, selected-row, and emphasized neutral fill. */
+	--accent-foreground: var(--neutral-900); /* Text and icons on accent fills. */
+	--destructive: var(--danger-600); /* Destructive action, error, and invalid-state color. */
+	--destructive-foreground: var(--neutral-25); /* Text and icons on solid destructive fills. */
+	--border: var(--neutral-200); /* Default divider, outline, and surface-border color. */
+	--input: var(--neutral-200); /* Default form-control border color. */
+	--ring: var(--neutral-400); /* Focus-visible ring and outline color. */
+	--chart-1: var(--series-1); /* First categorical chart-series color; never a status color. */
+	--chart-2: var(--series-2); /* Second categorical chart-series color; never a status color. */
+	--chart-3: var(--series-3); /* Third categorical chart-series color; never a status color. */
+	--chart-4: var(--series-4); /* Fourth categorical chart-series color; never a status color. */
+	--chart-5: var(--series-5); /* Fifth categorical chart-series color; never a status color. */
+	--sidebar: var(--neutral-150); /* Sidebar shell background. */
+	--sidebar-foreground: var(--neutral-800); /* Primary sidebar text and icon color. */
+	--sidebar-primary: var(--neutral-900); /* Strong sidebar selection or primary action fill. */
+	--sidebar-primary-foreground: var(--neutral-50); /* Text and icons on sidebar primary fills. */
+	--sidebar-accent: var(--neutral-75); /* Sidebar hover and selected-row neutral fill. */
+	--sidebar-accent-foreground: var(--neutral-900); /* Text and icons on sidebar accent fills. */
+	--sidebar-border: var(--neutral-200); /* Sidebar dividers and shell border. */
+	--sidebar-ring: var(--neutral-400); /* Focus-visible ring inside the sidebar. */
+	--shadow-ink: var(--pure-black); /* Ink every elevation tier tints with. */
+	--shadow-2xs: 0 1px 2px 0px color-mix(in oklab, var(--shadow-ink) 4%, transparent); /* shadcn compatibility only; no kit surface reads it. Resting lift is --shadow-xs. */
+	--shadow-xs: 0 1px 2px 0px color-mix(in oklab, var(--shadow-ink) 6%, transparent), 0 1px 1px -1px color-mix(in oklab, var(--shadow-ink) 6%, transparent); /* Resting lift: a framed card's bezel, a raised chip, a slider thumb, a floating sidebar. */
+	--shadow-sm: 0 1px 2px 0px color-mix(in oklab, var(--shadow-ink) 6%, transparent), 0 2px 4px -2px color-mix(in oklab, var(--shadow-ink) 10%, transparent); /* Hover lift for every clickable card and tile, and controls over artwork. */
+	--shadow: 0 1px 3px 0px color-mix(in oklab, var(--shadow-ink) 8%, transparent), 0 4px 8px -4px color-mix(in oklab, var(--shadow-ink) 12%, transparent); /* shadcn compatibility only; no kit surface reads it. Hover lift is --shadow-sm. */
+	--shadow-md: 0 2px 4px -1px color-mix(in oklab, var(--shadow-ink) 8%, transparent), 0 8px 16px -8px color-mix(in oklab, var(--shadow-ink) 16%, transparent); /* The lift inside --popover-shadow; anchored popups read that, with its hairline ring. */
+	--shadow-lg: 0 4px 8px -2px color-mix(in oklab, var(--shadow-ink) 10%, transparent), 0 12px 24px -12px color-mix(in oklab, var(--shadow-ink) 18%, transparent); /* Free-floating transient surfaces: toast, drag ghost, floating batch bar, submenu. */
+	--shadow-xl: 0 8px 16px -4px color-mix(in oklab, var(--shadow-ink) 12%, transparent), 0 20px 40px -20px color-mix(in oklab, var(--shadow-ink) 22%, transparent); /* Modals and command palettes. */
+	--shadow-2xl: 0 16px 32px -8px color-mix(in oklab, var(--shadow-ink) 18%, transparent), 0 32px 64px -28px color-mix(in oklab, var(--shadow-ink) 28%, transparent); /* shadcn compatibility only; no kit surface reads it. Modals and palettes use --shadow-xl. */
+}
+
+/*
+ * Dark theme — overrides only.
+ *
+ * Every token not listed here inherits its light value through the cascade, which is
+ * declared explicitly as `inherits: true` in scripts/theme-manifest.mjs rather than
+ * left to chance. GENERATED: edit the manifest, then run `npm run tokens:theme`.
+ */
+.dark,
+[data-theme="dark"],
+:is(.dark, [data-theme="dark"]) :is([data-ui-scope], [data-density]):not(.light, [data-theme="light"]) {
+	color-scheme: dark;
+	--background: var(--neutral-900);
+	--foreground: var(--neutral-50);
+	--card: var(--neutral-850);
+	--card-foreground: var(--neutral-50);
+	--popover: var(--neutral-800);
+	--popover-foreground: var(--foreground);
+	--primary: var(--brand-350);
+	--primary-foreground: var(--brand-950);
+	--secondary: var(--neutral-850);
+	--secondary-foreground: var(--neutral-50);
+	--muted: var(--neutral-875);
+	--muted-foreground: var(--neutral-400);
+	--accent: var(--neutral-750);
+	--accent-foreground: var(--neutral-50);
+	--destructive: var(--danger-400);
+	--destructive-foreground: var(--danger-950);
+	--border: var(--white-a10);
+	--input: var(--white-a15);
+	--ring: var(--neutral-500);
+	--chart-1: var(--series-1-dark);
+	--chart-2: var(--series-2-dark);
+	--chart-3: var(--series-3-dark);
+	--chart-4: var(--series-4-dark);
+	--chart-5: var(--series-5-dark);
+	--sidebar: var(--neutral-950);
+	--sidebar-foreground: var(--neutral-50);
+	--sidebar-primary: var(--neutral-50);
+	--sidebar-primary-foreground: var(--neutral-900);
+	--sidebar-accent: var(--neutral-800);
+	--sidebar-accent-foreground: var(--neutral-50);
+	--sidebar-border: var(--white-a10);
+	--sidebar-ring: var(--neutral-500);
+}
+
+/*
+ * The same values under the OS preference, for `colorScheme: "system"`.
+ *
+ * Emitted rather than hand-written so it cannot drift from the block above.
+ */
+@media (prefers-color-scheme: dark) {
+	:root:not(.light, [data-theme="light"]),
+	[data-ui-scope]:not(.light, [data-theme="light"], :where(.light, [data-theme="light"]) *),
+	[data-density]:not(.light, [data-theme="light"], :where(.light, [data-theme="light"]) *) {
+		color-scheme: dark;
+		--background: var(--neutral-900);
+		--foreground: var(--neutral-50);
+		--card: var(--neutral-850);
+		--card-foreground: var(--neutral-50);
+		--popover: var(--neutral-800);
+		--popover-foreground: var(--foreground);
+		--primary: var(--brand-350);
+		--primary-foreground: var(--brand-950);
+		--secondary: var(--neutral-850);
+		--secondary-foreground: var(--neutral-50);
+		--muted: var(--neutral-875);
+		--muted-foreground: var(--neutral-400);
+		--accent: var(--neutral-750);
+		--accent-foreground: var(--neutral-50);
+		--destructive: var(--danger-400);
+		--destructive-foreground: var(--danger-950);
+		--border: var(--white-a10);
+		--input: var(--white-a15);
+		--ring: var(--neutral-500);
+		--chart-1: var(--series-1-dark);
+		--chart-2: var(--series-2-dark);
+		--chart-3: var(--series-3-dark);
+		--chart-4: var(--series-4-dark);
+		--chart-5: var(--series-5-dark);
+		--sidebar: var(--neutral-950);
+		--sidebar-foreground: var(--neutral-50);
+		--sidebar-primary: var(--neutral-50);
+		--sidebar-primary-foreground: var(--neutral-900);
+		--sidebar-accent: var(--neutral-800);
+		--sidebar-accent-foreground: var(--neutral-50);
+		--sidebar-border: var(--white-a10);
+		--sidebar-ring: var(--neutral-500);
+	}
+}

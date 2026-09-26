@@ -1,0 +1,108 @@
+/*
+ * Popover. --popover-shadow lives in styles/theming/overlay.css (hover cards and navigation
+ * menus read it too). The surface declares its enter/exit once (theming/animation.css);
+ * side rules set only the slide axis, and Base UI's `--transform-origin` anchors the zoom.
+ */
+
+.positioner {
+	isolation: isolate;
+	z-index: var(--z-popover);
+}
+
+.content {
+	z-index: var(--z-popover);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+	width: calc(18rem * var(--scale));
+	padding: var(--surface-py) var(--surface-px);
+	border-radius: var(--radius);
+	background-color: var(--popover);
+	--surface-ground: var(--popover);
+	color: var(--popover-foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	box-shadow: var(--popover-shadow);
+	outline: none;
+	transform-origin: var(--transform-origin);
+
+	/* Fade and scale in from 95%; the exit reverses it. */
+	--enter-opacity: 0;
+	--enter-scale: 0.95;
+	--exit-opacity: 0;
+	--exit-scale: 0.95;
+
+	animation: var(--animate-exit);
+	/* A step faster than the default; a longhand after the shorthand (see theming/animation.css). */
+	animation-duration: var(--duration-instant);
+}
+
+/*
+ * `inset="flush"`: for an edge-to-edge collection (a menu, a command list) that owns its
+ * insets. A prop, not a caller class, so it does not depend on source order.
+ */
+.insetFlush {
+	padding: 0;
+	gap: 0;
+	overflow: hidden;
+}
+
+.content[data-open] {
+	animation: var(--animate-enter);
+	animation-duration: var(--duration-instant);
+}
+
+/* Slides away from the trigger: a popup below it starts slightly above its final position. */
+.content[data-side="bottom"] {
+	--enter-translate-y: calc(var(--slide-nudge) * -1);
+	--exit-translate-y: calc(var(--slide-nudge) * -1);
+}
+
+.content[data-side="top"] {
+	--enter-translate-y: var(--slide-nudge);
+	--exit-translate-y: var(--slide-nudge);
+}
+
+.content[data-side="left"],
+.content[data-side="inline-start"] {
+	--enter-translate-x: var(--slide-nudge);
+	--exit-translate-x: var(--slide-nudge);
+}
+
+.content[data-side="right"],
+.content[data-side="inline-end"] {
+	--enter-translate-x: calc(var(--slide-nudge) * -1);
+	--exit-translate-x: calc(var(--slide-nudge) * -1);
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+.title {
+	font-weight: var(--weight-medium);
+}
+
+.description {
+	color: var(--muted-foreground);
+	text-wrap: pretty;
+}
+
+/* A footer band with its own top rule; the surface padding pays the other three sides. */
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-md);
+	padding-top: var(--surface-py);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/* A flush popover has no surface padding, so the footer pays all four sides. */
+.insetFlush .footer {
+	padding: var(--surface-py) var(--surface-px);
+}

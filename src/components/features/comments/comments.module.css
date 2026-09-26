@@ -1,0 +1,551 @@
+/*
+ * Comments.
+ *
+ * The composer's chrome comes from RichTextEditor and the chips from Badge; what is here
+ * is the conversation rhythm and the attachment chip's inline progress.
+ */
+
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.header {
+	min-width: 0;
+}
+
+.body {
+	min-width: 0;
+}
+
+/* ── Timeline ──────────────────────────────────────────────────────────────────── */
+
+.timeline {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.timelineEntry {
+	min-width: 0;
+}
+
+/* ── Comment ───────────────────────────────────────────────────────────────────────
+ *
+ * A grid whose avatar column carries the thread rail. No row gap: the rail must run
+ * unbroken, so spacing is padding on the parts.
+ */
+
+.item {
+	display: grid;
+	grid-template-columns: var(--size-avatar) minmax(0, 1fr);
+	grid-template-areas:
+		"context context"
+		"gutter main"
+		". thread";
+	column-gap: var(--space-md);
+	min-width: 0;
+	padding-block: var(--space-lg);
+}
+
+/* Replies: smaller avatar, tighter rhythm. */
+.item:not([data-depth="0"]) {
+	grid-template-columns: var(--size-avatar-sm) minmax(0, 1fr);
+	padding-block: var(--space-sm);
+}
+
+/* "Pinned", with its glyph in the avatar column so the text aligns with the bubble. */
+.itemContext {
+	grid-area: context;
+	display: grid;
+	grid-template-columns: subgrid;
+	align-items: center;
+	margin-block-end: var(--space-xs);
+	color: var(--muted-foreground);
+}
+
+.itemContextIcon {
+	justify-self: end;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.itemGutter {
+	grid-area: gutter;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-height: 0;
+}
+
+/* The rail's first stretch: from under the avatar to the bottom of this comment's body. */
+.item[data-thread] > .itemGutter::after {
+	content: "";
+	flex: 1;
+	width: var(--border-width);
+	margin-block-start: var(--space-xs);
+	border-radius: var(--radius-pill);
+	background-color: var(--border);
+}
+
+.itemMain {
+	grid-area: main;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+/* ── Bubble ────────────────────────────────────────────────────────────────────── */
+
+.itemBubbleRow {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-2xs);
+	max-width: 100%;
+	min-width: 0;
+}
+
+/*
+ * Sized to its content, like a message. `--muted`, not a foreground wash, keeps the tinted
+ * mention chips inside above 4.5:1 contrast in dark.
+ */
+.itemBubble {
+	min-width: 0;
+	max-width: 100%;
+	padding: var(--space-md) var(--space-lg);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+	overflow-wrap: anywhere;
+}
+
+.itemHeader {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 var(--space-sm);
+	min-width: 0;
+}
+
+.itemAuthor,
+.itemEditingAuthor {
+	overflow-wrap: anywhere;
+}
+
+.itemMeta {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--space-xs);
+}
+
+.itemTime {
+	display: inline-flex;
+}
+
+.itemEdited::before {
+	content: "·";
+	margin-inline-end: var(--space-xs);
+}
+
+.itemContent {
+	margin-block-start: var(--space-2xs);
+	min-width: 0;
+}
+
+/* Folded: the line cap arrives inline, and the last line fades out. */
+.itemContent[data-clamped] {
+	overflow: hidden;
+	mask-image: linear-gradient(to bottom, black calc(100% - var(--space-2xl)), transparent);
+}
+
+.itemMore {
+	margin-block-start: var(--space-2xs);
+}
+
+.itemMenu {
+	flex-shrink: 0;
+}
+
+.itemMenu:empty {
+	display: none;
+}
+
+/* ── Under the bubble ──────────────────────────────────────────────────────────── */
+
+.itemChips {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+.itemActions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+/* Extra air separates the Reply word from the chips. */
+.itemReply:not(:first-child) {
+	margin-inline-start: var(--space-sm);
+}
+
+/* The editor replaces the bubble at full column width. */
+.inlineComposer {
+	align-self: stretch;
+	min-width: 0;
+}
+
+/* ── Quiet actions ─────────────────────────────────────────────────────────────── */
+
+.quietAction {
+	display: inline-flex;
+	align-items: center;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--muted-foreground);
+	cursor: pointer;
+	transition: color var(--duration-fast) var(--ease-out);
+}
+
+.quietAction:hover {
+	color: var(--foreground);
+}
+
+/* ── Reactions ─────────────────────────────────────────────────────────────────── */
+
+/* Every chip under the bubble shares one shape: outlined, no fill, inner radius, badge height. */
+.reaction,
+.reactionAdd {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-xs);
+	/* A badge's height: one xs line plus inset and border. */
+	min-height: calc(var(--text-xs) * var(--text-xs--line-height) + 2 * (var(--space-2xs) + var(--border-width)));
+	padding-inline: var(--space-sm);
+	padding-block: var(--space-2xs);
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: transparent;
+	color: var(--muted-foreground);
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out);
+}
+
+.reaction:disabled { cursor: default; }
+
+/* "Add a reaction" is an action: no border until hovered, like Reply. */
+.reactionAdd {
+	border-color: transparent;
+}
+
+/* Leading the row, it gives back its inset so the glyph aligns with the bubble's edge. */
+.itemActions > .reactionAdd:first-child {
+	margin-inline-start: calc(-1 * (var(--space-sm) + var(--border-width)));
+}
+
+.reaction:not(:disabled):hover,
+.reactionAdd:hover,
+.reactionAdd[data-popup-open] {
+	background-color: var(--accent);
+	color: var(--foreground);
+}
+
+/* The viewer's own reaction. */
+.reaction[data-mine],
+.reaction[data-mine]:not(:disabled):hover {
+	/* A primary soft badge's colours. */
+	border-color: var(--primary-30);
+	background-color: var(--primary-10);
+	color: var(--primary-accent);
+}
+
+.reactionAdd svg {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+.reaction:focus-visible,
+.reactionAdd:focus-visible,
+.reactionChoice:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.reactionEmoji {
+	font-size: var(--text-sm);
+	line-height: var(--leading-none);
+}
+
+/* A row of choices, overriding the popover's text column; a menu's inset keeps them concentric. */
+.reactionPicker {
+	flex-direction: row;
+	gap: var(--space-2xs);
+	padding: var(--space-md);
+}
+
+.reactionChoice {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-avatar);
+	height: var(--size-avatar);
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	font-size: var(--text-base);
+	line-height: var(--leading-none);
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.reactionChoice:hover {
+	background-color: var(--accent);
+}
+
+.reactionChoice[data-mine] {
+	background-color: var(--primary-10);
+}
+
+/* ── Thread ────────────────────────────────────────────────────────────────────────
+ *
+ * Each entry (toggle, reply, composer) forks off the rail with a curve (::before); all but
+ * the last carry the rail on (::after).
+ *
+ *   --comment-rail-x   rail offset left of the thread: the parent's gutter gap + half its avatar.
+ *   --comment-fork-y   where the curve lands: top padding + half a reply avatar or toggle line.
+ */
+
+.itemThread {
+	--comment-rail-x: calc(var(--space-md) + var(--size-avatar-sm) / 2);
+	grid-area: thread;
+	min-width: 0;
+}
+
+.item[data-depth="0"] > .itemThread {
+	--comment-rail-x: calc(var(--space-md) + var(--size-avatar) / 2);
+}
+
+.replies {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.threadEntry {
+	--comment-fork-y: calc(var(--space-sm) + var(--size-avatar-sm) / 2);
+	position: relative;
+	min-width: 0;
+}
+
+/* A toggle or the composer's context line: the fork lands on one xs line. */
+.threadEntry[data-entry="toggle"],
+.threadEntry[data-entry="composer"] {
+	--comment-fork-y: calc(var(--space-sm) + var(--text-xs) * var(--text-xs--line-height) / 2);
+	padding-block-start: var(--space-sm);
+}
+
+.threadEntry[data-entry="composer"] {
+	padding-block-end: var(--space-sm);
+}
+
+.threadEntry::before,
+.threadEntry:not([data-last])::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(-1 * var(--comment-rail-x) - var(--border-width) / 2);
+	pointer-events: none;
+}
+
+/* The fork: down the rail, then curving into the entry. */
+.threadEntry::before {
+	top: 0;
+	width: calc(var(--comment-rail-x) + var(--border-width) / 2 - var(--space-xs));
+	height: calc(var(--comment-fork-y) + var(--border-width) / 2);
+	border-inline-start: var(--border-width) solid var(--border);
+	border-block-end: var(--border-width) solid var(--border);
+	border-end-start-radius: var(--radius);
+}
+
+/* The rail continued to the next entry. */
+.threadEntry:not([data-last])::after {
+	top: calc(var(--comment-fork-y) + var(--border-width) / 2 - var(--radius));
+	bottom: 0;
+	width: var(--border-width);
+	background-color: var(--border);
+}
+
+.repliesToggle {
+	/* One xs line tall, as `--comment-fork-y` for a toggle assumes. */
+	min-height: calc(var(--text-xs) * var(--text-xs--line-height));
+}
+
+/* ── Composer ──────────────────────────────────────────────────────────────────── */
+
+.composer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+/* Positioned, so the inline mention panel pins below the editor. */
+.composerEditor {
+	position: relative;
+	min-width: 0;
+}
+
+/* A context line over the editor ("Replying to …"); Cancel lives in the footer. */
+.eyebrow {
+	min-width: 0;
+}
+
+/* ── Attachment chip ───────────────────────────────────────────────────────────── */
+
+.chip {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	max-width: min(100%, calc(20rem * var(--scale)));
+	min-width: 0;
+	padding-inline: var(--space-md);
+	padding-block: var(--space-2xs);
+	/* The reactions' chip shape (see Reactions). */
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: transparent;
+	overflow: hidden;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Only a linked chip is pressable, so only it takes the hover fill and the focus ring. */
+.chip:has(.chipLink):hover {
+	background-color: var(--accent);
+}
+
+/* The chip clips its overflow, so the ring goes on the chip rather than the link. */
+.chipLink:focus-visible {
+	outline: none;
+}
+
+.chip:has(.chipLink:focus-visible) {
+	box-shadow: var(--focus-ring);
+}
+
+.chip[data-status="failed"] {
+	border-color: var(--destructive-30);
+	background-color: var(--destructive-5);
+}
+
+.chipIcon {
+	flex-shrink: 0;
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+	color: var(--muted-foreground);
+}
+
+.chip[data-status="failed"] .chipIcon {
+	color: var(--destructive-accent);
+}
+
+.chipLink,
+.chipLabel {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.chipLink {
+	flex: 1;
+	text-decoration: none;
+	color: inherit;
+}
+
+
+.chipMeta {
+	flex-shrink: 0;
+}
+
+/* A hairline along the bottom edge, so uploads never resize the tray. */
+.chipProgress {
+	position: absolute;
+	inset-inline: var(--space-md);
+	bottom: 0;
+	height: var(--border-width-strong);
+	border-radius: var(--radius-pill);
+	background-color: var(--foreground-20);
+	overflow: hidden;
+}
+
+.chipProgressFill {
+	height: 100%;
+	background-color: var(--primary);
+	transition: width var(--duration-normal) var(--ease-out);
+}
+
+.chipRetry,
+.chipRemove {
+	flex-shrink: 0;
+}
+
+.chipRemove svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+/* ── Content ───────────────────────────────────────────────────────────────────── */
+
+/* Plain-text comments keep the writer's own line breaks. */
+.plain {
+	white-space: pre-line;
+}
+
+.richBlocks {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	min-width: 0;
+}
+
+.richList {
+	margin-block: var(--rich-text-block-gap);
+	padding-inline-start: var(--rich-text-list-indent);
+	list-style: disc;
+}
+
+.richListOrdered {
+	list-style: decimal;
+}
+
+.richQuote {
+	padding-inline-start: var(--rich-text-quote-indent);
+	border-inline-start: var(--border-width-strong) solid var(--border);
+	font-style: italic;
+}
+
+.richCite {
+	display: block;
+	margin-top: var(--space-xs);
+	font-style: normal;
+}
+
+.richDelimiter {
+	margin-block: var(--space-xl);
+	border-bottom: var(--border-width) dashed var(--border);
+}

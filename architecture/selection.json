@@ -1,0 +1,773 @@
+{
+  "note": "Hand-authored consumer selection guidance. One entry per family in architecture/manifest.json; verify selection keeps them in step. Alternatives name family ids, never symbols.",
+  "families": {
+    "admin/patterns/access": {
+      "chooseWhen": "Admin screens present credentials, role permissions and destructive confirmations.",
+      "avoidWhen": "You are changing who a resource is shared with.",
+      "alternatives": [
+        "features/resource-assignment",
+        "features/overlays"
+      ]
+    },
+    "admin/patterns/commerce": {
+      "chooseWhen": "Admin screens present orders, invoices, carts, fulfilment and loyalty.",
+      "avoidWhen": "The record is a catalogue product, whose options and readiness live in features/products.",
+      "alternatives": [
+        "features/products"
+      ]
+    },
+    "base/accordion": {
+      "chooseWhen": "Several titled sections share one column and the reader opens them one at a time.",
+      "avoidWhen": "Only one section can collapse, or the panel is a disclosure attached to a control.",
+      "alternatives": [
+        "base/display"
+      ]
+    },
+    "base/action-menu": {
+      "chooseWhen": "A row, card or header offers the same set of actions repeatedly and the overflow must collapse consistently.",
+      "avoidWhen": "You are building a bespoke menu anatomy, or the trigger is a right-click.",
+      "alternatives": [
+        "base/dropdown-menu",
+        "base/context-menu"
+      ]
+    },
+    "base/alert-dialog": {
+      "chooseWhen": "Documenting or extending the alert-dialog anatomy itself inside base.",
+      "avoidWhen": "You are confirming a destructive action in an app — that lifecycle, focus trap and async state belong to ConfirmDialog.",
+      "alternatives": [
+        "features/overlays"
+      ]
+    },
+    "base/aspect-ratio": {
+      "chooseWhen": "A media box must hold a fixed ratio while its width is decided by the layout.",
+      "avoidWhen": "The element already has intrinsic dimensions, or you want a square avatar.",
+      "alternatives": [
+        "base/avatar",
+        "base/upload"
+      ]
+    },
+    "base/avatar": {
+      "chooseWhen": "Showing a person or entity as an image with an initials fallback, alone or stacked.",
+      "avoidWhen": "The image is content rather than identity, or you need an upload affordance.",
+      "alternatives": [
+        "base/upload",
+        "primitives"
+      ]
+    },
+    "base/badge": {
+      "chooseWhen": "A short status or count sits beside the thing it describes and carries a semantic tone.",
+      "avoidWhen": "The text is a full sentence, or the tone is decoration rather than state.",
+      "alternatives": [
+        "base/display",
+        "base/typography"
+      ]
+    },
+    "base/batch-action-bar": {
+      "chooseWhen": "A multi-select produces a selection whose actions must appear without shifting the list.",
+      "avoidWhen": "Actions apply to one row, or the surface is a page-level form.",
+      "alternatives": [
+        "base/action-menu",
+        "base/forms"
+      ]
+    },
+    "base/buttons": {
+      "chooseWhen": "Any activation control — including one that carries a loading state, a tooltip, or sits in a group.",
+      "avoidWhen": "The control navigates and should be an anchor, or it toggles a persistent state.",
+      "alternatives": [
+        "base/typography",
+        "base/toggle"
+      ]
+    },
+    "base/cards": {
+      "chooseWhen": "A surface needs visible chrome — border, padding, header and footer regions.",
+      "avoidWhen": "You are framing reusable content that the call site should frame instead, or the rows are a list.",
+      "alternatives": [
+        "base/item",
+        "base/structure"
+      ]
+    },
+    "base/carousel": {
+      "chooseWhen": "Peer items exceed the width and horizontal paging is the intended reading order.",
+      "avoidWhen": "All items should be visible at once, or the overflow is a tab strip.",
+      "alternatives": [
+        "base/structure",
+        "base/navigation"
+      ]
+    },
+    "base/chart": {
+      "chooseWhen": "Rendering a Recharts chart that must inherit the kit's tokens, legend and tooltip chrome.",
+      "avoidWhen": "The number is a single figure with a trend, or the chart needs a titled card frame.",
+      "alternatives": [
+        "patterns/analytics"
+      ]
+    },
+    "base/choice-inputs": {
+      "chooseWhen": "The user picks from a known, closed set — checkbox, radio, switch or select.",
+      "avoidWhen": "The set is large enough to need filtering, or the values are free text.",
+      "alternatives": [
+        "base/combobox",
+        "base/text-inputs"
+      ]
+    },
+    "base/combobox": {
+      "chooseWhen": "Composing a filtered single- or multi-select from its parts, with options already in memory.",
+      "avoidWhen": "Options arrive from a fetch, or you want the assembled control rather than the anatomy.",
+      "alternatives": [
+        "features/combobox",
+        "base/choice-inputs"
+      ]
+    },
+    "base/command": {
+      "chooseWhen": "A keyboard-first palette lists commands across groups, usually behind a shortcut.",
+      "avoidWhen": "The palette searches application records rather than commands.",
+      "alternatives": [
+        "features/global-search",
+        "base/combobox"
+      ]
+    },
+    "base/context-menu": {
+      "chooseWhen": "The trigger is a right-click on a region that has its own actions.",
+      "avoidWhen": "The trigger is a visible button, or the actions repeat across rows.",
+      "alternatives": [
+        "base/dropdown-menu",
+        "base/action-menu"
+      ]
+    },
+    "base/copyable": {
+      "chooseWhen": "A value exists to be copied — an id, key, or reference — and needs copy feedback.",
+      "avoidWhen": "The value is prose, or the copy affordance belongs to a whole block.",
+      "alternatives": [
+        "primitives"
+      ]
+    },
+    "base/date-pickers": {
+      "chooseWhen": "The user picks a date, range, month or time from a calendar surface.",
+      "avoidWhen": "The date is typed as text, or you are only displaying a date.",
+      "alternatives": [
+        "base/value-inputs",
+        "primitives"
+      ]
+    },
+    "base/dialog": {
+      "chooseWhen": "Documenting or extending the dialog anatomy itself inside base.",
+      "avoidWhen": "You are presenting a modal in an app — the portal, focus trap, scroll lock and async confirm lifecycle belong to features/overlays.",
+      "alternatives": [
+        "features/overlays"
+      ]
+    },
+    "base/direction": {
+      "chooseWhen": "A subtree renders right-to-left and its primitives must follow.",
+      "avoidWhen": "The whole document is RTL and the html element already declares it.",
+      "alternatives": [
+        "ui-provider"
+      ]
+    },
+    "base/display": {
+      "chooseWhen": "Presenting label/key and value facts, a collapsible region, a keyboard hint or a scrollable pane.",
+      "avoidWhen": "The pair is an editable field, or the row carries identity and actions.",
+      "alternatives": [
+        "base/forms",
+        "base/item"
+      ]
+    },
+    "base/dropdown-menu": {
+      "chooseWhen": "Composing a menu anatomy — submenus, radio and checkbox items — from its parts.",
+      "avoidWhen": "You want the assembled row-actions control, or the trigger is a right-click.",
+      "alternatives": [
+        "base/action-menu",
+        "base/context-menu"
+      ]
+    },
+    "base/feedback": {
+      "chooseWhen": "A region reports its own state — informational alert, empty, loading, error, or progress.",
+      "avoidWhen": "The placeholder should mimic the eventual layout, or the message is transient.",
+      "alternatives": [
+        "base/skeleton",
+        "base/toaster"
+      ]
+    },
+    "base/forms": {
+      "chooseWhen": "Assembling a form's visible structure — label, control, support text, sections and an actions bar.",
+      "avoidWhen": "The fields come from a schema, or you only need the binding hooks.",
+      "alternatives": [
+        "features/schema-form",
+        "forms"
+      ]
+    },
+    "base/forms-numeric": {
+      "chooseWhen": "A numeric field carries a unit, currency or precision the input itself must enforce.",
+      "avoidWhen": "The number is plain, or it is being displayed rather than edited.",
+      "alternatives": [
+        "base/text-inputs",
+        "primitives"
+      ]
+    },
+    "base/hover-card": {
+      "chooseWhen": "Hovering a reference reveals a preview the reader does not have to act on.",
+      "avoidWhen": "The content is essential, interactive, or must be reachable by keyboard alone.",
+      "alternatives": [
+        "base/popover",
+        "base/tooltip"
+      ]
+    },
+    "base/input-group": {
+      "chooseWhen": "A control needs an affix inside its border — an icon, unit, prefix button or counter.",
+      "avoidWhen": "The affix is a separate field, or the label belongs above the control.",
+      "alternatives": [
+        "base/text-inputs",
+        "base/forms"
+      ]
+    },
+    "base/item": {
+      "chooseWhen": "A row carries identity — media, title, description and trailing actions — in a list or a menu.",
+      "avoidWhen": "The row is tabular data with aligned columns, or the surface needs card chrome.",
+      "alternatives": [
+        "base/table",
+        "base/cards"
+      ]
+    },
+    "base/label": {
+      "chooseWhen": "Naming a form control so the label and control are associated.",
+      "avoidWhen": "The text is a heading, a static field name, or a value's caption.",
+      "alternatives": [
+        "base/typography",
+        "base/display"
+      ]
+    },
+    "base/menubar": {
+      "chooseWhen": "An application-style menu bar sits persistently across the top of a workspace.",
+      "avoidWhen": "The menu hangs off a single button, or the bar is site navigation.",
+      "alternatives": [
+        "base/dropdown-menu",
+        "base/navigation-menu"
+      ],
+      "composeWith": [
+        "base/dropdown-menu"
+      ]
+    },
+    "base/navigation": {
+      "chooseWhen": "Moving between sibling views or pages — tabs, breadcrumbs, pagination, page heading.",
+      "avoidWhen": "The destinations are application shell regions, or the tabs are saved data views.",
+      "alternatives": [
+        "layout/navigation",
+        "features/data-view"
+      ]
+    },
+    "base/navigation-menu": {
+      "chooseWhen": "Site navigation needs grouped panels of links under top-level triggers.",
+      "avoidWhen": "The items are commands rather than destinations, or the shell owns the navigation.",
+      "alternatives": [
+        "base/menubar",
+        "layout/navigation"
+      ]
+    },
+    "base/otp-input": {
+      "chooseWhen": "A one-time code is entered as separate character cells.",
+      "avoidWhen": "The code is pasted as one string into an ordinary field.",
+      "alternatives": [
+        "base/text-inputs"
+      ]
+    },
+    "base/overlay": {
+      "chooseWhen": "Building a new modal surface inside the kit that must share the dialog/sheet anatomy.",
+      "avoidWhen": "You are consuming the kit — application modals come from features/overlays.",
+      "alternatives": [
+        "features/overlays"
+      ]
+    },
+    "base/popover": {
+      "chooseWhen": "A non-modal panel is anchored to a trigger and may hold interactive content.",
+      "avoidWhen": "The panel is a list of actions, or it must trap focus and block the page.",
+      "alternatives": [
+        "base/popover-menu",
+        "features/overlays"
+      ]
+    },
+    "base/popover-menu": {
+      "chooseWhen": "A popover's content is a simple list of actions and does not need the full menu anatomy.",
+      "avoidWhen": "Items need submenus, checkboxes or radios, or the actions repeat across rows.",
+      "alternatives": [
+        "base/dropdown-menu",
+        "base/action-menu"
+      ]
+    },
+    "base/qr-code": {
+      "chooseWhen": "A value must be scannable on screen or in print.",
+      "avoidWhen": "The value only needs copying to the clipboard rather than scanning off the screen.",
+      "alternatives": [
+        "base/copyable"
+      ]
+    },
+    "base/repeaters": {
+      "chooseWhen": "A field holds a variable-length list the user adds to, reorders or removes from.",
+      "avoidWhen": "The list length is fixed, or the shape comes from a schema.",
+      "alternatives": [
+        "features/schema-form",
+        "base/forms"
+      ]
+    },
+    "base/resizable": {
+      "chooseWhen": "The user sets the split between panes and the size should persist.",
+      "avoidWhen": "The split is fixed by the layout, or the region is a page shell.",
+      "alternatives": [
+        "layout/containers",
+        "base/structure"
+      ]
+    },
+    "base/sheet": {
+      "chooseWhen": "Documenting the sheet anatomy, or inside base where features/overlays cannot be imported.",
+      "avoidWhen": "You are presenting an edge-anchored modal in an app.",
+      "alternatives": [
+        "features/overlays"
+      ]
+    },
+    "base/sidebar": {
+      "chooseWhen": "Composing a collapsible sidebar from its parts, including the mobile presentation.",
+      "avoidWhen": "You want the assembled application sidebar with logo, user and workspace slots.",
+      "alternatives": [
+        "layout/sidebar",
+        "layout/workspace"
+      ]
+    },
+    "base/skeleton": {
+      "chooseWhen": "A placeholder should hold the eventual layout's shape while data loads.",
+      "avoidWhen": "The wait is indeterminate and unstructured, or the region failed.",
+      "alternatives": [
+        "base/spinner",
+        "base/feedback"
+      ]
+    },
+    "base/slot": {
+      "chooseWhen": "Merging props onto a caller-supplied element inside a component's own implementation.",
+      "avoidWhen": "You are consuming the kit — public components take a render prop instead.",
+      "alternatives": [
+        "base/buttons"
+      ]
+    },
+    "base/spinner": {
+      "chooseWhen": "A wait is short and has no layout to preview.",
+      "avoidWhen": "The eventual shape is known, or the wait blocks a whole region.",
+      "alternatives": [
+        "base/skeleton",
+        "base/feedback"
+      ]
+    },
+    "base/structure": {
+      "chooseWhen": "Passive siblings need consistent spacing, a grid, or a stack — with no semantics of their own.",
+      "avoidWhen": "The children form a titled page region, or the arrangement carries meaning.",
+      "alternatives": [
+        "layout/containers",
+        "base/item"
+      ]
+    },
+    "base/table": {
+      "chooseWhen": "Writing table markup directly, with rows you control and no sorting or selection.",
+      "avoidWhen": "The table needs columns, sorting, selection or a toolbar.",
+      "alternatives": [
+        "features/table",
+        "features/data-view"
+      ]
+    },
+    "base/text-inputs": {
+      "chooseWhen": "Free text is typed — plain, multiline, password, search or slug.",
+      "avoidWhen": "The value is numeric with a unit, or picked from a set.",
+      "alternatives": [
+        "base/forms-numeric",
+        "base/choice-inputs"
+      ]
+    },
+    "base/timeline": {
+      "chooseWhen": "Composing a generic vertical sequence of dated entries.",
+      "avoidWhen": "The sequence is a changelog, milestones or a step tracker.",
+      "alternatives": [
+        "patterns/timelines",
+        "features/activities"
+      ]
+    },
+    "base/toaster": {
+      "chooseWhen": "A message is transient, non-blocking, and reports the outcome of an action.",
+      "avoidWhen": "The message belongs to a region, or the user must act on it.",
+      "alternatives": [
+        "base/feedback",
+        "features/overlays"
+      ]
+    },
+    "base/toolbar": {
+      "chooseWhen": "A persistent group of related actions or controls needs one tab stop and arrow-key navigation.",
+      "avoidWhen": "The actions open from a trigger, select one value, or navigate between pages.",
+      "alternatives": [
+        "base/action-menu",
+        "base/toggle",
+        "base/navigation"
+      ]
+    },
+    "base/toggle": {
+      "chooseWhen": "A control holds a pressed state, alone or as one of a mutually exclusive group.",
+      "avoidWhen": "The state is a form value that submits, or the control performs an action.",
+      "alternatives": [
+        "base/choice-inputs",
+        "base/buttons"
+      ]
+    },
+    "base/tooltip": {
+      "chooseWhen": "A short, non-essential hint labels a control on hover or focus.",
+      "avoidWhen": "The content is interactive, long, or required to understand the control.",
+      "alternatives": [
+        "base/popover",
+        "base/hover-card"
+      ]
+    },
+    "base/typography": {
+      "chooseWhen": "Rendering library-owned copy in a role — heading, body, label, link or sanitized rich text.",
+      "avoidWhen": "The text is a formatted data value rather than prose.",
+      "alternatives": [
+        "primitives"
+      ]
+    },
+    "base/upload": {
+      "chooseWhen": "The user contributes files — dropzone, avatar, image, or a tray with progress.",
+      "avoidWhen": "Existing assets are being browsed and picked rather than added.",
+      "alternatives": [
+        "features/media-library"
+      ]
+    },
+    "base/value-inputs": {
+      "chooseWhen": "A single typed value needs a specialised editor — colour, datetime, phone, slider or tags.",
+      "avoidWhen": "The value is plain text or a number with a unit.",
+      "alternatives": [
+        "base/text-inputs",
+        "base/forms-numeric"
+      ]
+    },
+    "features/actions": {
+      "chooseWhen": "The same operation runs from a table row, a card menu and the command palette, and all three must get one confirm, one loading state and one error path.",
+      "avoidWhen": "One surface owns the action and nothing else invokes it — a registry then adds indirection for a single caller.",
+      "alternatives": [
+        "features/overlays",
+        "base/action-menu"
+      ]
+    },
+    "features/activities": {
+      "chooseWhen": "An audit or activity log renders actor, change and time, grouped by day.",
+      "avoidWhen": "The entries are milestones or a changelog, or the thread is a discussion.",
+      "alternatives": [
+        "patterns/timelines",
+        "features/comments"
+      ]
+    },
+    "features/ai-chat": {
+      "chooseWhen": "A conversational surface streams assistant messages, tool calls, artifacts and attachments.",
+      "avoidWhen": "The thread is human discussion on a record, or the input is a single prompt field.",
+      "alternatives": [
+        "features/comments",
+        "features/rich-text-editor"
+      ]
+    },
+    "features/async-preview": {
+      "chooseWhen": "A trigger fetches its content when it opens, and needs loading, empty and error states.",
+      "avoidWhen": "The content is already loaded, or the surface is modal.",
+      "alternatives": [
+        "base/popover",
+        "features/overlays"
+      ]
+    },
+    "features/combobox": {
+      "chooseWhen": "Options arrive from a fetch, the field selects application resources, or it proposes completions as the user types.",
+      "avoidWhen": "The options are a small in-memory list, you are composing a bespoke anatomy, or a trigger character inserts entities into text.",
+      "alternatives": [
+        "base/combobox",
+        "base/choice-inputs",
+        "features/mentions"
+      ]
+    },
+    "features/comments": {
+      "chooseWhen": "People discuss a record in a thread, with a composer and attachments.",
+      "avoidWhen": "The entries are system-generated, or the conversation is with an assistant.",
+      "alternatives": [
+        "features/activities",
+        "features/ai-chat"
+      ]
+    },
+    "features/data-view": {
+      "chooseWhen": "One dataset is presented through switchable views with saved tabs, a toolbar and pagination.",
+      "avoidWhen": "There is one table and no view switching, or you need the table body alone.",
+      "alternatives": [
+        "features/table",
+        "base/table"
+      ]
+    },
+    "features/event-calendar": {
+      "chooseWhen": "Events are placed on a calendar the user navigates by period.",
+      "avoidWhen": "The user is picking a date, or the sequence is chronological rather than spatial.",
+      "alternatives": [
+        "base/date-pickers",
+        "patterns/timelines"
+      ]
+    },
+    "features/filters": {
+      "chooseWhen": "Users build predicates over fields, with operators, editors and pills.",
+      "avoidWhen": "Filtering is one search box, or the choices are fixed tabs.",
+      "alternatives": [
+        "features/data-view",
+        "base/text-inputs"
+      ]
+    },
+    "features/global-search": {
+      "chooseWhen": "One search surface spans record types, with tabs, idle and empty states.",
+      "avoidWhen": "The palette lists commands, or the search scopes one collection.",
+      "alternatives": [
+        "base/command",
+        "features/combobox"
+      ]
+    },
+    "features/kanban": {
+      "chooseWhen": "Records move between columns by dragging, and the board owns that state.",
+      "avoidWhen": "The columns are read-only, or ordering is a table sort.",
+      "alternatives": [
+        "features/data-view",
+        "features/table"
+      ]
+    },
+    "features/map": {
+      "chooseWhen": "Geographic data is displayed or drawn, including markers, shapes and draw controls.",
+      "avoidWhen": "The location is a single coordinate value to read or type.",
+      "alternatives": [
+        "primitives",
+        "base/forms-numeric"
+      ]
+    },
+    "features/media-library": {
+      "chooseWhen": "Existing assets are browsed, previewed, searched and picked.",
+      "avoidWhen": "The user is contributing new files, or one image is being replaced.",
+      "alternatives": [
+        "base/upload"
+      ]
+    },
+    "features/mentions": {
+      "chooseWhen": "Typing a trigger character suggests entities and inserts them as chips.",
+      "avoidWhen": "The field selects one resource up front, or the suggestions are commands.",
+      "alternatives": [
+        "features/combobox"
+      ]
+    },
+    "features/overlays": {
+      "chooseWhen": "Any application modal — dialog, sheet or confirmation — including its async confirm lifecycle.",
+      "avoidWhen": "The panel is non-modal and anchored to its trigger.",
+      "alternatives": [
+        "base/popover",
+        "features/async-preview"
+      ]
+    },
+    "features/products": {
+      "chooseWhen": "Presenting catalogue records — options, readiness, policies and quotes — in the admin profile.",
+      "avoidWhen": "The record is an order, invoice or shipment.",
+      "alternatives": [
+        "admin/patterns/commerce",
+        "features/resource"
+      ]
+    },
+    "features/resource": {
+      "chooseWhen": "A record's index or show page needs its standard shell — header, actions bar and sections.",
+      "avoidWhen": "The page is a workspace shell, or the content is one table.",
+      "alternatives": [
+        "layout/page",
+        "features/data-view"
+      ]
+    },
+    "features/resource-assignment": {
+      "chooseWhen": "A resource is shared with or assigned to principals through a dialog.",
+      "avoidWhen": "You are displaying permissions rather than changing them.",
+      "alternatives": [
+        "admin/patterns/access",
+        "features/overlays"
+      ]
+    },
+    "features/rich-text-editor/tiptap": {
+      "chooseWhen": "Configure a custom TipTap engine or schema for RichTextEditor; the default editor already uses TipTap.",
+      "avoidWhen": "The default StarterKit and mention schema already meets the editing requirements.",
+      "alternatives": [
+        "features/rich-text-editor"
+      ]
+    },
+    "features/rich-text-editor": {
+      "chooseWhen": "Users author formatted content with a toolbar and counts.",
+      "avoidWhen": "The input is plain multiline text, or the content is only displayed.",
+      "alternatives": [
+        "base/text-inputs",
+        "base/typography"
+      ]
+    },
+    "features/schema-form": {
+      "chooseWhen": "Fields are generated from a schema at runtime rather than written by hand.",
+      "avoidWhen": "The form is known at build time, or you only need field structure.",
+      "alternatives": [
+        "base/forms",
+        "forms-rhf"
+      ]
+    },
+    "features/sync": {
+      "chooseWhen": "A synchronisation run is configured over a date range.",
+      "avoidWhen": "The form is a general-purpose date range field.",
+      "alternatives": [
+        "base/date-pickers"
+      ]
+    },
+    "features/table": {
+      "chooseWhen": "A table needs columns, sorting, selection, cell renderers and a toolbar.",
+      "avoidWhen": "The dataset needs several saved views, or you are writing table markup directly.",
+      "alternatives": [
+        "features/data-view",
+        "base/table"
+      ]
+    },
+    "features/theme-tweaker": {
+      "chooseWhen": "Users change theme, density or scale at runtime and the result must persist.",
+      "avoidWhen": "Defaults are set once at the root and never change.",
+      "alternatives": [
+        "ui-provider"
+      ]
+    },
+    "forms": {
+      "chooseWhen": "Binding a field to state you already own, without a form library.",
+      "avoidWhen": "React Hook Form owns the state, or the fields come from a schema.",
+      "alternatives": [
+        "forms-rhf",
+        "features/schema-form"
+      ]
+    },
+    "forms-rhf": {
+      "chooseWhen": "React Hook Form owns the form state and the kit's fields must bind to it.",
+      "avoidWhen": "The state is plain React, or the form is generated from a schema.",
+      "alternatives": [
+        "forms",
+        "features/schema-form"
+      ]
+    },
+    "theming": {
+      "chooseWhen": "Synthesising a theme from one brand colour, or measuring which foreground is readable on a background.",
+      "avoidWhen": "Users pick the theme at runtime, or the values are known and can simply be declared in CSS.",
+      "alternatives": [
+        "features/theme-tweaker",
+        "ui-provider"
+      ]
+    },
+    "index": {
+      "chooseWhen": "Prototyping, where one import is worth more than a small bundle.",
+      "avoidWhen": "Shipping to production — exact subpaths keep the CSS and JS you actually use.",
+      "alternatives": [
+        "base/buttons",
+        "primitives"
+      ]
+    },
+    "layout/app-shell": {
+      "chooseWhen": "The application needs its outermost frame — a sidebar with an inset, a stacked header over content, or a topbar with a collapsible rail beneath it.",
+      "avoidWhen": "You are inside a shell already and want a region of the page: a titled section, a width constraint, or a two-column split.",
+      "alternatives": [
+        "layout/containers",
+        "base/sidebar",
+        "layout/workspace"
+      ]
+    },
+    "layout/auth": {
+      "chooseWhen": "Sign-in, registration and recovery pages share a centred card and optional split panel.",
+      "avoidWhen": "The page sits inside the authenticated shell.",
+      "alternatives": [
+        "layout/page",
+        "layout/containers"
+      ]
+    },
+    "layout/containers": {
+      "chooseWhen": "A page region needs width constraint, a titled section, or a two-column split.",
+      "avoidWhen": "The children are peers needing only spacing, or the region is the app shell.",
+      "alternatives": [
+        "base/structure",
+        "layout/workspace"
+      ]
+    },
+    "layout/header": {
+      "chooseWhen": "The application header carries breadcrumbs, search, notifications and the user menu.",
+      "avoidWhen": "The heading names a page rather than the application.",
+      "alternatives": [
+        "layout/page",
+        "base/navigation"
+      ]
+    },
+    "layout/navigation": {
+      "chooseWhen": "The shell's own navigation — side, section or category — positions destinations.",
+      "avoidWhen": "The user moves between sibling views inside one page.",
+      "alternatives": [
+        "base/navigation",
+        "layout/sidebar"
+      ]
+    },
+    "layout/page": {
+      "chooseWhen": "A page needs its title, description and primary actions in the standard arrangement.",
+      "avoidWhen": "The page is a record's index or show view with a fuller shell.",
+      "alternatives": [
+        "features/resource",
+        "layout/containers"
+      ]
+    },
+    "layout/settings": {
+      "chooseWhen": "Settings pages share an aside navigation beside their content.",
+      "avoidWhen": "The navigation is the application sidebar, or the sections are tabs.",
+      "alternatives": [
+        "layout/navigation",
+        "base/navigation"
+      ]
+    },
+    "layout/sidebar": {
+      "chooseWhen": "The assembled application sidebar with logo, workspace switcher and user footer.",
+      "avoidWhen": "You are composing a bespoke sidebar from its parts.",
+      "alternatives": [
+        "base/sidebar",
+        "layout/workspace"
+      ]
+    },
+    "layout/workspace": {
+      "chooseWhen": "The whole authenticated shell — sidebar, header and content — is assembled at once.",
+      "avoidWhen": "You are placing one region, or the page is unauthenticated.",
+      "alternatives": [
+        "layout/sidebar",
+        "layout/auth"
+      ]
+    },
+    "patterns/analytics": {
+      "chooseWhen": "Figures are summarised — metric tiles, trends, comparisons, a heatmap or a titled chart card.",
+      "avoidWhen": "You are rendering the chart itself with no framing.",
+      "alternatives": [
+        "base/chart"
+      ]
+    },
+    "patterns/onboarding": {
+      "chooseWhen": "A checklist tracks setup tasks the user completes over time.",
+      "avoidWhen": "The steps are one linear flow with a current position.",
+      "alternatives": [
+        "patterns/timelines"
+      ]
+    },
+    "patterns/timelines": {
+      "chooseWhen": "A sequence is presented as changelog entries, milestones, or a step tracker.",
+      "avoidWhen": "The entries are a system audit log, or the sequence is a calendar.",
+      "alternatives": [
+        "features/activities",
+        "base/timeline"
+      ]
+    },
+    "primitives": {
+      "chooseWhen": "Displaying or formatting exactly one read-only value — currency/money, date, email, file size, initials — with no interaction.",
+      "avoidWhen": "The value is editable, or the text is prose in a typographic role.",
+      "alternatives": [
+        "base/typography",
+        "base/text-inputs"
+      ]
+    },
+    "ui-provider": {
+      "chooseWhen": "Setting display defaults, theme, density and scale for the app or a subtree.",
+      "avoidWhen": "The value is per-feature policy or domain data, which stays a prop.",
+      "alternatives": [
+        "features/theme-tweaker"
+      ]
+    }
+  }
+}

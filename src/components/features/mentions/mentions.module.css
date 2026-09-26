@@ -1,0 +1,183 @@
+/*
+ * The two mention surfaces. The chip itself is global in styles/mentions.css, because the
+ * editor renders it as raw HTML.
+ */
+
+/* ── The suggestion panel ─────────────────────────────────────────────────────── */
+
+.panel {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	width: calc(22rem * var(--scale));
+	max-width: min(100%, calc(100vw - var(--space-xl)));
+	overflow: hidden;
+}
+
+/*
+ * The inline panel is absolute against a wrapper the consumer marks relative (not fixed,
+ * not portaled), so it scrolls with its editor. The picker is placed by its popover.
+ */
+.panelInline {
+	--mention-available-height: 24rem;
+	position: absolute;
+	inset-inline-start: 0;
+	top: 100%;
+	/* `top` is flipped by [data-placement="top"]; the z-index is the popover level (it is a menu). */
+	z-index: var(--z-popover);
+	margin-top: var(--space-xs);
+	max-height: min(var(--mention-available-height, 24rem), 24rem);
+	border-radius: var(--radius);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
+	box-shadow: var(--popover-shadow);
+}
+
+/*
+ * Flipped when there is no room below. `top: auto` must be stated to undo `top: 100%`, and
+ * the margin swaps sides so the gap stays next to the editor.
+ */
+.panelInline[data-placement="top"] {
+	top: auto;
+	bottom: 100%;
+	margin-top: 0;
+	margin-bottom: var(--space-xs);
+}
+
+.panelHeader {
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+/* The needle, echoed back so the writer can see what the panel thinks they typed. */
+.panelQuery {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: var(--font-mono);
+}
+
+/* ── Kind tabs ─────────────────────────────────────────────────────────────────── */
+
+.tabs {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: var(--space-xs);
+	min-width: 0;
+	overflow-x: auto;
+}
+
+.tab {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1 0 auto;
+	gap: var(--space-xs);
+	min-height: var(--control-h-sm);
+	padding: var(--space-xs) var(--space-sm);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted-foreground);
+	font: inherit;
+	cursor: pointer;
+}
+
+.tab:hover, .tab[data-active] {
+	background-color: var(--accent);
+	color: var(--foreground);
+}
+
+.tab:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* ── Rows ──────────────────────────────────────────────────────────────────────── */
+
+.list {
+	display: flex;
+	flex-direction: column;
+	/* A hair between rows so adjacent hover fills never merge. */
+	gap: var(--space-2xs);
+	max-height: calc(18rem * var(--scale));
+	padding: var(--surface-py-xs) var(--surface-px-xs);
+	min-height: 0;
+	overscroll-behavior: contain;
+	overflow-y: auto;
+}
+
+.listState {
+	align-items: center;
+	justify-content: center;
+	padding-block: var(--space-2xl);
+	text-align: center;
+}
+
+.list .row {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: var(--space-md);
+	width: 100%;
+	min-width: 0;
+	min-height: var(--menu-row-min-h);
+	padding: var(--menu-row-py) var(--row-px);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+.row:hover,
+.row[aria-selected="true"],
+.row:focus-visible {
+	background-color: var(--accent);
+}
+
+.row:focus-visible {
+	outline: none;
+}
+
+.rowIcon {
+	flex-shrink: 0;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	color: var(--muted-foreground);
+}
+
+.rowText {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	/* Keep a gap so the label and its description read as two lines. */
+	gap: var(--space-2xs);
+	min-width: 0;
+	line-height: var(--leading-tight);
+}
+
+
+/* ── Picker ────────────────────────────────────────────────────────────────────── */
+
+/* The popover draws the surface; the command inside must not draw a second. */
+.command {
+	padding: 0;
+	border-radius: 0;
+	background: none;
+}
+
+.commandList {
+	padding: 0;
+}
+
+.command [data-slot="command-input-wrapper"] {
+	padding: var(--surface-py-xs) var(--surface-px-xs) 0;
+}

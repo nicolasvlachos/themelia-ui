@@ -1,0 +1,118 @@
+/*
+ * Sizing — global measurement tokens. Hand-maintained; one variable per measurement.
+ *
+ * Derives from the raw inputs in styles/tokens and styles/themes (--height-control,
+ * --control-x, --icon, --avatar, --surface-x/y, --row-x/y, --density-scale).
+ * Derived tokens: declared at every scope boundary (styles/SCOPES.md).
+ */
+
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/*
+	 * Component line height in pixels, not a ratio: a component that sets its own font-size
+	 * would otherwise inherit a fractional line box and centre glyphs on half pixels. For
+	 * self-bounded chips, tags and badges; prose keeps the ratios.
+	 */
+	--leading-12: 1rem;
+	/*
+	 * WCAG 2.2 minimum target size (24px). A smaller control extends its hit area with a
+	 * pseudo-element instead of growing.
+	 */
+	--hit-area-min: 1.5rem;
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+
+	/* Spacing ladder — 2, 4, 6, 8, 12, 16, 24px at the default density. */
+	--space-2xs: round(calc(0.125rem * var(--density-scale, var(--scale))), 1px);
+	--space-xs: round(calc(0.25rem * var(--density-scale, var(--scale))), 1px);
+	--space-sm: round(calc(0.375rem * var(--density-scale, var(--scale))), 1px);
+	--space-md: round(calc(0.5rem * var(--density-scale, var(--scale))), 1px);
+	--space-lg: round(calc(0.75rem * var(--density-scale, var(--scale))), 1px);
+	--space-xl: round(calc(1rem * var(--density-scale, var(--scale))), 1px);
+	--space-2xl: round(calc(1.5rem * var(--density-scale, var(--scale))), 1px);
+
+	/*
+	 * Control heights: 24, 30, 34px at the defaults. Density-scaled lengths round to whole
+	 * pixels so no preset lands between two.
+	 */
+	--control-h-2xs: round(calc(var(--height-control) * 0.7058824 * var(--density-scale, var(--scale))), 1px);
+	--control-h-sm: round(calc(var(--height-control) * 0.8823529 * var(--density-scale, var(--scale))), 1px);
+	--control-h: round(calc(var(--height-control) * var(--density-scale, var(--scale))), 1px);
+
+	/* Control inline padding from --control-x: 8, 10, 12px at the defaults. */
+	--control-px-2xs: round(calc(var(--control-x) * 0.6666667 * var(--density-scale, var(--scale))), 1px);
+	--control-px-sm: round(calc(var(--control-x) * 0.8333333 * var(--density-scale, var(--scale))), 1px);
+	--control-px: round(calc(var(--control-x) * var(--density-scale, var(--scale))), 1px);
+
+	/*
+	 * Icon sizes from --icon. Which step:
+	 *   sm    a dense row's furniture: chevron, caret, separator, metadata glyph
+	 *   md    a row icon that carries meaning rather than direction
+	 *   base  an icon beside body text or inside a control (Button derives from --icon)
+	 *   lg    a standalone icon that is the subject of its block
+	 * Size icons in CSS, never with a numeric `size` prop, which escapes density and
+	 * overrides; verify composition's `literal-icon-size` rule rejects one.
+	 */
+	--size-icon-sm: round(calc(var(--icon) * 0.75 * var(--density-scale, var(--scale))), 1px);
+	--size-icon-md: round(calc(var(--icon) * 0.875 * var(--density-scale, var(--scale))), 1px);
+	--size-icon: round(calc(var(--icon) * var(--density-scale, var(--scale))), 1px);
+	--size-icon-lg: round(calc(var(--icon) * 1.25 * var(--density-scale, var(--scale))), 1px);
+	/* Decorative sizes for illustration: an empty state's glyph, a dropzone's arrow. */
+	--size-icon-xl: round(calc(var(--icon) * 1.5 * var(--density-scale, var(--scale))), 1px);
+	--size-icon-2xl: round(calc(var(--icon) * 2.5 * var(--density-scale, var(--scale))), 1px);
+	/*
+	 * The medallion: the tinted glyph box or thumbnail at the head of a row (IconBadge,
+	 * accordion media, choice-card icon, Item image, file-row thumbnail). One size, so a
+	 * list mixing icons and images aligns.
+	 */
+	--size-medallion: round(calc(2.5rem * var(--density-scale, var(--scale))), 1px);
+	--size-avatar-sm: round(calc(var(--avatar) * 0.75 * var(--density-scale, var(--scale))), 1px);
+	--size-avatar: round(calc(var(--avatar) * var(--density-scale, var(--scale))), 1px);
+	--size-avatar-lg: round(calc(var(--avatar) * 1.25 * var(--density-scale, var(--scale))), 1px);
+
+	/*
+	 * Surface padding for cards and multi-content surfaces, from --surface-x / --surface-y:
+	 * 8, 16, 28px at the defaults. Table cells take --surface-px inline too, so they align
+	 * with the table's toolbar and footer.
+	 */
+	--surface-px-xs: round(calc(var(--surface-x) * 0.5 * var(--density-scale, var(--scale))), 1px);
+	--surface-px: round(calc(var(--surface-x) * var(--density-scale, var(--scale))), 1px);
+	--surface-px-lg: round(calc(var(--surface-x) * 1.75 * var(--density-scale, var(--scale))), 1px);
+	--surface-py-xs: round(calc(var(--surface-y) * 0.5 * var(--density-scale, var(--scale))), 1px);
+	--surface-py: round(calc(var(--surface-y) * var(--density-scale, var(--scale))), 1px);
+	--surface-py-lg: round(calc(var(--surface-y) * 1.75 * var(--density-scale, var(--scale))), 1px);
+
+
+	/*
+	 * Menu rows: one rhythm for the dropdown menu, popover menu, command list and select
+	 * list, so menus seen side by side match. The inline inset is --row-px.
+	 * 4px block inset, not 5: verify token-budget holds lengths to a 2px grid.
+	 */
+	--menu-row-py: round(calc(0.25rem * var(--density-scale, var(--scale))), 1px);
+	/*
+	 * A literal, deliberately not --height-control: a list row is not a button, and the
+	 * coupling would retune every menu whenever the button height changes.
+	 */
+	--menu-row-min-h: round(calc(2rem * var(--density-scale, var(--scale))), 1px);
+
+	/*
+	 * No popup-inset token: a popup insets its rows by --radius minus --radius-sm
+	 * (--space-md at the defaults) so they sit concentric in it.
+	 */
+
+	/* Row insets for list, menu and command rows, from --row-x / --row-y. */
+	--row-px: round(calc(var(--row-x) * var(--density-scale, var(--scale))), 1px);
+	--row-py: round(calc(var(--row-y) * var(--density-scale, var(--scale))), 1px);
+
+	/*
+	 * Taller than a body row, so the head reads as chrome. Global rather than in
+	 * table.module.css: TableSkeleton reserves exactly this height and can load without it.
+	 */
+	--table-head-h: round(calc(3rem * var(--density-scale, var(--scale))), 1px);
+}

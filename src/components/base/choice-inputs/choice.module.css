@@ -1,0 +1,699 @@
+/*
+ * Choice inputs — checkbox, radio, switch, plus card, list and pill groups.
+ * The three controls share one size token so mixed controls on a row stay related.
+ */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/* Card-grid track floor; a variable because .columns2/3/4 re-point it. */
+	--choice-card-min: 12rem;
+	/* Gap between the switch track and its thumb. */
+	--switch-thumb-inset: 2px;
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/*
+	 * Checkbox/radio box and switch track height. No size prop: the density factor drives
+	 * all three. Rounded to whole pixels — a fractional box renders soft, lopsided edges.
+	 */
+	--choice-size: round(calc(1.125rem * var(--density-scale, var(--scale))), 1px);
+
+	/* List-group marker dot. */
+	--choice-list-marker-dot: round(calc(0.625rem * var(--density-scale, var(--scale))), 1px);
+}
+
+/*
+ * The visible control is a sibling of a visually-hidden native input, so keyboard,
+ * form participation and labelling come from the platform; `:checked + .control` styles it.
+ */
+
+.field {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-md);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	cursor: pointer;
+	/* Align the control to the label's first line, not the centre of a wrapped block. */
+	align-items: flex-start;
+}
+
+/*
+ * Centre the control on the label's first line box (`1lh`), at any scale or leading, on a
+ * whole pixel: the type ramp's line boxes are fractional, and a half-pixel edge blurs.
+ */
+.control {
+	margin-top: round(calc((1lh - var(--choice-size)) / 2), 1px);
+}
+
+/* The label takes the remaining width so long text wraps beside the control, not under. */
+.label {
+	min-width: 0;
+}
+
+.field:has(input:disabled) {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+/* Hidden, not `display: none`: a removed input can't take focus or submit with the form. */
+.input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	margin: 0;
+	pointer-events: none;
+}
+
+.control {
+	position: relative;
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	border: var(--border-width) solid var(--control-border);
+	background-color: var(--field-bg);
+	transition: var(--transition-control);
+}
+
+.input:focus-visible + .control {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--focus-ring);
+}
+
+.input:checked + .radio {
+	border-color: var(--primary-accent);
+}
+
+/* Hover never repaints an invalid edge. */
+.field:hover .input:not(:checked):not(:disabled):not([aria-invalid="true"]) + .control {
+	border-color: var(--control-border-hover);
+}
+
+/*
+ * Invalid is drawn, not only announced. Focus takes the ring; invalid keeps the border.
+ * `.field` lifts it over the checked checkbox's border further down.
+ */
+.field .input[aria-invalid="true"] + .control {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.field .input[aria-invalid="true"]:focus-visible + .control {
+	box-shadow: var(--focus-ring);
+}
+
+/*
+ * Forced colors: the global focus restoration (styles/forced-colors.css) outlines the
+ * focused element, which here is the invisible .input — so ring the sibling control.
+ */
+@media (forced-colors: active) {
+	.input:focus-visible + .control {
+		outline: var(--focus-ring-width) solid Highlight;
+		outline-offset: 2px;
+	}
+}
+
+/* ── Checkbox ─────────────────────────────────────────────────────────────────── */
+
+.checkbox {
+	width: var(--choice-size);
+	height: var(--choice-size);
+	/* The item radius, like every control; a radio is the circle. */
+	border-radius: var(--radius-sm);
+}
+
+.input:checked + .checkbox,
+.input:indeterminate + .checkbox {
+	background-color: var(--primary);
+	border-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
+/*
+ * Both marks stack in one cell and swap by opacity. Inset and thickened so Lucide's
+ * 24-unit glyph fills the small box.
+ */
+.mark {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	padding: 12%;
+	opacity: 0;
+	stroke-width: 3.5;
+}
+
+.input:checked + .checkbox .checkMark,
+.input:indeterminate + .checkbox .dashMark {
+	opacity: 1;
+}
+
+/* Indeterminate outranks checked: a partially-selected group is not "on". */
+.input:indeterminate + .checkbox .checkMark {
+	opacity: 0;
+}
+
+/* ── Radio ────────────────────────────────────────────────────────────────────── */
+
+.radio {
+	width: var(--choice-size);
+	height: var(--choice-size);
+	border-radius: 50%;
+}
+
+.dot {
+	width: 50%;
+	height: 50%;
+	fill: var(--primary-accent);
+	stroke: var(--primary-accent);
+	opacity: 0;
+	transform: scale(0.5);
+	transition:
+		opacity var(--duration-instant) var(--ease-out),
+		transform var(--duration-fast) var(--ease-out);
+}
+
+.input:checked + .radio .dot {
+	opacity: 1;
+	transform: scale(1);
+}
+
+/* ── Switch ───────────────────────────────────────────────────────────────────── */
+
+/*
+ * The switch's copy of the `.control` nudge. Every `.switch` rule stays in this section:
+ * `verify css-collisions` cannot tell a split rule from a collision across a banner.
+ */
+.switch {
+	margin-top: round(calc((1lh - var(--choice-size)) / 2), 1px);
+}
+
+.switch {
+	width: round(calc(1.875rem * var(--density-scale, var(--scale))), 1px);
+	height: var(--choice-size);
+	border-radius: var(--radius-pill);
+	background-color: var(--control-border);
+	border-color: transparent;
+	justify-content: flex-start;
+	padding: var(--switch-thumb-inset);
+}
+
+.field:hover .input:not(:checked):not(:disabled) + .switch {
+	background-color: var(--control-border-hover);
+}
+
+.thumb {
+	display: block;
+	aspect-ratio: 1;
+	height: 100%;
+	border-radius: 50%;
+	background-color: var(--background);
+	box-shadow: var(--shadow-xs);
+	transition: translate var(--duration-fast) var(--ease-out);
+}
+
+.input:checked + .switch {
+	background-color: var(--primary);
+}
+
+/* The thumb travels the track width minus its own, correct at every size. */
+.input:checked + .switch .thumb {
+	translate: calc(100cqw - 100%) 0;
+}
+
+.switch {
+	container-type: inline-size;
+}
+
+/* ══ Choice surfaces ═══════════════════════════════════════════════════════════════
+ *
+ * Card, list and pill groups: one choice at three densities, sharing one selected
+ * treatment so mixed groups on a page read as one product.
+ */
+
+/* ── Card groups ──────────────────────────────────────────────────────────────── */
+
+/*
+ * Columns from `auto-fit`, not a container query: a query wrapper around the grid is sized
+ * from Chrome's first (one-column) layout pass and keeps the dead height.
+ * The floor is a bare length: `minmax(min(100%, X), 1fr)` resolves against an indefinite
+ * size in the intrinsic pass and collapses to one column. `.card { min-width: 0 }` covers
+ * narrow containers instead. Floors are container widths, not viewport widths.
+ */
+.cardGrid {
+	display: grid;
+	/* Definite width, so a wrapping flex parent can't size the grid from max-content. */
+	width: 100%;
+	gap: var(--space-lg);
+	grid-template-columns: repeat(auto-fit, minmax(var(--choice-card-min), 1fr));
+}
+
+.columns1 { grid-template-columns: minmax(0, 1fr); }
+.columns2 { --choice-card-min: 16rem; }
+.columns3 { --choice-card-min: 12rem; }
+.columns4 { --choice-card-min: 9rem; }
+
+.card {
+	position: relative;
+	display: flex;
+	width: 100%;
+	min-width: 0;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-md);
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	text-align: start;
+	cursor: pointer;
+	outline: none;
+	transition:
+		color var(--duration-fast) var(--ease-in-out),
+		background-color var(--duration-fast) var(--ease-in-out),
+		border-color var(--duration-fast) var(--ease-in-out),
+		box-shadow var(--duration-fast) var(--ease-in-out);
+}
+
+/* Inside a card a choice surface steps down to the control radius so the curves nest. */
+:global([data-slot="card"]) .card,
+:global([data-slot="card"]) .switchCard {
+	border-radius: var(--radius-sm);
+}
+
+/* Hover leaves a selected or invalid card alone: selection outranks hover. */
+.card:hover:not(:disabled):not([data-checked]):not([data-selected="true"]):not([aria-invalid="true"]) {
+	border-color: var(--foreground-20);
+	background-color: var(--accent-50);
+}
+
+.card:focus-visible {
+	box-shadow: var(--focus-ring);
+}
+
+.card[data-checked],
+.card[data-selected="true"] {
+	border-color: var(--primary);
+	background-color: var(--primary-5);
+}
+
+.card[aria-invalid="true"] {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.card[aria-invalid="true"]:focus-visible {
+	box-shadow: var(--focus-ring);
+}
+
+.card:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+.cardMark {
+	position: absolute;
+	top: var(--space-md);
+	inset-inline-end: var(--space-md);
+	width: var(--size-icon);
+	height: var(--size-icon);
+	color: var(--primary-foreground);
+	fill: var(--primary);
+	stroke: var(--primary-foreground);
+}
+
+.cardIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-medallion);
+	height: var(--size-medallion);
+	/* Media within a surface: tighter than the card around it, not the same 12px. */
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground-8);
+	color: var(--muted-foreground);
+	transition:
+		background-color var(--duration-fast) var(--ease-in-out),
+		color var(--duration-fast) var(--ease-in-out);
+}
+
+.cardIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.card[data-checked] .cardIcon,
+.card[data-selected="true"] .cardIcon {
+	background-color: var(--primary-10);
+	color: var(--primary-accent);
+}
+
+/* ── List group ───────────────────────────────────────────────────────────────── */
+
+.list {
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+}
+
+.list[aria-invalid="true"] {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.list[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.listRow {
+	display: flex;
+	width: 100%;
+	align-items: flex-start;
+	gap: var(--space-lg);
+	padding: var(--space-lg) var(--surface-px);
+	text-align: start;
+	cursor: pointer;
+	outline: none;
+	transition: background-color var(--duration-fast) var(--ease-in-out);
+}
+
+.listRow + .listRow {
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+.listRow:hover:not([data-disabled]):not([data-checked]) {
+	background-color: var(--accent-50);
+}
+
+/* Inset ring: `.list` clips its corners and would erase an outer one. */
+.listRow:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring-inset);
+}
+
+.listRow[data-checked] {
+	background-color: var(--primary-10);
+}
+
+.listRow[data-disabled] {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+/* Drawn, not the plain radio: the whole row is the target, so the marker has no input. */
+.listMarker {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	/* The plain radio's size and border contrast. */
+	width: var(--choice-size);
+	height: var(--choice-size);
+	margin-top: round(calc((1lh - var(--choice-size)) / 2), 1px);
+	border: var(--border-width) solid var(--control-border);
+	border-radius: 50%;
+	transition: border-color var(--duration-fast) var(--ease-in-out);
+}
+
+.listRow[data-checked] .listMarker {
+	border-color: var(--primary-accent);
+}
+
+.listMarkerDot {
+	width: var(--choice-list-marker-dot);
+	height: var(--choice-list-marker-dot);
+	fill: var(--primary-accent);
+	stroke: var(--primary-accent);
+	opacity: 0;
+	transform: scale(0.5);
+	transition:
+		opacity var(--duration-instant) var(--ease-out),
+		transform var(--duration-fast) var(--ease-out);
+}
+
+.listRow[data-checked] .listMarkerDot {
+	opacity: 1;
+	transform: scale(1);
+}
+
+/* ── Pill group ───────────────────────────────────────────────────────────────── */
+
+/*
+ * An inset frame, like the attached ToggleGroup: one framed control, one control row tall,
+ * with the pills inset from its edge. `auto`, not `hidden`, so options past the edge stay
+ * reachable.
+ */
+.pillGroup {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: var(--space-2xs);
+	border: var(--border-width) solid var(--control-border);
+	/* Control radius, not a pill, to sit beside buttons and inputs. */
+	border-radius: var(--radius-sm);
+}
+
+.pillGroupFullWidth {
+	display: flex;
+	width: 100%;
+}
+
+.pillGroup[aria-invalid="true"] {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.pillGroup[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-sm);
+	/* Inside the group's inset and border, so the whole group is one control row tall. */
+	height: calc(var(--control-h) - var(--space-2xs) * 2 - var(--border-width) * 2);
+	padding-inline: var(--control-px);
+	border: 0;
+	/* Concentric with the frame: its radius less the inset. */
+	border-radius: calc(var(--radius-sm) - var(--space-2xs));
+	background-color: var(--field-bg);
+	color: var(--foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	font-weight: var(--weight-medium);
+	white-space: nowrap;
+	cursor: pointer;
+	outline: none;
+	transition: background-color var(--duration-fast) var(--ease-in-out);
+}
+
+.pillFullWidth {
+	flex: 1;
+}
+
+.pill:hover:not(:disabled):not([aria-checked="true"]) {
+	background-color: var(--accent);
+}
+
+/* Inset: the group's overflow clip would cut an outer ring. */
+.pill:focus-visible {
+	box-shadow: var(--focus-ring-inset);
+}
+
+.pill[aria-checked="true"] {
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
+/* The grey ring lacks contrast on the primary fill; use the pill's own ink. */
+.pill[aria-checked="true"]:focus-visible {
+	box-shadow: inset 0 0 0 var(--focus-ring-width) var(--primary-foreground);
+}
+
+.pill:disabled {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.pill > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+}
+
+/* ── Rows: SwitchCard and ToggleField ─────────────────────────────────────────── */
+
+.row {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-lg);
+	border-radius: var(--radius-sm);
+	padding-block: var(--space-md);
+}
+
+.rowDisabled {
+	pointer-events: none;
+}
+
+.switchCard {
+	position: relative;
+	/* Card radius, matching the choice cards beside it. */
+	border-radius: var(--radius);
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--border);
+	background-color: var(--card);
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-in-out),
+		border-color var(--duration-fast) var(--ease-in-out),
+		box-shadow var(--duration-fast) var(--ease-in-out);
+}
+
+.switchCard:hover:not([data-disabled]):not([data-checked="true"]):not([data-invalid]) {
+	border-color: var(--foreground-20);
+	background-color: var(--accent-50);
+}
+
+.switchCard[data-checked="true"] {
+	border-color: var(--primary);
+	background-color: var(--primary-5);
+}
+
+.switchCard[data-invalid] {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.switchCard[data-disabled] {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+.switchCardIcon {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-medallion);
+	height: var(--size-medallion);
+	margin-top: var(--space-2xs);
+	/* Media within a surface: tighter than the card around it, not the same 12px. */
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground-8);
+	color: var(--muted-foreground);
+	transition:
+		background-color var(--duration-fast) var(--ease-in-out),
+		color var(--duration-fast) var(--ease-in-out);
+}
+
+.switchCardIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.switchCard[data-checked="true"] .switchCardIcon {
+	background-color: var(--primary-10);
+	color: var(--primary-accent);
+}
+
+.rowText {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+.rowControl {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	/* Aligned to the label's optical centre-line, exactly as the inline controls are. */
+	margin-top: round(calc((1lh - var(--choice-size)) / 2), 1px);
+}
+
+/* The row already applies the nudge. */
+.rowControl .control {
+	margin-top: 0;
+}
+
+.rowLabel {
+	cursor: pointer;
+}
+
+.description,
+.hint {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	text-wrap: pretty;
+}
+
+/*
+ * Full secondary colour: hints are read, so quieten them with size, not opacity (AA). The
+ * description is a Text, which takes it from type="secondary".
+ */
+.hint {
+	color: var(--text-role-secondary);
+}
+
+/*
+ * Info glyph beside an option's label. A non-focusable span (a control inside a radio is
+ * nested-interactive); the note reaches assistive tech as the option's description.
+ */
+.info {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	padding: 0;
+	background: none;
+	color: var(--muted-foreground);
+	cursor: help;
+	vertical-align: middle;
+	/* A glyph button takes the item radius, like every control. */
+	border-radius: var(--radius-sm);
+}
+
+.info > svg {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+.info:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/*
+ * Title and description inside a choice card (ChoiceCardText): its own tight gap, not the
+ * card's icon-to-text gap. Start-aligned so a short title doesn't stretch.
+ */
+.cardText {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-xs);
+}
+
+.labelLine {
+	display: inline-flex;
+	align-items: center;
+	/* The title's line box, so cards with and without an info glyph align. */
+	line-height: var(--text-sm--line-height);
+	/* Horizontal gap between the label and its info glyph. */
+	gap: var(--space-xs);
+}

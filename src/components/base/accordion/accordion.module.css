@@ -1,0 +1,215 @@
+/*
+ * Accordion. Surfaces differ only in where the chrome lives — `bordered` (one shell,
+ * divided rows), `card` (a panel per row), `flat` (none) — so the surface is a root class.
+ */
+
+.root {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+.surfaceBordered {
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+}
+
+.surfaceCard {
+	gap: var(--space-md);
+}
+
+/*
+ * No chrome. Kept non-empty: an empty rule can vanish from the bundle while the generated
+ * types still declare the key.
+ */
+.surfaceFlat {
+	border: 0;
+	background-color: transparent;
+}
+
+.item {
+	background-color: transparent;
+}
+
+.surfaceBordered .item:not(:last-child) {
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.surfaceCard .item {
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	overflow: hidden;
+}
+
+/*
+ * The open tint is layered over the item's own ground, so a card item keeps its --card
+ * beneath it and bordered and flat items keep their transparent one.
+ */
+.item[data-open] {
+	background-image: linear-gradient(var(--accent-50), var(--accent-50));
+}
+
+.header {
+	display: flex;
+}
+
+.trigger {
+	position: relative;
+	display: flex;
+	flex: 1;
+	min-width: 0;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-2xl);
+	min-height: var(--control-h);
+	padding: var(--space-lg) var(--surface-px);
+	border: 0;
+	background: none;
+	text-align: start;
+	font: inherit;
+	font-weight: var(--weight-medium);
+	line-height: var(--text-sm--line-height);
+	color: inherit;
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
+	border-radius: inherit;
+}
+
+.trigger:hover {
+	background-color: var(--accent-50);
+}
+
+/*
+ * Inset ring: the bordered surface and card items clip with `overflow: hidden`, which
+ * would cut an outer ring. The radius follows the surface it sits in, less its border.
+ */
+.trigger:focus-visible {
+	z-index: var(--z-raised);
+	outline: none;
+	box-shadow: var(--focus-ring-inset);
+}
+
+.surfaceBordered .item:first-child .trigger {
+	border-start-start-radius: calc(var(--radius) - var(--border-width));
+	border-start-end-radius: calc(var(--radius) - var(--border-width));
+}
+
+.surfaceCard .trigger {
+	border-radius: calc(var(--radius) - var(--border-width));
+}
+
+.trigger[aria-disabled="true"] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.icon {
+	flex-shrink: 0;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	color: var(--muted-foreground);
+	pointer-events: none;
+	transition: rotate var(--duration-fast) var(--ease-out);
+}
+
+.trigger[aria-expanded="true"] .icon {
+	rotate: 180deg;
+}
+
+/*
+ * A height transition, not a keyframe animation: Base UI publishes the measured
+ * --accordion-panel-height and waits for the transition between the `data-*-style`
+ * frames; a keyframe animation never settles.
+ */
+.panel {
+	overflow: hidden;
+	height: var(--accordion-panel-height);
+	padding-inline: var(--surface-px);
+	transition: height var(--duration-fast) var(--ease-out);
+}
+
+.panel[data-starting-style],
+.panel[data-ending-style] {
+	height: 0;
+}
+
+.content {
+	padding-block: 0 var(--surface-py);
+	line-height: var(--leading-relaxed);
+}
+
+/* ── The bounded row, used when the caller passes `items` ─────────────────────────── */
+
+.row {
+	display: grid;
+	flex: 1;
+	min-width: 0;
+	align-items: center;
+	gap: 0 var(--space-lg);
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.rowWithMedia {
+	grid-template-columns: auto minmax(0, 1fr);
+}
+
+.media {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	align-self: center;
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+	color: var(--muted-foreground);
+}
+
+.media > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.mediaMedallion {
+	width: var(--size-medallion);
+	height: var(--size-medallion);
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground-8);
+	color: var(--foreground);
+}
+
+.heading {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+.titleLine {
+	display: flex;
+	min-width: 0;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-xs) var(--space-md);
+}
+
+.badge {
+	display: inline-flex;
+	flex-shrink: 0;
+}
+
+/* Body copy aligns under the title, indented by the media column. */
+.bodyWithMedia {
+	padding-inline-start: calc(var(--size-icon-lg) + var(--space-lg));
+}
+
+.bodyWithMedallion {
+	padding-inline-start: calc(var(--size-medallion) + var(--space-lg));
+}

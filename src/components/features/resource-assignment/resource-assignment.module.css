@@ -1,0 +1,51 @@
+/*
+ * SharedResourceCard: the panel is a ContentBlock and the dialog an ActionDialog; this adds
+ * the region rhythm, the pending-selection summary and the separated view action.
+ */
+
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.body {
+	min-width: 0;
+}
+
+.sections {
+	display: grid;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+/* Ruled off: it navigates away, and flush with the content it reads as another field. */
+.viewAction {
+	padding-top: var(--space-lg);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/*
+ * The pending choice, restated above the confirm. A label/value row, so it cannot be
+ * mistaken for another option card in the picker above.
+ */
+.summary {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-md);
+	margin-top: var(--space-lg);
+	padding: var(--surface-py) var(--surface-px);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+}
+
+.summaryValue {
+	text-align: end;
+}
+
+.dialogFooter {
+	padding-top: var(--space-lg);
+	border-top: var(--border-width) solid var(--border-60);
+}

@@ -1,0 +1,95 @@
+/* Empty state: centred and measure-limited, since it fills the whole surface. */
+.root {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-md);
+	text-align: center;
+}
+
+/*
+ * Three paddings, on both axes: inline padding keeps centred copy off a dashed border
+ * when this stands in for a card body.
+ */
+.padSm { padding: var(--surface-py-xs) var(--surface-px-xs); }
+.padMd { padding: var(--surface-py) var(--surface-px); }
+.padLg { padding: var(--surface-py-lg) var(--surface-px-lg); }
+
+.bordered {
+	/* Dashed: "this slot takes something". */
+	border: var(--border-width) dashed var(--border);
+	border-radius: var(--radius);
+}
+
+/* Inside a card the slot steps down to the item radius so the curves nest. */
+:global([data-slot="card"]) .bordered {
+	border-radius: var(--radius-sm);
+}
+
+/* The bare slot: `none` gets no tile, since its media decides its own shape. */
+.media {
+	display: grid;
+	place-items: center;
+}
+
+.mediaIcon,
+.mediaIconSoft {
+	width: var(--size-icon-2xl);
+	height: var(--size-icon-2xl);
+	border-radius: var(--radius-sm);
+}
+
+.mediaIcon {
+	background-color: var(--foreground-8);
+	color: var(--muted-foreground);
+	box-shadow: inset 0 0 0 var(--border-width) var(--border-60);
+}
+
+/* The same tile, quieter, for a glyph that illustrates rather than reports status. */
+.mediaIconSoft {
+	background-color: var(--muted-50);
+	color: var(--muted-foreground);
+}
+
+.mediaIllustration {
+	max-width: calc(13rem * var(--scale));
+	/* An illustration brings its own canvas; it needs room below, not a tile. */
+	margin-bottom: var(--space-xl);
+}
+
+.mediaIcon svg:not([data-sized]),
+.mediaIconSoft svg:not([data-sized]) {
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	max-width: 26rem;
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--space-md);
+	margin-top: var(--space-sm);
+}
+
+/* A caller-written "learn more" link inside the description, styled as a link. */
+.description {
+	text-wrap: pretty;
+}
+
+.description :is(a) {
+	color: var(--link-color);
+	text-decoration: underline;
+	text-underline-offset: var(--link-underline-offset);
+}
+
+.description :is(a):hover {
+	text-decoration: none;
+}

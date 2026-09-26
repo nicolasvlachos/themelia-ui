@@ -1,0 +1,194 @@
+/*
+ * Table. The scroll container is its own tabbable element (with a focus ring), so a
+ * keyboard user can scroll a wide table.
+ */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/*
+	 * DataTable's bounded body (set inline from `maxBodyHeight`). Declared as `none` so the
+	 * `max-height` reading it stays valid when no cap is passed.
+	 */
+	--data-table-body-max-height: none;
+}
+
+.container {
+	position: relative;
+	width: 100%;
+	overflow-x: auto;
+	/* The fade's width, so focus scrolls a control clear of the mask. */
+	scroll-padding-inline: var(--space-2xl);
+	border-radius: var(--radius-sm);
+}
+
+/* A fade at each edge with more columns past it: a mask, as on the tab list. */
+.container[data-fade-start]:dir(ltr),
+.container[data-fade-end]:dir(rtl) {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+}
+
+.container[data-fade-end]:dir(ltr),
+.container[data-fade-start]:dir(rtl) {
+	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+}
+
+.container[data-fade-start][data-fade-end] {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
+}
+
+.container:focus-visible {
+	/* The ring runs round the container's edges, which the fades would eat. */
+	mask-image: none;
+	outline: none;
+	/* Inset: an outer ring on a full-width container is clipped by whatever frames it. */
+	box-shadow: var(--focus-ring-inset);
+}
+
+.table {
+	width: 100%;
+	caption-side: bottom;
+	border-collapse: collapse;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+.row {
+	border-bottom: var(--border-width) solid var(--border-60);
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Body rows only, and not the empty row. */
+.body .row:not(:has(> .empty)):hover {
+	background-color: var(--accent-50);
+}
+
+/* Selected in the DataTable's colour, and above hover. */
+.row[data-state="selected"],
+.body .row[data-state="selected"]:hover {
+	background-color: var(--primary-10);
+}
+
+.header .row {
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.body .row:last-child {
+	border-bottom: 0;
+}
+
+.head {
+	/* Taller than a body row, so it reads as chrome. TableSkeleton reads the same token. */
+	height: var(--table-head-h);
+	padding: var(--space-lg) var(--surface-px);
+	text-align: start;
+	vertical-align: middle;
+	white-space: nowrap;
+	color: var(--foreground);
+	font-weight: var(--weight-medium);
+}
+
+.cell {
+	/* --space-lg, and TableSkeleton's row reserves the same, so a loaded table does not jump. */
+	padding: var(--space-lg) var(--surface-px);
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+/* A checkbox cell needs no trailing inset. */
+.head:has([role="checkbox"]),
+.cell:has([role="checkbox"]) {
+	padding-inline-end: 0;
+}
+
+.footer {
+	background-color: var(--muted-50);
+	border-top: var(--border-width) solid var(--border-60);
+	font-weight: var(--weight-medium);
+}
+
+.footer .row:last-child {
+	border-bottom: 0;
+}
+
+.caption {
+	margin-top: var(--space-xl);
+	color: var(--muted-foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+/* Alignment escape hatches — the one thing a numeric column genuinely needs. */
+.alignStart { text-align: start; }
+.alignCenter { text-align: center; }
+.alignEnd { text-align: end; }
+
+/* Long-form cells opt out of the nowrap default. */
+.wrap { white-space: normal; }
+
+/* ── Sortable header ──────────────────────────────────────────────────────────── */
+
+/* The whole label is the target, not just the chevron. */
+.headSort {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	width: 100%;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: inherit;
+	cursor: pointer;
+}
+
+/*
+ * Alignment follows the cell. End-aligned, the indicator goes before the label so the
+ * label's end lines up with the values'.
+ */
+.alignEnd .headSort {
+	flex-direction: row-reverse;
+	justify-content: flex-start;
+}
+.alignCenter .headSort { justify-content: center; }
+
+/* The label is already full strength; the indicator firms up on hover. */
+.headSort:hover .headSortIcon {
+	opacity: 0.75;
+}
+
+.headSort:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.headSortIcon {
+	flex-shrink: 0;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	/* Faint but present, so a sortable column is discoverable without hover. */
+	opacity: 0.45;
+}
+
+.headSort[data-active] .headSortIcon {
+	opacity: 1;
+	color: var(--foreground);
+}
+
+/* ── Empty ────────────────────────────────────────────────────────────────────── */
+
+.empty {
+	padding-block: calc(var(--space-xl) * 2);
+	text-align: center;
+}
+
+/* ── Sticky header ────────────────────────────────────────────────────────────── */
+
+/* Sticky needs its own background, or rows show through it. */
+.container[data-sticky-header] .head {
+	position: sticky;
+	top: 0;
+	z-index: var(--z-raised);
+	/* The ground the table sits on, so the head matches it on the page, in a card or a popup. */
+	background-color: var(--surface-ground, var(--background));
+}

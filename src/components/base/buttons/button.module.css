@@ -1,0 +1,164 @@
+/*
+ * Button — component variables. Geometry resolves through the control and spacing scales
+ * (no literals), so density scopes resize buttons like every other control.
+ */
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/*
+	 * No size prop: geometry follows the density/spacing axes; type follows the shared ramp,
+	 * so a density preset changes geometry without shrinking labels.
+	 */
+	--button-h: var(--control-h);
+
+
+	/* Rounded to whole pixels: a fractional circle renders as a soft oval (as in choice.module.css). */
+	--button-spinner-size: round(var(--size-icon-sm), 1px);
+
+}
+
+/*
+ * Button — shared shell. The tone × style matrix lives in `button-tones.module.css`;
+ * this file owns geometry, state and the loading affordance.
+ */
+
+.root {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	white-space: nowrap;
+	user-select: none;
+	border: var(--border-width) solid transparent;
+	background-clip: padding-box;
+	/*
+	 * The item radius at every size, matching the fields beside it. A container that nests
+	 * buttons sets `--button-radius` to its own radius less the inset, so they sit concentric;
+	 * a genuinely round control sets `--radius-pill`.
+	 */
+	border-radius: var(--button-radius, var(--radius-sm));
+	font-family: inherit;
+	font-weight: var(--weight-medium);
+	outline: none;
+	cursor: pointer;
+	transition: var(--transition-control);
+}
+
+.root:focus-visible {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--focus-ring);
+}
+
+.root:disabled,
+.root[aria-disabled="true"] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+/* Busy is not disabled: a loading button keeps full ink; the spinner says "working". */
+.root[aria-busy="true"] {
+	opacity: 1;
+	cursor: progress;
+}
+
+/* No press transform: a scale shifts the label and pulls joined-group edges apart. */
+
+.root svg {
+	pointer-events: none;
+	flex-shrink: 0;
+}
+
+.root svg:not([data-sized]) {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* One size. `line-height: 1` in a fixed height keeps the label centred at any scale. */
+.root {
+	height: var(--button-h);
+	gap: var(--space-sm);
+	padding-inline: var(--control-px);
+	font-size: var(--text-sm);
+	line-height: var(--leading-none);
+}
+
+/* Square, sized by the button height so it lines up with any control. */
+.iconOnly {
+	padding-inline: 0;
+	width: var(--button-h);
+	aspect-ratio: 1;
+}
+
+.fullWidth {
+	width: 100%;
+}
+
+/* Loading: the label keeps its space and only fades, so the button never resizes mid-press. */
+/*
+ * `display: contents` keeps icon and label as flex items of the button, so they take its
+ * gap; the wrapper exists only so `loading` can hide the words.
+ */
+.label {
+	display: contents;
+}
+
+/* While loading it must be a box to take opacity; it restates the button's row layout. */
+.loadingLabel {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	opacity: 0;
+}
+
+/* A pseudo-element, not a span: Slot takes exactly one child (see button.tsx). */
+.root[data-loading]::after {
+	content: "";
+	position: absolute;
+	width: var(--button-spinner-size);
+	height: var(--button-spinner-size);
+	border: var(--border-width-strong) solid currentColor;
+	border-top-color: transparent;
+	border-radius: 50%;
+	animation: var(--animate-spin);
+}
+
+/* ══ Text button ═══════════════════════════════════════════════════════════════════
+ * A button styled as a link, for in-page actions; navigation should be an anchor.
+ */
+
+/*
+ * Takes the surrounding prose's size. The resting underline mixes the link colour, so the
+ * link isn't distinguished by colour alone.
+ */
+.textButton {
+	height: auto;
+	padding: 0;
+	background: none;
+	font-size: inherit;
+	line-height: inherit;
+	text-decoration: underline;
+	text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+	text-underline-offset: var(--link-underline-offset);
+	transition: text-decoration-color var(--duration-normal) var(--ease-out);
+}
+
+/* The default tone reads as a link; any other tone keeps its own ink. */
+.root.textButton[data-tone="primary"] {
+	color: var(--link-color);
+}
+
+/*
+ * Clear the ghost hover and open fills: with no padding they paint a bare box round the
+ * glyphs. Two classes outrank every tone rule whatever the bundle order.
+ */
+.root.textButton:hover:not(:disabled):not([aria-disabled="true"]),
+.root.textButton[data-popup-open]:not(:disabled) {
+	background: none;
+	text-decoration-color: currentColor;
+}

@@ -1,0 +1,220 @@
+/*
+ * RichTextEditor. The editable cannot be a RichText (that component owns its innerHTML),
+ * so the prose rules are restated below for the editable, reading the shared
+ * `--rich-text-*` contract in theming/text.css so both render identically.
+ * Derived tokens: declared at every scope boundary (styles/SCOPES.md).
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/* Two floors: a page's editor and a compact comment box. */
+	--editor-min-h: calc(12rem * var(--scale));
+	--editor-min-h-compact: calc(4rem * var(--scale));
+}
+
+.root {
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: var(--field-bg);
+	overflow: hidden;
+}
+
+.root[data-disabled] {
+	opacity: var(--disabled-opacity);
+}
+
+.root:hover:not(:focus-within):not([data-disabled]) {
+	border-color: var(--control-border-hover);
+}
+
+/* Focus lives on the wrapper, not the editable: the toolbar is part of the control. */
+.root:focus-within {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--field-focus-ring);
+}
+
+/* ── Toolbar ───────────────────────────────────────────────────────────────────── */
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-xs);
+	padding: var(--space-sm);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.toolbarButton svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.toolbarRule {
+	/* Shorter than the buttons: a full-height rule reads as a column break. */
+	align-self: center;
+	height: var(--space-xl);
+	margin-inline: var(--space-xs);
+}
+
+/* Pushed to the far end: the submit control belongs opposite the formatting. */
+.toolbarTrailing {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	margin-inline-start: auto;
+}
+
+/* ── Body ──────────────────────────────────────────────────────────────────────── */
+
+.bodyWrap {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+.bodyWrap[hidden] {
+	display: none;
+}
+
+.mount {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.body {
+	flex: 1;
+	height: 100%;
+	min-height: 100%;
+	padding-inline: var(--space-lg);
+	padding-block: var(--space-md);
+	font-size: var(--text-default, var(--text-sm));
+	line-height: var(--leading-relaxed);
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+.body:focus-visible {
+	outline: none;
+}
+
+.root[data-disabled] .body {
+	cursor: not-allowed;
+}
+
+/* Overlays the first line, so the caret is already in place when typing starts. */
+.placeholder {
+	position: absolute;
+	inset-inline-start: var(--space-lg);
+	top: var(--space-md);
+	pointer-events: none;
+}
+
+/* ── The marks, inside the editable ────────────────────────────────────────────── */
+
+.body > :first-child { margin-block-start: 0; }
+.body > :last-child { margin-block-end: 0; }
+
+.body p,
+.body ul,
+.body ol,
+.body blockquote,
+.body pre {
+	margin-block: var(--rich-text-block-gap);
+}
+
+.body ul,
+.body ol {
+	padding-inline-start: var(--rich-text-list-indent);
+}
+
+.body ul { list-style: disc; }
+.body ol { list-style: decimal; }
+
+.body li {
+	margin-block: var(--rich-text-item-gap);
+}
+
+/* TipTap wraps list text in paragraphs; keep the shared list-item rhythm. */
+.body li > p:first-child { margin-block-start: 0; }
+.body li > p:last-child { margin-block-end: 0; }
+
+.body :global(.ProseMirror-selectednode) {
+	outline: var(--border-width-strong) solid var(--primary);
+	outline-offset: var(--border-width);
+}
+
+.body a {
+	color: var(--link-color);
+	text-decoration: underline;
+	text-underline-offset: var(--link-underline-offset);
+}
+
+.body code {
+	padding: 0.1em 0.32em;
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+	font-family: var(--font-mono);
+	font-size: 0.875em;
+}
+
+.body pre {
+	padding: var(--space-lg);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted-50);
+	overflow-x: auto;
+}
+
+/* The block paints the well; the code inside it drops the inline chip. */
+.body pre code {
+	padding: 0;
+	background: none;
+}
+
+/* A rule and an indent, not a coloured accent bar. */
+.body blockquote {
+	padding-inline-start: var(--rich-text-quote-indent);
+	border-inline-start: var(--border-width-strong) solid var(--border);
+	color: var(--muted-foreground);
+}
+
+/* ── Source mode ───────────────────────────────────────────────────────────────── */
+
+.source {
+	width: 100%;
+	min-height: 0;
+	border: 0;
+	border-radius: 0;
+	background-color: var(--muted-50);
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	line-height: var(--leading-relaxed);
+	resize: vertical;
+}
+
+.source:focus-visible {
+	outline: none;
+	box-shadow: none;
+}
+
+/* ── Footers ───────────────────────────────────────────────────────────────────── */
+
+.footerSlot {
+	padding-inline: var(--space-lg);
+	padding-block: var(--space-xs) var(--space-md);
+}
+
+.counts {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-lg);
+	padding-inline: var(--space-lg);
+	padding-block: var(--space-sm);
+	border-top: var(--border-width) solid var(--border-60);
+}

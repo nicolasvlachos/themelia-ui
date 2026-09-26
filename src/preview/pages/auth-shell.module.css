@@ -1,0 +1,35 @@
+.frame {
+	width: 100%;
+	min-width: 0;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	/* Grows with its content, so the clip only takes the corners a split panel runs into. */
+	overflow: clip;
+}
+
+.canvas {
+	min-height: 36rem;
+	border-radius: inherit;
+	overflow: clip;
+}
+
+.composed {
+	min-height: 36rem;
+}
+
+.expandedDialog {
+	--overlay-max-width: var(--content-width-xl);
+}
+
+.formColumn {
+	width: 100%;
+	max-width: 28rem;
+}
+
+.inlineIcon {
+	display: inline;
+	width: 1em;
+	height: 1em;
+	vertical-align: middle;
+	margin-inline-end: var(--space-xs);
+}

@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Playwright
+/test-results/
+/playwright-report/
+.scratch/
+dist-docs
+# `npm pack` output (a manual pack, or a packed-package check mid-run); never committed.
+*.tgz
+
+# The reference consumers build into these; only their source is committed.
+examples/consumer-*/dist/
+examples/consumer-*/dist-ssr/
+examples/consumer-*/node_modules/
+
+# The browser suites build the preview app here.
+dist-test

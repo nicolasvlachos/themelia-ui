@@ -1,0 +1,51 @@
+/*
+ * Timeline blocks: changelog, milestones, steps. The drawing is `base/timeline`'s rail and
+ * `Stepper`; this adds the shared title row, the milestone's bar and the steps scroller.
+ */
+
+/* Wraps, so a badge drops below a long title instead of squeezing it. */
+.titleRow {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.byline {
+	margin-inline-start: var(--space-md);
+}
+
+/* The bar and its figure on one line. */
+.progressGroup {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	/* Capped: a full-width bar competes with the milestone's title. */
+	max-width: calc(18rem * var(--scale));
+}
+
+.progressGroup > :first-child {
+	flex: 1;
+	min-width: 0;
+}
+
+/* ══ StepsBar ══════════════════════════════════════════════════════════════════════ */
+
+/* Scrolls rather than clipping, so a final label is never cut off. */
+.stepsBar {
+	/*
+	 * The scroller must be the containing block: an absolutely positioned descendant (e.g.
+	 * `VisuallyHidden`) would otherwise overflow the document and scroll the page sideways.
+	 */
+	position: relative;
+	overflow-x: auto;
+	min-width: 0;
+	border-radius: var(--radius-sm);
+}
+
+/* Inset, as on the table's scroller: an outer ring on a full-width scroller is clipped by its frame. */
+.stepsBar:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring-inset);
+}

@@ -1,0 +1,238 @@
+/* Skeleton. The pulse keyframes live in theming/animation.css (`--animate-pulse`). */
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	--skeleton-line-box: calc(var(--text-sm) * var(--text-sm--line-height));
+}
+
+/* A foreground wash, so it shows on any surface (`--muted` vanishes on cards). */
+.root {
+	background-color: var(--foreground-10);
+	/* A pill: a bar stands in for a line of text, at every theme radius. */
+	border-radius: var(--radius-pill);
+	animation: var(--animate-pulse);
+}
+
+/* ══ Composed skeletons ════════════════════════════════════════════════════════════
+ *
+ * Shapes that reserve the space of the layouts they stand in for, so nothing reflows.
+ */
+
+.lines {
+	display: flex;
+	flex-direction: column;
+	/* No gap: each line's margin carries its leading, so n lines fill exactly n line boxes. */
+	gap: 0;
+}
+
+.line {
+	height: var(--text-sm);
+	/* Half the leading above and below, exactly where text puts it inside a line box. */
+	margin-block: calc((var(--skeleton-line-box) - var(--text-sm)) / 2);
+}
+
+/* The last line is short, so the block reads as prose. */
+.lineLast {
+	width: 60%;
+}
+
+.block {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+}
+
+/* A heading's glyphs, not its line box: the leading rides on the margin, as for a line. */
+.title {
+	height: var(--text-xl);
+	width: 32%;
+	margin-block: calc((var(--text-xl) * var(--text-xl--line-height) - var(--text-xl)) / 2);
+}
+
+/* A panel's heading: a step above its body, a third of its width. */
+.heading {
+	height: var(--text-base);
+	width: 28%;
+	margin-block: calc((var(--text-base) * var(--text-base--line-height) - var(--text-base)) / 2);
+}
+
+.pageHeader {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-lg);
+}
+
+.pageHeaderText {
+	display: flex;
+	flex: 1 1 18rem;
+	min-width: 0;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+.pageHeaderText .title {
+	width: 45%;
+}
+
+.pageHeaderDescription {
+	width: 70%;
+}
+
+.pageHeaderActions {
+	display: flex;
+	flex-shrink: 0;
+	gap: var(--space-md);
+}
+
+/* A button's box — its height and its corner — so the header does not jump when they land. */
+.action {
+	width: calc(5.5rem * var(--scale));
+	height: var(--control-h);
+	border-radius: var(--radius-sm);
+}
+
+/* A card's edge and inset: the page is made of cards, so its placeholder is too. */
+.panel {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding: var(--surface-py) var(--surface-px);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+}
+
+.avatar {
+	width: var(--size-avatar);
+	height: var(--size-avatar);
+	flex-shrink: 0;
+	border-radius: 50%;
+}
+
+.twoColumn {
+	display: grid;
+	align-items: start;
+	gap: var(--space-xl);
+	grid-template-columns: minmax(0, 1fr);
+}
+
+@media (--bp-lg) {
+	.twoColumn {
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+	}
+}
+
+.identity {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.identity .lines {
+	flex: 1;
+	min-width: 0;
+}
+
+.identityName { width: 60%; }
+.identityMeta { width: 85%; }
+
+/* The facts sit under a rule, label on the start and value on the end, as a MetadataList does. */
+.facts {
+	display: flex;
+	flex-direction: column;
+	padding-block-start: var(--space-md);
+	border-block-start: var(--border-width) solid var(--border-60);
+}
+
+.fact {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--space-lg);
+}
+
+.factLabel { width: 30%; }
+.factValue { width: 40%; }
+
+/*
+ * Rows measure exactly as the real table's (line box + cell inset + rule), so nothing jumps
+ * when data arrives; columns and rows vary in measure so it reads as a table.
+ */
+.table {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+}
+
+.tableFramed {
+	overflow: hidden;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+}
+
+.tableRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xl);
+	/* The cell's insets — keep in step with table.module.css `.cell`. */
+	height: calc(var(--skeleton-line-box) + var(--space-lg) * 2);
+	padding-inline: var(--surface-px);
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+/* Taller, as the table's own head is; no band, since the real head has none. */
+.tableHeadRow {
+	height: var(--table-head-h);
+}
+
+/* As the table's `.body .row:last-child`. */
+.tableRow:last-child {
+	border-bottom: 0;
+}
+
+/* Tracks: the first column is the row's name and takes more of the width. */
+.tableCell {
+	display: flex;
+	flex: 1;
+	min-width: 0;
+}
+
+.tableCell:first-child {
+	flex: 1.6;
+}
+
+/* A trailing numeric column, set on the end as a table sets figures. */
+.tableCell:last-child:not(:first-child) {
+	justify-content: flex-end;
+}
+
+.tableBar {
+	height: var(--text-sm);
+	width: 70%;
+}
+
+.tableCell:nth-child(2) .tableBar { width: 55%; }
+.tableCell:nth-child(3) .tableBar { width: 45%; }
+.tableCell:last-child:not(:first-child) .tableBar { width: 40%; }
+
+/* Data is ragged: alternate rows take other measures in the first two columns. */
+.tableRow:nth-child(odd):not(.tableHeadRow) .tableCell:first-child .tableBar { width: 52%; }
+.tableRow:nth-child(3n):not(.tableHeadRow) .tableCell:nth-child(2) .tableBar { width: 72%; }
+
+/* A head cell is a short label, smaller than the data. */
+.tableHeadRow .tableBar,
+.tableHeadRow .tableCell:nth-child(n) .tableBar {
+	height: var(--text-xs);
+	width: 35%;
+}
+
+.tableHeadRow .tableCell:last-child:not(:first-child) .tableBar {
+	width: 25%;
+}

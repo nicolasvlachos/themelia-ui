@@ -1,0 +1,114 @@
+/*
+ * The combobox pickers. Field, popup, rows and groups come from base/combobox; this adds
+ * only the status row, create row, pager, apply footer and the option's label/detail layout.
+ */
+
+.root {
+	min-width: 0;
+}
+
+.error,
+.errorState {
+	margin-top: var(--space-sm);
+}
+
+/* Above the popover level, so a dropdown inside a dialog is not painted behind it. */
+.positioner {
+	z-index: calc(var(--z-popover) + 1);
+}
+
+/* Collapsed rather than unmounted (see combobox-dropdown.tsx). */
+.popup[data-empty] {
+	height: 0;
+	min-height: 0;
+	max-height: 0;
+	background: none;
+	box-shadow: none;
+	opacity: 0;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+/* ── Rows ──────────────────────────────────────────────────────────────────────── */
+
+.status {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	padding-inline: var(--row-px);
+	padding-block: var(--space-sm);
+}
+
+.empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--control-h);
+	padding-inline: var(--row-px);
+	padding-block: var(--space-sm);
+	text-align: center;
+}
+
+/* The scroller, not the list, owns the height cap. */
+.scroller {
+	/* Capped by a reading limit and by the available viewport height. */
+	max-height: min(20rem, var(--available-height));
+}
+
+.list {
+	max-height: none;
+	overflow: visible;
+}
+
+.createRow {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.createRow svg {
+	flex-shrink: 0;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.loadingMore {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-inline: var(--row-px);
+	padding-block: var(--space-sm);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-md);
+	padding-inline: var(--row-px);
+	padding-block: var(--space-sm);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/* ── Option ────────────────────────────────────────────────────────────────────── */
+
+.option {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--space-md);
+	min-width: 0;
+	width: 100%;
+	line-height: var(--leading-tight);
+}
+
+.optionMeta {
+	display: inline-flex;
+	flex: 1;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+	overflow: hidden;
+	color: var(--muted-foreground);
+}

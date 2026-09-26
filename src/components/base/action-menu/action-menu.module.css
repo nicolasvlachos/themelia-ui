@@ -1,0 +1,46 @@
+
+
+.triggerLabel {
+	white-space: nowrap;
+}
+
+.buttons {
+	display: inline-flex;
+	/* Wraps, so trailing buttons and the overflow trigger stay inside narrow containers. */
+	flex-wrap: wrap;
+	max-width: 100%;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+/* `buttonStyle: "link"`: a ghost button with an underline, not a separate style per tone. */
+.linkButton {
+	text-decoration: underline;
+	text-underline-offset: var(--link-underline-offset);
+}
+
+/* `labelVisibility`: visually hidden (below the breakpoint for `responsive`), so the name survives. */
+.labelHidden,
+.labelResponsive {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+@media (--bp-sm) {
+	.labelResponsive {
+		position: static;
+		width: auto;
+		height: auto;
+		margin: 0;
+		overflow: visible;
+		clip-path: none;
+		white-space: nowrap;
+	}
+}

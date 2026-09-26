@@ -1,0 +1,143 @@
+/*
+ * Numeric fields — decimal, percentage, currency, weight, dimensions, coordinates.
+ * Height, border, focus and invalid state come from the shared field surface
+ * (styles/fields.css): the stepper group is `data-field-shell`, its input `data-field-control`.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	--numeric-unit-w: calc(6rem * var(--scale));
+
+}
+
+
+/* Input and buttons share the shell's single border and radius, reading as one control. */
+.stepperGroup {
+	align-items: stretch;
+	/* The buttons run to the group's edge. */
+	padding-inline: 0;
+	overflow: hidden;
+	gap: 0;
+}
+
+.stepperButton {
+	display: inline-flex;
+	flex-shrink: 0;
+	width: var(--control-h);
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	background: none;
+	color: var(--muted-foreground);
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out);
+}
+
+.stepperButton:first-child { border-inline-end: var(--border-width) solid var(--control-border); }
+.stepperButton:last-child { border-inline-start: var(--border-width) solid var(--control-border); }
+
+.stepperButton:hover:not(:disabled) {
+	background-color: var(--accent);
+	color: var(--foreground);
+}
+
+.stepperButton:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+.stepperButton > svg {
+	/* --size-icon already carries --density-scale; don't scale it again. */
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* Tabular, so digits don't shift as the value is stepped. */
+.stepperInput {
+	flex: 1;
+	min-width: 0;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+
+/* A unit inside the stepper group: addon colour, no border — borders mark the clickable parts. */
+.stepperAdornment {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	padding-inline-end: var(--control-px-sm);
+	color: var(--muted-foreground);
+	white-space: nowrap;
+}
+
+/* A plain numeric field still wants tabular figures. */
+.numericInput {
+	font-variant-numeric: tabular-nums;
+}
+
+/* ── Composite rows ───────────────────────────────────────────────────────────── */
+
+.row {
+	display: flex;
+	min-width: 0;
+	align-items: flex-start;
+	gap: var(--space-md);
+}
+
+.grow {
+	min-width: 0;
+	flex: 1;
+}
+
+.unitColumn {
+	flex-shrink: 0;
+	width: var(--numeric-unit-w);
+}
+
+.currencyColumn {
+	flex-shrink: 0;
+	width: calc(7rem * var(--scale));
+}
+
+.field {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+	/* FormField's caption-to-control gap. */
+	gap: var(--space-sm);
+}
+
+/* Wraps: each axis keeps a readable floor and the unit selector drops to the next line first. */
+.dimensions {
+	flex-wrap: wrap;
+	row-gap: var(--space-md);
+}
+
+.dimensions > .field {
+	flex: 1 1 calc(4.5rem * var(--scale));
+}
+
+.subLabel {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+}
+
+/* The × separator between dimension fields, aligned with the boxes rather than the captions. */
+.separator {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	height: var(--control-h);
+	/* Bottom-aligned: the row is `flex-start` and columns may start with a caption. */
+	align-self: flex-end;
+	color: var(--muted-foreground);
+	user-select: none;
+}

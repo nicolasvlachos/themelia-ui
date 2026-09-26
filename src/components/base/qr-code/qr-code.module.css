@@ -1,0 +1,66 @@
+/*
+ * QR code: dark modules on a light ground in both themes. Scanners read dark-on-light
+ * reliably and an inverted code less so, so it takes the inverse pair, not the theme's.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	--qr-size: calc(12rem * var(--scale));
+	/* Read from JS (getPropertyValue in qr-code.tsx) and baked into the SVG — not dead. */
+	--qr-foreground: var(--inverse-background);
+	--qr-background: var(--inverse-foreground);
+}
+
+/* The wrapper carries the quiet zone and background; the SVG is sized here, not by the encoder. */
+.root {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--qr-size);
+	height: var(--qr-size);
+	/* The quiet zone a scanner needs to find the finder patterns. */
+	padding: var(--space-lg);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--qr-background);
+}
+
+/* The light plate is for a symbol to scan; a placeholder sits on the theme's own ground. */
+.root:has(> .placeholder) {
+	background-color: var(--background);
+}
+
+/* The symbol fills what the quiet zone leaves. */
+.symbol {
+	display: block;
+	width: 100%;
+	height: 100%;
+	line-height: 0;
+}
+
+.symbol > svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	/* Hard-edged modules: anti-aliasing at fractional sizes blurs the code. */
+	shape-rendering: crispEdges;
+}
+
+/* Shown while encoding, if encoding fails, and for a caller's empty state. */
+.placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	text-align: center;
+}

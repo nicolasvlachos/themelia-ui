@@ -1,0 +1,42 @@
+/*
+ * Motion — durations and easings. Modules transition explicit property lists, never
+ * `all`, which would animate layout and make popups judder on open.
+ *
+ * Raw inputs: declared once at :root (styles/SCOPES.md), so the reduced-motion block
+ * below reaches every scope.
+ */
+:root {
+	--duration-instant: 75ms;
+	--duration-fast: 150ms;
+	--duration-normal: 200ms;
+
+	/* A strong ease-out: motion starts immediately and settles without a sluggish tail. */
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Derived tokens: declared at every scope boundary, so the reduced-motion override reaches them. */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+	/*
+	 * The default interactive transition: colour and elevation only, on the same ease-out
+	 * as every other state change, so a button and the row beside it settle together.
+	 */
+	--transition-control:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--duration-instant: 0ms;
+		--duration-fast: 0ms;
+		--duration-normal: 0ms;
+	}
+}

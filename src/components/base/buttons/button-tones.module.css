@@ -1,0 +1,211 @@
+/* Button tone × style matrix: one block per tone, the same five styles in each. */
+
+/* ── neutral ─────────────────────────────────────────────────────────────────── */
+
+.tone-neutral.style-solid {
+	background-color: var(--foreground);
+	color: var(--background);
+}
+
+.tone-neutral.style-solid:hover:not(:disabled) {
+	background-color: color-mix(in oklab, var(--foreground) 88%, var(--background));
+}
+
+.tone-neutral.style-outline {
+	border-color: var(--control-border);
+	color: var(--foreground);
+}
+
+.tone-neutral.style-outline:hover:not(:disabled),
+.tone-neutral.style-outline[data-popup-open] {
+	background-color: var(--accent);
+}
+
+.tone-neutral.style-ghost {
+	color: var(--foreground);
+}
+
+.tone-neutral.style-ghost:hover:not(:disabled),
+.tone-neutral.style-ghost[data-popup-open] {
+	background-color: var(--accent);
+}
+
+/* ── primary ─────────────────────────────────────────────────────────────────── */
+
+.tone-primary.style-solid {
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
+.tone-primary.style-solid:hover:not(:disabled) {
+	background-color: color-mix(in oklab, var(--primary) 88%, var(--foreground));
+}
+
+.tone-primary.style-outline {
+	border-color: var(--primary-30);
+	color: var(--primary-accent);
+}
+
+.tone-primary.style-outline:hover:not(:disabled),
+.tone-primary.style-outline[data-popup-open] {
+	background-color: var(--primary-10);
+}
+
+.tone-primary.style-ghost {
+	color: var(--primary-accent);
+}
+
+.tone-primary.style-ghost:hover:not(:disabled),
+.tone-primary.style-ghost[data-popup-open] {
+	background-color: var(--primary-10);
+}
+
+/* ── secondary ─────────────────────────────────────────────────────────────────── */
+
+.tone-secondary.style-solid {
+	background-color: var(--secondary);
+	color: var(--secondary-foreground);
+}
+
+.tone-secondary.style-solid:hover:not(:disabled) {
+	background-color: color-mix(in oklab, var(--secondary) 88%, var(--foreground));
+}
+
+.tone-secondary.style-outline {
+	border-color: var(--control-border);
+	color: var(--foreground);
+}
+
+.tone-secondary.style-outline:hover:not(:disabled),
+.tone-secondary.style-outline[data-popup-open] {
+	background-color: var(--accent);
+}
+
+.tone-secondary.style-ghost {
+	color: var(--foreground);
+}
+
+.tone-secondary.style-ghost:hover:not(:disabled),
+.tone-secondary.style-ghost[data-popup-open] {
+	background-color: var(--accent);
+}
+
+/* ── info ─────────────────────────────────────────────────────────────────── */
+
+.tone-info.style-solid {
+	background-color: var(--info);
+	color: var(--info-foreground);
+}
+
+.tone-info.style-solid:hover:not(:disabled) {
+	background-color: color-mix(in oklab, var(--info) 88%, var(--foreground));
+}
+
+.tone-info.style-outline {
+	border-color: var(--info-30);
+	color: var(--info);
+}
+
+.tone-info.style-outline:hover:not(:disabled),
+.tone-info.style-outline[data-popup-open] {
+	background-color: var(--info-10);
+}
+
+.tone-info.style-ghost {
+	color: var(--info);
+}
+
+.tone-info.style-ghost:hover:not(:disabled),
+.tone-info.style-ghost[data-popup-open] {
+	background-color: var(--info-10);
+}
+
+/* ── success ─────────────────────────────────────────────────────────────────── */
+
+.tone-success.style-solid {
+	background-color: var(--success);
+	color: var(--success-foreground);
+}
+
+.tone-success.style-solid:hover:not(:disabled) {
+	background-color: color-mix(in oklab, var(--success) 88%, var(--foreground));
+}
+
+.tone-success.style-outline {
+	border-color: var(--success-30);
+	color: var(--success);
+}
+
+.tone-success.style-outline:hover:not(:disabled),
+.tone-success.style-outline[data-popup-open] {
+	background-color: var(--success-10);
+}
+
+.tone-success.style-ghost {
+	color: var(--success);
+}
+
+.tone-success.style-ghost:hover:not(:disabled),
+.tone-success.style-ghost[data-popup-open] {
+	background-color: var(--success-10);
+}
+
+/* ── warning ─────────────────────────────────────────────────────────────────── */
+
+.tone-warning.style-solid {
+	background-color: var(--warning);
+	color: var(--warning-foreground);
+}
+
+.tone-warning.style-solid:hover:not(:disabled) {
+	background-color: color-mix(in oklab, var(--warning) 88%, var(--foreground));
+}
+
+.tone-warning.style-outline {
+	border-color: var(--warning-40);
+	color: var(--warning-accent);
+}
+
+.tone-warning.style-outline:hover:not(:disabled),
+.tone-warning.style-outline[data-popup-open] {
+	background-color: var(--warning-10);
+}
+
+.tone-warning.style-ghost {
+	color: var(--warning-accent);
+}
+
+.tone-warning.style-ghost:hover:not(:disabled),
+.tone-warning.style-ghost[data-popup-open] {
+	background-color: var(--warning-10);
+}
+
+/* ── destructive ─────────────────────────────────────────────────────────────────── */
+
+.tone-destructive.style-solid {
+	background-color: var(--destructive);
+	color: var(--destructive-foreground);
+}
+
+.tone-destructive.style-solid:hover:not(:disabled) {
+	background-color: color-mix(in oklab, var(--destructive) 88%, var(--foreground));
+}
+
+.tone-destructive.style-outline {
+	border-color: var(--destructive-30);
+	color: var(--destructive-accent);
+}
+
+.tone-destructive.style-outline:hover:not(:disabled),
+.tone-destructive.style-outline[data-popup-open] {
+	background-color: var(--destructive-10);
+}
+
+.tone-destructive.style-ghost {
+	color: var(--destructive-accent);
+}
+
+.tone-destructive.style-ghost:hover:not(:disabled),
+.tone-destructive.style-ghost[data-popup-open] {
+	background-color: var(--destructive-10);
+}

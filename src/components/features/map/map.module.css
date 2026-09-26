@@ -1,0 +1,242 @@
+/*
+ * Map. `leaflet.css` is unlayered and beats any layered rule, so overrides of Leaflet's own
+ * elements live in styles/map.css with two-class selectors; this file styles the kit's parts.
+ */
+
+/* The map's box: three named heights (or any length via `--map-h`) and two surfaces. */
+.map {
+	flex: 1;
+	width: 100%;
+	height: 100%;
+	min-height: var(--map-h, 24rem);
+}
+
+.heightSm { --map-h: 16rem; }
+.heightMd { --map-h: 24rem; }
+.heightLg { --map-h: 36rem; }
+
+/* `framed` draws an edge against a same-coloured page; `flush` is for a map that is the panel. */
+.surfaceFramed {
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+}
+
+.surfaceFlush {
+	border: 0;
+}
+
+/* ── Controls ──────────────────────────────────────────────────────────────────── */
+
+/* Above Leaflet's panes (up to 700) and its own controls (800). */
+.control {
+	position: absolute;
+	z-index: 900;
+	width: fit-content;
+	height: fit-content;
+	cursor: default;
+}
+
+/* The wrapper-to-item inset, so a --radius-sm control sits concentric in a framed corner. */
+.topLeft { top: var(--space-md); left: var(--space-md); }
+.topRight { top: var(--space-md); right: var(--space-md); }
+.bottomLeft { bottom: var(--space-md); left: var(--space-md); }
+.bottomRight { bottom: var(--space-md); right: var(--space-md); }
+
+/* A control sits on tiles, not on a surface, so it needs an edge of its own. */
+.controlButton {
+	border: var(--border-width) solid var(--border);
+}
+
+/* Above the controls, so a menu is never behind its button. */
+.controlMenu {
+	z-index: 1000;
+}
+
+.searchControl {
+	width: 15rem;
+	max-width: calc(100% - var(--space-2xl));
+	z-index: 950;
+}
+
+/* Through a variable: CSS Modules scopes `@keyframes` names. */
+.spin {
+	animation: var(--animate-spin);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.spin {
+		animation: none;
+	}
+}
+
+/* ── Overlays ──────────────────────────────────────────────────────────────────── */
+
+/* Vector shapes are SVG: `fill`/`stroke`, which outrank Leaflet's presentation attributes. */
+.shape {
+	fill: var(--foreground);
+	stroke: var(--foreground);
+	stroke-width: 2;
+}
+
+.markerIcon {
+	display: inline-flex;
+	color: var(--foreground);
+}
+
+.markerIcon > svg {
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+}
+
+.pulse {
+	position: absolute;
+	top: calc(var(--space-xs) * -1);
+	inset-inline-end: calc(var(--space-xs) * -1);
+	display: flex;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.pulseRing {
+	position: absolute;
+	display: inline-flex;
+	width: 100%;
+	height: 100%;
+	border-radius: var(--radius-pill);
+	background-color: var(--primary);
+	opacity: 0.75;
+	animation: var(--animate-ping);
+}
+
+.pulseDot {
+	position: relative;
+	display: inline-flex;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	border-radius: var(--radius-pill);
+	background-color: var(--primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.pulseRing {
+		animation: none;
+	}
+}
+
+.drawHandle {
+	display: block;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	border-radius: var(--radius-pill);
+	background-color: var(--primary-accent);
+	transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.drawHandle:hover {
+	transform: scale(1.1);
+}
+
+/* Leaflet's popup root. Its surface is restyled unlayered in styles/map.css; the width is ours. */
+.popup {
+	max-width: 18rem;
+}
+
+/* Leaflet's tooltip chrome is stripped in styles/map.css; this is the surface. */
+.tooltip {
+	position: relative;
+	width: fit-content;
+	padding-block: var(--space-sm);
+	padding-inline: var(--control-px);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground);
+	color: var(--background);
+	font-family: var(--font-sans);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	text-wrap: balance;
+	box-shadow: var(--shadow-sm);
+}
+
+.tooltipArrow {
+	position: absolute;
+	z-index: var(--z-raised);
+	width: var(--tooltip-arrow-size);
+	height: var(--tooltip-arrow-size);
+	/* An arrow tip: a quarter of the item radius, which keeps the point. */
+	border-radius: calc(var(--radius-sm) / 4);
+	background-color: var(--foreground);
+	rotate: 45deg;
+}
+
+.tooltip[data-side="top"] .tooltipArrow {
+	bottom: 0;
+	left: 50%;
+	translate: -50% 50%;
+}
+
+.tooltip[data-side="bottom"] .tooltipArrow {
+	top: 0;
+	left: 50%;
+	translate: -50% -50%;
+}
+
+.tooltip[data-side="left"] .tooltipArrow {
+	top: 50%;
+	right: 0;
+	translate: 50% -50%;
+}
+
+.tooltip[data-side="right"] .tooltipArrow {
+	top: 50%;
+	left: 0;
+	translate: -50% -50%;
+}
+
+/* ── Place autocomplete ────────────────────────────────────────────────────────── */
+
+/* Flush and unbounded: the input group owns the closed surface, the list lives in a popover. */
+.autocomplete {
+	height: fit-content;
+	padding: 0;
+	overflow: visible;
+	border: 0;
+	background: none;
+}
+
+.autocompleteAnchor {
+	position: relative;
+}
+
+/* An inert anchor over the field for the popover to measure; the click belongs to the input. */
+.autocompleteTrigger {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.autocompleteField {
+	background-color: var(--popover);
+}
+
+.autocompleteResults {
+	width: var(--anchor-width);
+	max-width: var(--available-width);
+	padding: 0;
+	gap: 0;
+	overflow: hidden;
+}
+
+.autocompleteList {
+	max-height: 18rem;
+	padding: 0;
+}
+
+.autocompleteRow {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-2xs);
+	min-width: 0;
+	text-align: start;
+}

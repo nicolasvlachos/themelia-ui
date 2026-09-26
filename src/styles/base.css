@@ -1,0 +1,167 @@
+/*
+ * Base reset — the minimal subset of Tailwind Preflight the components were authored
+ * against: border reset, form-control inheritance, replaced-element defaults. Not a
+ * normalize.css.
+ */
+@layer base {
+	/* Zero-width solid borders, so a component can set only `border-width` or `border-color`. */
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+		border: 0 solid var(--border);
+	}
+
+	* {
+		margin: 0;
+	}
+
+	html {
+		font-family: var(--font-sans);
+		line-height: var(--text-sm--line-height);
+		-webkit-text-size-adjust: 100%;
+		tab-size: 4;
+	}
+
+	body {
+		background-color: var(--background);
+		color: var(--foreground);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--line-height);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	/* Browser-drawn editing surfaces are part of the theme too. */
+	::selection {
+		background-color: var(--primary);
+		color: var(--primary-foreground);
+	}
+
+	:is(input, textarea, [contenteditable="true"]) {
+		caret-color: var(--primary-accent);
+	}
+
+	code,
+	kbd,
+	samp,
+	pre {
+		font-family: var(--font-mono);
+		font-size: 1em;
+	}
+
+	/* Headings carry no intrinsic scale; the typography components own that. */
+	h1, h2, h3, h4, h5, h6 {
+		font-size: inherit;
+		font-weight: inherit;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: inherit;
+	}
+
+	b, strong { font-weight: bolder; }
+	small { font-size: 80%; }
+	sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+	sub { bottom: -0.25em; }
+	sup { top: -0.5em; }
+
+	/*
+	 * The one match highlight (search results, combobox labels, rich text): an amber wash
+	 * under full ink, square-ended like a highlighter. The margin pays back the pad so text
+	 * never shifts; `clone` pads each line of a wrapped match.
+	 */
+	mark {
+		margin-inline: -0.125em;
+		padding-inline: 0.125em;
+		/* 30, not 20: 20 turns faint on a dark card. */
+		background-color: var(--warning-30);
+		color: var(--foreground);
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-color: inherit;
+		text-indent: 0;
+	}
+
+	/* Form controls inherit font and colour instead of the UA's own (and `buttonface`). */
+	button,
+	input,
+	optgroup,
+	select,
+	textarea {
+		font: inherit;
+		font-feature-settings: inherit;
+		font-variation-settings: inherit;
+		letter-spacing: inherit;
+		color: inherit;
+		background-color: transparent;
+		border-radius: 0;
+		opacity: 1;
+		padding: 0;
+	}
+
+	button,
+	input[type="button"],
+	input[type="reset"],
+	input[type="submit"] {
+		appearance: button;
+		background-color: transparent;
+		background-image: none;
+	}
+
+	/* Pointer for enabled buttons only. */
+	button:not(:disabled),
+	[role="button"]:not(:disabled) {
+		cursor: pointer;
+	}
+
+	:disabled {
+		cursor: default;
+	}
+
+	::placeholder {
+		opacity: 1;
+		color: var(--muted-foreground);
+	}
+
+	textarea {
+		resize: vertical;
+	}
+
+	::-webkit-search-decoration {
+		-webkit-appearance: none;
+	}
+
+	::-webkit-inner-spin-button,
+	::-webkit-outer-spin-button {
+		height: auto;
+	}
+
+	/* Block, so no descender gap under icons and images (mentions.css re-inlines chip glyphs). */
+	img,
+	svg,
+	video,
+	canvas,
+	audio,
+	iframe,
+	embed,
+	object {
+		display: block;
+		vertical-align: middle;
+	}
+
+	img,
+	video {
+		max-width: 100%;
+		height: auto;
+	}
+
+	[hidden]:not([hidden="until-found"]) {
+		display: none !important;
+	}
+}

@@ -1,0 +1,59 @@
+
+/* ══ Alert metadata ════════════════════════════════════════════════════════════════
+ * Key/value pairs under an alert's message, as a `<dl>`.
+ */
+
+.alertMeta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-lg);
+	margin: 0;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.alertMetaItem {
+	display: flex;
+	gap: calc(var(--space-lg) / 3);
+	min-width: 0;
+}
+
+.alertMetaLabel {
+	color: var(--text-role-secondary);
+	white-space: nowrap;
+}
+
+.alertMetaValue {
+	margin: 0;
+	min-width: 0;
+	font-variant-numeric: tabular-nums;
+	overflow-wrap: anywhere;
+}
+
+/* ══ Whole-region states ═══════════════════════════════════════════════════════════
+ * Loading and error regions, distinct from Empty ("nothing here").
+ */
+
+.state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-lg);
+	padding-block: calc(var(--space-2xl) * 2);
+	text-align: center;
+}
+
+.stateIcon {
+	width: var(--size-icon-xl);
+	height: var(--size-icon-xl);
+	color: var(--muted-foreground);
+}
+
+.stateIconError {
+	color: var(--destructive);
+}
+
+.stateSpinner {
+	animation: var(--animate-spin);
+}

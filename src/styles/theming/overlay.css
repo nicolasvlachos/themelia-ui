@@ -1,0 +1,52 @@
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	--overlay-max-width: 32rem;
+	--overlay-enter-scale: 0.97;
+	/* The scrim's filter; `none` by default (styles/overlays.css explains the cost of a blur). */
+	--overlay-backdrop-filter: none;
+	--overlay-edge-inset: 0px;
+
+	/* Named cross-axis steps, as viewport shares; `--overlay-max-width` caps them on desktop. */
+	--overlay-edge-sm: 55%;
+	--overlay-edge-md: 75%;
+	--overlay-edge-lg: 90%;
+	--overlay-edge-full: 100%;
+
+	/*
+	 * A tooltip arrow: a 45°-rotated square centred on the edge, so half shows and it protrudes
+	 * size × 0.707. Global because Tooltip and the map's tooltip both draw one. Keep in step
+	 * with `sideOffset` in tooltip.tsx.
+	 */
+	--tooltip-arrow-size: 0.5rem;
+}
+
+/*
+ * Overlay — one contract for dialog, alert dialog, sheet and drawer; each preset overrides
+ * only the variables that make it that preset.
+ */
+:root {
+		/* Optional region inset override; otherwise each axis follows surface padding. */
+		--overlay-region-p: initial;
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+		/* Exit is quicker than the --duration-normal entrance, and derived so both retune together. */
+		--overlay-duration-exit: calc(var(--duration-normal) * 0.75);
+
+
+		/* The length between the insets, so the gap is equal on every side. */
+		--overlay-edge-length: calc(100% - var(--overlay-edge-inset) * 2);
+		/* The gap `inset` opens when a caller asks for one without naming a length. */
+		--overlay-edge-inset-default: var(--space-lg);
+
+		/*
+		 * Anchored-popup boundary: hairline ring plus a medium lift. Global because the hover
+		 * card and navigation menu read it too and may load without the popover module.
+		 */
+		--popover-shadow: 0 0 0 var(--border-width) var(--foreground-10), var(--shadow-md);
+}

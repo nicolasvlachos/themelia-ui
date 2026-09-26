@@ -1,0 +1,88 @@
+/*
+ * Palette — the primitive tier: raw colour ramps with no meaning. Only styles/themes may
+ * reference these; a component reading `--neutral-200` skips the semantic tier and will
+ * not follow a retheme.
+ *
+ * Steps track lightness, descending, Tailwind-style. The ladder is gappy on purpose: every
+ * step is one a theme uses. Light and dark counterparts may differ in hue as well as
+ * lightness (destructive is 27.3 light, 22.2 dark, to stay readable on a dark surface).
+ */
+:root {
+	/* ── Neutral — canvas, surfaces, borders, text. Chroma 0: true greys. ────────── */
+	--neutral-0: oklch(1 0 0);
+	--neutral-25: oklch(0.99 0 0);
+	--neutral-50: oklch(0.985 0 0);
+	--neutral-75: oklch(0.98 0 0);
+	--neutral-100: oklch(0.97 0 0);
+	--neutral-150: oklch(0.96 0 0);
+	--neutral-200: oklch(0.922 0 0);
+	--neutral-400: oklch(0.708 0 0);
+	--neutral-500: oklch(0.556 0 0);
+	--neutral-550: oklch(0.5 0 0);
+	--neutral-700: oklch(0.36 0 0);
+	/*
+	 * The dark highlight (selected rows, active tabs, menu cursors). Dark enough for muted
+	 * text on it to clear 4.5:1, light enough to lift off a popover and a card.
+	 */
+	--neutral-750: oklch(0.33 0 0);
+	--neutral-800: oklch(0.28 0 0);
+	--neutral-850: oklch(0.25 0 0);
+	--neutral-875: oklch(0.23 0 0);
+	--neutral-900: oklch(0.205 0 0);
+	--neutral-950: oklch(0.16 0 0);
+
+	/* ── Brand — hue 167.35, the kit's green ──────────────────────────────────── */
+	--brand-300: oklch(0.72 0.124 167.35);
+	--brand-350: oklch(0.7 0.13 167.35);
+	--brand-600: oklch(0.45 0.124 167.35);
+	--brand-950: oklch(0.18 0.03 167.35);
+
+	/* ── Danger — hue 27.3 light / 22.2 dark ──────────────────────────────────── */
+	--danger-400: oklch(0.704 0.191 22.216);
+	--danger-600: oklch(0.5 0.245 27.325);
+	--danger-950: oklch(0.18 0.05 22);
+
+	/* ── Success — hue 145 ────────────────────────────────────────────────────── */
+	--success-400: oklch(0.76 0.16 145);
+	--success-600: oklch(0.4 0.16 145);
+	--success-950: oklch(0.18 0.05 145);
+
+	/* ── Info — hue 277 light / 250 dark ──────────────────────────────────────── */
+	--info-400: oklch(0.72 0.14 250);
+	--info-600: oklch(0.45 0.214 276.966);
+	--info-950: oklch(0.18 0.05 250);
+
+	/* ── Warning — hue 90 for fills, 80 for ink and accents ───────────────────── */
+	--warning-300: oklch(0.82 0.16 90);
+	--warning-500: oklch(0.72 0.16 90);
+	--warning-700: oklch(0.45 0.12 80);
+	--warning-900: oklch(0.2 0.05 80);
+	--warning-950: oklch(0.18 0.05 80);
+
+	/* ── Link — hue 259 ───────────────────────────────────────────────────────── */
+	--link-400: oklch(0.72 0.12 259.13);
+	--link-600: oklch(0.462 0.1776 259.13);
+
+	/* ── Violet — hue 264, dark sidebar selection only ────────────────────────── */
+	--violet-500: oklch(0.488 0.243 264.376);
+
+	/* ── Chart series ─────────────────────────────────────────────────────────────
+	 * Categorical: hue is the series' identity and holds across themes; only lightness
+	 * moves. Hues stay clear of the status hues so a series never reads as a state.
+	 */
+	--series-1: oklch(0.56 0.11 167);
+	--series-1-dark: oklch(0.74 0.13 167);
+	--series-2: oklch(0.56 0.11 230);
+	--series-2-dark: oklch(0.72 0.14 230);
+	--series-3: oklch(0.56 0.17 285);
+	--series-3-dark: oklch(0.72 0.15 285);
+	--series-4: oklch(0.58 0.16 330);
+	--series-4-dark: oklch(0.74 0.15 330);
+	--series-5: oklch(0.6 0.14 60);
+	--series-5-dark: oklch(0.78 0.14 60);
+
+	/* ── Alpha — dark borders and inputs, so they lift with any surface behind them. */
+	--white-a10: oklch(1 0 0 / 10%);
+	--white-a15: oklch(1 0 0 / 15%);
+	--pure-black: oklch(0 0 0);
+}

@@ -1,0 +1,68 @@
+/*
+ * Themelia UI — stylesheet entry point. Import once at the application root.
+ *
+ * Layer order is the override story; later layers win regardless of specificity:
+ *
+ *   tokens     primitives (palette) and the raw tunable contract
+ *   theming    wiring derived from tokens (never raw values)
+ *   base       element reset
+ *   components CSS-Module rules (see vite.config.ts)
+ *   utilities  the escape-hatch helpers the kit ships
+ *
+ * Consumer unlayered CSS outranks every layer. `@import` cannot sit inside `@layer {}`,
+ * hence the `layer(...)` form on each import.
+ */
+@layer tokens, theming, base, components, utilities;
+
+/* The default typefaces. Unlayered: a layer cannot hold @font-face. */
+@import "./fonts.css";
+
+/* ── tokens: the raw contract ─────────────────────────────────────────────────── */
+/* Primitives first: the theme resolves its semantics against these. */
+@import "./tokens/palette.css" layer(tokens);
+@import "./themes/default.css" layer(tokens);
+@import "./tokens/foundation.css" layer(tokens);
+@import "./tokens/primitives.css" layer(tokens);
+@import "./tokens/states.css" layer(tokens);
+@import "./tokens/layout.css" layer(tokens);
+@import "./tokens/components.css" layer(tokens);
+
+/* ── theming: computed wiring ─────────────────────────────────────────────────── */
+@import "./theming/breakpoints.css";
+@import "./theming/colors.css" layer(theming);
+@import "./theming/sizing.css" layer(theming);
+@import "./theming/typography.css" layer(theming);
+@import "./theming/focus.css" layer(theming);
+@import "./theming/motion.css" layer(theming);
+@import "./theming/layers.css" layer(theming);
+@import "./theming/animation.css" layer(theming);
+
+/* Per-family contracts. A module whose contract is missing here renders unstyled. */
+@import "./theming/overlay.css" layer(theming);
+@import "./theming/layout.css" layer(theming);
+@import "./theming/field.css" layer(theming);
+@import "./theming/feedback.css" layer(theming);
+@import "./theming/text.css" layer(theming);
+
+/* ── base: element reset (declares its own @layer base) ───────────────────────── */
+@import "./base.css";
+
+/* The shared field surface. */
+@import "./fields.css";
+
+/* Minimum hit areas for small controls. */
+@import "./targets.css";
+
+/* Mention chips: global because editor-serialised HTML renders them too. */
+@import "./mentions.css";
+
+/* ── utilities: caller-supplied class hooks the component API documents ───────── */
+@import "./utilities.css";
+/* ── utilities: the forced-colors focus restoration (declares its own @layer) ──── */
+@import "./forced-colors.css";
+
+/* Unlayered: modal scrims must outrank component modules. */
+@import "./overlays.css";
+
+/* Unlayered to meet leaflet.css (also unlayered); every selector is scoped to `.map--component`. */
+@import "./map.css";

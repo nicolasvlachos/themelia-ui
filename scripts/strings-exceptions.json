@@ -1,0 +1,397 @@
+[
+ {
+  "finding": "copy-attribute|base/repeaters/localized-string-repeater.tsx|aria-label={`${ariaLabel} ${index + 1}`}",
+  "reason": "consumer-owned-prop",
+  "owner": "LocalizedStringRepeater"
+ },
+ {
+  "finding": "copy-attribute|base/repeaters/string-repeater.tsx|aria-label={`${ariaLabel} ${index + 1}`}",
+  "reason": "consumer-owned-prop",
+  "owner": "StringRepeater"
+ },
+ {
+  "finding": "copy-attribute|features/filters/filter-pill.tsx|aria-label={`${strings.clear}: ${filter.label}`}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "FilterPill"
+ },
+ {
+  "finding": "copy-attribute|features/filters/filter-pill.tsx|aria-label={`${strings.edit}: ${filter.label}`}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "FilterPill"
+ },
+ {
+  "finding": "copy-attribute|features/media-library/media-library-parts.tsx|aria-label={`${strings.upload.remove}: ${file.name}`}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "MediaLibraryUploadPanel"
+ },
+ {
+  "finding": "copy-attribute|features/media-library/media-resource-gallery.tsx|aria-label={`${copy.gallery.remove}: ${accessors.getName}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "MediaResourceGallery"
+ },
+ {
+  "finding": "copy-attribute|features/products/product-options-matrix.tsx|aria-label={`${copy.valuesLabel} ${index + 1}`}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "ProductOptionsMatrix"
+ },
+ {
+  "finding": "copy-attribute|features/theme-tweaker/theme-tweaker.tsx|aria-label={`${strings.resetVariable}: ${field.label}`}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "ThemeTweaker"
+ },
+ {
+  "finding": "copy-attribute|layout/header/partials/header-notifications.tsx|aria-label={`${copy.trigger}, ${copy.unread(unreadCount)}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "HeaderNotifications"
+ },
+ {
+  "finding": "copy-attribute|layout/header/partials/header-user-menu.tsx|aria-label={`${copy.trigger}, ${user.name}`}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "HeaderUserMenu"
+ },
+ {
+  "finding": "copy-attribute|layout/sidebar/partials/sidebar-user.tsx|aria-label={`${copy.trigger}, ${user.name}`}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "SidebarUser"
+ },
+ {
+  "finding": "jsx-text|features/activities/activity-row.tsx|{`+${hidden} ${moreLabel}`}",
+  "reason": "consumer-owned-prop",
+  "owner": "ActivityRowProps"
+ },
+ {
+  "finding": "jsx-text|primitives/ratio.tsx|{`${number(value)} ${copy.of} ${number(total)}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "Rating"
+ },
+ {
+  "finding": "jsx-text|primitives/ratio.tsx|{`${number(value)}${copy.fraction}${number(to}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "Rating"
+ },
+ {
+  "finding": "jsx-text|primitives/ratio.tsx|{`${score} ${copy.outOf} ${new Intl.NumberFor}",
+  "reason": "composed-from-overridable-parts",
+  "owner": "Rating"
+ },
+ {
+  "finding": "loose-copy-prop|admin/patterns/commerce/booking.tsx|actionLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "BookingCardProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/activities/activity-headline.tsx|youLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ActivityHeadlineProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/activities/activity-row.tsx|actionsLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ActivityRowProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/activities/activity-row.tsx|detailLabels",
+  "reason": "consumer-owned-prop",
+  "owner": "ActivityRowProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/activities/activity-row.tsx|moreLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ActivityRowProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/activities/activity-row.tsx|sourceLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ActivityRowProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/activities/activity-row.tsx|youLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ActivityRowProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/ai-chat/ai-chat-parts.tsx|submitKeyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "AiChatPromptInputProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/ai-chat/ai-chat.types.ts|approveLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "AiConfirmationProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/ai-chat/ai-chat.types.ts|avatarLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "AiMessageBubbleProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/ai-chat/ai-chat.types.ts|rejectLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "AiConfirmationProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/async-preview/preview-trigger-cell.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "PreviewTriggerCellProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/combobox/resource-combobox.tsx|errorMessage",
+  "reason": "consumer-owned-prop",
+  "owner": "ResourceComboboxProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/event-calendar/event-calendar.types.ts|displayLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "EventCalendarHeaderProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/event-calendar/event-calendar.types.ts|emptyStateMessage",
+  "reason": "consumer-owned-prop",
+  "owner": "EventCalendarProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/global-search/global-search-footer.tsx|closeLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "GlobalSearchFooterProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/global-search/global-search-footer.tsx|navigateLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "GlobalSearchFooterProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/global-search/global-search-footer.tsx|openLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "GlobalSearchFooterProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/global-search/global-search-input.tsx|clearLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "GlobalSearchInputProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/global-search/global-search.types.ts|groupLabels",
+  "reason": "consumer-owned-prop",
+  "owner": "GlobalSearchProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/map/map.tsx|layerGroupsLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MapLayersControlProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/map/map.tsx|tileLayersLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MapLayersControlProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/media-library/media-library-parts.tsx|cancelLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MediaLibraryFooterActionsProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/media-library/media-library-parts.tsx|confirmLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MediaLibraryFooterActionsProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/media-library/media-library.types.ts|cancelLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MediaLibraryProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/media-library/media-library.types.ts|confirmLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MediaLibraryProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/mentions/mention-suggestion-list.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MentionRowsProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/mentions/mention-suggestion-list.tsx|listLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MentionRowsProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/mentions/mention-suggestion-list.tsx|loadingLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MentionRowsProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/overlays/overlays.types.ts|alertMessage",
+  "reason": "consumer-owned-prop",
+  "owner": "OverlayEmphasisProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/overlays/overlays.types.ts|alertMessage#2",
+  "reason": "consumer-owned-prop",
+  "owner": "OverlayEmphasisProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/products/products.types.ts|menuLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ProductVariantActionMenuProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/products/products.types.ts|menuLabel#2",
+  "reason": "consumer-owned-prop",
+  "owner": "ProductVariantActionMenuProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/products/products.types.ts|scoreLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ProductReadinessCardProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/schema-form/schema-form-actions.tsx|resetLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "SchemaFormActionsProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/schema-form/schema-form-actions.tsx|submitLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "SchemaFormActionsProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/schema-form/schema-form.types.ts|resetLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "SchemaFormProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/schema-form/schema-form.types.ts|submitLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "SchemaFormProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/cell-renderers.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "StatusCellProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/cell-renderers.tsx|emptyLabel#2",
+  "reason": "consumer-owned-prop",
+  "owner": "StatusCellProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/cell-renderers.tsx|emptyLabel#3",
+  "reason": "consumer-owned-prop",
+  "owner": "StatusCellProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/cell-renderers.tsx|emptyLabel#4",
+  "reason": "consumer-owned-prop",
+  "owner": "StatusCellProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/cell-renderers.tsx|emptyLabel#5",
+  "reason": "consumer-owned-prop",
+  "owner": "StatusCellProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/fullscreen-toggle.tsx|enterLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "FullscreenToggleProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/fullscreen-toggle.tsx|exitLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "FullscreenToggleProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/resource-cell.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ResourceCellProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/table.types.ts|emptyStateMessage",
+  "reason": "consumer-owned-prop",
+  "owner": "DataTableProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/table.types.ts|emptyStateMessage#2",
+  "reason": "consumer-owned-prop",
+  "owner": "DataTableProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/table.types.ts|filterPlaceholder",
+  "reason": "consumer-owned-prop",
+  "owner": "DataTableProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/table.types.ts|menuLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "DataTableActionsProps"
+ },
+ {
+  "finding": "loose-copy-prop|features/table/table.types.ts|rowActionsMenuLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "DataTableProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/address.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "AddressProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/coordinates.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "CoordinatesProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/date.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "DateBaseProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/dimensions.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "DimensionsProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/duration.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "DurationProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/file-size.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "FileSizeProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/inline-list.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "InlineListProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/link.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "LinkProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/money.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "MoneyProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/number.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "NumberProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/quantity.tsx|zeroLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "QuantityProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/range.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "RangeProps"
+ },
+ {
+  "finding": "loose-copy-prop|primitives/value.tsx|emptyLabel",
+  "reason": "consumer-owned-prop",
+  "owner": "ValueProps"
+ }
+]

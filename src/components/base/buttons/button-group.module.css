@@ -1,0 +1,87 @@
+/* ButtonGroup — buttons acting as one control; neighbours overlap so each seam is one hairline. */
+.root {
+	display: inline-flex;
+	align-items: center;
+}
+
+/* LoaderButton's live-region sibling is not a segment, hence the `of :not(...)` filters. */
+/* Overlap neighbours by one border. Separators (and the segment after one) don't overlap. */
+.root > :nth-child(n + 2 of :not([data-slot="loader-button-status"])):not(.groupSeparator):not(.groupSeparator + *) {
+	margin-inline-start: calc(var(--border-width) * -1);
+}
+
+.root > :nth-child(n + 2 of :not([data-slot="loader-button-status"])):nth-last-child(n + 2 of :not([data-slot="loader-button-status"])) {
+	border-radius: 0;
+}
+
+/* Which corners square off depends on the axis, so these are horizontal-only. */
+.root:not(.vertical) > :nth-child(1 of :not([data-slot="loader-button-status"])):nth-last-child(n + 2 of :not([data-slot="loader-button-status"])) {
+	border-start-end-radius: 0;
+	border-end-end-radius: 0;
+}
+
+.root:not(.vertical) > :nth-last-child(1 of :not([data-slot="loader-button-status"])):nth-child(n + 2 of :not([data-slot="loader-button-status"])) {
+	border-start-start-radius: 0;
+	border-end-start-radius: 0;
+}
+
+/* Stacked, a pill radius would clamp to half the width; outer corners take the control radius. */
+.vertical > :not([data-slot="loader-button-status"]) {
+	border-radius: var(--radius-sm);
+}
+
+.vertical > :nth-child(1 of :not([data-slot="loader-button-status"])):nth-last-child(n + 2 of :not([data-slot="loader-button-status"])) {
+	border-end-start-radius: 0;
+	border-end-end-radius: 0;
+}
+
+.vertical > :nth-last-child(1 of :not([data-slot="loader-button-status"])):nth-child(n + 2 of :not([data-slot="loader-button-status"])) {
+	border-start-start-radius: 0;
+	border-start-end-radius: 0;
+}
+
+/* Hovered or focused segments lift above neighbours so their border is unbroken. */
+.root > :not([data-slot="loader-button-status"]):hover,
+.root > :not([data-slot="loader-button-status"]):focus-visible {
+	z-index: var(--z-raised);
+}
+
+.vertical {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+/* Same selector as the horizontal overlap rule, so it wins by source order. */
+.vertical > :nth-child(n + 2 of :not([data-slot="loader-button-status"])):not(.groupSeparator):not(.groupSeparator + *) {
+	margin-inline-start: 0;
+	margin-top: calc(var(--border-width) * -1);
+}
+
+/* ══ Group segments ════════════════════════════════════════════════════════════════ */
+
+/* A non-interactive segment — a unit, a prefix, a count — with the buttons' edge. */
+.groupText {
+	display: inline-flex;
+	align-items: center;
+	height: var(--button-h);
+	padding-inline: var(--space-lg);
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground-8);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	white-space: nowrap;
+}
+
+/* An inner rule: between outline segments it sits beside their edges, so it must be softer. */
+.groupSeparator {
+	flex-shrink: 0;
+	align-self: stretch;
+	width: var(--border-width);
+	background-color: var(--border-60);
+}
+
+.groupSeparatorVertical {
+	width: auto;
+	height: var(--border-width);
+}

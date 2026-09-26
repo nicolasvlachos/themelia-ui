@@ -1,0 +1,211 @@
+/** Async feature flows (action overlays, comboboxes, async previews, schema form) at desktop and phone widths, in every theme and density. */
+import { test, expect } from "@playwright/test"
+import AxeBuilder from "@axe-core/playwright"
+import { visitRoute } from "./routes"
+
+for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 }]) {
+	test.describe(`${viewport.width}px async feature interactions`, () => {
+		test.use({ viewport })
+		test("action overlays preserve pending actions and recover from failure", async ({ page }, info) => {
+			/* An axe audit per overlay: it has run past the 30s default on a slower machine. */
+			test.setTimeout(90_000)
+			await visitRoute(page, "/action-overlays")
+			await page.getByRole("button", { name: "Async confirm", exact: true }).click()
+			const dialog = page.getByRole("dialog", { name: "Saving takes a moment" })
+			await dialog.getByRole("button", { name: "Confirm", exact: true }).click()
+			await expect(dialog.getByRole("button", { name: "Cancel" })).toBeDisabled()
+			await expect(dialog.getByRole("button", { name: "Close", exact: true })).toHaveCount(0)
+			/* Escape is ignored while the confirm is pending; the dialog closes once it resolves. */
+			await page.keyboard.press("Escape")
+			await expect(dialog).toBeVisible()
+			await expect(dialog).not.toBeVisible()
+			await page.getByRole("button", { name: "Async that rejects" }).click()
+			const failed = page.getByRole("dialog")
+			await failed.getByRole("button", { name: "Confirm", exact: true }).click()
+			await expect(failed.getByRole("button", { name: "Confirm", exact: true })).toBeEnabled()
+			await expect(failed).toBeVisible()
+			await expect(failed).toHaveCSS("scale", "1")
+			const failedBounds = await failed.boundingBox()
+			/* Centred, with the overlay edge inset on both sides — never flush with the screen. */
+			const { x, width } = failedBounds!
+			expect(Math.abs(x - (viewport.width - x - width))).toBeLessThanOrEqual(1)
+			expect(x).toBeGreaterThanOrEqual(8)
+			/* Captured for review, not compared. */
+			await page.screenshot({ path: info.outputPath("overlay-failed.png") })
+			await failed.getByRole("button", { name: "Cancel" }).click()
+			for (const name of ["Plain", "Toned", "Neutral", "Destructive", "Modal sheet", "Non-modal inspector", "Open edit", "Open remove"]) {
+				await page.getByRole("button", { name, exact: true }).click()
+				const surface = page.locator("dialog[open]")
+				await expect(surface).toBeVisible()
+				await expect(surface).toHaveCSS("opacity", "1")
+				if (await surface.getAttribute("data-placement") === "center") {
+					await expect(surface).toHaveCSS("scale", "1")
+					const bounds = await surface.boundingBox()
+					expect(bounds!.x).toBeCloseTo((viewport.width - bounds!.width) / 2, 0)
+					expect(bounds!.x).toBeGreaterThanOrEqual(8)
+				}
+				const axe = await new AxeBuilder({ page }).include("dialog[open]").analyze()
+				expect(axe.violations).toEqual([])
+				if (name === "Non-modal inspector") await surface.getByRole("button", { name: "Close", exact: true }).press("Escape")
+				else await surface.getByRole("button", { name: /Cancel|Close/, exact: true }).first().click()
+				await expect(surface).toHaveCount(0)
+			}
+		})
+
+		test("combobox searches, retains draft selections, cancels and applies", async ({ page }, info) => {
+			await visitRoute(page, "/combobox")
+			const input = page.getByRole("combobox", { name: "Country", exact: true })
+			await input.click()
+			await input.fill("gre")
+			await expect(input).toHaveValue("gre")
+			await page.getByRole("option", { name: "Greece", exact: true }).click()
+			await expect(input).toHaveValue("Greece")
+			await expect(page.getByText("Greece — Athens", { exact: true })).toBeVisible()
+			await input.click()
+			await input.fill("zzzz")
+			await expect(page.getByText("No results found.", { exact: true })).toBeVisible()
+			await expect(page.getByRole("option", { name: "Greece", exact: true })).toHaveAttribute("aria-selected", "true")
+			await input.press("Escape")
+			const multi = page.getByRole("combobox", { name: "Countries", exact: true })
+			await multi.click()
+			await page.getByRole("option", { name: "Germany", exact: true }).click()
+			await multi.press("Escape")
+			await expect(page.getByText("1 selected", { exact: true })).toBeVisible()
+			const draft = page.getByRole("combobox", { name: "Filter by country" })
+			await draft.click()
+			await page.getByRole("option", { name: "Greece", exact: true }).click()
+			await expect(page.getByRole("option", { name: "Greece", exact: true })).toHaveAttribute("aria-selected", "true")
+			await draft.fill("ger")
+			await expect(page.getByRole("option", { name: "Greece", exact: true })).toHaveAttribute("aria-selected", "true")
+			await page.getByRole("button", { name: "Cancel", exact: true }).click()
+			await expect(page.getByText("applied: none", { exact: true })).toBeVisible()
+			await draft.click()
+			await draft.fill("")
+			await page.getByRole("option", { name: "Greece", exact: true }).click()
+			await page.getByRole("button", { name: "Apply", exact: true }).click()
+			await expect(page.getByText("applied: Greece", { exact: true })).toBeVisible()
+			const creatable = page.getByRole("combobox", { name: "Country or a new one" })
+			await creatable.click()
+			await creatable.fill("Atlantis")
+			await page.getByRole("option", { name: /Create.*Atlantis/ }).click()
+			await creatable.press("Escape")
+			await page.screenshot({ path: info.outputPath("combobox-selected.png") })
+		})
+
+		test("resource combobox retries the failed query", async ({ page }) => {
+			await visitRoute(page, "/combobox")
+			const resource = page.locator("#resource-combobox")
+			await resource.getByRole("combobox", { name: "Country (self-fetching)" }).click()
+			await resource.getByRole("combobox", { name: "Country (self-fetching)" }).fill("gre")
+			await page.keyboard.press("Escape")
+			await expect(resource.getByRole("alert")).toBeVisible()
+			await resource.getByRole("checkbox", { name: "Make the fetcher fail" }).press("Space")
+			await resource.getByRole("button", { name: /Retry|Try again/ }).click()
+			await expect(resource.getByRole("alert")).toHaveCount(0)
+			const input = page.getByRole("combobox", { name: "Country (self-fetching)" })
+			await input.click()
+			await input.fill("gre")
+			await page.getByRole("option", { name: /Greece/ }).click()
+			await expect(input).toHaveValue("Greece")
+		})
+
+		test("async previews reuse prefetch, retry, empty and show table records", async ({ page }, info) => {
+			await visitRoute(page, "/async-preview")
+			const demo = page.locator("#async-preview-basic")
+			await demo.getByRole("button", { name: "Northwind Traders", exact: true }).click()
+			await expect(page.locator(".async-preview--component").getByText("ops@northwind.test")).toBeVisible()
+			await expect(demo.getByText("request #1 → c-1", { exact: true })).toBeVisible()
+			await expect(demo.getByText(/request #2/)).toHaveCount(0)
+			await page.keyboard.press("Escape")
+			await page.getByRole("button", { name: "Fails once, then recovers", exact: true }).click()
+			const preview = page.locator(".async-preview--component")
+			await expect(preview.getByRole("alert")).toBeVisible()
+			await page.screenshot({ path: info.outputPath("preview-error.png") })
+			await preview.getByRole("button", { name: /Retry|Try again/ }).click()
+			await expect(preview.getByText("ops@northwind.test")).toBeVisible()
+			await page.keyboard.press("Escape")
+			await page.getByRole("button", { name: "Resolves to nothing", exact: true }).click()
+			await expect(preview.locator(".async-preview-empty--component")).toBeVisible()
+			await page.keyboard.press("Escape")
+			await page.getByRole("button", { name: "Already in hand", exact: true }).click()
+			await expect(preview.getByText("billing@contoso.test")).toBeVisible()
+			await page.keyboard.press("Escape")
+			await page.locator("#preview-trigger-cell").getByRole("button", { name: /Fabrikam/ }).click()
+			await expect(preview.getByText("hello@fabrikam.test")).toBeVisible()
+			const axe = await new AxeBuilder({ page }).include(".async-preview--component").analyze()
+			expect(axe.violations).toEqual([])
+		})
+
+		test("schema form validates, resets invalid JSON and retries a failed save", async ({ page }, info) => {
+			await visitRoute(page, "/schema-form")
+			const demo = page.locator("#form-layout")
+			const name = demo.getByRole("textbox", { name: "Venue name", exact: true })
+			await name.fill("")
+			await demo.getByRole("button", { name: "Save changes" }).click()
+			await expect(name).toBeFocused()
+			await expect(demo.getByText("Venue name is required.")).toBeVisible()
+			await name.fill("Marlow Hall")
+			const metadata = demo.getByRole("textbox", { name: "Integration metadata" })
+			await metadata.fill("{broken")
+			await demo.getByRole("button", { name: "Save changes" }).click()
+			await expect(demo.getByText("Enter valid JSON.")).toBeVisible()
+			await expect(demo.getByText(/^submitted:/)).toHaveCount(0)
+			await demo.getByRole("button", { name: "Reset" }).click()
+			await expect(metadata).toHaveValue(/MRL-1/)
+			await expect(demo.getByText("Enter valid JSON.")).toHaveCount(0)
+			await demo.getByRole("checkbox", { name: "Make the save fail" }).press("Space")
+			await demo.getByRole("button", { name: "Save changes" }).click()
+			await expect(name).toBeDisabled()
+			await expect(demo.getByText("Changes could not be saved. Please try again.")).toBeVisible()
+			await page.screenshot({ path: info.outputPath("form-error.png") })
+			await demo.getByRole("checkbox", { name: "Make the save fail" }).press("Space")
+			await demo.getByRole("button", { name: "Save changes" }).click()
+			await expect(demo.getByText(/^submitted:/)).toBeVisible()
+			await expect(demo.getByRole("alert")).toHaveCount(0)
+			await demo.getByRole("switch", { name: "Self-service booking" }).press("Space")
+			await expect(demo.getByRole("textbox", { name: "Cut-off (hours before)" })).toBeVisible()
+			await page.locator("#cards-layout").getByRole("button", { name: "Save settings" }).click()
+			const axe = await new AxeBuilder({ page }).include("main").analyze()
+			expect(axe.violations).toEqual([])
+		})
+	})
+}
+
+for (const theme of ["light", "dark"] as const) {
+	for (const density of ["Compact", "Default", "Comfortable"]) {
+		test(`feature surfaces remain usable in ${theme} ${density.toLowerCase()}`, async ({ page }, info) => {
+			test.skip(info.project.name !== "chromium", "Density and theme use shared CSS; interaction contracts run in every engine.")
+			await page.emulateMedia({ colorScheme: theme })
+			await visitRoute(page, "/action-overlays")
+			await page.getByRole("combobox", { name: "Density", exact: true }).selectOption({ label: density })
+			for (const width of [1280, 390]) {
+				await page.setViewportSize({ width, height: 900 })
+				for (const route of ["/action-overlays", "/combobox", "/async-preview", "/schema-form"]) {
+					await visitRoute(page, route)
+					let surface = page.locator("main")
+					if (route === "/action-overlays") {
+						await page.getByRole("button", { name: "Async confirm", exact: true }).click()
+						surface = page.getByRole("dialog", { name: "Saving takes a moment" })
+					} else if (route === "/combobox") {
+						await page.getByRole("combobox", { name: "Country", exact: true }).click()
+						await page.getByRole("combobox", { name: "Country", exact: true }).fill("gre")
+						surface = page.getByRole("listbox")
+						await expect(page.getByRole("option", { name: "Greece", exact: true })).toBeVisible()
+					} else if (route === "/async-preview") {
+						await page.getByRole("button", { name: "Already in hand", exact: true }).click()
+						surface = page.locator(".async-preview--component")
+					} else {
+						surface = page.locator("#form-layout .schema-form--component")
+					}
+					await expect(surface).toBeVisible()
+					const box = await surface.boundingBox()
+					expect(box).not.toBeNull()
+					expect(box!.x).toBeGreaterThanOrEqual(-1)
+					expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1)
+					await surface.screenshot({ path: info.outputPath(`${route.slice(1)}-${width}.png`), animations: "disabled" })
+					await expect(page.locator(".example--error")).toHaveCount(0)
+				}
+			}
+		})
+	}
+}

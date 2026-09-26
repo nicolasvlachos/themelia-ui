@@ -1,0 +1,20 @@
+/*
+ * Minimum hit area for a small control (WCAG 2.2: 24x24px). Add `data-hit-area` to any
+ * control drawn under the minimum; a pseudo-element grows the target without moving layout.
+ */
+@layer components {
+	[data-hit-area] {
+		position: relative;
+	}
+
+	[data-hit-area]::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		translate: -50% -50%;
+		/* `max()`: only ever grows the target. */
+		width: max(100%, var(--hit-area-min));
+		height: max(100%, var(--hit-area-min));
+	}
+}

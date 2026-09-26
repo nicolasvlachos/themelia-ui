@@ -1,0 +1,143 @@
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/* Neutral defaults — a surface overrides only the axis it animates. */
+	--enter-opacity: 1;
+	--enter-scale: 1;
+	--enter-translate-x: 0;
+	--enter-translate-y: 0;
+	--exit-opacity: 1;
+	--exit-scale: 1;
+	--exit-translate-x: 0;
+	--exit-translate-y: 0;
+
+	/* Looping animations. */
+	--animate-spin: spin 1s linear infinite;
+
+	/* The distance menus and popovers enter from. Sheets travel their full width instead. */
+	--slide-nudge: 0.5rem;
+}
+
+/*
+ * Animation — one parameterised enter/exit keyframe pair. A surface composes its entrance
+ * by setting only the variables it needs; unset ones stay neutral:
+ *
+ *   .content {
+ *     animation: var(--animate-exit);
+ *     --enter-opacity: 0;
+ *     --enter-scale: 0.95;
+ *   }
+ *   .content[data-open] { animation: var(--animate-enter); }
+ *
+ * Derived tokens: declared at every scope boundary (styles/SCOPES.md).
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+		/*
+		 * Shorthands live in this global sheet because CSS Modules renames `@keyframes`
+		 * names: `animation: enter …` written in a module points at a scoped name that does
+		 * not exist. To change speed, set `animation-duration` after the shorthand; the
+		 * duration below is already resolved, so redefining --duration-fast does nothing.
+		 */
+		--animate-enter: enter var(--duration-fast) var(--ease-out);
+		/* Exits start moving immediately; ease-in reads as latency at this duration. */
+		--animate-exit: exit var(--duration-fast) var(--ease-out);
+		/* An expanding halo — a live location on a map, a recording indicator. */
+		--animate-ping: ping 1s var(--ease-out) infinite;
+		--animate-pulse: pulse 2s var(--ease-in-out) infinite;
+}
+
+@keyframes enter {
+	from {
+		opacity: var(--enter-opacity);
+		transform: translate3d(var(--enter-translate-x), var(--enter-translate-y), 0)
+			scale3d(var(--enter-scale), var(--enter-scale), var(--enter-scale));
+	}
+}
+
+@keyframes exit {
+	to {
+		opacity: var(--exit-opacity);
+		transform: translate3d(var(--exit-translate-x), var(--exit-translate-y), 0)
+			scale3d(var(--exit-scale), var(--exit-scale), var(--exit-scale));
+	}
+}
+
+/* Indeterminate progress — spinners and loader buttons. */
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* An expanding, fading halo. Paired with a solid dot that stays put. */
+@keyframes ping {
+	75%,
+	100% {
+		transform: scale(2);
+		opacity: 0;
+	}
+}
+
+/* Skeleton placeholders. */
+@keyframes pulse {
+	50% {
+		opacity: 0.5;
+	}
+}
+
+/*
+ * Native top-layer surfaces (dialog, alert dialog, sheet, drawer) use transitions plus
+ * `@starting-style`, not the keyframes above: the element leaves the top layer the moment
+ * `close()` runs, so only transitioning `overlay` and `display` (allow-discrete) keeps it
+ * there to animate out. Unsupported browsers show and hide it instantly.
+ */
+
+/*
+ * The indeterminate bar's band. Translate percentages are of the band (40% of the track),
+ * so 250% carries it fully off the far edge. Keep in step with the band width.
+ */
+@keyframes progress-indeterminate {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(250%);
+	}
+}
+
+/* Motion here is decorative, so reduced motion removes it. */
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--animate-enter: none;
+		--animate-exit: none;
+	}
+
+	/*
+	 * Catches motion not written against the duration tokens (spinners, skeletons, the
+	 * progress crawl, third-party CSS). `0s` animations still fire their end events; `0s`
+	 * transitions fire no `transitionend`, hence 0.01ms. A non-zero animation duration would
+	 * make Base UI see both and warn on every Collapsible and Accordion.
+	 */
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0s !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* Right to left across a background twice the element's size: one pass per cycle. */
+@keyframes shimmer-sweep {
+	from {
+		background-position: 200% 0;
+	}
+
+	to {
+		background-position: -200% 0;
+	}
+}

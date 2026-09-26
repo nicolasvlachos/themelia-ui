@@ -1,0 +1,30 @@
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	--rich-text-list-indent: 1.5em;
+	--rich-text-quote-indent: 1em;
+	/* Every underlined link and link-like action: TextLink, RichText, Item titles, TextButton. */
+	--link-underline-offset: 3px;
+}
+
+/*
+ * Text — the semantic colour roles Text exposes (the type scale is in tokens/foundation.css).
+ * Derived tokens: declared at every scope boundary (styles/SCOPES.md).
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+		/*
+		 * Roles. An inverting surface (the inverse Alert) overrides these in its own scope and
+		 * every Text inside follows; keep them indirect.
+		 */
+		--text-role-main: var(--foreground);
+		--text-role-inverse: var(--background);
+		/* Two text colours only: main, and --muted-foreground for all supporting copy. */
+		--text-role-secondary: var(--muted-foreground);
+		/* ── RichText ── */
+		--rich-text-block-gap: calc(0.75em * var(--text-scale, var(--scale)));
+		--rich-text-item-gap: calc(0.25em * var(--text-scale, var(--scale)));
+}

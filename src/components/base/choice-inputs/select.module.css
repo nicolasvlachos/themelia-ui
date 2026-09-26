@@ -1,0 +1,209 @@
+/*
+ * Select. The trigger carries `data-field-control`, so height, border, radius, focus and
+ * invalid state come from styles/fields.css; rows read the shared --menu-row-* tokens.
+ */
+
+.trigger {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-sm);
+	text-align: start;
+	white-space: nowrap;
+	cursor: default;
+}
+
+.trigger[data-placeholder] {
+	color: var(--muted-foreground);
+}
+
+.value {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	align-items: center;
+	gap: var(--space-md);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.triggerIcon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	color: var(--muted-foreground);
+	pointer-events: none;
+}
+
+.triggerIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.positioner {
+	z-index: var(--z-popover);
+	outline: none;
+}
+
+.popup {
+	/* At least the trigger's width, so the listbox lines up with its field; wider options may grow it. */
+	min-width: max(var(--anchor-width), calc(9rem * var(--scale)));
+	max-width: var(--available-width);
+	max-height: var(--available-height);
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding: var(--space-md);
+	border-radius: var(--radius);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
+	box-shadow: var(--popover-shadow);
+	outline: none;
+	transform-origin: var(--transform-origin);
+
+	--enter-opacity: 0;
+	--enter-scale: 0.95;
+	--exit-opacity: 0;
+	--exit-scale: 0.95;
+}
+
+.popup[data-open] {
+	animation: var(--animate-enter);
+}
+
+.popup[data-closed] {
+	animation: var(--animate-exit);
+}
+
+/* Aligned over the trigger already, so a moving entrance would read as a jump. */
+.popup[data-align-trigger="true"] {
+	animation: none;
+}
+
+.group {
+	padding: 0;
+}
+
+.item {
+	position: relative;
+	display: flex;
+	width: 100%;
+	min-height: var(--menu-row-min-h);
+	align-items: center;
+	gap: var(--space-md);
+	padding: var(--menu-row-py) var(--row-px);
+	/* Clearance for the trailing check. */
+	padding-inline-end: calc(var(--size-icon) + var(--row-px) * 2);
+	border-radius: var(--radius-sm);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	cursor: default;
+	user-select: none;
+	outline: none;
+}
+
+.item[data-highlighted] {
+	background-color: var(--accent);
+	color: var(--accent-foreground);
+}
+
+.item[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.itemText {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	align-items: flex-start;
+	gap: var(--space-md);
+}
+
+.optionIcon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	margin-top: calc((1lh - var(--size-icon)) / 2);
+}
+
+.optionIcon > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.optionText {
+	min-width: 0;
+	flex: 1;
+	text-align: start;
+}
+
+
+/* Clamped to two lines so descriptions don't push options off screen. */
+.optionDescription {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	margin-top: var(--space-2xs);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+}
+
+.indicator {
+	position: absolute;
+	inset-inline-end: var(--row-px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--muted-foreground);
+	pointer-events: none;
+}
+
+.item[data-highlighted] .indicator {
+	color: inherit;
+}
+
+.indicator > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.label {
+	/* On the rows' inset, like the dropdown's label. */
+	padding: var(--space-sm) var(--row-px);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-medium);
+	color: var(--muted-foreground);
+}
+
+.separator {
+	height: var(--border-width);
+	margin-inline: calc(var(--space-md) * -1);
+	margin-block: var(--space-xs);
+	background-color: var(--border-60);
+}
+
+/* The scroll arrows sit over the list, so they need the popup's background. */
+.scrollArrow {
+	position: sticky;
+	z-index: var(--z-raised);
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	padding-block: var(--space-xs);
+	background-color: var(--popover);
+	cursor: default;
+}
+
+.scrollArrowUp { top: 0; }
+.scrollArrowDown { bottom: 0; }
+
+.scrollArrow > svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}

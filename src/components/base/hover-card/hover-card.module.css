@@ -1,0 +1,44 @@
+/* HoverCard — popover chrome, not tooltip padding: it holds an avatar, a name and copy. */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). A barely-there entrance scale. */
+:root {
+	--hover-card-enter-scale: 0.98;
+}
+
+.positioner {
+	z-index: var(--z-popover);
+}
+
+.content {
+	width: calc(18rem * var(--scale));
+	/* The positioner's room to the collision edge, also inside a scoped portal host. */
+	max-width: var(--available-width, calc(100vw - var(--space-2xl)));
+	padding: var(--surface-py) var(--surface-px);
+	border-radius: var(--radius);
+	background-color: var(--popover);
+	--surface-ground: var(--popover);
+	color: var(--popover-foreground);
+	box-shadow: var(--popover-shadow);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	opacity: 0;
+	scale: var(--hover-card-enter-scale);
+	transform-origin: var(--transform-origin);
+	transition:
+		opacity var(--duration-instant) var(--ease-out),
+		scale var(--duration-instant) var(--ease-out),
+		overlay var(--duration-instant) allow-discrete,
+		display var(--duration-instant) allow-discrete;
+}
+
+.content[data-open] {
+	opacity: 1;
+	scale: 1;
+}
+
+/* `@starting-style`, not a rAF-toggled class: rAF never fires in a hidden tab. */
+@starting-style {
+	.content[data-open] {
+		opacity: 0;
+		scale: var(--hover-card-enter-scale);
+	}
+}

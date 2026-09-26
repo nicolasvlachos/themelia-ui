@@ -1,0 +1,54 @@
+/* Progress. Without a value it is indeterminate: a travelling band, not a bar frozen mid-way. */
+/*
+ * Referenced through a custom property: CSS Modules would rename a keyframe named directly
+ * in `animation`, but the keyframes are global (styles/theming/animation.css).
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+	--animate-progress-indeterminate: progress-indeterminate 1.2s var(--ease-in-out) infinite;
+}
+
+.root {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height: var(--space-md);
+	border-radius: var(--radius-pill);
+	/* The same wash as a control track. */
+	background-color: var(--foreground-20);
+}
+
+.fill {
+	height: 100%;
+	/* Pinned to inline-start, so it mirrors with direction. */
+	margin-inline-end: auto;
+	border-radius: inherit;
+	background-color: var(--progress-fill);
+	transition: width var(--duration-normal) var(--ease-out);
+}
+
+.indeterminate {
+	position: absolute;
+	inset-block: 0;
+	/* Anchored left in both directions; RTL reverses the run instead (anchoring at inline-start would stop it short). */
+	left: 0;
+	/* The keyframes' 250% is this width's reciprocal — change them together. */
+	width: 40%;
+	border-radius: inherit;
+	background-color: var(--progress-fill);
+	animation: var(--animate-progress-indeterminate);
+}
+
+:global([dir="rtl"]) .indeterminate {
+	animation-direction: reverse;
+}
+
+.toneSuccess { --progress-fill: var(--success); }
+/* The accent: light --warning lacks contrast on the track. */
+.toneWarning { --progress-fill: var(--warning-accent); }
+.toneDestructive { --progress-fill: var(--destructive); }
+.toneInfo { --progress-fill: var(--info); }

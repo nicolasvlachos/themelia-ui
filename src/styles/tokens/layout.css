@@ -1,0 +1,19 @@
+/*
+ * Layout tokens: shell and application-frame dimensions, outside the swappable theme.
+ */
+
+:root {
+	/* Every shell's top bar derives from this, as do offsets such as scroll margins. */
+	--shell-header-height: 3.5rem; /* Top-bar height before the density factor. */
+	/* Unscaled: density tightens a sidebar's rows, not the column its labels must fit. */
+	--sidebar-width: 16rem; /* Expanded sidebar width, for Sidebar and every shell. */
+	--content-width-sm: 40rem; /* Compact centered content measure. */
+	--content-width-md: 48rem; /* Medium centered content measure. */
+	--content-width-lg: 64rem; /* Default readable page content measure. */
+	--content-width-xl: 80rem; /* Wide application content measure. */
+	--content-width-2xl: 96rem; /* Maximum standard application content measure. */
+	--adaptive-grid-min-sm: 12rem; /* Compact minimum width for adaptive peer columns. */
+	--adaptive-grid-min-md: 16rem; /* Default minimum width for adaptive peer columns. */
+	--adaptive-grid-min-lg: 20rem; /* Spacious minimum width for adaptive peer columns. */
+}
+

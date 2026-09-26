@@ -1,0 +1,53 @@
+/*
+ * Copyable. The copy button is a sibling of the passive value, not a wrapper: a clickable
+ * value would nest interactive content such as an <Email> or <Url>.
+ */
+
+.root {
+	display: inline-flex;
+	min-width: 0;
+	align-items: center;
+	gap: var(--space-sm);
+}
+
+/* Capped, so the value truncates instead of pushing the button out of view. */
+.truncateRoot {
+	max-width: 100%;
+}
+
+.content {
+	min-width: 0;
+	color: var(--link-color);
+}
+
+.mono {
+	font-family: var(--font-mono);
+}
+
+.trigger {
+	flex-shrink: 0;
+	color: var(--link-color);
+	opacity: 0.6;
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+	opacity: 1;
+}
+
+/* Compact: the trigger sized to its glyph, for a value on a line of text under a title. */
+.triggerCompact {
+	--button-h: calc(var(--size-icon-md) + var(--space-2xs) * 2);
+	min-height: 0;
+	margin-block: calc(var(--space-2xs) * -1);
+}
+
+.triggerCompact svg {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+.confirmIcon {
+	color: var(--success);
+}

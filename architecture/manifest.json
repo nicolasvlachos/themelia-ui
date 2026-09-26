@@ -1,0 +1,2000 @@
+{
+  "profileDefinition": {
+    "general": "A family that does not depend on an admin family. It may still implement workflows commonly used by admin applications.",
+    "admin": "A terminal family that may depend on general families and may never be imported by a general family."
+  },
+  "families": [
+    {
+      "id": "admin/patterns/access",
+      "profile": "admin",
+      "layer": "admin",
+      "source": "src/components/admin/patterns/access/index.ts",
+      "export": "./admin/patterns/access",
+      "cssExport": "./admin/patterns/access.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/badge",
+        "base/buttons",
+        "base/copyable",
+        "base/display",
+        "base/feedback",
+        "base/item",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/blocks-admin",
+        "label": "Timelines, onboarding & admin"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "admin/patterns/commerce",
+      "profile": "admin",
+      "layer": "admin",
+      "source": "src/components/admin/patterns/commerce/index.ts",
+      "export": "./admin/patterns/commerce",
+      "cssExport": "./admin/patterns/commerce.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/avatar",
+        "base/badge",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/copyable",
+        "base/display",
+        "base/feedback",
+        "base/forms",
+        "base/item",
+        "base/navigation",
+        "base/structure",
+        "base/table",
+        "base/text-inputs",
+        "base/timeline",
+        "base/typography",
+        "base/value-inputs",
+        "patterns/timelines"
+      ],
+      "documentationRoute": {
+        "path": "/blocks-commerce",
+        "label": "Cart, checkout & billing"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/accordion",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/accordion/index.ts",
+      "export": "./base/accordion",
+      "cssExport": "./base/accordion.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/accordion",
+        "label": "Accordion"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/action-menu",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/action-menu/index.ts",
+      "export": "./base/action-menu",
+      "cssExport": "./base/action-menu.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/dropdown-menu",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/action-menu",
+        "label": "Action menu & buttons"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/alert-dialog",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/alert-dialog/index.ts",
+      "export": "./base/alert-dialog",
+      "cssExport": "./base/alert-dialog.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/overlay"
+      ],
+      "documentationRoute": {
+        "path": "/overlay",
+        "label": "Overlay, dialog & sheet"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/aspect-ratio",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/aspect-ratio/index.ts",
+      "export": "./base/aspect-ratio",
+      "cssExport": "./base/aspect-ratio.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/aspect-ratio",
+        "label": "Aspect ratio"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/avatar",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/avatar/index.ts",
+      "export": "./base/avatar",
+      "cssExport": "./base/avatar.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/avatar",
+        "label": "Avatar"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/badge",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/badge/index.ts",
+      "export": "./base/badge",
+      "cssExport": "./base/badge.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/slot"
+      ],
+      "documentationRoute": {
+        "path": "/badge",
+        "label": "Badge"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/batch-action-bar",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/batch-action-bar/index.ts",
+      "export": "./base/batch-action-bar",
+      "cssExport": "./base/batch-action-bar.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/batch-action-bar",
+        "label": "Batch action bar"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/buttons",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/buttons/index.ts",
+      "export": "./base/buttons",
+      "cssExport": "./base/buttons.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/slot",
+        "base/tooltip",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/button",
+        "label": "Button"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/cards",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/cards/index.ts",
+      "export": "./base/cards",
+      "cssExport": "./base/cards.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/buttons",
+        "base/feedback",
+        "base/skeleton",
+        "base/structure",
+        "base/tooltip",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/card",
+        "label": "Card"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/carousel",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/carousel/index.ts",
+      "export": "./base/carousel",
+      "cssExport": "./base/carousel.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons"
+      ],
+      "documentationRoute": {
+        "path": "/carousel",
+        "label": "Carousel"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/chart",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/chart/index.ts",
+      "export": "./base/chart",
+      "cssExport": "./base/chart.css",
+      "optionalPeers": [
+        "recharts"
+      ],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/chart",
+        "label": "Chart"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/choice-inputs",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/choice-inputs/index.ts",
+      "export": "./base/choice-inputs",
+      "cssExport": "./base/choice-inputs.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/display",
+        "base/label",
+        "base/structure",
+        "base/tooltip",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/radio-group",
+        "label": "Radio groups"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/combobox",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/combobox/index.ts",
+      "export": "./base/combobox",
+      "cssExport": "./base/combobox.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/combobox",
+        "label": "Combobox"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/command",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/command/index.ts",
+      "export": "./base/command",
+      "cssExport": "./base/command.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/dialog",
+        "base/input-group",
+        "base/overlay"
+      ],
+      "documentationRoute": {
+        "path": "/command",
+        "label": "Command palette"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/context-menu",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/context-menu/index.ts",
+      "export": "./base/context-menu",
+      "cssExport": "./base/context-menu.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/dropdown-menu"
+      ],
+      "documentationRoute": {
+        "path": "/dropdown-menu",
+        "label": "Dropdown & context menu"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/copyable",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/copyable/index.ts",
+      "export": "./base/copyable",
+      "cssExport": "./base/copyable.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/toaster",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/copyable",
+        "label": "Copyable"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/date-pickers",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/date-pickers/index.ts",
+      "export": "./base/date-pickers",
+      "cssExport": "./base/date-pickers.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/display",
+        "base/popover",
+        "base/text-inputs",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/calendar",
+        "label": "Calendar"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/dialog",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/dialog/index.ts",
+      "export": "./base/dialog",
+      "cssExport": "./base/dialog.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/overlay"
+      ],
+      "documentationRoute": {
+        "path": "/overlay",
+        "label": "Overlay, dialog & sheet"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/direction",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/direction/index.ts",
+      "export": "./base/direction",
+      "cssExport": null,
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/content-block",
+        "label": "Content block"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/display",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/display/index.ts",
+      "export": "./base/display",
+      "cssExport": "./base/display.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/buttons",
+        "base/structure",
+        "base/tooltip",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/scroll-area",
+        "label": "Scroll area"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/dropdown-menu",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/dropdown-menu/index.ts",
+      "export": "./base/dropdown-menu",
+      "cssExport": "./base/dropdown-menu.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/dropdown-menu",
+        "label": "Dropdown & context menu"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/feedback",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/feedback/index.ts",
+      "export": "./base/feedback",
+      "cssExport": "./base/feedback.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/alert",
+        "label": "Alert"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/forms",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/forms/index.ts",
+      "export": "./base/forms",
+      "cssExport": "./base/forms.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/cards",
+        "base/feedback",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/form-workflow",
+        "label": "Form workflow"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/forms-numeric",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/forms-numeric/index.ts",
+      "export": "./base/forms-numeric",
+      "cssExport": "./base/forms-numeric.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/choice-inputs",
+        "base/text-inputs"
+      ],
+      "documentationRoute": {
+        "path": "/unit-inputs",
+        "label": "Unit inputs"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/hover-card",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/hover-card/index.ts",
+      "export": "./base/hover-card",
+      "cssExport": "./base/hover-card.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/hover-card",
+        "label": "Hover card"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/input-group",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/input-group/index.ts",
+      "export": "./base/input-group",
+      "cssExport": "./base/input-group.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/text-inputs",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/input-group",
+        "label": "Input group"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/item",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/item/index.ts",
+      "export": "./base/item",
+      "cssExport": "./base/item.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/display",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/item",
+        "label": "Item"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/label",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/label/index.ts",
+      "export": "./base/label",
+      "cssExport": "./base/label.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/label",
+        "label": "Label"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/menubar",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/menubar/index.ts",
+      "export": "./base/menubar",
+      "cssExport": "./base/menubar.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/menubar",
+        "label": "Menubar"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/navigation",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/navigation/index.ts",
+      "export": "./base/navigation",
+      "cssExport": "./base/navigation.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/display",
+        "base/dropdown-menu",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/breadcrumbs",
+        "label": "Breadcrumbs"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/navigation-menu",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/navigation-menu/index.ts",
+      "export": "./base/navigation-menu",
+      "cssExport": "./base/navigation-menu.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/navigation-menu",
+        "label": "Navigation menu"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/otp-input",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/otp-input/index.ts",
+      "export": "./base/otp-input",
+      "cssExport": "./base/otp-input.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/display"
+      ],
+      "documentationRoute": {
+        "path": "/otp-input",
+        "label": "One-time code input"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/overlay",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/overlay/index.ts",
+      "export": "./base/overlay",
+      "cssExport": "./base/overlay.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/slot",
+        "base/structure",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/overlay",
+        "label": "Overlay, dialog & sheet"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/popover",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/popover/index.ts",
+      "export": "./base/popover",
+      "cssExport": "./base/popover.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/slot",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/popover",
+        "label": "Popover"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/popover-menu",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/popover-menu/index.ts",
+      "export": "./base/popover-menu",
+      "cssExport": "./base/popover-menu.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/command",
+        "base/popover",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/popover-menu",
+        "label": "Popover menu"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/qr-code",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/qr-code/index.ts",
+      "export": "./base/qr-code",
+      "cssExport": "./base/qr-code.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/qr-code",
+        "label": "QR code"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/repeaters",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/repeaters/index.ts",
+      "export": "./base/repeaters",
+      "cssExport": "./base/repeaters.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/choice-inputs",
+        "base/display",
+        "base/forms",
+        "base/structure",
+        "base/text-inputs"
+      ],
+      "documentationRoute": {
+        "path": "/repeater",
+        "label": "Repeater"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/resizable",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/resizable/index.ts",
+      "export": "./base/resizable",
+      "cssExport": "./base/resizable.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/resizable",
+        "label": "Resizable panels"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/sheet",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/sheet/index.ts",
+      "export": "./base/sheet",
+      "cssExport": "./base/sheet.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/overlay"
+      ],
+      "documentationRoute": {
+        "path": "/overlay",
+        "label": "Overlay, dialog & sheet"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/sidebar",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/sidebar/index.ts",
+      "export": "./base/sidebar",
+      "cssExport": "./base/sidebar.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/display",
+        "base/overlay",
+        "base/sheet",
+        "base/skeleton",
+        "base/text-inputs",
+        "base/tooltip",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/sidebar",
+        "label": "Sidebar"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/skeleton",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/skeleton/index.ts",
+      "export": "./base/skeleton",
+      "cssExport": "./base/skeleton.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/display"
+      ],
+      "documentationRoute": {
+        "path": "/skeleton",
+        "label": "Skeleton"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/slot",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/slot/index.ts",
+      "export": "./base/slot",
+      "cssExport": null,
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/content-block",
+        "label": "Content block"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/spinner",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/spinner/index.ts",
+      "export": "./base/spinner",
+      "cssExport": "./base/spinner.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/spinner",
+        "label": "Spinner"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/structure",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/structure/index.ts",
+      "export": "./base/structure",
+      "cssExport": "./base/structure.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/structure",
+        "label": "Stack & grid"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/table",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/table/index.ts",
+      "export": "./base/table",
+      "cssExport": "./base/table.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/table",
+        "label": "Table"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/text-inputs",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/text-inputs/index.ts",
+      "export": "./base/text-inputs",
+      "cssExport": "./base/text-inputs.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/input",
+        "label": "Input"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/timeline",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/timeline/index.ts",
+      "export": "./base/timeline",
+      "cssExport": "./base/timeline.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/display",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/timeline",
+        "label": "Timeline"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/toaster",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/toaster/index.ts",
+      "export": "./base/toaster",
+      "cssExport": "./base/toaster.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/toast",
+        "label": "Toast"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/toggle",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/toggle/index.ts",
+      "export": "./base/toggle",
+      "cssExport": "./base/toggle.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/toggle",
+        "label": "Toggle"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/toolbar",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/toolbar/index.ts",
+      "export": "./base/toolbar",
+      "cssExport": "./base/toolbar.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons"
+      ],
+      "documentationRoute": {
+        "path": "/toolbar",
+        "label": "Toolbar"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/tooltip",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/tooltip/index.ts",
+      "export": "./base/tooltip",
+      "cssExport": "./base/tooltip.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/tooltip",
+        "label": "Tooltip"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/typography",
+      "profile": "general",
+      "layer": "typography",
+      "source": "src/components/base/typography/index.ts",
+      "export": "./base/typography",
+      "cssExport": "./base/typography.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/typography",
+        "label": "Typography"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/upload",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/upload/index.ts",
+      "export": "./base/upload",
+      "cssExport": "./base/upload.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/buttons",
+        "base/display",
+        "base/feedback"
+      ],
+      "documentationRoute": {
+        "path": "/file-upload",
+        "label": "File upload"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "base/value-inputs",
+      "profile": "general",
+      "layer": "base",
+      "source": "src/components/base/value-inputs/index.ts",
+      "export": "./base/value-inputs",
+      "cssExport": "./base/value-inputs.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/choice-inputs",
+        "base/date-pickers",
+        "base/display",
+        "base/structure",
+        "base/text-inputs",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/color-input",
+        "label": "Color input"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/actions",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/actions/index.ts",
+      "export": "./features/actions",
+      "cssExport": "./features/actions.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "features/overlays"
+      ],
+      "documentationRoute": {
+        "path": "/actions",
+        "label": "Action definitions"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/activities",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/activities/index.ts",
+      "export": "./features/activities",
+      "cssExport": "./features/activities.css",
+      "optionalPeers": [
+        "@tiptap/core",
+        "@tiptap/pm",
+        "@tiptap/starter-kit"
+      ],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/badge",
+        "base/buttons",
+        "base/display",
+        "base/feedback",
+        "base/typography",
+        "features/comments",
+        "features/mentions"
+      ],
+      "documentationRoute": {
+        "path": "/activities",
+        "label": "Activities"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/ai-chat",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/ai-chat/index.ts",
+      "export": "./features/ai-chat",
+      "cssExport": "./features/ai-chat.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/buttons",
+        "base/copyable",
+        "base/display",
+        "base/feedback",
+        "base/text-inputs",
+        "base/typography",
+        "base/upload"
+      ],
+      "documentationRoute": {
+        "path": "/ai-chat",
+        "label": "AI chat"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/async-preview",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/async-preview/index.ts",
+      "export": "./features/async-preview",
+      "cssExport": "./features/async-preview.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/feedback",
+        "base/popover",
+        "base/spinner",
+        "base/tooltip"
+      ],
+      "documentationRoute": {
+        "path": "/async-preview",
+        "label": "Async preview"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/combobox",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/combobox/index.ts",
+      "export": "./features/combobox",
+      "cssExport": "./features/combobox.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/combobox",
+        "base/display",
+        "base/feedback",
+        "base/spinner",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/combobox",
+        "label": "Combobox"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/comments",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/comments/index.ts",
+      "export": "./features/comments",
+      "cssExport": "./features/comments.css",
+      "optionalPeers": [
+        "@tiptap/core",
+        "@tiptap/pm",
+        "@tiptap/starter-kit"
+      ],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/avatar",
+        "base/badge",
+        "base/buttons",
+        "base/display",
+        "base/feedback",
+        "base/popover",
+        "base/spinner",
+        "base/structure",
+        "base/tooltip",
+        "base/typography",
+        "features/mentions",
+        "features/overlays",
+        "features/rich-text-editor"
+      ],
+      "documentationRoute": {
+        "path": "/comments",
+        "label": "Comments"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/data-view",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/data-view/index.ts",
+      "export": "./features/data-view",
+      "cssExport": "./features/data-view.css",
+      "optionalPeers": [
+        "@tanstack/react-table"
+      ],
+      "dependsOnFamilies": [
+        "base/choice-inputs",
+        "base/feedback",
+        "base/navigation",
+        "base/structure",
+        "base/typography",
+        "features/filters",
+        "features/table"
+      ],
+      "documentationRoute": {
+        "path": "/data-view",
+        "label": "Data view & data table"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/event-calendar",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/event-calendar/index.ts",
+      "export": "./features/event-calendar",
+      "cssExport": "./features/event-calendar.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/date-pickers",
+        "base/display",
+        "base/feedback",
+        "base/popover",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/event-calendar",
+        "label": "Event calendar"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/filters",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/filters/index.ts",
+      "export": "./features/filters",
+      "cssExport": "./features/filters.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/command",
+        "base/date-pickers",
+        "base/dropdown-menu",
+        "base/feedback",
+        "base/item",
+        "base/navigation",
+        "base/overlay",
+        "base/popover",
+        "base/popover-menu",
+        "base/sheet",
+        "base/spinner",
+        "base/text-inputs",
+        "base/typography",
+        "base/value-inputs"
+      ],
+      "documentationRoute": {
+        "path": "/filters",
+        "label": "Filters"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/global-search",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/global-search/index.ts",
+      "export": "./features/global-search",
+      "cssExport": "./features/global-search.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/avatar",
+        "base/badge",
+        "base/buttons",
+        "base/display",
+        "base/feedback",
+        "base/item",
+        "base/navigation",
+        "base/text-inputs",
+        "base/typography",
+        "features/overlays"
+      ],
+      "documentationRoute": {
+        "path": "/global-search",
+        "label": "Global search"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/kanban",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/kanban/index.ts",
+      "export": "./features/kanban",
+      "cssExport": "./features/kanban.css",
+      "optionalPeers": [
+        "@dnd-kit/core",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities"
+      ],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/buttons",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/kanban",
+        "label": "Kanban & sync"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/map",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/map/index.ts",
+      "export": "./features/map",
+      "cssExport": "./features/map.css",
+      "optionalPeers": [
+        "leaflet",
+        "leaflet-draw",
+        "leaflet.fullscreen",
+        "leaflet.markercluster",
+        "react-leaflet",
+        "react-leaflet-markercluster"
+      ],
+      "dependsOnFamilies": [
+        "base/buttons",
+        "base/command",
+        "base/display",
+        "base/dropdown-menu",
+        "base/input-group",
+        "base/popover",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/map",
+        "label": "Map"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/media-library",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/media-library/index.ts",
+      "export": "./features/media-library",
+      "cssExport": "./features/media-library.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/batch-action-bar",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/display",
+        "base/feedback",
+        "base/forms",
+        "base/navigation",
+        "base/structure",
+        "base/table",
+        "base/text-inputs",
+        "base/typography",
+        "base/upload",
+        "base/value-inputs",
+        "features/overlays"
+      ],
+      "documentationRoute": {
+        "path": "/media-library",
+        "label": "Media library"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/mentions",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/mentions/index.ts",
+      "export": "./features/mentions",
+      "cssExport": "./features/mentions.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/avatar",
+        "base/command",
+        "base/item",
+        "base/popover",
+        "base/spinner",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/mentions",
+        "label": "Mentions"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/overlays",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/overlays/index.ts",
+      "export": "./features/overlays",
+      "cssExport": "./features/overlays.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/alert-dialog",
+        "base/buttons",
+        "base/dialog",
+        "base/display",
+        "base/feedback",
+        "base/overlay",
+        "base/sheet"
+      ],
+      "documentationRoute": {
+        "path": "/action-overlays",
+        "label": "Action overlays"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/products",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/products/index.ts",
+      "export": "./features/products",
+      "cssExport": "./features/products.css",
+      "optionalPeers": [
+        "@tanstack/react-table"
+      ],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/badge",
+        "base/batch-action-bar",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/display",
+        "base/feedback",
+        "base/forms",
+        "base/item",
+        "base/repeaters",
+        "base/structure",
+        "base/table",
+        "base/text-inputs",
+        "base/typography",
+        "base/upload",
+        "features/overlays",
+        "features/table"
+      ],
+      "documentationRoute": {
+        "path": "/products",
+        "label": "Product surfaces"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/resource",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/resource/index.ts",
+      "export": "./features/resource",
+      "cssExport": "./features/resource.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/avatar",
+        "base/display",
+        "base/feedback",
+        "base/navigation",
+        "base/structure",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/resource",
+        "label": "Resource shells"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/resource-assignment",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/resource-assignment/index.ts",
+      "export": "./features/resource-assignment",
+      "cssExport": "./features/resource-assignment.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/buttons",
+        "base/display",
+        "base/feedback",
+        "base/structure",
+        "base/typography",
+        "features/overlays"
+      ],
+      "documentationRoute": {
+        "path": "/resource-assignment",
+        "label": "Resource assignment"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/rich-text-editor",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/rich-text-editor/index.ts",
+      "export": "./features/rich-text-editor",
+      "cssExport": "./features/rich-text-editor.css",
+      "optionalPeers": [
+        "@tiptap/core",
+        "@tiptap/pm",
+        "@tiptap/starter-kit"
+      ],
+      "dependsOnFamilies": [
+        "base/text-inputs",
+        "base/toolbar",
+        "base/typography",
+        "features/rich-text-editor/tiptap"
+      ],
+      "documentationRoute": {
+        "path": "/rich-text-editor",
+        "label": "Rich text editor"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/rich-text-editor/tiptap",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/rich-text-editor/tiptap/index.ts",
+      "export": "./features/rich-text-editor/tiptap",
+      "cssExport": null,
+      "optionalPeers": [
+        "@tiptap/core",
+        "@tiptap/pm",
+        "@tiptap/starter-kit"
+      ],
+      "dependsOnFamilies": [],
+      "documentationRoute": null,
+      "status": "stable"
+    },
+    {
+      "id": "features/schema-form",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/schema-form/index.ts",
+      "export": "./features/schema-form",
+      "cssExport": "./features/schema-form.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/display",
+        "base/feedback",
+        "base/forms",
+        "base/forms-numeric",
+        "base/structure",
+        "base/text-inputs",
+        "base/value-inputs"
+      ],
+      "documentationRoute": {
+        "path": "/schema-form",
+        "label": "Schema form"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/sync",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/sync/index.ts",
+      "export": "./features/sync",
+      "cssExport": "./features/sync.css",
+      "optionalPeers": [
+        "react-hook-form"
+      ],
+      "dependsOnFamilies": [
+        "base/choice-inputs",
+        "base/label",
+        "base/structure",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/kanban",
+        "label": "Kanban & sync"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/table",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/table/index.ts",
+      "export": "./features/table",
+      "cssExport": "./features/table.css",
+      "optionalPeers": [
+        "@tanstack/react-table"
+      ],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/avatar",
+        "base/badge",
+        "base/batch-action-bar",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/display",
+        "base/feedback",
+        "base/navigation",
+        "base/table",
+        "base/text-inputs",
+        "base/toolbar",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/data-view",
+        "label": "Data view & data table"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "features/theme-tweaker",
+      "profile": "general",
+      "layer": "features",
+      "source": "src/components/features/theme-tweaker/index.ts",
+      "export": "./features/theme-tweaker",
+      "cssExport": "./features/theme-tweaker.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/accordion",
+        "base/badge",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/display",
+        "base/feedback",
+        "base/forms",
+        "base/forms-numeric",
+        "base/item",
+        "base/navigation",
+        "base/overlay",
+        "base/structure",
+        "base/text-inputs",
+        "base/typography",
+        "base/value-inputs",
+        "features/overlays"
+      ],
+      "documentationRoute": {
+        "path": "/theme-tweaker",
+        "label": "Theme tweaker"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "forms",
+      "profile": "general",
+      "layer": "foundation",
+      "source": "src/lib/forms/index.ts",
+      "export": "./forms",
+      "cssExport": null,
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/form-binding",
+        "label": "Form binding"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "forms-rhf",
+      "profile": "general",
+      "layer": "foundation",
+      "source": "src/lib/forms-rhf/index.ts",
+      "export": "./forms-rhf",
+      "cssExport": null,
+      "optionalPeers": [
+        "react-hook-form"
+      ],
+      "dependsOnFamilies": [],
+      "documentationRoute": null,
+      "status": "stable"
+    },
+    {
+      "id": "index",
+      "profile": "general",
+      "layer": "foundation",
+      "source": "src/index.ts",
+      "export": ".",
+      "cssExport": null,
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": null,
+      "status": "stable"
+    },
+    {
+      "id": "layout/app-shell",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/app-shell/index.ts",
+      "export": "./layout/app-shell",
+      "cssExport": "./layout/app-shell.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/sidebar"
+      ],
+      "documentationRoute": {
+        "path": "/app-shell",
+        "label": "App shell"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "layout/auth",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/auth/index.ts",
+      "export": "./layout/auth",
+      "cssExport": "./layout/auth.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/cards",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/auth-shell",
+        "label": "Auth shells"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "layout/containers",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/containers/index.ts",
+      "export": "./layout/containers",
+      "cssExport": "./layout/containers.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/containers",
+        "label": "Containers"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "layout/header",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/header/index.ts",
+      "export": "./layout/header",
+      "cssExport": "./layout/header.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/avatar",
+        "base/buttons",
+        "base/display",
+        "base/dropdown-menu",
+        "base/navigation",
+        "base/popover",
+        "base/sidebar",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/header",
+        "label": "Header"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "layout/navigation",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/navigation/index.ts",
+      "export": "./layout/navigation",
+      "cssExport": "./layout/navigation.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/item",
+        "base/timeline",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/side-nav",
+        "label": "Side nav & section nav"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "layout/page",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/page/index.ts",
+      "export": "./layout/page",
+      "cssExport": "./layout/page.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/buttons",
+        "base/display",
+        "base/navigation",
+        "layout/containers"
+      ],
+      "documentationRoute": {
+        "path": "/page",
+        "label": "Page & page header"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "layout/settings",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/settings/index.ts",
+      "export": "./layout/settings",
+      "cssExport": "./layout/settings.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/navigation",
+        "layout/containers",
+        "layout/navigation"
+      ],
+      "documentationRoute": {
+        "path": "/side-nav",
+        "label": "Side nav & section nav"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "layout/sidebar",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/sidebar/index.ts",
+      "export": "./layout/sidebar",
+      "cssExport": "./layout/sidebar.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/avatar",
+        "base/display",
+        "base/dropdown-menu",
+        "base/sidebar",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/app-shell",
+        "label": "App shell"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "layout/workspace",
+      "profile": "general",
+      "layer": "layout",
+      "source": "src/components/layout/workspace/index.ts",
+      "export": "./layout/workspace",
+      "cssExport": "./layout/workspace.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/display",
+        "base/feedback",
+        "base/item",
+        "base/navigation",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/workspace-header",
+        "label": "Workspace record header"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "patterns/analytics",
+      "profile": "general",
+      "layer": "patterns",
+      "source": "src/components/patterns/analytics/index.ts",
+      "export": "./patterns/analytics",
+      "cssExport": "./patterns/analytics.css",
+      "optionalPeers": [
+        "recharts"
+      ],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/buttons",
+        "base/cards",
+        "base/chart",
+        "base/display",
+        "base/feedback",
+        "base/skeleton",
+        "base/tooltip",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/analytics",
+        "label": "Analytics"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "patterns/onboarding",
+      "profile": "general",
+      "layer": "patterns",
+      "source": "src/components/patterns/onboarding/index.ts",
+      "export": "./patterns/onboarding",
+      "cssExport": "./patterns/onboarding.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/accordion",
+        "base/display",
+        "base/feedback",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/blocks-admin",
+        "label": "Timelines, onboarding & admin"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "patterns/timelines",
+      "profile": "general",
+      "layer": "patterns",
+      "source": "src/components/patterns/timelines/index.ts",
+      "export": "./patterns/timelines",
+      "cssExport": "./patterns/timelines.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/feedback",
+        "base/timeline",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/blocks-admin",
+        "label": "Timelines, onboarding & admin"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "primitives",
+      "profile": "general",
+      "layer": "primitives",
+      "source": "src/components/primitives/index.ts",
+      "export": "./primitives",
+      "cssExport": "./primitives.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/primitive-address",
+        "label": "Addresses & places"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "theming",
+      "profile": "general",
+      "layer": "foundation",
+      "source": "src/lib/theming/index.ts",
+      "export": "./theming",
+      "cssExport": null,
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": null,
+      "status": "stable"
+    },
+    {
+      "id": "ui-provider",
+      "profile": "general",
+      "layer": "foundation",
+      "source": "src/lib/ui-provider/index.ts",
+      "export": "./ui-provider",
+      "cssExport": null,
+      "optionalPeers": [],
+      "dependsOnFamilies": [],
+      "documentationRoute": {
+        "path": "/ui-root-scope",
+        "label": "UIRoot & UIScope"
+      },
+      "status": "stable"
+    }
+  ],
+  "nonFamilyExports": [
+    {
+      "export": "./profiles/general.json",
+      "reason": "Machine-readable profile metadata: every subpath available below the general dependency ceiling, and the optional peers that come with them. Data, not code — a tool asking what it may import needs a list rather than a paragraph."
+    },
+    {
+      "export": "./profiles/admin.json",
+      "reason": "The same for the admin ceiling, including the general families the two admin families reach down into. A record listing only the admin families would understate both the surface and the peers a consumer receives."
+    },
+    {
+      "export": "./styles",
+      "reason": "The processed global stylesheet's side-effect entry. Imported for what it emits, not for what it exports."
+    },
+    {
+      "export": "./style.css",
+      "reason": "The complete catalogue — core plus every family, generated by concatenating the emitted sheets once each. The simplest installation."
+    },
+    {
+      "export": "./core.css",
+      "reason": "Reset, tokens, themes and typography: the half every family depends on, and the sheet that declares the layer order. Imported first by every ESM entry, and by hand in a CJS consumer."
+    },
+    {
+      "export": "./tailwind.css",
+      "reason": "The Tailwind CSS v4 theme bridge: one `@theme inline` block mapping the token contract into Tailwind's namespaces. Not part of the cascade and never shipped as-is — a consumer imports it into their Tailwind entry, where it is read at build time and every key no utility uses is dropped. Generated from the tokens by scripts/gen-tailwind-bridge.mjs."
+    },
+    {
+      "export": "./tokens.json",
+      "reason": "The token contract in W3C DTCG format, for Figma and design tooling. Data, not code: the runtime never reads it. Colours are OKLCH objects with a clipped `hex` fallback; `calc()` is resolved to a literal and the shadow ladder is absent, because DTCG has neither arithmetic nor `color-mix` — both stated in the file's own `$extensions`. Generated by scripts/gen-dtcg-tokens.mjs and checked by verify dtcg-tokens."
+    },
+    {
+      "export": "./styles/*",
+      "reason": "Individual token and theming sheets, so a consumer can take the contract without the components."
+    },
+    {
+      "export": "./package.json",
+      "reason": "Conventional. Tooling reads it to resolve the package's own metadata."
+    }
+  ]
+}

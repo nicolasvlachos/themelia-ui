@@ -1,0 +1,77 @@
+/*
+ * Package-owned state tokens.
+ *
+ * GENERATED from scripts/theme-manifest.mjs by scripts/gen-theme.mjs.
+ * Do not hand-edit; edit the manifest and re-run `npm run tokens:theme`.
+ *
+ * These extend the shadcn palette with the semantics the package needs. Product tokens
+ * may reference shadcn tokens; the shadcn theme never references these back.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+	--success: var(--success-600); /* Semantic success fill, border, and foreground accent. */
+	--success-foreground: var(--neutral-50); /* Text and icons on solid success fills. */
+	--info: var(--info-600); /* Semantic informational fill, border, and foreground accent. */
+	--info-foreground: var(--neutral-25); /* Text and icons on solid informational fills. */
+	--link-color: var(--link-600); /* Inline links and link-like copyable values. */
+	--primary-accent: var(--brand-600); /* Brand color drawn AS foreground — text, icons, spinners, active marks — on the app surface or a primary tint. Matches --primary here; in dark it steps one lighter than --primary, which is tuned as a fill for --primary-foreground ink. Read this, not --primary, wherever the brand is ink. Not shadcn's --accent, which is a muted hover surface. */
+	--warning: var(--warning-500); /* Semantic warning fill, border, and foreground accent. */
+	--warning-foreground: var(--warning-900); /* Text and icons on solid warning fills. */
+	--warning-accent: var(--warning-700); /* Warning colour drawn AS foreground — icons and marks — on a tinted warning surface. Darkens here and brightens in dark, where --warning stays a light fill so solid warning chips keep the amber. */
+	--destructive-accent: color-mix(in oklab, var(--destructive) 85%, var(--foreground)); /* Destructive colour drawn AS foreground — text and marks — on a tinted destructive surface. */
+	--inverse-background: var(--neutral-800); /* Base background for explicit dark or artwork-backed surfaces. */
+	--inverse-foreground: var(--neutral-50); /* Primary text and icons on inverse backgrounds. */
+	--inverse-muted: color-mix(in oklab, var(--neutral-50) 74%, transparent); /* Secondary text on inverse backgrounds. */
+	--inverse-subtle: color-mix(in oklab, var(--neutral-50) 58%, transparent); /* Tertiary text and icons on inverse backgrounds. */
+	--inverse-disabled: color-mix(in oklab, var(--neutral-50) 42%, transparent); /* Disabled content on inverse backgrounds. */
+	--inverse-surface: color-mix(in oklab, var(--neutral-50) 12%, transparent); /* Subtle nested fill on inverse backgrounds. */
+	--inverse-surface-strong: color-mix(in oklab, var(--neutral-50) 22%, transparent); /* Emphasized nested fill on inverse backgrounds. */
+	--inverse-border: color-mix(in oklab, var(--neutral-50) 18%, transparent); /* Dividers and outlines on inverse backgrounds. */
+	--inverse-decoration: color-mix(in oklab, var(--neutral-50) 6%, transparent); /* Non-semantic decorative wash on inverse backgrounds. */
+}
+
+/*
+ * Dark theme — overrides only.
+ *
+ * Every token not listed here inherits its light value through the cascade, which is
+ * declared explicitly as `inherits: true` in scripts/theme-manifest.mjs rather than
+ * left to chance. GENERATED: edit the manifest, then run `npm run tokens:theme`.
+ */
+.dark,
+[data-theme="dark"],
+:is(.dark, [data-theme="dark"]) :is([data-ui-scope], [data-density]):not(.light, [data-theme="light"]) {
+	--success: var(--success-400);
+	--success-foreground: var(--success-950);
+	--info: var(--info-400);
+	--info-foreground: var(--info-950);
+	--link-color: var(--link-400);
+	--primary-accent: var(--brand-300);
+	--warning: var(--warning-300);
+	--warning-foreground: var(--warning-950);
+	--warning-accent: var(--warning-300);
+}
+
+/*
+ * The same values under the OS preference, for `colorScheme: "system"`.
+ *
+ * Emitted rather than hand-written so it cannot drift from the block above.
+ */
+@media (prefers-color-scheme: dark) {
+	:root:not(.light, [data-theme="light"]),
+	[data-ui-scope]:not(.light, [data-theme="light"], :where(.light, [data-theme="light"]) *),
+	[data-density]:not(.light, [data-theme="light"], :where(.light, [data-theme="light"]) *) {
+		--success: var(--success-400);
+		--success-foreground: var(--success-950);
+		--info: var(--info-400);
+		--info-foreground: var(--info-950);
+		--link-color: var(--link-400);
+		--primary-accent: var(--brand-300);
+		--warning: var(--warning-300);
+		--warning-foreground: var(--warning-950);
+		--warning-accent: var(--warning-300);
+	}
+}

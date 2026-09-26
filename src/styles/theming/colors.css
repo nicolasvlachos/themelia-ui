@@ -1,0 +1,98 @@
+/*
+ * Alpha ladder — the global colour wiring layer.
+ *
+ *
+ * Every colour/alpha pair the components actually use, declared once. Modules
+ * reference `var(--border-60)` rather than repeating color-mix() inline, which
+ * gives consumers a single override point per pair and keeps modules value-free.
+ *
+ * `color-mix(in oklab, …)` is exactly what Tailwind v4 emits for `/nn` opacity,
+ * so the rendered colour is identical to the source implementation.
+ *
+ * 38 pairs across 13 colours.
+ *
+ * Declared at every scope boundary rather than `:root`, so a scope that rethemes a colour
+ * re-derives its whole ladder. See styles/SCOPES.md.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+
+	/* border — 1 step */
+	--border-60: color-mix(in oklab, var(--border) 60%, transparent);
+
+	/* muted — 5 steps */
+	--muted-20: color-mix(in oklab, var(--muted) 20%, transparent);
+	--muted-40: color-mix(in oklab, var(--muted) 40%, transparent);
+	--muted-50: color-mix(in oklab, var(--muted) 50%, transparent);
+	--muted-60: color-mix(in oklab, var(--muted) 60%, transparent);
+	--muted-80: color-mix(in oklab, var(--muted) 80%, transparent);
+
+	/* destructive — 5 steps */
+	--destructive-5: color-mix(in oklab, var(--destructive) 5%, transparent);
+	--destructive-10: color-mix(in oklab, var(--destructive) 10%, transparent);
+	--destructive-20: color-mix(in oklab, var(--destructive) 20%, transparent);
+	--destructive-30: color-mix(in oklab, var(--destructive) 30%, transparent);
+	--destructive-40: color-mix(in oklab, var(--destructive) 40%, transparent);
+
+	/* primary — 7 steps */
+	--primary-5: color-mix(in oklab, var(--primary) 5%, transparent);
+	--primary-10: color-mix(in oklab, var(--primary) 10%, transparent);
+	--primary-15: color-mix(in oklab, var(--primary) 15%, transparent);
+	--primary-20: color-mix(in oklab, var(--primary) 20%, transparent);
+	--primary-25: color-mix(in oklab, var(--primary) 25%, transparent);
+	--primary-30: color-mix(in oklab, var(--primary) 30%, transparent);
+	--primary-40: color-mix(in oklab, var(--primary) 40%, transparent);
+
+	/* foreground — 3 steps */
+	--foreground-8: color-mix(in oklab, var(--foreground) 8%, transparent);
+	--foreground-10: color-mix(in oklab, var(--foreground) 10%, transparent);
+	--foreground-20: color-mix(in oklab, var(--foreground) 20%, transparent);
+
+	/* warning — 4 steps */
+	--warning-10: color-mix(in oklab, var(--warning) 10%, transparent);
+	--warning-20: color-mix(in oklab, var(--warning) 20%, transparent);
+	--warning-30: color-mix(in oklab, var(--warning) 30%, transparent);
+	--warning-40: color-mix(in oklab, var(--warning) 40%, transparent);
+
+	/* success — 3 steps */
+	--success-5: color-mix(in oklab, var(--success) 5%, transparent);
+	--success-10: color-mix(in oklab, var(--success) 10%, transparent);
+	--success-30: color-mix(in oklab, var(--success) 30%, transparent);
+
+	/* info — 3 steps */
+	--info-5: color-mix(in oklab, var(--info) 5%, transparent);
+	--info-10: color-mix(in oklab, var(--info) 10%, transparent);
+	--info-30: color-mix(in oklab, var(--info) 30%, transparent);
+
+	/* muted-foreground — 2 steps */
+	--muted-foreground-40: color-mix(in oklab, var(--muted-foreground) 40%, transparent);
+	--muted-foreground-70: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+
+	/* background — 2 steps */
+	--background-70: color-mix(in oklab, var(--background) 70%, transparent);
+	--background-80: color-mix(in oklab, var(--background) 80%, transparent);
+
+	/* input — 1 step */
+	--input-30: color-mix(in oklab, var(--input) 30%, transparent);
+
+	/* accent — 1 step */
+	--accent-50: color-mix(in oklab, var(--accent) 50%, transparent);
+
+	/* sidebar-accent — the --accent-50 row hover on the sidebar palette */
+	--sidebar-accent-50: color-mix(in oklab, var(--sidebar-accent) 50%, transparent);
+}
+
+/*
+ * --surface-ground: "the surface I sit on", for sticky cells, cut-out rings, opaque halos
+ * and fades. A surface that paints a ground (Card, popups, the sidebar, table and data-view
+ * frames) sets it; readers write var(--surface-ground, var(--background)). A colour island
+ * resets it so the fallback re-derives in the island's mode instead of inheriting a ground
+ * resolved outside it. Zero specificity, so any surface inside the island still wins.
+ */
+:where([data-theme], .light, .dark) {
+	--surface-ground: initial;
+}

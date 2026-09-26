@@ -1,0 +1,18 @@
+/*
+ * Package primitives: the raw control and media inputs that theming/sizing.css derives
+ * heights, paddings and media sizes from.
+ */
+
+:root {
+	/*
+	 * One height for every control, so a button beside a field matches it. A whole-pixel
+	 * value (34px): a fractional height centres circles on half pixels (tests/geometry.spec.ts).
+	 */
+	--height-control: 2.125rem; /* Default height for buttons, inputs, selects and triggers. */
+	--control-x: 0.75rem; /* Default inline padding for buttons and field controls. */
+
+	/* Media */
+	--icon: 1rem; /* Default interface icon size. */
+	--avatar: 2rem; /* Default avatar used in standard rows and cards. */
+}
+

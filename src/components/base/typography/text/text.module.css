@@ -1,0 +1,77 @@
+/* Text. Each axis is an independent class so `cvm` can compose any combination. */
+
+.root {
+	margin: 0;
+}
+
+/* ── Role ─────────────────────────────────────────────────────────────────────── */
+
+.typeMain { color: var(--text-role-main); }
+.typeInverse { color: var(--text-role-inverse); }
+.typeSecondary { color: var(--text-role-secondary); }
+.typeError { color: var(--destructive); }
+.typeSuccess { color: var(--success); }
+.typePrimary { color: var(--primary-accent); }
+
+/* ── Size ─────────────────────────────────────────────────────────────────────── */
+
+/*
+ * The size a caller did not choose: a class, not a rule on `.root`, so `size="inherit"`
+ * keeps inheriting. Falls back to `sm` when the provider sets no `--text-default`.
+ */
+.sizeDefault {
+	font-size: var(--text-default, var(--text-sm));
+	line-height: var(--text-default--line-height, var(--text-sm--line-height));
+}
+
+/* `inherit` deliberately declares nothing, so the surrounding size flows through. */
+.sizeXxs { font-size: var(--text-xs); line-height: var(--text-xs--line-height); }
+.sizeXs { font-size: var(--text-xs); line-height: var(--text-xs--line-height); }
+.sizePxs { font-size: var(--text-pxs); line-height: var(--text-pxs--line-height); }
+.sizeSm { font-size: var(--text-sm); line-height: var(--text-sm--line-height); }
+.sizeBase { font-size: var(--text-base); line-height: var(--text-base--line-height); }
+.sizeLg { font-size: var(--text-lg); line-height: var(--text-lg--line-height); }
+.sizeXl { font-size: var(--text-xl); line-height: var(--text-xl--line-height); }
+
+/* ── Alignment ────────────────────────────────────────────────────────────────── */
+
+/*
+ * `center`, `right` and `truncate` make the element a block: alignment and ellipsis do
+ * nothing on an inline box. `left` does not, so an inline Text stays inline. `min-width: 0`
+ * lets a truncating flex item shrink.
+ */
+.truncate {
+	display: block;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.alignLeft { text-align: left; }
+.alignCenter { display: block; text-align: center; }
+.alignRight { display: block; text-align: right; }
+
+/*
+ * ── Leading ──────────────────────────────────────────────────────────────────────
+ * After the size classes, so an explicit `lineHeight` wins by source order.
+ */
+
+.leadingNone { line-height: var(--leading-none); }
+.leadingTight { line-height: var(--leading-tight); }
+.leadingSnug { line-height: var(--leading-snug); }
+.leadingNormal { line-height: var(--leading-normal); }
+.leadingRelaxed { line-height: var(--leading-relaxed); }
+.leadingLoose { line-height: 2; }
+
+/* ── Weight ───────────────────────────────────────────────────────────────────── */
+
+.weightNormal { font-weight: var(--weight-normal); }
+.weightMedium { font-weight: var(--weight-medium); }
+.weightSemibold { font-weight: var(--weight-semibold); }
+.weightBold { font-weight: var(--weight-bold); }
+
+/* Tabular figures in the text's own face, so digits line up in a column. */
+.numeric {
+	font-variant-numeric: tabular-nums;
+}

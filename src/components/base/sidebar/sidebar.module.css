@@ -1,0 +1,736 @@
+/*
+ * Sidebar. Colour tokens (--sidebar, --sidebar-accent, …) are theme semantics in
+ * themes/default.css; the expanded width is the global --sidebar-width (tokens/layout.css).
+ */
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/* Linear: an eased width looks like it is catching up with the content beside it. */
+	--sidebar-ease: linear;
+}
+
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	--sidebar-width-icon: round(calc(3rem * var(--density-scale, var(--scale))), 1px);
+
+
+	--sidebar-group-label-h: round(calc(2rem * var(--density-scale, var(--scale))), 1px);
+
+	--sidebar-menu-h-sm: round(calc(1.75rem * var(--density-scale, var(--scale))), 1px);
+	--sidebar-menu-h: round(calc(2rem * var(--density-scale, var(--scale))), 1px);
+	--sidebar-menu-h-lg: round(calc(3rem * var(--density-scale, var(--scale))), 1px);
+
+	--sidebar-badge-h: round(calc(1.25rem * var(--density-scale, var(--scale))), 1px);
+
+}
+
+/*
+ * Two boxes for one panel: a fixed CONTAINER spans the viewport and slides off-canvas,
+ * and an in-flow GAP reserves its column. Both animate width together.
+ */
+
+.wrapper {
+	display: flex;
+	width: 100%;
+	min-height: 100svh;
+}
+
+/*
+ * `contained`: bounded by the parent instead of the viewport (a preview, a shell in a tab).
+ * The wrapper becomes the containing block for the otherwise fixed panel.
+ */
+.wrapperContained {
+	position: relative;
+	min-height: 0;
+	height: 100%;
+	overflow: hidden;
+}
+
+/* The shell paints the inset variant's surround, so the inset panel sits on it. */
+.wrapper:has([data-variant="inset"]) {
+	background-color: var(--sidebar);
+}
+
+/* ── Desktop shell ────────────────────────────────────────────────────────────── */
+
+.root {
+	display: none;
+	color: var(--sidebar-foreground);
+}
+
+/*
+ * Each sidebar surface is the ground its halos and fades sit on, and its focus rings take
+ * the theme's --sidebar-ring. It is a seed like --ring, so it gets focus.css's recipe: mixed
+ * toward the ink in light, unmixed in dark (below). The rings are composed from the colour
+ * where they are declared, so they are composed again here to pick it up.
+ */
+.root,
+.static,
+.mobile {
+	--surface-ground: var(--sidebar);
+	--focus-ring-color: color-mix(in oklab, var(--sidebar-ring) 70%, var(--sidebar-foreground) 30%);
+	--focus-ring:
+		0 0 0 var(--focus-ring-offset) var(--sidebar),
+		0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--focus-ring-color);
+	--focus-ring-inset:
+		inset 0 0 0 var(--focus-ring-offset) var(--sidebar),
+		inset 0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--focus-ring-color);
+	--field-focus-ring: 0 0 0 var(--focus-ring-width) color-mix(in oklab, var(--focus-ring-color) 22%, transparent);
+}
+
+/* Dark: the unmixed seed, which clears 3:1 against the shell, as the page ring does. */
+:is(:global(.dark), [data-theme="dark"]) :is(.root, .static, .mobile) {
+	--focus-ring-color: var(--sidebar-ring);
+}
+
+/* The same under the OS preference (`colorScheme: "system"`), outside any explicit light choice. */
+@media (prefers-color-scheme: dark) {
+	:is(.root, .static, .mobile):not(:where(:global(.light), [data-theme="light"]) *) {
+		--focus-ring-color: var(--sidebar-ring);
+	}
+}
+
+@media (--bp-md) {
+	.root {
+		display: block;
+	}
+}
+
+.gap {
+	position: relative;
+	width: var(--sidebar-width);
+	background-color: transparent;
+	transition: width var(--duration-normal) var(--sidebar-ease);
+}
+
+.root[data-collapsible="offcanvas"] .gap {
+	width: 0;
+}
+
+.root[data-collapsible="icon"] .gap {
+	width: var(--sidebar-width-icon);
+}
+
+/* Floating and inset panels carry their own inset, so the column has to allow for it. */
+.root[data-collapsible="icon"][data-variant="floating"] .gap,
+.root[data-collapsible="icon"][data-variant="inset"] .gap {
+	width: calc(var(--sidebar-width-icon) + var(--space-md) * 2);
+}
+
+.container {
+	position: fixed;
+	inset-block: 0;
+	z-index: var(--z-sticky);
+	display: none;
+	height: 100svh;
+	width: var(--sidebar-width);
+	transition:
+		left var(--duration-normal) var(--sidebar-ease),
+		right var(--duration-normal) var(--sidebar-ease),
+		width var(--duration-normal) var(--sidebar-ease);
+}
+
+@media (--bp-md) {
+	.container {
+		display: flex;
+	}
+}
+
+.container[data-side="left"] { left: 0; }
+.container[data-side="right"] { right: 0; }
+
+/* Off-canvas slides the panel out by its own width rather than hiding it, so it animates. */
+.root[data-collapsible="offcanvas"] .container[data-side="left"] {
+	left: calc(var(--sidebar-width) * -1);
+}
+
+.root[data-collapsible="offcanvas"] .container[data-side="right"] {
+	right: calc(var(--sidebar-width) * -1);
+}
+
+.root[data-collapsible="icon"] .container {
+	width: var(--sidebar-width-icon);
+}
+
+.root[data-variant="sidebar"] .container[data-side="left"] {
+	border-inline-end: var(--border-width) solid var(--sidebar-border);
+}
+
+.root[data-variant="sidebar"] .container[data-side="right"] {
+	border-inline-start: var(--border-width) solid var(--sidebar-border);
+}
+
+.root[data-variant="floating"] .container,
+.root[data-variant="inset"] .container {
+	padding: var(--space-md);
+}
+
+.root[data-collapsible="icon"][data-variant="floating"] .container,
+.root[data-collapsible="icon"][data-variant="inset"] .container {
+	width: calc(var(--sidebar-width-icon) + var(--space-md) * 2 + var(--border-width) * 2);
+}
+
+.inner {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	flex-direction: column;
+	background-color: var(--sidebar);
+}
+
+.root[data-variant="floating"] .inner {
+	border-radius: var(--radius);
+	box-shadow: var(--shadow-xs), 0 0 0 var(--border-width) var(--sidebar-border);
+}
+
+/* `collapsible="none"` — a plain panel in the flow, with no rail and no off-canvas. */
+.static {
+	display: flex;
+	height: 100%;
+	width: var(--sidebar-width);
+	flex-direction: column;
+	background-color: var(--sidebar);
+	color: var(--sidebar-foreground);
+}
+
+/* The mobile sheet supplies its own surface; this only sets the width and strips padding. */
+.mobile {
+	width: 18rem;
+	padding: 0;
+	background-color: var(--sidebar);
+	color: var(--sidebar-foreground);
+}
+
+.mobileInner {
+	display: flex;
+	height: 100%;
+	width: 100%;
+	flex-direction: column;
+}
+
+/* ── Rail ─────────────────────────────────────────────────────────────────────── */
+
+/* A strip on the panel's edge. Not a tab stop (`tabIndex={-1}`): it duplicates the trigger. */
+.rail {
+	position: absolute;
+	inset-block: 0;
+	z-index: var(--z-raised);
+	display: none;
+	width: var(--space-xl);
+	border: 0;
+	background: transparent;
+	translate: -50% 0;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+@media (--bp-sm) {
+	.rail {
+		display: flex;
+	}
+}
+
+.rail::after {
+	content: "";
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: 50%;
+	width: var(--border-width-strong);
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.rail:hover::after {
+	background-color: var(--sidebar-border);
+}
+
+.container[data-side="left"] .rail {
+	inset-inline-end: calc(var(--space-xl) * -1);
+	cursor: w-resize;
+}
+
+.container[data-side="right"] .rail {
+	inset-inline-start: 0;
+	cursor: e-resize;
+}
+
+/* Collapsed, the rail opens rather than closes — so the cursor points the other way. */
+.root[data-state="collapsed"] .container[data-side="left"] .rail { cursor: e-resize; }
+.root[data-state="collapsed"] .container[data-side="right"] .rail { cursor: w-resize; }
+
+.root[data-collapsible="offcanvas"] .rail {
+	translate: 0 0;
+}
+
+.root[data-collapsible="offcanvas"] .rail:hover {
+	background-color: var(--sidebar);
+}
+
+/* ── Inset ────────────────────────────────────────────────────────────────────── */
+
+.wrapperContained .container {
+	position: absolute;
+	height: 100%;
+}
+
+.inset {
+	position: relative;
+	display: flex;
+	width: 100%;
+	flex: 1;
+	flex-direction: column;
+	background-color: var(--background);
+}
+
+@media (--bp-md) {
+	.wrapper:has([data-variant="inset"]) .inset {
+		margin: var(--space-md);
+		margin-inline-start: 0;
+		border-radius: var(--radius);
+		box-shadow: var(--shadow-xs);
+	}
+
+	/* Collapsed, the panel is gone and the inset needs its own leading margin back. */
+	.wrapper:has([data-variant="inset"][data-state="collapsed"]) .inset {
+		margin-inline-start: var(--space-md);
+	}
+}
+
+/* ── Structure ────────────────────────────────────────────────────────────────── */
+
+.header,
+.footer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding: var(--space-md);
+}
+
+.content {
+	display: flex;
+	min-height: 0;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-md);
+	position: relative;
+	overflow: auto;
+	/* A scrollbar in a 3rem rail would be most of the rail. */
+	scrollbar-width: none;
+}
+
+.content::-webkit-scrollbar {
+	display: none;
+}
+
+/* Collapsed to the icon rail there is nothing to scroll to — only overflow to clip. */
+.root[data-collapsible="icon"] .content {
+	overflow: hidden;
+}
+
+.separator {
+	margin-inline: var(--space-md);
+	width: auto;
+	background-color: var(--sidebar-border);
+}
+
+.group {
+	position: relative;
+	display: flex;
+	width: 100%;
+	min-width: 0;
+	flex-direction: column;
+	padding: var(--space-md);
+}
+
+.groupLabel {
+	display: flex;
+	height: var(--sidebar-group-label-h);
+	flex-shrink: 0;
+	align-items: center;
+	padding-inline: var(--space-md);
+	border-radius: var(--radius-sm);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	outline: none;
+	transition:
+		margin var(--duration-normal) var(--sidebar-ease),
+		opacity var(--duration-normal) var(--sidebar-ease);
+}
+
+.groupLabel:focus-visible {
+	box-shadow: var(--focus-ring);
+}
+
+/* Collapsed, the caption is pulled up by its own height so the rows below slide, not jump. */
+.root[data-collapsible="icon"] .groupLabel {
+	margin-top: calc(var(--sidebar-group-label-h) * -1);
+	opacity: 0;
+}
+
+.groupAction {
+	position: absolute;
+	top: calc(var(--space-md) + (var(--sidebar-group-label-h) - var(--size-icon-lg)) / 2);
+	inset-inline-end: calc(var(--space-md) + var(--space-md) / 2);
+	display: flex;
+	aspect-ratio: 1;
+	width: var(--size-icon-lg);
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--sidebar-foreground);
+	cursor: pointer;
+	outline: none;
+}
+
+.groupAction:hover {
+	background-color: var(--sidebar-accent);
+	color: var(--sidebar-accent-foreground);
+}
+
+.groupAction:focus-visible {
+	box-shadow: var(--focus-ring);
+}
+
+.root[data-collapsible="icon"] .groupAction {
+	display: none;
+}
+
+.groupContent {
+	width: 100%;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+}
+
+/* ── Menu ─────────────────────────────────────────────────────────────────────── */
+
+.menu {
+	display: flex;
+	width: 100%;
+	min-width: 0;
+	flex-direction: column;
+	gap: var(--space-xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.menuItem {
+	position: relative;
+}
+
+.menuButton {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: var(--space-md);
+	height: var(--sidebar-menu-h);
+	padding: var(--space-md);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: inherit;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	text-align: start;
+	overflow: hidden;
+	cursor: pointer;
+	outline: none;
+	transition:
+		width var(--duration-normal) var(--sidebar-ease),
+		height var(--duration-normal) var(--sidebar-ease),
+		padding var(--duration-normal) var(--sidebar-ease),
+		background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Hover is half the accent; the current page is all of it, at medium weight. */
+.menuButton:hover,
+.menuButton[data-open] {
+	background-color: var(--sidebar-accent-50);
+	color: var(--sidebar-accent-foreground);
+}
+
+.menuButton:active,
+.menuButton[data-active] {
+	background-color: var(--sidebar-accent);
+	color: var(--sidebar-accent-foreground);
+}
+
+/*
+ * Lifted with an outer shadow, as the enclosed tab's selection is: in light the accent
+ * alone barely separates from the rail.
+ */
+.menuButton[data-active],
+.menuSubButton[data-active] {
+	font-weight: var(--weight-medium);
+	box-shadow: var(--shadow-xs);
+}
+
+.menuButton:focus-visible,
+.menuButton[data-active]:focus-visible {
+	box-shadow: var(--focus-ring);
+}
+
+.menuButton:disabled,
+.menuButton[aria-disabled="true"] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.menuButton svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+}
+
+/* Unsized, lucide's 24px height would stretch these glyphs in a 20px button. */
+.groupAction svg,
+.menuAction svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+}
+
+/* The label is the only part that gives way, so the glyph and any badge keep their space. */
+.menuButton > span:last-child {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.menuButtonSm { height: var(--sidebar-menu-h-sm); font-size: var(--text-xs);
+line-height: var(--text-xs--line-height); }
+.menuButtonLg { height: var(--sidebar-menu-h-lg); }
+
+.menuButtonOutline {
+	background-color: var(--background);
+	box-shadow: 0 0 0 var(--border-width) var(--sidebar-border);
+}
+
+.menuButtonOutline:hover {
+	box-shadow: 0 0 0 var(--border-width) var(--sidebar-accent);
+}
+
+/* Collapsed to the rail, every row becomes a square. */
+.root[data-collapsible="icon"] .menuButton {
+	width: var(--sidebar-menu-h);
+	height: var(--sidebar-menu-h);
+	padding: var(--space-md);
+}
+
+.root[data-collapsible="icon"] .menuButtonLg {
+	padding: 0;
+}
+
+/* A row with a trailing action reserves room for it, so the label never runs underneath. */
+.menuItem:has(.menuAction) .menuButton {
+	/* The action, its end offset, and the row's own inset beside it. */
+	padding-inline-end: calc(var(--size-icon-lg) + var(--space-xs) + var(--space-md));
+}
+
+.menuAction {
+	position: absolute;
+	top: calc((var(--sidebar-menu-h) - var(--size-icon-lg)) / 2);
+	inset-inline-end: var(--space-xs);
+	display: flex;
+	aspect-ratio: 1;
+	width: var(--size-icon-lg);
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--sidebar-foreground);
+	cursor: pointer;
+	outline: none;
+}
+
+.menuAction:hover {
+	background-color: var(--sidebar-accent);
+	color: var(--sidebar-accent-foreground);
+}
+
+.menuAction:focus-visible {
+	box-shadow: var(--focus-ring);
+}
+
+.root[data-collapsible="icon"] .menuAction {
+	display: none;
+}
+
+/*
+ * Revealed on hover or focus. `:focus-within` on the row is what keeps it reachable from
+ * the keyboard — an action that only appears under the pointer cannot be tabbed to.
+ */
+@media (hover: hover) {
+	.menuActionOnHover {
+		opacity: 0;
+	}
+
+	.menuItem:hover .menuActionOnHover,
+	.menuItem:focus-within .menuActionOnHover,
+	.menuActionOnHover[data-open] {
+		opacity: 1;
+	}
+}
+
+.menuBadge {
+	position: absolute;
+	top: calc((var(--sidebar-menu-h) - var(--sidebar-badge-h)) / 2);
+	inset-inline-end: var(--space-md);
+	display: flex;
+	height: var(--sidebar-badge-h);
+	min-width: var(--sidebar-badge-h);
+	align-items: center;
+	justify-content: center;
+	padding-inline: var(--space-xs);
+	/* Badge's count radius, for a caller who gives the count a fill. */
+	border-radius: var(--radius-sm);
+	font-size: var(--text-xs);
+	line-height: var(--leading-12);
+	font-weight: var(--weight-medium);
+	font-variant-numeric: tabular-nums;
+	color: var(--sidebar-foreground);
+	pointer-events: none;
+	user-select: none;
+}
+
+/* Inside a row rather than over it — for a button that lays its own parts out. */
+.menuBadgeInline {
+	position: static;
+	margin-inline-start: auto;
+}
+
+.root[data-collapsible="icon"] .menuBadge {
+	display: none;
+}
+
+.menuSkeleton {
+	display: flex;
+	height: var(--sidebar-menu-h);
+	align-items: center;
+	gap: var(--space-md);
+	padding: var(--space-md);
+	border-radius: var(--radius-sm);
+}
+
+.menuSkeletonIcon {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+}
+
+.menuSkeletonText {
+	height: var(--size-icon);
+	max-width: 100%;
+	flex: 1;
+}
+
+/* ── Nested menu ──────────────────────────────────────────────────────────────── */
+
+/* The rule lines up with the parent row's glyph, so the list hangs off the item above. */
+.menuSub {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: var(--space-xs);
+	margin: 0;
+	/*
+	 * Rule under the parent glyph (row inset + half the icon − rule width); the list's and
+	 * the child row's insets then put the child label on the parent's label column.
+	 */
+	margin-inline-start: calc(var(--space-md) + var(--size-icon) / 2 - var(--border-width));
+	padding: var(--space-2xs) var(--space-md);
+	border-inline-start: var(--border-width) solid var(--sidebar-border);
+	list-style: none;
+}
+
+.root[data-collapsible="icon"] .menuSub {
+	display: none;
+}
+
+.menuSubItem {
+	position: relative;
+}
+
+.menuSubButton {
+	display: flex;
+	/* The same row whether it renders as a link or, with no href, a button. */
+	width: 100%;
+	border: 0;
+	background: none;
+	font: inherit;
+	text-align: start;
+	min-width: 0;
+	height: var(--sidebar-menu-h-sm);
+	align-items: center;
+	gap: var(--space-md);
+	padding-inline: var(--space-md);
+	border-radius: var(--radius-sm);
+	color: var(--sidebar-foreground);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	overflow: hidden;
+	text-decoration: none;
+	cursor: pointer;
+	outline: none;
+}
+
+.menuSubButtonSm {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.menuSubButton:hover {
+	background-color: var(--sidebar-accent-50);
+	color: var(--sidebar-accent-foreground);
+}
+
+.menuSubButton:active,
+.menuSubButton[data-active] {
+	background-color: var(--sidebar-accent);
+	color: var(--sidebar-accent-foreground);
+}
+
+.menuSubButton:focus-visible,
+.menuSubButton[data-active]:focus-visible {
+	box-shadow: var(--focus-ring);
+}
+
+.menuSubButton:disabled,
+.menuSubButton[aria-disabled="true"] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.menuSubButton svg {
+	width: var(--size-icon);
+	height: var(--size-icon);
+	flex-shrink: 0;
+	color: var(--sidebar-accent-foreground);
+}
+
+.menuSubButton > span:last-child {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* The navigation search field, on the shell surface rather than the page's. */
+.input {
+	width: 100%;
+	background-color: var(--field-bg);
+	box-shadow: none;
+}
+
+/* Gone in the icon rail: a field clipped to 3rem has no room to type in. */
+.root[data-collapsible="icon"] .input {
+	display: none;
+}

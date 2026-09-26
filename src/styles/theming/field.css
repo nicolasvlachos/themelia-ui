@@ -1,0 +1,21 @@
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	--field-bg: transparent;
+
+	/* Label column for horizontal fields, so a settings page aligns down its controls. */
+	--field-label-width: 12rem;
+}
+
+/*
+ * Field — tokens shared by every form control (the surface itself is styles/fields.css).
+ * Height and inline inset are --control-h and --control-px-sm, read directly.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+		--field-icon-lane: calc(var(--size-icon) + var(--space-md) * 2);
+		--field-addon-lane: round(calc(2.5rem * var(--density-scale, var(--scale))), 1px);
+}

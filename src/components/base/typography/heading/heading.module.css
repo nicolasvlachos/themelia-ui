@@ -1,0 +1,45 @@
+/* Heading. The visual size is independent of the semantic level. */
+.root {
+	margin: 0;
+	color: var(--text-role-main);
+	font-family: var(--font-heading);
+	font-weight: var(--weight-semibold);
+	line-height: var(--leading-tight);
+	text-wrap: balance;
+}
+
+.size2xl { font-size: var(--text-2xl);
+line-height: var(--text-2xl--line-height); }
+.sizeXl { font-size: var(--text-xl);
+line-height: var(--text-xl--line-height); }
+.sizeLg { font-size: var(--text-lg);
+line-height: var(--text-lg--line-height); }
+.sizeBase { font-size: var(--text-base);
+line-height: var(--text-base--line-height); }
+.sizeSm { font-size: var(--text-sm);
+line-height: var(--text-sm--line-height); }
+
+/* Display sizes only: tracked at sm, base or lg, a Heading stands apart from same-size titles. */
+.size2xl,
+.sizeXl {
+	letter-spacing: var(--tracking-tight);
+}
+
+.group {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.sub {
+	margin: 0;
+	text-wrap: pretty;
+}
+
+/* One line with an ellipsis; `min-width: 0` lets a flex item shrink, as in `Text`. */
+.truncate {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

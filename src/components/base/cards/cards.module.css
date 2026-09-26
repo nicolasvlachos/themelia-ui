@@ -1,0 +1,323 @@
+/*
+ * Card — the single surface primitive. Every framed region in the kit is a Card; don't
+ * grow parallel card-shaped chrome.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/* The surface insets, re-pointable per variant (auth cards take 0). */
+	--card-px: var(--surface-px);
+	--card-py: var(--surface-py);
+
+
+	/* Collapsed height for an expandable card. */
+	--card-collapsed-height: calc(12rem * var(--scale));
+
+}
+
+/* A flush shell; header, content and footer each own the inset and can draw full-bleed dividers. */
+
+.root {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	color: var(--card-foreground);
+}
+
+/* ── Surfaces ─────────────────────────────────────────────────────────────────── */
+
+.surfaceCard {
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	--surface-ground: var(--card);
+	box-shadow: none;
+}
+
+/*
+ * Framed (the default): a bezel. Outer hairline is an inset outline so clipping parents
+ * can't cut it; the --space-md band equals the radius difference, so the surface corner is
+ * --radius-sm by construction; the inner hairline (::after) sits above tinted regions.
+ */
+.surfaceFramed {
+	position: relative;
+	border: var(--space-md) solid var(--muted-50);
+	border-radius: var(--radius);
+	background-color: var(--card);
+	--surface-ground: var(--card);
+	background-clip: padding-box;
+	outline: var(--border-width) solid var(--border);
+	outline-offset: calc(var(--border-width) * -1);
+	box-shadow: var(--shadow-xs);
+}
+
+.surfaceFramed::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: var(--radius-sm);
+	box-shadow: inset 0 0 0 var(--border-width) var(--border);
+	pointer-events: none;
+}
+
+/* Regions painting to the surface's corner take the surface radius, not the card's. */
+.surfaceFramed > .media {
+	border-start-start-radius: var(--radius-sm);
+	border-start-end-radius: var(--radius-sm);
+}
+
+.surfaceFramed .footer {
+	border-bottom-left-radius: var(--radius-sm);
+	border-bottom-right-radius: var(--radius-sm);
+}
+
+.surfaceFramed .primaryAction {
+	border-radius: var(--radius-sm);
+}
+
+/* Flat: card structure without panel chrome. */
+.surfaceFlat {
+	background: none;
+	border: 0;
+	box-shadow: none;
+}
+
+.surfaceBordered {
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background: none;
+	box-shadow: none;
+}
+
+/* ── Regions ──────────────────────────────────────────────────────────────────── */
+
+/* Edge-to-edge media: the card's top radius less the border, so the curve sits inside the frame. */
+.media {
+	min-width: 0;
+	overflow: hidden;
+	border-start-start-radius: calc(var(--radius) - var(--border-width));
+	border-start-end-radius: calc(var(--radius) - var(--border-width));
+}
+
+
+.header {
+	padding: var(--card-py) var(--card-px);
+}
+
+.headerDivider {
+	border-bottom: var(--border-width) solid var(--border-60);
+}
+
+.titleRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.icon {
+	display: inline-flex;
+	flex-shrink: 0;
+	color: var(--muted-foreground);
+}
+
+.icon svg:not([data-sized]) {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+.title {
+	min-width: 0;
+	font-size: var(--text-base);
+	line-height: var(--leading-tight);
+	/* Truncates rather than pushing the header controls off the row. */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* The `titleLevel` heading's weight; the Text branch takes it from its weight prop. */
+.titleRow > :is(h1, h2, h3, h4, h5, h6) {
+	font-weight: var(--weight-semibold);
+}
+
+/* Info affordance: a real button, since a `title` tooltip is unreachable by keyboard and touch. */
+.titleInfo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted-foreground);
+	cursor: help;
+}
+
+.titleInfo > svg {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+.titleInfo:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.titleSuffix {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+.headerControls {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: var(--space-xs);
+	margin-inline-start: auto;
+}
+
+.description {
+	text-wrap: pretty;
+}
+
+.alert {
+	padding-inline: var(--card-px);
+	padding-bottom: var(--card-py);
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	min-width: 0;
+	padding: var(--card-py) var(--card-px);
+}
+
+/*
+ * A header already supplies the top inset — unless a divider makes the content its own
+ * region, which then pays its own inset like the footer.
+ */
+.header:not(.headerDivider) + .content,
+.alert + .content {
+	padding-top: 0;
+}
+
+.footer {
+	padding: var(--card-py) var(--card-px);
+	background-color: var(--muted-20);
+	border-bottom-left-radius: inherit;
+	border-bottom-right-radius: inherit;
+}
+
+.footerDivider {
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+/* ── Expandable ───────────────────────────────────────────────────────────────── */
+
+/*
+ * A fade, not a hard cut: a clean edge reads as the end of the content. A mask fades the
+ * content itself, so it works on every surface, painted or not.
+ */
+.collapsible {
+	position: relative;
+	overflow: hidden;
+	max-height: var(--card-collapsed-height);
+	mask-image: linear-gradient(to bottom, black calc(100% - 3rem * var(--scale)), transparent);
+}
+
+.expanded {
+	max-height: none;
+	mask-image: none;
+}
+
+.expandToggle {
+	display: flex;
+	justify-content: center;
+	padding-bottom: var(--card-py);
+}
+
+/* ══ Action strip ══════════════════════════════════════════════════════════════════
+ * Visible commands at the card's foot, driven by the same ActionDefinition array as the
+ * header's overflow menu.
+ */
+
+.actionStrip {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.actionStripSeparated {
+	padding-top: var(--space-lg);
+	border-top: var(--border-width) solid var(--border-60);
+}
+
+.actionStripEnd { justify-content: flex-end; }
+.actionStripBetween { justify-content: space-between; }
+
+/* The primary action fills the row on a narrow card. */
+.actionStripFullPrimary > :first-child {
+	flex: 1;
+}
+
+/*
+ * Whole-card link: the anchor covers the card instead of wrapping it, so inner controls
+ * stay clickable. The card must be the containing block, or `inset: 0` covers the viewport.
+ */
+.root:has(.primaryAction) {
+	position: relative;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/*
+ * Hover strengthens the surface, not the covering anchor, which would wash out the content
+ * beneath it.
+ */
+@media (hover: hover) {
+	.surfaceCard:has(.primaryAction:hover),
+	.surfaceBordered:has(.primaryAction:hover) {
+		border-color: var(--foreground-20);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.surfaceFramed:has(.primaryAction:hover) {
+		outline-color: var(--foreground-20);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.surfaceFlat:has(.primaryAction:hover) {
+		background-color: var(--accent-50);
+	}
+}
+
+.primaryAction {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
+}
+
+.primaryAction:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* Interactive children sit above the covering link (`.root` is its offset parent). */
+.root:has(.primaryAction) button:not(.primaryAction),
+.root:has(.primaryAction) a:not(.primaryAction) {
+	position: relative;
+	z-index: var(--z-raised);
+}

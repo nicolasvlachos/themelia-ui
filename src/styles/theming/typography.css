@@ -1,0 +1,26 @@
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	/* Weights */
+	--weight-normal: 400;
+	--weight-medium: 500;
+	--weight-semibold: 600;
+	--weight-bold: 700;
+
+	/* Leading — unitless so it scales with the element's own font-size */
+	--leading-none: 1;
+	--leading-tight: 1.25;
+	--leading-snug: 1.375;
+	--leading-normal: 1.5;
+	--leading-relaxed: 1.625;
+
+	/* Uppercase labels and shortcuts. */
+	--tracking-widest: 0.1em;
+	/* Heading xl and 2xl only: large display type tightens; body and small titles do not. */
+	--tracking-tight: -0.025em;
+}
+
+/*
+ * Typography — weight, leading and tracking scales (Tailwind v4's values). The size ramp
+ * lives in styles/tokens/foundation.css. There are no heading, label or link colour roles:
+ * they read --text-role-main, --text-role-secondary and --link-color (theming/text.css).
+ */

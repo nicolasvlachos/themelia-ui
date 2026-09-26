@@ -1,0 +1,318 @@
+/* Header: the shell's sticky top bar. It owns the bar; everything inside is the caller's. */
+/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+
+	--header-tool-badge-size: round(calc(1rem * var(--density-scale, var(--scale))), 1px);
+	/* The badge sits partly outside the button so it reads as attached. */
+	--header-tool-badge-offset: round(calc(0.25rem * var(--density-scale, var(--scale))), 1px);
+
+	--header-notification-dot: round(calc(0.5rem * var(--density-scale, var(--scale))), 1px);
+
+}
+
+.header {
+	position: sticky;
+	top: 0;
+	z-index: var(--z-sticky);
+	display: flex;
+	align-items: center;
+	min-height: var(--shell-header-h);
+	padding-inline: var(--space-xl);
+	padding-block: var(--space-sm);
+	border-bottom: var(--border-width) solid var(--border);
+	/* Opaque unless the browser can blur behind a translucent bar (below). */
+	background-color: var(--background);
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+	.header {
+		background-color: var(--background-70);
+		backdrop-filter: blur(12px);
+	}
+}
+
+.content {
+	display: flex;
+	align-items: stretch;
+	gap: var(--space-2xl);
+	flex: 1;
+	min-width: 0;
+	min-height: var(--control-h);
+}
+
+/* The brand is hidden on small screens, where the sidebar trigger stands in for it. */
+.brand {
+	display: none;
+	align-items: center;
+	flex-shrink: 0;
+	min-width: 0;
+}
+
+@media (--bp-md) {
+	.brand {
+		display: flex;
+	}
+}
+
+.breadcrumbs {
+	flex: 1;
+	min-width: 0;
+}
+
+.left,
+.center {
+	display: flex;
+	align-items: center;
+	min-width: 0;
+}
+
+/* The centre slot shrinks; the right cluster of fixed-size controls does not. */
+.center {
+	flex-shrink: 1;
+}
+
+.right {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	flex-shrink: 0;
+	margin-inline-start: auto;
+}
+
+/* ══ HeaderSearch ══════════════════════════════════════════════════════════════════
+ * A button dressed as a field: the field's height, radius, border and surface.
+ */
+
+.search {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	width: 100%;
+	min-width: round(calc(13rem * var(--density-scale, var(--scale))), 1px);
+	max-width: round(calc(32rem * var(--density-scale, var(--scale))), 1px);
+	height: var(--control-h);
+	padding-inline: var(--control-px-sm);
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	/* The field surface, so a field tint reaches it too; not a muted fill, which fails contrast in dark. */
+	background-color: var(--field-bg);
+	color: var(--foreground);
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out);
+}
+
+/* A field's hover: the edge firms, the ground stays. */
+.search:hover {
+	border-color: var(--control-border-hover);
+}
+
+.search:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.searchIcon {
+	flex-shrink: 0;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	color: var(--muted-foreground);
+}
+
+/* Left-aligned and greedy, so the hint sits at the far end like a field's trailing addon. */
+.searchLabel {
+	flex: 1;
+	overflow: hidden;
+	text-align: start;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Hidden on a narrow bar: a shortcut is not reachable on a device without a keyboard. */
+.searchHint {
+	display: none;
+	flex-shrink: 0;
+}
+
+@media (--bp-lg) {
+	.searchHint {
+		display: inline-flex;
+	}
+}
+
+/* ══ HeaderToolButton ══════════════════════════════════════════════════════════════ */
+
+/* Always the badge's containing block, badge or not. */
+.tool {
+	position: relative;
+	flex-shrink: 0;
+}
+
+.toolBadge {
+	position: absolute;
+	top: calc(var(--header-tool-badge-offset) * -1);
+	inset-inline-end: calc(var(--header-tool-badge-offset) * -1);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: var(--header-tool-badge-size);
+	height: var(--header-tool-badge-size);
+	padding-inline: var(--space-2xs);
+	border-radius: var(--radius-pill);
+	background-color: var(--destructive);
+	color: var(--destructive-foreground);
+	font-size: var(--text-xs);
+	font-weight: var(--weight-medium);
+	line-height: var(--leading-none);
+	pointer-events: none;
+}
+
+/* ══ HeaderToolPopover / HeaderNotifications surface ═══════════════════════════════ */
+
+.toolSurface {
+	width: round(calc(20rem * var(--density-scale, var(--scale))), 1px);
+	/* The positioner's own room to the collision edge — right inside a scoped portal host too. */
+	max-width: var(--available-width, calc(100vw - var(--space-2xl)));
+}
+
+.notificationsHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-lg);
+}
+
+.notificationsEmpty {
+	padding: var(--space-xl);
+	text-align: center;
+}
+
+.notificationsList {
+	display: flex;
+	flex-direction: column;
+	max-height: round(calc(24rem * var(--density-scale, var(--scale))), 1px);
+	overflow-y: auto;
+}
+
+.notificationRow {
+	align-items: start;
+}
+
+/* Unread carries a tint as well as the dot: colour alone is not a state. */
+.notificationRow[data-read="false"] {
+	background-color: var(--muted-50);
+}
+
+.notificationBody {
+	display: flex;
+	align-items: start;
+	gap: var(--space-sm);
+	min-width: 0;
+}
+
+.notificationTone {
+	flex-shrink: 0;
+	width: var(--header-notification-dot);
+	height: var(--header-notification-dot);
+	margin-block-start: var(--space-xs);
+	border-radius: var(--radius-pill);
+}
+
+.notificationTone[data-tone="info"] { background-color: var(--info); }
+.notificationTone[data-tone="success"] { background-color: var(--success); }
+.notificationTone[data-tone="warning"] { background-color: var(--warning-accent); }
+.notificationTone[data-tone="destructive"] { background-color: var(--destructive); }
+
+.notificationText {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+/* ══ HeaderUserMenu ════════════════════════════════════════════════════════════════ */
+
+.userTrigger {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	max-width: round(calc(14rem * var(--density-scale, var(--scale))), 1px);
+	padding: var(--space-xs) var(--space-sm);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--foreground);
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.userTrigger:hover,
+.userTrigger[data-popup-open] {
+	background-color: var(--accent);
+}
+
+.userTrigger:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* The identity column shrinks and truncates; the avatar and chevron do not. Below md the trigger is the avatar alone. */
+.userIdentity {
+	display: none;
+	flex-direction: column;
+	min-width: 0;
+	text-align: start;
+	line-height: var(--leading-tight);
+}
+
+.userIdentity > * {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+@media (--bp-md) {
+	.userIdentity {
+		display: flex;
+	}
+}
+
+.userChevron {
+	flex-shrink: 0;
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+	color: var(--muted-foreground);
+}
+
+/* ══ HeaderBreadcrumbs ═════════════════════════════════════════════════════════════ */
+
+.crumbBar {
+	display: flex;
+	align-items: stretch;
+	gap: var(--space-2xl);
+	min-width: 0;
+	min-height: var(--control-h);
+	overflow: hidden;
+}
+
+.crumbTrigger {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+}
+
+.crumbTrail {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	min-width: 0;
+	overflow: hidden;
+}

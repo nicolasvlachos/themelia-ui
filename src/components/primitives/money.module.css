@@ -1,0 +1,46 @@
+/* The dual-currency pair: baseline-aligned, since the two amounts are set at different sizes. */
+.pair {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--space-xs);
+	white-space: nowrap;
+}
+
+/* Stacked: a column with tight leading, so it does not read as two table rows. */
+.stacked {
+	flex-direction: column;
+	align-items: inherit;
+	gap: 0;
+	line-height: var(--leading-tight);
+}
+
+.primary {
+	font-variant-numeric: tabular-nums;
+}
+
+.separator {
+	flex-shrink: 0;
+	color: var(--muted-foreground);
+}
+
+.secondary {
+	font-variant-numeric: tabular-nums;
+}
+
+/* Three steps of prominence, and one that renders nothing. */
+.secondary[data-emphasis="discrete"] {
+	color: var(--muted-foreground);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.secondary[data-emphasis="muted"] {
+	color: var(--muted-foreground);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+}
+
+.secondary[data-emphasis="match"] {
+	color: inherit;
+	font-size: inherit;
+}

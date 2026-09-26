@@ -1,0 +1,150 @@
+/*
+ * Admin blocks: credentials, roles, the danger zone. Base draws most of the chrome
+ * (ContentBlock, Item, Copyable); this adds the permission grid and the headers.
+ */
+
+/* ══ CredentialList ════════════════════════════════════════════════════════════════ */
+
+.credentialList {
+	min-width: 0;
+}
+
+.credentialHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+/* The toggle carries the title: full width and flush with the rows beneath it. */
+.credentialToggle {
+	flex: 1;
+	justify-content: flex-start;
+	padding-inline: 0;
+	text-align: start;
+}
+
+.credentialBody {
+	display: flex;
+	flex-direction: column;
+	padding-block-start: var(--space-md);
+}
+
+/* ══ RolePermissions ═══════════════════════════════════════════════════════════════ */
+
+/* The query container; the groups inside react to the block's width. */
+.role {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+	min-width: 0;
+	container-type: inline-size;
+	container-name: role-block;
+}
+
+/* Identity on one side, the count and the edit action on the other. */
+.roleHeader {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.roleIdentity {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+	flex: 1 1 16rem;
+}
+
+.roleHeaderActions {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	flex-shrink: 0;
+}
+
+/* Stacked when narrow; area and permissions side by side once the block is wide enough. */
+.roleGroup {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--space-md);
+	min-width: 0;
+}
+
+.roleGroup + .roleGroup {
+	padding-block-start: var(--space-lg);
+	border-block-start: var(--border-width) solid var(--border-60);
+}
+
+/* Equal tracks, so permissions line up in columns across areas. */
+.rolePermissions {
+	display: grid;
+	/* Narrower than 9rem drops "View invoices" onto two lines. */
+	grid-template-columns: repeat(auto-fill, minmax(calc(9rem * var(--scale)), 1fr));
+	gap: var(--space-sm) var(--space-lg);
+	min-width: 0;
+}
+
+.rolePermission {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	min-width: 0;
+	color: var(--text-role-secondary);
+}
+
+.rolePermission[data-granted] {
+	color: var(--foreground);
+}
+
+.roleMark {
+	flex-shrink: 0;
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+	color: var(--muted-foreground);
+}
+
+.rolePermission[data-granted] .roleMark {
+	color: var(--success);
+}
+
+@container role-block (--cq-md) {
+
+	.roleGroup {
+		/* Wide enough for "Notifications" unwrapped, narrow enough to leave the grid room. */
+		grid-template-columns: calc(7.5rem * var(--scale)) 1fr;
+		align-items: start;
+		gap: var(--space-md) var(--space-xl);
+	}
+}
+
+/* ══ SensitiveAction ═══════════════════════════════════════════════════════════════ */
+
+/* The border states the stakes before the copy does. */
+.sensitive {
+	border-color: var(--destructive-30);
+}
+
+.sensitiveRow {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: var(--space-lg);
+	min-width: 0;
+}
+
+.sensitiveBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	min-width: 0;
+	flex: 1 1 12rem;
+}
+
+.sensitiveAction {
+	flex-shrink: 0;
+	margin-inline-start: auto;
+}

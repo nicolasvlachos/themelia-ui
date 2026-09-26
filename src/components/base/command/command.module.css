@@ -1,0 +1,196 @@
+/*
+ * Command palette, built on `cmdk`: its state hooks are `data-selected` and
+ * `[cmdk-group-heading]`, not data-slot.
+ */
+
+.root {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	flex-direction: column;
+	overflow: hidden;
+	padding: var(--space-md);
+	border-radius: var(--radius);
+	/* Inline on a page the palette needs its own edge; inside a popover or dialog it drops it. */
+	border: var(--border-width) solid var(--border);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
+}
+
+:where([data-slot="popover-content"], dialog) .root {
+	border: 0;
+}
+
+/* The search band, spaced from the first row so the list doesn't read as part of the input. */
+.inputWrapper {
+	/*
+	 * No side or top inset: the root's padding already places the field on the rows' edge,
+	 * and --radius-sm is the root radius less that inset.
+	 */
+	padding: 0 0 var(--space-md);
+}
+
+/* Quieter than a standalone input: tinted fill, no border or shadow; the palette frames it. */
+.inputGroup {
+	height: var(--control-h-sm);
+	border-radius: var(--radius-sm);
+	border-color: var(--input-30);
+	background-color: var(--input-30);
+	box-shadow: none;
+}
+
+/* Focus firms the edge as on a field, without the halo: the palette already frames it. */
+.inputGroup:has(.input:focus-visible) {
+	border-color: var(--focus-ring-color);
+}
+
+.inputGroup [data-slot="input-group-addon"] {
+	padding-inline-start: var(--control-px-2xs);
+}
+
+.input {
+	width: 100%;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	outline: none;
+}
+
+.input:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+.searchIcon {
+	flex-shrink: 0;
+	width: var(--size-icon);
+	height: var(--size-icon);
+	opacity: 0.5;
+}
+
+/*
+ * Scrolls with a hidden scrollbar; `scroll-padding` keeps a keyboard-selected row clear
+ * of the edges.
+ */
+.list {
+	max-height: 18rem;
+	overflow-x: hidden;
+	overflow-y: auto;
+	scroll-padding-block: var(--space-md);
+	outline: none;
+	scrollbar-width: none;
+}
+
+.list::-webkit-scrollbar {
+	display: none;
+}
+
+.empty {
+	padding-block: var(--space-2xl);
+	text-align: center;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	color: var(--muted-foreground);
+}
+
+.group {
+	overflow: hidden;
+	padding: 0;
+	color: var(--foreground);
+}
+
+/* cmdk filters with `hidden`; authored display rules must not revive it. */
+.group[hidden],
+.item[hidden] {
+	display: none;
+}
+
+/* The heading takes the row inset, so it starts where its rows start. */
+.group [cmdk-group-heading] {
+	padding-inline: var(--row-px);
+	padding-block: var(--space-sm);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	font-weight: var(--weight-medium);
+	color: var(--muted-foreground);
+}
+
+/* Bleeds into the palette's padding to span the full surface. */
+.separator {
+	height: var(--border-width);
+	width: auto;
+	margin-block: var(--space-xs);
+	margin-inline: calc(var(--space-md) * -1);
+	background-color: var(--border-60);
+}
+
+.item {
+	position: relative;
+	display: flex;
+	cursor: default;
+	align-items: center;
+	gap: var(--space-md);
+	min-height: var(--menu-row-min-h);
+	padding-inline: var(--row-px);
+	padding-block: var(--menu-row-py);
+	border-radius: var(--radius-sm);
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	outline: none;
+	user-select: none;
+}
+
+.item svg {
+	pointer-events: none;
+	flex-shrink: 0;
+}
+
+.item svg:not([data-sized]) {
+	width: var(--size-icon);
+	height: var(--size-icon);
+}
+
+/* The same highlight as every other listbox and menu row. */
+.item[data-selected="true"] {
+	background-color: var(--accent);
+	color: var(--accent-foreground);
+}
+
+.item[data-selected="true"] svg {
+	color: var(--accent-foreground);
+}
+
+.item[data-disabled="true"] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+/* The trailing check marks a chosen row; hidden when a shortcut claims the trailing slot. */
+.check {
+	margin-inline-start: auto;
+}
+
+/* Unchecked rows drop the check entirely, so its auto margin can't displace trailing content. */
+.item:not([data-checked="true"]) .check,
+.item:has([data-slot="command-shortcut"]) .check {
+	display: none;
+}
+
+.shortcut {
+	margin-inline-start: auto;
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	letter-spacing: var(--tracking-widest);
+	color: var(--muted-foreground);
+}
+
+.item[data-selected="true"] .shortcut {
+	color: var(--foreground);
+}
+
+.dialogContent {
+	overflow: hidden;
+	padding: 0;
+	border-radius: var(--radius);
+	/* Sits above the visual midpoint while staying horizontally centred. */
+	margin: min(18dvh, 8rem) auto auto;
+}

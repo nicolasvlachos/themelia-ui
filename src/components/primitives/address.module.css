@@ -1,0 +1,10 @@
+/* The block form: resets `<address>`'s default italic; each line is its own block child. */
+.block {
+	display: flex;
+	flex-direction: column;
+	font-style: normal;
+}
+
+.line {
+	display: block;
+}

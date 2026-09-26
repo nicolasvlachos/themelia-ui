@@ -1,0 +1,138 @@
+/* Carousel — no component variables; rules read the spacing scale directly. */
+
+/*
+ * Native CSS scroll-snap: the browser handles momentum, touch and keyboard scrolling.
+ * JS only reports the current slide and scrolls to a chosen one.
+ */
+
+.root {
+	position: relative;
+}
+
+/*
+ * An edge fade while more content lies past it, keyed off the same `atStart`/`atEnd` as
+ * the arrows. A mask (as on the tab list), not a `--background` overlay, so it works on any
+ * surface and in RTL. Horizontal only.
+ */
+.root:not([data-at-start]) > .viewport:not(.vertical):dir(ltr),
+.root:not([data-at-end]) > .viewport:not(.vertical):dir(rtl) {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+}
+
+.root:not([data-at-end]) > .viewport:not(.vertical):dir(ltr),
+.root:not([data-at-start]) > .viewport:not(.vertical):dir(rtl) {
+	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+}
+
+.root:not([data-at-start]):not([data-at-end]) > .viewport:not(.vertical) {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
+}
+
+/* The focus ring is drawn outside the track, where the mask would clip it. */
+.root > .viewport:focus-visible {
+	mask-image: none;
+}
+
+.viewport {
+	display: flex;
+	gap: var(--space-xl);
+	position: relative;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	/* Hidden: the arrows and dots navigate. */
+	scrollbar-width: none;
+	border-radius: var(--radius);
+}
+
+.viewport::-webkit-scrollbar {
+	display: none;
+}
+
+.viewport:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.vertical {
+	flex-direction: column;
+	overflow-x: hidden;
+	overflow-y: auto;
+	scroll-snap-type: y mandatory;
+}
+
+.slide {
+	flex-shrink: 0;
+	scroll-snap-align: start;
+	/* Stop at every slide on a hard flick. */
+	scroll-snap-stop: always;
+}
+
+/* The control band under the track: centred, with a real gap. */
+/* Previous points to the start, which is on the right in RTL. */
+.directional:dir(rtl) {
+	scale: -1 1;
+}
+
+.controls {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-lg);
+	/* Separated from the slides so the arrows don't read as part of the last card. */
+	margin-block-start: var(--space-lg);
+}
+
+/* Overlay controls carry their own ground and elevation so they read over any slide. */
+.controlsOverlay {
+	position: absolute;
+	inset-block: 0;
+	/* Clear of the slide's own padding, so the arrow doesn't cover its text. */
+	inset-inline: var(--space-lg);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	pointer-events: none;
+}
+
+.controlsOverlay > * {
+	background-color: var(--background);
+	box-shadow: var(--shadow-sm);
+}
+
+.controlsOverlay > * {
+	pointer-events: auto;
+}
+
+.dots {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-sm);
+}
+
+.dot {
+	width: var(--space-md);
+	height: var(--space-md);
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-pill);
+	background-color: var(--muted-foreground-40);
+	cursor: pointer;
+	transition:
+		width var(--duration-fast) var(--ease-out),
+		background-color var(--duration-fast) var(--ease-out);
+}
+
+.dot[data-active] {
+	background-color: var(--primary);
+}
+
+.dotsPill .dot[data-active] {
+	width: round(calc(1.25rem * var(--density-scale, var(--scale))), 1px);
+}
+
+.dot:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}

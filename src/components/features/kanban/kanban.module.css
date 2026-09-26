@@ -1,0 +1,106 @@
+/* Kanban: the board's geometry and its drag states. The cards are the consumer's. */
+
+.root {
+	width: 100%;
+	min-width: 0;
+}
+
+.board {
+	display: grid;
+	gap: var(--space-lg);
+	width: 100%;
+	min-width: 0;
+	/* The caller's column template may not fit; scroll (dnd-kit auto-scrolls it during a drag). */
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+}
+
+/* Fade the overflowing edge with a mask, so a cut column reads as "more" on any surface. */
+.board[data-fade-start]:dir(ltr),
+.board[data-fade-end]:dir(rtl) {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+}
+
+.board[data-fade-end]:dir(ltr),
+.board[data-fade-start]:dir(rtl) {
+	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+}
+
+.board[data-fade-start][data-fade-end] {
+	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	border-radius: var(--radius);
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* The whole column highlights, not an insertion line. */
+.column[data-over] {
+	background-color: var(--primary-5);
+	outline: var(--border-width) solid var(--primary);
+	outline-offset: var(--space-2xs);
+}
+
+.columnContent {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	/* A floor, so an empty column is still a drop target. */
+	min-height: calc(4rem * var(--scale));
+	min-width: 0;
+}
+
+/* `touch-action: none`: otherwise touch browsers claim the gesture for scrolling. */
+.item {
+	touch-action: none;
+	user-select: none;
+	min-width: 0;
+	border-radius: var(--radius);
+}
+
+/* With no handle the whole item is the grip, so it takes keyboard focus itself. */
+.item:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* Faded, not hidden: the gap it leaves is the drop target. */
+.item[data-dragging] {
+	opacity: var(--repeater-dragging-opacity);
+}
+
+.item[data-clickable] {
+	cursor: pointer;
+}
+
+.handle {
+	cursor: grab;
+}
+
+.handle:active {
+	cursor: grabbing;
+}
+
+.actions {
+	display: inline-flex;
+}
+
+.actionsTrigger {
+	color: var(--muted-foreground);
+}
+
+/* The drag overlay takes no pointer events, so it never becomes the drop target. */
+.overlay {
+	padding: var(--space-lg);
+	border: var(--border-width) solid var(--primary);
+	border-radius: var(--radius-sm);
+	background-color: var(--primary-5);
+	color: var(--primary-accent);
+	box-shadow: var(--shadow-lg);
+	pointer-events: none;
+}
+

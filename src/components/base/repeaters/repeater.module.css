@@ -1,0 +1,131 @@
+/*
+ * Repeater — a collection the reader edits row by row. Reordering uses native drag-and-drop
+ * plus keyboard move commands.
+ */
+.root {
+	display: flex;
+	flex-direction: column;
+	/* Wider than the row gap: the add control is not another row. */
+	gap: var(--space-lg);
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.row {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-md);
+}
+
+/*
+ * A carded row's inset (padding + border), declared on the root so the footer — the list's
+ * sibling — can read it and start where the fields do.
+ */
+.root:has(> .list > .rowCard) {
+	--repeater-row-inset: calc(var(--space-lg) + var(--border-width));
+}
+
+/* A nested bare repeater resets the inherited inset. */
+.row .root:not(:has(> .list > .rowCard)) {
+	--repeater-row-inset: 0px;
+}
+
+.rowCard {
+	padding: var(--space-lg);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+}
+
+/* Inside a card a carded row steps down to the item radius so the curves nest. */
+:global([data-slot="card"]) .rowCard {
+	border-radius: var(--radius-sm);
+}
+
+.row[data-dragging] {
+	opacity: var(--repeater-dragging-opacity);
+}
+
+/* The insertion point, drawn on the row the pointer is currently over. */
+.row[data-drop-before] {
+	box-shadow: 0 calc(var(--border-width-strong) * -1) 0 0 var(--primary);
+}
+
+.row[data-drop-after] {
+	box-shadow: 0 var(--border-width-strong) 0 0 var(--primary);
+}
+
+.handle {
+	display: inline-flex;
+	width: var(--control-h-2xs);
+	height: var(--control-h-2xs);
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted-foreground);
+	cursor: grab;
+	/* Centred on the first control's line. */
+	margin-top: calc((var(--control-h) - var(--control-h-2xs)) / 2);
+}
+
+.handle:active {
+	cursor: grabbing;
+}
+
+.handle:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.handle > svg {
+	width: var(--size-icon-sm);
+	height: var(--size-icon-sm);
+}
+
+.body {
+	min-width: 0;
+	flex: 1;
+}
+
+/* A button and the field beside it are one height, so the remove control needs no offset. */
+.remove {
+	flex-shrink: 0;
+}
+
+.empty {
+	padding-block: var(--space-2xl);
+	text-align: center;
+	font-size: var(--text-sm);
+	line-height: var(--text-sm--line-height);
+	color: var(--muted-foreground);
+}
+
+/*
+ * With a grip column, the footer indents to line up with the fields:
+ *   --repeater-row-inset          a carded row's padding + border
+ *   --control-h-2xs + --space-md  the grip and its gap
+ *   --repeater-footer-inset       a consumer's own content inset (set this, not footer padding,
+ *                                 which this rule outranks)
+ * Child combinators throughout, so a nested repeater never matches.
+ */
+.root:has(> .list > .row > [data-repeater-handle]) > .footer {
+	padding-inline-start: calc(
+		var(--repeater-row-inset, 0px) + var(--control-h-2xs) + var(--space-md) +
+			var(--repeater-footer-inset, 0px)
+	);
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+}

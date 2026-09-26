@@ -1,0 +1,375 @@
+/*
+ * Value inputs — slider, tags, colour, phone. The field surface is shared via
+ * `data-field-shell` / `data-field-control` (styles/fields.css); only the affordances are here.
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/* Slider `sm` (default); `.sliderMd` overrides both for a larger drag target. */
+	--slider-track: var(--space-sm);
+	--slider-thumb: round(calc(var(--size-icon)), 1px);
+
+}
+
+/* ── Slider ───────────────────────────────────────────────────────────────────── */
+
+.sliderRoot {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+}
+
+.slider {
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	min-width: 0;
+	flex: 1;
+}
+
+.slider[data-orientation="horizontal"] { width: 100%; }
+.slider[data-orientation="vertical"] { height: 100%; }
+.slider[data-orientation="vertical"] .sliderControl { min-block-size: auto; min-inline-size: var(--hit-area-min); }
+
+/* The control is the pointer target, taller than the thin track centred inside it. */
+.sliderControl {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+	min-block-size: var(--hit-area-min);
+	display: flex;
+	width: 100%;
+	align-items: center;
+	touch-action: none;
+	user-select: none;
+}
+
+/* The thumb's `cursor: grab` must be overridden too. */
+.sliderControl[data-disabled] {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
+.sliderControl[data-disabled] .sliderThumb {
+	cursor: not-allowed;
+}
+
+.sliderControl[data-orientation="vertical"] {
+	height: 100%;
+	width: auto;
+	min-height: calc(10rem * var(--scale));
+	flex-direction: column;
+}
+
+.sliderTrack {
+	position: relative;
+	flex-grow: 1;
+	overflow: hidden;
+	border-radius: var(--radius-pill);
+	/* A foreground wash, not `--muted`, which vanishes on cards in both themes. */
+	background-color: var(--foreground-20);
+	user-select: none;
+}
+
+.sliderTrack[data-orientation="horizontal"] {
+	height: var(--slider-track);
+	width: 100%;
+}
+
+.sliderTrack[data-orientation="vertical"] {
+	width: var(--slider-track);
+	height: 100%;
+}
+
+.sliderRange {
+	position: absolute;
+	background-color: var(--primary);
+	user-select: none;
+}
+
+.sliderRange[data-orientation="horizontal"] { height: 100%; }
+.sliderRange[data-orientation="vertical"] { width: 100%; }
+
+.sliderThumb {
+	display: block;
+	width: var(--slider-thumb);
+	height: var(--slider-thumb);
+	flex-shrink: 0;
+	/* Two pixels: a hairline vanishes against the filled range behind the thumb. */
+	border: var(--border-width-strong) solid var(--primary);
+	border-radius: var(--radius-pill);
+	background-color: var(--background);
+	box-shadow: var(--shadow-xs);
+	user-select: none;
+	cursor: grab;
+	transition:
+		box-shadow var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out);
+}
+
+/*
+ * Hover is a soft halo, focus the kit's ring; both sit beside the elevation. Focus uses
+ * `:has()`: Base UI renders the real `<input type=range>` inside the thumb.
+ */
+.sliderThumb:hover {
+	outline: none;
+	box-shadow:
+		var(--shadow-xs),
+		0 0 0 var(--space-xs) var(--foreground-10);
+}
+
+.sliderThumb:has(:focus-visible) {
+	outline: none;
+	box-shadow:
+		var(--shadow-xs),
+		var(--focus-ring);
+}
+
+.sliderThumb:active {
+	cursor: grabbing;
+}
+
+/* ── Size ─────────────────────────────────────────────────────────────────────── */
+
+.sliderMd {
+	--slider-track: var(--space-md);
+	--slider-thumb: round(calc(var(--size-icon-lg)), 1px);
+}
+
+/* Invalid recolours the filled range and the thumb — the track stays neutral. */
+.slider[aria-invalid="true"] .sliderRange { background-color: var(--destructive); }
+.slider[aria-invalid="true"] .sliderThumb { border-color: var(--destructive); }
+
+.sliderValue {
+	min-width: calc(2rem * var(--scale));
+	flex-shrink: 0;
+	text-align: end;
+	font-variant-numeric: tabular-nums;
+}
+
+/* ── Tags ─────────────────────────────────────────────────────────────────────── */
+
+/*
+ * The one shell that grows (chips wrap), so it keeps its own block padding — replacing the
+ * inner control's, or a one-row tags field would stand taller than its neighbours.
+ */
+.tagsShell {
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-sm);
+	padding-block: var(--space-xs);
+	cursor: text;
+}
+
+.tagsShell [data-field-control] {
+	padding-block: 0;
+}
+
+.tag {
+	display: inline-flex;
+	align-items: center;
+	/* A whole-pixel line height, so the remove button centres on a whole pixel. */
+	line-height: var(--leading-12);
+	gap: var(--space-xs);
+	padding: var(--space-2xs) var(--space-md);
+	/* The nested radius, like the combobox's chips. */
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground-8);
+	color: var(--foreground);
+	font-size: var(--text-xs);
+	font-weight: var(--weight-medium);
+}
+
+.tagRemove {
+	display: inline-flex;
+	align-items: center;
+	border: 0;
+	/* A glyph button takes the item radius, like every control. */
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted-foreground);
+	cursor: pointer;
+	transition: var(--transition-control);
+}
+
+.tagRemove:hover:not(:disabled) {
+	background-color: var(--accent);
+	color: var(--foreground);
+}
+
+.tagRemove:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+.tagRemove > svg {
+	width: var(--space-lg);
+	height: var(--space-lg);
+}
+
+/* No surface of its own (the shell is the field); a minimum width keeps it clickable. */
+.tagsInput {
+	min-width: 5rem;
+	flex: 1;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	outline: none;
+}
+
+.tagsInput::placeholder {
+	color: var(--muted-foreground);
+}
+
+/* The field's support-line gap, like every hint under a control. */
+.tagsFooter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-sm);
+	margin-top: var(--space-sm);
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	color: var(--muted-foreground);
+}
+
+.tagsOverLimit {
+	color: var(--destructive);
+}
+
+.tagsClear {
+	border: 0;
+	background: none;
+	padding: 0;
+	color: inherit;
+	font: inherit;
+	text-decoration: underline;
+	text-underline-offset: var(--link-underline-offset);
+	cursor: pointer;
+	border-radius: var(--radius-sm);
+}
+
+.tagsClear:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-ring);
+}
+
+/* ── Colour ───────────────────────────────────────────────────────────────────── */
+
+.colorRoot {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+/*
+ * The native input sits over the swatch at zero opacity, so it opens the browser picker
+ * while the swatch shows the current value (any CSS colour, not just hex).
+ */
+.colorPicker {
+	position: relative;
+	flex-shrink: 0;
+	width: var(--control-h);
+	height: var(--control-h);
+	overflow: hidden;
+	border: var(--border-width) solid var(--control-border);
+	border-radius: var(--radius-sm);
+	background-color: var(--field-bg);
+	box-shadow: none;
+	cursor: pointer;
+}
+
+/* The ring follows the keyboard only, like every other control. */
+.colorPicker:has(.colorNative:focus-visible) {
+	border-color: var(--focus-ring-color);
+	box-shadow: var(--field-focus-ring);
+}
+
+.colorPicker:hover:not(:has(:focus-visible)):not(:has(:disabled)):not([data-invalid]) {
+	border-color: var(--control-border-hover);
+}
+
+/*
+ * The swatch belongs to the field, so it takes the field's invalid edge with it. Focus
+ * takes the focus ring, invalid keeps its border, and hover never repaints it.
+ */
+.colorPicker[data-invalid] {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--invalid-ring);
+}
+
+.colorPicker[data-invalid]:has(.colorNative:focus-visible) {
+	border-color: var(--invalid-ring-border);
+	box-shadow: var(--field-focus-ring);
+}
+
+.colorPicker[data-disabled] {
+	pointer-events: none;
+	opacity: var(--disabled-opacity);
+}
+
+.colorSwatch {
+	position: absolute;
+	inset: var(--space-xs);
+	/* Concentric with the field it sits in: the field's corner less the inset between them. */
+	border-radius: calc(var(--radius-sm) - var(--space-xs));
+}
+
+/* No colour: a strike through the well — muted when empty, destructive when unreadable. */
+.colorSwatch[data-empty] {
+	--swatch-strike: var(--muted-foreground);
+
+	box-shadow: inset 0 0 0 var(--border-width) var(--border);
+	background: linear-gradient(
+		to top right,
+		transparent calc(50% - var(--border-width)),
+		var(--swatch-strike) calc(50% - var(--border-width)),
+		var(--swatch-strike) calc(50% + var(--border-width)),
+		transparent calc(50% + var(--border-width))
+	);
+}
+
+.colorSwatch[data-unreadable] {
+	--swatch-strike: var(--destructive);
+}
+
+.colorNative {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.colorText {
+	min-width: 0;
+	flex: 1;
+	/* Monospace so the hex value's digits stay column-aligned while it is edited. */
+	font-family: var(--font-mono);
+}
+
+/* ── Phone ────────────────────────────────────────────────────────────────────── */
+
+.phoneRoot {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: var(--space-md);
+}
+
+.phonePrefix {
+	flex-shrink: 0;
+	width: calc(7.5rem * var(--scale));
+}
+
+.phoneNumber {
+	min-width: 0;
+	flex: 1;
+}

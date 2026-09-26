@@ -1,0 +1,13 @@
+/*
+ * Stacking order — named tiers, with gaps so an app can insert its own layer between them.
+ * Raw inputs: declared once at :root (styles/SCOPES.md).
+ */
+:root {
+	--z-raised: 1; /* Lifted within its own stacking context — a selected row, a chip. */
+	--z-sticky: 10; /* Sticky table headers and toolbars. */
+	--z-docked: 20; /* A floating batch bar: above a sticky header, below any menu it opens. */
+	--z-popover: 50; /* Menus, selects, popovers. */
+	/* Toasts, above any menu still open when one arrives. */
+	--z-toast: 100;
+	--z-tooltip: 1000; /* Always last: a tooltip may describe anything, including a toast. */
+}

@@ -1,0 +1,88 @@
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	--focus-ring-width: 2px;
+	--focus-ring-offset: 0px;
+
+	--disabled-opacity: 0.5;
+}
+
+/*
+ * Focus — rings composed once, so a module writes `box-shadow: var(--focus-ring)` and a
+ * consumer retunes every focus state from one place. The invalid ring is the same shape
+ * over --destructive.
+ *
+ * Derived tokens: declared at every scope boundary (styles/SCOPES.md).
+ */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+.light,
+.dark {
+	/*
+	 * One edge for every control that sits in a row with others (fields, selects, pickers,
+	 * triggers, filter pills, outline buttons). Derived so scoped --input/--foreground
+	 * overrides recompute it. The idle edge (30% foreground here, re-mixed for dark below) sits
+	 * deliberately below WCAG 1.4.11's 3:1; the hover edge, focus ring and invalid border clear
+	 * it. tests/tokens.spec.ts holds its floor.
+	 */
+	--control-border: color-mix(in oklab, var(--input) 70%, var(--foreground) 30%);
+	--control-border-hover: color-mix(in oklab, var(--input) 45%, var(--foreground) 55%);
+
+	/* Ring-dominant, with foreground mixed in for separation from the canvas. */
+	--focus-ring-color: color-mix(in oklab, var(--ring) 70%, var(--foreground) 30%);
+
+	/* Composite ring. Offset renders as a same-coloured-as-surface inner spread. */
+	--focus-ring:
+		0 0 0 var(--focus-ring-offset) var(--background),
+		0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--focus-ring-color);
+
+	/*
+	 * The same ring drawn inside the box, for a control under an `overflow: hidden`
+	 * ancestor. `inset var(--focus-ring)` would inset only the first layer, so both layers
+	 * are restated.
+	 */
+	--focus-ring-inset:
+		inset 0 0 0 var(--focus-ring-offset) var(--background),
+		inset 0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--focus-ring-color);
+
+	/*
+	 * A field's focus: the edge firms to the ring colour and a soft halo surrounds it,
+	 * matching the invalid state's shape rather than the solid control ring.
+	 */
+	--field-focus-ring: 0 0 0 var(--focus-ring-width) color-mix(in oklab, var(--focus-ring-color) 22%, transparent);
+
+	/* Invalid state (aria-invalid). */
+	--invalid-ring-color: var(--destructive-20);
+	--invalid-ring-border: var(--destructive);
+	--invalid-ring: 0 0 0 var(--focus-ring-width) var(--invalid-ring-color);
+}
+
+/*
+ * Dark: the unmixed ring seed, which clears 3:1 against the canvas. The invalid border is
+ * the destructive ink, lifted toward the foreground so it stays stronger than the idle border.
+ * Dark --input is translucent white, so the light mixes would land the control edges at
+ * about 3.8:1; these hold the same 2.4:1 idle and 4.3:1 hover as light.
+ */
+.dark,
+[data-theme="dark"],
+:is(.dark, [data-theme="dark"]) :is([data-ui-scope], [data-density]):not(.light, [data-theme="light"]) {
+	--control-border: color-mix(in oklab, var(--input) 85%, var(--foreground) 15%);
+	--control-border-hover: color-mix(in oklab, var(--input) 65%, var(--foreground) 35%);
+	--focus-ring-color: var(--ring);
+	--invalid-ring-color: var(--destructive-40);
+	--invalid-ring-border: var(--destructive-accent);
+}
+
+/* The same values under the OS preference (`colorScheme: "system"`); verify dark-overrides keeps both in step. */
+@media (prefers-color-scheme: dark) {
+	:root:not(.light, [data-theme="light"]),
+	[data-ui-scope]:not(.light, [data-theme="light"], :where(.light, [data-theme="light"]) *),
+	[data-density]:not(.light, [data-theme="light"], :where(.light, [data-theme="light"]) *) {
+		--control-border: color-mix(in oklab, var(--input) 85%, var(--foreground) 15%);
+		--control-border-hover: color-mix(in oklab, var(--input) 65%, var(--foreground) 35%);
+		--focus-ring-color: var(--ring);
+		--invalid-ring-color: var(--destructive-40);
+		--invalid-ring-border: var(--destructive-accent);
+	}
+}

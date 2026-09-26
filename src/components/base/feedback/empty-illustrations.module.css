@@ -1,0 +1,275 @@
+/*
+ * Empty-state illustrations. Surfaces, fills and lines are tokens, so they follow a
+ * retheme; the internal geometry (offsets, rotations) is the drawing and stays literal.
+ */
+
+/* ── Shared bars ───────────────────────────────────────────────────────────────── */
+
+/* Pills: they stand in for lines of text, and a small corner on a thin bar reads as a botched pill. */
+.lineWide,
+.lineNarrow,
+.lineShort {
+	border-radius: var(--radius-pill);
+	background-color: var(--muted);
+}
+
+.lineWide { width: 75%; height: 0.625rem; }
+.lineNarrow { width: 50%; height: 0.5rem; background-color: var(--muted-60); }
+.lineShort { width: 33%; height: 0.5rem; background-color: var(--muted-40); }
+
+/* ── Stacked cards ─────────────────────────────────────────────────────────────── */
+
+.stack {
+	position: relative;
+	width: 13rem;
+	height: var(--empty-art-h);
+}
+
+.stackBack,
+.stackMid {
+	position: absolute;
+	height: 1.5rem;
+	border: var(--border-width) solid var(--border-60);
+	/* Smaller than the front card's: a full surface corner on this strip reads as a pill. */
+	border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.stackBack {
+	inset-inline: 1.5rem;
+	top: 0;
+	background-color: var(--muted-60);
+}
+
+.stackMid {
+	inset-inline: 0.75rem;
+	top: 0.75rem;
+	background-color: var(--muted-80);
+}
+
+.stackFront {
+	position: absolute;
+	inset-inline: 0;
+	top: 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: var(--space-lg);
+	height: 4rem;
+	padding-inline: var(--space-xl);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--background);
+	box-shadow: var(--shadow-sm);
+}
+
+.stackThumb {
+	flex-shrink: 0;
+	width: 2rem;
+	height: 2rem;
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+}
+
+.stackLines {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--space-sm);
+}
+
+/* The "more below" fade; it overlays the front card, so it takes no pointer events. */
+.stackFade {
+	position: absolute;
+	inset-inline: 0;
+	bottom: 0;
+	height: 2rem;
+	pointer-events: none;
+	background-image: linear-gradient(
+		to bottom,
+		transparent,
+		color-mix(in oklab, var(--background) 60%, transparent),
+		var(--background)
+	);
+}
+
+/* ── Document stack ────────────────────────────────────────────────────────────── */
+
+.docs {
+	position: relative;
+	width: 8rem;
+	height: var(--empty-art-h);
+}
+
+.doc {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	width: 5rem;
+	height: 5rem;
+	padding: var(--space-md);
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	box-shadow: var(--shadow-sm);
+}
+
+.docBack {
+	inset-inline-start: 0.25rem;
+	top: 0.25rem;
+	border-color: var(--border-60);
+	background-color: var(--muted-60);
+	rotate: -6deg;
+}
+
+.docFront {
+	inset-inline-end: 0.25rem;
+	top: 0.5rem;
+	background-color: var(--background);
+	rotate: 3deg;
+}
+
+.docStatus {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	margin-top: auto;
+}
+
+/* The set's one spot of colour: a document that has been dealt with. */
+.docDot {
+	width: 0.375rem;
+	height: 0.375rem;
+	border-radius: 50%;
+	background-color: var(--success);
+}
+
+/* ── Inbox ─────────────────────────────────────────────────────────────────────── */
+
+.inbox {
+	position: relative;
+	width: 8rem;
+	height: var(--empty-art-h);
+}
+
+.inboxCheck {
+	position: absolute;
+	inset-inline-start: 50%;
+	top: 0;
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	translate: -50% 0;
+	border: var(--border-width) solid var(--success-30);
+	border-radius: 50%;
+	background-color: var(--success-10);
+	color: var(--success);
+}
+
+.inboxCheck svg {
+	width: var(--size-icon-md);
+	height: var(--size-icon-md);
+}
+
+.inboxTray {
+	position: absolute;
+	inset-inline: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	height: 3.5rem;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--background);
+	box-shadow: var(--shadow-sm);
+	overflow: hidden;
+}
+
+.inboxLip {
+	height: 0.75rem;
+	background-color: var(--muted-40);
+}
+
+.inboxRow {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: space-between;
+	padding-inline: var(--space-lg);
+}
+
+.inboxLines {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	width: 60%;
+}
+
+.inboxDot {
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 50%;
+	background-color: var(--muted-40);
+}
+
+/* ── Search glass ──────────────────────────────────────────────────────────────── */
+
+/* The halo is a spread shadow, not a second element. */
+.glass {
+	display: grid;
+	place-items: center;
+	width: 5rem;
+	height: 5rem;
+	border-radius: 50%;
+	background-color: var(--muted-40);
+	box-shadow: 0 0 0 0.5rem var(--muted-20);
+	color: var(--muted-foreground);
+}
+
+.glass svg {
+	width: var(--size-icon-2xl);
+	height: var(--size-icon-2xl);
+}
+
+/* ── Users ─────────────────────────────────────────────────────────────────────── */
+
+.users {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 8rem;
+	height: var(--empty-art-h);
+}
+
+.userLeft,
+.userCentre,
+.userRight {
+	border: var(--border-width-strong) solid var(--border);
+	border-radius: 50%;
+}
+
+.userLeft {
+	position: absolute;
+	inset-inline-start: 0.5rem;
+	width: 3rem;
+	height: 3rem;
+	background-color: var(--muted-80);
+}
+
+/* The centre disc overlaps both; `position: relative` lets its `z-index` apply. */
+.userCentre {
+	position: relative;
+	z-index: var(--z-raised);
+	width: 3.5rem;
+	height: 3.5rem;
+	background-color: var(--muted);
+	box-shadow: var(--shadow-sm);
+}
+
+.userRight {
+	position: absolute;
+	inset-inline-end: 0.5rem;
+	width: 2.5rem;
+	height: 2.5rem;
+	background-color: var(--muted-60);
+}

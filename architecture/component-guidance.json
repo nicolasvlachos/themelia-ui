@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 1,
+  "note": "Curated component decisions only. Imports, API declarations and JSDoc are generated from source/build; components without entries retain explicit family-level fallback.",
+  "components": {
+    "base/display": {
+      "MetadataList": {
+        "chooseWhen": "Read-only metadata and label/value facts about one record.",
+        "avoidWhen": "Editing values or rendering a list of actionable records.",
+        "capabilities": [
+          "read only facts",
+          "key value details",
+          "grid rows inline layouts"
+        ],
+        "composition": "Pass plain labels and semantic values; MetadataList owns typography and label/value gaps.",
+        "alternatives": [
+          "Item",
+          "FormField"
+        ]
+      },
+      "ContentBlock": {
+        "chooseWhen": "A titled section within a page or existing surface.",
+        "avoidWhen": "Needing a full card contract or a modal interaction.",
+        "capabilities": [
+          "section title description spacing",
+          "content grouping"
+        ],
+        "composition": "Use title and description props; compose content within the shared section spacing.",
+        "alternatives": [
+          "Card",
+          "Overlay"
+        ]
+      },
+      "ScrollArea": {
+        "chooseWhen": "A constrained scrollable region that needs consistent scrollbars.",
+        "avoidWhen": "Making the entire document scroll or hiding overflowing interactive content.",
+        "capabilities": [
+          "horizontal vertical overflow",
+          "scrollable content"
+        ],
+        "composition": "Constrain the parent; retain keyboard access and give the region a useful accessible name when needed.",
+        "alternatives": [
+          "TabList"
+        ]
+      }
+    },
+    "base/item": {
+      "Item": {
+        "chooseWhen": "An identity row with a title, description, media and actions.",
+        "avoidWhen": "A definition list of facts or an editable field.",
+        "capabilities": [
+          "resource identity row",
+          "compact list item",
+          "leading media trailing actions"
+        ],
+        "composition": "Compose ItemMedia, ItemContent, ItemTitle, ItemDescription and ItemActions; keep facts in MetadataList.",
+        "alternatives": [
+          "MetadataList",
+          "FormField"
+        ]
+      }
+    },
+    "base/forms": {
+      "FormField": {
+        "chooseWhen": "An editable control with an associated label, hint and error.",
+        "avoidWhen": "Read-only metadata or surface headings.",
+        "capabilities": [
+          "field label hint validation error",
+          "accessible input association"
+        ],
+        "composition": "Put a control inside FormField; let the field own label and support typography.",
+        "alternatives": [
+          "MetadataList"
+        ]
+      }
+    },
+    "base/cards": {
+      "Card": {
+        "chooseWhen": "A bounded surface with a coordinated header, body and footer.",
+        "avoidWhen": "Only grouping content within an existing surface or temporarily interrupting a task.",
+        "capabilities": [
+          "surface title description spacing",
+          "header body footer",
+          "card actions"
+        ],
+        "composition": "Use CardHeader and CardContent rather than local title, description and inset styles.",
+        "alternatives": [
+          "ContentBlock",
+          "Overlay"
+        ]
+      }
+    },
+    "base/overlay": {
+      "Overlay": {
+        "chooseWhen": "Temporary focused interaction over the current page.",
+        "avoidWhen": "Persistent page content or application navigation.",
+        "capabilities": [
+          "modal dialog drawer",
+          "focus dismissal",
+          "header title description footer spacing"
+        ],
+        "composition": "Use OverlayHeader, OverlayBody and OverlayFooter; retain dismissal and focus behavior.",
+        "alternatives": [
+          "Card",
+          "ContentBlock"
+        ]
+      }
+    },
+    "base/navigation": {
+      "TabList": {
+        "chooseWhen": "Scrollable tabs with edge fade and overflow navigation.",
+        "avoidWhen": "Independent actions or filtering unrelated to a tabbed content region.",
+        "capabilities": [
+          "horizontal scrollable tabs",
+          "overflow edge fade blur",
+          "keyboard navigation"
+        ],
+        "composition": "Place within Tabs with Tab and TabPanel; edgeFade is opt-in and scroll controls appear on overflow.",
+        "alternatives": [
+          "ScrollArea"
+        ]
+      }
+    },
+    "base/typography": {
+      "Text": {
+        "chooseWhen": "Primary copy and supporting text with a stable reusable typography role.",
+        "avoidWhen": "A field label, surface title or metadata label whose owner already styles it.",
+        "capabilities": [
+          "body copy typography",
+          "supporting text"
+        ],
+        "composition": "Leave ordinary body size unset to inherit provider defaults; use xs for genuine support copy.",
+        "alternatives": [
+          "DisplayLabel",
+          "Heading"
+        ]
+      },
+      "DisplayLabel": {
+        "chooseWhen": "A read-only label or group name.",
+        "avoidWhen": "Labeling an editable control.",
+        "capabilities": [
+          "readonly labels",
+          "metadata typography"
+        ],
+        "composition": "Pass plain content, without nested Text or local font overrides.",
+        "alternatives": [
+          "FormField",
+          "MetadataList"
+        ]
+      }
+    },
+    "base/structure": {
+      "Stack": {
+        "chooseWhen": "A passive one-dimensional layout with shared spacing.",
+        "avoidWhen": "An existing component already owns the layout.",
+        "capabilities": [
+          "vertical horizontal gap spacing",
+          "responsive arrangement"
+        ],
+        "composition": "Use shared gap and inset props; do not pin local pixel spacing.",
+        "alternatives": [
+          "Grid"
+        ]
+      }
+    },
+    "features/data-view": {
+      "DataView": {
+        "chooseWhen": "A resource browser combining a table, search, filters and saved views.",
+        "avoidWhen": "Only needing a table or replacing one small visual region with a new state machine.",
+        "capabilities": [
+          "mobile filters for a table",
+          "saved views search sorting",
+          "resource list filtering"
+        ],
+        "composition": "Start with DataView props and slots; use DataViewShell or useDataView only for a genuinely different arrangement.",
+        "alternatives": [
+          "DataTable",
+          "SearchFilters"
+        ]
+      }
+    },
+    "features/table": {
+      "DataTable": {
+        "chooseWhen": "A typed table with column, sorting and selection controls.",
+        "avoidWhen": "Needing a complete resource browser with saved views and filters.",
+        "capabilities": [
+          "tabular rows columns",
+          "sorting selection pagination"
+        ],
+        "composition": "Keep columns and data policy in the app; use DataView for the surrounding resource workflow.",
+        "alternatives": [
+          "DataView"
+        ]
+      }
+    },
+    "features/filters": {
+      "SearchFilters": {
+        "chooseWhen": "Search and filter controls for a resource collection.",
+        "avoidWhen": "Owning a whole resource table or using a tab bar for filter editing.",
+        "capabilities": [
+          "mobile filter overlay",
+          "filter operators pending validation",
+          "search resource filters"
+        ],
+        "composition": "Compose with FilterProvider and public editors; reuse FiltersButton for compact overlay access.",
+        "alternatives": [
+          "DataView",
+          "FiltersButton"
+        ]
+      },
+      "FiltersButton": {
+        "chooseWhen": "A compact entry point to filters in an overlay, especially on mobile.",
+        "avoidWhen": "Always-visible filter controls with sufficient room.",
+        "capabilities": [
+          "mobile filters overlay",
+          "compact responsive filter trigger"
+        ],
+        "composition": "Use inside the filter provider so desktop and mobile share the same filter state.",
+        "alternatives": [
+          "SearchFilters"
+        ]
+      }
+    },
+    "features/comments": {
+      "Comments": {
+        "chooseWhen": "Compact comments or posts with replies and a composer.",
+        "avoidWhen": "A feed of system events or mixed audit history.",
+        "capabilities": [
+          "compact comments replies posts",
+          "discussion composer attachments"
+        ],
+        "composition": "Use the ready Comments surface before its parts or useComments; the app owns persistence and permissions.",
+        "alternatives": [
+          "ActivityFeed",
+          "ActivityLog"
+        ]
+      }
+    },
+    "features/activities": {
+      "ActivityFeed": {
+        "chooseWhen": "A structured timeline of activity events.",
+        "avoidWhen": "A conversation primarily made of user comments and replies.",
+        "capabilities": [
+          "activity event timeline",
+          "history loading error refresh"
+        ],
+        "composition": "Use public accessors, callbacks and parts; keep fetching and domain formatting at the consumer boundary.",
+        "alternatives": [
+          "Comments",
+          "ActivityLog"
+        ]
+      },
+      "ActivityLog": {
+        "chooseWhen": "A mixed history of events and discussion.",
+        "avoidWhen": "Only a comment thread or a homogeneous event feed.",
+        "capabilities": [
+          "mixed activity comments history"
+        ],
+        "composition": "Compose the public log contract instead of rebuilding rows, markers or comment states.",
+        "alternatives": [
+          "Comments",
+          "ActivityFeed"
+        ]
+      }
+    },
+    "features/theme-tweaker": {
+      "ThemeTweaker": {
+        "chooseWhen": "A live theme editor available from every page of an application.",
+        "avoidWhen": "A static content block or a second independent theme provider.",
+        "capabilities": [
+          "live theme editor from every page",
+          "app theme values colors typography density"
+        ],
+        "composition": "Mount one launcher at the application shell, bind it to the live theme scope, and let its shared controls own styling.",
+        "alternatives": [
+          "UIConfigSettings"
+        ]
+      }
+    },
+    "layout/page": {
+      "Page": {
+        "chooseWhen": "A route-level shell with a coherent heading, actions and content.",
+        "avoidWhen": "A nested card or modal body.",
+        "capabilities": [
+          "page title description actions",
+          "route layout"
+        ],
+        "composition": "Supply header props and compose content from surfaces and feature families; routing remains application-owned.",
+        "alternatives": [
+          "Card",
+          "ContentBlock"
+        ]
+      }
+    },
+    "base/text-inputs": {
+      "Input": {
+        "chooseWhen": "Editable text input for a single-line field.",
+        "avoidWhen": "Choosing from suggestions or displaying read-only content.",
+        "composition": "Place inside FormField for its label, hint and error; use controlled values when the app owns state.",
+        "capabilities": [
+          "editable text input",
+          "single line form control"
+        ],
+        "alternatives": [
+          "FormField",
+          "MetadataList"
+        ]
+      }
+    }
+  }
+}

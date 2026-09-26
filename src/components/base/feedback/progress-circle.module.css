@@ -1,0 +1,64 @@
+/* Raw inputs: declared once at :root (styles/SCOPES.md). */
+:root {
+	--progress-sweep: 0%;
+}
+
+/* ProgressCircle — derived tokens, declared at every scope boundary (styles/SCOPES.md). */
+:root,
+[data-ui-scope],
+[data-density],
+[data-theme],
+:global(.light),
+:global(.dark) {
+
+	/* Big enough to hold a percentage at the small text size in the hole. */
+	--progress-circle: round(calc(var(--size-icon-2xl) * 1.15), 2px);
+	--progress-circle-fill: var(--primary);
+
+}
+
+.root {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: var(--progress-circle);
+	height: var(--progress-circle);
+}
+
+/* A masked disc, not a disc covered by a smaller one: the hole shows whatever surface is behind. */
+.root::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: var(--radius-pill);
+	background-image: conic-gradient(
+		var(--progress-circle-fill) var(--progress-sweep),
+		var(--foreground-20) var(--progress-sweep)
+	);
+	mask: radial-gradient(
+		closest-side,
+		transparent calc(100% - var(--space-xs)),
+		black calc(100% - var(--space-xs))
+	);
+	transition: background-image var(--duration-normal) var(--ease-out);
+}
+
+.inner {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-2xs);
+	min-width: 0;
+	/* Above the ring and clear of its stroke. */
+	position: relative;
+	max-width: calc(100% - var(--space-xs) * 2);
+}
+
+.toneSuccess { --progress-circle-fill: var(--success); }
+/* The accent, as on the bar: light --warning lacks contrast on the track. */
+.toneWarning { --progress-circle-fill: var(--warning-accent); }
+.toneDestructive { --progress-circle-fill: var(--destructive); }
+.toneInfo { --progress-circle-fill: var(--info); }

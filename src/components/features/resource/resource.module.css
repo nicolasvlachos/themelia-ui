@@ -1,0 +1,114 @@
+/* Resource shells: mostly layout, since the parts bring their own chrome. */
+
+.shell {
+	min-width: 0;
+	/* A container query: the aside drops below the body when the shell, not the viewport, is narrow. */
+	container-type: inline-size;
+	container-name: resource-shell;
+}
+
+.layout {
+	display: grid;
+	min-width: 0;
+	gap: var(--space-2xl);
+}
+
+.primary,
+.content,
+.aside {
+	min-width: 0;
+}
+
+@container resource-shell (width >= 64rem) {
+	.layout[data-has-aside] {
+		/* The app shell's rail width, so an aside and a sidebar agree. */
+		grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+	}
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────────── */
+
+.headerAvatar,
+.headerIcon {
+	width: var(--resource-media);
+	height: var(--resource-media);
+}
+
+.headerIcon svg {
+	width: var(--size-icon-lg);
+	height: var(--size-icon-lg);
+}
+
+.headerBadges {
+	flex-shrink: 0;
+}
+
+.headerMetadata {
+	margin-top: var(--space-sm);
+}
+
+/* ── Action bar ────────────────────────────────────────────────────────────────── */
+
+/*
+ * A toolbar, not a card: its controls carry their own edges. Only the sticky variant gets
+ * a ground and an edge, because rows scroll under it.
+ */
+.actionBar {
+	padding-block: var(--row-py);
+}
+
+/*
+ * Pinned below the app shell header (`--shell-header-h`), not the viewport top, and dressed
+ * as the header is: its edge and ground, frosted where the browser can blur.
+ */
+.actionBarSticky {
+	position: sticky;
+	top: var(--shell-header-h);
+	z-index: var(--z-sticky);
+	padding-inline: var(--surface-px);
+	border-bottom: var(--border-width) solid var(--border);
+	background-color: var(--background);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+	.actionBarSticky {
+		background-color: var(--background-70);
+		backdrop-filter: blur(12px);
+	}
+}
+
+.actionBarLeading {
+	flex: 1;
+	min-width: 0;
+}
+
+.actionBarTrailing {
+	flex-shrink: 0;
+}
+
+/* ── Replacement states ────────────────────────────────────────────────────────── */
+
+/* Loading and error states keep the card frame, so the region holds its shape. */
+.stateSurface {
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius);
+	background-color: var(--card);
+}
+
+/* ── Details section ───────────────────────────────────────────────────────────── */
+
+.section[data-padding="sm"] { padding: var(--surface-py-xs) var(--surface-px-xs); }
+.section[data-padding="md"] { padding: var(--surface-py) var(--surface-px); }
+.section[data-padding="lg"] { padding: var(--surface-py-lg) var(--surface-px-lg); }
+
+.sectionContent {
+	display: grid;
+	gap: var(--space-2xl);
+	min-width: 0;
+}
+
+.sectionFooter {
+	margin-top: var(--space-xl);
+	padding-top: var(--space-lg);
+	border-top: var(--border-width) solid var(--border-60);
+}

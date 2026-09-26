@@ -1,0 +1,15 @@
+/*
+ * Unlayered on purpose — see the general example. The verifier reads this class out of the
+ * built CSS, because an override that the kit's layers swallow is the one failure a
+ * consumer cannot diagnose from the outside.
+ */
+.consumer-override {
+	border-radius: 0;
+}
+
+.workspace {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1rem;
+}

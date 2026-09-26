@@ -1,0 +1,21 @@
+/*
+ * Forced colors — restores the focus ring. Components pair `box-shadow: var(--focus-ring)`
+ * with `outline: none`, and forced-colors mode drops box-shadow, leaving no focus at all.
+ * In `utilities` because it must outrank those `outline: none` rules in `components`.
+ * System colours only: the user's palette is the only palette in this mode.
+ */
+@layer utilities {
+	@media (forced-colors: active) {
+		/* `:focus-visible`, not `:focus`, so a pointer click draws no ring. */
+		*:focus-visible {
+			outline: var(--focus-ring-width) solid Highlight;
+			outline-offset: 2px;
+		}
+
+		/* A shelled field shows focus on the shell, as the normal ring does. */
+		[data-field-shell]:has([data-field-control]:focus-visible) {
+			outline: var(--focus-ring-width) solid Highlight;
+			outline-offset: 2px;
+		}
+	}
+}
