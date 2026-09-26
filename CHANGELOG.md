@@ -1,6 +1,19 @@
 # Changelog
 
-## Unreleased
+## 3.0.0 — 2026-09-27
+
+A major release. The package is ES modules whose JavaScript imports no CSS, so each module's
+stylesheet is imported beside it; every `renderLink` takes one shape; and the published
+catalogue uses the documentation's words. Read
+[Upgrading to 3.0](docs/learn/migration.md#upgrading-to-30), then run the packaged codemod
+from your project, dry first:
+
+```sh
+node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/
+```
+
+The [migration reference](https://unpkg.com/themelia-ui/docs/generated/migration.md) lists
+every change with its replacement.
 
 ### Breaking
 

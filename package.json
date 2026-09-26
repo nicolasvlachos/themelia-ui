@@ -1,6 +1,6 @@
 {
   "name": "themelia-ui",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "private": false,
   "description": "Themelia UI is a production-ready, composable React component system with CSS-first theming.",
   "keywords": [

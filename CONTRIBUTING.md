@@ -284,9 +284,8 @@ The policy consumers rely on is [API compatibility](docs/learn/api-compatibility
 2. Run `npm run tokens:surface`. It records the theme variables this version declares in
    `architecture/token-surface.json`, and `verify migrations` holds the next version to that
    record. Run it only when cutting a version, never to make a removal pass.
-3. Name the version in `docs/learn/migration.md`, in its opening line and in the heading of
-   the version's upgrade section, and set `phase` on the version's entries in
-   `architecture/migrations.json`.
+3. Name the version in the heading of its upgrade section in `docs/learn/migration.md`, and
+   set `phase` on the version's entries in `architecture/migrations.json`.
 4. Run `npm run docs:sync-skill`. The status block, the component index and the skill read
    the version from `package.json`.
 
@@ -312,7 +311,7 @@ to the six tiers the docs and the component index use (`typography` is part of B
 
 <!-- GENERATED:status by scripts/gen-status-docs.mjs — do not edit. -->
 
-Version `2.0.2` contains 97 modules across 6 tiers — Foundations 4, Primitives 1, Base 54, Layout 9, Features 24, Blocks 5.
+Version `3.0.0` contains 97 modules across 6 tiers — Foundations 4, Primitives 1, Base 54, Layout 9, Features 24, Blocks 5.
 
 The package publishes 98 exact JavaScript entrypoints and 93 exact CSS entrypoints. There are no broad aggregate barrels: a consumer imports the module it uses.
 

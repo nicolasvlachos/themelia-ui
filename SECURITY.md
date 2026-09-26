@@ -4,7 +4,8 @@
 
 | version | supported |
 |---|---|
-| 2.x | ✅ |
+| 3.x | ✅ |
+| 2.x | ❌ superseded by 3.0 |
 | 1.x | ❌ superseded by 2.0 |
 | 0.x | ❌ pre-release, superseded by 1.0 |
 

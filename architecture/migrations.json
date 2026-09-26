@@ -52,6 +52,7 @@
     },
     {
       "kind": "subpath",
+      "phase": "3.0.0",
       "from": "themelia-ui/styles",
       "to": "themelia-ui/core.css",
       "mechanical": true,
@@ -287,6 +288,7 @@
     },
     {
       "kind": "prop",
+      "phase": "3.0.0",
       "from": "Scope as",
       "to": "Scope render",
       "mechanical": false,
@@ -295,6 +297,7 @@
     },
     {
       "kind": "prop",
+      "phase": "3.0.0",
       "from": "LayoutLinkRenderer, LayoutLinkRenderProps",
       "to": "LinkRenderer, LinkRenderProps",
       "mechanical": false,
@@ -303,6 +306,7 @@
     },
     {
       "kind": "prop",
+      "phase": "3.0.0",
       "from": "ActionLinkRenderer, ActionLinkRenderProps",
       "to": "LinkRenderer, LinkRenderProps",
       "mechanical": false,
@@ -311,6 +315,7 @@
     },
     {
       "kind": "prop",
+      "phase": "3.0.0",
       "from": "Pagination renderLink(page, props)",
       "to": "Pagination pageHref and renderLink(props)",
       "mechanical": false,
@@ -319,11 +324,21 @@
     },
     {
       "kind": "prop",
+      "phase": "3.0.0",
       "from": "ResourceCellLinkProps and SideNav's renderLink props",
       "to": "LinkRenderProps",
       "mechanical": false,
       "why": "A table's resource cell and the side navigation took renderer shapes of their own.",
       "action": "Type the renderer passed to `ResourceCellProps.renderLink` or `SideNavProps.renderLink` as `LinkRenderer`. A disabled `SideNav` entry arrives with `disabled` and renders without a destination."
+    },
+    {
+      "kind": "prop",
+      "phase": "3.0.0",
+      "from": "null for a variant prop on Badge, Alert, Item, ItemMedia, InputGroupAddon and InputGroupButton",
+      "to": "the prop left out",
+      "mechanical": false,
+      "why": "Props typed from a variant map are declared, so their types no longer include null.",
+      "action": "Leave the prop out for the default: `Badge`'s `tone` and `variant` (and a metadata value's `badgeTone` and `badgeVariant`), `Alert`'s `tone` and `variant`, `Item`'s `surface`, `ItemMedia`'s `variant`, `InputGroupAddon`'s `align` and `InputGroupButton`'s `size`."
     }
   ],
   "css": [
@@ -720,6 +735,7 @@
     },
     {
       "kind": "behaviour",
+      "phase": "3.0.0",
       "from": "A CommonJS build behind the require condition, carrying no stylesheet imports",
       "to": "ES modules only",
       "mechanical": false,
@@ -728,6 +744,7 @@
     },
     {
       "kind": "behaviour",
+      "phase": "3.0.0",
       "from": "JavaScript entries that imported their own stylesheets",
       "to": "JavaScript that imports no CSS, with each module's stylesheet imported beside it",
       "mechanical": false,
@@ -738,6 +755,7 @@
   "data": [
     {
       "kind": "data",
+      "phase": "3.0.0",
       "from": "component-index.json schema 2: families, layer, dependsOnFamilies",
       "to": "component-index.json schema 3: modules, tier, dependsOn",
       "mechanical": false,
