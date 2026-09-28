@@ -11,6 +11,7 @@ import {
 import { useId, useMemo, useRef, useState, type KeyboardEvent } from "react"
 
 import { VisuallyHidden } from "@/components/base/display"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useDatesConfig } from "@/lib/ui-provider"
 
@@ -230,7 +231,7 @@ export function Calendar({
 					<VisuallyHidden id={captionHintId}>{copy.chooseMonth}</VisuallyHidden>
 					<button
 						type="button"
-						className={styles.caption}
+						className={cx(styles.caption, textClassName({ size: "sm", weight: "medium" }))}
 						/* The month is the name; the action is a localized description, not glued into the name. */
 						aria-describedby={captionHintId}
 						onClick={() => setView(view === "days" ? "months" : "days")}
@@ -239,7 +240,7 @@ export function Calendar({
 					</button>
 					</>
 				) : (
-					<span className={styles.captionRange}>
+					<span className={textClassName({ size: "sm", weight: "medium" })}>
 						{format(month, "MMMM yyyy", { locale: dateLocale })} – {format(addMonths(month, numberOfMonths - 1), "MMMM yyyy", { locale: dateLocale })}
 					</span>
 				)}
@@ -283,7 +284,7 @@ export function Calendar({
 							<button
 								key={index}
 								type="button"
-								className={styles.monthCell}
+								className={cx(styles.monthCell, textClassName({ size: "sm" }))}
 								data-selected={candidate.getMonth() === month.getMonth() || undefined}
 								onClick={() => {
 									setMonth(candidate)
@@ -351,11 +352,11 @@ function MonthGrid({
 
 	return (
 		<div className={styles.monthColumn}>
-			{showCaption && <div className={styles.monthCaption}>{format(month, "MMMM yyyy", { locale: dateLocale })}</div>}
+			{showCaption && <div className={cx(styles.monthCaption, textClassName({ size: "sm", weight: "medium" }))}>{format(month, "MMMM yyyy", { locale: dateLocale })}</div>}
 			<div className={styles.grid} role="grid" aria-label={format(month, "MMMM yyyy", { locale: dateLocale })}>
 				<div className={styles.row} role="row">
 					{weekdays.map((weekday) => (
-						<div key={weekday} className={styles.weekday} role="columnheader" aria-label={weekday}>
+						<div key={weekday} className={cx(styles.weekday, textClassName({ size: "xs", weight: "medium", type: "secondary" }))} role="columnheader" aria-label={weekday}>
 							{weekday}
 						</div>
 					))}
@@ -379,7 +380,7 @@ function MonthGrid({
 						>
 							<button
 								type="button"
-								className={styles.day}
+								className={cx(styles.day, textClassName({ size: "sm", numeric: true, weight: selected ? "medium" : undefined }))}
 								data-day={format(day, "yyyy-MM-dd")}
 								data-today={isToday(day) || undefined}
 								data-outside={outside || undefined}

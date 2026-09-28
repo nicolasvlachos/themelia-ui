@@ -1,37 +1,40 @@
-/* Text. Each axis is an independent class so `cvm` can compose any combination. */
+/*
+ * Text: the kit's type. Each axis is an independent class so `cvm` can compose any
+ * combination, and `textClassName` lends the same classes to an element Text cannot wrap.
+ */
 
 .root {
 	margin: 0;
 }
 
-/* ── Role ─────────────────────────────────────────────────────────────────────── */
+/* ── Role: two text colours, and the tones as ink ──────────────────────────────── */
 
-.typeMain { color: var(--text-role-main); }
-.typeInverse { color: var(--text-role-inverse); }
-.typeSecondary { color: var(--text-role-secondary); }
-.typeError { color: var(--destructive); }
+.typeMain { color: var(--foreground); }
+.typeInverse { color: var(--background); }
+.typeSecondary { color: var(--muted-foreground); }
+/* The tone rule's inks (styles/tone.css): the hue on a dark page, mixed toward the text in light. */
+.typeError { color: color-mix(in oklab, var(--destructive) 85%, light-dark(var(--foreground), var(--destructive))); }
 .typeSuccess { color: var(--success); }
-.typePrimary { color: var(--primary-accent); }
-
-/* ── Size ─────────────────────────────────────────────────────────────────────── */
+.typePrimary { color: var(--primary); }
 
 /*
- * The size a caller did not choose: a class, not a rule on `.root`, so `size="inherit"`
- * keeps inheriting. Falls back to `sm` when the provider sets no `--text-default`.
+ * ── Size ─────────────────────────────────────────────────────────────────────────
+ * A step of the ramp times the type factor, each with the line box paired with it. `inherit`
+ * declares nothing, so the surrounding size flows through. The size a caller did not choose
+ * is a class too, falling back to `sm` when the provider sets no `--text-default`.
  */
+
 .sizeDefault {
-	font-size: var(--text-default, var(--text-sm));
-	line-height: var(--text-default--line-height, var(--text-sm--line-height));
+	font-size: calc(var(--text-default, var(--text-sm)) * var(--text-scale));
+	line-height: var(--text-default--line-height, calc(1.25 / 0.875));
 }
 
-/* `inherit` deliberately declares nothing, so the surrounding size flows through. */
-.sizeXxs { font-size: var(--text-xs); line-height: var(--text-xs--line-height); }
-.sizeXs { font-size: var(--text-xs); line-height: var(--text-xs--line-height); }
-.sizePxs { font-size: var(--text-pxs); line-height: var(--text-pxs--line-height); }
-.sizeSm { font-size: var(--text-sm); line-height: var(--text-sm--line-height); }
-.sizeBase { font-size: var(--text-base); line-height: var(--text-base--line-height); }
-.sizeLg { font-size: var(--text-lg); line-height: var(--text-lg--line-height); }
-.sizeXl { font-size: var(--text-xl); line-height: var(--text-xl--line-height); }
+.sizeXs { font-size: calc(var(--text-xs) * var(--text-scale)); line-height: calc(1 / 0.75); }
+.sizePxs { font-size: calc(var(--text-pxs) * var(--text-scale)); line-height: calc(1.125 / 0.8125); }
+.sizeSm { font-size: calc(var(--text-sm) * var(--text-scale)); line-height: calc(1.25 / 0.875); }
+.sizeBase { font-size: calc(var(--text-base) * var(--text-scale)); line-height: 1.5; }
+.sizeLg { font-size: calc(var(--text-lg) * var(--text-scale)); line-height: calc(1.75 / 1.125); }
+.sizeXl { font-size: calc(var(--text-xl) * var(--text-scale)); line-height: calc(1.75 / 1.25); }
 
 /* ── Alignment ────────────────────────────────────────────────────────────────── */
 
@@ -52,26 +55,34 @@
 .alignCenter { display: block; text-align: center; }
 .alignRight { display: block; text-align: right; }
 
-/*
- * ── Leading ──────────────────────────────────────────────────────────────────────
- * After the size classes, so an explicit `lineHeight` wins by source order.
- */
+/* ── Leading: after the sizes, so an explicit `lineHeight` wins by source order ─── */
 
-.leadingNone { line-height: var(--leading-none); }
-.leadingTight { line-height: var(--leading-tight); }
-.leadingSnug { line-height: var(--leading-snug); }
-.leadingNormal { line-height: var(--leading-normal); }
-.leadingRelaxed { line-height: var(--leading-relaxed); }
+.leadingNone { line-height: 1; }
+.leadingTight { line-height: 1.25; }
+.leadingSnug { line-height: 1.375; }
+.leadingNormal { line-height: 1.5; }
+.leadingRelaxed { line-height: 1.625; }
 .leadingLoose { line-height: 2; }
 
 /* ── Weight ───────────────────────────────────────────────────────────────────── */
 
-.weightNormal { font-weight: var(--weight-normal); }
-.weightMedium { font-weight: var(--weight-medium); }
-.weightSemibold { font-weight: var(--weight-semibold); }
-.weightBold { font-weight: var(--weight-bold); }
+.weightNormal { font-weight: 400; }
+.weightMedium { font-weight: 500; }
+.weightSemibold { font-weight: 600; }
+.weightBold { font-weight: 700; }
 
 /* Tabular figures in the text's own face, so digits line up in a column. */
 .numeric {
 	font-variant-numeric: tabular-nums;
+}
+
+/* The monospaced face, for identifiers and code. */
+.mono {
+	font-family: var(--font-mono);
+}
+
+/* Uppercase with open tracking, for an overline or a keyboard hint. */
+.caps {
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
 }

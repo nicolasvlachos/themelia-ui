@@ -5,6 +5,7 @@
  */
 import { forwardRef, isValidElement, useCallback, useRef, type KeyboardEvent, type ReactNode } from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./choice.module.css"
@@ -125,7 +126,7 @@ export const PillRadioGroup = forwardRef<HTMLDivElement, PillRadioGroupProps>(
 							aria-label={hasText(option.label) ? undefined : option.value}
 							disabled={disabled || option.disabled}
 							onClick={() => handleClick(option.value)}
-							className={cx("pill-radio-group--option", styles.pill, fullWidth && styles.pillFullWidth)}
+							className={cx("pill-radio-group--option", styles.pill, fullWidth && styles.pillFullWidth, textClassName({ size: "sm", weight: "medium" }))}
 						>
 							{renderChoiceIcon(option.icon)}
 							{option.label}

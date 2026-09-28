@@ -43,7 +43,7 @@ npm install themelia-ui
 React 19 and `react-dom` are required peers. Every other peer is optional and needed only by
 the modules that use it; the [import table](https://unpkg.com/themelia-ui/docs/generated/imports.md) lists which.
 
-Themelia supports Chrome and Edge 125, Firefox 121 and Safari 16.4 or newer. Builds and
+Themelia supports Chrome and Edge 125, Firefox 121 and Safari 17.5 or newer. Builds and
 server rendering need Node 20.19 or newer.
 
 ## Quick start
@@ -122,7 +122,7 @@ up to complete blocks:
 | Base | One control or concept, including `Text` and `Heading` | `themelia-ui/base/<module>` |
 | Layout | Page and application shells | `themelia-ui/layout/<module>` |
 | Features | An interaction lifecycle with controlled state | `themelia-ui/features/<module>` |
-| Blocks | Subject-shaped compositions of the tiers above | `themelia-ui/patterns/<module>`, `themelia-ui/admin/patterns/<module>` |
+| Blocks | Subject-shaped compositions of the tiers above | `themelia-ui/blocks/<module>`, `themelia-ui/blocks/admin/<module>` |
 
 ```ts
 import { UIProvider } from "themelia-ui/ui-provider"
@@ -130,7 +130,7 @@ import { Money } from "themelia-ui/primitives"
 import { Button } from "themelia-ui/base/buttons"
 import { Page } from "themelia-ui/layout/page"
 import { DataTable } from "themelia-ui/features/table"
-import { MetricGrid } from "themelia-ui/patterns/analytics"
+import { MetricGrid } from "themelia-ui/blocks/analytics"
 ```
 
 There are no tier barrels: `themelia-ui/base` does not exist, so one import never pulls in a
@@ -163,25 +163,22 @@ A nested `UIProvider` themes one region, and inherits whatever it does not set. 
 control, `UIRoot`, `UIScope`, `Scope` and `UIPortalHost` each do one of its jobs; see
 [Provider and scoping](docs/learn/provider-and-scoping.md).
 
-From CSS, set raw values such as radii and fonts on `:root`. Semantic colours such as
-`--primary`, `--background` and `--border` are derived again at every theme boundary, so
-declare them on the same selector list the package uses:
+From CSS, set any theme variable on `:root`. A colour holds both modes as
+`light-dark(light, dark)`, and each element's `color-scheme` picks the half, so one
+declaration reaches every region, a dark region inside a light page included:
 
 ```css
 :root {
   --radius: 1rem;
   --radius-sm: 0.5rem;
-}
-
-:root, [data-ui-scope], [data-density], [data-theme], .light, .dark {
-  --primary: oklch(0.55 0.19 250);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: light-dark(oklch(0.55 0.19 250), oklch(0.72 0.14 250));
+  --primary-foreground: light-dark(oklch(0.985 0 0), oklch(0.2 0.03 250));
 }
 ```
 
-The default theme answers three dark-mode signals: `class="dark"`, `data-theme="dark"` and,
-with `colorScheme: "system"`, the operating system's preference. A dark value of your own
-should answer all three.
+A colour given one value is used in both modes. Dark mode follows `class="dark"`,
+`data-theme="dark"` or, with `colorScheme: "system"`, the operating system's preference: each
+sets `color-scheme`, and nothing is declared twice.
 
 Beyond a few variables:
 
@@ -212,10 +209,10 @@ If the application loads module stylesheets instead of `style.css`, import
 The bridge is a Tailwind theme declaration generated from Themelia's variables. It does two
 things:
 
-1. Utilities read the live theme. `bg-primary`, `text-muted-foreground`, `rounded-sm` (the
-   item radius), `rounded-(--radius)` (the container radius), `p-md` and `shadow-lg` resolve
-   through Themelia's variables at the element, so they follow dark mode, nested providers
-   and density.
+1. Utilities read the live theme. `bg-primary`, `text-muted-foreground`, `rounded` (the
+   container radius), `rounded-sm` (the item radius), `p-padding`, `gap-gap-sm` and
+   `shadow-lg` resolve through Themelia's variables at the element, so they follow dark mode,
+   nested providers and density.
 2. It keeps Tailwind's defaults from replacing the variables both define, such as
    `--radius-sm`, `--text-sm` and `--font-sans`. Import it even if you never write one of
    its utilities.
@@ -225,7 +222,7 @@ so a utility in `className` overrides a component's own rule. There is no need f
 `!important` or `tailwind-merge`.
 
 ```tsx
-<Button className="rounded-pill px-lg shadow-lg">Approve</Button>
+<Button className="rounded-pill px-padding shadow-lg">Approve</Button>
 ```
 
 ## Overrides

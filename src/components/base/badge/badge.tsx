@@ -5,32 +5,25 @@
 import * as React from "react"
 
 import { Slot } from "@/components/base/slot"
-import { type VariantProps } from "@/lib/cvm"
+import { textClassName } from "@/components/base/typography"
+import type { SemanticTone } from "@/lib/component-vocabulary"
 import { cx } from "@/lib/cx"
 
 import { badgeVariants } from "./badge.variants"
 import styles from "./badge.module.css"
 
-export type BadgeTone =
-	| "neutral"
-	| "primary"
-	| "secondary"
-	| "success"
-	| "info"
-	| "warning"
-	| "destructive"
+/** Semantic colour: the kit's one tone union. */
+export type BadgeTone = SemanticTone
 
-/** Structural presentation. The tone supplies the hue; this decides how it is applied. */
-export type BadgeVariant = "soft" | "solid" | "outline"
+/** Fill treatment. The tone supplies the hue; this decides how much of it is applied. */
+export type BadgeAppearance = "soft" | "solid" | "outline"
 
 
-export interface BadgeProps
-	extends React.ComponentProps<"span">,
-		VariantProps<typeof badgeVariants> {
-	/** Semantic colour: what the badge means. `variant` decides how much of it is applied. */
+export interface BadgeProps extends React.ComponentProps<"span"> {
+	/** Semantic colour: what the badge means. `appearance` decides how much of it is applied. */
 	tone?: BadgeTone
-	/** How much of the tone is applied. Structural, not semantic. */
-	variant?: BadgeVariant
+	/** How much of the tone is applied: a soft wash, a solid fill or an outline. */
+	appearance?: BadgeAppearance
 	/** A leading status dot in the badge's own tone. */
 	dot?: boolean
 	/** Draws the dot hollow, for a state that has not happened yet: "queued", not "failed". */
@@ -47,7 +40,7 @@ export interface BadgeProps
 function Badge({
 	className,
 	tone = "neutral",
-	variant = "soft",
+	appearance = "soft",
 	render,
 	dot = false,
 	pending = false,
@@ -74,7 +67,7 @@ function Badge({
 		<Comp
 			data-slot="badge"
 			data-tone={tone}
-			className={cx("badge--component", badgeVariants({ tone, variant, className }))}
+			className={cx("badge--component", badgeVariants({ appearance }), textClassName({ size: "xs", weight: "medium", lineHeight: "none" }), className)}
 			{...props}
 		>
 			{render

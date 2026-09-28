@@ -4,7 +4,7 @@ import type { ReactNode } from "react"
 
 import { cx } from "@/lib/cx"
 import { useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 
 import { defaultComboboxStrings, type ComboboxStrings } from "./combobox.strings"
 import styles from "./combobox.module.css"
@@ -124,7 +124,7 @@ export function ComboboxPopupInput({ className, ...props }: ComboboxPrimitive.In
 			<SearchIcon aria-hidden className={styles.popupSearchIcon} />
 			<ComboboxPrimitive.Input
 				data-slot="combobox-input"
-				className={cx("combobox-popup-input--component", styles.popupSearchInput, className)}
+				className={cx("combobox-popup-input--component", styles.popupSearchInput, textClassName({ size: "sm" }), className)}
 				{...props}
 			/>
 		</div>
@@ -211,7 +211,7 @@ export function ComboboxItem({ className, children, ...props }: ComboboxPrimitiv
 	return (
 		<ComboboxPrimitive.Item
 			data-slot="combobox-item"
-			className={cx("combobox-item--component", styles.item, className)}
+			className={cx("combobox-item--component", styles.item, textClassName({ size: "sm" }), className)}
 			{...props}
 		>
 			<span className={styles.itemLabel}>{children}</span>
@@ -245,14 +245,22 @@ export function ComboboxItemIndicator({
  */
 export function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
 	return (
-		<ComboboxPrimitive.Empty data-slot="combobox-empty" className={cx("combobox-empty--component", styles.empty, className)} {...props} />
+		<ComboboxPrimitive.Empty
+			data-slot="combobox-empty"
+			className={cx("combobox-empty--component", styles.empty, textClassName({ size: "sm" }), className)}
+			{...props}
+		/>
 	)
 }
 
 /** Async status — "Searching…", "12 of 340". Hidden while empty. */
 export function ComboboxStatus({ className, ...props }: ComboboxPrimitive.Status.Props) {
 	return (
-		<ComboboxPrimitive.Status data-slot="combobox-status" className={cx("combobox-status--component", styles.status, className)} {...props} />
+		<ComboboxPrimitive.Status
+			data-slot="combobox-status"
+			className={cx("combobox-status--component", styles.status, textClassName({ size: "sm" }), className)}
+			{...props}
+		/>
 	)
 }
 
@@ -268,7 +276,12 @@ export function ComboboxGroupLabel({ className, ...props }: ComboboxPrimitive.Gr
 	return (
 		<ComboboxPrimitive.GroupLabel
 			data-slot="combobox-group-label"
-			className={cx("combobox-group-label--component", styles.groupLabel, className)}
+			className={cx(
+				"combobox-group-label--component",
+				styles.groupLabel,
+				textClassName({ size: "xs", weight: "medium" }),
+				className,
+			)}
 			{...props}
 		/>
 	)
@@ -319,7 +332,11 @@ export function ComboboxChip({
 }: ComboboxPrimitive.Chip.Props & { strings?: Partial<Pick<ComboboxStrings, "removeChip">> }) {
 	const copy = { ...defaultComboboxStrings, ...strings }
 	return (
-		<ComboboxPrimitive.Chip data-slot="combobox-chip" className={cx("combobox-chip--component", styles.chip, className)} {...props}>
+		<ComboboxPrimitive.Chip
+			data-slot="combobox-chip"
+			className={cx("combobox-chip--component", styles.chip, textClassName({ size: "xs", weight: "medium" }), className)}
+			{...props}
+		>
 			{children}
 			<ComboboxPrimitive.ChipRemove
 				data-hit-area

@@ -14,7 +14,7 @@ export type MediaLibraryItemType = "image" | "video" | "file"
 export type MediaLibrarySelectionMode = "single" | "multiple"
 export type MediaLibraryView = "grid" | "table" | "list"
 export type MediaLibraryTab = "library" | "upload"
-export type MediaLibraryDensity = "comfortable" | "compact"
+export type MediaLibrarySize = "default" | "sm"
 export type MediaResourceGalleryLayout = "field" | "grid" | "list"
 export type MediaLibrarySort = "newest" | "name" | "size" | "usage"
 export type MediaLibraryTypeFilter = "all" | MediaLibraryItemType
@@ -315,7 +315,8 @@ export interface MediaLibraryProps<TItem = MediaLibraryItem>
 	description?: ReactNode
 	confirmLabel?: ReactNode
 	cancelLabel?: ReactNode
-	density?: MediaLibraryDensity
+	/** Tile size: `sm` fits more tiles in a row. */
+	size?: MediaLibrarySize
 	/** Shows each asset's size and dimensions under its name. */
 	showMeta?: boolean
 	allowUpload?: boolean
@@ -396,7 +397,8 @@ export interface MediaResourceGalleryProps<TItem = MediaLibraryItem>
 	/** The add control hides once reached. */
 	maxItems?: number
 	layout?: MediaResourceGalleryLayout
-	density?: MediaLibraryDensity
+	/** Tile size: `sm` fits more tiles in a row. */
+	size?: MediaLibrarySize
 	readOnly?: boolean
 	empty?: ReactNode
 	action?: ReactNode

@@ -13,8 +13,8 @@ import { defaultEmptyStrings, type EmptyStrings } from "./empty.strings"
 import styles from "./empty.module.css"
 
 /**
- * Breathing room: `sm` for panels and cells, `lg` for a whole page. Not derived from
- * provider density, which already reaches these tokens via `--density-scale`.
+ * Breathing room: `sm` for panels and cells, `default` for a card body or a page. Not
+ * derived from provider density, which already reaches the paddings through the presets.
  */
 export type EmptyPadding = ComponentScale
 
@@ -60,8 +60,9 @@ export interface EmptyProps extends Omit<React.ComponentProps<"div">, "title"> {
 	/** Quiet copy under the action — a hint, a learn-more, a shortcut. */
 	footer?: React.ReactNode
 	/**
-	 * Breathing room, on both axes: `sm` for panels and cells, `lg` for a whole page. The
-	 * inline padding is what keeps copy off a dashed edge.
+	 * Breathing room, on both axes: `sm` for panels and cells, `default` for a card body or a
+	 * page. The inline padding is what keeps copy off a dashed edge.
+	 * @default "default"
 	 */
 	padding?: EmptyPadding
 	/**
@@ -78,9 +79,8 @@ export interface EmptyProps extends Omit<React.ComponentProps<"div">, "title"> {
 }
 
 const PADDING_CLASS: Record<EmptyPadding, string> = {
+	default: styles.padDefault,
 	sm: styles.padSm,
-	md: styles.padMd,
-	lg: styles.padLg,
 }
 
 const MEDIA_CLASS: Record<EmptyMediaVariant, string | undefined> = {
@@ -102,7 +102,7 @@ export function Empty({
 	description,
 	action,
 	footer,
-	padding = "md",
+	padding = "default",
 	border = false,
 	className,
 	children,

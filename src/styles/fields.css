@@ -1,29 +1,31 @@
 /*
- * The shared field surface: height, border, radius, focus, invalid and disabled states for
- * every text control. A control opts in with `data-field-control` and styles only what is
+ * The shared field surface: height, frame, radius, type, focus, invalid and disabled states
+ * for every text control. A control opts in with `data-field-control` and styles only what is
  * its own (a textarea's resize, a select's chevron). Layered as `components` so consumer
  * unlayered CSS wins, as with a module.
+ *
+ * Focus is the shared outline (styles/focus.css), drawn over the frame rather than outside
+ * it, so a field in a row keeps its footprint.
  */
 @layer components {
 	[data-field-control] {
 		width: 100%;
 		min-width: 0;
-		height: var(--control-h);
-		padding-inline: var(--control-px-sm);
-		padding-block: var(--space-xs);
-		border: var(--border-width) solid var(--control-border);
+		height: var(--control-height);
+		padding-inline: var(--padding-sm);
+		padding-block: calc(var(--padding-sm) / 2);
+		border: var(--border-width) solid var(--input);
 		border-radius: var(--radius-sm);
-		background-color: var(--field-bg);
+		background-color: transparent;
 		color: var(--foreground);
+		/* The field's type: Text's `sm` step, set here once for every control. */
 		font: inherit;
-		font-size: var(--text-sm);
-		line-height: var(--text-sm--line-height);
+		font-size: calc(var(--text-sm) * var(--text-scale));
+		line-height: calc(1.25 / 0.875);
 		box-shadow: none;
-		outline: none;
 		transition:
-			color var(--duration-fast) var(--ease-in-out),
-			border-color var(--duration-fast) var(--ease-in-out),
-			box-shadow var(--duration-fast) var(--ease-in-out);
+			color var(--duration-fast) var(--ease),
+			border-color var(--duration-fast) var(--ease);
 	}
 
 	/*
@@ -31,14 +33,14 @@
 	 * each scope so a nested opt-out wins. A fixed 16px: it must not scale with density.
 	 */
 	[data-iphone-input-zoom="true"] {
-		--field-min-font-size: 16px;
+		--_field-min-font-size: 16px;
 	}
 	[data-iphone-input-zoom="false"] {
-		--field-min-font-size: 0px;
+		--_field-min-font-size: 0px;
 	}
 	:is(input, textarea, select)[data-field-control] {
-		font-size: max(var(--text-sm), var(--field-min-font-size, 0px));
-		line-height: max(var(--text-sm--line-height), calc(var(--field-min-font-size, 0px) * 1.25));
+		font-size: max(calc(var(--text-sm) * var(--text-scale)), var(--_field-min-font-size, 0px));
+		line-height: max(calc(1.25 / 0.875), calc(var(--_field-min-font-size, 0px) * 1.25));
 	}
 
 	[data-field-control]::placeholder {
@@ -48,34 +50,29 @@
 	[data-field-control]:hover:not(:disabled):not([data-disabled]):not(:focus-visible):not(
 			[aria-invalid="true"]
 		):not(:is(input, textarea):read-only) {
-		border-color: var(--control-border-hover);
+		border-color: color-mix(in oklab, var(--input), var(--foreground) 35%);
 	}
 
 	/*
-	 * Read-only: full ink and focus ring (the value can still be read and copied), a quiet
-	 * plate, no hover. Scoped to text controls because a <button> trigger matches `:read-only`.
+	 * Read-only: full ink and focus (the value can still be read and copied), a quiet plate,
+	 * no hover. Scoped to text controls because a <button> trigger matches `:read-only`.
 	 */
 	:is(input, textarea)[data-field-control]:read-only:not(:disabled) {
-		background-color: var(--foreground-8);
+		background-color: color-mix(in oklab, var(--foreground) var(--tint), transparent);
 	}
 
 	[data-field-control]:focus-visible {
-		border-color: var(--focus-ring-color);
-		box-shadow: var(--field-focus-ring);
+		border-color: var(--ring);
+		outline-offset: calc(var(--border-width) * -1);
 	}
 
 	/* Keyed on `aria-invalid` so the styling and the announcement cannot disagree. */
 	[data-field-control][aria-invalid="true"] {
-		border-color: var(--invalid-ring-border);
-		box-shadow: var(--invalid-ring);
+		border-color: var(--destructive);
 	}
 
-	/*
-	 * Focus wins the ring; invalid keeps the border. Needed because the invalid rule above
-	 * would otherwise take the box-shadow and hide focus (tests/interaction.spec.ts).
-	 */
 	[data-field-control][aria-invalid="true"]:focus-visible {
-		box-shadow: var(--field-focus-ring);
+		outline-color: var(--destructive);
 	}
 
 	[data-field-control]:disabled {
@@ -85,16 +82,12 @@
 
 	/*
 	 * Chrome repaints autofilled backgrounds; an opaque --card inset (forms sit on cards)
-	 * covers it. Focused, the ring is restated beside the inset, which would replace it.
-	 * `:is()` forgives whichever spelling a browser lacks; a plain list would drop the rule.
+	 * covers it. `:is()` forgives whichever spelling a browser lacks; a plain list would drop
+	 * the rule.
 	 */
 	[data-field-control]:is(:autofill, :-webkit-autofill) {
 		-webkit-text-fill-color: var(--foreground);
 		box-shadow: inset 0 0 0 100px var(--card);
-	}
-
-	[data-field-control]:is(:autofill, :-webkit-autofill):focus-visible {
-		box-shadow: inset 0 0 0 100px var(--card), var(--field-focus-ring);
 	}
 
 	/*
@@ -107,23 +100,21 @@
 	[data-field-shell] {
 		display: flex;
 		align-items: center;
-		/* Inline affordances — a leading icon, a trailing action, a unit suffix. */
-		gap: var(--space-sm);
-		min-height: var(--control-h);
-		padding-inline: var(--control-px-sm);
-		border: var(--border-width) solid var(--control-border);
+		/* Inline affordances: a leading icon, a trailing action, a unit suffix. */
+		gap: var(--gap-sm);
+		min-height: var(--control-height);
+		padding-inline: var(--padding-sm);
+		border: var(--border-width) solid var(--input);
 		border-radius: var(--radius-sm);
-		background-color: var(--field-bg);
-		box-shadow: none;
-		transition:
-			border-color var(--duration-fast) var(--ease-in-out),
-			box-shadow var(--duration-fast) var(--ease-in-out);
+		background-color: transparent;
+		transition: border-color var(--duration-fast) var(--ease);
 	}
 
 	/* `:has()` on the control, not `:focus-within`: a focused trailing button must not light the field. */
 	[data-field-shell]:has([data-field-control]:focus-visible) {
-		border-color: var(--focus-ring-color);
-		box-shadow: var(--field-focus-ring);
+		border-color: var(--ring);
+		outline: calc(var(--border-width) * 2) solid var(--ring);
+		outline-offset: calc(var(--border-width) * -1);
 	}
 
 	[data-field-shell]:hover:not(:has([data-field-control]:disabled)):not(
@@ -131,25 +122,17 @@
 		):not(:has([data-field-control]:focus-visible)):not(
 			:has([data-field-control][aria-invalid="true"])
 		):not([aria-invalid="true"]):not(:has(:is(input, textarea)[data-field-control]:read-only)) {
-		border-color: var(--control-border-hover);
+		border-color: color-mix(in oklab, var(--input), var(--foreground) 35%);
 	}
 
 	[data-field-shell]:has(:is(input, textarea)[data-field-control]:read-only:not(:disabled)) {
-		background-color: var(--foreground-8);
+		background-color: color-mix(in oklab, var(--foreground) var(--tint), transparent);
 	}
 
 	[data-field-shell]:has([data-field-control][aria-invalid="true"]),
 	[data-field-shell][aria-invalid="true"] {
-		border-color: var(--invalid-ring-border);
-		box-shadow: var(--invalid-ring);
-	}
-
-	/* The same rule for a shell, which wears the ring on its control's behalf. */
-	[data-field-shell]:has([data-field-control][aria-invalid="true"]):has(
-			[data-field-control]:focus-visible
-		),
-	[data-field-shell][aria-invalid="true"]:has([data-field-control]:focus-visible) {
-		box-shadow: var(--field-focus-ring);
+		border-color: var(--destructive);
+		outline-color: var(--destructive);
 	}
 
 	[data-field-shell]:has([data-field-control]:disabled) {
@@ -167,9 +150,8 @@
 		padding-inline: 0;
 	}
 
-	[data-field-shell] [data-field-control]:focus-visible,
-	[data-field-shell] [data-field-control][aria-invalid="true"] {
-		box-shadow: none;
+	[data-field-shell] [data-field-control]:focus-visible {
+		outline: none;
 	}
 
 	/* The shell takes the autofill surface and the bare inner input matches it. */

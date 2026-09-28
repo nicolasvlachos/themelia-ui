@@ -1,4 +1,4 @@
-import { MetricBar } from "themelia-ui/patterns/analytics"
+import { MetricBar } from "themelia-ui/blocks/analytics"
 
 import { METRICS } from "./data"
 

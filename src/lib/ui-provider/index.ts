@@ -34,7 +34,6 @@ export type {
 	MoneySecondaryEmphasis,
 	MotionConfig,
 	OverlayConfig,
-	PaletteToken,
 	ResolvedUIConfig,
 	SemanticToken,
 	TextSize,

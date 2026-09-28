@@ -1,42 +1,20 @@
 /*
- * Chart. Series colours should reference `--chart-1` … `--chart-5` (themes/default.css),
- * which flip with the theme, rather than literals.
+ * Chart. Series colours should reference `--chart-1` … `--chart-5`, which follow the theme,
+ * rather than literals. The type is Text's `xs` step, set on the container (chart.tsx).
  */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). */
-:root {
-	/* Plot aspect; the chart sizes from its width. Override per surface for strips or tiles. */
-	--chart-aspect: 16 / 9;
-	--chart-indicator-line-w: 2px;
-}
-
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-
-	/* The series swatch in a tooltip or legend. */
-	--chart-indicator: round(calc(0.625rem * var(--density-scale, var(--scale))), 1px);
-
-	/* Sparkline stroke default; tones below override it. */
-	--sparkline-stroke: var(--muted-foreground);
-}
 
 /*
  * Recharts hard-codes strokes and fills (`#ccc`, `#fff`) with no props for most; the
- * `:global` selectors pin those literals and map them to tokens.
+ * `:global` selectors pin those literals and map them to theme colours.
  */
 
+/* The plot's aspect: the chart sizes from its width. A strip or a tile sets its own `aspect-ratio`. */
 .container {
 	display: flex;
 	width: 100%;
 	min-width: 0;
 	justify-content: center;
-	aspect-ratio: var(--chart-aspect);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
+	aspect-ratio: 16 / 9;
 }
 
 .container :global(.recharts-cartesian-axis-tick text) {
@@ -44,7 +22,7 @@
 }
 
 .container :global(.recharts-cartesian-grid line[stroke="#ccc"]) {
-	stroke: var(--border-60);
+	stroke: var(--border);
 }
 
 .container :global(.recharts-curve.recharts-tooltip-cursor) {
@@ -75,41 +53,36 @@
 
 /* Recharts focuses its own layers, which have no visible bounds. */
 .container :global(.recharts-layer),
-.container :global(.recharts-sector),
-.container :global(.recharts-surface) {
+.container :global(.recharts-sector) {
 	outline: none;
-	border-radius: var(--radius-sm);
 }
 
-/* The plot surface takes keyboard focus (arrow keys walk the tooltip), so it needs a ring. */
-.container :global(.recharts-surface:focus-visible) {
-	outline: var(--focus-ring-width) solid var(--focus-ring-color);
-	outline-offset: var(--focus-ring-width);
+/*
+ * The plot surface takes keyboard focus (arrow keys walk the tooltip); the shared outline
+ * draws it, round the item radius.
+ */
+.container :global(.recharts-surface) {
+	border-radius: var(--radius-sm);
 }
 
 /* ── Tooltip ──────────────────────────────────────────────────────────────────── */
 
+/* An anchored popup: the popover ground, and the floating shadow with its hairline. */
 .tooltip {
 	display: grid;
-	min-width: calc(8rem * var(--scale));
-	gap: var(--space-sm);
-	padding: var(--space-md) var(--space-lg);
+	min-width: 8rem;
+	gap: var(--gap-sm);
+	padding: var(--padding-sm) var(--padding);
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
-	box-shadow: var(--popover-shadow);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-}
-
-.tooltipLabel {
-	font-weight: var(--weight-medium);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
 }
 
 .tooltipRow {
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 .tooltipName {
@@ -118,24 +91,20 @@
 	color: var(--muted-foreground);
 }
 
-.tooltipValue {
-	font-variant-numeric: tabular-nums;
-	font-weight: var(--weight-medium);
-}
-
 /* ── Indicators ───────────────────────────────────────────────────────────────── */
 
+/* The series swatch in a tooltip or legend. */
 .indicator {
 	flex-shrink: 0;
-	width: var(--chart-indicator);
-	height: var(--chart-indicator);
+	width: 0.625rem;
+	height: 0.625rem;
 	border-radius: var(--radius-pill);
 	/* Per-series data colour set by the row; falls back to the row's text colour. */
-	background-color: var(--chart-indicator-color, currentColor);
+	background-color: var(--_indicator-color, currentColor);
 }
 
 .indicatorLine {
-	width: var(--chart-indicator-line-w);
+	width: calc(var(--border-width) * 2);
 	border-radius: 0;
 }
 
@@ -144,9 +113,9 @@
 	height: 0;
 	border-radius: 0;
 	background: none;
-	border-top: var(--chart-indicator-line-w) dashed var(--chart-indicator-color, currentColor);
+	border-top: calc(var(--border-width) * 2) dashed var(--_indicator-color, currentColor);
 	align-self: center;
-	min-width: var(--chart-indicator);
+	min-width: 0.625rem;
 }
 
 /* ── Legend ───────────────────────────────────────────────────────────────────── */
@@ -156,32 +125,30 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-xl);
-	padding-block: var(--space-lg);
+	gap: var(--gap);
+	padding-block: var(--padding);
 }
 
+/* The `xs` step's whole-pixel line box, so the swatch centres on a whole pixel. */
 .legendItem {
 	display: flex;
 	align-items: center;
-	/* A whole-pixel line height, so the swatch centres on a whole pixel. */
-	line-height: var(--leading-12);
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	color: var(--muted-foreground);
 }
 
 /* ══ Sparkline ═════════════════════════════════════════════════════════════════════
- * The shape alone, no axes or tooltip; fills its box.
+ * The shape alone, no axes or tooltip; fills its box. The stroke is the tone's ink
+ * (styles/tone.css); neutral, the default, draws in the supporting-text colour.
  */
 
 .sparkline {
 	width: 100%;
-	height: var(--size-icon-xl);
+	height: 1.5rem;
 	min-width: 0;
+	--_sparkline-stroke: var(--tone-ink);
 }
 
-.sparkline[data-tone="primary"] { --sparkline-stroke: var(--primary-accent); }
-.sparkline[data-tone="secondary"] { --sparkline-stroke: var(--secondary-foreground); }
-.sparkline[data-tone="info"] { --sparkline-stroke: var(--info); }
-.sparkline[data-tone="success"] { --sparkline-stroke: var(--success); }
-.sparkline[data-tone="warning"] { --sparkline-stroke: var(--warning-accent); }
-.sparkline[data-tone="destructive"] { --sparkline-stroke: var(--destructive-accent); }
+.sparkline[data-tone="neutral"] {
+	--_sparkline-stroke: var(--muted-foreground);
+}

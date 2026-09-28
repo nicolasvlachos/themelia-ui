@@ -1,5 +1,165 @@
 # Changelog
 
+## 3.1.0 — 2026-09-28
+
+This release renames and removes public API. Read
+[Upgrading to 3.1](docs/learn/migration.md#upgrading-to-31) before you upgrade, then run the
+packaged codemod from your project, dry first:
+
+```sh
+node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/
+```
+
+### Breaking
+
+- Blocks are published under `themelia-ui/blocks/`, the name the documentation, the
+  component index and the finder already use. `themelia-ui/patterns/analytics`,
+  `onboarding` and `timelines` are now `themelia-ui/blocks/analytics`, `onboarding` and
+  `timelines`; `themelia-ui/admin/patterns/access` and `commerce` are
+  `themelia-ui/blocks/admin/access` and `commerce`. Each stylesheet moved with its module.
+  The codemod rewrites both.
+- The theme is one level: about eighty variables declared once at `:root`, each colour a
+  `light-dark(light, dark)` pair, and every length, shadow, tint and duration in twos.
+  Components compute everything else where they use it, so a value set anywhere reaches every
+  component below it, and a dark region inside a light page needs no second set of values.
+  - The palette, the alpha steps (`--primary-10`), the spacing ladder (`--space-*`), the
+    control, icon and avatar ladders, the derived role variables, the dark twins, the
+    `--scale` and `--density-scale` factors, and `--font-serif`, which nothing read, are gone. The codemod renames each variable that
+    has a successor (`--control-h` to `--control-height`, `--size-icon` to `--icon-size`,
+    `--link-color` to `--link`) and reports the rest.
+  - A theme of your own is one `:root` block; the selector list for re-declaring colours at
+    every boundary is not needed.
+  - The `theming` cascade layer is gone: the order is `tokens, base, components, utilities`.
+  - `--animate-*` are gone. A `--keyframes-*` variable holds a keyframes name and you state
+    the timing: `animation: var(--keyframes-spin) 1s linear infinite`. The kit's keyframes
+    are named `themelia-*`, so a bare `spin` or `pulse` is no longer the kit's.
+  - `tokens.json` has no palette group; each colour is a token per mode, and shadows,
+    durations, the easing curve and the font stacks carry their DTCG types.
+  - Safari 17.5 or newer is required, for `light-dark()`.
+- Fill style is `appearance` on every component that has one, so `tone` is colour,
+  `appearance` is fill and `variant` is structure:
+  - `buttonStyle` becomes `appearance` on `Button`, `TextButton`, `LoaderButton`,
+    `TooltipButton`, every component that forwards Button props, and action definitions.
+    `ButtonStyle` and `ActionButtonStyle` become `ButtonAppearance` and `ActionAppearance`,
+    provider defaults read `defaults.button.appearance`, and Button renders
+    `data-appearance` instead of `data-style`.
+  - `Badge`'s `variant` becomes `appearance` (`BadgeAppearance`); a metadata badge value's
+    `badgeVariant` becomes `badgeAppearance`. `badgeVariants` is no longer exported: a badge
+    takes its colour from its tone, so render a `Badge` (with `render` for a link) instead.
+  - `Toggle`'s and `SidebarMenuButton`'s `variant` become `appearance`; Toggle renders
+    `data-appearance` instead of `data-variant`.
+  - The overlays' and action modalities' `confirmStyle` becomes `confirmAppearance`
+    (`OverlayButtonAppearance`).
+- Every size, padding and gap prop has two steps, `default` and `sm`:
+  - `gap`, `rowGap`, `columnGap` and `amount` on `Stack`, `Grid`, `AdaptiveGrid`, `Split` and
+    `Bleed` take `none`, `sm` (8px) or `default` (16px), and an unset `Stack` or `Split` gap
+    is now 16px instead of 8px.
+  - `maxWidth` and `sideWidth` take `default` (the content width), `sm`, `full`, `none` or a
+    CSS length; `AdaptiveGrid`'s `minColumnWidth` takes `default`, `sm` or a length. A free
+    string is no longer accepted, so a misspelt step cannot pass as a length.
+  - `ComponentScale` is `default | sm`: `Spinner`'s `size`, `Empty`'s and
+    `ResourceDetailsSection`'s `padding` and `DataTable`'s `size`. `md` is `default`; `lg` is
+    gone.
+  - `Avatar`, `SidebarMenuButton` and `AuthShell` lose `size="lg"`; `SidebarMenuButton`,
+    `SidebarMenuSubButton` and `AuthShell` name their middle step `default`.
+  - An overlay's, `SheetContent`'s and `ActionSheet`'s `size` takes `default`, `sm`, `full`
+    or a CSS length, and `length` and `inset` take a CSS length.
+  - `Slider` and `SliderField` have no `size`: under a finger the track and thumb grow into
+    a larger target by themselves. `InputGroupButton` has one size, and `iconOnly` makes it
+    square.
+  - `ActivityFeed`'s `itemSpacing` is `default | sm`.
+- `density` belongs to the provider. `MetadataList`'s becomes `size` (`default | sm`, and
+  `data-size`), `MediaLibrary`'s and its parts' become `size`, `ActivityFeed`'s and its
+  rows' become `variant` (`data-variant`), and `AiTask`'s becomes `defaultExpanded`.
+- An action modality's `size` and the `ActionOverlaySize` type are gone: nothing read them.
+- `Text` drops `size="xxs"` and `weight="regular"`; write `xs` and `normal`.
+- The ThemeTweaker writes one block in which each colour is a `light-dark()` pair, so an
+  exported theme follows `color-scheme` wherever it is applied:
+  - `ThemeSelectors` is `{ shared }`, and `createScopedThemeSelectors` returns it; the `light`
+    and `dark` selectors are gone.
+  - `themeToStyle(theme)` takes no mode: the style carries both halves.
+  - The default fields are the theme's variables, grouped into new `ThemeTweakerSection`s.
+- The theming recipes write the theme's variables: `deriveThemePalette` sets `--link` and no
+  sidebar primary, `deriveThemeTypeScale` writes the type steps (Text pairs each step with its
+  line height), and `deriveThemeElevation` writes `--shadow` and `--shadow-lg`.
+- The provider's `theme.colors` takes the theme's 38 colours (`SemanticToken`). `link-color`
+  is `link`, and `overlay-backdrop` is new. The `inverse-*` colours, `primary-accent`,
+  `destructive-accent`, `warning-accent` and `sidebar-primary*` are gone: an inverse region
+  is a nested provider with its own `colorScheme`, and a tone's text colour comes from its
+  tone. `theme.palette` and the `PaletteToken` type are gone with the palette.
+- `MotionConfig.durations` takes `fast` and `normal`; `instant` is gone.
+- The Tailwind bridge follows the theme. `p-padding`, `p-padding-sm`, `gap-gap` and
+  `gap-gap-sm` replace the spacing keys (`p-md` and the rest), `rounded` is the container
+  radius, and `animate-*`, `leading-*`, `tracking-*` and the shadow steps other than
+  `shadow` and `shadow-lg` are Tailwind's own again.
+
+### Added
+
+- `DataTable` rows expand. `expandedRow` turns on a toggle at each row's start and the panel it
+  opens under the row: `render` draws the panel, and `onLoad` optionally fetches what it shows
+  when the row opens, with a skeleton meanwhile, the request aborted when the row closes, Retry
+  on failure and the result kept for the next open. `canExpand` leaves a row without a toggle,
+  `multiple: false` keeps one row open at a time, and `expanded`, `defaultExpanded` and
+  `onExpandedChange` control the open rows. The panel lines up with the first column, stays in
+  view on a table scrolled sideways, and keeps a panel that throws or suspends inside its row.
+- `textClassName()` lends Text's classes to an element Text cannot wrap: a native control,
+  a button's label, a table cell. `Text` takes `mono` and `caps`.
+- `AiShimmer` takes `size`, a step on the type scale as on `Text`.
+- `richTextClassName()` lends RichText's prose surface to an element RichText cannot render,
+  such as an editor's content-editable root.
+- Each block's page shows it composed from the lower tiers (analytics, timelines, onboarding,
+  access and commerce), for the case configuration does not reach.
+
+### Changed
+
+- `package.json` publishes each tier through two subpath patterns, `./base/*` and
+  `./base/*.css`, instead of one entry per module. Every import path resolves as before; a
+  tool that lists the `exports` keys sees the patterns.
+- Destructive is lighter in dark mode, so red text holds 4.5:1 on the hover fill, on its own
+  tint in a popover, and as a soft badge in a selected row.
+- A framed Card's band is the item inset, and the surface inside it takes the concentric
+  corner, so a square-cornered theme keeps the band.
+- `MetricTrendChip` and `MetricComparison` render `data-tone` as `success`, `destructive` or
+  `neutral`, the kit's tone names, instead of `positive` and `negative`.
+- Checkboxes, radios and switches keep one size, 1.125rem, at every density.
+- A disabled control shows the not-allowed cursor and dims; it no longer ignores the pointer.
+- Table headers are quieter: labels in the muted colour, with the sorted column's in the body
+  colour, a lighter band on `DataTable`, and 42px instead of 48px, following density. The whole
+  head cell sorts, and an unsorted column's arrow shows on hover or keyboard focus; touch
+  screens keep a faint one. `TableSkeleton` reserves the new height.
+
+### Fixed
+
+- `MonoValue` renders in the monospaced face its documentation promises.
+- `MapTooltip` draws its own surface; Leaflet's stylesheet left bare text on the map, and
+  its arrow points at the marker on every side.
+- The fade at a scroll edge of `Carousel` and a scrolling `Table` lifts while the region
+  has focus, so it no longer hides the focus outline.
+- `ResizableHandle` shows its active state while dragged again.
+- A vertical `Slider` has its 10rem track; the track collapsed.
+- Text in an `InputGroup` textarea is inset from the frame.
+- A `Card` title with an info button lines up with one without.
+- A default `Sheet` is 384px wide again; it rendered at 472px.
+- Upload file sizes render at the small secondary size.
+- A permission a role lacks, and a refund stage not yet reached, recede again.
+- The AI composer draws one frame; it drew the field's frame inside its own.
+- The breadcrumb bar no longer clips the sidebar trigger's focus outline, and the collapsed
+  sidebar rail no longer shows a sliver of each row's label.
+- A nested provider with `density="default"` resets a density set further out; it kept the
+  outer one.
+- A nested provider that sets `density` under a scaled one sizes that density at the
+  inherited scale; the outer lengths outranked the preset.
+- Map controls sit on a ground and an edge of their own; over the tiles they were
+  see-through. An active drawing tool keeps its fill.
+- A scrolling `DataTable`'s focus outline runs round the whole frame; its sticky header and
+  pinned columns painted over it.
+- A failed attachment keeps its file name in view: the error shares the row, may widen the
+  chip to the tray, and shows in full on hover. Each attachment's link is named by its file;
+  every one was named "Download".
+- The kit's animations run on a page that also loads Tailwind or tw-animate-css. Their
+  `spin`, `pulse`, `enter` and `exit` replaced the kit's keyframes, or the kit's replaced
+  theirs, whichever loaded last.
+
 ## 3.0.0 — 2026-09-27
 
 A major release. The package is ES modules whose JavaScript imports no CSS, so each module's

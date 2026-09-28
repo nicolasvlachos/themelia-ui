@@ -9,7 +9,7 @@ function SlugFieldDemo() {
 	const [title, setTitle] = useState("Northwind Traders — Q4 Report & Notes")
 
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Title">
 				<Input value={title} onChange={(event) => setTitle(event.target.value)} />
 			</FormField>

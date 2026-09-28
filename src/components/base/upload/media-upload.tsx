@@ -6,6 +6,7 @@ import { ImageIcon, PencilIcon, TrashIcon, UserIcon } from "lucide-react"
 import { useCallback, useId, useRef, useState, type ReactNode } from "react"
 
 import { Button } from "@/components/base/buttons"
+import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { PreviewImage } from "./preview-image"
@@ -174,19 +175,27 @@ function MediaPicker({
 				) : (
 					<span className={styles.mediaEmpty}>
 						{emptyIcon}
-						{shape === "image" && <span>{emptyLabel}</span>}
+						{shape === "image" && (
+							<Text tag="span" size="xs" type="inherit">
+								{emptyLabel}
+							</Text>
+						)}
 					</span>
 				)}
 
 				<span className={styles.mediaOverlay} aria-hidden>
 					<PencilIcon aria-hidden />
-					{shape === "image" && <span>{overlayLabel}</span>}
+					{shape === "image" && (
+						<Text tag="span" size="xs" type="inherit">
+							{overlayLabel}
+						</Text>
+					)}
 				</span>
 			</div>
 
 			{/* Outside the picker, or every click on it would open the file dialog. */}
 			{shown && !disabled && (
-				<Button tone="neutral" buttonStyle="ghost" onClick={() => {
+				<Button tone="neutral" appearance="ghost" onClick={() => {
 					clear()
 					inputRef.current?.focus()
 				}}>

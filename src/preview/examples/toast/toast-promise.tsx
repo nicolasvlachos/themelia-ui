@@ -8,7 +8,7 @@ export default function ToastPromise() {
 	return (
 		<Stack direction="horizontal" gap="sm" wrap>
 			<Button
-				buttonStyle="outline"
+				appearance="outline"
 				tone="neutral"
 				onClick={() =>
 					void toast.promise(wait(1800), {
@@ -21,7 +21,7 @@ export default function ToastPromise() {
 				Resolves
 			</Button>
 			<Button
-				buttonStyle="outline"
+				appearance="outline"
 				tone="neutral"
 				onClick={() =>
 					void toast

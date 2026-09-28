@@ -13,7 +13,7 @@ import { starTargets } from './lib/public-symbols.mjs'
 const MANIFEST = JSON.parse(readFileSync('architecture/manifest.json', 'utf8'))
 
 /* Manifest layer names, not directories: `typography` lives at src/components/base/typography. */
-const LAYERS = ['base', 'features', 'layout', 'patterns', 'admin', 'primitives', 'typography']
+const LAYERS = ['base', 'features', 'layout', 'blocks', 'admin', 'primitives', 'typography']
 
 /* Foundation families live outside `src/components/`. `src/index.ts` is left out: it
  * re-exports the other families and would count every component twice. */
@@ -87,12 +87,14 @@ if (missing.length) {
 /* Every documented import path is a published subpath: it is what a consumer copies. */
 {
   const exportsMap = JSON.parse(readFileSync('package.json', 'utf8')).exports
+  /* Static, before any build: the manifest's module subpaths, and the exact keys. */
+  const published = new Set([...MANIFEST.families.map((family) => family.export), ...Object.keys(exportsMap).filter((key) => !key.includes('*'))])
   const name = JSON.parse(readFileSync('package.json', 'utf8')).name
   const unpublished = []
 
   for (const page of pages) {
     const subpath = page.subpath.replace(name, '.')
-    if (subpath in exportsMap) continue
+    if (published.has(subpath)) continue
     unpublished.push(
       `unpublished-import  ${page.preview} advertises \`${page.subpath}\`, which is not a published subpath`,
     )

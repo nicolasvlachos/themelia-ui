@@ -4,6 +4,7 @@
  */
 import type { ComponentProps, ReactNode } from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./feedback.module.css"
@@ -23,11 +24,18 @@ export function AlertMetadata({ items, className, ...props }: AlertMetadataProps
 	if (items.length === 0) return null
 
 	return (
-		<dl className={cx("alert-metadata--component", styles.alertMeta, className)} {...props}>
+		<dl
+			className={cx("alert-metadata--component", styles.alertMeta, textClassName({ size: "xs" }), className)}
+			{...props}
+		>
 			{items.map((item, index) => (
 				<div key={index} className={styles.alertMetaItem}>
-					<dt className={styles.alertMetaLabel}>{item.label}</dt>
-					<dd className={styles.alertMetaValue}>{item.value}</dd>
+					<dt className={cx(styles.alertMetaLabel, textClassName({ size: "inherit", type: "secondary" }))}>
+						{item.label}
+					</dt>
+					<dd className={cx(styles.alertMetaValue, textClassName({ size: "inherit", numeric: true }))}>
+						{item.value}
+					</dd>
 				</div>
 			))}
 		</dl>

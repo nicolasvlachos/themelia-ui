@@ -16,9 +16,9 @@
 	z-index: var(--z-sticky);
 	display: flex;
 	align-items: center;
-	gap: var(--space-xl);
+	gap: var(--gap);
 	height: 3.5rem;
-	padding-inline: var(--space-xl);
+	padding-inline: var(--padding);
 	border-bottom: var(--border-width) solid var(--border);
 	background-color: color-mix(in oklab, var(--background) 85%, transparent);
 	backdrop-filter: blur(12px);
@@ -27,7 +27,7 @@
 .brand {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	text-decoration: none;
 	color: inherit;
 	flex-shrink: 0;
@@ -42,8 +42,8 @@
 	background-color: var(--foreground);
 	color: var(--background);
 	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-bold);
+	line-height: calc(1 / 0.75);
+	font-weight: 700;
 }
 
 .headerSpacer {
@@ -53,13 +53,13 @@
 .headerActions {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 /* A lone header field has nothing to align with, so drop FormField's label column. */
 .densityField {
-	--field-label-width: auto;
-	gap: var(--space-sm);
+	--_field-label-width: auto;
+	gap: var(--gap-sm);
 }
 
 /* Only reachable below lg, where the sidebar is collapsed. */
@@ -67,8 +67,8 @@
 	display: none;
 	align-items: center;
 	justify-content: center;
-	width: var(--control-h-sm);
-	height: var(--control-h-sm);
+	width: var(--control-height-sm);
+	height: var(--control-height-sm);
 	border: 0;
 	border-radius: var(--radius-sm);
 	background: none;
@@ -99,8 +99,8 @@
 
 @media (--bp-max-md) {
 	.header {
-		gap: var(--space-sm);
-		padding-inline: var(--space-md);
+		gap: var(--gap-sm);
+		padding-inline: var(--padding-sm);
 	}
 	/* Search is the only flexible region here; a flexible spacer would split its room. */
 	.headerSpacer {
@@ -147,7 +147,7 @@
 
 .searchHint {
 	pointer-events: none;
-	padding: 0 var(--space-xs);
+	padding: 0 calc(var(--padding-sm) / 2);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius-sm);
 	background-color: var(--background);
@@ -158,7 +158,7 @@
 }
 
 .searchDialog {
-	width: min(36rem, calc(100vw - var(--space-2xl)));
+	width: min(36rem, calc(100vw - calc(var(--gap) * 1.5)));
 }
 
 .searchItemMeta {
@@ -234,18 +234,18 @@
 }
 
 .sidebar {
-	padding: var(--space-xl) var(--space-lg);
+	padding: var(--padding) var(--padding);
 }
 
 .navGroup + .navGroup {
-	margin-top: var(--space-xl);
+	margin-top: var(--gap);
 }
 
 /* The group label out-ranks its entries; colour and weight come from its Text. */
 .navGroupLabel {
 	display: block;
-	margin: 0 0 var(--space-xs);
-	padding-inline: var(--space-md);
+	margin: 0 0 calc(var(--gap-sm) / 2);
+	padding-inline: var(--padding-sm);
 	letter-spacing: 0.05em;
 }
 
@@ -254,13 +254,13 @@
  * inset so it reads as a caption. Only runs after the first pay a gap.
  */
 .navSection + .navSection {
-	margin-top: var(--space-md);
+	margin-top: var(--gap-sm);
 }
 
 .navSectionLabel {
 	display: block;
-	padding-block: var(--space-xs) var(--space-2xs);
-	padding-inline: var(--space-xl) var(--space-md);
+	padding-block: calc(var(--padding-sm) / 2) calc(var(--padding-sm) / 4);
+	padding-inline: var(--padding) var(--padding-sm);
 }
 
 /* The group's page count, beside the chevron: how much a closed group holds. */
@@ -275,32 +275,32 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	/* Indented past the group heading so entries read as its children. */
-	padding-block: var(--space-xs);
-	padding-inline: var(--space-xl) var(--space-md);
+	padding-block: calc(var(--padding-sm) / 2);
+	padding-inline: var(--padding) var(--padding-sm);
 	border-radius: var(--radius-sm);
 	color: var(--muted-foreground);
 	text-decoration: none;
 	font-size: var(--text-sm);
-	line-height: var(--leading-normal);
+	line-height: 1.5;
 }
 
 .navLink:hover {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 	color: var(--foreground);
 }
 
 .navLinkActive {
 	background-color: var(--accent);
 	color: var(--foreground);
-	font-weight: var(--weight-medium);
+	font-weight: 500;
 }
 
 .navBadge {
-	padding: 0 var(--space-xs);
+	padding: 0 calc(var(--padding-sm) / 2);
 	border-radius: var(--radius-sm);
-	background-color: var(--primary-10);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 /* Centred in its track: the measure cap is narrower than the track on large screens. */
@@ -309,7 +309,7 @@
 	/* Auto margins on a grid item disable `stretch`; `width: 100%` keeps it filling the track. */
 	width: 100%;
 	margin-inline: auto;
-	padding: var(--space-2xl) var(--space-2xl) 6rem;
+	padding: calc(var(--padding) * 1.5) calc(var(--padding) * 1.5) 6rem;
 	max-width: 52rem;
 }
 
@@ -321,7 +321,7 @@
 	top: 3.5rem;
 	max-height: calc(100dvh - 3.5rem);
 	overflow-y: auto;
-	padding: var(--space-2xl) var(--space-lg);
+	padding: calc(var(--padding) * 1.5) var(--padding);
 }
 
 @media (--bp-xl) {
@@ -332,19 +332,19 @@
 
 .tocLabel {
 	display: block;
-	margin-bottom: var(--space-md);
+	margin-bottom: var(--gap-sm);
 }
 
 .tocLink {
 	display: block;
-	padding: var(--space-2xs) 0;
-	border-inline-start: var(--border-width-strong) solid var(--border);
-	padding-inline-start: var(--space-md);
-	margin-inline-start: calc(var(--space-2xs) * -1);
+	padding: calc(var(--padding-sm) / 4) 0;
+	border-inline-start: calc(var(--border-width) * 2) solid var(--border);
+	padding-inline-start: var(--padding-sm);
+	margin-inline-start: calc(calc(var(--gap-sm) / 4) * -1);
 	color: var(--muted-foreground);
 	text-decoration: none;
 	font-size: var(--text-xs);
-	line-height: var(--leading-relaxed);
+	line-height: 1.625;
 }
 
 .tocLink:hover {
@@ -352,7 +352,7 @@
 }
 
 .tocLinkActive {
-	border-inline-start-color: var(--primary-accent);
+	border-inline-start-color: var(--primary);
 	color: var(--foreground);
 }
 
@@ -361,21 +361,21 @@
 .breadcrumb {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
-	margin-bottom: var(--space-md);
+	gap: calc(var(--gap-sm) / 2);
+	margin-bottom: var(--gap-sm);
 }
 
 .pageHeader {
-	margin-bottom: var(--space-2xl);
+	margin-bottom: calc(var(--gap) * 1.5);
 }
 
 .pageTitle {
-	margin-bottom: var(--space-sm);
+	margin-bottom: var(--gap-sm);
 }
 
 /* The import line wraps (a list of names to copy); code examples scroll to keep indentation. */
 .importLine {
-	margin-top: var(--space-xl);
+	margin-top: var(--gap);
 }
 
 .importLine .code {
@@ -387,11 +387,11 @@
 
 .section {
 	scroll-margin-top: 5rem;
-	margin-top: var(--space-2xl);
+	margin-top: calc(var(--gap) * 1.5);
 }
 
 .sectionHeader {
-	margin-bottom: var(--space-lg);
+	margin-bottom: var(--gap);
 }
 
 /* ── Example: preview / code tabs ─────────────────────────────────────────────── */
@@ -428,21 +428,16 @@
 .exampleTabs {
 	display: flex;
 	align-items: center;
-	gap: var(--space-lg);
-	padding-inline: var(--space-lg);
+	gap: var(--gap);
+	padding-inline: var(--padding);
 	border-bottom: var(--border-width) solid var(--border);
-	background-color: var(--muted-20);
-}
-/* The Preview/Code pair is the control a reader uses on every page of this site. */
-.exampleTab:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 }
 
 
 .exampleTab {
 	position: relative;
-	padding: var(--space-sm) var(--space-xs);
+	padding: var(--padding-sm) calc(var(--padding-sm) / 2);
 	border: 0;
 	border-radius: var(--radius-sm);
 	background: none;
@@ -450,17 +445,17 @@
 	color: var(--foreground);
 	font: inherit;
 	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-medium);
+	line-height: calc(1 / 0.75);
+	font-weight: 500;
 	cursor: pointer;
 }
 
 .exampleTab::after {
 	content: "";
 	position: absolute;
-	inset-inline: var(--space-xs);
+	inset-inline: calc(var(--gap-sm) / 2);
 	inset-block-end: -1px;
-	height: var(--border-width-strong);
+	height: calc(var(--border-width) * 2);
 	border-radius: var(--radius-pill);
 	background-color: transparent;
 }
@@ -484,50 +479,52 @@
 .preview {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
-	padding: var(--space-2xl);
+	gap: var(--gap);
+	padding: calc(var(--padding) * 1.5);
 	background-color: var(--card);
 }
 
 /* ── Code ─────────────────────────────────────────────────────────────────────── */
 
+/* A dark island in both modes, on the card step so it still lifts off a dark page. */
 .codeWrap {
 	position: relative;
-	background-color: var(--inverse-background);
+	color-scheme: dark;
+	background-color: var(--card);
 }
 
 .code {
 	margin: 0;
-	padding: var(--space-xl);
+	padding: var(--padding);
 	/* Contains absolutely positioned descendants. */
 	position: relative;
 	overflow-x: auto;
-	color: var(--inverse-foreground);
+	color: var(--foreground);
 	font-family: var(--font-mono);
 	font-size: var(--text-xs);
-	line-height: var(--leading-relaxed);
+	line-height: 1.625;
 	tab-size: 2;
 }
 
 .copyButton {
 	position: absolute;
-	top: var(--space-md);
-	right: var(--space-md);
+	top: var(--gap-sm);
+	right: var(--gap-sm);
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-xs);
-	height: var(--control-h-2xs);
-	padding-inline: var(--space-sm);
-	border: var(--border-width) solid var(--inverse-border);
+	gap: calc(var(--gap-sm) / 2);
+	height: calc(var(--icon-size) + var(--padding-sm));
+	padding-inline: var(--padding-sm);
+	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius-sm);
-	background-color: var(--inverse-surface);
-	color: var(--inverse-foreground);
+	background-color: var(--accent);
+	color: var(--foreground);
 	font: inherit;
 	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
+	line-height: calc(1 / 0.75);
 	cursor: pointer;
 	opacity: 0;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition: opacity var(--duration-fast) var(--ease);
 }
 
 /* Revealed on hover or focus so it does not compete with the code. */
@@ -554,7 +551,7 @@
 	table-layout: fixed;
 	border-collapse: collapse;
 	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
+	line-height: calc(1.25 / 0.875);
 }
 
 /* Default (column 3) is sized to fit the longest default literal unbroken, `"var(--scale)"`. */
@@ -577,17 +574,17 @@
 
 .table th,
 .table td {
-	padding: var(--space-md) var(--space-lg);
+	padding: var(--padding-sm) var(--padding);
 	text-align: left;
 	vertical-align: top;
 }
 
 .table thead th {
 	border-bottom: var(--border-width) solid var(--border);
-	background-color: var(--muted-50);
-	font-weight: var(--weight-medium);
+	background-color: var(--muted);
+	font-weight: 500;
 	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
+	line-height: calc(1 / 0.75);
 	white-space: nowrap;
 }
 
@@ -599,26 +596,26 @@
 .tableCode {
 	font-family: var(--font-mono);
 	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
+	line-height: calc(1 / 0.75);
 	overflow-wrap: anywhere;
 }
 
 .tableType {
-	color: var(--primary-accent);
+	color: var(--primary);
 }
 
 /* ── Callout ──────────────────────────────────────────────────────────────────── */
 
 /* A plain tinted block with a label; deliberately no accent edge stripe. */
 .callout {
-	padding: var(--space-lg);
+	padding: var(--padding);
 	border-radius: var(--radius-sm);
-	background-color: var(--muted-40);
+	background-color: var(--muted);
 }
 
 .calloutLabel {
 	display: block;
-	margin-bottom: var(--space-xs);
+	margin-bottom: calc(var(--gap-sm) / 2);
 }
 
 /* ── Prev / next ──────────────────────────────────────────────────────────────── */
@@ -626,17 +623,17 @@
 .pager {
 	display: flex;
 	justify-content: space-between;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	margin-top: 4rem;
-	padding-top: var(--space-2xl);
+	padding-top: calc(var(--padding) * 1.5);
 	border-top: var(--border-width) solid var(--border);
 }
 
 .pagerLink {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
-	padding: var(--space-lg);
+	gap: calc(var(--gap-sm) / 4);
+	padding: var(--padding);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	color: inherit;
@@ -645,7 +642,7 @@
 }
 
 .pagerLink:hover {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 }
 
 .pagerNext {
@@ -657,23 +654,23 @@
 
 /* The hero starts where every other page's content starts. */
 .hero {
-	padding-block: var(--space-2xl);
+	padding-block: calc(var(--padding) * 1.5);
 	max-width: 42rem;
 }
 
 .heroActions {
 	display: flex;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	flex-wrap: wrap;
-	margin-top: var(--space-2xl);
+	margin-top: calc(var(--gap) * 1.5);
 }
 
 /* Two columns, not auto-fit: four cards must not split three plus one. */
 .featureGrid {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--space-lg);
-	margin-top: var(--space-2xl);
+	gap: var(--gap);
+	margin-top: calc(var(--gap) * 1.5);
 }
 
 @media (--bp-max-sm) {
@@ -683,7 +680,7 @@
 }
 
 .feature {
-	padding: var(--space-xl);
+	padding: var(--padding);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	background-color: var(--card);
@@ -694,16 +691,16 @@
 	place-items: center;
 	width: 2rem;
 	height: 2rem;
-	margin-bottom: var(--space-md);
+	margin-bottom: var(--gap-sm);
 	border-radius: var(--radius-sm);
-	background-color: var(--primary-10);
-	color: var(--primary-accent);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
+	color: var(--primary);
 }
 
 .swatchGrid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	width: 100%;
 }
 
@@ -725,7 +722,7 @@
 }
 
 .swatchMeta {
-	padding: var(--space-sm) var(--space-md);
+	padding: var(--padding-sm) var(--padding-sm);
 }
 
 /* ── Review surface ───────────────────────────────────────────────────────────── */
@@ -733,15 +730,15 @@
 .review {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xl);
-	padding-bottom: var(--space-2xl);
+	gap: calc(var(--gap) * 1.5);
+	padding-bottom: calc(var(--padding) * 1.5);
 }
 
 .reviewBlock {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
-	padding-top: var(--space-lg);
+	gap: var(--gap-sm);
+	padding-top: var(--padding);
 	border-top: var(--border-width) solid var(--border);
 }
 
@@ -754,7 +751,7 @@
 .reviewBody {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 }
 
 /* ── Mentions page ────────────────────────────────────────────────────────────── */
@@ -762,9 +759,9 @@
 /* Stored markup shown as markup — wrapped, because a body is longer than a line. */
 .mentionSource {
 	display: block;
-	padding: var(--space-md);
+	padding: var(--padding-sm);
 	border-radius: var(--radius-sm);
-	background-color: var(--muted-40);
+	background-color: var(--muted);
 	font-family: var(--font-mono);
 	overflow-wrap: anywhere;
 }
@@ -776,7 +773,7 @@
 	display: flex;
 	width: 100%;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	border: 0;
 	padding: 0;
 	background: none;
@@ -790,18 +787,14 @@
 	flex: 1;
 }
 
-.navGroupToggle:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
 
 /* The chevron rotates rather than swapping glyph. */
 .navGroupChevron {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	flex: none;
 	color: var(--muted-foreground);
-	transition: transform var(--duration-fast) var(--ease-out);
+	transition: transform var(--duration-fast) var(--ease);
 }
 
 .navGroupChevron[data-open] {
@@ -817,23 +810,19 @@
 /* A gallery card: the whole card is the link, so the anchor owns padding and border. */
 .galleryCard {
 	display: block;
-	padding: var(--space-lg);
+	padding: var(--padding);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	background-color: var(--card);
 	color: inherit;
 	text-decoration: none;
-	transition: border-color var(--duration-fast) var(--ease-out);
+	transition: border-color var(--duration-fast) var(--ease);
 }
 
 .galleryCard:hover {
-	border-color: var(--primary-40);
+	border-color: color-mix(in oklab, var(--primary) var(--tint-strong), transparent);
 }
 
-.galleryCard:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
 
 @media (prefers-reduced-motion: reduce) {
 	.galleryCard {
@@ -846,34 +835,34 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 /* Icons size from the ladder here, never a `size` prop (`verify composition` rejects it). */
 .featureIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .breadcrumb > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	color: var(--muted-foreground);
 }
 
 .copyButton svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 /* A persistent app utility, reachable without returning to the header. */
 .themeLauncher:global(.button--component) {
 	position: fixed;
-	inset-inline-end: max(var(--space-lg), env(safe-area-inset-right));
-	bottom: max(var(--space-lg), env(safe-area-inset-bottom));
+	inset-inline-end: max(var(--gap), env(safe-area-inset-right));
+	bottom: max(var(--gap), env(safe-area-inset-bottom));
 	z-index: var(--z-docked);
-	width: calc(var(--control-h) + var(--space-lg));
-	height: calc(var(--control-h) + var(--space-lg));
+	width: calc(var(--control-height) + var(--gap));
+	height: calc(var(--control-height) + var(--gap));
 	border-radius: var(--radius-pill);
 	background-color: var(--background);
 	box-shadow: var(--shadow-lg);
@@ -881,7 +870,7 @@
 
 .themePanel {
 	/* Reserve the launcher and its outer gaps without feeding popup resize measurements back into its height. */
-	max-height: min(42rem, calc(100dvh - var(--control-h) - var(--space-lg) * 3));
+	max-height: min(42rem, calc(100dvh - var(--control-height) - var(--gap) * 3));
 	gap: 0;
 	overflow: hidden;
 }
@@ -889,7 +878,7 @@
 /* Fixed chrome surrounds the shared scroll owner; typography stays with the components. */
 .themePanelHeader {
 	flex: none;
-	padding: calc(var(--surface-py) * 0.75) var(--surface-px);
+	padding: calc(var(--padding) * 0.75) var(--padding);
 }
 
 .themePanelTabs {
@@ -900,8 +889,8 @@
 
 .themePanelNavigation {
 	flex: none;
-	margin-inline: var(--surface-px);
-	margin-bottom: var(--space-md);
+	margin-inline: var(--padding);
+	margin-bottom: var(--gap-sm);
 }
 
 .themePanelNavigation > :global(.tabs--tab) {
@@ -911,7 +900,7 @@
 .themePanelBody {
 	flex: 1;
 	min-height: 0;
-	padding: 0 var(--surface-px) var(--surface-py);
+	padding: 0 var(--padding) var(--padding);
 }
 
 .themePanelFooter {

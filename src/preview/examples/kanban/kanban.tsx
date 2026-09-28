@@ -81,7 +81,7 @@ export default function KanbanExample() {
 								{(board[column.id] ?? []).map((card) => (
 									<KanbanItem key={card.id} value={card.id}>
 										<Card className={styles.card}>
-											<Stack direction="horizontal" align="start" gap="xs">
+											<Stack direction="horizontal" align="start" gap="sm">
 												<KanbanItemHandle />
 												<Text size="sm" weight="medium" className={styles.cardTitle}>
 													{card.title}

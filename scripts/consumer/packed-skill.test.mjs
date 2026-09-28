@@ -72,8 +72,6 @@ test('every file of the canonical skill is packed', () => {
 test('maintainer-only material and implementation source stay out of the tarball', () => {
   const publishedStyleDocs = new Set([
     'src/styles/TOKENS.md',
-    'src/styles/FACTORS.md',
-    'src/styles/SCOPES.md',
   ])
   const leaked = packed.filter((p) =>
     p.startsWith('.claude/') ||

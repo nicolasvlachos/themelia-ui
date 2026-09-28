@@ -4,7 +4,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function FormErrorSummary() {
 	return (
-		<Stack style={{ maxWidth: "34rem" }}>
+		<Stack gap="sm" style={{ maxWidth: "34rem" }}>
 			<ErrorSummary
 				errors={[
 					"Name is required.",
@@ -12,7 +12,7 @@ export default function FormErrorSummary() {
 					"VAT number does not match the selected country.",
 				]}
 				action={
-					<Button tone="neutral" buttonStyle="outline">
+					<Button tone="neutral" appearance="outline">
 						Review the first problem
 					</Button>
 				}

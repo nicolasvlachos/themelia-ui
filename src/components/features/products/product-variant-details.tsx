@@ -90,7 +90,7 @@ export function ProductVariantDetails({
 			headerEnd={
 				<>
 					{!!onBack && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onBack}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onBack}>
 							<ArrowLeftIcon />
 							{copy.backLabel}
 						</Button>
@@ -122,7 +122,7 @@ export function ProductVariantDetails({
 					{renderMetadata ? (
 						renderMetadata(variant)
 					) : (
-						<MetadataList title={copy.factsTitle} items={facts} columns={3} density="compact" />
+						<MetadataList title={copy.factsTitle} items={facts} columns={3} size="sm" />
 					)}
 
 					{selectedOptions.length > 0 && (

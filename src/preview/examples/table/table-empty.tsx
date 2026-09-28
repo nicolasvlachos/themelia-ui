@@ -9,7 +9,7 @@ import styles from "./table-empty.module.css"
 
 export default function TableEmptyExample() {
 	return (
-		<Stack gap="xl" style={{ width: "100%" }}>
+		<Stack style={{ width: "100%" }}>
 			<Table>
 				<TableHeader>
 					<TableRow>

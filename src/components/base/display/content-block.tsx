@@ -75,11 +75,11 @@ export function ContentBlock({
 			{...props}
 		>
 			{hasHeader && (
-				<Stack gap="xs" className="content-block--heading">
+				<Stack gap="sm" className="content-block--heading">
 					{hasTitleRow && (
 						<div className={styles.contentBlockHeader}>
 							{icon != null && <span className={styles.contentBlockIcon}>{icon}</span>}
-							<Text tag="span" size="inherit" weight="semibold"
+							<Text tag="span" size="base" lineHeight="tight" weight="semibold"
 								className={styles.contentBlockTitle}
 								data-suffixed={titleSuffix != null || undefined}
 							>

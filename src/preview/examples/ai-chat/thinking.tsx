@@ -23,7 +23,7 @@ const CHAIN = [
 
 export default function Thinking() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<AiReasoning durationSeconds={4}>
 				The totals are summed as floats. 0.1 + 0.2 is 0.30000000000000004, and rounding
 				each line before summing compounds the error across a long invoice.
@@ -32,7 +32,7 @@ export default function Thinking() {
 				Checking whether the backfill needs to run per tenant…
 			</AiReasoning>
 			<AiChainOfThought steps={CHAIN} streaming />
-			<AiTask task={PLAN} density="expanded" />
+			<AiTask task={PLAN} defaultExpanded />
 		</Stack>
 	)
 }

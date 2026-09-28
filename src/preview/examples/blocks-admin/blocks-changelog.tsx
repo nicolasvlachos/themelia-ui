@@ -1,4 +1,4 @@
-import { ChangelogTimeline, type ChangelogEntry } from "themelia-ui/patterns/timelines"
+import { ChangelogTimeline, type ChangelogEntry } from "themelia-ui/blocks/timelines"
 
 const CHANGELOG: ChangelogEntry[] = [
 	{

@@ -2,7 +2,7 @@ import { Badge } from "themelia-ui/base/badge"
 import { Button } from "themelia-ui/base/buttons"
 import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
-import { Checklist } from "themelia-ui/patterns/onboarding"
+import { Checklist } from "themelia-ui/blocks/onboarding"
 
 export default function BlocksChecklist() {
 	return (
@@ -16,11 +16,11 @@ export default function BlocksChecklist() {
 					title: "Connect a data source",
 					badge: <Badge tone="warning">Required</Badge>,
 					content: (
-						<Stack gap="md">
+						<Stack gap="sm">
 							<Text type="secondary">Pick where your data lives. You can add more later.</Text>
 							<Stack direction="horizontal" gap="sm" wrap>
 								<Button tone="primary">Connect Postgres</Button>
-								<Button tone="secondary" buttonStyle="outline">Upload a CSV</Button>
+								<Button tone="secondary" appearance="outline">Upload a CSV</Button>
 							</Stack>
 						</Stack>
 					),

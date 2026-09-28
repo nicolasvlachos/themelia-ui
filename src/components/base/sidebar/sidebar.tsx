@@ -22,7 +22,7 @@ import { Input } from "@/components/base/text-inputs"
 import { VisuallyHidden } from "@/components/base/display"
 import { cx } from "@/lib/cx"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/base/tooltip"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 
 import { useSidebar } from "./sidebar-store"
 import styles from "./sidebar.module.css"
@@ -154,7 +154,7 @@ export function SidebarTrigger({
 	className,
 	onClick,
 	tone = "neutral",
-	buttonStyle = "ghost",
+	appearance = "ghost",
 	iconOnly = true,
 	...props
 }: ComponentProps<typeof Button>) {
@@ -164,7 +164,7 @@ export function SidebarTrigger({
 		<Button
 			data-slot="sidebar-trigger"
 			tone={tone}
-			buttonStyle={buttonStyle}
+			appearance={appearance}
 			iconOnly={iconOnly}
 			aria-label={copy.toggle}
 			className={cx("sidebar-trigger--component", className)}
@@ -260,7 +260,7 @@ export function SidebarGroupLabel({ className, ...props }: ComponentProps<"div">
 	return (
 		<Text
 			tag="div"
-			size="inherit"
+			size="xs"
 			type="secondary"
 			weight="medium"
 			data-slot="sidebar-group-label"
@@ -302,23 +302,19 @@ export function SidebarMenuItem({ className, ...props }: ComponentProps<"li">) {
 	return <li data-slot="sidebar-menu-item" className={cx("sidebar-menu-item--component", styles.menuItem, className)} {...props} />
 }
 
-/**
- * Row shape, not density: `lg` is an account or workspace switcher (avatar over two lines),
- * `sm` a secondary row.
- */
-export type SidebarMenuButtonSize = "sm" | "md" | "lg"
+/** The row's height: `default`, or `sm` for a secondary row. */
+export type SidebarMenuButtonSize = "default" | "sm"
 
 export interface SidebarMenuButtonProps extends Omit<ComponentProps<"button">, "size"> {
 	/**
-	 * The row's height, as a shape rather than a density: `lg` is the workspace switcher, `sm`
-	 * a secondary row. A size prop here, because a navigation row is not on the control
-	 * ladder that density scales.
+	 * The row's height: a control's by default, the small control's for a secondary row
+	 * (`sm`), with its label a type step smaller.
 	 */
 	size?: SidebarMenuButtonSize
 	/** Marks the row as the current page. */
 	active?: boolean
 	/** `outline` gives the row its own frame — for a switcher that must read as a control. */
-	variant?: "default" | "outline"
+	appearance?: "default" | "outline"
 	/**
 	 * The element this row becomes instead of a `button` — usually a router link, so the row
 	 * navigates the app's own way. `children` stays the row's content.
@@ -337,16 +333,15 @@ export interface SidebarMenuButtonProps extends Omit<ComponentProps<"button">, "
 }
 
 const BUTTON_SIZE = {
+	default: undefined,
 	sm: styles.menuButtonSm,
-	md: undefined,
-	lg: styles.menuButtonLg,
 } satisfies Record<SidebarMenuButtonSize, string | undefined>
 
 /** The row's control: a button, or through `render` a router link. */
 export function SidebarMenuButton({
-	size = "md",
+	size = "default",
 	active = false,
-	variant = "default",
+	appearance = "default",
 	render,
 	closeOnSelectMobile = true,
 	tooltip,
@@ -360,7 +355,9 @@ export function SidebarMenuButton({
 		"sidebar-menu-button--component",
 		styles.menuButton,
 		BUTTON_SIZE[size],
-		variant === "outline" && styles.menuButtonOutline,
+		appearance === "outline" && styles.menuButtonOutline,
+		/* The current page is set in medium weight as well as filled. */
+		textClassName({ size: size === "sm" ? "xs" : "sm", weight: active ? "medium" : "normal" }),
 		className,
 	)
 
@@ -435,7 +432,13 @@ export function SidebarMenuBadge({ inline = false, className, ...props }: Sideba
 	return (
 		<div
 			data-slot="sidebar-menu-badge"
-			className={cx("sidebar-menu-badge--component", styles.menuBadge, inline && styles.menuBadgeInline, className)}
+			className={cx(
+				"sidebar-menu-badge--component",
+				styles.menuBadge,
+				inline && styles.menuBadgeInline,
+				textClassName({ size: "xs", weight: "medium", numeric: true }),
+				className,
+			)}
 			{...props}
 		/>
 	)
@@ -470,8 +473,8 @@ export function SidebarMenuSubItem({ className, ...props }: ComponentProps<"li">
 }
 
 export interface SidebarMenuSubButtonProps extends ComponentProps<"a"> {
-	/** The nested row's height. */
-	size?: "sm" | "md"
+	/** The nested row's height: `default`, or `sm` for a denser list. */
+	size?: "default" | "sm"
 	/** Marks the row as the current page. */
 	active?: boolean
 	/** Dismisses the mobile sheet when the row is activated. See SidebarMenuButton. */
@@ -488,7 +491,7 @@ export interface SidebarMenuSubButtonProps extends ComponentProps<"a"> {
  * `render` a router link.
  */
 export function SidebarMenuSubButton({
-	size = "md",
+	size = "default",
 	active = false,
 	closeOnSelectMobile = true,
 	render,
@@ -511,7 +514,12 @@ export function SidebarMenuSubButton({
 			...mergeProps<"a">(
 				{
 					...(render || isLink ? {} : { type: "button" }),
-					className: cx("sidebar-menu-sub-button--component", styles.menuSubButton, size === "sm" && styles.menuSubButtonSm, className),
+					className: cx(
+						"sidebar-menu-sub-button--component",
+						styles.menuSubButton,
+						textClassName({ size: size === "sm" ? "xs" : "sm", weight: active ? "medium" : "normal" }),
+						className,
+					),
 					children,
 					onClick: () => {
 						if (closeOnSelectMobile && isMobile) setOpenMobile(false)

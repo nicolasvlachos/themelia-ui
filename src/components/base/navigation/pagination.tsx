@@ -87,7 +87,7 @@ export function Pagination({
 			disabled?: boolean
 			children: React.ReactNode
 			iconOnly?: boolean
-			buttonStyle?: React.ComponentProps<typeof Button>["buttonStyle"]
+			appearance?: React.ComponentProps<typeof Button>["appearance"]
 			tone?: React.ComponentProps<typeof Button>["tone"]
 		},
 	) => {
@@ -146,7 +146,7 @@ export function Pagination({
 					label: copy.previous,
 					disabled: page <= 1,
 					tone: "neutral",
-					buttonStyle: "ghost",
+					appearance: "ghost",
 					iconOnly: !arrowText,
 					children: (
 						<>
@@ -172,7 +172,7 @@ export function Pagination({
 								current: entry === page,
 								/* Outline for the current page, like every other "you are here" in the kit. */
 								tone: "secondary",
-								buttonStyle: entry === page ? "outline" : "ghost",
+								appearance: entry === page ? "outline" : "ghost",
 								iconOnly: true,
 								children: entry,
 							})}
@@ -184,7 +184,7 @@ export function Pagination({
 					label: copy.next,
 					disabled: page >= total,
 					tone: "neutral",
-					buttonStyle: "ghost",
+					appearance: "ghost",
 					iconOnly: !arrowText,
 					children: (
 						<>

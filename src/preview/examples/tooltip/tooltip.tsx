@@ -6,22 +6,22 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "themelia-ui/base/toolti
 
 export default function TooltipExample() {
 	return (
-		<Stack direction="horizontal" gap="lg" align="center" wrap>
+		<Stack direction="horizontal" align="center" wrap>
 			<Tooltip>
-				<TooltipTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
+				<TooltipTrigger render={<Button appearance="outline" tone="neutral" />}>
 					Hover or focus
 				</TooltipTrigger>
 				<TooltipContent>Charged on the first of the month.</TooltipContent>
 			</Tooltip>
 
 			<Tooltip>
-				<TooltipTrigger render={<Button buttonStyle="ghost" tone="neutral" iconOnly aria-label="About billing" />}>
+				<TooltipTrigger render={<Button appearance="ghost" tone="neutral" iconOnly aria-label="About billing" />}>
 					<InfoIcon />
 				</TooltipTrigger>
 				<TooltipContent>An icon-only control still needs a name of its own.</TooltipContent>
 			</Tooltip>
 
-			<TooltipButton tooltip="TooltipButton wires the two together" buttonStyle="outline" tone="neutral">
+			<TooltipButton tooltip="TooltipButton wires the two together" appearance="outline" tone="neutral">
 				TooltipButton
 			</TooltipButton>
 		</Stack>

@@ -8,9 +8,9 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function SheetShape() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="center">
+		<Stack direction="horizontal" wrap align="center">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Flush, size=&quot;sm&quot;
 				</OverlayTrigger>
 				<SheetContent side="inline-end" size="sm">
@@ -25,7 +25,7 @@ export default function SheetShape() {
 			</Overlay>
 
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Inset
 				</OverlayTrigger>
 				<SheetContent side="inline-end" size="28rem" inset>
@@ -44,7 +44,7 @@ export default function SheetShape() {
 			</Overlay>
 
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Inset from block-end
 				</OverlayTrigger>
 				<SheetContent side="block-end" size="60%" length="70%" inset="1.5rem">

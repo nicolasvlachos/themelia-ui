@@ -8,6 +8,7 @@
 import type { LucideIcon } from "lucide-react"
 import type { ReactNode } from "react"
 
+import type { TextProps } from "@/components/base/typography"
 import type { SemanticTone } from "@/lib/component-vocabulary"
 
 import type * as Strings from "./ai-chat.strings"
@@ -21,6 +22,8 @@ export interface AiShimmerProps {
 	paused?: boolean
 	/** Sweep duration, in seconds. */
 	duration?: number
+	/** Step on the type scale, as on `Text`. Unset, the provider's default size. */
+	size?: TextProps["size"]
 	className?: string
 }
 
@@ -124,9 +127,13 @@ export interface AiTaskItem {
 
 export interface AiTaskProps {
 	task: AiTaskItem
-	/** `compact` collapses the sub-tasks behind a toggle; `expanded` always shows them. */
-	density?: "compact" | "expanded"
-	/** Indent per nesting level, as a multiple of `--space-xl`. */
+	/**
+	 * Opens every level of sub-tasks at first. Off, only the top level starts open and the rest
+	 * sit behind their toggles.
+	 * @default false
+	 */
+	defaultExpanded?: boolean
+	/** Indent per nesting level, as a multiple of `--padding`. */
 	indent?: number
 	className?: string
 	strings?: Partial<Strings.AiTaskStrings>

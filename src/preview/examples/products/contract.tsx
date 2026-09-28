@@ -15,8 +15,8 @@ export default function Contract() {
 
 	return (
 		<>
-			<Grid gap="lg">
-				<Stack gap="lg">
+			<Grid>
+				<Stack>
 					<ProductDetailsCard
 						metadata={DETAILS}
 						onEditDetails={() => note("edit details")}

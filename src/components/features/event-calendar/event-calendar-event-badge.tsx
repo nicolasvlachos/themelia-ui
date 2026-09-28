@@ -11,7 +11,7 @@ import { resolveStrings } from "@/lib/strings"
 import { useDatesConfig } from "@/lib/ui-provider"
 
 import { defaultEventCalendarEventCardStrings } from "./event-calendar.strings"
-import { resolveCategoryColorToken, type EventCalendarEventBadgeProps } from "./event-calendar.types"
+import { resolveCategoryTone, type EventCalendarEventBadgeProps } from "./event-calendar.types"
 import styles from "./event-calendar.module.css"
 
 /**
@@ -38,7 +38,7 @@ export function EventCalendarEventBadge({
 			type="button"
 			data-slot="event-calendar-event-badge"
 			data-compact={compact || undefined}
-			data-token={resolveCategoryColorToken(category)}
+			data-tone={resolveCategoryTone(category)}
 			className={cx("event-calendar-event-badge--component", styles.badge)}
 			// Keeps the day cell's handler from firing too.
 			onClick={(clickEvent) => {

@@ -1,0 +1,10 @@
+/*
+ * Size: two control heights and two icon sizes. A glyph button below the small control is an
+ * icon plus the small padding on each side, not a third height.
+ */
+:root {
+	--control-height: 2.125rem;
+	--control-height-sm: 1.875rem;
+	--icon-size: 1rem;
+	--icon-size-sm: 0.75rem;
+}

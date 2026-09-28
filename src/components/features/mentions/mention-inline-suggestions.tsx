@@ -131,10 +131,10 @@ export function MentionInlineSuggestions<TResource extends string = string>({
 			const above = a.top - top
 			const next = height > below && above > below ? "top" : "bottom"
 			setPlacement(next)
-			/* The panel's gap to the editor (`--space-xs`, on whichever side it sits), kept again at the viewport edge. */
+			/* The panel's gap to the editor (its margin, on whichever side it sits), kept again at the viewport edge. */
 			const style = getComputedStyle(el)
 			const gap = (Number.parseFloat(style.marginTop) || 0) + (Number.parseFloat(style.marginBottom) || 0)
-			el.style.setProperty("--mention-available-height", `${Math.max(0, (next === "top" ? above : below) - gap * 2)}px`)
+			el.style.setProperty("--_mention-available-height", `${Math.max(0, (next === "top" ? above : below) - gap * 2)}px`)
 		}
 		measure()
 		window.addEventListener("resize", measure)
@@ -164,7 +164,7 @@ export function MentionInlineSuggestions<TResource extends string = string>({
 				<div className="sr-only">
 					<Text size="xs" weight="medium" type="secondary">{copy.title}</Text>
 					{!!query && (
-						<Text size="xs" type="secondary" className={styles.panelQuery}>
+						<Text size="xs" type="secondary" truncate mono>
 							{copy.formatQuery(query)}
 						</Text>
 					)}

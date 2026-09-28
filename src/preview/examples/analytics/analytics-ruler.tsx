@@ -1,4 +1,4 @@
-import { TimeRuler } from "themelia-ui/patterns/analytics"
+import { TimeRuler } from "themelia-ui/blocks/analytics"
 
 const HOURS = [
 	0, 0, 0, 0, 1, 2, 5, 9, 14, 18, 22, 25,

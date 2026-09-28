@@ -1,7 +1,7 @@
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import type { ChartConfig } from "themelia-ui/base/chart"
-import { ChartCard } from "themelia-ui/patterns/analytics"
+import { ChartCard } from "themelia-ui/blocks/analytics"
 
 import { SERIES } from "./data"
 

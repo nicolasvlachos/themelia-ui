@@ -9,11 +9,13 @@ by the module that needs it; see [Optional peers](#optional-peers).
 
 ## Browser support
 
-Chrome and Edge 125, Firefox 121 and Safari 16.4 or newer. The stylesheets rely on
-`round()`, `:has()`, `:dir()` and `color-mix()` with no fallback below those versions.
-Entrance transitions use `@starting-style` and simply don't animate where it is missing.
-If your bundler lowers CSS for older targets, keep `:dir()` out of it: lowered, it becomes a
-list of right-to-left languages and ignores `dir="rtl"`.
+Chrome and Edge 125, Firefox 121 and Safari 17.5 or newer. The stylesheets rely on
+`round()`, `:has()`, `:dir()`, `color-mix()` and `light-dark()` with no fallback below those
+versions. Entrance transitions use `@starting-style` and simply don't animate where it is
+missing. If your bundler lowers CSS for older targets, keep `:dir()` and `light-dark()` out of
+it: lowered, `:dir()` becomes a list of right-to-left languages and ignores `dir="rtl"`, and
+`light-dark()` resolves where a theme variable is declared, so a dark region inside a light
+page keeps the light colours.
 
 ## Import exactly what you use
 

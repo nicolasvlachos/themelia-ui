@@ -1,6 +1,6 @@
 import {
 	ActivityHeatmap, type ActivityHeatmapDay, type ActivityLevel,
-} from "themelia-ui/patterns/analytics"
+} from "themelia-ui/blocks/analytics"
 
 /* A fixed, cyclic pattern, not random data, for stable visual baselines. */
 const HEATMAP: ActivityHeatmapDay[] = Array.from({ length: 182 }, (_, index) => {

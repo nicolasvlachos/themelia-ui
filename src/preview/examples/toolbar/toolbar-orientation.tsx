@@ -5,7 +5,7 @@ import { Toolbar, ToolbarButton } from "themelia-ui/base/toolbar"
 
 export default function ToolbarOrientation() {
 	return (
-		<Stack direction="horizontal" gap="xl" align="start">
+		<Stack direction="horizontal" align="start">
 			<Toolbar aria-label="History" orientation="vertical">
 				<ToolbarButton iconOnly aria-label="Undo">
 					<Undo2Icon />

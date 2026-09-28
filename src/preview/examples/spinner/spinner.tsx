@@ -5,7 +5,7 @@ import { Demo } from "./_shared"
 
 export default function SpinnerExample() {
 	return (
-		<Stack direction="horizontal" gap="2xl" align="end">
+		<Stack direction="horizontal" align="end">
 			<Demo caption='label="Saving…"'>
 				<Spinner label="Saving…" />
 			</Demo>

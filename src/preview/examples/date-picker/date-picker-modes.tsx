@@ -18,7 +18,7 @@ export default function DatePickerModes() {
 	const [month, setMonth] = useState<MonthYearValue | undefined>(undefined)
 
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="start">
+		<Stack direction="horizontal" wrap align="start">
 			<SingleDatePicker value={day} onValueChange={setDay} />
 			<RangeDatePicker value={range} onValueChange={setRange} />
 			<MultipleDatePicker value={days} onValueChange={setDays} />

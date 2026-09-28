@@ -43,7 +43,7 @@ export default function Library() {
 				onConfirm={(items) => setNote(`using ${items.length}`)}
 			/>
 			<Stack direction="horizontal" align="center" gap="sm" wrap>
-				<Button tone="neutral" buttonStyle="outline" onClick={() => { failNext.current = true; setNote("The next save, delete, or upload will fail once.") }}>
+				<Button tone="neutral" appearance="outline" onClick={() => { failNext.current = true; setNote("The next save, delete, or upload will fail once.") }}>
 					Fail next action
 				</Button>
 				<Text size="sm" type="secondary">Preview recovery without mixing test controls into the library toolbar.</Text>

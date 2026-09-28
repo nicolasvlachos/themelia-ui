@@ -179,7 +179,14 @@ test.describe('from source', () => {
 	test('an exported theme reaches inside a provider and follows its data-theme', async ({ page }) => {
 		await page.goto(url('/button'))
 		await page.locator('main [data-ui-scope] button').first().waitFor()
-		const read = () => page.evaluate(() => getComputedStyle(document.querySelector('main [data-ui-scope] button')!).getPropertyValue('--primary').trim())
+		/* A variable keeps its light-dark() pair unresolved; a colour that uses it resolves to one half. */
+		await page.evaluate(() => {
+			const probe = document.createElement('span')
+			probe.id = 'primary-probe'
+			probe.style.color = 'var(--primary)'
+			document.querySelector('main [data-ui-scope] button')!.append(probe)
+		})
+		const read = () => page.evaluate(() => getComputedStyle(document.getElementById('primary-probe')!).color)
 		await page.evaluate(async () => {
 			const { serializeTheme, createTheme } = await import('/src/components/features/theme-tweaker/theme-tweaker.utils.ts')
 			const style = document.createElement('style')

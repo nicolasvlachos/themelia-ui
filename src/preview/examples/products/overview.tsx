@@ -13,7 +13,7 @@ export default function Overview() {
 
 	return (
 		<>
-			<Grid gap="lg">
+			<Grid>
 				<ProductOverview
 					title="Trailhead 29er"
 					description="Aluminium trail hardtail, sold as a frameset or a complete build."

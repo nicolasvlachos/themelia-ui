@@ -1,7 +1,7 @@
 import { MoreVerticalIcon } from "lucide-react"
 import { Fragment, isValidElement, useMemo, type ComponentProps, type ComponentType, type ReactNode } from "react"
 
-import { Button, type ButtonStyle } from "@/components/base/buttons"
+import { Button, type ButtonAppearance } from "@/components/base/buttons"
 import {
 	DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup,
 	DropdownMenuItem, DropdownMenuLabel, DropdownMenuLinkItem, DropdownMenuSeparator,
@@ -91,7 +91,7 @@ export interface ActionMenuProps {
 export interface ActionButtonsProps {
 	/**
 	 * The same definitions `ActionMenu` takes, side by side rather than collapsed into a menu:
-	 * that is the point of the shape. Each entry's `tone` and `buttonStyle` carry through to
+	 * that is the point of the shape. Each entry's `tone` and `appearance` carry through to
 	 * its button.
 	 */
 	actions: readonly ActionDefinition[]
@@ -334,7 +334,7 @@ export function ActionMenu({
 					renderTrigger ?? (
 						<Button
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							iconOnly={!showsLabel}
 							aria-label={showsLabel ? undefined : copy.trigger}
 							{...buttonProps}
@@ -389,10 +389,10 @@ export function ActionButtons({
 	return (
 		<div className={cx("action-buttons--component", styles.buttons, className)}>
 			{shown.map((action, index) => {
-				const asLink = action.buttonStyle === "link"
-				const buttonStyle: ButtonStyle = asLink
+				const asLink = action.appearance === "link"
+				const appearance: ButtonAppearance = asLink
 					? "ghost"
-					: ((action.buttonStyle as ButtonStyle | undefined) ?? "solid")
+					: ((action.appearance as ButtonAppearance | undefined) ?? "solid")
 				const content = (
 					<>
 						{renderIcon(action.icon)}
@@ -415,7 +415,7 @@ export function ActionButtons({
 							/* The anchor arrives complete; `render` keeps its own content. */
 							render={anchor}
 							tone={action.tone ?? "primary"}
-							buttonStyle={buttonStyle}
+							appearance={appearance}
 							className={cx(asLink && styles.linkButton, action.className)}
 						/>
 					)
@@ -425,7 +425,7 @@ export function ActionButtons({
 					<Button
 						key={actionKey(action, index)}
 						tone={action.tone ?? "primary"}
-						buttonStyle={buttonStyle}
+						appearance={appearance}
 						disabled={action.disabled}
 						onClick={action.onClick}
 						className={cx(asLink && styles.linkButton, action.className)}

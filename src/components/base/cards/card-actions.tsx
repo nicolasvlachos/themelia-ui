@@ -5,7 +5,7 @@
 import { isValidElement, type ComponentProps, type ComponentType, type ReactElement, type ReactNode } from "react"
 
 import type { ActionDefinition } from "@/components/base/action-menu"
-import { Button, type ButtonStyle } from "@/components/base/buttons"
+import { Button, type ButtonAppearance } from "@/components/base/buttons"
 import { cx } from "@/lib/cx"
 import type { LinkRenderer } from "@/lib/navigation"
 
@@ -14,7 +14,7 @@ import styles from "./cards.module.css"
 export interface CardActionStripProps extends Omit<ComponentProps<"div">, "children"> {
 	/**
 	 * The commands, as the overflow menu takes them. The first is the primary action; the rest
-	 * follow in outline unless an entry sets its own `buttonStyle`.
+	 * follow in outline unless an entry sets its own `appearance`.
 	 */
 	actions: ActionDefinition[]
 	/** A rule above the strip, ruling it off from content that runs right into it. */
@@ -76,8 +76,8 @@ export function CardActionStrip({
 						{action.label}
 					</>
 				)
-				const buttonStyle: ButtonStyle =
-					action.buttonStyle === "link" ? "ghost" : ((action.buttonStyle as ButtonStyle) ?? (index === 0 ? "solid" : "outline"))
+				const appearance: ButtonAppearance =
+					action.appearance === "link" ? "ghost" : ((action.appearance as ButtonAppearance) ?? (index === 0 ? "solid" : "outline"))
 
 				if (action.href && !action.disabled) {
 					const href = action.href
@@ -95,7 +95,7 @@ export function CardActionStrip({
 								)) as ReactElement
 							}
 							tone={action.tone ?? "primary"}
-							buttonStyle={buttonStyle}
+							appearance={appearance}
 						/>
 					)
 				}
@@ -104,7 +104,7 @@ export function CardActionStrip({
 					<Button
 						key={action.id ?? index}
 						tone={action.tone ?? "primary"}
-						buttonStyle={buttonStyle}
+						appearance={appearance}
 						disabled={action.disabled}
 						onClick={action.onClick}
 					>

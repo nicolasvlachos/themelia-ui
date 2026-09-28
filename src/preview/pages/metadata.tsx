@@ -27,9 +27,9 @@ export function MetadataPage() {
 			/>
 
 			<Example
-				example="metadata/metadata-density"
-				title="density"
-				description="compact tightens the rhythm and drops the value a size, for a side panel or an inspector where the facts support the content rather than being it."
+				example="metadata/metadata-size"
+				title="size"
+				description="sm tightens the rhythm (the gaps and the row inset) for a side panel or an inspector, where the facts support the content rather than being it. The values keep their type size."
 			/>
 
 			<Example id="metadata-kinds" title="The value kinds">

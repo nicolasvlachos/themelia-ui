@@ -36,7 +36,7 @@ export function ActionDialog({ width = "md", surfaceStyle, ...props }: ActionDia
 			{...props}
 			parts={PARTS}
 			hook="action-dialog"
-			surfaceStyle={{ "--overlay-max-width": WIDTH[width] ?? width, ...surfaceStyle } as CSSProperties}
+			surfaceStyle={{ "--_overlay-max-width": WIDTH[width] ?? width, ...surfaceStyle } as CSSProperties}
 		/>
 	)
 }

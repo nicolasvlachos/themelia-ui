@@ -6,13 +6,13 @@
 	display: flex;
 	flex-direction: column;
 	/* Wider than the row gap: the add control is not another row. */
-	gap: var(--space-lg);
+	gap: var(--gap);
 }
 
 .list {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -21,7 +21,7 @@
 .row {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 /*
@@ -29,16 +29,16 @@
  * sibling — can read it and start where the fields do.
  */
 .root:has(> .list > .rowCard) {
-	--repeater-row-inset: calc(var(--space-lg) + var(--border-width));
+	--_repeater-row-inset: calc(var(--padding) + var(--border-width));
 }
 
 /* A nested bare repeater resets the inherited inset. */
 .row .root:not(:has(> .list > .rowCard)) {
-	--repeater-row-inset: 0px;
+	--_repeater-row-inset: 0px;
 }
 
 .rowCard {
-	padding: var(--space-lg);
+	padding: var(--padding);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 }
@@ -48,23 +48,25 @@
 	border-radius: var(--radius-sm);
 }
 
+/* The row being dragged fades, so the drop line reads as where it will land. */
 .row[data-dragging] {
-	opacity: var(--repeater-dragging-opacity);
+	opacity: 0.4;
 }
 
 /* The insertion point, drawn on the row the pointer is currently over. */
 .row[data-drop-before] {
-	box-shadow: 0 calc(var(--border-width-strong) * -1) 0 0 var(--primary);
+	box-shadow: 0 calc(var(--border-width) * -2) 0 0 var(--primary);
 }
 
 .row[data-drop-after] {
-	box-shadow: 0 var(--border-width-strong) 0 0 var(--primary);
+	box-shadow: 0 calc(var(--border-width) * 2) 0 0 var(--primary);
 }
 
+/* The grip: an icon plus the small padding square, centred on the first control's line. */
 .handle {
 	display: inline-flex;
-	width: var(--control-h-2xs);
-	height: var(--control-h-2xs);
+	width: calc(var(--icon-size) + var(--padding-sm));
+	height: calc(var(--icon-size) + var(--padding-sm));
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
@@ -73,22 +75,16 @@
 	background: none;
 	color: var(--muted-foreground);
 	cursor: grab;
-	/* Centred on the first control's line. */
-	margin-top: calc((var(--control-h) - var(--control-h-2xs)) / 2);
+	margin-top: calc((var(--control-height) - var(--icon-size) - var(--padding-sm)) / 2);
 }
 
 .handle:active {
 	cursor: grabbing;
 }
 
-.handle:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 .handle > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .body {
@@ -101,31 +97,28 @@
 	flex-shrink: 0;
 }
 
+/* Text's `sm` in the secondary colour (repeater.tsx), centred in the list's place. */
 .empty {
-	padding-block: var(--space-2xl);
-	text-align: center;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	color: var(--muted-foreground);
+	padding-block: var(--padding);
 }
 
 /*
  * With a grip column, the footer indents to line up with the fields:
- *   --repeater-row-inset          a carded row's padding + border
- *   --control-h-2xs + --space-md  the grip and its gap
- *   --repeater-footer-inset       a consumer's own content inset (set this, not footer padding,
- *                                 which this rule outranks)
+ *   --_repeater-row-inset          a carded row's padding + border
+ *   the grip and its gap           an icon plus the small padding, and the row's gap
+ *   --_repeater-footer-inset       a consumer's own content inset (set this, not footer
+ *                                  padding, which this rule outranks)
  * Child combinators throughout, so a nested repeater never matches.
  */
 .root:has(> .list > .row > [data-repeater-handle]) > .footer {
 	padding-inline-start: calc(
-		var(--repeater-row-inset, 0px) + var(--control-h-2xs) + var(--space-md) +
-			var(--repeater-footer-inset, 0px)
+		var(--_repeater-row-inset, 0px) + var(--icon-size) + var(--padding-sm) + var(--gap-sm) +
+			var(--_repeater-footer-inset, 0px)
 	);
 }
 
 .footer {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }

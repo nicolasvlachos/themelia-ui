@@ -26,7 +26,7 @@ test("geometry is whole-pixel where it has to be", async ({ page }) => {
 		 * pill may round past the container radius it defines.
 		 */
 		await page.addStyleTag({ content: `
-			:root, [data-ui-scope], [data-density], [data-theme], .light, .dark {
+			:root {
 				--radius: 1.25rem !important;
 				--radius-sm: 0.625rem !important;
 			}
@@ -253,12 +253,6 @@ test("a skeleton reserves exactly what its content will occupy", async ({ page }
 			return { lines, skeleton, text }
 		})
 
-		const probe = document.createElement("div")
-		probe.style.cssText = "position:absolute;visibility:hidden;height:var(--size-avatar)"
-		document.body.appendChild(probe)
-		const liveAvatar = probe.getBoundingClientRect().height
-		probe.remove()
-
 		/*
 		 * A header action stands in for a Button, so it is measured against a real Button root
 		 * (the page chrome always renders one, which puts its class on the page) in the same scope.
@@ -281,7 +275,7 @@ test("a skeleton reserves exactly what its content will occupy", async ({ page }
 
 		return {
 			stacks,
-			avatar: { skeleton: withPrefix("avatar")[0]?.getBoundingClientRect().height ?? null, live: liveAvatar },
+			avatar: { skeleton: withPrefix("avatar")[0]?.getBoundingClientRect().height ?? null },
 			action,
 		}
 	})
@@ -294,10 +288,14 @@ test("a skeleton reserves exactly what its content will occupy", async ({ page }
 		"a skeleton line stack must occupy the same height as the text it replaces",
 	).toEqual([])
 
-	expect(result.avatar?.skeleton, "the skeleton avatar must be --size-avatar").toBeCloseTo(
-		result.avatar?.live ?? -1,
-		1,
-	)
+	/* The default Avatar, measured where it renders: the last one in the sizes example takes no size. */
+	await page.goto(url("/avatar"))
+	await page.waitForSelector("h1")
+	const liveAvatar = await page
+		.locator('[data-example="avatar/avatar"] .avatar--component')
+		.last()
+		.evaluate((element) => element.getBoundingClientRect().height)
+	expect(result.avatar?.skeleton, "the skeleton avatar must match the default Avatar").toBeCloseTo(liveAvatar, 1)
 
 	expect(result.action, "the skeleton header action or a Button to measure it against is missing").toBeTruthy()
 	expect(result.action?.skeleton, "a skeleton header action must be a Button's height").toBeCloseTo(

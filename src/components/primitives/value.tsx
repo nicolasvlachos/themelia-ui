@@ -37,15 +37,17 @@ export function ValueRoot({
 	emptyLabel = EMPTY,
 	size,
 	align,
-	weight = "regular",
+	weight = "normal",
 	type = "main",
 	truncate,
 	className,
 	hook,
 	numeric,
+	mono,
+	lineHeight,
 	ref,
 	...props
-}: ValueProps & { hook: string; numeric?: boolean }) {
+}: ValueProps & { hook: string; numeric?: boolean; mono?: boolean; lineHeight?: TextProps["lineHeight"] }) {
 	const empty = children === null || children === undefined || children === ""
 	return (
 		<Text
@@ -53,9 +55,11 @@ export function ValueRoot({
 			tag="span"
 			size={size}
 			align={align}
+			lineHeight={lineHeight}
 			weight={weight}
 			type={type}
 			numeric={numeric}
+			mono={mono}
 			truncate={truncate}
 			data-empty={empty ? "" : undefined}
 			className={cx(`${hook}--component`, className)}
@@ -91,7 +95,7 @@ export function MutedValue({ type = "secondary", size = "xs", ...props }: ValueP
  * down a column.
  */
 export function MonoValue({ className, ...props }: ValueProps) {
-	return <ValueRoot hook="mono-value" numeric className={cx("value--mono", className)} {...props} />
+	return <ValueRoot hook="mono-value" numeric mono className={cx("value--mono", className)} {...props} />
 }
 
 export interface EmptyValueProps extends Omit<ValueProps, "children"> {

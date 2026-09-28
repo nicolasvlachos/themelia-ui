@@ -7,11 +7,12 @@ import { resolveStrings } from "@/lib/strings"
 
 import { MediaLibraryCard, type MediaLibraryListProps } from "./media-library-parts"
 import { defaultMediaLibraryStrings, type MediaLibraryStrings } from "./media-library.strings"
-import type { MediaLibraryDensity, MediaLibrarySlots } from "./media-library.types"
+import type { MediaLibrarySize, MediaLibrarySlots } from "./media-library.types"
 import styles from "./media-library.module.css"
 
 export interface MediaLibraryGridProps<TItem> extends MediaLibraryListProps<TItem> {
-	density?: MediaLibraryDensity
+	/** Tile size: `sm` fits more tiles in a row. */
+	size?: MediaLibrarySize
 	showMeta?: boolean
 	renderItem?: MediaLibrarySlots<TItem>["renderItem"]
 	className?: string
@@ -21,15 +22,15 @@ export interface MediaLibraryGridProps<TItem> extends MediaLibraryListProps<TIte
  * The composable visual grid. Like the list and the table, it uses the same accessors and
  * selection callbacks.
  */
-export function MediaLibraryGrid<TItem>({ items, selectedSet, accessors, strings, onToggle, onDetails, density = "comfortable", selectionMode = "multiple", showMeta = true, renderItem, className }: MediaLibraryGridProps<TItem>) {
-	return <div data-media-density={density} className={cx("media-library-grid--component", styles.grid, className)}>
+export function MediaLibraryGrid<TItem>({ items, selectedSet, accessors, strings, onToggle, onDetails, size = "default", selectionMode = "multiple", showMeta = true, renderItem, className }: MediaLibraryGridProps<TItem>) {
+	return <div data-size={size} className={cx("media-library-grid--component", styles.grid, className)}>
 		{items.map((item) => {
 			const id = accessors.getId(item)
 			const selected = selectedSet.has(id)
 			const toggle = () => onToggle(id)
 			const openDetails = () => onDetails(id)
 			return renderItem ? <div key={id}>{renderItem(item, { id, selected, accessors, selectionMode, toggle, openDetails })}</div> :
-				<MediaLibraryCard key={id} item={item} selected={selected} density={density} selectionMode={selectionMode} showMeta={showMeta} accessors={accessors} strings={strings} onToggle={toggle} onDetails={openDetails} />
+				<MediaLibraryCard key={id} item={item} selected={selected} size={size} selectionMode={selectionMode} showMeta={showMeta} accessors={accessors} strings={strings} onToggle={toggle} onDetails={openDetails} />
 		})}
 	</div>
 }

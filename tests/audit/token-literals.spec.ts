@@ -16,9 +16,11 @@ type Violation = { component: string; property: string; value: string; sample: s
  * Properties worth policing. `background-color` and `border-color` are left out: they are
  * often a `color-mix` over a token, and the mix result is not itself a token.
  */
+/*
+ * Radii are left to stylelint's radius rule and the geometry audit's nesting check: a nested
+ * corner is arithmetic on its container's, which no list of values can enumerate.
+ */
 const AUDITED = [
-	"border-top-left-radius",
-	"border-bottom-right-radius",
 	"transition-duration",
 	"transition-timing-function",
 	"row-gap",
@@ -77,12 +79,23 @@ function audit([audited, emRelativeList, dataTinted]: [string[], string[], strin
 	const tokenNames = Array.from(getComputedStyle(document.documentElement)).filter((name) =>
 		name.startsWith("--"),
 	)
-	/* An edge-to-edge child of a bordered wrapper or item, and a data mark or arrow tip. */
-	const DERIVED_RADII = [
-		"calc(var(--radius) - var(--border-width))",
-		"calc(var(--radius-sm) - var(--border-width))",
-		"calc(var(--radius-sm) / 4)",
+	/* Two of each: a length between or beyond the pair is simple arithmetic on it (TOKENS.md). */
+	const LENGTHS = ["--padding", "--padding-sm", "--gap", "--gap-sm"]
+	const DERIVED_LENGTHS = [
+		...LENGTHS.flatMap((name) => [0.25, 0.5, 1.5, 2, 3].map((factor) => `calc(var(${name}) * ${factor})`)),
+		"calc(var(--radius) - var(--radius-sm))",
+		/* An inset that clears a control or an icon and the gap after it. */
+		"calc(var(--control-height) + var(--gap-sm))",
+		"calc(var(--icon-size) + var(--gap-sm))",
 	]
+	/* Text's steps as Text sizes them, and its four weights. */
+	const DERIVED_TYPE = ["xs", "pxs", "sm", "base", "lg", "xl", "2xl"].map((step) => `calc(var(--text-${step}) * var(--text-scale))`)
+	const WEIGHTS = ["400", "500", "600", "700"]
+	const derivedFor = (property: string) =>
+		/gap|padding/.test(property) ? DERIVED_LENGTHS
+			: property === "font-size" ? DERIVED_TYPE
+			: property === "font-weight" ? WEIGHTS
+			: []
 
 	/*
 	 * Allowed values are built per scope and cached: `[data-ui-scope]`, `[data-density]` and a
@@ -102,9 +115,7 @@ function audit([audited, emRelativeList, dataTinted]: [string[], string[], strin
 		const allowed: Record<string, Set<string>> = {}
 		for (const property of audited) {
 			const values = new Set<string>()
-			/* A corner may also be the contract's arithmetic on the two radii (TOKENS.md). */
-			const derived = property.includes("radius") ? DERIVED_RADII : []
-			for (const value of [...tokenNames.map((name) => `var(${name})`), ...derived]) {
+			for (const value of [...tokenNames.map((name) => `var(${name})`), ...derivedFor(property)]) {
 				probe.style.setProperty(property, value)
 				for (const part of splitTopLevel(getComputedStyle(probe).getPropertyValue(property))) {
 					if (part) values.add(part)
@@ -119,7 +130,8 @@ function audit([audited, emRelativeList, dataTinted]: [string[], string[], strin
 		return allowed
 	}
 
-	const SCOPE_SELECTOR = "[data-ui-scope], [data-density], .theme-scope--component"
+	/* A region that sets its own variables, or a colour island that resolves them in its own scheme. */
+	const SCOPE_SELECTOR = "[data-ui-scope], [data-density], [data-theme], .light, .dark, .theme-scope--component"
 
 	for (const el of Array.from(document.querySelectorAll('[class*="--component"]'))) {
 		const rect = el.getBoundingClientRect()
@@ -141,17 +153,21 @@ function audit([audited, emRelativeList, dataTinted]: [string[], string[], strin
 			for (const part of splitTopLevel(raw)) {
 				if (!part || inert.has(part)) continue
 				if (allowed[property].has(part)) continue
+				/* A toned element's ink or foreground, which the tone rule declares on the element itself. */
+				if (property === "color" && el.closest("[data-tone], [data-ref-tone]")) {
+					const probe = document.createElement("i")
+					el.appendChild(probe)
+					const inks = ["var(--tone-ink)", "var(--tone-foreground)"].map((value) => {
+						probe.style.color = value
+						return getComputedStyle(probe).color
+					})
+					probe.remove()
+					if (inks.includes(part)) continue
+				}
 				/* Within one layout unit: Firefox snaps laid-out padding to 1/60px; the unlaid-out probe does not. */
 				if (/^-?[\d.]+px$/.test(part)) {
 					const px = Number.parseFloat(part)
 					if ([...allowed[property]].some((v) => /^-?[\d.]+px$/.test(v) && Math.abs(Number.parseFloat(v) - px) <= 1 / 60 + 0.001)) continue
-				}
-
-				/* A fully round control's radius is half its own height, not a scale step. */
-				if (property.includes("radius")) {
-					if (part === "50%" || part === "999px") continue
-					const pill = Math.min(rect.width, rect.height) / 2
-					if (Math.abs(Number.parseFloat(part) - pill) <= 1) continue
 				}
 
 				const key = `${component}|${property}|${part}`

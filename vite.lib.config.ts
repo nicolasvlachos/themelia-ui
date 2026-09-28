@@ -62,7 +62,7 @@ function discoverEntries(): Record<string, string> {
 	 * the alternative is a published package quietly missing a subpath.
 	 */
 	const onDisk = new Set<string>()
-	for (const layer of ["base", "features", "layout", "patterns", "admin/patterns"] as const) {
+	for (const layer of ["base", "features", "layout", "blocks", "blocks/admin"] as const) {
 		const dir = resolve(root, "src/components", layer)
 		if (!existsSync(dir)) continue
 		for (const item of readdirSync(dir, { withFileTypes: true })) {

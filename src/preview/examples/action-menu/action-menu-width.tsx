@@ -8,7 +8,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function ActionMenuWidth() {
 	return (
-		<Stack direction="horizontal" gap="xl" align="center" wrap>
+		<Stack direction="horizontal" align="center" wrap>
 			<ActionMenu
 				label="Shortcuts"
 				actions={[
@@ -37,7 +37,7 @@ export default function ActionMenuWidth() {
 			/>
 			<ActionMenu
 				renderTrigger={
-					<Button buttonStyle="outline" tone="neutral" style={{ width: "16rem" }}>
+					<Button appearance="outline" tone="neutral" style={{ width: "16rem" }}>
 						Matches the trigger
 						<ChevronDownIcon />
 					</Button>

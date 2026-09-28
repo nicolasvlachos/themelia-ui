@@ -1,4 +1,4 @@
-import { UpcomingBookings, type Booking } from "themelia-ui/admin/patterns/commerce"
+import { UpcomingBookings, type Booking } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 const BOOKINGS: Booking[] = [

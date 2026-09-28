@@ -3,6 +3,7 @@ import { forwardRef } from "react"
 
 import { Button } from "@/components/base/buttons"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/base/popover"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import type { HeaderToolButtonProps, HeaderToolPopoverProps } from "../header.types"
@@ -24,7 +25,7 @@ export const HeaderToolButton = forwardRef<HTMLButtonElement, HeaderToolButtonPr
 				type="button"
 				data-slot="header-tool-button"
 				tone="neutral"
-				buttonStyle="ghost"
+				appearance="ghost"
 				iconOnly
 				aria-label={label}
 				/* Only when engaged; otherwise a plain button would announce "not pressed". */
@@ -36,7 +37,11 @@ export const HeaderToolButton = forwardRef<HTMLButtonElement, HeaderToolButtonPr
 				<Icon aria-hidden />
 				{badge !== undefined && badge !== null && badge !== false && (
 					/* Hidden: the control's accessible name states the count. */
-					<span aria-hidden data-slot="header-tool-badge" className={styles.toolBadge}>
+					<span
+						aria-hidden
+						data-slot="header-tool-badge"
+						className={cx(styles.toolBadge, textClassName({ size: "xs", weight: "medium", lineHeight: "none" }))}
+					>
 						{badge}
 					</span>
 				)}

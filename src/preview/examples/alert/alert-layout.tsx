@@ -14,7 +14,7 @@ export default function AlertLayout() {
 				<AlertTitle>With an action</AlertTitle>
 				<AlertDescription>Inline space is reserved on the trailing edge.</AlertDescription>
 				<AlertAction>
-					<Button tone="neutral" buttonStyle="ghost">
+					<Button tone="neutral" appearance="ghost">
 						Undo
 					</Button>
 				</AlertAction>

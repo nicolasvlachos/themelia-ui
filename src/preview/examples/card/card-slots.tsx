@@ -9,7 +9,7 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function CardSlots() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
 			<Card
 				icon={<CreditCardIcon />}
 				title="Primary payment method"
@@ -22,7 +22,7 @@ export default function CardSlots() {
 					{ label: "Remove", icon: <TrashIcon />, onClick: () => {}, tone: "destructive" },
 				]}
 				footerText="Updated 3 days ago"
-				footerSlot={<Button tone="neutral" buttonStyle="outline">Manage</Button>}
+				footerSlot={<Button tone="neutral" appearance="outline">Manage</Button>}
 				footerDivider
 			>
 				<Text type="secondary" size="sm">

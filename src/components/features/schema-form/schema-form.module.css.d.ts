@@ -7,7 +7,6 @@ declare const styles: {
 	readonly footer: string
 	readonly grid: string
 	readonly header: string
-	readonly mono: string
 	readonly recommendation: string
 	readonly recommendations: string
 	readonly root: string

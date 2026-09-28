@@ -19,7 +19,7 @@ export default function SelectExample() {
 	const [country, setCountry] = useState<string | undefined>("nl")
 
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Billing country">
 				<Select options={COUNTRIES} value={country} onValueChange={setCountry} allowClear />
 			</FormField>

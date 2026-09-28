@@ -8,8 +8,7 @@ declare const styles: {
 	readonly mediaIcon: string
 	readonly mediaIconSoft: string
 	readonly mediaIllustration: string
-	readonly padLg: string
-	readonly padMd: string
+	readonly padDefault: string
 	readonly padSm: string
 	readonly root: string
 }

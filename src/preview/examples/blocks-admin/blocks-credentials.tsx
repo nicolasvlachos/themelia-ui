@@ -1,4 +1,4 @@
-import { CredentialList } from "themelia-ui/admin/patterns/access"
+import { CredentialList } from "themelia-ui/blocks/admin/access"
 
 const CREDENTIALS = [
 	{ id: "1", name: "Production", value: "sk_live_4417a92f0b3d", displayValue: "sk_live_••••0b3d" },

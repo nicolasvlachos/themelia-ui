@@ -4,7 +4,7 @@ import {
 	SeoListing,
 	calculateSeoScore,
 	type SeoScoreInput,
-} from "themelia-ui/admin/patterns/commerce"
+} from "themelia-ui/blocks/admin/commerce"
 import { FormField } from "themelia-ui/base/forms"
 import { AdaptiveGrid, Stack } from "themelia-ui/base/structure"
 import { Input, Textarea } from "themelia-ui/base/text-inputs"
@@ -46,7 +46,7 @@ function ListingDemo({ initial }: { initial: SeoScoreInput }) {
 				strings={{ confirm: "Save changes" }}
 				onConfirm={() => setListing(draft)}
 			>
-				<Stack gap="lg">
+				<Stack>
 					<FormField label="Page title">
 						<Input value={draft.title ?? ""} onChange={event => setDraft({ ...draft, title: event.target.value })} />
 					</FormField>
@@ -67,7 +67,7 @@ function ListingDemo({ initial }: { initial: SeoScoreInput }) {
 
 export default function CatalogueSeo() {
 	return (
-		<AdaptiveGrid minColumnWidth="lg" gap="xl" align="start">
+		<AdaptiveGrid minColumnWidth="20rem" align="start">
 			<ListingDemo initial={LISTING} />
 			{/* Scored outside the card and handed in — the seam an editor uses. */}
 			<ListingDemo initial={WEAK_LISTING} />

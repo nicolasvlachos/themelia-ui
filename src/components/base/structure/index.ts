@@ -6,5 +6,5 @@ export { Bleed, type BleedProps } from "./bleed"
 export type {
 	ResponsiveValue, StructureBreakpoint, StructureGap, StructureAlign,
 	StructureJustify, StructureDirection, GridColumns, GridSpan, AdaptiveGridMinimum,
-	StructureWidth, BleedAxis, SplitSide,
+	StructureWidth, BleedAxis, SplitSide, CssLength,
 } from "./structure.types"

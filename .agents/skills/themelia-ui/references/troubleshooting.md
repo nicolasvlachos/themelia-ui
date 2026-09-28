@@ -40,23 +40,20 @@ listed there, report it as a package containment defect.
 
 ## A theme or density override does not apply
 
-Derived tokens are declared at every scope boundary (`:root`, `[data-ui-scope]`,
-`[data-density]`, `[data-theme]`, `.light` and `.dark`) and resolve there. Which selector an
-override needs depends on the token:
+Every theme variable is declared once, at `:root`, and inherits from wherever you set it. When
+an override does not show:
 
-- **Raw inputs**, such as the radii, font stacks, palette steps, `--scale`,
-  `--density-scale` and `--text-scale`, are declared at `:root` only, so a value set on
-  `:root` reaches every scope. Inside a `data-density` preset region, the preset's
-  `--density-scale` applies instead.
-- **Semantic colours** such as `--primary` and `--background` are re-declared at every
-  boundary. Set on `:root` alone, they stop at the first boundary, and every provider renders
-  one. Declare them at the boundary list, or pass them through provider config.
-- **A provider's `theme.colors`** is written on the provider's own element, so a nested
-  provider, `Scope` or `data-density` region inside it declares the kit's colours again. For
-  colours that must reach every region, use the boundary list, or set palette steps
-  (`theme.palette`), which each nested boundary derives its colours from.
-- **A plain element** that is not a boundary sets the variable, and nothing re-derives from
-  it: the derived values were resolved above it. Wrap the region in `Scope`.
+- **Is it the theme's name?** A 3.0 name such as `--space-md`, `--control-h` or
+  `--primary-10` is gone; the codemod renames or reports each one, and
+  `src/styles/TOKENS.md` (`node_modules/themelia-ui/src/styles/TOKENS.md`) names the variable for every role.
+- **Is a density preset in effect?** A `data-density` region (or a provider's `density`) sets
+  the lengths and control heights on its element, so a value set further out does not reach
+  inside it. Set the value for the preset too: `[data-density="compact"] { --padding: … }`.
+- **Is it a colour set to one value?** One value applies in both modes. For a separate dark
+  value, write `light-dark(light, dark)`; a rule under `.dark` misses a dark region inside a
+  light page.
+- **Is it in a portalled popup?** A value set on a provider or a region reaches its subtree,
+  and a popup portalled to `<body>` leaves it; see the next section.
 
 See [Theming](theming.md#setting-a-theme) and
 [Provider and scoping](provider-and-scoping.md).
@@ -66,8 +63,8 @@ See [Theming](theming.md#setting-a-theme) and
 Popups portal to `<body>` by default, outside any nested scope, so they miss its density,
 colour scheme and token overrides. Wrap the region in `UIPortalHost` so its popups render
 inside the scope, or pass the component a `container`. A root provider with a
-`documentTarget` mirrors only `data-theme` and `data-density` to the document; token
-overrides that `<body>` popups must see belong in CSS at the scope boundaries. See
+`documentTarget` mirrors only `data-theme` and `data-density` to the document; a value that
+`<body>` popups must see belongs on `:root`. See
 [Provider and scoping](provider-and-scoping.md#portals-and-scopes).
 
 ## A controlled component appears frozen

@@ -13,7 +13,7 @@ const activity = {
 describe("activity detail structure", () => {
 	it("opens distinct detail groups with translated captions and keeps controls outside them", () => {
 		const onRowClick = vi.fn()
-		render(<ActivityFeed activities={[activity]} density="rich" onActivityClick={onRowClick}
+		render(<ActivityFeed activities={[activity]} variant="rich" onActivityClick={onRowClick}
 			strings={{ changesTitle: "Modifications", metadataTitle: "Contexte", resourcesTitle: "Documents" }} />)
 		fireEvent.click(screen.getByRole("button", { name: "Show details" }))
 		expect(onRowClick).not.toHaveBeenCalled()
@@ -26,7 +26,7 @@ describe("activity detail structure", () => {
 		expect(screen.queryByRole("group", { name: "Contexte" })).not.toBeInTheDocument()
 	})
 	it("does not render empty detail sections", () => {
-		render(<ActivityFeed activities={[{ id: "one", event: "created", headline: "Created booking", details: "Only a note" }]} density="rich" />)
+		render(<ActivityFeed activities={[{ id: "one", event: "created", headline: "Created booking", details: "Only a note" }]} variant="rich" />)
 		expect(screen.getByText("Only a note")).toBeVisible()
 		expect(screen.queryByRole("group", { name: "Changes" })).not.toBeInTheDocument()
 		expect(screen.queryByRole("button", { name: "Show details" })).not.toBeInTheDocument()

@@ -2,5 +2,5 @@
 .slide {
 	min-height: 7rem;
 	border-radius: var(--radius);
-	background-color: var(--muted-40);
+	background-color: var(--muted);
 }

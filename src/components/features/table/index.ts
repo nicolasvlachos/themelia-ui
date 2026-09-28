@@ -34,7 +34,8 @@ export {
 } from "./table.strings"
 export type {
 	ClassNameFor, ColumnGroup, ColumnVisibilityToggleProps, DataTableActionsProps,
-	DataTableBodyProps, DataTableHeaderProps, DataTableProps,
+	DataTableBodyProps, DataTableExpandedRow, DataTableExpandedRowContext, DataTableHeaderProps,
+	DataTableProps,
 	DataTableSelectionToolbarContext, DataTableSize, DataTableSurface,
 	DataTableToolbarProps, RowActionsDisplayMode, RowClickHandler, RowSelectionHandler,
 	SortingHandler, TableAction,

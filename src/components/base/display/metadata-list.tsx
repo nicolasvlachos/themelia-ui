@@ -11,7 +11,7 @@ import { Button } from "@/components/base/buttons"
 import { Grid, Stack } from "@/components/base/structure"
 import type { ResponsiveValue } from "@/components/base/structure"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/base/tooltip"
-import { DisplayLabel, Text } from "@/components/base/typography"
+import { DisplayLabel, Text, textClassName } from "@/components/base/typography"
 import { EMPTY } from "@/lib/format"
 import { cx } from "@/lib/cx"
 
@@ -22,8 +22,8 @@ import styles from "./metadata.module.css"
 
 export type MetadataColumns = 1 | 2 | 3 | 4
 export type MetadataLayout = "grid" | "rows" | "inline"
-/** `compact` tightens the rhythm for a dense panel. */
-export type MetadataDensity = "default" | "compact"
+/** `sm` tightens the rhythm for a dense panel. */
+export type MetadataSize = "default" | "sm"
 
 /** One fact: a label and a value, and optionally a description, a tooltip and an icon. */
 export interface MetadataListItem {
@@ -61,10 +61,10 @@ interface MetadataListSharedProps {
 	 */
 	columns?: ResponsiveValue<MetadataColumns>
 	/**
-	 * `compact` tightens the rhythm — the gaps and the row inset — for a dense panel. The value
-	 * keeps its size.
+	 * `sm` tightens the rhythm — the gaps and the row inset — for a dense panel. The value
+	 * keeps its type size.
 	 */
-	density?: MetadataDensity
+	size?: MetadataSize
 	/**
 	 * Shown for a fact whose value is absent. A dash says "we looked"; an omitted row does
 	 * not.
@@ -179,7 +179,7 @@ function InfoTrigger({ label, content, copy }: { label: ReactNode; content: Reac
 					<Button
 						type="button"
 						tone="neutral"
-						buttonStyle="ghost"
+						appearance="ghost"
 						iconOnly
 						aria-label={name}
 						className={styles.infoTrigger}
@@ -227,7 +227,7 @@ function ItemLabel({
 export function MetadataList({
 	items,
 	columns = 2,
-	density = "default",
+	size = "default",
 	emptyLabel = EMPTY,
 	title,
 	titleSeparator = false,
@@ -242,8 +242,9 @@ export function MetadataList({
 
 	if (list.length === 0) return null
 
-	const compact = density === "compact"
-	const valueClass = styles.value
+	const compact = size === "sm"
+	/* The value's type: Text's `sm` step with tight leading, in every layout and at every size. */
+	const valueClass = textClassName({ size: "sm", lineHeight: "tight" })
 	const hasTitle = title !== null && title !== undefined
 
 	const head = (
@@ -278,7 +279,7 @@ export function MetadataList({
 				{head}
 				<Stack
 					direction="horizontal"
-					gap={compact ? "sm" : "md"}
+					gap="sm"
 					align="baseline"
 					wrap
 					className={cx("metadata-list--inline", styles.inline)}
@@ -293,8 +294,8 @@ export function MetadataList({
 								</span>
 								{/* A rendered value sits in the value's box, taking its size. */}
 								{item.render
-									? <span className={styles.value}>{item.render(item)}</span>
-									: renderValue(value, absent, fallback, styles.value)}
+									? <span className={valueClass}>{item.render(item)}</span>
+									: renderValue(value, absent, fallback, valueClass)}
 							</div>
 							{!!(between && index < facts.length - 1) && (
 								<Text
@@ -318,12 +319,8 @@ export function MetadataList({
 			<div className={rootClass}>
 				{head}
 				{/* A real `<dl>`, announced as a description list. */}
-				{/*
- * `data-row-density`, not `data-density`: the latter is a scope boundary and would reset
- * a caller's compact scope.
- */}
 				<dl
-					data-row-density={density}
+					data-size={size}
 					className={cx("metadata-list--rows", styles.rows, itemSeparator !== false && styles.rowsDivided)}
 				>
 					{facts.map(({ item, key, absent, emptyLabel: fallback, value }) => (
@@ -357,7 +354,7 @@ export function MetadataList({
 			{head}
 			<Grid
 				columns={resolveColumns(columns)}
-				gap={compact ? "md" : "xl"}
+				gap={compact ? "sm" : "default"}
 				align="start"
 				className="metadata-list--grid"
 			>

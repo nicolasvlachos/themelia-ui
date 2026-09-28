@@ -5,7 +5,7 @@ import { AiToolCall } from "themelia-ui/features/ai-chat"
 
 export default function Tools() {
 	return (
-		<Stack gap="md">
+		<Stack gap="sm">
 			<AiToolCall name="read_file" status="pending" />
 			<AiToolCall
 				name="search_codebase"

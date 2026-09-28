@@ -10,7 +10,7 @@ export default function Phone() {
 	const [phone, setPhone] = useState("6 1234 5678")
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
 			<FormField label="Mobile" helperText="Leaving the field strips a typed prefix and the trunk zero.">
 				<PhoneInput
 					prefix={prefix}

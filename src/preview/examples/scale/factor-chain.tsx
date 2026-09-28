@@ -1,31 +1,31 @@
 import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
-import { Scope } from "themelia-ui/ui-provider"
+import { Scope, UIProvider } from "themelia-ui/ui-provider"
 
 import { ControlRow } from "./_shared"
 
 export default function FactorChain() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<Stack gap="sm">
 				<Text type="secondary" size="xs">default</Text>
 				<ControlRow />
 			</Stack>
 			<Stack gap="sm">
-				<Text type="secondary" size="xs">--density-scale: 0.8 — heights and rows tighten, gaps hold</Text>
-				<Scope vars={{ "--density-scale": 0.8 }}>
+				<Text type="secondary" size="xs">scale: 0.875 — every length and type step</Text>
+				<UIProvider config={{ scale: 0.875 }}>
+					<ControlRow />
+				</UIProvider>
+			</Stack>
+			<Stack gap="sm">
+				<Text type="secondary" size="xs">--control-height: 2.5rem — every control, nothing else</Text>
+				<Scope vars={{ "--control-height": "2.5rem" }}>
 					<ControlRow />
 				</Scope>
 			</Stack>
 			<Stack gap="sm">
-				<Text type="secondary" size="xs">--density-scale: 1.4 — gaps open, control heights hold</Text>
-				<Scope vars={{ "--density-scale": 1.4 }}>
-					<ControlRow />
-				</Scope>
-			</Stack>
-			<Stack gap="sm">
-				<Text type="secondary" size="xs">--button-h: 2.75rem — one measurement</Text>
-				<Scope vars={{ "--button-h": "2.75rem" }}>
+				<Text type="secondary" size="xs">--radius-sm: 0 — every item corner</Text>
+				<Scope vars={{ "--radius-sm": "0" }}>
 					<ControlRow />
 				</Scope>
 			</Stack>

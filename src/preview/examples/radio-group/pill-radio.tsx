@@ -14,7 +14,7 @@ export default function PillRadio() {
 	const [view, setView] = useState<string | null>("grid")
 
 	return (
-		<Stack gap="lg" align="start">
+		<Stack align="start">
 			<PillRadioGroup name="view" options={VIEWS} value={view} onValueChange={setView} allowClear />
 			<PillRadioGroup
 				name="range"

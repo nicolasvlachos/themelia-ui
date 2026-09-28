@@ -1,9 +1,11 @@
 /**
  * ThemeTweaker: live editing of the kit's CSS variables.
  *
- * A theme has three buckets (`shared`, `light`, `dark`); each field's `scope` in the
- * catalog decides where it lands. Values are raw CSS strings, so derived values such as
- * `color-mix(in oklch, var(--primary) 10%, var(--background))` keep following their inputs.
+ * A theme has three buckets (`shared`, `light`, `dark`); each field's `scope` in the catalog
+ * decides where an edit lands. A colour's two buckets become one `light-dark(light, dark)`
+ * declaration, the half left unedited taken from the kit's theme. Values are raw CSS strings,
+ * so derived values such as `color-mix(in oklch, var(--primary) 10%, var(--background))` keep
+ * following their inputs.
  */
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react"
 
@@ -30,9 +32,8 @@ export type ThemeTweakerGroup =
 
 export type ThemeTweakerSection =
 	| "surfaces-content" | "brand-actions" | "charts" | "sidebar" | "semantic-feedback"
-	| "inverse-surfaces" | "font-families" | "type-scale" | "radius" | "elevation"
-	| "global-scales" | "actions-controls" | "rows-surfaces" | "media"
-	| "application-shell" | "content-widths" | "adaptive-layout"
+	| "tints" | "font-families" | "type-scale" | "radius" | "elevation" | "spacing"
+	| "controls" | "motion" | "application-shell"
 
 export type ThemeTweakerFieldScope = "shared" | "mode"
 export type ThemeTweakerFieldKind = "color" | "font" | "length" | "number" | "shadow"
@@ -64,17 +65,13 @@ export interface ThemeTweakerField {
 	control?: ThemeTweakerRangeControl
 }
 
+/**
+ * Where a serialised theme is declared. One selector: a colour carries both modes in its
+ * `light-dark()` value, and the element's `color-scheme` picks the half.
+ */
 export interface ThemeSelectors {
-	/** Receives the mode-independent variables. */
+	/** `:root` for the whole application, or a scope's own selector. */
 	shared: string
-	/** Explicit light: a `.light` or `data-theme="light"` element and the boundaries inside it. */
-	light: string
-	/** Explicit dark: a `.dark` or `data-theme="dark"` element and the boundaries inside it. */
-	dark: string
-	/** Light by OS preference (no explicit theme), emitted under `prefers-color-scheme: light`. */
-	systemLight?: string
-	/** Dark by OS preference (no explicit theme), emitted under `prefers-color-scheme: dark`. */
-	systemDark?: string
 }
 
 export interface SerializeThemeOptions {

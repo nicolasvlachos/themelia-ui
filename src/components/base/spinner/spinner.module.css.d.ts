@@ -2,13 +2,6 @@
 declare const styles: {
 	readonly ring: string
 	readonly root: string
-	readonly sizeLg: string
 	readonly sizeSm: string
-	readonly toneDestructive: string
-	readonly toneInfo: string
-	readonly toneNeutral: string
-	readonly tonePrimary: string
-	readonly toneSuccess: string
-	readonly toneWarning: string
 }
 export default styles

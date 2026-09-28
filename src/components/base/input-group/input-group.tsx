@@ -5,7 +5,7 @@ import { Input } from "@/components/base/text-inputs"
 import { Textarea, type TextareaProps } from "@/components/base/text-inputs"
 import { cvm } from "@/lib/cvm"
 import { cx } from "@/lib/cx"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 
 import styles from "./input-group.module.css"
 
@@ -94,7 +94,7 @@ function InputGroupAddon({
 		<div
 			data-slot="input-group-addon"
 			data-align={align}
-			className={cx("input-group-addon--component", inputGroupAddonVariants({ align, className }))}
+			className={cx("input-group-addon--component", inputGroupAddonVariants({ align }), textClassName({ size: "sm", weight: "medium" }), className)}
 			onClick={(e) => {
 				// Clicking the addon focuses the field, like a label — unless it hit a button.
 				if ((e.target as HTMLElement).closest("button")) {
@@ -109,25 +109,15 @@ function InputGroupAddon({
 
 const inputGroupButtonVariants = cvm(styles.button, {
 	variants: {
-		size: {
-			xs: styles.buttonXs,
-			sm: styles.buttonSm,
-			"icon-xs": styles.buttonIconXs,
-			"icon-sm": styles.buttonIconSm,
-		},
-	},
-	defaultVariants: {
-		size: "xs",
+		iconOnly: { true: styles.buttonIcon, false: undefined },
 	},
 })
 
-export interface InputGroupButtonProps extends Omit<React.ComponentProps<typeof Button>, "size" | "type"> {
-	/**
-	 * The sizes that fit inside a field: two text sizes and their icon-only twins. A
-	 * full-height Button would set the field's height rather than fit in it, which is why
-	 * this is the one place the kit keeps a size prop on a control.
-	 */
-	size?: "xs" | "sm" | "icon-xs" | "icon-sm"
+/**
+ * One size, inset inside the field: a full-height Button would set the field's height rather
+ * than fit in it. `iconOnly` makes it square.
+ */
+export interface InputGroupButtonProps extends Omit<React.ComponentProps<typeof Button>, "type"> {
 	/** The native button type: `button` unless set, so pressing it never submits the form around the field. */
 	type?: "button" | "submit" | "reset"
 }
@@ -137,29 +127,28 @@ function InputGroupButton({
 	className,
 	type = "button",
 	tone = "neutral",
-	buttonStyle = "ghost",
-	size = "xs",
+	appearance = "ghost",
+	iconOnly = false,
 	...props
 }: InputGroupButtonProps) {
-	// Quiet by default, with nested-radius sizes rather than the standard action scale.
+	// Quiet by default, with a nested radius rather than the standard action scale.
 	return (
 		<Button
 			type={type}
-			data-size={size}
 			tone={tone}
-			buttonStyle={buttonStyle}
-			className={cx("input-group-button--component", inputGroupButtonVariants({ size, className }))}
+			appearance={appearance}
+			className={cx("input-group-button--component", inputGroupButtonVariants({ iconOnly, className }))}
 			{...props}
 		/>
 	)
 }
 
 /**
- * Secondary text at the group's own size — a unit, a domain suffix, a counter. It inherits
- * the size, so it cannot drift from the input beside it.
+ * Secondary text at the field's size — a unit, a domain suffix, a counter. Text's `sm`, the
+ * step every field control's value uses, so it cannot drift from the input beside it.
  */
 function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
-	return <Text tag="span" size="inherit" type="secondary" className={cx("input-group-text--component", styles.text, className)} {...props} />
+	return <Text tag="span" size="sm" type="secondary" className={cx("input-group-text--component", styles.text, className)} {...props} />
 }
 
 /**

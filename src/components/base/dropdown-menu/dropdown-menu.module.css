@@ -1,20 +1,10 @@
 /*
- * Dropdown menu — component variables. The popup carries the global `dark` class unless
- * `overlay.darkMenus` is false, so styles read the popover tokens and the class flips them.
- */
-/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-	--menu-sub-shadow: 0 0 0 var(--border-width) var(--foreground-10), var(--shadow-lg);
-}
-
-/*
+ * Dropdown menu. The popup carries the global `dark` class unless `overlay.darkMenus` is
+ * false; the theme makes that class a `color-scheme: dark` island, so the popover colours
+ * below take their dark half there and follow the page otherwise.
+ *
  * Base UI supplies `--available-height`, `--available-width` and `--transform-origin` at
- * runtime; `verify wiring` allowlists them. Enter/exit animation matches Popover.
+ * runtime. Enter/exit animation matches Popover.
  */
 
 .positioner {
@@ -28,7 +18,7 @@
 	max-height: var(--available-height);
 	/* Sized by content, not the trigger: anchor width is a Select behaviour. */
 	width: max-content;
-	min-width: calc(8rem * var(--scale));
+	min-width: 8rem;
 	/*
 	 * Capped at a reading measure so one long label wraps instead of widening every row.
 	 * DropdownMenuContent's `width` and `maxWidth` override per menu.
@@ -36,27 +26,27 @@
 	max-width: min(20rem, var(--available-width));
 	overflow-x: hidden;
 	overflow-y: auto;
-	padding: var(--space-md);
+	/* The container radius less the row radius, so the rows' corners nest in the menu's. */
+	padding: calc(var(--radius) - var(--radius-sm));
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
-	box-shadow: var(--popover-shadow);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
+	/* The popup holds focus only to route the keys; the highlighted row is the indicator. */
 	outline: none;
 	transform-origin: var(--transform-origin);
 	--surface-ground: var(--popover);
 
-	--enter-opacity: 0;
-	--enter-scale: 0.95;
-	--exit-opacity: 0;
-	--exit-scale: 0.95;
+	--_enter-opacity: 0;
+	--_enter-scale: 0.95;
+	--_exit-opacity: 0;
+	--_exit-scale: 0.95;
 
-	animation: var(--animate-exit);
-	animation-duration: var(--duration-instant);
+	animation: var(--keyframes-exit) var(--duration-fast) var(--ease);
 }
 
 .content[data-open] {
-	animation: var(--animate-enter);
-	animation-duration: var(--duration-instant);
+	animation: var(--keyframes-enter) var(--duration-fast) var(--ease);
 }
 
 /* A closing menu must not show a scrollbar while it shrinks. */
@@ -64,23 +54,23 @@
 	overflow: hidden;
 }
 
-.content[data-side="bottom"] { --enter-translate-y: calc(var(--slide-nudge) * -1); }
-.content[data-side="top"] { --enter-translate-y: var(--slide-nudge); }
+.content[data-side="bottom"] { --_enter-y: calc(var(--gap-sm) * -1); }
+.content[data-side="top"] { --_enter-y: var(--gap-sm); }
 .content[data-side="left"],
-.content[data-side="inline-start"] { --enter-translate-x: var(--slide-nudge); }
+.content[data-side="inline-start"] { --_enter-x: var(--gap-sm); }
 .content[data-side="right"],
-.content[data-side="inline-end"] { --enter-translate-x: calc(var(--slide-nudge) * -1); }
+.content[data-side="inline-end"] { --_enter-x: calc(var(--gap-sm) * -1); }
 
 /* A submenu is sized by its own content, not by the parent row it hangs off. */
 .subContent {
 	width: auto;
 	min-width: 6rem;
 	max-height: none;
-	box-shadow: var(--menu-sub-shadow);
 }
 
 /* ── Rows ─────────────────────────────────────────────────────────────────────── */
 
+/* A row is at least an icon with the small padding above and below it. */
 .item {
 	position: relative;
 	display: flex;
@@ -88,13 +78,12 @@
 	white-space: nowrap;
 	cursor: default;
 	align-items: center;
-	gap: var(--space-md);
-	min-height: var(--menu-row-min-h);
-	padding-inline: var(--row-px);
-	padding-block: var(--menu-row-py);
+	gap: var(--gap-sm);
+	min-height: calc(var(--icon-size) + var(--padding-sm) * 2);
+	padding-inline: var(--padding-sm);
+	padding-block: calc(var(--padding-sm) / 2);
 	border-radius: var(--radius-sm);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
+	/* The highlight fill is the row's focus indicator. */
 	outline: none;
 	user-select: none;
 }
@@ -105,11 +94,14 @@
 }
 
 .item svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
-/* Base UI highlights via :focus on the row, covering both keyboard and pointer. */
+/*
+ * Base UI highlights via :focus on the row, covering both keyboard and pointer. A disabled
+ * row stays reachable by the arrow keys, so it shows the cursor too.
+ */
 .item:focus,
 .item[data-popup-open],
 .item[data-open] {
@@ -118,43 +110,40 @@
 }
 
 /* Icons follow the row's foreground, except on a destructive row (below). */
-.item:not([data-variant="destructive"]):focus * {
+.item:not([data-tone]):focus * {
 	color: var(--accent-foreground);
 }
 
 .item[data-disabled] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
 /* Aligns an iconless row with icon rows: row inset + icon column + gap. */
 .item[data-inset] {
-	padding-inline-start: calc(var(--row-px) + var(--size-icon) + var(--space-md));
+	padding-inline-start: calc(var(--padding-sm) + var(--icon-size) + var(--gap-sm));
 }
 
-.item[data-variant="destructive"] {
-	color: var(--destructive-accent);
+/* `variant="destructive"` renders `data-tone`: the tone's ink, and its tint under the cursor. */
+.item[data-tone] {
+	color: var(--tone-ink);
 }
 
-.item[data-variant="destructive"]:focus {
-	background-color: var(--destructive-10);
-	color: var(--destructive-accent);
-}
-
-.item[data-variant="destructive"] > svg {
-	color: var(--destructive-accent);
+.item[data-tone]:focus {
+	background-color: color-mix(in oklab, var(--tone) var(--tint), transparent);
+	color: var(--tone-ink);
 }
 
 /* Checkbox and radio rows reserve trailing space so the indicator never overlaps the label. */
 .choiceItem {
-	padding-inline-end: calc(var(--size-icon) + var(--row-px) * 2);
-	padding-inline-start: var(--row-px);
+	padding-inline-end: calc(var(--icon-size) + var(--padding-sm) * 2);
+	padding-inline-start: var(--padding-sm);
 }
 
 .indicator {
 	pointer-events: none;
 	position: absolute;
-	inset-inline-end: var(--row-px);
+	inset-inline-end: var(--padding-sm);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -164,25 +153,21 @@
 
 /* The caption aligns with the row's edge; `data-inset` aligns it with the label column. */
 .label {
-	padding-inline: var(--row-px);
-	padding-block: var(--space-sm);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-medium);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	color: var(--muted-foreground);
 }
 
 /* The label column: row inset + icon + gap, as for `.item[data-inset]`. */
 .label[data-inset] {
-	padding-inline-start: calc(var(--row-px) + var(--size-icon) + var(--space-md));
+	padding-inline-start: calc(var(--padding-sm) + var(--icon-size) + var(--gap-sm));
 }
 
 /* The rule bleeds into the menu's own padding so it spans the full surface. */
 .separator {
 	height: var(--border-width);
-	margin-inline: calc(var(--space-md) * -1);
-	margin-block: var(--space-xs);
-	background-color: var(--border-60);
+	margin-inline: calc((var(--radius) - var(--radius-sm)) * -1);
+	margin-block: calc(var(--gap-sm) / 2);
+	background-color: var(--border);
 }
 
 /* The label gives way first, so icon, shortcut and indicator keep their space. */
@@ -202,13 +187,11 @@
 	min-width: 0;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .itemDescription {
 	overflow: hidden;
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
 	color: var(--muted-foreground);
 	text-overflow: ellipsis;
 	white-space: normal;
@@ -216,7 +199,7 @@
 
 /* With a description, the icon aligns to the first line, not the block's centre. */
 .itemWithDescription .itemIcon {
-	margin-top: calc((1lh - var(--size-icon)) / 2);
+	margin-top: calc((1lh - var(--icon-size)) / 2);
 	align-self: flex-start;
 }
 
@@ -226,8 +209,8 @@
  */
 .itemIcon {
 	display: inline-flex;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
@@ -237,16 +220,13 @@
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	margin-inline-start: auto;
 }
 
 .shortcut {
 	flex-shrink: 0;
 	margin-inline-start: auto;
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	letter-spacing: var(--tracking-widest);
 	color: var(--muted-foreground);
 }
 

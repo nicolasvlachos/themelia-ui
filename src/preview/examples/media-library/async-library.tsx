@@ -52,15 +52,15 @@ export default function AsyncLibrary() {
 	}, [scenario])
 
 	return (
-		<Stack>
-			<Stack direction="horizontal" wrap>
-				<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => load("assets")}>
+		<Stack gap="sm">
+			<Stack gap="sm" direction="horizontal" wrap>
+				<Button type="button" tone="neutral" appearance="outline" onClick={() => load("assets")}>
 					Load sample assets
 				</Button>
-				<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => load("failure")}>
+				<Button type="button" tone="neutral" appearance="outline" onClick={() => load("failure")}>
 					Simulate failure
 				</Button>
-				<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => load("empty")}>
+				<Button type="button" tone="neutral" appearance="outline" onClick={() => load("empty")}>
 					Show empty library
 				</Button>
 			</Stack>

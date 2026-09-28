@@ -9,7 +9,7 @@ export default function RoundingModeExample() {
 	const [mode, setMode] = useState<RoundingMode>("half-even")
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Rounding" helperText="Applies to the field below.">
 				<RoundingModeSelect
 					value={mode}

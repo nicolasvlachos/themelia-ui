@@ -5,7 +5,7 @@ import { WIZARD } from "./data"
 
 export default function StepperDefault() {
 	return (
-		<Stack gap="2xl">
+		<Stack>
 			<Stepper steps={WIZARD} />
 			<Stepper variant="trail" steps={WIZARD} />
 		</Stack>

@@ -6,6 +6,5 @@ declare const styles: {
 	readonly header: string
 	readonly insetFlush: string
 	readonly positioner: string
-	readonly title: string
 }
 export default styles

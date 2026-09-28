@@ -6,7 +6,7 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function ContentBlockSurfaces() {
 	return (
-		<Grid columns={{ base: 1, sm: 2 }} gap="lg">
+		<Grid columns={{ base: 1, sm: 2 }}>
 			{(["plain", "bordered", "muted", "card"] as const).map((surface) => (
 				<GridCell key={surface}>
 					<ContentBlock

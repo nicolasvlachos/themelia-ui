@@ -1,4 +1,4 @@
-import { OrderStatusCard, type OrderEvent } from "themelia-ui/admin/patterns/commerce"
+import { OrderStatusCard, type OrderEvent } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 const ORDER_EVENTS: OrderEvent[] = [

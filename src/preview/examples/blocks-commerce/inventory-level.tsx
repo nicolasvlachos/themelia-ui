@@ -1,9 +1,9 @@
-import { InventoryLevel } from "themelia-ui/admin/patterns/commerce"
+import { InventoryLevel } from "themelia-ui/blocks/admin/commerce"
 import { AdaptiveGrid, GridCell } from "themelia-ui/base/structure"
 
 export default function InventoryLevelExample() {
 	return (
-		<AdaptiveGrid minColumnWidth="lg" gap="xl">
+		<AdaptiveGrid minColumnWidth="20rem">
 			<GridCell>
 				<InventoryLevel productName="Merino crew neck" variant="Medium / Charcoal" stock={8} reorderLevel={12} maxStock={120} lastRestocked="02 Aug" />
 			</GridCell>

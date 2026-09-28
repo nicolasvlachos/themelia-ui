@@ -10,9 +10,9 @@ import { Input } from "themelia-ui/base/text-inputs"
 
 export default function Dialog() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Open dialog
 				</OverlayTrigger>
 				<DialogContent>
@@ -26,7 +26,7 @@ export default function Dialog() {
 						</FormField>
 					</OverlayBody>
 					<OverlayFooter>
-						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+						<OverlayClose render={<Button tone="neutral" appearance="outline" />}>
 							Cancel
 						</OverlayClose>
 						<OverlayClose render={<Button />}>

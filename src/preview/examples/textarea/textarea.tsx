@@ -5,7 +5,7 @@ import { Textarea } from "themelia-ui/base/text-inputs"
 
 export default function TextareaExample() {
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Notes" helperText="Plain multi-line text.">
 				<Textarea rows={4} placeholder="Anything worth recording." />
 			</FormField>

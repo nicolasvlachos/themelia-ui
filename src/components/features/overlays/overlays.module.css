@@ -6,28 +6,31 @@
 .titleRow {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
-/* Fixed-size, so a long title truncates rather than squeezing the glyph. */
+/*
+ * Fixed-size, so a long title truncates rather than squeezing the glyph. The glyph is the
+ * tone's ink (`data-tone`, read through styles/tone.css); neutral recedes to the supporting
+ * colour, since it marks a question rather than a state.
+ */
 .toneIcon {
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
+	color: var(--tone-ink);
+}
+
+.toneIcon[data-tone="neutral"] {
+	color: var(--muted-foreground);
 }
 
 .toneIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
-
-.toneIcon[data-tone="neutral"] { color: var(--muted-foreground); }
-.toneIcon[data-tone="destructive"] { color: var(--destructive); }
-.toneIcon[data-tone="warning"] { color: var(--warning-accent); }
-.toneIcon[data-tone="info"] { color: var(--info); }
-.toneIcon[data-tone="success"] { color: var(--success); }
 
 .titleText {
 	min-width: 0;
@@ -35,7 +38,7 @@
 
 /* Inside the scroll region, so the notice scrolls with what it warns about. */
 .notice {
-	padding-block-end: var(--space-lg);
+	padding-block-end: var(--gap);
 }
 
 /* Trailing-aligned; stacks (primary on top) below `sm` so labels are not truncated. */
@@ -44,7 +47,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-end;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	width: 100%;
 }
 

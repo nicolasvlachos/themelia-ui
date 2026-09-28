@@ -45,14 +45,14 @@ export default function FormBindingState() {
 	)
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<BoundInput name="email" label="Email" control={control} type="email" />
 			<BoundInput name="workspace" label="Workspace" control={control} />
 			<Stack direction="horizontal" gap="sm" align="center">
 				<Button onClick={() => setSubmitted(JSON.stringify(control.values))}>
 					Submit
 				</Button>
-				<Button buttonStyle="outline" onClick={() => control.reset()}>
+				<Button appearance="outline" onClick={() => control.reset()}>
 					Reset
 				</Button>
 			</Stack>

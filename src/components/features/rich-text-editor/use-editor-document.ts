@@ -1,9 +1,17 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react"
 
+import { richTextClassName } from "@/components/base/typography"
+
 import { normalizeHtml, toEditorContent } from "./editor-dom"
 import type { RichTextEngine } from "./rich-text-engine.types"
 import { createTiptapEngine } from "./tiptap/tiptap-engine"
 import styles from "./rich-text-editor.module.css"
+
+/*
+ * The editable wears RichText's surface and type (its prose leading), so the marks inside it
+ * render as the posted body will, and a body does not reflow once posted.
+ */
+const BODY_CLASSES = [styles.body, ...richTextClassName().split(" ")].filter(Boolean)
 
 /** Own the engine's lifetime; supplied engines remain owned by their caller. */
 export function useEditorDocument({ engine, value, onValueChange, onCaretChange, disabled, autoFocus, label }: {
@@ -70,7 +78,7 @@ export function useEditorDocument({ engine, value, onValueChange, onCaretChange,
 	useEffect(() => {
 		const node = editable.current
 		if (!node) return
-		node.classList.add(styles.body)
+		node.classList.add(...BODY_CLASSES)
 		node.setAttribute("role", "textbox")
 		node.setAttribute("aria-label", label)
 		node.setAttribute("aria-multiline", "true")

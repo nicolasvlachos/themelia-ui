@@ -2,6 +2,7 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 import * as React from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useOverlayConfig, useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
 
@@ -79,10 +80,19 @@ function DropdownMenuContent({
 				side={side}
 				sideOffset={sideOffset}
 			>
-				{/* Dark unless the provider sets `overlay.darkMenus: false`; `dark` is the global theme class, passed as a plain string. */}
+				{/*
+				 * Dark unless the provider sets `overlay.darkMenus: false`: `dark` is the global theme
+				 * class, passed as a plain string, which makes the popup a `color-scheme: dark` island.
+				 */}
 				<MenuPrimitive.Popup
 					data-slot="dropdown-menu-content"
-					className={cx("dropdown-menu-content--component", darkMenus && "dark", styles.content, className)}
+					className={cx(
+						"dropdown-menu-content--component",
+						darkMenus && "dark",
+						styles.content,
+						textClassName({ size: "sm" }),
+						className,
+					)}
 					style={{
 						...(width === "trigger"
 							? { width: "var(--anchor-width)" }
@@ -117,7 +127,7 @@ function DropdownMenuLabel({
 		<MenuPrimitive.GroupLabel
 			data-slot="dropdown-menu-label"
 			data-inset={inset || undefined}
-			className={cx("dropdown-menu-label--component", styles.label, className)}
+			className={cx("dropdown-menu-label--component", styles.label, textClassName({ size: "xs", weight: "medium" }), className)}
 			{...props}
 		/>
 	)
@@ -140,6 +150,9 @@ interface MenuRowSlots {
 	inset?: boolean
 }
 
+/* A key hint's type: the small step in capitals with open tracking. */
+const SHORTCUT_TYPE = textClassName({ size: "xs", caps: true })
+
 /** Lays the slots out. Shared by the plain, link, checkbox, and radio rows. */
 function MenuRowContent({ icon, description, shortcut, trailing, children }: MenuRowSlots & { children?: React.ReactNode }) {
 	/* A `<DropdownMenuShortcut>` child joins the trailing column rather than the label. */
@@ -155,12 +168,14 @@ function MenuRowContent({ icon, description, shortcut, trailing, children }: Men
 			{icon != null && <span className={styles.itemIcon}>{icon}</span>}
 			<span className={styles.itemBody}>
 				<span className={styles.itemLabel}>{label}</span>
-				{description != null && <span className={styles.itemDescription}>{description}</span>}
+				{description != null && (
+					<span className={cx(styles.itemDescription, textClassName({ size: "xs" }))}>{description}</span>
+				)}
 			</span>
 			{(trailingShortcut != null || trailing != null) && (
 				<span className={styles.itemTrailing}>
 					{trailing}
-					{shortcut != null ? <span className={styles.shortcut}>{shortcut}</span> : trailingShortcut}
+					{shortcut != null ? <span className={cx(styles.shortcut, SHORTCUT_TYPE)}>{shortcut}</span> : trailingShortcut}
 				</span>
 			)}
 		</>
@@ -191,6 +206,7 @@ function DropdownMenuItem({
 			data-slot="dropdown-menu-item"
 			data-inset={inset || undefined}
 			data-variant={variant}
+			data-tone={variant === "destructive" ? "destructive" : undefined}
 			className={cx("dropdown-menu-item--component", styles.item, description != null && styles.itemWithDescription, className)}
 			{...props}
 		>
@@ -225,6 +241,7 @@ function DropdownMenuLinkItem({
 			data-slot="dropdown-menu-link-item"
 			data-inset={inset || undefined}
 			data-variant={variant}
+			data-tone={variant === "destructive" ? "destructive" : undefined}
 			className={cx("dropdown-menu-link-item--component", styles.item, description != null && styles.itemWithDescription, className)}
 			{...props}
 		>
@@ -267,8 +284,8 @@ function DropdownMenuSubTrigger({
 function DropdownMenuSubContent({
 	align = "start",
 	/*
-	 * Offsets mirror the popup inset (--space-md, 8px): -8 aligns the submenu's first row with
-	 * its parent row; 8 + 4 sits it 4px clear of the parent surface.
+	 * Offsets mirror the popup inset (the radius difference, 8px): -8 aligns the submenu's
+	 * first row with its parent row; 8 + 4 sits it 4px clear of the parent surface.
 	 */
 	alignOffset = -8,
 	side = "right",
@@ -375,7 +392,11 @@ function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.
  */
 function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
 	return (
-		<span data-slot="dropdown-menu-shortcut" className={cx("dropdown-menu-shortcut--component", styles.shortcut, className)} {...props} />
+		<span
+			data-slot="dropdown-menu-shortcut"
+			className={cx("dropdown-menu-shortcut--component", styles.shortcut, SHORTCUT_TYPE, className)}
+			{...props}
+		/>
 	)
 }
 

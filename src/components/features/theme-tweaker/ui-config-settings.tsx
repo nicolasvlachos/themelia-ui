@@ -13,6 +13,7 @@ import { Input } from "@/components/base/text-inputs"
 import { Select, ToggleField } from "@/components/base/choice-inputs"
 import { SliderField } from "@/components/base/value-inputs"
 import { Stack } from "@/components/base/structure"
+import { textClassName } from "@/components/base/typography"
 import type { UIConfig } from "@/lib/ui-provider"
 import { cx } from "@/lib/cx"
 
@@ -69,7 +70,7 @@ export function UIConfigSettings({
 	}
 
 	return (
-		<Stack gap="lg" className={cx("ui-config-settings--component", styles.providerSettings, className)}>
+		<Stack className={cx("ui-config-settings--component", styles.providerSettings, className)}>
 			<ContentBlock title={strings.title} description={strings.description} />
 
 			<Alert tone="info" role="note">
@@ -128,7 +129,7 @@ export function UIConfigSettings({
 									<Input
 										value={resolved.dates?.format ?? ""}
 										onChange={(event) => updateSlice("dates", "format", event.target.value)}
-										className={styles.monoInput}
+										className={textClassName({ size: "inherit", mono: true })}
 									/>
 								</FormField>
 							</div>

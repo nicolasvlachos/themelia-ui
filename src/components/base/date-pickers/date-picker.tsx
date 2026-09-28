@@ -169,6 +169,7 @@ export function DatePicker({
 							 * aria-required and aria-invalid, which a plain button may not. Its name comes
 							 * from the label, so an unlabelled picker falls back to the placeholder copy.
 							 */
+							// oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- the popover trigger sets aria-expanded and aria-controls when it renders
 							role="combobox"
 							aria-haspopup="dialog"
 							aria-label={aria["aria-label"] ?? (aria["aria-labelledby"] ? undefined : copy.placeholder)}
@@ -220,7 +221,7 @@ export function DatePicker({
 								<Button
 									key={preset.label}
 									tone="neutral"
-									buttonStyle="ghost"
+									appearance="ghost"
 									onClick={() => handleChange(preset.value())}
 								>
 									{preset.label}

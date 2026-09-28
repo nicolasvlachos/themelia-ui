@@ -10,7 +10,7 @@ export default function Currency() {
 	const [currency, setCurrency] = useState("EUR")
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Invoice total">
 				<CurrencyInput
 					value={amount}

@@ -105,7 +105,7 @@ test('a rendered match names the exact import a consumer must write', () => {
 test('no index record points a consumer at an unpublished path', () => {
   for (const record of modules) {
     assert.match(record.publicImport, /^themelia-ui(\/|$)/, record.module)
-    assert.doesNotMatch(record.publicImport, /^themelia-ui\/(base|features|patterns|layout|admin)$/,
+    assert.doesNotMatch(record.publicImport, /^themelia-ui\/(base|features|blocks|layout)$/,
       `${record.module} points at a broad barrel that is not published`)
   }
 })
@@ -173,7 +173,7 @@ test('explanations are optional and do not mutate the shared catalogue', () => {
 })
 
 test('access recipes do not inherit timeline or onboarding examples from their shared page', () => {
-  const record = modules.find((entry) => entry.module === 'admin/patterns/access')
+  const record = modules.find((entry) => entry.module === 'blocks/admin/access')
   assert.ok(record.recipes.length >= 3)
   assert.ok(record.recipes.every((recipe) => !/changelog|milestone|step|onboarding/i.test(recipe.title)))
 })

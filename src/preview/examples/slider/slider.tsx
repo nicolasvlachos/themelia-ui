@@ -9,7 +9,7 @@ export default function SliderExample() {
 	const [volume, setVolume] = useState(40)
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Volume">
 				<SliderField value={volume} onValueChange={setVolume} showValue unit="%" />
 			</FormField>

@@ -6,8 +6,8 @@ import { Input } from "themelia-ui/base/text-inputs"
 
 export default function LabelExample() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
-			<Stack gap="xs">
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+			<Stack gap="sm">
 				<Label htmlFor="demo-email">Email</Label>
 				<Input id="demo-email" placeholder="name@example.com" />
 			</Stack>

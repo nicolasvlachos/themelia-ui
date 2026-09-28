@@ -29,7 +29,7 @@ export default function BulkActions() {
 							<Button
 								type="button"
 								tone="neutral"
-								buttonStyle="ghost"
+								appearance="ghost"
 								onClick={() => {
 									setAssets((current) => current.map((asset) => selected.includes(asset.id) ? { ...asset, public: true } : asset))
 									setNote(`Made ${selectedCount} assets public`)
@@ -41,7 +41,7 @@ export default function BulkActions() {
 							<Button
 								type="button"
 								tone="destructive"
-								buttonStyle="ghost"
+								appearance="ghost"
 								onClick={() => {
 									setAssets((current) => current.filter((asset) => !selected.includes(asset.id)))
 									setNote(`Deleted ${selectedCount}`)

@@ -37,7 +37,7 @@ export function FiltersButton({ availableFilters, labelVisibility = "hidden", cl
 		<TooltipButton
 			type="button"
 			tone="neutral"
-			buttonStyle="outline"
+			appearance="outline"
 			iconOnly
 			tooltip={strings.addFilter}
 			side="bottom"
@@ -49,7 +49,7 @@ export function FiltersButton({ availableFilters, labelVisibility = "hidden", cl
 		<Button
 			type="button"
 			tone="neutral"
-			buttonStyle="outline"
+			appearance="outline"
 			className={className}
 		>
 			<ListFilterIcon />

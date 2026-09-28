@@ -8,13 +8,13 @@ export default function FormSubmitState() {
 	const [state, setState] = useState<SubmitState>("idle")
 
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="center">
+		<Stack direction="horizontal" wrap align="center">
 			{(["idle", "submitting", "succeeded"] as SubmitState[]).map((s) => (
 				<SubmitStateButton key={s} state={s} />
 			))}
 			<Button
 				tone="neutral"
-				buttonStyle="outline"
+				appearance="outline"
 				onClick={() => {
 					setState("submitting")
 					setTimeout(() => setState("succeeded"), 1200)

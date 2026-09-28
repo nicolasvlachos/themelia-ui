@@ -13,6 +13,7 @@ import {
 	OverlayTitle,
 	type OverlayRootProps,
 } from "@/components/base/overlay"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultCommandStrings, type CommandStrings } from "./command.strings"
@@ -22,9 +23,18 @@ export type CommandProps = React.ComponentProps<typeof CommandPrimitive>
 
 const CommandDialogInputContext = React.createContext<React.RefObject<HTMLInputElement | null> | null>(null)
 
-/** The command palette's root: filtering, keyboard navigation and the rows' shared state. */
+/**
+ * The command palette's root: filtering, keyboard navigation and the rows' shared state. It
+ * sets the rows' type; a group heading and a shortcut take the small step.
+ */
 function Command({ className, ...props }: CommandProps) {
-	return <CommandPrimitive data-slot="command" className={cx("command--component", styles.root, className)} {...props} />
+	return (
+		<CommandPrimitive
+			data-slot="command"
+			className={cx("command--component", styles.root, textClassName({ size: "sm" }), className)}
+			{...props}
+		/>
+	)
 }
 
 export type CommandDialogProps = Omit<OverlayRootProps, "children"> & {
@@ -163,6 +173,7 @@ const groupHeading = (node: HTMLElement) => node.querySelector<HTMLElement>("[cm
 function CommandGroup({
 	className,
 	ref,
+	heading,
 	...props
 }: React.ComponentProps<typeof CommandPrimitive.Group> &
 	Pick<React.ComponentProps<typeof CommandPrimitive.Group>, "heading">) {
@@ -171,6 +182,16 @@ function CommandGroup({
 			ref={withListScroll(ref, groupHeading)}
 			data-slot="command-group"
 			className={cx("command-group--component", styles.group, className)}
+			/* cmdk renders the heading's element; the caption's type goes inside it. */
+			heading={
+				heading ? (
+					<Text tag="span" size="xs" weight="medium" type="secondary">
+						{heading}
+					</Text>
+				) : (
+					heading
+				)
+			}
 			{...props}
 		/>
 	)
@@ -217,7 +238,13 @@ function CommandItem({
 
 /** The key hint at the end of a row. */
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
-	return <span data-slot="command-shortcut" className={cx("command-shortcut--component", styles.shortcut, className)} {...props} />
+	return (
+		<span
+			data-slot="command-shortcut"
+			className={cx("command-shortcut--component", styles.shortcut, textClassName({ size: "xs", caps: true }), className)}
+			{...props}
+		/>
+	)
 }
 
 export {

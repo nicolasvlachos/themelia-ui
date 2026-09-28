@@ -11,7 +11,7 @@ export default function Empty() {
 
 	return (
 		<>
-			<Grid gap="lg">
+			<Grid>
 				<ProductVariantsBulkTable
 					variants={[]}
 					onGenerateVariants={() => note("generate the combinations")}

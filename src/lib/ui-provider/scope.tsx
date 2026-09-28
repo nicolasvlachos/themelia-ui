@@ -10,15 +10,12 @@ export interface ScopeProps extends useRender.ComponentProps<"div"> {
 }
 
 /**
- * `<Scope>` — a token boundary without the config machinery. Overriding a factor needs a
- * scope boundary, not just any element: derived tokens are declared at `:root`,
- * `[data-ui-scope]`, `[data-density]`, `[data-theme]`, `.light` and `.dark`, so a plain
- * `div` that sets `--density-scale` sets a variable nothing reads. Scope renders
- * `data-ui-scope`, which puts the element on that list. Use it when the change is purely
- * tokens, and `<UIProvider>` when JavaScript config changes too. `render` picks the element,
- * e.g. `render={<section />}`.
+ * `<Scope>` — a region with its own theme variables, without the config machinery. Every
+ * component inside reads the variables it sets, and the element leaves layout alone. Use it
+ * when the change is purely variables, and `<UIProvider>` when JavaScript config changes
+ * too. `render` picks the element, e.g. `render={<section />}`.
  *
- *   <Scope vars={{ "--density-scale": 0.8 }}>
+ *   <Scope vars={{ "--control-height": "2.5rem" }}>
  *     <Toolbar />
  *   </Scope>
  */

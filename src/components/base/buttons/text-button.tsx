@@ -10,7 +10,7 @@ import { Button, type ButtonProps } from "./button"
 import styles from "./button.module.css"
 import type { ButtonTone } from "./button.types"
 
-export type TextButtonProps = Omit<ButtonProps, "tone" | "buttonStyle" | "iconOnly" | "fullWidth"> & {
+export type TextButtonProps = Omit<ButtonProps, "tone" | "appearance" | "iconOnly" | "fullWidth"> & {
 	/**
 	 * Semantic colour intent. A text button always sets it, so the provider's button defaults
 	 * do not reach it.
@@ -32,7 +32,7 @@ export const TextButton = React.forwardRef<HTMLButtonElement, TextButtonProps>(f
 		<Button
 			ref={ref}
 			tone={tone}
-			buttonStyle="ghost"
+			appearance="ghost"
 			/* Its own slot, so downstream code can tell inline prose from a ghost button in a control row. */
 			data-slot="text-button"
 			className={cx("text-button--component", styles.textButton, className)}

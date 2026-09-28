@@ -67,7 +67,7 @@ export function DataTableActions<TData extends RowData>({
 					icon={MoreHorizontalIcon}
 					strings={{ trigger: menuLabel ?? strings.actions.menuLabel }}
 					align="end"
-					buttonProps={{ tone: "neutral", buttonStyle: "ghost", iconOnly: true }}
+					buttonProps={{ tone: "neutral", appearance: "ghost", iconOnly: true }}
 				/>
 			)}
 		</div>

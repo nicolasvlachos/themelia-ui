@@ -67,7 +67,6 @@ export function SidebarUser({
 
 	const trigger = (
 		<SidebarMenuButton
-			size="lg"
 			className={styles.userTrigger}
 			// Collapsed, the row is an avatar: it needs a name of its own.
 			aria-label={state === "collapsed" ? `${copy.trigger}, ${user.name}` : undefined}

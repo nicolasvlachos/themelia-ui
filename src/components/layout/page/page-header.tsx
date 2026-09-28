@@ -98,7 +98,7 @@ export function PageHeader({
 					/* The button renders as the link and supplies its own children. */
 					render={link({ href: backHref, children: null }) as ReactElement}
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					aria-label={copy.back}
 				>
@@ -107,7 +107,7 @@ export function PageHeader({
 			) : (
 				<Button
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					aria-label={copy.back}
 					onClick={onBack}
@@ -127,7 +127,7 @@ export function PageHeader({
 			return (
 				<Button
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					aria-label={copy.titleIcon}
 					onClick={onTitleIconClick}
@@ -141,7 +141,7 @@ export function PageHeader({
 				<Button
 					render={link({ href: titleIconHref, children: null }) as ReactElement}
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					aria-label={copy.titleIcon}
 				>

@@ -12,24 +12,15 @@ import styles from "./spinner.module.css"
 
 const spinnerVariants = cvm(styles.root, {
 	variants: {
-		size: { sm: styles.sizeSm, md: undefined, lg: styles.sizeLg },
-		tone: {
-			neutral: styles.toneNeutral,
-			primary: styles.tonePrimary,
-			secondary: styles.toneNeutral,
-			info: styles.toneInfo,
-			success: styles.toneSuccess,
-			warning: styles.toneWarning,
-			destructive: styles.toneDestructive,
-		},
+		size: { default: undefined, sm: styles.sizeSm },
 	},
-	defaultVariants: { size: "md", tone: "primary" },
+	defaultVariants: { size: "default" },
 })
 
 export interface SpinnerProps extends Omit<React.ComponentProps<"span">, "children"> {
 	/**
-	 * The ring's size: `sm`, `md` or `lg`. The one place a size prop survives: a spinner has
-	 * no content to scale with.
+	 * The ring's size: `default`, or `sm` inside a dense row. A spinner keeps a size prop: it
+	 * has no content to scale with.
 	 */
 	size?: ComponentScale
 	/**
@@ -44,13 +35,14 @@ export interface SpinnerProps extends Omit<React.ComponentProps<"span">, "childr
 	label?: React.ReactNode
 }
 
-export function Spinner({ size = "md", tone = "primary", label, className, ...props }: SpinnerProps) {
+export function Spinner({ size = "default", tone = "primary", label, className, ...props }: SpinnerProps) {
 	return (
 		<span
 			data-slot="spinner"
+			data-tone={tone}
 			role={label ? "status" : undefined}
 			aria-hidden={label ? undefined : true}
-			className={cx("spinner--component", spinnerVariants({ size, tone }), className)}
+			className={cx("spinner--component", spinnerVariants({ size }), className)}
 			{...props}
 		>
 			<span className={styles.ring} />

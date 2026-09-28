@@ -11,7 +11,6 @@ describe("mergeUIConfig", () => {
 	const parent = mergeUIConfig(DEFAULT_UI_CONFIG, {
 		theme: {
 			colors: { primary: "blue", secondary: "blue" },
-			palette: { "brand-600": "#3b82f6", "danger-600": "#ef4444" },
 			vars: { "--brand-gap": "4px", "--brand-inset": "8px" },
 		},
 		typography: {
@@ -25,12 +24,6 @@ describe("mergeUIConfig", () => {
 		const result = mergeUIConfig(parent, { theme: { colors: { primary: "red" } } })
 
 		expect(result.theme?.colors).toEqual({ primary: "red", secondary: "blue" })
-	})
-
-	it("merges theme.palette", () => {
-		const result = mergeUIConfig(parent, { theme: { palette: { "brand-600": "#000" } } })
-
-		expect(result.theme?.palette).toEqual({ "brand-600": "#000", "danger-600": "#ef4444" })
 	})
 
 	it("merges theme.vars", () => {
@@ -55,10 +48,10 @@ describe("mergeUIConfig", () => {
 	})
 
 	it("keeps a sibling record the config never mentions", () => {
-		/* Naming `colors` must not disturb `palette`. */
+		/* Naming `colors` must not disturb `vars`. */
 		const result = mergeUIConfig(parent, { theme: { colors: { primary: "red" } } })
 
-		expect(result.theme?.palette).toEqual({ "brand-600": "#3b82f6", "danger-600": "#ef4444" })
+		expect(result.theme?.vars).toEqual({ "--brand-gap": "4px", "--brand-inset": "8px" })
 	})
 
 	it("still replaces a scalar inside a slice", () => {
@@ -92,11 +85,11 @@ describe("mergeUIConfig", () => {
 	it("still merges component defaults per family", () => {
 		/* Existing behaviour, pinned. */
 		const base = mergeUIConfig(DEFAULT_UI_CONFIG, {
-			defaults: { button: { tone: "primary", buttonStyle: "solid" } },
+			defaults: { button: { tone: "primary", appearance: "solid" } },
 		})
 		const result = mergeUIConfig(base, { defaults: { button: { tone: "destructive" } } })
 
-		expect(result.defaults?.button).toEqual({ tone: "destructive", buttonStyle: "solid" })
+		expect(result.defaults?.button).toEqual({ tone: "destructive", appearance: "solid" })
 	})
 
 	it("keeps scalars falling through from the parent", () => {

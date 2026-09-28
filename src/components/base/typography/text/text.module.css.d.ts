@@ -3,12 +3,14 @@ declare const styles: {
 	readonly alignCenter: string
 	readonly alignLeft: string
 	readonly alignRight: string
+	readonly caps: string
 	readonly leadingLoose: string
 	readonly leadingNone: string
 	readonly leadingNormal: string
 	readonly leadingRelaxed: string
 	readonly leadingSnug: string
 	readonly leadingTight: string
+	readonly mono: string
 	readonly numeric: string
 	readonly root: string
 	readonly sizeBase: string
@@ -18,7 +20,6 @@ declare const styles: {
 	readonly sizeSm: string
 	readonly sizeXl: string
 	readonly sizeXs: string
-	readonly sizeXxs: string
 	readonly truncate: string
 	readonly typeError: string
 	readonly typeInverse: string

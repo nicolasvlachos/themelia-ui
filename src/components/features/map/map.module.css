@@ -3,17 +3,17 @@
  * elements live in styles/map.css with two-class selectors; this file styles the kit's parts.
  */
 
-/* The map's box: three named heights (or any length via `--map-h`) and two surfaces. */
+/* The map's box: three named heights (or any length via `--_map-h`) and two surfaces. */
 .map {
 	flex: 1;
 	width: 100%;
 	height: 100%;
-	min-height: var(--map-h, 24rem);
+	min-height: var(--_map-h, 24rem);
 }
 
-.heightSm { --map-h: 16rem; }
-.heightMd { --map-h: 24rem; }
-.heightLg { --map-h: 36rem; }
+.heightSm { --_map-h: 16rem; }
+.heightMd { --_map-h: 24rem; }
+.heightLg { --_map-h: 36rem; }
 
 /* `framed` draws an edge against a same-coloured page; `flush` is for a map that is the panel. */
 .surfaceFramed {
@@ -34,17 +34,28 @@
 	width: fit-content;
 	height: fit-content;
 	cursor: default;
+	/* The wrapper-to-item inset, so a --radius-sm control sits concentric in a framed corner. */
+	--_control-inset: calc(var(--radius) - var(--radius-sm));
+	/* Lifted off the tiles, once around a joined group rather than per button. */
+	border-radius: var(--radius-sm);
+	box-shadow: var(--shadow);
 }
 
-/* The wrapper-to-item inset, so a --radius-sm control sits concentric in a framed corner. */
-.topLeft { top: var(--space-md); left: var(--space-md); }
-.topRight { top: var(--space-md); right: var(--space-md); }
-.bottomLeft { bottom: var(--space-md); left: var(--space-md); }
-.bottomRight { bottom: var(--space-md); right: var(--space-md); }
+.topLeft { top: var(--_control-inset); left: var(--_control-inset); }
+.topRight { top: var(--_control-inset); right: var(--_control-inset); }
+.bottomLeft { bottom: var(--_control-inset); left: var(--_control-inset); }
+.bottomRight { bottom: var(--_control-inset); right: var(--_control-inset); }
 
-/* A control sits on tiles, not on a surface, so it needs an edge of its own. */
+/*
+ * A control sits on tiles, not on a surface, so it needs a ground and an edge of its own. An
+ * active tool keeps its solid fill; hover and open still take the button's own fill.
+ */
 .controlButton {
 	border: var(--border-width) solid var(--border);
+}
+
+.controlButton:not([data-appearance="solid"]) {
+	background-color: var(--popover);
 }
 
 /* Above the controls, so a menu is never behind its button. */
@@ -52,15 +63,21 @@
 	z-index: 1000;
 }
 
+/* The field on the map paints the same ground as the buttons beside it, on its frame. */
+.searchControl :global(.input-group--component) {
+	background-color: var(--popover);
+}
+
+/* The same inset on the far side, so a narrow map never pushes the field past its edge. */
 .searchControl {
 	width: 15rem;
-	max-width: calc(100% - var(--space-2xl));
+	max-width: calc(100% - var(--_control-inset) * 2);
 	z-index: 950;
 }
 
 /* Through a variable: CSS Modules scopes `@keyframes` names. */
 .spin {
-	animation: var(--animate-spin);
+	animation: var(--keyframes-spin) 1s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -83,18 +100,20 @@
 	color: var(--foreground);
 }
 
+/* A map symbol, not an interface glyph: a pin reads at a size a toolbar icon would not. */
 .markerIcon > svg {
-	width: var(--size-icon-lg);
-	height: var(--size-icon-lg);
+	width: 1.25rem;
+	height: 1.25rem;
 }
 
+/* Overhangs the marker's corner by a third of its own size. */
 .pulse {
 	position: absolute;
-	top: calc(var(--space-xs) * -1);
-	inset-inline-end: calc(var(--space-xs) * -1);
+	top: calc(var(--icon-size-sm) / -3);
+	inset-inline-end: calc(var(--icon-size-sm) / -3);
 	display: flex;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .pulseRing {
@@ -105,14 +124,14 @@
 	border-radius: var(--radius-pill);
 	background-color: var(--primary);
 	opacity: 0.75;
-	animation: var(--animate-ping);
+	animation: var(--keyframes-ping) 1s var(--ease) infinite;
 }
 
 .pulseDot {
 	position: relative;
 	display: inline-flex;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	border-radius: var(--radius-pill);
 	background-color: var(--primary);
 }
@@ -125,11 +144,11 @@
 
 .drawHandle {
 	display: block;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	border-radius: var(--radius-pill);
-	background-color: var(--primary-accent);
-	transition: transform var(--duration-fast) var(--ease-out);
+	background-color: var(--primary);
+	transition: transform var(--duration-fast) var(--ease);
 }
 
 .drawHandle:hover {
@@ -141,53 +160,46 @@
 	max-width: 18rem;
 }
 
-/* Leaflet's tooltip chrome is stripped in styles/map.css; this is the surface. */
+/*
+ * The tooltip is Leaflet's own element, whose unlayered rules outrank this file, so its
+ * surface is drawn in styles/map.css; this sizes it, and its type comes from Text's classes.
+ */
 .tooltip {
-	position: relative;
 	width: fit-content;
-	padding-block: var(--space-sm);
-	padding-inline: var(--control-px);
-	border: 0;
-	border-radius: var(--radius-sm);
-	background-color: var(--foreground);
-	color: var(--background);
-	font-family: var(--font-sans);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
 	text-wrap: balance;
-	box-shadow: var(--shadow-sm);
 }
 
 .tooltipArrow {
 	position: absolute;
-	z-index: var(--z-raised);
-	width: var(--tooltip-arrow-size);
-	height: var(--tooltip-arrow-size);
+	z-index: 1;
+	width: 0.5rem;
+	height: 0.5rem;
 	/* An arrow tip: a quarter of the item radius, which keeps the point. */
 	border-radius: calc(var(--radius-sm) / 4);
 	background-color: var(--foreground);
 	rotate: 45deg;
 }
 
-.tooltip[data-side="top"] .tooltipArrow {
+/* Keyed on Leaflet's own direction class, the side MapTooltip passes it as `direction`. */
+.tooltip:global(.leaflet-tooltip-top) .tooltipArrow {
 	bottom: 0;
 	left: 50%;
 	translate: -50% 50%;
 }
 
-.tooltip[data-side="bottom"] .tooltipArrow {
+.tooltip:global(.leaflet-tooltip-bottom) .tooltipArrow {
 	top: 0;
 	left: 50%;
 	translate: -50% -50%;
 }
 
-.tooltip[data-side="left"] .tooltipArrow {
+.tooltip:global(.leaflet-tooltip-left) .tooltipArrow {
 	top: 50%;
 	right: 0;
 	translate: 50% -50%;
 }
 
-.tooltip[data-side="right"] .tooltipArrow {
+.tooltip:global(.leaflet-tooltip-right) .tooltipArrow {
 	top: 50%;
 	left: 0;
 	translate: -50% -50%;
@@ -219,14 +231,6 @@
 	background-color: var(--popover);
 }
 
-.autocompleteResults {
-	width: var(--anchor-width);
-	max-width: var(--available-width);
-	padding: 0;
-	gap: 0;
-	overflow: hidden;
-}
-
 .autocompleteList {
 	max-height: 18rem;
 	padding: 0;
@@ -236,7 +240,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 	text-align: start;
 }

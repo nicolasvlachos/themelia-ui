@@ -4,6 +4,7 @@
  */
 import { useRef, type ComponentProps, type ReactNode } from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { resolveActiveHref, type LinkRenderer } from "@/lib/navigation"
 import { useScrollEdges } from "@/lib/scroll-edges"
@@ -75,7 +76,7 @@ export function NavigationTabs({
 				)
 
 				const shared = {
-					className: styles.tab,
+					className: cx(styles.tab, textClassName({ size: "sm", weight: "medium" })),
 					"data-active": active || undefined,
 					// `page`, not `true`: this marks the current PAGE, not a selected tab.
 					"aria-current": active ? ("page" as const) : undefined,

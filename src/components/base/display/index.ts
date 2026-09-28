@@ -16,7 +16,7 @@ export { Kbd, KbdGroup } from "./kbd"
 export {
 	MetadataList,
 	type MetadataListProps, type MetadataListItem, type MetadataInlineListItem,
-	type MetadataColumns, type MetadataLayout, type MetadataDensity,
+	type MetadataColumns, type MetadataLayout, type MetadataSize,
 } from "./metadata-list"
 export {
 	defaultMetadataListStrings, type MetadataListStrings,

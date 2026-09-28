@@ -12,15 +12,17 @@
 
 .item {
 	display: flex;
-	gap: var(--space-lg);
+	gap: var(--gap-sm);
 	min-width: 0;
 
 	/* How far the dot drops to centre on the title's first line. */
-	--timeline-dot-drop: calc((1lh - var(--size-icon-sm)) / 2);
+	--_timeline-dot-drop: calc((1lh - var(--icon-size-sm)) / 2);
+	/* A disc round a glyph: the small icon with a ring of ground. */
+	--_timeline-disc: calc(var(--icon-size-sm) + var(--padding-sm));
 }
 
 .item:has(.dot svg) {
-	--timeline-dot-drop: calc((1lh - var(--size-icon-lg)) / 2);
+	--_timeline-dot-drop: calc((1lh - var(--_timeline-disc)) / 2);
 }
 
 /*
@@ -32,7 +34,7 @@
 	flex-direction: column;
 	align-items: center;
 	align-self: stretch;
-	width: var(--size-icon-lg);
+	width: var(--_timeline-disc);
 	flex-shrink: 0;
 }
 
@@ -42,24 +44,24 @@
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
-	margin-block-start: var(--timeline-dot-drop);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
+	margin-block-start: var(--_timeline-dot-drop);
 	border-radius: var(--radius-pill);
 	background-color: var(--surface-ground, var(--background));
 	color: var(--foreground);
-	box-shadow: 0 0 0 var(--border-width-strong) var(--border);
+	box-shadow: 0 0 0 calc(var(--border-width) * 2) var(--border);
 }
 
 .dot:has(svg) {
-	width: var(--size-icon-lg);
-	height: var(--size-icon-lg);
+	width: var(--_timeline-disc);
+	height: var(--_timeline-disc);
 }
 
 /* A smaller icon step than the disc, so the glyph keeps a ring of ground. */
 .icon {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 /*
@@ -74,19 +76,19 @@
 .line {
 	flex: 1;
 	width: var(--border-width);
-	min-height: var(--space-md);
-	margin-block-end: calc((var(--size-icon-sm) - 1lh) / 2);
+	min-height: var(--gap-sm);
+	margin-block-end: calc((var(--icon-size-sm) - 1lh) / 2);
 	background-color: var(--border);
 }
 
 .content {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 	flex: 1;
 	/* The gap between entries, paid here so the line stays unbroken. */
-	padding-block-end: var(--space-xl);
+	padding-block-end: var(--gap);
 }
 
 /*
@@ -94,7 +96,7 @@
  * dense throughout. Asked on the `ol`, not per entry, so one rail keeps one beat.
  */
 .timeline:not(:has(.content > :not(.head))) .content {
-	padding-block-end: var(--space-md);
+	padding-block-end: var(--gap-sm);
 }
 
 /* The last entry has no connector below it. */
@@ -106,7 +108,7 @@
 	display: flex;
 	align-items: baseline;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -115,32 +117,30 @@
 }
 
 .body {
-	margin-block-start: var(--space-sm);
+	margin-block-start: calc(var(--gap-sm) / 2);
 }
 
 /* ── Status ───────────────────────────────────────────────────────────────────────
  *
- * Dot and line share the entry's tone, so a stretch of the rail reads as one run. A bare
- * dot is solid (at that size the marker is the colour); a glyph dot is tinted.
+ * Dot and line share the entry's tone (`data-tone`, from its status, read through the
+ * shared tone rule), so a stretch of the rail reads as one run. A bare dot is solid (at that
+ * size the marker is the colour); a glyph dot is tinted.
  */
 
-.item[data-status="completed"] .dot,
-.item[data-status="success"] .dot {
-	background-color: var(--success);
-	color: var(--success-foreground);
-	box-shadow: 0 0 0 var(--border-width-strong) color-mix(in oklab, var(--success) 20%, var(--surface-ground, var(--background)));
+.item[data-tone] .dot {
+	background-color: var(--tone);
+	color: var(--tone-foreground);
+	box-shadow: 0 0 0 calc(var(--border-width) * 2) color-mix(in oklab, var(--tone) var(--tint), var(--surface-ground, var(--background)));
 }
 
-.item[data-status="completed"] .dot:has(svg),
-.item[data-status="success"] .dot:has(svg) {
-	background-color: color-mix(in oklab, var(--success) 10%, var(--surface-ground, var(--background)));
-	color: var(--success);
-	box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--success) 30%, var(--surface-ground, var(--background)));
+.item[data-tone] .dot:has(svg) {
+	background-color: color-mix(in oklab, var(--tone) var(--tint), var(--surface-ground, var(--background)));
+	color: var(--tone-ink);
+	box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--tone) var(--tint-strong), var(--surface-ground, var(--background)));
 }
 
-.item[data-status="completed"] .line,
-.item[data-status="success"] .line {
-	background-color: var(--success-30);
+.item[data-tone] .line {
+	background-color: color-mix(in oklab, var(--tone) var(--tint-strong), transparent);
 }
 
 /*
@@ -149,71 +149,18 @@
  */
 .item[data-status="progress"] .dot {
 	background-color: var(--surface-ground, var(--background));
-	color: var(--primary-accent);
-	box-shadow: 0 0 0 var(--border-width-strong) var(--primary);
+	color: var(--tone-ink);
+	box-shadow: 0 0 0 calc(var(--border-width) * 2) var(--tone);
 }
 
-.item[data-status="progress"] .dot:has(svg) {
-	background-color: color-mix(in oklab, var(--primary) 10%, var(--surface-ground, var(--background)));
-	color: var(--primary-accent);
-	box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--primary) 30%, var(--surface-ground, var(--background)));
-}
-
-.item[data-status="progress"] .line {
-	background-color: var(--primary-30);
-}
-
+/* The step the thing is on: a wider halo than the other solid dots. A glyph dot outranks both. */
 .item[data-status="current"] .dot {
-	background-color: var(--primary);
-	color: var(--primary-foreground);
-	box-shadow: 0 0 0 var(--space-xs) color-mix(in oklab, var(--primary) 20%, var(--surface-ground, var(--background)));
-}
-
-.item[data-status="current"] .dot:has(svg) {
-	background-color: color-mix(in oklab, var(--primary) 10%, var(--surface-ground, var(--background)));
-	color: var(--primary-accent);
-	box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--primary) 30%, var(--surface-ground, var(--background)));
-}
-
-.item[data-status="current"] .line {
-	background-color: var(--primary-30);
-}
-
-.item[data-status="warning"] .dot {
-	background-color: var(--warning);
-	color: var(--warning-foreground);
-	box-shadow: 0 0 0 var(--border-width-strong) color-mix(in oklab, var(--warning) 20%, var(--surface-ground, var(--background)));
-}
-
-.item[data-status="warning"] .dot:has(svg) {
-	background-color: color-mix(in oklab, var(--warning) 10%, var(--surface-ground, var(--background)));
-	color: var(--warning-accent);
-	box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--warning) 30%, var(--surface-ground, var(--background)));
-}
-
-.item[data-status="warning"] .line {
-	background-color: var(--warning-30);
-}
-
-.item[data-status="destructive"] .dot {
-	background-color: var(--destructive);
-	color: var(--destructive-foreground);
-	box-shadow: 0 0 0 var(--border-width-strong) color-mix(in oklab, var(--destructive) 20%, var(--surface-ground, var(--background)));
-}
-
-.item[data-status="destructive"] .dot:has(svg) {
-	background-color: color-mix(in oklab, var(--destructive) 10%, var(--surface-ground, var(--background)));
-	color: var(--destructive-accent);
-	box-shadow: 0 0 0 var(--border-width) color-mix(in oklab, var(--destructive) 30%, var(--surface-ground, var(--background)));
-}
-
-.item[data-status="destructive"] .line {
-	background-color: var(--destructive-30);
+	box-shadow: 0 0 0 calc(var(--border-width) * 4) color-mix(in oklab, var(--tone) var(--tint), var(--surface-ground, var(--background)));
 }
 
 /* Pending has not happened, so it is unfilled. */
 .item[data-status="pending"] .dot {
 	background-color: var(--muted);
 	color: var(--muted-foreground);
-	box-shadow: 0 0 0 var(--border-width-strong) var(--border);
+	box-shadow: 0 0 0 calc(var(--border-width) * 2) var(--border);
 }

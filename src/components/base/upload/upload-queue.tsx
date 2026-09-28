@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { Badge } from "@/components/base/badge"
 import { Button } from "@/components/base/buttons"
 import { VisuallyHidden } from "@/components/base/display"
+import { Text } from "@/components/base/typography"
 import { FileSize } from "@/components/primitives"
 import { cx } from "@/lib/cx"
 
@@ -144,15 +145,15 @@ export function UploadProgressList({
 
 							<div className={styles.rowBody}>
 								<span className={styles.rowName}>{item.name}</span>
-								<span className={styles.rowMeta}>
+								<Text tag="span" size="xs" type="secondary">
 									{copy.status[item.status]}
 									{item.size !== undefined && (
 										<>
 											{" · "}
-											<FileSize value={item.size} />
+											<FileSize value={item.size} size="inherit" type="inherit" />
 										</>
 									)}
-								</span>
+								</Text>
 
 								{item.status === "uploading" && (
 									<div
@@ -168,7 +169,7 @@ export function UploadProgressList({
 								)}
 
 								{item.status === "error" && !!item.error && (
-									<span className={styles.rowError}>{item.error}</span>
+									<Text tag="span" size="xs" type="error">{item.error}</Text>
 								)}
 							</div>
 
@@ -178,7 +179,7 @@ export function UploadProgressList({
 										<Button
 											key={action.key}
 											tone="neutral"
-											buttonStyle="ghost"
+											appearance="ghost"
 											iconOnly
 											/* The label already includes the file name. */
 											aria-label={action.label}
@@ -283,7 +284,7 @@ export function UploadTray({
 						))}
 					</div>
 					{!!onClearAll && (
-						<Button tone="neutral" buttonStyle="ghost" onClick={onClearAll}>
+						<Button tone="neutral" appearance="ghost" onClick={onClearAll}>
 							{copy.clearAll}
 						</Button>
 					)}

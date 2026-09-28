@@ -7,7 +7,7 @@ export default function FieldGroupExample() {
 	return (
 		<div style={{ maxWidth: "34rem", width: "100%" }}>
 			<FieldGroup legend="Reporting period" description="Both ends are inclusive.">
-				<Stack direction="horizontal" gap="md">
+				<Stack direction="horizontal" gap="sm">
 					<FormField label="From">
 						<Input type="date" defaultValue="2026-03-01" />
 					</FormField>

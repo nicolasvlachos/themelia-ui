@@ -15,7 +15,7 @@ export default function VariantDetail() {
 		<>
 			{/* Stacked, not two-up: both of these switch layout on their OWN width, and a
 			    half-column here is narrower than either ever gets in a real rail. */}
-			<Stack gap="lg">
+			<Stack>
 				<ProductVariantDetails
 					variant={{
 						id: "m-trail",

@@ -1,6 +1,6 @@
 import { CreditCardIcon, PackageIcon, TrendingUpIcon, UsersIcon } from "lucide-react"
 
-import type { MetricData } from "themelia-ui/patterns/analytics"
+import type { MetricData } from "themelia-ui/blocks/analytics"
 
 export const REVENUE: MetricData = {
 	id: "revenue",

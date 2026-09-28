@@ -111,8 +111,8 @@ callbacks, then open each linked module reference for the complete prop contract
 ### Dashboard
 
 ```tsx fragment — dashboard data and chart series come from the consuming application
-import { MetricGrid } from "themelia-ui/patterns/analytics"
-import "themelia-ui/patterns/analytics.css"
+import { MetricGrid } from "themelia-ui/blocks/analytics"
+import "themelia-ui/blocks/analytics.css"
 import { Page } from "themelia-ui/layout/page"
 import "themelia-ui/layout/page.css"
 
@@ -248,7 +248,7 @@ export function RenameRecord({ initialName, save }: {
         catch { setError("Could not save. Your changes are still here; try again.") }
         finally { setPending(false) }
       }}>
-        <Stack gap="md">
+        <Stack gap="sm">
           <FormField label="Name" error={error}>
             <Input value={name} disabled={pending} onChange={(event) => setName(event.target.value)} />
           </FormField>

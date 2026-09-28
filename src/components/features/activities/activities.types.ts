@@ -27,10 +27,10 @@ export type ActivityTone = SemanticTone
  * `default` an icon and a second line, for a record's own history.
  * `rich`    the whole row: metadata, changes, resources, actions.
  */
-export type ActivityDensity = "compact" | "default" | "rich"
+export type ActivityVariant = "compact" | "default" | "rich"
 
 /** The rhythm between rows, independent of how much each row draws. */
-export type ActivityItemSpacing = "compact" | "default" | "relaxed"
+export type ActivityItemSpacing = "default" | "sm"
 
 export interface ActivityActor {
 	/** Compared against `currentUserId` to render "You" instead of a name. */
@@ -140,7 +140,7 @@ export interface ActivityAction<TData = unknown> extends ContextAction<ActivityI
 
 /** Everything a custom renderer needs about where its row sits. */
 export interface ActivityRenderRowContext<TData = unknown> {
-	density: ActivityDensity
+	variant: ActivityVariant
 	isLast: boolean
 	isFirstInGroup: boolean
 	activity: ActivityItem<TData>
@@ -222,7 +222,7 @@ export interface ActivityFeedProps<TData = unknown>
 	 */
 	activities?: ReadonlyArray<ActivityItem<TData>>
 	/** How much of a row is drawn. `rich` adds metadata, changes, resources, and actions. */
-	density?: ActivityDensity
+	variant?: ActivityVariant
 	/** The rhythm between rows, independent of how much each row draws. */
 	itemSpacing?: ActivityItemSpacing
 	groupByDate?: boolean

@@ -7,7 +7,7 @@ export default function UiScopeRender() {
 			render={<aside />}
 			transparent={false}
 			config={{ density: "compact" }}
-			style={{ padding: "var(--space-lg)", border: "var(--border-width) solid var(--border)", borderRadius: "var(--radius)" }}
+			style={{ padding: "var(--padding)", border: "var(--border-width) solid var(--border)", borderRadius: "var(--radius)" }}
 		>
 			<Text size="xs" type="secondary">
 				This scope is a real &lt;aside&gt;, at compact density.

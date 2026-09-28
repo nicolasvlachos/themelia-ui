@@ -12,7 +12,7 @@ export default function KeyValue() {
 	])
 
 	return (
-		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack gap="sm" style={{ maxWidth: "34rem", width: "100%" }}>
 			<FormField htmlFor={false} label="Request headers" helperText="Try entering the same key twice.">
 				<KeyValueEditor value={headers} onValueChange={setHeaders} sortable />
 			</FormField>

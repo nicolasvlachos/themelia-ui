@@ -14,7 +14,7 @@ export function SeparatorPage() {
 			<Example
 				example="separator/separator-variants"
 				title="Variants and thickness"
-				description="A dashed or dotted rule reads as provisional — a fold, a drop target, a boundary the reader can cross — where a solid one reads as structure. Thickness is a per-rule override of `--separator-thickness`, for a seam between panels rather than between rows."
+				description="A dashed or dotted rule reads as provisional — a fold, a drop target, a boundary the reader can cross — where a solid one reads as structure. The `thickness` prop thickens one rule, for a seam between panels rather than between rows."
 			/>
 
 			<Example id="separator-api" title="API">

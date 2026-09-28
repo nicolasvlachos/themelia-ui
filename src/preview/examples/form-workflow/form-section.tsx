@@ -6,12 +6,12 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function FormSectionExample() {
 	return (
-		<Stack gap="xl" style={{ maxWidth: "34rem" }}>
+		<Stack style={{ maxWidth: "34rem" }}>
 			<FormSection
 				title="Billing"
 				description="Where invoices go. Changing it does not change the shipping address."
 				actions={
-					<Button tone="neutral" buttonStyle="ghost">
+					<Button tone="neutral" appearance="ghost">
 						Edit
 					</Button>
 				}

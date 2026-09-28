@@ -98,7 +98,7 @@ function ScopedPanel() {
             This panel is compact; the page around it is not.
           </Text>
           <Popover>
-            <PopoverTrigger render={<Button buttonStyle="outline">Open in scope</Button>} />
+            <PopoverTrigger render={<Button appearance="outline">Open in scope</Button>} />
             <PopoverContent>
               <Text size="xs">Rendered through a portal, still inside the compact scope.</Text>
             </PopoverContent>
@@ -129,7 +129,7 @@ export function App() {
             actions={<Button onClick={dialog.show}>Invite someone</Button>}
           />
 
-          <Stack gap="lg" className="consumer-override">
+          <Stack className="consumer-override">
             <ScopedPanel />
 
             <section>
@@ -137,7 +137,7 @@ export function App() {
               {invited.length === 0 ? (
                 <Text type="secondary">Nobody yet.</Text>
               ) : (
-                <Stack gap="2xs">
+                <Stack gap="sm">
                   {invited.map((email) => (
                     <Text key={email}>{email}</Text>
                   ))}

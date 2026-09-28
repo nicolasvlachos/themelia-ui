@@ -15,7 +15,7 @@ import { ContentBlock } from "@/components/base/display"
 import { ItemGroup } from "@/components/base/item"
 import { MetadataList, Separator, type MetadataListItem } from "@/components/base/display"
 import { Progress } from "@/components/base/feedback"
-import { DisplayLabel, Text } from "@/components/base/typography"
+import { DisplayLabel, Text, textClassName } from "@/components/base/typography"
 import { Percent, Value } from "@/components/primitives"
 import type { TableAction } from "@/components/features/table"
 import { cx } from "@/lib/cx"
@@ -63,6 +63,9 @@ function rowActionsNode<TItem extends object>(
 	return <ProductRowActions item={item} actions={actions} menuLabel={menuLabel} />
 }
 
+/** Tabular figures through Text's classes, for a `Value`, which takes no `numeric`. */
+const TABULAR = textClassName({ size: "inherit", numeric: true })
+
 /** Metrics as `MetadataList` facts, with the tone on the value. */
 function metricFacts(
 	metrics: readonly (ProductMetricSummary | ProductStructureMetric)[],
@@ -72,10 +75,12 @@ function metricFacts(
 		label: metric.label,
 		description: metric.description,
 		render: () => (
+			/* `inherit`: the tone's ink comes from the class, through the shared tone rule. */
 			<Value
 				weight="semibold"
+				type="inherit"
 				data-tone={metric.tone ?? "neutral"}
-				className={styles.metricValue}
+				className={cx(styles.metricValue, TABULAR)}
 			>
 				{metric.value}
 			</Value>
@@ -95,7 +100,7 @@ function headerEnd(
 		<>
 			{extra}
 			{!!onCreate && (
-				<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onCreate}>
+				<Button type="button" tone="neutral" appearance="ghost" onClick={onCreate}>
 					<PlusIcon />
 					{createLabel}
 				</Button>
@@ -308,7 +313,7 @@ export function ProductDetailsCard({
 				<>
 					{end}
 					{!!onEditDetails && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onEditDetails}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onEditDetails}>
 							<PencilIcon />
 							{copy.editLabel}
 						</Button>
@@ -347,12 +352,12 @@ export function ProductContractOverview({
 			headerEnd={
 				<>
 					{!!onOpenContract && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onOpenContract}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onOpenContract}>
 							{copy.openLabel}
 						</Button>
 					)}
 					{!!onEditContract && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onEditContract}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onEditContract}>
 							<PencilIcon />
 							{copy.editLabel}
 						</Button>
@@ -375,7 +380,7 @@ export function ProductContractOverview({
 				<div className={styles.sectionHead}>
 					<DisplayLabel>{copy.rulesTitle}</DisplayLabel>
 					{!!onCreateRule && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onCreateRule}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onCreateRule}>
 							<PlusIcon />
 							{copy.createRuleLabel}
 						</Button>
@@ -485,7 +490,7 @@ export function ProductOptionsSummary({
 				onCreateOption,
 				actions,
 				onManageOptions ? (
-					<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onManageOptions}>
+					<Button type="button" tone="neutral" appearance="ghost" onClick={onManageOptions}>
 						{copy.manageLabel}
 					</Button>
 				) : undefined,
@@ -581,7 +586,7 @@ export function ProductQuotePreviewCard({
 			headerEnd={
 				<>
 					{!!onRecalculate && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onRecalculate}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onRecalculate}>
 							<RotateCcwIcon />
 							{copy.recalculateLabel}
 						</Button>
@@ -607,7 +612,7 @@ export function ProductQuotePreviewCard({
 							description: line.description,
 							/* Through `render`: MetadataList has no tone, and the tone belongs on the value (contrast). */
 							render: () => (
-								<Value data-tone={line.tone ?? "neutral"} className={styles.quoteValue}>
+								<Value type="inherit" data-tone={line.tone ?? "neutral"} className={cx(styles.quoteValue, TABULAR)}>
 									{line.value}
 								</Value>
 							),
@@ -620,7 +625,7 @@ export function ProductQuotePreviewCard({
 							<Separator />
 							<div className={styles.quoteTotalRow}>
 								<Text tag="span" weight="semibold">{line.label}</Text>
-								<Value weight="semibold" className={styles.numeric}>{line.value}</Value>
+								<Value weight="semibold" className={TABULAR}>{line.value}</Value>
 							</div>
 							{!!line.description && (
 								<Text size="xs" type="secondary">{line.description}</Text>

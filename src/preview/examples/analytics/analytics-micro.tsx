@@ -1,4 +1,4 @@
-import { MetricMicroGrid } from "themelia-ui/patterns/analytics"
+import { MetricMicroGrid } from "themelia-ui/blocks/analytics"
 
 const MICRO = [
 	{ label: "Sessions", value: "18.2k", data: [4, 9, 6, 12, 10, 17] },

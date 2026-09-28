@@ -1,10 +1,10 @@
-import { InvoiceMini } from "themelia-ui/admin/patterns/commerce"
+import { InvoiceMini } from "themelia-ui/blocks/admin/commerce"
 import { ContentBlock } from "themelia-ui/base/display"
 import { AdaptiveGrid, GridCell } from "themelia-ui/base/structure"
 
 export default function InvoiceMiniExample() {
 	return (
-		<AdaptiveGrid minColumnWidth="md" gap="xl">
+		<AdaptiveGrid>
 			<GridCell>
 				<ContentBlock surface="bordered"><InvoiceMini invoiceNumber="INV-0114" status="overdue" customerName="Adventure Park Bansko" lineCount={3} dueAt="28 Aug" total="3,120.00 EUR" /></ContentBlock>
 			</GridCell>

@@ -6,7 +6,7 @@
  * than restate; `verify docs-freshness` fails stale output.
  */
 import { apiExportsFor } from './lib/api-exports.mjs'
-import { typesFor } from './lib/export-targets.mjs'
+import { expandExports, typesFor } from './lib/export-targets.mjs'
 import { recipeFamilies, validateGuidance } from './lib/component-discovery.mjs'
 import { mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs'
 import ts from 'typescript'
@@ -21,7 +21,7 @@ const selection = JSON.parse(readFileSync('architecture/selection.json', 'utf8')
 
 const manifest = readManifest()
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
-const builtEntries = Object.entries(pkg.exports).map(([key, target]) => [key, typesFor(target)]).filter(([, file]) => file)
+const builtEntries = Object.entries(expandExports(pkg.exports)).map(([key, target]) => [key, typesFor(target)]).filter(([, file]) => file)
 const builtAPI = apiExportsFor(builtEntries.map(([, file]) => file), { documentation: true })
 const documentedAPI = Object.fromEntries(builtEntries.map(([key, file]) => [key, Object.fromEntries(builtAPI(file.replace(/^\.\//, '')))]))
 const guidance = JSON.parse(readFileSync('architecture/component-guidance.json', 'utf8')).components

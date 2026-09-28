@@ -10,6 +10,7 @@ import {
 
 import { Badge } from "@/components/base/badge"
 import { Button } from "@/components/base/buttons"
+import { Text } from "@/components/base/typography"
 import { useObjectUrls } from "@/hooks"
 import { cx } from "@/lib/cx"
 
@@ -184,7 +185,7 @@ export function MediaGallery({
 
 					<Button
 						tone="neutral"
-						buttonStyle="solid"
+						appearance="solid"
 						iconOnly
 						className={styles.tileRemove}
 						aria-label={copy.remove(file.name)}
@@ -218,7 +219,9 @@ export function MediaGallery({
 						}}
 					/>
 					<ImagePlusIcon aria-hidden />
-					<span>{copy.add}</span>
+					<Text tag="span" size="xs" type="inherit">
+						{copy.add}
+					</Text>
 				</label>
 			)}
 		</div>

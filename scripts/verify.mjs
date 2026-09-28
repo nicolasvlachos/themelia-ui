@@ -3,7 +3,7 @@
  * unit tests and a single library build; the checks that read dist/ follow the build.
  *
  *   node scripts/verify.mjs                  the static and dist checks (`npm run verify`)
- *   node scripts/verify.mjs factors bem      only those checks (no build unless one needs dist/)
+ *   node scripts/verify.mjs wiring bem       only those checks (no build unless one needs dist/)
  *   node scripts/verify.mjs --gates          the checkers' own self-tests
  *   node scripts/verify.mjs --consumer       the packed-package checks
  *   node scripts/verify.mjs --all            all of the above and the reference apps, one build
@@ -24,7 +24,7 @@ const node = (file) => `node scripts/${file}.mjs`
 const CHECKS = [
   /* Vitest allows `.only` unless CI is set; a focused test must fail the run on any machine. */
   { id: 'unit', command: 'npx vitest run --allowOnly=false' },
-  { id: 'lint', command: 'npx oxlint --deny-warnings' },
+  { id: 'lint', command: 'npx oxlint --deny-warnings && npx stylelint "src/**/*.css"' },
   /* Every CSS contract in one pass; CSS_GROUPS runs one group by name. */
   { id: 'css', command: node('verify-css') },
   { id: 'strings', command: node('verify-strings') },

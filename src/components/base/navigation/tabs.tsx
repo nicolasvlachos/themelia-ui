@@ -7,6 +7,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 import { Button } from "@/components/base/buttons"
 import { ScrollArea } from "@/components/base/display"
+import { textClassName } from "@/components/base/typography"
 import { cvm } from "@/lib/cvm"
 import { cx } from "@/lib/cx"
 import { mediaQueryMatches, observeResize } from "@/lib/observers"
@@ -215,7 +216,7 @@ export function TabList({ variant = "underline", label, edgeFade = false, string
 
 	return (
 		<div ref={railRef} className={cx("tabs--rail", styles.tabRail)}>
-			{edges.overflow && <Button iconOnly tone="neutral" buttonStyle="ghost" className={styles.tabScroll} aria-label={copy.previous} aria-controls={listId} disabled={!edges.previous} onClick={() => scroll(-1)}><ChevronLeftIcon /></Button>}
+			{edges.overflow && <Button iconOnly tone="neutral" appearance="ghost" className={styles.tabScroll} aria-label={copy.previous} aria-controls={listId} disabled={!edges.previous} onClick={() => scroll(-1)}><ChevronLeftIcon /></Button>}
 			<ScrollArea
 				ref={listRef}
 				id={listId}
@@ -232,7 +233,7 @@ export function TabList({ variant = "underline", label, edgeFade = false, string
 			>
 				{children}
 			</ScrollArea>
-			{edges.overflow && <Button iconOnly tone="neutral" buttonStyle="ghost" className={styles.tabScroll} aria-label={copy.next} aria-controls={listId} disabled={!edges.next} onClick={() => scroll(1)}><ChevronRightIcon /></Button>}
+			{edges.overflow && <Button iconOnly tone="neutral" appearance="ghost" className={styles.tabScroll} aria-label={copy.next} aria-controls={listId} disabled={!edges.next} onClick={() => scroll(1)}><ChevronRightIcon /></Button>}
 		</div>
 	)
 }
@@ -260,7 +261,7 @@ export function Tab({ value, className, onClick, ...props }: TabProps) {
 			// Only the selected tab is tabbable; the rest are reached with arrows.
 			tabIndex={selected ? 0 : -1}
 			data-slot="tab"
-			className={cx("tabs--tab", styles.tab, className)}
+			className={cx("tabs--tab", styles.tab, textClassName({ size: "sm", weight: "medium" }), className)}
 			onClick={(event) => {
 				onClick?.(event)
 				if (!event.defaultPrevented) setValue(value)

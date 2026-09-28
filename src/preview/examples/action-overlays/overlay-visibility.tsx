@@ -11,11 +11,11 @@ export default function OverlayVisibility() {
 
 	return (
 		<>
-			<Stack direction="horizontal" gap="lg" wrap>
-				<Button tone="neutral" buttonStyle="outline" onClick={overlays.edit.show}>
+			<Stack direction="horizontal" wrap>
+				<Button tone="neutral" appearance="outline" onClick={overlays.edit.show}>
 					Open edit
 				</Button>
-				<Button tone="neutral" buttonStyle="outline" onClick={overlays.remove.show}>
+				<Button tone="neutral" appearance="outline" onClick={overlays.remove.show}>
 					Open remove
 				</Button>
 			</Stack>

@@ -284,7 +284,7 @@ export function ActivityLog<
 					<ActivityMarker
 						icon={<MessageCircleIcon />}
 						tone="neutral"
-						density={context.density}
+						variant={context.variant}
 						last={context.isLast}
 					/>
 					<div className={styles.commentBody}>
@@ -326,7 +326,7 @@ export function ActivityLog<
 			error={error}
 			onRetry={onRetry}
 			// Always rich: only rich draws changes and metadata.
-			density="rich"
+			variant="rich"
 			itemSpacing={itemSpacing}
 			groupByDate
 			strings={activityStrings}

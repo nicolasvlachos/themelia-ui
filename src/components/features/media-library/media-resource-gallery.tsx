@@ -39,7 +39,7 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 	onAdd,
 	maxItems,
 	layout = "grid",
-	density = "comfortable",
+	size = "default",
 	readOnly = false,
 	empty,
 	action,
@@ -77,7 +77,7 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 						<div className={styles.galleryActions}>
 							{action}
 							{canAdd && (
-								<Button type="button" tone="neutral" buttonStyle="outline" onClick={onAdd}>
+								<Button type="button" tone="neutral" appearance="outline" onClick={onAdd}>
 									<PlusIcon />
 									{copy.gallery.add}
 								</Button>
@@ -96,11 +96,10 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 					<Empty
 						title={copy.gallery.emptyTitle}
 						description={copy.gallery.emptyDescription}
-						padding="md"
 						border
 						action={
 							canAdd ? (
-								<Button type="button" tone="neutral" buttonStyle="outline" onClick={onAdd}>
+								<Button type="button" tone="neutral" appearance="outline" onClick={onAdd}>
 									{copy.gallery.add}
 								</Button>
 							) : undefined
@@ -108,7 +107,7 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 					/>
 				))
 			) : (
-				<ul data-layout={layout} data-media-density={density} className={styles.galleryList}>
+				<ul data-layout={layout} data-size={size} className={styles.galleryList}>
 					{items.map((item, index) => {
 						const id = accessors.getId(item)
 						const primary = id === primaryId
@@ -133,7 +132,7 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 								<MediaPreview item={item} accessors={accessors} className={styles.galleryPreview} />
 
 								{primary && (
-									<Badge tone="primary" className={styles.galleryBadge}>
+									<Badge tone="primary" appearance="solid" className={styles.galleryBadge}>
 										{copy.gallery.primary}
 									</Badge>
 								)}
@@ -145,7 +144,7 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 												<Button
 													type="button"
 													tone="neutral"
-													buttonStyle="ghost"
+													appearance="ghost"
 													iconOnly
 													aria-label={copy.gallery.moveEarlier}
 													disabled={!context.canMovePrevious}
@@ -156,7 +155,7 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 												<Button
 													type="button"
 													tone="neutral"
-													buttonStyle="ghost"
+													appearance="ghost"
 													iconOnly
 													aria-label={copy.gallery.moveLater}
 													disabled={!context.canMoveNext}
@@ -171,7 +170,7 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 											<Button
 												type="button"
 												tone="neutral"
-												buttonStyle="ghost"
+												appearance="ghost"
 												iconOnly
 												aria-label={copy.gallery.makePrimary}
 												onClick={context.setPrimary}
@@ -184,7 +183,7 @@ export function MediaResourceGallery<TItem = MediaLibraryItem>({
 											<Button
 												type="button"
 												tone="neutral"
-												buttonStyle="ghost"
+												appearance="ghost"
 												iconOnly
 												aria-label={`${copy.gallery.remove}: ${accessors.getName(item)}`}
 												onClick={context.remove}

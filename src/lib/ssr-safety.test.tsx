@@ -52,7 +52,7 @@ const cases: Array<[string, () => React.ReactElement]> = [
 	["QRCode", () => <QRCode value="https://x.example" />],
 	["SectionNav", () => <SectionNav items={[{ id: "a", label: "A" }]} />],
 	["Skeleton", () => <Skeleton />],
-	["Stack", () => <Stack>x</Stack>],
+	["Stack", () => <Stack gap="sm">x</Stack>],
 	["Table", () => (
 		<Table><TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody></Table>
 	)],

@@ -16,7 +16,7 @@ export default function AuthComposed() {
 				className={styles.composed}
 				panelMobile="stacked"
 				form={
-					<Stack gap="xl" className={styles.formColumn}>
+					<Stack className={styles.formColumn}>
 						<AuthCard
 							level={3}
 							title="Join your team"
@@ -30,7 +30,7 @@ export default function AuthComposed() {
 					</Stack>
 				}
 				panel={
-					<Stack gap="xl">
+					<Stack>
 						<DisplayLabel>Northwind workspace</DisplayLabel>
 						<Heading level={3} size="xl">Your next chapter starts together.</Heading>
 						<Text type="secondary" lineHeight="relaxed">You have been invited to collaborate with the operations team. Your projects and conversations will be waiting.</Text>

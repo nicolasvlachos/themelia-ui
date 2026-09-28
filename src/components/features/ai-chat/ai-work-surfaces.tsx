@@ -14,8 +14,9 @@ import {
 import { Badge, type BadgeTone } from "@/components/base/badge"
 import { Button } from "@/components/base/buttons"
 import { IconBadge } from "@/components/base/display"
-import { DisplayLabel, Text } from "@/components/base/typography"
+import { DisplayLabel, Text, textClassName } from "@/components/base/typography"
 import { Duration, MonoValue, SecondaryValue } from "@/components/primitives"
+import type { SemanticTone } from "@/lib/component-vocabulary"
 import { cx } from "@/lib/cx"
 
 import {
@@ -58,14 +59,20 @@ function ToolDetail({
 	children,
 }: {
 	label: string
-	tone?: "destructive"
+	tone?: Extract<SemanticTone, "destructive">
 	children: ReactNode
 }) {
 	return (
 		<div className={styles.toolDetail}>
 			<DisplayLabel>{label}</DisplayLabel>
 			{/* Focusable, so keyboard readers can scroll it. */}
-			<pre tabIndex={0} data-tone={tone} className={styles.pre}>{children}</pre>
+			<pre
+				tabIndex={0}
+				data-tone={tone}
+				className={cx(styles.pre, textClassName({ size: "xs", lineHeight: "relaxed", mono: true }))}
+			>
+				{children}
+			</pre>
 		</div>
 	)
 }
@@ -112,7 +119,7 @@ export function AiToolCall({
 	const header = (
 		<>
 			<ToolIcon aria-hidden className={styles.disclosureIcon} />
-			<MonoValue className={styles.toolName}>{name}</MonoValue>
+			<MonoValue truncate className={styles.toolName}>{name}</MonoValue>
 			<span className={styles.toolMeta}>
 				<Badge tone={TOOL_STATUS[status].tone}>
 					<StatusIcon aria-hidden data-spin={status === "running" || undefined} />
@@ -172,13 +179,13 @@ const TASK_STATUS = {
 function TaskRow({
 	item,
 	depth,
-	density,
+	defaultExpanded,
 	indent,
 	copy,
 }: {
 	item: AiTaskItem
 	depth: number
-	density: "compact" | "expanded"
+	defaultExpanded: boolean
 	indent: number
 	copy: AiTaskStrings
 }) {
@@ -186,14 +193,14 @@ function TaskRow({
 	const Icon = item.icon ?? TASK_STATUS[status].icon
 	const hasChildren = !!item.children?.length
 
-	/* The top level opens even in compact density. */
-	const [open, setOpen] = useState(density === "expanded" || depth === 0)
+	/* The top level always starts open. */
+	const [open, setOpen] = useState(defaultExpanded || depth === 0)
 
 	return (
 		<>
 			<div
 				data-nested={depth > 0 || undefined}
-				style={{ "--ai-task-depth": depth * indent } as React.CSSProperties}
+				style={{ "--_ai-task-depth": depth * indent } as React.CSSProperties}
 				className={styles.taskRow}
 			>
 				<div className={styles.taskTitleRow}>
@@ -201,7 +208,7 @@ function TaskRow({
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							iconOnly
 							aria-expanded={open}
 							aria-label={open ? copy.collapseSubtasks : copy.expandSubtasks}
@@ -225,6 +232,7 @@ function TaskRow({
 					<Text
 						weight={status === "running" ? "semibold" : "medium"}
 						type={status === "queued" || status === "cancelled" ? "secondary" : "main"}
+						truncate
 						data-status={status}
 						className={styles.taskTitle}
 					>
@@ -232,9 +240,9 @@ function TaskRow({
 					</Text>
 					<Badge tone={TASK_STATUS[status].tone}>{copy.statusLabels[status]}</Badge>
 					{!!item.rightSlot && (
-						<SecondaryValue size="xs" className={styles.numeric}>
+						<Text tag="span" size="xs" type="secondary" numeric>
 							{item.rightSlot}
-						</SecondaryValue>
+						</Text>
 					)}
 				</div>
 				{!!item.body && <div className={styles.taskExtra}>{item.body}</div>}
@@ -247,7 +255,7 @@ function TaskRow({
 						key={child.id}
 						item={child}
 						depth={depth + 1}
-						density={density}
+						defaultExpanded={defaultExpanded}
 						indent={indent}
 						copy={copy}
 					/>
@@ -262,7 +270,7 @@ function TaskRow({
  */
 export function AiTask({
 	task,
-	density = "compact",
+	defaultExpanded = false,
 	indent = 1.125,
 	className,
 	strings,
@@ -271,7 +279,7 @@ export function AiTask({
 
 	return (
 		<div className={cx("ai-task--component", styles.task, className)}>
-			<TaskRow item={task} depth={0} density={density} indent={indent} copy={copy} />
+			<TaskRow item={task} depth={0} defaultExpanded={defaultExpanded} indent={indent} copy={copy} />
 		</div>
 	)
 }
@@ -390,7 +398,7 @@ export function AiConfirmation({
 					<>
 						<Text size="xs" type="secondary">{copy.pending}</Text>
 						<div className={styles.confirmationActions}>
-							<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onReject}>
+							<Button type="button" tone="neutral" appearance="ghost" onClick={onReject}>
 								<XIcon />
 								{rejectLabel ?? copy.reject}
 							</Button>

@@ -4,7 +4,6 @@ declare const styles: {
 	readonly autocompleteAnchor: string
 	readonly autocompleteField: string
 	readonly autocompleteList: string
-	readonly autocompleteResults: string
 	readonly autocompleteRow: string
 	readonly autocompleteTrigger: string
 	readonly bottomLeft: string

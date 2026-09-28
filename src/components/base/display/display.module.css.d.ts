@@ -15,7 +15,6 @@ declare const styles: {
 	readonly contentBlockTitle: string
 	readonly dateBlock: string
 	readonly dateBlockBoxed: string
-	readonly dateBlockDay: string
 	readonly dateBlockInline: string
 	readonly dateBlockMonth: string
 	readonly dateBlockTime: string
@@ -35,12 +34,6 @@ declare const styles: {
 	readonly scrollArea: string
 	readonly separator: string
 	readonly separatorLabelled: string
-	readonly toneDestructive: string
-	readonly toneInfo: string
-	readonly toneNeutral: string
-	readonly tonePrimary: string
-	readonly toneSuccess: string
-	readonly toneWarning: string
 	readonly visuallyHidden: string
 }
 export default styles

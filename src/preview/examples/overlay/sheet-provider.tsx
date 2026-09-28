@@ -9,9 +9,9 @@ import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function SheetProvider() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="center">
+		<Stack direction="horizontal" wrap align="center">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Kit default
 				</OverlayTrigger>
 				<SheetContent>
@@ -27,7 +27,7 @@ export default function SheetProvider() {
 
 			<UIProvider config={{ defaults: { sheet: { size: "26rem", inset: true } } }}>
 				<Overlay>
-					<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 						Under a provider
 					</OverlayTrigger>
 					<SheetContent>

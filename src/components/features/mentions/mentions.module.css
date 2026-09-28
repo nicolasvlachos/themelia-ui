@@ -9,28 +9,30 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0;
-	width: calc(22rem * var(--scale));
-	max-width: min(100%, calc(100vw - var(--space-xl)));
+	width: 22rem;
+	max-width: min(100%, calc(100vw - var(--padding)));
 	overflow: hidden;
 }
 
 /*
  * The inline panel is absolute against a wrapper the consumer marks relative (not fixed,
  * not portaled), so it scrolls with its editor. The picker is placed by its popover.
+ * `--_mention-available-height` is measured by the component: the room between the editor
+ * and the viewport edge on the side the panel opens.
  */
 .panelInline {
-	--mention-available-height: 24rem;
+	--_mention-available-height: 24rem;
 	position: absolute;
 	inset-inline-start: 0;
 	top: 100%;
 	/* `top` is flipped by [data-placement="top"]; the z-index is the popover level (it is a menu). */
 	z-index: var(--z-popover);
-	margin-top: var(--space-xs);
-	max-height: min(var(--mention-available-height, 24rem), 24rem);
+	margin-top: calc(var(--gap-sm) / 2);
+	max-height: min(var(--_mention-available-height), 24rem);
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
-	box-shadow: var(--popover-shadow);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
 }
 
 /*
@@ -41,25 +43,17 @@
 	top: auto;
 	bottom: 100%;
 	margin-top: 0;
-	margin-bottom: var(--space-xs);
+	margin-bottom: calc(var(--gap-sm) / 2);
 }
 
+/* Inset by the radius difference, so the tabs sit concentric in the panel's corner. */
 .panelHeader {
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
-	padding: var(--surface-py-xs) var(--surface-px-xs);
-	border-bottom: var(--border-width) solid var(--border-60);
-}
-
-/* The needle, echoed back so the writer can see what the panel thinks they typed. */
-.panelQuery {
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-family: var(--font-mono);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
+	border-bottom: var(--border-width) solid var(--border);
 }
 
 /* ── Kind tabs ─────────────────────────────────────────────────────────────────── */
@@ -67,7 +61,7 @@
 .tabs {
 	display: flex;
 	flex-wrap: nowrap;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 	overflow-x: auto;
 }
@@ -77,14 +71,11 @@
 	align-items: center;
 	justify-content: center;
 	flex: 1 0 auto;
-	gap: var(--space-xs);
-	min-height: var(--control-h-sm);
-	padding: var(--space-xs) var(--space-sm);
-	border: 0;
+	gap: calc(var(--gap-sm) / 2);
+	min-height: var(--control-height-sm);
+	padding-inline: var(--padding-sm);
 	border-radius: var(--radius-sm);
-	background: none;
 	color: var(--muted-foreground);
-	font: inherit;
 	cursor: pointer;
 }
 
@@ -93,9 +84,9 @@
 	color: var(--foreground);
 }
 
+/* The tab strip scrolls, and a scroller clips: the ring is drawn inside the tab. */
 .tab:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /* ── Rows ──────────────────────────────────────────────────────────────────────── */
@@ -103,10 +94,10 @@
 .list {
 	display: flex;
 	flex-direction: column;
-	/* A hair between rows so adjacent hover fills never merge. */
-	gap: var(--space-2xs);
-	max-height: calc(18rem * var(--scale));
-	padding: var(--surface-py-xs) var(--surface-px-xs);
+	/* A hairline between rows so adjacent fills never merge. */
+	gap: var(--border-width);
+	max-height: 18rem;
+	padding: var(--padding-sm);
 	min-height: 0;
 	overscroll-behavior: contain;
 	overflow-y: auto;
@@ -115,28 +106,29 @@
 .listState {
 	align-items: center;
 	justify-content: center;
-	padding-block: var(--space-2xl);
+	padding-block: var(--padding);
 	text-align: center;
 }
 
+/* Two classes, to outrank the row surface (Item or the command row) this restyles as a menu row. */
 .list .row {
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	width: 100%;
 	min-width: 0;
-	min-height: var(--menu-row-min-h);
-	padding: var(--menu-row-py) var(--row-px);
+	min-height: var(--control-height-sm);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	border: 0;
 	border-radius: var(--radius-sm);
 	background: none;
 	color: inherit;
-	font: inherit;
 	text-align: start;
 	cursor: pointer;
 }
 
+/* The row cursor, as in a menu: the fill is the focus indicator, and the list clips an outline. */
 .row:hover,
 .row[aria-selected="true"],
 .row:focus-visible {
@@ -149,8 +141,8 @@
 
 .rowIcon {
 	flex-shrink: 0;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	color: var(--muted-foreground);
 }
 
@@ -159,9 +151,8 @@
 	flex: 1;
 	flex-direction: column;
 	/* Keep a gap so the label and its description read as two lines. */
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
-	line-height: var(--leading-tight);
 }
 
 
@@ -179,5 +170,5 @@
 }
 
 .command [data-slot="command-input-wrapper"] {
-	padding: var(--surface-py-xs) var(--surface-px-xs) 0;
+	padding: var(--padding-sm) var(--padding-sm) 0;
 }

@@ -16,19 +16,28 @@ test("activity presentation inherits the chosen theme instead of the system them
 	const demo = page.locator("#activity-feed")
 	for (const density of ["compact", "default", "rich"]) {
 		await demo.getByRole("radio", { name: density, exact: true }).click()
+		/* The used colour and inset each row reads, beside the feed's: a variable reads back unresolved. */
 		const colors = await demo.locator('[data-slot="activity-feed"]').evaluate((feed) => {
-			const parent = getComputedStyle(feed)
+			const read = (host: Element) => {
+				const probe = document.createElement("i")
+				probe.style.color = "var(--foreground)"
+				probe.style.paddingTop = "var(--padding-sm)"
+				host.append(probe)
+				const style = getComputedStyle(probe)
+				const value = { foreground: style.color, inset: style.paddingTop }
+				probe.remove()
+				return value
+			}
+			const expected = read(feed)
 			return [...feed.querySelectorAll('[data-slot="activity-row"], [data-slot="activity-marker"]')].map((node) => ({
-				foreground: getComputedStyle(node).getPropertyValue("--foreground").trim(),
-				expectedForeground: parent.getPropertyValue("--foreground").trim(),
-				scale: getComputedStyle(node).getPropertyValue("--density-scale").trim(),
-				expectedScale: parent.getPropertyValue("--density-scale").trim(),
+				...read(node),
+				expected,
 			}))
 		})
 		expect(colors.length).toBeGreaterThan(0)
 		for (const color of colors) {
-			expect(color.foreground).toBe(color.expectedForeground)
-			expect(color.scale).toBe(color.expectedScale)
+			expect(color.foreground).toBe(color.expected.foreground)
+			expect(color.inset).toBe(color.expected.inset)
 		}
 	}
 })

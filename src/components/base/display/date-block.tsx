@@ -5,6 +5,7 @@
 import { format, isValid } from "date-fns"
 import type { ComponentProps, ReactNode } from "react"
 
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useDatesConfig } from "@/lib/ui-provider"
 
@@ -81,10 +82,14 @@ export function DateBlock({
 	// The date-fns locale object translates "Thu" and "Aug".
 	const { locale } = useDatesConfig()
 	const parsed = toDate(date)
+	const inline = layout === "inline"
 	const isBoxed = boxed ?? layout === "stacked"
 
 	// No valid date renders nothing.
 	if (!parsed) return null
+
+	/* Stacked, each part has its own step; inline, every part takes the line's size and case. */
+	const label = inline ? "inherit" : "xs"
 
 	return (
 		<time
@@ -93,17 +98,44 @@ export function DateBlock({
 			className={cx(
 				"date-block--component",
 				styles.dateBlock,
-				layout === "inline" && styles.dateBlockInline,
+				inline && styles.dateBlockInline,
+				inline && textClassName({ size: "sm" }),
 				isBoxed && styles.dateBlockBoxed,
 				className,
 			)}
 			{...props}
 		>
-			{showWeekday && <span className={styles.dateBlockWeekday}>{format(parsed, weekdayFormat, { locale })}</span>}
-			<span className={styles.dateBlockDay}>{format(parsed, dayFormat, { locale })}</span>
-			{showMonth && <span className={styles.dateBlockMonth}>{format(parsed, monthFormat, { locale })}</span>}
-			{showYear && <span className={styles.dateBlockYear}>{format(parsed, yearFormat, { locale })}</span>}
-			{time != null && <span className={styles.dateBlockTime}>{time}</span>}
+			{showWeekday && (
+				<Text tag="span" size={label} weight="medium" caps={!inline} type="secondary" className={styles.dateBlockWeekday}>
+					{format(parsed, weekdayFormat, { locale })}
+				</Text>
+			)}
+			{/* `type="inherit"`: the day takes the colour of the line it sits in. */}
+			<Text tag="span" size={inline ? "inherit" : "xl"} weight="semibold" numeric type="inherit">
+				{format(parsed, dayFormat, { locale })}
+			</Text>
+			{showMonth && (
+				<Text
+					tag="span"
+					size={label}
+					weight={isBoxed ? "semibold" : "medium"}
+					caps={!inline}
+					type="secondary"
+					className={styles.dateBlockMonth}
+				>
+					{format(parsed, monthFormat, { locale })}
+				</Text>
+			)}
+			{showYear && (
+				<Text tag="span" size={label} numeric type="secondary" className={styles.dateBlockYear}>
+					{format(parsed, yearFormat, { locale })}
+				</Text>
+			)}
+			{time != null && (
+				<Text tag="span" size={label} numeric type="secondary" className={styles.dateBlockTime}>
+					{time}
+				</Text>
+			)}
 		</time>
 	)
 }

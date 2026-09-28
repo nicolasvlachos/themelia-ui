@@ -63,7 +63,7 @@ for (const doc of DOCS) {
 
   /*
    * dead-path: resolved against several bases because docs write paths relatively
-   * (`theming/colors.css` is `src/styles/theming/colors.css`). Package subpaths, aliases, URLs
+   * (`theme/colour.css` is `src/styles/theme/colour.css`). Package subpaths, aliases, URLs
    * and `examples/` (standalone apps that cite their own layout) are skipped.
    */
   const BASES = ['', 'src/', 'src/styles/', 'scripts/', 'docs/']

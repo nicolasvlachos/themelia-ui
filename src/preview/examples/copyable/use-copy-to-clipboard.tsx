@@ -9,7 +9,7 @@ function ShareLink() {
 
 	return (
 		<Button
-			buttonStyle="outline"
+			appearance="outline"
 			tone="neutral"
 			onClick={() => void copy(url)}
 		>
@@ -20,7 +20,7 @@ function ShareLink() {
 
 export default function UseCopyToClipboard() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<ShareLink />
 		</Stack>
 	)

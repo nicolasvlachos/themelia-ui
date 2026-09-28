@@ -6,7 +6,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function ToggleRows() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
 			<SwitchCard
 				label="Two-factor authentication"
 				icon={ShieldIcon}
@@ -20,7 +20,7 @@ export default function ToggleRows() {
 				icon={RocketIcon}
 				description="Turn on features that are still changing."
 			/>
-			<Stack gap="2xs">
+			<Stack gap="sm">
 				<ToggleField label="Email notifications" description="A daily digest, sent at 09:00." defaultValue />
 				<ToggleField label="Product updates" description="Occasional release notes." />
 				<ToggleField

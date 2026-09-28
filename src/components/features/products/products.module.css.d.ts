@@ -22,7 +22,6 @@ declare const styles: {
 	readonly matrix: string
 	readonly media: string
 	readonly metricValue: string
-	readonly numeric: string
 	readonly optionEditor: string
 	readonly optionEditorActions: string
 	readonly optionList: string

@@ -4,7 +4,8 @@
  * Variables preview instantly through the cascade; provider defaults update only when the
  * caller passes the edited config (from `onConfigChange`) to UIProvider. CSS and config
  * export together so locale and currency travel with a theme. A standalone export needs
- * every variable's computed value, which `captureResolvedTheme` reads from the document.
+ * every variable's value, which `captureResolvedTheme` reads from the target: a colour reads
+ * back as its unresolved `light-dark()` pair, so one read gives both modes.
  */
 import { resolveStrings } from "@/lib/strings"
 import {
@@ -25,7 +26,7 @@ import { ContentBlock, VisuallyHidden } from "@/components/base/display"
 import { DecimalInput } from "@/components/base/forms-numeric"
 import { FormField } from "@/components/base/forms"
 import { Grid, Stack } from "@/components/base/structure"
-import { Heading, Text } from "@/components/base/typography"
+import { Heading, Text, textClassName } from "@/components/base/typography"
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/base/item"
 import { OverlayClose } from "@/components/base/overlay"
 import { ColorInput, SliderField } from "@/components/base/value-inputs"
@@ -48,7 +49,7 @@ import type {
 } from "./theme-tweaker.types"
 import {
 	countThemeOverrides, createSerializableUIConfig, createTheme, createThemeExportArtifact,
-	downloadTextFile, downloadTheme, themeToStyle,
+	downloadTextFile, downloadTheme, splitLightDark, themeToStyle,
 } from "./theme-tweaker.utils"
 import { useAppliedTheme } from "./use-applied-theme"
 import styles from "./theme-tweaker.module.css"
@@ -95,72 +96,33 @@ function resolveInspectionTarget(
 }
 
 /**
- * Reads what every public variable resolves to in both modes, by briefly mutating the
- * document root (restored in `finally`). Synchronous, so nothing paints in between.
+ * What every variable resolves to at `element`: shared values as declared there, and each
+ * colour's two halves, split from its `light-dark()` pair. A custom property keeps the pair
+ * unresolved, so one read gives both modes.
  */
 function captureResolvedTheme(
 	theme: ThemeDefinition,
 	fields: readonly ThemeTweakerField[],
+	element: HTMLElement | null,
 ): ThemeDefinition {
-	if (typeof document === "undefined" || typeof window === "undefined") return createTheme(theme)
+	if (!element || typeof window === "undefined") return createTheme(theme)
 
-	const root = document.documentElement
-	const names = [...new Set(fields.map((field) => field.name))]
-	const hadLight = root.classList.contains("light")
-	const hadDark = root.classList.contains("dark")
-	const originals = new Map(
-		names.map((name) => [
-			name,
-			{
-				value: root.style.getPropertyValue(name),
-				priority: root.style.getPropertyPriority(name),
-			},
-		]),
-	)
-
-	const capture = (mode: ThemeMode) => {
-		for (const name of names) root.style.removeProperty(name)
-		root.classList.toggle("light", mode === "light")
-		root.classList.toggle("dark", mode === "dark")
-		for (const [name, value] of Object.entries(themeToStyle(theme, mode))) {
-			if (typeof value === "string") root.style.setProperty(name, value)
+	const computed = window.getComputedStyle(element)
+	const shared: ThemeOverrides = {}
+	const light: ThemeOverrides = {}
+	const dark: ThemeOverrides = {}
+	for (const field of fields) {
+		const value = computed.getPropertyValue(field.name).trim()
+		if (!value) continue
+		if (field.scope === "shared") {
+			shared[field.name] = value
+			continue
 		}
-		const computed = window.getComputedStyle(root)
-		return Object.fromEntries(
-			names
-				.map((name) => [name, computed.getPropertyValue(name).trim()] as const)
-				.filter(([, value]) => value.length > 0),
-		)
+		const halves = splitLightDark(value)
+		light[field.name] = halves ? halves[0] : value
+		dark[field.name] = halves ? halves[1] : value
 	}
-
-	try {
-		const light = capture("light")
-		const dark = capture("dark")
-		const sharedNames = new Set(
-			fields.filter((field) => field.scope === "shared").map((field) => field.name),
-		)
-		return createTheme({
-			mode: theme.mode,
-			// Shared variables are read once, from light, so the export has one copy.
-			shared: Object.fromEntries(
-				Object.entries(light).filter(([name]) => sharedNames.has(name as `--${string}`)),
-			),
-			light: Object.fromEntries(
-				Object.entries(light).filter(([name]) => !sharedNames.has(name as `--${string}`)),
-			),
-			dark: Object.fromEntries(
-				Object.entries(dark).filter(([name]) => !sharedNames.has(name as `--${string}`)),
-			),
-		})
-	} finally {
-		for (const name of names) {
-			const original = originals.get(name)
-			if (original?.value) root.style.setProperty(name, original.value, original.priority)
-			else root.style.removeProperty(name)
-		}
-		root.classList.toggle("light", hadLight)
-		root.classList.toggle("dark", hadDark)
-	}
+	return createTheme({ mode: theme.mode, shared, light, dark })
 }
 
 function updateThemeVariable(
@@ -195,12 +157,12 @@ function ThemeExportBlock({
 	return (
 		<section aria-labelledby={titleId} className={styles.exportBlock}>
 			<div className={styles.exportBlockHeader}>
-				<Stack gap="2xs" className={styles.minWidth}>
+				<Stack gap="sm" className={styles.minWidth}>
 					<Heading id={titleId} level={3}>{title}</Heading>
 					<Text type="secondary">{description}</Text>
 				</Stack>
-				<Stack direction="horizontal" gap="xs" align="center" wrap>
-					<Button type="button" tone="neutral" buttonStyle="outline" onClick={onCopy}>
+				<Stack direction="horizontal" gap="sm" align="center" wrap>
+					<Button type="button" tone="neutral" appearance="outline" onClick={onCopy}>
 						<CopyIcon />
 						{copyLabel}
 					</Button>
@@ -211,7 +173,11 @@ function ThemeExportBlock({
 				</Stack>
 			</div>
 			{/* Focusable because it scrolls, so keyboard readers can reach it. */}
-			<pre tabIndex={0} aria-label={title} className={styles.exportCode}>
+			<pre
+				tabIndex={0}
+				aria-label={title}
+				className={cx(styles.exportCode, textClassName({ size: "xs", lineHeight: "relaxed", mono: true }))}
+			>
 				<code>{code}</code>
 			</pre>
 		</section>
@@ -237,7 +203,7 @@ function ThemeVariableField({
 		<Button
 			type="button"
 			tone="neutral"
-			buttonStyle="ghost"
+			appearance="ghost"
 			iconOnly
 			aria-label={`${strings.resetVariable}: ${field.label}`}
 			title={strings.resetVariable}
@@ -299,7 +265,7 @@ function ThemeVariableField({
 							const next = event.target.value.trim()
 							onChange(next ? `${next}${control_.unit ?? ""}` : "")
 						}}
-						className={styles.numberInput}
+						className={cx(styles.numberInput, textClassName({ size: "inherit", mono: true }))}
 					/>
 					{resetAction}
 				</div>
@@ -314,7 +280,7 @@ function ThemeVariableField({
 					value={value}
 					onChange={(event) => onChange(event.target.value)}
 					placeholder={placeholder}
-					className={cx(styles.controlInput, styles.monoInput)}
+					className={cx(styles.controlInput, textClassName({ size: "inherit", mono: true }))}
 				/>
 				{resetAction}
 			</div>
@@ -346,7 +312,7 @@ function DefaultThemePreview({ strings }: { strings: ThemeTweakerStrings }) {
 			title={strings.previewTitle}
 			description={strings.previewDescription}
 		>
-			<Stack gap="lg">
+			<Stack>
 				<Stack direction="horizontal" gap="sm" wrap>
 					<Badge tone="success">{strings.previewSuccess}</Badge>
 					<Badge tone="warning">{strings.previewWarning}</Badge>
@@ -449,13 +415,17 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 		const timer = window.setTimeout(() => {
 			const element = resolveInspectionTarget(target, selfRef.current)
 			if (!element) return
-			const computed = window.getComputedStyle(element)
+			const resolved = captureResolvedTheme(theme, fields, element)
+			/* A colour shows the half for the mode being edited. */
 			setEffectiveValues(
 				Object.fromEntries(
-					fields.map((field) => [field.name, computed.getPropertyValue(field.name).trim()]),
+					fields.map((field) => [
+						field.name,
+						(field.scope === "shared" ? resolved.shared : resolved[theme.mode])[field.name] ?? "",
+					]),
 				),
 			)
-			setResolvedTheme(captureResolvedTheme(theme, fields))
+			setResolvedTheme(resolved)
 		}, 0)
 		return () => window.clearTimeout(timer)
 	}, [apply, fields, target, theme])
@@ -601,7 +571,7 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 			</ContentBlock>
 		) : group === "typography" ? (
 			<ContentBlock surface="bordered" title={copy.typeRecipeTitle} description={copy.typeRecipeDescription}>
-				<Grid columns={{ base: 1, sm: 2 }} gap="md">
+				<Grid columns={{ base: 1, sm: 2 }} gap="sm">
 					<FormField label={copy.baseTypeSize}>
 						<SliderField
 							aria-label={copy.baseTypeSize}
@@ -645,7 +615,7 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 						step={0.05}
 						onValueChange={(next: number) => {
 							setElevationIntensity(next)
-							applyModeRecipe(deriveThemeElevation({ intensity: next }))
+							applySharedRecipe(deriveThemeElevation({ intensity: next }))
 						}}
 					/>
 				</FormField>
@@ -655,9 +625,9 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 	const content = (
 		<div className={cx(styles.layout, preview !== false && styles.layoutWithPreview)}>
 			<div className={styles.controls}>
-				<Stack gap="lg">
+				<Stack>
 					{showIntro && (
-						<Stack gap="xs">
+						<Stack gap="sm">
 							<Stack direction="horizontal" gap="sm" align="center" wrap>
 								<Heading level={2}>{copy.title}</Heading>
 								<Badge tone="neutral">{copy.changedCount(overrideCount)}</Badge>
@@ -676,11 +646,11 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 							</Tabs>
 						</Stack>
 
-						<Stack direction="horizontal" gap="xs" align="center" justify="end" wrap={false}>
+						<Stack direction="horizontal" gap="sm" align="center" justify="end" wrap={false}>
 							<Button
 								type="button"
 								tone="neutral"
-								buttonStyle="outline"
+								appearance="outline"
 								disabled={!!serializationError}
 								onClick={() => {
 									setActionStatus("idle")
@@ -719,8 +689,8 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 						))}
 					</TabList>
 					<TabPanel value={group}>
-						<Stack gap="xl">
-							<Stack gap="xs">
+						<Stack>
+							<Stack gap="sm">
 								<Stack direction="horizontal" gap="sm" align="center" wrap>
 									<Heading level={3} size="base">{query ? copy.allGroups : copy.groups[group]}</Heading>
 									{!!query && (
@@ -807,7 +777,7 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 									})}
 								/>
 							) : (
-								<Empty padding="sm" title={copy.emptySearch} description={false} className={styles.empty} />
+								<Empty border title={copy.emptySearch} description={false} />
 							)}
 						</Stack>
 					</TabPanel>
@@ -834,7 +804,7 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							disabled={overrideCount === 0}
 							onClick={reset}
 						>
@@ -842,13 +812,13 @@ export const ThemeTweaker = forwardRef<HTMLDivElement, ThemeTweakerProps>(functi
 							{copy.reset}
 						</Button>
 						{/* `render`: the Button is the close itself and keeps its geometry. */}
-						<OverlayClose render={<Button type="button" tone="neutral" buttonStyle="outline" />}>
+						<OverlayClose render={<Button type="button" tone="neutral" appearance="outline" />}>
 							{copy.close}
 						</OverlayClose>
 					</div>
 				}
 			>
-				<Stack gap="xl">
+				<Stack>
 					<ThemeExportBlock
 						title={copy.cssOutputLabel}
 						description={copy.cssOutputDescription}

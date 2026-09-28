@@ -8,9 +8,9 @@ import type {
 
 import type { StringsProp } from '@/lib/strings';
 import type { SemanticTone } from '@/lib/component-vocabulary';
-import type { ActionButtonStyle, ActionPresentation } from '@/lib/action-presentation';
+import type { ActionAppearance, ActionPresentation } from '@/lib/action-presentation';
 
-export type { ActionButtonStyle } from '@/lib/action-presentation';
+export type { ActionAppearance } from '@/lib/action-presentation';
 
 export const ACTION_GLOBAL_SCOPE = '__global__';
 
@@ -26,17 +26,6 @@ export type ActionPlacement = 'auto' | 'inline' | 'menu';
 export type ActionModalityType = 'alert' | 'dialog' | 'drawer';
 export type ActionTone = SemanticTone;
 export type ActionStatus = 'idle' | 'running' | 'succeeded' | 'failed';
-export type ActionOverlaySize =
-	| 'xs'
-	| 'sm'
-	| 'md'
-	| 'lg'
-	| 'xl'
-	| '2xl'
-	| '3xl'
-	| '4xl'
-	| '5xl'
-	| 'full';
 export type ActionDrawerDirection = 'left' | 'right' | 'top' | 'bottom';
 export type ActionRequestMethod =
 	| 'get'
@@ -204,7 +193,6 @@ export interface ActionModalityConfig<
 	confirmLabel?: ActionMessage<TPayload, TValues, TResult>;
 	cancelLabel?: ActionMessage<TPayload, TValues, TResult>;
 	tone?: ActionTone;
-	size?: ActionOverlaySize;
 	drawerDirection?: ActionDrawerDirection;
 	formId?: string;
 	showCancel?: boolean;
@@ -219,7 +207,7 @@ export interface ActionModalityConfig<
 	closeOnEscape?: boolean;
 	closeOnSuccess?: boolean;
 	closeOnBackdropClick?: boolean;
-	confirmStyle?: Extract<ActionButtonStyle, 'solid' | 'outline'>;
+	confirmAppearance?: Extract<ActionAppearance, 'solid' | 'outline'>;
 	footer?: ReactNode;
 	alertMessage?: ActionMessage<TPayload, TValues, TResult>;
 	render?: BivariantCallback<

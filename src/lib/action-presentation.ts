@@ -1,9 +1,9 @@
 import type { SemanticTone } from "./component-vocabulary"
 
 /** The button treatments an action may take. */
-export const ACTION_BUTTON_STYLES = ["solid", "outline", "ghost", "link"] as const
+export const ACTION_APPEARANCES = ["solid", "outline", "ghost", "link"] as const
 
-export type ActionButtonStyle = (typeof ACTION_BUTTON_STYLES)[number]
+export type ActionAppearance = (typeof ACTION_APPEARANCES)[number]
 
 /**
  * The presentation an action carries wherever it is rendered (ActionMenu, ActionButtons,
@@ -13,7 +13,7 @@ export interface ActionPresentation {
 	/** Semantic colour intent. Colour is always `tone`, never `variant`. */
 	tone?: SemanticTone
 	/** Button treatment, independent of the colour. */
-	buttonStyle?: ActionButtonStyle
+	appearance?: ActionAppearance
 	/** Set false to omit the action entirely. */
 	visible?: boolean
 	/** Prevents activation while keeping the action visible. */

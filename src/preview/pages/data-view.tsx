@@ -61,6 +61,18 @@ export function DataViewPage() {
 				description="The shared batch bar, docked rather than a strip inside the table chrome — a table is the case a dock exists for, because the selection has to stay reachable after the reader has scrolled hundreds of rows past the one that started it. `selectionToolbar` still replaces it wholesale; `bulkActions` fills the actions and leaves the count and the way out alone."
 			/>
 
+			<Example
+				example="data-view/table-expandable"
+				title="Expandable rows"
+				description="`expandedRow` turns on a toggle at each row's start and the panel it opens under the row. `render` draws the panel; here everything it shows is already on the row. The panel lines up with the first column, and on a table scrolled sideways it stays in view."
+			/>
+
+			<Example
+				example="data-view/table-expandable-async"
+				title="Details on demand"
+				description="`onLoad` fetches what the panel shows when its row opens: a skeleton meanwhile, the request aborted if the row closes, Retry when it fails (The Old Granary fails once) and the result kept for the next open. `canExpand` leaves cancelled bookings without a toggle, and `multiple: false` keeps one row open at a time."
+			/>
+
 			<Example example="data-view/table-empty" title="Nothing to show" />
 
 			<Example id="table-rules" title="What the table decides">

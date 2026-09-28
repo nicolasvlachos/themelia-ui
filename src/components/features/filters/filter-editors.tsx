@@ -56,7 +56,7 @@ function EditorHeader({
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					onClick={onBack}
 					aria-label={strings.backToFilters}

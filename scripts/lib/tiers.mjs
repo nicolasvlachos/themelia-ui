@@ -1,7 +1,7 @@
 /*
  * The six tiers that group modules in the documentation and in the published component index,
  * in dependency order. The architecture manifest's `layer` names split them more finely:
- * `typography` is the Base module `base/typography`, and `patterns` and `admin` together are
+ * `typography` is the Base module `base/typography`, and `blocks` and `admin` together are
  * Blocks.
  */
 export const TIERS = [
@@ -20,7 +20,7 @@ const TIER_OF_LAYER = {
   base: 'base',
   layout: 'layout',
   features: 'features',
-  patterns: 'blocks',
+  blocks: 'blocks',
   admin: 'blocks',
 }
 

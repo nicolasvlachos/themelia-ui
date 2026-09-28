@@ -13,7 +13,7 @@ export default function PlaceAutocompleteExample() {
 
 	return (
 		<>
-			<Stack maxWidth="24rem">
+			<Stack gap="sm" maxWidth="24rem">
 				<PlaceAutocomplete limit={5} onPlaceSelect={setPlace} />
 			</Stack>
 			{!!place && (

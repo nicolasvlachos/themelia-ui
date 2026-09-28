@@ -9,6 +9,7 @@ import { gzipSync } from 'node:zlib'
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
+import { expandExports } from './export-targets.mjs'
 import { TIERS, tierOfLayer } from './tiers.mjs'
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'))
@@ -41,7 +42,7 @@ export function collectRepositoryFacts(root = '.', options = {}) {
   const { readCommit = defaultReadCommit, gzip = gzipSync, lintWarnings = null } = options
 
   const pkg = readJson(join(root, 'package.json'))
-  const exports = pkg.exports ?? {}
+  const exports = expandExports(pkg.exports, root)
 
   /* JS entrypoints are conditional exports; CSS ones resolve to a stylesheet. Counted apart. */
   const entries = Object.entries(exports)

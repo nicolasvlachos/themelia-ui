@@ -1,12 +1,13 @@
 /**
  * Checkbox — a visually hidden native input drives a styled sibling, so form, keyboard and
- * label behaviour are the platform's. No `size` prop (styles/tokens/foundation.css).
+ * label behaviour are the platform's. No `size` prop: the box is one size beside every label.
  * `indeterminate` is a DOM property, so it is set through a ref. Marks are Lucide icons,
  * the kit's one icon vocabulary.
  */
 import { CheckIcon, MinusIcon } from "lucide-react"
 import * as React from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./choice.module.css"
@@ -41,7 +42,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(functi
 	}, [indeterminate])
 
 	return (
-		<label className={cx("checkbox--component", styles.field, className)}>
+		<label className={cx("checkbox--component", styles.field, textClassName({ size: "sm" }), className)}>
 			<input ref={innerRef} type="checkbox" data-slot="checkbox" className={styles.input} {...props} />
 			<span className={cx(styles.control, styles.checkbox)}>
 				<CheckIcon aria-hidden className={cx(styles.mark, styles.checkMark)} />

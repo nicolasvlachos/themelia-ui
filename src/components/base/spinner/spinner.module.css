@@ -1,48 +1,33 @@
 /*
- * Spinner — a ring with one coloured quarter (one element, no SVG). Keyframes live in
- * theming/animation.css.
+ * Spinner — a ring with one coloured quarter (one element, no SVG), in the ink of the tone
+ * it carries (`data-tone`, read through the shared tone rule). The keyframes are global
+ * (`--keyframes-spin`, styles/animation.css).
  */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	--spinner-size-sm: round(var(--size-icon-sm), 1px);
-	--spinner-size-md: round(var(--size-icon), 1px);
-	--spinner-size-lg: round(var(--size-icon-lg), 1px);
-}
 
 .root {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
+	color: var(--tone-ink);
+}
+
+/* The quiet tones, as on a button: supporting ink rather than full contrast. */
+.root:is([data-tone="neutral"], [data-tone="secondary"]) {
+	color: var(--muted-foreground);
 }
 
 .ring {
 	display: block;
 	flex-shrink: 0;
+	width: var(--icon-size);
+	height: var(--icon-size);
 	border-radius: 50%;
-	border: var(--border-width-strong) solid var(--muted);
+	border: calc(var(--border-width) * 2) solid var(--muted);
 	border-top-color: currentColor;
-	/*
-	 * Via the variable: CSS Modules would scope a bare keyframes name. The duration is a
-	 * longhand after the shorthand (see styles/theming/animation.css).
-	 */
-	animation: var(--animate-spin);
-	animation-duration: 0.7s;
-	width: var(--spinner-size-md);
-	height: var(--spinner-size-md);
+	animation: var(--keyframes-spin) 0.7s linear infinite;
 }
 
-.sizeSm .ring { width: var(--spinner-size-sm); height: var(--spinner-size-sm); }
-.sizeLg .ring { width: var(--spinner-size-lg); height: var(--spinner-size-lg); }
-
-/* Tones borrow the button contract so a spinner beside an action matches it. */
-.toneNeutral { color: var(--muted-foreground); }
-.tonePrimary { color: var(--primary-accent); }
-.toneInfo { color: var(--info); }
-.toneSuccess { color: var(--success); }
-.toneWarning { color: var(--warning-accent); }
-.toneDestructive { color: var(--destructive); }
+.sizeSm .ring {
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
+}

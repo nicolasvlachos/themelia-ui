@@ -1,7 +1,7 @@
 /*
- * Generates the aggregate barrels (base, patterns, admin/patterns) as pure re-exports of the
- * hand-authored family barrels, so a new family is never left out, plus the root src/index.ts.
- * Family barrels stay hand-written: they decide what a component makes public.
+ * Generates the aggregate base barrel as pure re-exports of the hand-authored family barrels,
+ * so a new family is never left out, plus the root src/index.ts. Family barrels stay
+ * hand-written: they decide what a component makes public.
  */
 import { readdirSync, existsSync, readFileSync, writeFileSync } from 'node:fs'
 
@@ -28,14 +28,6 @@ let written = 0
 const base = subBarrels('base')
 if (write('src/components/base/index.ts', base.map((n) => `export * from "./${n}"`).join('\n') + '\n')) written++
 
-/* Optional: the generator must run cleanly before a profile's first family lands. */
-const patterns = existsSync('src/components/patterns') ? subBarrels('patterns') : []
-if (patterns.length && write('src/components/patterns/index.ts', patterns.map((n) => `export * from "./${n}"`).join('\n') + '\n')) written++
-
-/* The admin profile's own aggregate, one level deeper: admin/patterns/<family>. */
-const adminPatterns = existsSync('src/components/admin/patterns') ? subBarrels('admin/patterns') : []
-if (adminPatterns.length && write('src/components/admin/patterns/index.ts', adminPatterns.map((n) => `export * from "./${n}"`).join('\n') + '\n')) written++
-
 /*
  * The root barrel is the foundation only (provider and display primitives, both peer-free).
  * Re-exporting a layer here would make `import { Button } from "themelia-ui"` resolve every
@@ -47,5 +39,4 @@ const root = [
 ].join('\n')
 if (write('src/index.ts', root + '\n')) written++
 
-const expected = 2 + (patterns.length ? 1 : 0) + (adminPatterns.length ? 1 : 0)
-console.log(`barrels: ${written} written, ${expected - written} already current (base ${base.length}, patterns ${patterns.length}, admin/patterns ${adminPatterns.length})`)
+console.log(`barrels: ${written} written, ${2 - written} already current (base ${base.length})`)

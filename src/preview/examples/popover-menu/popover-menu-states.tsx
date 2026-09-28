@@ -11,10 +11,10 @@ export default function PopoverMenuStates() {
 	const [failed, setFailed] = useState(true)
 
 	return (
-		<Stack direction="horizontal" gap="xl" align="center">
+		<Stack direction="horizontal" align="center">
 			<PopoverMenu
 				trigger={
-					<Button buttonStyle="outline" tone="neutral">
+					<Button appearance="outline" tone="neutral">
 						Failed load
 						<ChevronDownIcon />
 					</Button>
@@ -26,7 +26,7 @@ export default function PopoverMenuStates() {
 			/>
 			<PopoverMenu
 				trigger={
-					<Button buttonStyle="outline" tone="neutral">
+					<Button appearance="outline" tone="neutral">
 						Two characters
 						<ChevronDownIcon />
 					</Button>

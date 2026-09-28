@@ -47,6 +47,17 @@ export interface DataTableStrings {
 		/** Names the full-screen table, which is a modal region. */
 		fullscreenRegion: string
 	}
+	/** Expandable rows: the toggle, and the panel's loading, error and empty states. */
+	expansion: {
+		/** The toggle column's header, read by screen readers only. */
+		column: string
+		show: (index: number) => string
+		hide: (index: number) => string
+		loading: string
+		error: string
+		retry: string
+		empty: string
+	}
 }
 
 /** `created_at` → "Created At". Only used when a header is not a plain string. */
@@ -99,6 +110,15 @@ export const defaultDataTableStrings: DataTableStrings = {
 		scrollRegion: "Table scroll area",
 		fullscreenRegion: "Table, full screen",
 	},
+	expansion: {
+		column: "Details",
+		show: (index) => `Show details for row ${index + 1}`,
+		hide: (index) => `Hide details for row ${index + 1}`,
+		loading: "Loading details",
+		error: "Couldn't load the details.",
+		retry: "Retry",
+		empty: "No details.",
+	},
 }
 
 /** Default accessible name for the table-owned controls. */
@@ -134,5 +154,6 @@ export function mergeDataTableStrings(
 			...defaultDataTableStrings.accessibility,
 			...overrides.accessibility,
 		},
+		expansion: { ...defaultDataTableStrings.expansion, ...overrides.expansion },
 	}
 }

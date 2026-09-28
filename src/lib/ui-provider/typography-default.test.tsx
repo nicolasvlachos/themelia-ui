@@ -14,7 +14,8 @@ describe("the default text size", () => {
 	it("is written as a custom property by the provider", () => {
 		const vars = configToCssVars({ typography: { defaultTextSize: "xs" } })
 		expect(vars["--text-default"]).toBe("var(--text-xs)")
-		expect(vars["--text-default--line-height"]).toBe("var(--text-xs--line-height)")
+		/* The line box Text pairs with the step, so the default reads like the step itself. */
+		expect(vars["--text-default--line-height"]).toBe("calc(1 / 0.75)")
 	})
 
 	it("writes nothing for `inherit`, which means take the surrounding size", () => {

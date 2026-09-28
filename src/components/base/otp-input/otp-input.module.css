@@ -3,52 +3,50 @@
 	display: flex;
 	align-items: center;
 	/* Wider between groups than within, so "123 456" reads as two runs of three. */
-	gap: var(--space-xl);
+	gap: var(--gap);
 }
 
 .group {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
+/* The field frame, one per character; the digit's type is Text's (otp-input.tsx). */
 .slot {
-	width: round(calc(2.75rem * var(--density-scale, var(--scale))), 1px);
-	height: round(calc(3rem * var(--density-scale, var(--scale))), 1px);
+	width: 2.75rem;
+	height: 3rem;
 	padding: 0;
-	border: var(--border-width) solid var(--control-border);
+	border: var(--border-width) solid var(--input);
 	border-radius: var(--radius-sm);
-	background-color: var(--field-bg);
+	background-color: transparent;
 	color: var(--foreground);
-	font-size: var(--text-lg);
-	line-height: var(--text-lg--line-height);
-	font-variant-numeric: tabular-nums;
 	text-align: center;
-	transition:
-		border-color var(--duration-fast) var(--ease-out),
-		box-shadow var(--duration-fast) var(--ease-out);
+	transition: border-color var(--duration-fast) var(--ease);
 }
 
-.slot:focus {
-	outline: none;
-	border-color: var(--focus-ring-color);
-	box-shadow: var(--field-focus-ring);
-	/* Above its neighbours, so the ring is not clipped by the next box's border. */
-	z-index: var(--z-raised);
+/*
+ * Focus is drawn over the frame, as the fields draw it, and lifts the box above its
+ * neighbours so the next box's edge does not cut into the outline.
+ */
+.slot:focus-visible {
+	position: relative;
+	z-index: 1;
+	border-color: var(--ring);
+	outline-offset: calc(var(--border-width) * -1);
 }
 
-.slot:hover:not(:focus):not([aria-invalid="true"]):not([data-disabled]) {
-	border-color: var(--control-border-hover);
+.slot:hover:not(:focus-visible):not([aria-invalid="true"]):not([data-disabled]) {
+	border-color: color-mix(in oklab, var(--input), var(--foreground) 35%);
 }
 
-/* As the fields draw it: focus takes the ring, invalid keeps the border. */
+/* A code is right or wrong as a whole: every box takes the invalid edge, and focus its colour. */
 .root[data-invalid] .slot {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
+	border-color: var(--destructive);
 }
 
-.root[data-invalid] .slot:focus {
-	box-shadow: var(--field-focus-ring);
+.root[data-invalid] .slot:focus-visible {
+	outline-color: var(--destructive);
 }
 
 .root[data-disabled] .slot {

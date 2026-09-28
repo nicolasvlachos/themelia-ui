@@ -7,7 +7,7 @@
 	display: inline-flex;
 	min-width: 0;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 /* Capped, so the value truncates instead of pushing the button out of view. */
@@ -17,35 +17,31 @@
 
 .content {
 	min-width: 0;
-	color: var(--link-color);
+	color: var(--link);
 }
 
-.mono {
-	font-family: var(--font-mono);
-}
-
+/* The button's own neutral ink, quietened until the pointer or the keyboard reaches it. */
 .trigger {
 	flex-shrink: 0;
-	color: var(--link-color);
 	opacity: 0.6;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition:
+		opacity var(--duration-fast) var(--ease),
+		background-color var(--duration-fast) var(--ease);
 }
 
-.trigger:hover,
+.trigger:hover:not(:disabled, [aria-disabled="true"]),
 .trigger:focus-visible {
 	opacity: 1;
 }
 
-/* Compact: the trigger sized to its glyph, for a value on a line of text under a title. */
+/*
+ * Compact: the trigger sized to its glyph, for a value on a line of text under a title. The
+ * block margin gives back the button's inset round the glyph, so the line keeps its height.
+ */
 .triggerCompact {
-	--button-h: calc(var(--size-icon-md) + var(--space-2xs) * 2);
+	--_button-height: calc(var(--icon-size) + var(--padding-sm) / 2);
 	min-height: 0;
-	margin-block: calc(var(--space-2xs) * -1);
-}
-
-.triggerCompact svg {
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
+	margin-block: calc((var(--icon-size) - var(--_button-height)) / 2);
 }
 
 .confirmIcon {

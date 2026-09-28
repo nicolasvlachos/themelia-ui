@@ -6,7 +6,7 @@
 import { ChevronDownIcon, type LucideIcon } from "lucide-react"
 import * as React from "react"
 
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { Badge } from "@/components/base/badge"
 import { cx } from "@/lib/cx"
 import { resolveActiveHref, resolveLinkRenderer, type LinkRenderer } from "@/lib/navigation"
@@ -115,7 +115,7 @@ export function SideNav({
 							(group.collapsible ? (
 								<button
 									type="button"
-									className={styles.groupLabel}
+									className={cx(styles.groupLabel, textClassName({ size: "xs", weight: "medium" }))}
 									// Drawn under 24px; the TARGET must not be. See styles/targets.css.
 									data-hit-area
 									aria-expanded={!isCollapsed}
@@ -152,7 +152,8 @@ export function SideNav({
 								)
 								const linkProps = {
 									href: item.href,
-									className: styles.item,
+									/* The current page is set in medium weight as well as filled. */
+									className: cx(styles.item, textClassName({ size: "sm", weight: isActive ? "medium" : "normal" })),
 									children: content,
 									"aria-current": isActive ? ("page" as const) : undefined,
 									"aria-disabled": item.disabled || undefined,

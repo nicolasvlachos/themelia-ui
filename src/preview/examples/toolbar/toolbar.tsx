@@ -7,7 +7,7 @@ import {
 
 export default function ToolbarExample() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<Toolbar aria-label="Formatting">
 				<ToolbarGroup>
 					<ToolbarButton iconOnly aria-label="Bold">
@@ -27,7 +27,7 @@ export default function ToolbarExample() {
 					</ToolbarButton>
 				</ToolbarGroup>
 				<ToolbarSeparator />
-				<ToolbarInput aria-label="Font size" defaultValue="14" inputMode="numeric" style={{ width: "calc(4rem * var(--scale))" }} />
+				<ToolbarInput aria-label="Font size" defaultValue="14" inputMode="numeric" style={{ width: "4rem" }} />
 				<ToolbarLink
 					href="#/toolbar"
 					onClick={(event) => {

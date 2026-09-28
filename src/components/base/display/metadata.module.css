@@ -1,6 +1,6 @@
 /*
- * MetadataList. The label style comes from DisplayLabel; the layouts differ only in
- * arrangement.
+ * MetadataList. The label style comes from DisplayLabel and the value's type from Text; the
+ * layouts differ only in arrangement.
  */
 
 .root {
@@ -9,11 +9,11 @@
 
 .title {
 	display: block;
-	margin-bottom: var(--space-sm);
+	margin-bottom: var(--gap-sm);
 }
 
 .titleSeparator {
-	margin-bottom: var(--space-md);
+	margin-bottom: var(--gap-sm);
 }
 
 /* ── Shared parts ──────────────────────────────────────────────────────────────── */
@@ -31,34 +31,25 @@
 
 .itemIcon {
 	flex-shrink: 0;
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	color: var(--muted-foreground);
 }
-
-.value {
-	font-size: var(--text-sm);
-	line-height: var(--leading-tight);
-}
-
-/* No compact value size: density changes gaps and row inset, not type. */
 
 .description {
 	text-wrap: pretty;
 }
 
-/* Pulled back by its inline padding so the hit area doesn't push the colon off the label. */
+/*
+ * A glyph-sized trigger, pulled back by the button's inset round the glyph so the hit
+ * area doesn't push the colon off the label.
+ */
 .infoTrigger {
-	--button-h: var(--size-icon-lg);
+	--_button-height: calc(var(--icon-size) + var(--padding-sm) / 2);
 	flex-shrink: 0;
-	margin-inline: calc(var(--space-2xs) * -1);
+	margin-inline: calc((var(--icon-size) - var(--_button-height)) / 2);
 	color: var(--muted-foreground);
 	cursor: help;
-}
-
-.infoTrigger svg {
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
 }
 
 .tooltip {
@@ -70,14 +61,14 @@
 .gridItem {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 .gridLabel {
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -89,8 +80,7 @@
 
 /* Rules between rows only, never at the ends. */
 .rowsDivided > * + * {
-	/* Quieter than a table rule: these separate facts, not records. */
-	border-top: var(--border-width) solid var(--border-60);
+	border-top: var(--border-width) solid var(--border);
 }
 
 /* Proportional tracks align values without a label min-width that would crowd phones. */
@@ -98,18 +88,18 @@
 	display: grid;
 	grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 	align-items: baseline;
-	gap: var(--space-sm) var(--space-xl);
-	padding-block: var(--row-py);
+	gap: var(--gap-sm) var(--gap);
+	padding-block: var(--padding-sm);
 }
 
-.rows[data-row-density="compact"] .row {
-	padding-block: round(calc(var(--row-py) * 0.75), 1px);
+.rows[data-size="sm"] .row {
+	padding-block: calc(var(--padding-sm) / 2);
 }
 
 .rowLabel {
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 	margin: 0;
 }
@@ -130,7 +120,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 

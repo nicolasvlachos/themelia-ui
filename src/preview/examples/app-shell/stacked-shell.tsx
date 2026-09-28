@@ -18,15 +18,15 @@ function StackedDemo() {
 				boundContent={false}
 				contentRender={<div />}
 				header={
-					<Stack direction="horizontal" gap="md" align="center" wrap>
+					<Stack direction="horizontal" gap="sm" align="center" wrap>
 						<Brand />
 						<nav aria-label="Primary navigation (stacked example)">
-							<Stack direction="horizontal" gap="xs" wrap>
+							<Stack direction="horizontal" gap="sm" wrap>
 								{destinations.map(([path, label]) => (
 									<Button
 										key={path}
 										tone="neutral"
-										buttonStyle={currentUrl === path ? "solid" : "ghost"}
+										appearance={currentUrl === path ? "solid" : "ghost"}
 										aria-current={currentUrl === path ? "page" : undefined}
 										onClick={() => setCurrentUrl(path)}
 									>{label}</Button>

@@ -20,6 +20,28 @@ const MARKUP = /\.(?:html|vue|svelte|astro|mdx)$/
 
 const escape = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
+/**
+ * The file a subpath resolves to in the installed package, through an exact key or a subpath
+ * pattern (`./base/*.css`), or null when nothing publishes it.
+ */
+function publishedFile(pkg, root, subpath) {
+  for (const [key, value] of Object.entries(pkg.exports ?? {})) {
+    const target = typeof value === 'string' ? value : value?.default
+    if (typeof target !== 'string') continue
+    let file = null
+    if (!key.includes('*')) {
+      if (key === subpath) file = target
+    } else {
+      const [before, after] = key.split('*')
+      if (subpath.length > before.length + after.length && subpath.startsWith(before) && subpath.endsWith(after)) {
+        file = target.replace('*', subpath.slice(before.length, subpath.length - after.length))
+      }
+    }
+    if (file && existsSync(resolve(root, file))) return file
+  }
+  return null
+}
+
 /** The two published maps, indexed for the rewrites below. */
 export function loadMaps(dir = GENERATED) {
   const read = (file) => {
@@ -29,12 +51,13 @@ export function loadMaps(dir = GENERATED) {
   }
   const codemod = read('migration-codemod.json')
   const broad = read('migration-broad-imports.json')
-  const pkg = JSON.parse(readFileSync(resolve(dir, '..', '..', 'package.json'), 'utf8'))
+  const root = resolve(dir, '..', '..')
+  const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'))
   /* A moved family's stylesheet moves with it, where the new one is published. */
   const sheets = new Map()
   for (const [from, to] of Object.entries(codemod.moves ?? {})) {
     const subpath = `.${to.slice(pkg.name.length)}.css`
-    if (from.startsWith(`${pkg.name}/`) && pkg.exports?.[subpath]) sheets.set(`${from}.css`, `${to}.css`)
+    if (from.startsWith(`${pkg.name}/`) && publishedFile(pkg, root, subpath)) sheets.set(`${from}.css`, `${to}.css`)
   }
   return {
     /* Where a reader finds the rest, as a path from wherever the codemod was run. */

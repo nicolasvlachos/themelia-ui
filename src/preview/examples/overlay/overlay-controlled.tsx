@@ -12,8 +12,8 @@ export default function OverlayControlled() {
 	const [open, setOpen] = useState(false)
 
 	return (
-		<Stack direction="horizontal" gap="md" align="center">
-			<Button tone="neutral" buttonStyle="outline" onClick={() => setOpen(true)}>
+		<Stack direction="horizontal" gap="sm" align="center">
+			<Button tone="neutral" appearance="outline" onClick={() => setOpen(true)}>
 				Open from outside
 			</Button>
 			<Text size="xs" type="secondary">
@@ -26,7 +26,7 @@ export default function OverlayControlled() {
 						<OverlayDescription>The caller owns the open state.</OverlayDescription>
 					</OverlayHeader>
 					<OverlayFooter>
-						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+						<OverlayClose render={<Button tone="neutral" appearance="outline" />}>
 							Close
 						</OverlayClose>
 					</OverlayFooter>

@@ -58,7 +58,7 @@ function MultiCombobox({ id }: { id?: string }) {
 
 export default function ComboboxMultiple() {
 	return (
-		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack gap="sm" style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Ships to" helperText="Type to filter, Backspace to remove the last chip.">
 				<MultiCombobox />
 			</FormField>

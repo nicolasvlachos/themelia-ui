@@ -1,4 +1,4 @@
-import { RefundStatus } from "themelia-ui/admin/patterns/commerce"
+import { RefundStatus } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 export default function RefundStatusExample() {

@@ -6,6 +6,7 @@ import * as React from "react"
 import { converter, formatHsl, formatRgb, parse } from "culori"
 
 import { Input, type InputProps } from "@/components/base/text-inputs"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultColorInputStrings, type ColorInputStrings } from "./value-inputs.strings"
@@ -232,7 +233,7 @@ export const ColorInput = React.forwardRef<HTMLInputElement, ColorInputProps>(fu
 					setEditing(false)
 					onBlur?.(event)
 				}}
-				className={styles.colorText}
+				className={cx(styles.colorText, textClassName({ size: "inherit", mono: true }))}
 			/>
 		</div>
 	)

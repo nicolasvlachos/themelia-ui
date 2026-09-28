@@ -12,11 +12,6 @@ declare const styles: {
 	readonly icon: string
 	readonly spinner: string
 	readonly start: string
-	readonly statusError: string
-	readonly statusInfo: string
-	readonly statusSuccess: string
-	readonly statusWarning: string
-	readonly title: string
 	readonly toast: string
 	readonly top: string
 	readonly viewport: string

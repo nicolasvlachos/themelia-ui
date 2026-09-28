@@ -13,7 +13,7 @@ import { previewRoutes } from './lib/preview-routes.mjs'
 
 const routeOf = previewRoutes()
 
-const LAYERS = ['primitives', 'base', 'features', 'layout', 'patterns', 'admin/patterns']
+const LAYERS = ['primitives', 'base', 'features', 'layout', 'blocks', 'blocks/admin']
 const ROOT_ENTRIES = [
   { id: 'index', source: 'src/index.ts', export: '.', layer: 'foundation' },
   { id: 'ui-provider', source: 'src/lib/ui-provider/index.ts', export: './ui-provider', layer: 'foundation' },
@@ -116,8 +116,8 @@ for (const layer of LAYERS) {
       id: `${layer}/${item.name}`,
       source: `${dir}/index.ts`,
       export: `./${layer}/${item.name}`,
-      /* `admin/patterns/commerce` is one family in the `admin` layer, not a layer of its own. */
-      layer: layer.startsWith('admin') ? 'admin' : layer,
+      /* `blocks/admin/commerce` is one family in the `admin` layer, not a layer of its own. */
+      layer: layer === 'blocks/admin' ? 'admin' : layer,
       dir,
     })
   }

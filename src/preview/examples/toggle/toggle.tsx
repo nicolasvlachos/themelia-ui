@@ -9,11 +9,11 @@ export default function ToggleExample() {
 	const [bold, setBold] = useState(false)
 
 	return (
-		<Stack direction="horizontal" gap="lg" align="center">
+		<Stack direction="horizontal" align="center">
 			<Toggle pressed={bold} onPressedChange={setBold} aria-label="Bold">
 				<BoldIcon />
 			</Toggle>
-			<Toggle variant="outline" aria-label="Italic">
+			<Toggle appearance="outline" aria-label="Italic">
 				<ItalicIcon />
 			</Toggle>
 			<Toggle disabled aria-label="Underline">

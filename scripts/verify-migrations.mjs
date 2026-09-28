@@ -12,12 +12,13 @@
  */
 import { readFileSync } from 'node:fs'
 
+import { expandExports } from './lib/export-targets.mjs'
 import { declaredTokens } from './lib/token-surface.mjs'
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
 const recorded = JSON.parse(readFileSync('architecture/migrations.json', 'utf8'))
 const name = pkg.name
-const published = new Set(Object.keys(pkg.exports))
+const published = new Set(Object.keys(expandExports(pkg.exports)))
 
 const subpathOf = (specifier) =>
   specifier.startsWith(`${name}/`) ? `.${specifier.slice(name.length)}` : specifier === name ? '.' : null

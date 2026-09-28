@@ -1,7 +1,7 @@
 /**
  * Sparkline — a mini area chart with no axes, grid or tooltip, for metric tiles and table
  * cells. Lives in `base/chart` so Recharts stays a peer of this subpath only. The stroke is
- * a CSS variable set from `tone`, so it follows the theme.
+ * the tone's ink, read through `data-tone`, so it follows the theme.
  */
 import { useId } from "react"
 import * as Recharts from "recharts"
@@ -66,14 +66,14 @@ export function Sparkline({
 					>
 						<defs>
 							<linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-								<stop offset="0%" stopColor="var(--sparkline-stroke)" stopOpacity={0.25} />
-								<stop offset="100%" stopColor="var(--sparkline-stroke)" stopOpacity={0} />
+								<stop offset="0%" stopColor="var(--_sparkline-stroke)" stopOpacity={0.25} />
+								<stop offset="100%" stopColor="var(--_sparkline-stroke)" stopOpacity={0} />
 							</linearGradient>
 						</defs>
 						<Recharts.Area
 							type="monotone"
 							dataKey="value"
-							stroke="var(--sparkline-stroke)"
+							stroke="var(--_sparkline-stroke)"
 							strokeWidth={1.75}
 							fill={`url(#${gradientId})`}
 							dot={false}

@@ -26,13 +26,13 @@ export default function ActionMenuExample() {
 	]
 
 	return (
-		<Stack direction="horizontal" gap="xl" align="center">
+		<Stack direction="horizontal" align="center">
 			<ActionMenu actions={actions} />
 			<ActionMenu actions={actions} label="Actions" icon={SettingsIcon} />
 			<ActionMenu
 				actions={actions}
 				renderTrigger={
-					<Button buttonStyle="outline" tone="neutral">
+					<Button appearance="outline" tone="neutral">
 						Custom trigger
 						<ChevronDownIcon />
 					</Button>

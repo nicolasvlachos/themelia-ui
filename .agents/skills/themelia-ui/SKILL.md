@@ -46,9 +46,7 @@ These paths exist after installation and are the source of truth:
 | `node_modules/themelia-ui/docs/generated/public-api.md` | every exported name and exact subpath |
 | `node_modules/themelia-ui/docs/generated/imports.md` | every JS/CSS import and optional-peer owner |
 | `node_modules/themelia-ui/docs/generated/recipes.json` | machine-readable live-preview examples |
-| `node_modules/themelia-ui/src/styles/TOKENS.md` | exhaustive public theme-author contract |
-| `node_modules/themelia-ui/src/styles/FACTORS.md` | scale, spacing, density, and typography factors |
-| `node_modules/themelia-ui/src/styles/SCOPES.md` | boundaries where derived tokens recompute |
+| `node_modules/themelia-ui/src/styles/TOKENS.md` | the theme contract: every variable, its role, and what components compute from it |
 | `node_modules/themelia-ui/docs/generated/migration.md` | every renamed or removed name, token and utility, with what replaces it |
 | `node_modules/themelia-ui/scripts/consumer/codemod.mjs` | applies the mechanical half of an upgrade to your source |
 
@@ -67,7 +65,7 @@ node node_modules/themelia-ui/scripts/consumer/find-component.mjs --peer=@tansta
 node node_modules/themelia-ui/scripts/consumer/find-component.mjs --help
 ```
 
-It indexes 97 modules, 386 attributed live recipes, and
+It indexes 97 modules, 393 attributed live recipes, and
 118 live preview routes by public symbol, module id, recipe title, preview route,
 component capabilities, descriptions, and positive selection guidance. Negative `avoidWhen` guidance is never treated as a
 recommendation. `--json` includes the exact
@@ -102,9 +100,9 @@ Selection rules:
 | Base (`base`) | 54 | one generic concept: text roles, controls, rows, passive structure | `themelia-ui/base/accordion` |
 | Layout (`layout`) | 9 | page and application shells | `themelia-ui/layout/app-shell` |
 | Features (`features`) | 24 | an owned interaction lifecycle — a context, a hook, a state machine | `themelia-ui/features/actions` |
-| Blocks (`blocks`) | 5 | an arrangement rendering a subject; the admin blocks make up the admin profile | `themelia-ui/admin/patterns/access` |
+| Blocks (`blocks`) | 5 | an arrangement rendering a subject; the admin blocks make up the admin profile | `themelia-ui/blocks/admin/access` |
 
-97 modules, 752 public components, 1070 exported symbols in total.
+97 modules, 752 public components, 1071 exported symbols in total.
 <!-- /GENERATED:tiers -->
 
 Dependencies flow downward:
@@ -159,7 +157,7 @@ import "themelia-ui/base/buttons.css"
 renders unstyled.
 
 **The stylesheet is split per module.** 90 of 97 modules ship one; a module whose components draw nothing has none. Each module stylesheet imports
-`core.css` itself, so the tokens, themes, and cascade layer order arrive automatically.
+`core.css` itself, so the theme and the cascade layer order arrive automatically.
 Import `core.css` on its own only when application CSS needs the token contract before
 any component stylesheet is loaded.
 
@@ -192,7 +190,7 @@ There are 15 optional peer packages. A consumer only needs the peers reachable f
 | `react-hook-form` | `features/sync`, `forms-rhf` |
 | `react-leaflet` | `features/map` |
 | `react-leaflet-markercluster` | `features/map` |
-| `recharts` | `base/chart`, `patterns/analytics` |
+| `recharts` | `base/chart`, `blocks/analytics` |
 <!-- /GENERATED:peers -->
 
 ## Provider, scopes, themes, and portals
@@ -224,12 +222,12 @@ export function ScopedPreview() {
 }
 ```
 
-Theme through the public contract in `node_modules/themelia-ui/src/styles/TOKENS.md`.
-The three factors are `--scale` (everything), `--density-scale` (spacing and control
-geometry, rounded to whole pixels) and `--text-scale` (type); the last two default to
-`--scale`. Set them on `:root`, with a `density` preset, or on a scope boundary; semantic
-colours are re-derived at each boundary, so override those through the provider or a scope. Component-level variables
-are implementation plumbing unless the public token reference explicitly promotes them.
+Theme through the public contract in `node_modules/themelia-ui/src/styles/TOKENS.md`: about
+eighty variables, declared once at `:root`, each colour a `light-dark(light, dark)` pair. Set
+the ones you change on `:root` (or on any element, for a region); nothing below `:root`
+declares them again. A denser region is the provider's `density` or `scale`, and type alone
+is `typography.scale`. A component's own variables are private (`--_x`), never an override
+surface.
 
 Import application overrides after kit CSS. Kit component rules are layered, so ordinary
 unlayered consumer CSS wins without `!important`. Target stable documented `data-slot` or

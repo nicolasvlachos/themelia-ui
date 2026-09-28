@@ -39,7 +39,7 @@ export function MediaLibrary<TItem = MediaLibraryItem>({
 	description,
 	confirmLabel,
 	cancelLabel,
-	density = "comfortable",
+	size = "default",
 	showMeta = true,
 	allowUpload = true,
 	typeFilters = ALL_TYPES,
@@ -108,7 +108,7 @@ export function MediaLibrary<TItem = MediaLibraryItem>({
 						description={hasFilters ? copy.emptyFilteredDescription : copy.emptyDescription}
 						action={
 							hasFilters ? (
-								<Button type="button" tone="neutral" buttonStyle="outline" onClick={clearFilters}>
+								<Button type="button" tone="neutral" appearance="outline" onClick={clearFilters}>
 									{copy.clearFilters}
 								</Button>
 							) : undefined
@@ -134,7 +134,7 @@ export function MediaLibrary<TItem = MediaLibraryItem>({
 			)
 		}
 
-		return <MediaLibraryGrid items={visibleItems} selectedSet={selectedSet} selectionMode={selectionMode} accessors={accessors} strings={copy} onToggle={handleToggle} onDetails={setDetailId} density={density} showMeta={showMeta} renderItem={slots?.renderItem} />
+		return <MediaLibraryGrid items={visibleItems} selectedSet={selectedSet} selectionMode={selectionMode} accessors={accessors} strings={copy} onToggle={handleToggle} onDetails={setDetailId} size={size} showMeta={showMeta} renderItem={slots?.renderItem} />
 	})()
 
 	const browse = (
@@ -165,7 +165,7 @@ export function MediaLibrary<TItem = MediaLibraryItem>({
                 status={loading ? copy.loading : undefined} strings={copy} />
             {fetchError && visibleItems.length > 0 ? <Alert tone="warning" role="alert">
                 <AlertDescription>{copy.refreshError}</AlertDescription>
-                <AlertAction><Button tone="neutral" buttonStyle="outline" onClick={refetch}>{copy.retry}</Button></AlertAction>
+                <AlertAction><Button tone="neutral" appearance="outline" onClick={refetch}>{copy.retry}</Button></AlertAction>
             </Alert> : null}
 
 			<div className={styles.workspace} data-detail={detailItem ? "" : undefined}>

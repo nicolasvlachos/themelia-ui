@@ -5,7 +5,7 @@ import { Input } from "themelia-ui/base/text-inputs"
 
 export default function FormFieldExample() {
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Email" required hint="We only use this for receipts.">
 				<Input type="email" placeholder="you@example.com" />
 			</FormField>

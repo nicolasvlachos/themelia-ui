@@ -1,4 +1,4 @@
-import { MilestonesTimeline, type Milestone } from "themelia-ui/patterns/timelines"
+import { MilestonesTimeline, type Milestone } from "themelia-ui/blocks/timelines"
 
 const MILESTONES: Milestone[] = [
 	{ id: "1", title: "Discovery", description: "Interviews with eight teams.", status: "completed", dueDate: "12 Jun" },

@@ -1,15 +1,4 @@
 /* Workspace: the frame one record is edited in, its header, section nav and locale strip. */
-/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	/* ── WorkspaceLayout ───────────────────────────────────────────────────────── */
-	--workspace-rail-w: round(calc(20rem * var(--density-scale, var(--scale))), 1px);
-}
 
 /*
  * WorkspaceRecordHeader: identifies a record (media, status, metadata, two tiers of
@@ -24,13 +13,13 @@
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .actions {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	flex-shrink: 0;
 	margin-inline-start: auto;
 }
@@ -39,7 +28,7 @@
 .metadata {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--space-sm) var(--space-xl);
+	gap: var(--gap-sm) var(--gap);
 	margin: 0;
 	min-width: 0;
 }
@@ -47,7 +36,7 @@
 .secondary {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	flex-wrap: wrap;
 	min-width: 0;
 }
@@ -59,7 +48,7 @@
 .nav {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 	height: 100%;
 }
 
@@ -67,41 +56,40 @@
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 	min-height: 0;
 }
 
 .navGroup {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
+/* The caption and its description, set in from the group's edge. */
 .navGroupHead {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
-	padding-inline: var(--space-xs);
+	padding-inline: var(--padding-sm);
 }
 
+/* The rows sit half the small gap apart, so two filled rows never touch. */
 .navItems {
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .navItem {
 	border-radius: var(--radius-sm);
 	text-align: start;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .navItem:is(button, a) {
 	cursor: pointer;
 }
 
-.navItem:is(button, a):hover:not([data-active]):not([aria-disabled]) {
-	background-color: var(--accent-50);
-}
-
+/* One hover fill; the current section takes it too, at medium weight (workspace-nav.tsx). */
+.navItem:is(button, a):hover:not([data-active]):not([aria-disabled]),
 .navItem[data-active] {
 	background-color: var(--accent);
 }
@@ -114,21 +102,21 @@
 
 /* The status glyph keeps its own colour over the row's tint. */
 .navStatusIcon {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .navItem[data-status="complete"] .navStatusIcon { color: var(--success); }
-.navItem[data-status="current"] .navStatusIcon { color: var(--primary-accent); }
-.navItem[data-status="attention"] .navStatusIcon { color: var(--warning-accent); }
+.navItem[data-status="current"] .navStatusIcon { color: var(--primary); }
+.navItem[data-status="attention"] .navStatusIcon { color: color-mix(in oklab, var(--warning) 45%, light-dark(var(--foreground), var(--warning))); }
 .navItem[data-status="idle"] .navStatusIcon { color: var(--muted-foreground); }
 .navItem[data-status="disabled"] .navStatusIcon { color: var(--muted-foreground); }
 
 .navProgress {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
-	margin-block-start: var(--space-xs);
+	gap: var(--gap-sm);
+	margin-block-start: calc(var(--gap-sm) / 2);
 }
 
 .navProgress > :first-child {
@@ -141,9 +129,11 @@
 
 /* ══ WorkspaceLayout ═══════════════════════════════════════════════════════════════
  * Sits inside an app shell, so it bounds itself to its parent and scrolls its own content.
+ * `--_workspace-rail-w` is the rail's width, which the `railWidth` prop re-points.
  */
 
 .layout {
+	--_workspace-rail-w: 20rem;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -174,11 +164,11 @@
 	}
 
 	.layout[data-has-rail] .layoutBody {
-		grid-template-columns: minmax(0, 1fr) var(--workspace-rail-w);
+		grid-template-columns: minmax(0, 1fr) var(--_workspace-rail-w);
 	}
 
 	.layout[data-has-sidebar][data-has-rail] .layoutBody {
-		grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--workspace-rail-w);
+		grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--_workspace-rail-w);
 	}
 }
 
@@ -189,7 +179,7 @@
 	min-width: 0;
 	min-height: 0;
 	overflow-y: auto;
-	padding: var(--space-xl);
+	padding: var(--padding);
 }
 
 .layoutSidebar {
@@ -213,19 +203,19 @@
 .layoutMeasure {
 	margin-inline: auto;
 	width: 100%;
-	max-width: var(--workspace-content-max-w);
+	max-width: var(--_measure);
 }
 
-.layout[data-content-width="default"] { --workspace-content-max-w: 58rem; }
-.layout[data-content-width="wide"] { --workspace-content-max-w: 86rem; }
-.layout[data-content-width="full"] { --workspace-content-max-w: none; }
+.layout[data-content-width="default"] { --_measure: 58rem; }
+.layout[data-content-width="wide"] { --_measure: 86rem; }
+.layout[data-content-width="full"] { --_measure: none; }
 
 /* ══ WorkspaceLocaleStrip ══════════════════════════════════════════════════════════ */
 
 .strip {
 	display: flex;
 	align-items: center;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -233,20 +223,21 @@
 .stripList {
 	display: flex;
 	flex: 1;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 	/* Contains absolutely positioned descendants. */
 	position: relative;
 	overflow-x: auto;
 }
 
+/* A choice among alternatives: the chosen one takes the brand tint and a brand edge. */
 .stripItem {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	flex-shrink: 0;
-	min-width: round(calc(11rem * var(--density-scale, var(--scale))), 1px);
-	padding: var(--space-sm) var(--space-md);
+	min-width: 11rem;
+	padding: var(--padding-sm);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius-sm);
 	background-color: var(--card);
@@ -254,8 +245,8 @@
 	text-align: start;
 	cursor: pointer;
 	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		border-color var(--duration-fast) var(--ease-out);
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease);
 }
 
 .stripItem:hover:not(:disabled):not([data-active]) {
@@ -264,7 +255,7 @@
 
 .stripItem[data-active] {
 	border-color: var(--primary);
-	background-color: var(--primary-5);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .stripItem:disabled {
@@ -272,15 +263,15 @@
 	cursor: not-allowed;
 }
 
+/* The list scrolls and clips, so the outline is drawn inside the item. */
 .stripItem:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 .stripHead {
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 

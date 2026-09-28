@@ -11,7 +11,7 @@ export function AppThemeEditor({ showIntro = false }: { showIntro?: boolean }) {
 	const { theme, config, updateTheme, updateConfig, reset, configError } = useAppTheme()
 	const [error, setError] = useState<string | null>(null)
 	return (
-		<Stack gap="md">
+		<Stack gap="sm">
 			{(configError || error) && <Text role="alert" type="error">{configError || error}</Text>}
 			<ThemeTweaker
 				value={theme} onValueChange={updateTheme}
@@ -20,7 +20,7 @@ export function AppThemeEditor({ showIntro = false }: { showIntro?: boolean }) {
 				preview={false} showIntro={showIntro}
 				onError={failure => setError(String(failure))}
 				strings={{ title: "Theme settings" }}
-				actionsSlot={showIntro ? <Button tone="neutral" buttonStyle="outline" aria-label="Reset app theme" onClick={() => { reset(); setError(null) }}>Reset</Button> : undefined}
+				actionsSlot={showIntro ? <Button tone="neutral" appearance="outline" aria-label="Reset app theme" onClick={() => { reset(); setError(null) }}>Reset</Button> : undefined}
 			/>
 		</Stack>
 	)

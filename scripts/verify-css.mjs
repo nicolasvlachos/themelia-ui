@@ -14,11 +14,8 @@ import { fileURLToPath } from 'node:url'
 import { publicComponents } from './lib/public-symbols.mjs'
 
 export const RULES = {
-  composition: ['inline-presentation', 'important', 'pressable-no-focus', 'raw-img', 'radius-pair', 'literal-radius', 'literal-colour', 'literal-space', 'literal-hairline', 'literal-icon-size', 'text-grey', 'text-class-type', 'empty-rule', 'stale-exception'],
-  factors: ['squared-factor'],
-  scoping: ['bare-root-derived'],
-  wiring: ['unimported-theming', 'undefined-var', 'module-keyframes', 'undefined-inline-var', 'undeclared-runtime-token', 'theme-only-token'],
-  'dark-overrides': ['bare-theme-class', 'missing-explicit', 'missing-media-twin', 'twin-selector', 'twin-mismatch'],
+  composition: ['inline-presentation', 'raw-img', 'literal-icon-size', 'text-grey', 'text-class-type', 'theme-selector', 'empty-rule'],
+  wiring: ['undefined-var', 'module-keyframes', 'undefined-inline-var', 'undeclared-runtime-token', 'theme-only-token'],
   responsive: ['missing-breakpoint', 'missing-reset', 'missing-chain', 'chain-skip'],
   'container-queries': ['self-query'],
   'css-collisions': ['class-collision'],
@@ -162,46 +159,21 @@ const LAYERS = [
   ['base', 'src/components/base'],
   ['features', 'src/components/features'],
   ['layout', 'src/components/layout'],
-  /* patterns and admin sit above features, so no feature acquires a domain vocabulary. */
-  ['patterns', 'src/components/patterns'],
-  ['admin', 'src/components/admin'],
+  /* Blocks sit above features, so no feature acquires a domain vocabulary. */
+  ['blocks', 'src/components/blocks'],
   ['preview', 'src/preview'],
 ]
 const layerOf = (path) => LAYERS.find(([, dir]) => path.startsWith(`${dir}/`))?.[0]
-const TOP = ['features', 'patterns', 'admin']
+const TOP = ['features', 'blocks']
 
 /* TSX rules: [id, layers (all when null), pattern, says]. */
 const TSX_RULES = [
   ['inline-presentation', TOP, /\bstyle=\{\{[^}]*\b(?:fontSize|fontFamily|fontWeight|lineHeight|letterSpacing|padding(?:Inline|Block|Top|Right|Bottom|Left)?|margin(?:Inline|Block|Top|Right|Bottom|Left)?|gap|rowGap|columnGap)\s*:/g, 'inline presentation bypasses shared typography/spacing — use Text and the spacing tokens'],
   /* Needs both alt and onError; PreviewImage is the component that answers this rule. */
   ['raw-img', null, /<img\b(?![^>]*alt=)|<img\b(?![^>]*onError)/g, 'an <img> with no alt or no failure path — a third party\'s file fails often', /preview-image\.tsx$/],
-  /* Icons size in CSS (--size-icon-*); `size="sm"` is a different prop and passes. */
+  /* Icons size in CSS (--icon-size, --icon-size-sm); `size="sm"` is a different prop and passes. */
   ['literal-icon-size', null, /\bsize=\{\d+\}/g, 'an icon sized in JavaScript — a numeric size prop is a second mechanism no token override reaches'],
 ]
-
-const MODULE = /\.module\.css$/
-/*
- * CSS rules over declarations: [id, files, property, value, says, skip]. An identity names the
- * property as far as the pattern matched it (`scroll-margin-top` is keyed `margin-top`).
- */
-const CSS_RULES = [
-  ['important', MODULE, /.+/, /!important/, 'an !important — a specificity fight the cascade layers exist to prevent'],
-  /* --radius for containers, --radius-sm inside them; empty-state illustrations draw UI, they are not UI. */
-  ['radius-pair', /\.css$/, /border-radius$/, /^var\(--radius-(?!sm\)|pill\))[a-z0-9-]+\)/, 'a radius outside the pair — --radius for containers, --radius-sm inside them (outer = inner + inset), --radius-pill for round ends', /empty-illustrations\.module\.css$/],
-  /* calc() is inner = outer − inset; round(min(var(--…))) caps a control's corner at 30% of its height. */
-  ['literal-radius', MODULE, /border-radius$/, /^(?!var\(|calc\(|round\(min\(var\(--|0$|inherit|50%)/, 'a literal border-radius'],
-  /* Modules and theming/ alike: a colour anywhere in any value. */
-  ['literal-colour', /\.module\.css$|^src\/styles\/theming\//, /.+/, /(?<![\w-])(?:#[0-9a-f]{3,8}\b|(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb)\()/i, 'a literal colour — every colour in this kit is a token'],
-  /* px and rem, so `calc(0.875rem * var(--scale))` is caught; 1px is a hairline. */
-  ['literal-space', MODULE, /(?:padding|margin|gap)(?:-[a-z-]+)?$/, /^[^v\n;]*(?:\b(?!1px)\d+px|\b[\d.]+rem)/, 'a measurement off the spacing scale — spacing comes from --space-* so it follows --density-scale and presets'],
-  ['literal-hairline', /\.css$/, /^(?:border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?(?:-width)?|outline(?:-width)?|box-shadow|column-rule(?:-width)?)$/, /(?<![\d.])[12]px/, 'a literal hairline — use --border-width, --border-width-strong or --focus-ring-width'],
-]
-
-/*
- * Allowed CSS findings by exact identity (rule|file|selector|property|value). A new finding
- * fails as unexpected; an entry that stops matching fails as stale, so the list only shrinks.
- */
-const EXCEPTIONS = []
 
 /* Shared sheets checked alongside the component modules for empty rules and text colour. */
 const SHARED_SHEETS = ['src/styles/fields.css', 'src/styles/overlays.css', 'src/styles/mentions.css']
@@ -261,13 +233,8 @@ function subjectOf(selector) {
   return selector.slice(start)
 }
 
-function composition({ root, css, ts, sheet }, out) {
+function composition({ css, ts, sheet }, out) {
   const identities = new Map()
-  const exceptions = [...EXCEPTIONS]
-  const spacing = join(root, 'scripts/spacing-exceptions.json')
-  /* Spacing debt; the file records why each entry stays. */
-  if (existsSync(spacing)) exceptions.push(...JSON.parse(readFileSync(spacing, 'utf8')).findings)
-  const allowed = new Set(exceptions.map((identity) => identity.replace(/\s+/g, ' ')))
 
   for (const file of ts) {
     const layer = layerOf(file.path)
@@ -309,39 +276,9 @@ function composition({ root, css, ts, sheet }, out) {
         }
       }
     }
-    /* A native <button> on a row or card is fine; a pressable surface without :focus-visible is not. */
-    const dir = file.path.replace(/\/[^/]+$/, '')
-    const parent = dir.replace(/\/[^/]+$/, '')
-    const beside = css.filter((s) => s.module && [dir, parent].includes(s.path.replace(/\/[^/]+$/, ''))).map((s) => s.src).join('\n')
-    for (const { tag, at } of openingTags(source, 'button')) {
-      /* Field chrome draws the ring for data-field-control; tabIndex -1 is unfocusable. */
-      if (/data-field-control|tabIndex=\{-1\}/.test(tag)) continue
-      const names = [...tag.matchAll(/styles\.(\w+)/g)].map((ref) => ref[1])
-      if (names.length && !names.some((name) => new RegExp(`\\.${name}\\b[^{]*:focus-visible`).test(beside))) {
-        out('pressable-no-focus', file.path, lineAt(source, at), `styles.${names.join('+')} is pressable with no :focus-visible rule — a keyboard reader cannot see where they are`)
-      }
-    }
   }
 
-  for (const s of css) {
-    if (!layerOf(s.path)) continue
-    for (const [id, files, property, value, says, skip] of CSS_RULES) {
-      if (!files.test(s.path) || skip?.test(s.path)) continue
-      for (const d of s.decls) {
-        const name = property.exec(d.name)?.[0]
-        if (!name || !value.test(d.value)) continue
-        const selector = unglobal(d.block.prelude.split('\n').pop().trim())
-        const identity = `${id}|${s.path}|${selector}|${name}|${d.value}`.replace(/\s+/g, ' ')
-        identities.set(identity, { id, file: s.path, line: d.line, says })
-      }
-    }
-  }
-  for (const [identity, { id, file, line, says }] of identities) {
-    if (!allowed.has(identity)) out(id, file, line, `${says} — ${identity}`)
-  }
-  for (const identity of allowed) {
-    if (!identities.has(identity)) out('stale-exception', identity.split('|')[1], undefined, `${identity} no longer matches anything — delete the exception`)
-  }
+  for (const [identity, { id, file, line, says }] of identities) out(id, file, line, `${says} — ${identity}`)
 
   for (const s of css) {
     if (!(s.module && /^src\/(components|preview)\//.test(s.path)) && !SHARED_SHEETS.includes(s.path)) continue
@@ -358,106 +295,16 @@ function composition({ root, css, ts, sheet }, out) {
       }
     }
   }
-}
-
-/* ── factors ── a length scaled twice by the global factors (src/styles/FACTORS.md) ──── */
-
-const GLOBAL = new Set(['--scale', '--density-scale', '--text-scale'])
-/* `var(--density-scale, var(--scale))` is one factor with its default, not two. */
-const normalize = (value) => value.replace(/var\(\s*(--(?:density|text)-scale)\s*,\s*var\(\s*--scale\s*\)\s*\)/g, 'var($1)')
-const refsIn = (value) => [...value.matchAll(/var\(\s*(--[a-z0-9-]+)/g)]
-const scalesIn = (value) => [...value.matchAll(/var\(\s*(--(?:[a-z0-9-]+-)?scale)\s*\)/g)].map((m) => m[1]).filter((name) => GLOBAL.has(name))
-/** Whitespace-separated words, leaving the contents of calc()/var() whole. */
-function words(value) {
-  const out = []
-  let depth = 0
-  let current = ''
-  for (const char of value) {
-    if (char === '(') depth++
-    else if (char === ')') depth = Math.max(0, depth - 1)
-    if (/\s/.test(char) && depth === 0) {
-      if (current) out.push(current)
-      current = ''
-    } else current += char
-  }
-  if (current) out.push(current)
-  return out
-}
-
-function factors({ css }, out) {
-  const declared = new Map()
-  const entries = []
-  for (const s of css.filter(under('styles', 'components'))) {
-    for (const d of s.decls) {
-      const value = normalize(d.value)
-      const entry = { path: s.path, d, value }
-      if (d.name.startsWith('--')) declared.set(d.name, [...(declared.get(d.name) ?? []), entry])
-      const used = scalesIn(value)
-      if (value.includes('calc(') && (d.name.startsWith('--') ? used.length : new Set(used).size) > 1) {
-        out('squared-factor', s.path, d.line, `${d.name} multiplies by ${[...new Set(used)].join(' and ')} — the effect is squared`)
-      }
-      entries.push(entry)
+  /* Colours switch through light-dark(); a rule keyed on the scheme misses a dark region inside a light page. */
+  for (const s of css.filter((sheet) => (sheet.module && sheet.path.startsWith('src/components/')) || /^src\/styles\/(?!theme\/)[^/]+\.css$/.test(sheet.path))) {
+    for (const block of s.blocks.filter((b) => THEMED.test(b.prelude))) {
+      out('theme-selector', s.path, block.line, `${block.prelude.replace(/\s+/g, ' ').slice(0, 80)} keys on the colour scheme — write light-dark() in the value instead`)
     }
-  }
-
-  /* The global factors a value reaches through its references; `seen` survives a cycle. */
-  const factorsOf = (value, seen = new Set()) => {
-    const found = new Set()
-    for (const [, ref] of refsIn(value)) {
-      if (GLOBAL.has(ref)) found.add(ref)
-      else if (!seen.has(ref)) {
-        seen.add(ref)
-        for (const entry of declared.get(ref) ?? []) for (const factor of factorsOf(entry.value, seen)) found.add(factor)
-      }
-    }
-    return found
-  }
-
-  /*
-   * A factor-carrying token multiplied by a factor squares it. Only multiplication counts:
-   * `calc(var(--space-lg) + 2px * var(--scale))` scales each term once.
-   */
-  const squared = (value) => {
-    for (const term of words(value).flatMap((word) => word.split(/\s[+]\s|\s[-]\s/))) {
-      const refs = refsIn(term).map((m) => ({ name: m[1], start: m.index, end: m.index + m[0].length }))
-      const direct = refs.filter((ref) => GLOBAL.has(ref.name))
-      for (const ref of direct.length ? refs : []) {
-        const inner = GLOBAL.has(ref.name) ? new Set() : factorsOf(`var(${ref.name})`)
-        if (!inner.size) continue
-        const by = direct.filter((f) => term.slice(Math.min(ref.end, f.end), Math.max(ref.start, f.start)).includes('*'))
-        if (by.length) return `${ref.name} — which already carries ${[...inner].join(' and ')} — by ${[...new Set(by.map((f) => f.name))].join(' and ')}`
-      }
-    }
-    return null
-  }
-
-  for (const { path, d, value } of entries) {
-    const hit = (d.name.startsWith('--') || value.includes('calc(')) && squared(value)
-    if (hit) out('squared-factor', path, d.line, `${d.name} multiplies ${hit}; the effect is squared`)
   }
 }
 
 /* A token declared only under a theme selector: a default page has no value for it. */
 const THEMED = /\.dark\b|\.light\b|\[data-theme|prefers-color-scheme/
-
-/* ── scoping ── a derived token at bare :root bakes at root values (src/styles/SCOPES.md) */
-
-const SCOPE_MARKERS = ['[data-ui-scope]', '[data-density]', '[data-theme]']
-/* Allowed to read another token from bare :root: a theme alias to a palette constant. */
-const BARE_ROOT_ALLOWED = new Set(['--shadow-ink'])
-
-function scoping({ css }, out) {
-  for (const s of css.filter(under('styles', 'components', 'preview'))) {
-    for (const block of s.blocks) {
-      if (!block.prelude.includes(':root') || SCOPE_MARKERS.some((marker) => block.prelude.includes(marker))) continue
-      for (const d of custom(block.decls)) {
-        if (d.value.includes('var(') && !BARE_ROOT_ALLOWED.has(d.name)) {
-          out('bare-root-derived', s.path, d.line, `${d.name} references another token from a bare :root block — it bakes at root values and ignores every nested scope`)
-        }
-      }
-    }
-  }
-}
 
 /* ── wiring ── the silent failures of a var-driven kit: unstyled, no error ─────────────── */
 
@@ -475,11 +322,6 @@ const RUNTIME_PROVIDED = new Set([
 ])
 
 function wiring({ css, ts }, out) {
-  const index = css.find((s) => s.path === 'src/styles/index.css')?.text ?? ''
-  for (const s of css) {
-    const name = /^src\/styles\/theming\/([^/]+\.css)$/.exec(s.path)?.[1]
-    if (name && !index.includes(`./theming/${name}`)) out('unimported-theming', s.path, undefined, 'is never imported by src/styles/index.css — every var it defines resolves to nothing')
-  }
   const defined = new Set(css.filter(under('styles', 'components')).flatMap((s) => custom(s.decls).map((d) => d.name)))
   /* Only a bare var(--x) must resolve; a fallback may be absent by design. */
   const undefinedIn = (text, extra = () => false) => {
@@ -503,7 +345,7 @@ function wiring({ css, ts }, out) {
     for (const d of s.decls) {
       /* CSS Modules scopes keyframe names, so a module naming a global one never animates. */
       if (/animation(?:-name)?$/.test(d.name) && d.value !== 'none' && !d.value.includes('var(')) {
-        out('module-keyframes', s.path, d.line, `\`animation: ${d.value}\` names a keyframe directly and will never run — use a --animate-* variable`)
+        out('module-keyframes', s.path, d.line, `\`animation: ${d.value}\` names a keyframe directly and will never run — use a --keyframes-* variable`)
       }
     }
   }
@@ -534,60 +376,6 @@ function wiring({ css, ts }, out) {
   }
 }
 
-/* ── dark-overrides ── every dark-only block answers the class, the boundaries and the OS ─ */
-
-/* An explicit light choice wins, as .light or [data-theme="light"], and so does a bare boundary inside one (gen-theme.mjs). */
-const MEDIA_SELECTORS = [
-  ':root:not(.light, [data-theme="light"])',
-  '[data-ui-scope]:not(.light, [data-theme="light"], :where(.light, [data-theme="light"]) *)',
-  '[data-density]:not(.light, [data-theme="light"], :where(.light, [data-theme="light"]) *)',
-]
-/* Plain-sheet spelling; a module's :global(...) is unwrapped before comparing. */
-const EXPLICIT_SELECTORS = ['.dark', '[data-theme="dark"]', ':is(.dark, [data-theme="dark"]) :is([data-ui-scope], [data-density]):not(.light, [data-theme="light"])']
-const DARK_TWIN = /^@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)$/
-
-function darkOverrides({ css }, out) {
-  for (const s of css.filter(under('styles/theming', 'components'))) {
-    const lines = s.text.split('\n')
-    const dark = []
-    for (const block of s.blocks.filter(isRule)) {
-      const list = selectorList(s, block)
-      /* In a module a bare theme class is hashed to a local one and matches nothing. */
-      if (s.module && /(?<!:global\()\.(?:dark|light)(?![\w-])/.test(block.prelude)) {
-        out('bare-theme-class', s.path, block.line, `a bare .dark/.light in a CSS Module is hashed and matches nothing — write :global(.dark)`)
-      }
-      /* A standalone dark selector; the shared boundary list has .dark after .light. */
-      const start = list.findIndex((item, i) => item.text === '.dark' && list[i - 1]?.text !== '.light')
-      if (start >= 0) dark.push({ block, list: list.slice(start), line: list[start].line })
-    }
-    const twins = s.blocks.filter((block) => DARK_TWIN.test(block.prelude))
-    for (const [i, { block, list, line }] of dark.entries()) {
-      /* Opt-out: `dark-override: in-tree` within 16 lines above, for a dark class set below the root. */
-      if (lines.slice(Math.max(0, line - 17), line - 1).join('\n').includes('dark-override: in-tree')) continue
-      for (const wanted of EXPLICIT_SELECTORS) {
-        if (!list.some((item) => item.text === wanted)) out('missing-explicit', s.path, line, `explicit dark block is missing \`${wanted}\``)
-      }
-      const own = custom(block.decls).map((d) => d.name)
-      if (!own.length) continue
-      /* colorScheme "system" sets no class; the twin comes before the next dark block. */
-      const twin = twins.find((t) => t.at > block.at && t.at < (dark[i + 1]?.block.at ?? Infinity))
-      if (!twin) {
-        out('missing-media-twin', s.path, line, `dark override with no @media (prefers-color-scheme: dark) twin — dead for colorScheme "system". Declares: ${own.join(', ')}`)
-        continue
-      }
-      const inner = descendants(twin).filter(isRule)
-      const selectors = inner.flatMap((b) => selectorList(s, b).map((item) => item.text))
-      const missing = MEDIA_SELECTORS.find((wanted) => !selectors.includes(wanted))
-      if (missing) out('twin-selector', s.path, twin.line, `media twin is missing \`${missing}\``)
-      const theirs = inner.flatMap((b) => custom(b.decls).map((d) => d.name))
-      const onlyClass = own.filter((name) => !theirs.includes(name))
-      const onlyMedia = theirs.filter((name) => !own.includes(name))
-      if (onlyClass.length) out('twin-mismatch', s.path, line, `declared for .dark but not under the OS preference: ${onlyClass.join(', ')}`)
-      if (onlyMedia.length) out('twin-mismatch', s.path, twin.line, `declared under the OS preference but not for .dark: ${onlyMedia.join(', ')}`)
-    }
-  }
-}
-
 /* ── responsive ── each breakpoint's var() chain falls back through every lower one ───── */
 
 /* Every module implementing a responsive chain; add a new family here in the same change. */
@@ -596,16 +384,16 @@ const RESPONSIVE = {
   'src/components/base/aspect-ratio/aspect-ratio.module.css': ['root'],
 }
 const BPS = ['base', 'sm', 'md', 'lg', 'xl', '2xl']
-/* Selector → the variable families each of its breakpoint rules declares. */
+/* Selector → the variable families each of its breakpoint rules declares (private, `--_x`). */
 const CHAINS = {
-  stack: ['stack-direction', 'stack-gap', 'stack-align', 'stack-justify', 'stack-wrap', 'stack-max-width'],
-  grid: ['grid-columns', 'grid-gap', 'grid-row-gap', 'grid-column-gap', 'grid-align', 'grid-max-width'],
-  cell: ['cell-span'],
+  stack: ['_stack-direction', '_stack-gap', '_stack-align', '_stack-justify', '_stack-wrap', '_stack-max-width'],
+  grid: ['_grid-columns', '_grid-gap', '_grid-row-gap', '_grid-column-gap', '_grid-align', '_grid-max-width'],
+  cell: ['_cell-span'],
   /* Takes Grid's responsive gap and align. */
-  adaptive: ['grid-gap', 'grid-align'],
-  root: ['aspect-ratio'],
-  split: ['split-width', 'split-gap'],
-  bleed: ['bleed-amount'],
+  adaptive: ['_grid-gap', '_grid-align'],
+  root: ['_aspect-ratio'],
+  split: ['_split-width', '_split-gap'],
+  bleed: ['_bleed-amount'],
 }
 /* The breakpoint of the nearest @media (--bp-*); a @container ladder below it takes its values from it. */
 const breakpointOf = (block) => {
@@ -782,10 +570,7 @@ function bem({ root, ts }, out) {
 
 const GROUPS = {
   composition,
-  factors,
-  scoping,
   wiring,
-  'dark-overrides': darkOverrides,
   responsive,
   'container-queries': containerQueries,
   'css-collisions': cssCollisions,

@@ -79,7 +79,7 @@ export function SiteSearch() {
 		<div className={styles.search}>
 			<Button
 				tone="neutral"
-				buttonStyle="outline"
+				appearance="outline"
 				className={styles.searchTrigger}
 				aria-label="Search components"
 				onClick={(event) => {

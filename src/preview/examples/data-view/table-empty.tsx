@@ -11,7 +11,7 @@ export default function TableEmpty() {
 			columns={tableColumns.slice(0, 3)}
 			data={[]}
 			emptyStateMessage="No bookings match these filters."
-			emptyStateAction={<Button type="button" tone="neutral" buttonStyle="outline">Clear filters</Button>}
+			emptyStateAction={<Button type="button" tone="neutral" appearance="outline">Clear filters</Button>}
 		/>
 	)
 }

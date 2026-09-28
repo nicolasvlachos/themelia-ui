@@ -6,10 +6,7 @@ declare const styles: {
 	readonly alignInlineEnd: string
 	readonly alignInlineStart: string
 	readonly button: string
-	readonly buttonIconSm: string
-	readonly buttonIconXs: string
-	readonly buttonSm: string
-	readonly buttonXs: string
+	readonly buttonIcon: string
 	readonly control: string
 	readonly controlTextarea: string
 	readonly root: string

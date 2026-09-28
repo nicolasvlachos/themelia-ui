@@ -15,7 +15,7 @@ const keepPage = ({ data }: { data: readonly Booking[] }) => data as Booking[]
 
 function ResetViewButton({ disabled, onReset }: { disabled: boolean; onReset: () => void }) {
 	const { clearFilters } = useFilters()
-	return <Button tone="neutral" buttonStyle="outline" disabled={disabled}
+	return <Button tone="neutral" appearance="outline" disabled={disabled}
 		onClick={() => { clearFilters(); onReset() }}>Reset view</Button>
 }
 
@@ -62,7 +62,7 @@ export default function DataViewExample() {
 				enableColumnVisibility: true,
 				getRowId: (row) => row.id,
 				emptyStateMessage: "No bookings match your filters",
-				emptyStateAction: <Button tone="neutral" buttonStyle="outline" onClick={() => updateFilters([])}>Clear filters</Button>,
+				emptyStateAction: <Button tone="neutral" appearance="outline" onClick={() => updateFilters([])}>Clear filters</Button>,
 			}}
 			slots={{
 				topbarEnd: <ResetViewButton

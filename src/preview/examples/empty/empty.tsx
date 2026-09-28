@@ -13,7 +13,7 @@ export default function EmptyExample() {
 			action={
 				<>
 					<Button>Create invoice</Button>
-					<Button tone="neutral" buttonStyle="outline">
+					<Button tone="neutral" appearance="outline">
 						Import
 					</Button>
 				</>

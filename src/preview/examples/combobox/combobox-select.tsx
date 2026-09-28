@@ -79,7 +79,7 @@ function GroupedCombobox({ id }: { id?: string }) {
 
 export default function ComboboxSelect() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Country from the list">
 				<SelectLikeCombobox />
 			</FormField>

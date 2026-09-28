@@ -1,4 +1,4 @@
-import { OrderTransactions, type Transaction } from "themelia-ui/admin/patterns/commerce"
+import { OrderTransactions, type Transaction } from "themelia-ui/blocks/admin/commerce"
 
 const TRANSACTIONS: Transaction[] = [
 	{

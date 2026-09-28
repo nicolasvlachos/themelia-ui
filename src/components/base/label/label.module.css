@@ -5,18 +5,11 @@
 .root {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
-	font-size: var(--text-sm);
-	/* FormField's caption line box, so wrapped labels match it. */
-	line-height: var(--text-sm--line-height);
+	gap: var(--gap-sm);
 	user-select: none;
 }
 
-:global([data-disabled="true"]) .root {
-	pointer-events: none;
-	opacity: var(--disabled-opacity);
-}
-
+:global([data-disabled="true"]) .root,
 :global(.peer):disabled ~ .root {
 	cursor: not-allowed;
 	opacity: var(--disabled-opacity);

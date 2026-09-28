@@ -14,7 +14,7 @@ export default function PageHeadingExample() {
 				description="Everything issued in this workspace, newest first."
 				actions={
 					<>
-						<Button tone="neutral" buttonStyle="outline">Export</Button>
+						<Button tone="neutral" appearance="outline">Export</Button>
 						<Button>New invoice</Button>
 					</>
 				}

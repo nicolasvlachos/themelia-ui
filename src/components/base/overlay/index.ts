@@ -14,6 +14,7 @@ export type {
 	OverlayPlacement,
 	OverlayModality,
 	OverlaySurface,
+	CssLength,
 	OverlaySize,
 	OverlayLength,
 	OverlayInset,

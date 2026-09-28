@@ -8,6 +8,7 @@ import { useCallback, useRef, useState, type DragEvent, type KeyboardEvent, type
 
 import { Button } from "@/components/base/buttons"
 import { VisuallyHidden } from "@/components/base/display"
+import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultRepeaterStrings, type RepeaterStrings } from "./repeaters.strings"
@@ -159,7 +160,9 @@ export function Repeater<T>({
 				{announcement}
 			</VisuallyHidden>
 			{items.length === 0 ? (
-				<div className={styles.empty}>{emptyState ?? copy.emptyState}</div>
+				<Text tag="div" size="sm" type="secondary" align="center" className={styles.empty}>
+					{emptyState ?? copy.emptyState}
+				</Text>
 			) : (
 				<ul className={styles.list}>
 					{items.map((item, index) => {
@@ -209,7 +212,7 @@ export function Repeater<T>({
 								{!!onRemove && (
 									<Button
 										tone="neutral"
-										buttonStyle="ghost"
+										appearance="ghost"
 										iconOnly
 										disabled={disabled}
 										aria-label={copy.remove(index + 1)}
@@ -228,7 +231,7 @@ export function Repeater<T>({
 
 			{showAdd && !!onAdd && (
 				<div className={styles.footer}>
-					<Button tone="neutral" buttonStyle="outline" onClick={onAdd} disabled={disabled || atLimit} data-repeater-add="">
+					<Button tone="neutral" appearance="outline" onClick={onAdd} disabled={disabled || atLimit} data-repeater-add="">
 						<PlusIcon />
 						{copy.add}
 					</Button>

@@ -69,7 +69,7 @@ export function EventCalendarHeader({
 							<Button
 								type="button"
 								tone="neutral"
-								buttonStyle="ghost"
+								appearance="ghost"
 								iconOnly
 								aria-label={copy.jumpToMonth}
 							>
@@ -116,7 +116,7 @@ export function EventCalendarHeader({
 					</>
 				)}
 
-				<Button type="button" tone="neutral" buttonStyle="outline" onClick={onToday}>
+				<Button type="button" tone="neutral" appearance="outline" onClick={onToday}>
 					{copy.today}
 				</Button>
 
@@ -125,7 +125,7 @@ export function EventCalendarHeader({
 					<Button
 						type="button"
 						tone="neutral"
-						buttonStyle="outline"
+						appearance="outline"
 						iconOnly
 						onClick={onPrevious}
 						disabled={prevDisabled}
@@ -136,7 +136,7 @@ export function EventCalendarHeader({
 					<Button
 						type="button"
 						tone="neutral"
-						buttonStyle="outline"
+						appearance="outline"
 						iconOnly
 						onClick={onNext}
 						disabled={nextDisabled}

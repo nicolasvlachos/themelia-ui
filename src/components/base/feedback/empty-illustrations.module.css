@@ -1,6 +1,7 @@
 /*
- * Empty-state illustrations. Surfaces, fills and lines are tokens, so they follow a
- * retheme; the internal geometry (offsets, rotations) is the drawing and stays literal.
+ * Empty-state illustrations. Surfaces, fills and lines are theme colours, so they follow a
+ * retheme; the internal geometry (sizes, offsets, rotations) is the drawing and stays literal.
+ * Each drawing is 6rem tall.
  */
 
 /* ── Shared bars ───────────────────────────────────────────────────────────────── */
@@ -14,36 +15,37 @@
 }
 
 .lineWide { width: 75%; height: 0.625rem; }
-.lineNarrow { width: 50%; height: 0.5rem; background-color: var(--muted-60); }
-.lineShort { width: 33%; height: 0.5rem; background-color: var(--muted-40); }
+.lineNarrow { width: 50%; height: 0.5rem; }
+.lineShort { width: 33%; height: 0.5rem; }
 
 /* ── Stacked cards ─────────────────────────────────────────────────────────────── */
 
 .stack {
 	position: relative;
 	width: 13rem;
-	height: var(--empty-art-h);
+	height: 6rem;
 }
 
 .stackBack,
 .stackMid {
 	position: absolute;
 	height: 1.5rem;
-	border: var(--border-width) solid var(--border-60);
+	border: var(--border-width) solid var(--border);
 	/* Smaller than the front card's: a full surface corner on this strip reads as a pill. */
 	border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+	background-color: var(--muted);
 }
 
+/* Further back is fainter. */
 .stackBack {
 	inset-inline: 1.5rem;
 	top: 0;
-	background-color: var(--muted-60);
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 }
 
 .stackMid {
 	inset-inline: 0.75rem;
 	top: 0.75rem;
-	background-color: var(--muted-80);
 }
 
 .stackFront {
@@ -52,13 +54,13 @@
 	top: 1.5rem;
 	display: flex;
 	align-items: center;
-	gap: var(--space-lg);
+	gap: var(--gap-sm);
 	height: 4rem;
-	padding-inline: var(--space-xl);
+	padding-inline: var(--padding);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	background-color: var(--background);
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--shadow);
 }
 
 .stackThumb {
@@ -73,10 +75,10 @@
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
-/* The "more below" fade; it overlays the front card, so it takes no pointer events. */
+/* The "more below" fade, into the surface it sits on; it overlays the front card, so it takes no pointer events. */
 .stackFade {
 	position: absolute;
 	inset-inline: 0;
@@ -86,8 +88,8 @@
 	background-image: linear-gradient(
 		to bottom,
 		transparent,
-		color-mix(in oklab, var(--background) 60%, transparent),
-		var(--background)
+		color-mix(in oklab, var(--surface-ground, var(--background)) 60%, transparent),
+		var(--surface-ground, var(--background))
 	);
 }
 
@@ -96,27 +98,27 @@
 .docs {
 	position: relative;
 	width: 8rem;
-	height: var(--empty-art-h);
+	height: 6rem;
 }
 
 .doc {
 	position: absolute;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	width: 5rem;
 	height: 5rem;
-	padding: var(--space-md);
+	padding: var(--padding-sm);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius-sm);
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--shadow);
 }
 
+/* Fainter than its lines, so they still read on it. */
 .docBack {
 	inset-inline-start: 0.25rem;
 	top: 0.25rem;
-	border-color: var(--border-60);
-	background-color: var(--muted-60);
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 	rotate: -6deg;
 }
 
@@ -130,7 +132,7 @@
 .docStatus {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	margin-top: auto;
 }
 
@@ -147,7 +149,7 @@
 .inbox {
 	position: relative;
 	width: 8rem;
-	height: var(--empty-art-h);
+	height: 6rem;
 }
 
 .inboxCheck {
@@ -159,15 +161,15 @@
 	width: 2rem;
 	height: 2rem;
 	translate: -50% 0;
-	border: var(--border-width) solid var(--success-30);
+	border: var(--border-width) solid color-mix(in oklab, var(--success) var(--tint-strong), transparent);
 	border-radius: 50%;
-	background-color: var(--success-10);
+	background-color: color-mix(in oklab, var(--success) var(--tint), transparent);
 	color: var(--success);
 }
 
 .inboxCheck svg {
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .inboxTray {
@@ -180,13 +182,13 @@
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	background-color: var(--background);
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--shadow);
 	overflow: hidden;
 }
 
 .inboxLip {
 	height: 0.75rem;
-	background-color: var(--muted-40);
+	background-color: var(--muted);
 }
 
 .inboxRow {
@@ -194,13 +196,13 @@
 	flex: 1;
 	align-items: center;
 	justify-content: space-between;
-	padding-inline: var(--space-lg);
+	padding-inline: var(--padding-sm);
 }
 
 .inboxLines {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	width: 60%;
 }
 
@@ -208,7 +210,7 @@
 	width: 0.75rem;
 	height: 0.75rem;
 	border-radius: 50%;
-	background-color: var(--muted-40);
+	background-color: var(--muted);
 }
 
 /* ── Search glass ──────────────────────────────────────────────────────────────── */
@@ -220,14 +222,14 @@
 	width: 5rem;
 	height: 5rem;
 	border-radius: 50%;
-	background-color: var(--muted-40);
-	box-shadow: 0 0 0 0.5rem var(--muted-20);
+	background-color: var(--muted);
+	box-shadow: 0 0 0 0.5rem color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 	color: var(--muted-foreground);
 }
 
 .glass svg {
-	width: var(--size-icon-2xl);
-	height: var(--size-icon-2xl);
+	width: 2.5rem;
+	height: 2.5rem;
 }
 
 /* ── Users ─────────────────────────────────────────────────────────────────────── */
@@ -238,14 +240,15 @@
 	align-items: center;
 	justify-content: center;
 	width: 8rem;
-	height: var(--empty-art-h);
+	height: 6rem;
 }
 
 .userLeft,
 .userCentre,
 .userRight {
-	border: var(--border-width-strong) solid var(--border);
+	border: calc(var(--border-width) * 2) solid var(--border);
 	border-radius: 50%;
+	background-color: var(--muted);
 }
 
 .userLeft {
@@ -253,17 +256,15 @@
 	inset-inline-start: 0.5rem;
 	width: 3rem;
 	height: 3rem;
-	background-color: var(--muted-80);
 }
 
 /* The centre disc overlaps both; `position: relative` lets its `z-index` apply. */
 .userCentre {
 	position: relative;
-	z-index: var(--z-raised);
+	z-index: 1;
 	width: 3.5rem;
 	height: 3.5rem;
-	background-color: var(--muted);
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--shadow);
 }
 
 .userRight {
@@ -271,5 +272,4 @@
 	inset-inline-end: 0.5rem;
 	width: 2.5rem;
 	height: 2.5rem;
-	background-color: var(--muted-60);
 }

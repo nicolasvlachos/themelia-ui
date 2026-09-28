@@ -5,15 +5,15 @@
  * required: a prop wins when given, internal state otherwise, and the callback fires either way.
  */
 import {
-	flexRender, type ColumnFiltersState, type ColumnVisibilityState, type RowData,
-	type RowSelectionState, type SortingState, type Updater,
+	flexRender, type ColumnFiltersState, type ColumnVisibilityState, type ExpandedState,
+	type RowData, type RowSelectionState, type SortingState, type Updater,
 } from "@tanstack/react-table"
 import {
 	getCoreRowModel, getFilteredRowModel, getSortedRowModel, useLegacyTable,
 	type LegacyColumnDef,
 } from "@tanstack/react-table/legacy"
 import {
-	useCallback, useMemo, useRef, useState,
+	useCallback, useId, useMemo, useRef, useState,
 	type CSSProperties, type ReactNode,
 } from "react"
 
@@ -30,10 +30,11 @@ import { DataTableActions } from "./data-table-actions"
 import { DataTableBody } from "./data-table-body"
 import { DataTableHeader } from "./data-table-header"
 import { DataTableToolbar } from "./data-table-toolbar"
-import { addSelectionColumn } from "./table-helpers"
+import { addExpandColumn, addSelectionColumn } from "./table-helpers"
 import { mergeDataTableStrings } from "./table.strings"
 import type {
-	DataTableProps, DataTableSelectionToolbarContext, } from "./table.types"
+	DataTableExpandedRow, DataTableProps, DataTableSelectionToolbarContext,
+} from "./table.types"
 import { useFullscreenTableModality } from "./use-fullscreen-modality"
 import styles from "./table.module.css"
 import { DataTableSizeContext } from "./data-table-size"
@@ -43,7 +44,7 @@ function toCssLength(value: number | string | undefined): string | undefined {
 	return typeof value === "number" ? `${value}px` : value
 }
 
-export function DataTable<TData extends RowData, TValue = unknown>({
+export function DataTable<TData extends RowData, TValue = unknown, TDetail = unknown>({
 	size,
 	surface = "card",
 	headerTransparent = false,
@@ -96,6 +97,7 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 	totalRowCount,
 	pageSize,
 	onRowClick,
+	expandedRow,
 	onRowSelectionChange,
 	onSortingChange,
 	onColumnVisibilityChange,
@@ -109,10 +111,10 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 	initialState,
 	storageKey,
 	style,
-}: DataTableProps<TData, TValue>) {
-	/* The provider's density maps onto the table's three sizes. */
+}: DataTableProps<TData, TValue, TDetail>) {
+	/* A compact provider density maps onto the table's small size. */
 	const { density } = useDensity()
-	const resolvedSize = size ?? (density === "compact" ? "sm" : density === "comfortable" ? "lg" : "md")
+	const resolvedSize = size ?? (density === "compact" ? "sm" : "default")
 
 	const strings = useMemo(() => mergeDataTableStrings(stringsOverride), [stringsOverride])
 
@@ -151,11 +153,22 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 		initialState?.columnFilters ?? [],
 	)
 	const [internalFullscreen, setInternalFullscreen] = useState(defaultFullscreen)
+	const [internalExpanded, setInternalExpanded] = useState<Record<string, boolean>>(
+		expandedRow?.defaultExpanded ?? {},
+	)
 
 	const sorting = controlledSorting ?? internalSorting
 	const columnVisibility = controlledColumnVisibility ?? internalVisibility
 	const rowSelection = controlledRowSelection ?? internalSelection
 	const fullscreen = controlledFullscreen ?? internalFullscreen
+	/*
+	 * Expansion reacts to whether `expandedRow` is there, never to the object: an inline literal
+	 * is a new object every render, and must not rebuild the columns.
+	 */
+	const expandable = expandedRow !== undefined
+	const expanded = expandedRow?.expanded ?? internalExpanded
+	/* Prefixes panel ids and cache keys, so two tables on a page never share either. */
+	const expansionId = useId()
 
 	const tableAreaRef = useRef<HTMLDivElement>(null)
 	const regionRef = useRef<HTMLDivElement>(null)
@@ -205,6 +218,19 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 		[columnFilters, onColumnFiltersChange],
 	)
 
+	const handleExpanded = (updater: Updater<ExpandedState>) => {
+		const resolved = typeof updater === "function" ? updater(expanded) : updater
+		// `true` is TanStack's "every row", which this table never asks for.
+		let next: Record<string, boolean> = resolved === true ? {} : resolved
+		if (expandedRow?.multiple === false) {
+			const opened = Object.keys(next).filter((id) => next[id] && !expanded[id])
+			const latest = opened.at(-1)
+			if (latest !== undefined) next = { [latest]: true }
+		}
+		if (expandedRow?.expanded === undefined) setInternalExpanded(next)
+		expandedRow?.onExpandedChange?.(next)
+	}
+
 	const setFullscreen = useCallback(
 		(next: boolean) => {
 			if (controlledFullscreen === undefined) setInternalFullscreen(next)
@@ -225,9 +251,13 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 	)
 
 	const allColumns = useMemo<LegacyColumnDef<TData, TValue>[]>(() => {
-		const base = enableRowSelection
-			? addSelectionColumn<TData, TValue>(resolvedColumns, strings)
+		/* The checkbox keeps the far left; the toggle follows it. */
+		const withToggle = expandable
+			? addExpandColumn<TData, TValue>(resolvedColumns, strings, (rowId) => `${expansionId}-panel-${rowId}`)
 			: resolvedColumns
+		const base = enableRowSelection
+			? addSelectionColumn<TData, TValue>(withToggle, strings)
+			: withToggle
 
 		if (!rowActions) return base
 
@@ -253,14 +283,14 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 			} as LegacyColumnDef<TData, TValue>,
 		]
 	}, [
-		enableRowSelection, resolveMenuLabel, resolvedColumns, rowActions, rowActionsBreakpoint,
-		rowActionsDisplayMode, strings,
+		enableRowSelection, expandable, expansionId, resolveMenuLabel, resolvedColumns, rowActions,
+		rowActionsBreakpoint, rowActionsDisplayMode, strings,
 	])
 
 	const table = useLegacyTable<TData>({
 		data,
 		columns: allColumns as LegacyColumnDef<TData, unknown>[],
-		state: { sorting, columnVisibility, rowSelection, columnFilters },
+		state: { sorting, columnVisibility, rowSelection, columnFilters, expanded },
 		enableSorting,
 		manualSorting,
 		enableRowSelection,
@@ -270,6 +300,9 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 		onRowSelectionChange: enableRowSelection ? handleSelection : undefined,
 		onColumnVisibilityChange: handleVisibility,
 		onColumnFiltersChange: enableFiltering ? handleFilters : undefined,
+		enableExpanding: expandable,
+		onExpandedChange: expandable ? handleExpanded : undefined,
+		getRowCanExpand: expandable ? (row) => expandedRow?.canExpand?.(row.original) ?? true : undefined,
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		...(enableFiltering ? { getFilteredRowModel: getFilteredRowModel() } : {}),
@@ -369,7 +402,9 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 				data-size={resolvedSize}
 				data-surface={surface}
 				data-fullscreen={fullscreen || undefined}
-				style={{ ...style, ...(bodyMaxHeight ? { "--data-table-body-max-height": bodyMaxHeight } : {}) } as CSSProperties}
+				data-selectable={enableRowSelection || undefined}
+				data-expandable={expandable || undefined}
+				style={{ ...style, ...(bodyMaxHeight ? { "--_data-table-body-max-height": bodyMaxHeight } : {}) } as CSSProperties}
 				className={cx(
 					"data-table--component",
 					styles.root,
@@ -425,7 +460,6 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 						stickyHeader={stickyHeader}
 						className={cx(styles.table, className)}
 						containerClassName={cx(
-							styles.tableContainer,
 							scrolls && styles.tableContainerScrolls,
 							bodyMaxHeight !== undefined && styles.tableContainerBounded,
 							tableContainerClassName,
@@ -438,6 +472,7 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 							cellClassName={cellClassName}
 							stickyFirstColumn={stickyFirstColumn}
 							hasSelectionColumn={enableRowSelection}
+							hasExpandColumn={expandable}
 							columnGroups={columnGroups}
 							headerTransparent={headerTransparent}
 						/>
@@ -450,6 +485,9 @@ export function DataTable<TData extends RowData, TValue = unknown>({
 							rowClassName={rowClassName}
 							stickyFirstColumn={stickyFirstColumn}
 							hasSelectionColumn={enableRowSelection}
+							hasExpandColumn={expandable}
+							expandedRow={expandedRow as DataTableExpandedRow<TData, unknown> | undefined}
+							expansionId={expansionId}
 							striped={striped}
 							strings={strings}
 						/>

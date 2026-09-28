@@ -11,7 +11,7 @@ export default function ResourceComboboxExample() {
 	const [failing, setFailing] = useState(true)
 
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Country (self-fetching)">
 				<ResourceCombobox<Country>
 					// No preload, so the error does not appear on mount.

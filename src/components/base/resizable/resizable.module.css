@@ -1,15 +1,4 @@
 /* Resizable — the handle draws a hairline and carries a wider invisible hit strip (::after). */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-	/* The invisible grab strip, wider than the line. */
-	--resizable-hit: round(calc(0.75rem * var(--density-scale, var(--scale))), 1px);
-	--resizable-grip-w: round(calc(0.25rem * var(--density-scale, var(--scale))), 1px);
-	--resizable-grip-h: round(calc(1.5rem * var(--density-scale, var(--scale))), 1px);
-}
 
 .group {
 	display: flex;
@@ -35,7 +24,7 @@
 	justify-content: center;
 	width: var(--border-width);
 	background-color: var(--border);
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 /*
@@ -47,20 +36,22 @@
 	position: absolute;
 	inset-block: 0;
 	left: 50%;
-	width: var(--resizable-hit);
+	width: 0.75rem;
 	translate: -50% 0;
 }
 
-.handle:hover,
-.handle[data-resize-handle-active] {
+.handle:hover:not([aria-disabled="true"]),
+.handle[data-separator="active"] {
 	background-color: var(--primary);
 }
 
+/* Above the panes, so their overflow does not cover the focus outline. */
 .handle:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-	/* Above the panes, so the ring is not clipped by their overflow. */
-	z-index: var(--z-raised);
+	z-index: 1;
+}
+
+.handle[aria-disabled="true"] {
+	opacity: var(--disabled-opacity);
 }
 
 .handle[aria-orientation="horizontal"] {
@@ -73,19 +64,19 @@
 	inset-inline: 0;
 	inset-block-start: 50%;
 	width: auto;
-	height: var(--resizable-hit);
+	height: 0.75rem;
 	translate: 0 -50%;
 }
 
 .grip {
-	z-index: var(--z-raised);
-	width: var(--resizable-grip-w);
-	height: var(--resizable-grip-h);
+	z-index: 1;
+	width: 0.25rem;
+	height: 1.5rem;
 	border-radius: var(--radius-pill);
 	background-color: var(--border);
 }
 
 .handle[aria-orientation="horizontal"] .grip {
-	width: var(--resizable-grip-h);
-	height: var(--resizable-grip-w);
+	width: 1.5rem;
+	height: 0.25rem;
 }

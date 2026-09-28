@@ -1,4 +1,4 @@
-/** Activity rows expand into labelled detail groups, collapse again and follow the feed's density. */
+/** Activity rows expand into labelled detail groups, collapse again and follow the feed's variant. */
 import { expect, test } from "@playwright/test"
 import AxeBuilder from "@axe-core/playwright"
 import { visitRoute } from "./routes"
@@ -18,8 +18,8 @@ test("activity rows expand into labelled detail groups", async ({ page }) => {
 	expect((await new AxeBuilder({ page }).include("#activity-feed").analyze()).violations).toEqual([])
 	await row.getByRole("button", { name: "Hide details", exact: true }).click()
 	await expect(row.getByRole("group", { name: "Changes", exact: true })).toHaveCount(0)
-	for (const density of ["compact", "default", "rich"]) {
-		await demo.getByRole("radio", { name: density, exact: true }).click()
-		await expect(row).toHaveAttribute("data-activity-density", density)
+	for (const variant of ["compact", "default", "rich"]) {
+		await demo.getByRole("radio", { name: variant, exact: true }).click()
+		await expect(row).toHaveAttribute("data-variant", variant)
 	}
 })

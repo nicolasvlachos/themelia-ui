@@ -1,4 +1,4 @@
-import { BookingCard } from "themelia-ui/admin/patterns/commerce"
+import { BookingCard } from "themelia-ui/blocks/admin/commerce"
 import { Badge } from "themelia-ui/base/badge"
 import { Stack } from "themelia-ui/base/structure"
 import { toast } from "themelia-ui/base/toaster"

@@ -9,7 +9,6 @@ declare const styles: {
 	readonly root: string
 	readonly source: string
 	readonly toolbar: string
-	readonly toolbarButton: string
 	readonly toolbarRule: string
 	readonly toolbarTrailing: string
 }

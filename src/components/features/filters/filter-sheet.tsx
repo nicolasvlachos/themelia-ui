@@ -67,14 +67,14 @@ export function FilterSheet({ filters, loadingFilters, showClearFilters = true }
 	return (
 		<Overlay open={open} onOpenChange={changeOpen}>
 			<OverlayTrigger render={
-				<Button tone="neutral" buttonStyle="outline" disabled={isNavigating} className="filter-sheet--trigger">
+				<Button tone="neutral" appearance="outline" disabled={isNavigating} className="filter-sheet--trigger">
 					<ListFilterIcon />
 					{title}
 					{appliedCount > 0 && <Badge tone="neutral">{appliedCount}</Badge>}
 				</Button>
 			} />
 			<SheetContent
-				side="block-end" size="lg" inset="5vw"
+				side="block-end" size="90%" inset="5vw"
 				aria-labelledby={titleId} aria-describedby={descriptionId}
 				className={`filter-sheet--component ${styles.mobileSheet}`}
 			>
@@ -122,7 +122,7 @@ export function FilterSheet({ filters, loadingFilters, showClearFilters = true }
 											<ChevronRightIcon aria-hidden />
 										</Item>
 										{getFilterValue(filter.key).length > 0 && (
-											<Button iconOnly tone="neutral" buttonStyle="ghost" disabled={isNavigating}
+											<Button iconOnly tone="neutral" appearance="ghost" disabled={isNavigating}
 												aria-label={(strings.clearFilter ?? defaultFilterStrings.clearFilter!)(filter.label)}
 												onClick={event => {
 													event.currentTarget.parentElement?.querySelector<HTMLElement>("[data-filter-key]")?.focus()
@@ -138,7 +138,7 @@ export function FilterSheet({ filters, loadingFilters, showClearFilters = true }
 				{!editing && (
 					<OverlayFooter>
 						{showClearFilters && activeFilters.length > 0 && (
-							<Button tone="neutral" buttonStyle="ghost" disabled={isNavigating} onClick={clearFilters}>{strings.clearFilters}</Button>
+							<Button tone="neutral" appearance="ghost" disabled={isNavigating} onClick={clearFilters}>{strings.clearFilters}</Button>
 						)}
 						<Button onClick={() => changeOpen(false)}>{strings.done ?? defaultFilterStrings.done}</Button>
 					</OverlayFooter>

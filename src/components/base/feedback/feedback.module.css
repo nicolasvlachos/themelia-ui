@@ -1,32 +1,27 @@
-
 /* ══ Alert metadata ════════════════════════════════════════════════════════════════
- * Key/value pairs under an alert's message, as a `<dl>`.
+ * Key/value pairs under an alert's message, as a `<dl>`; the type is Text's `xs` step.
  */
 
 .alertMeta {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--space-lg);
+	gap: var(--gap-sm) var(--gap);
 	margin: 0;
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
 }
 
 .alertMetaItem {
 	display: flex;
-	gap: calc(var(--space-lg) / 3);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 .alertMetaLabel {
-	color: var(--text-role-secondary);
 	white-space: nowrap;
 }
 
 .alertMetaValue {
 	margin: 0;
 	min-width: 0;
-	font-variant-numeric: tabular-nums;
 	overflow-wrap: anywhere;
 }
 
@@ -39,14 +34,15 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-lg);
-	padding-block: calc(var(--space-2xl) * 2);
+	gap: var(--gap-sm);
+	padding-block: calc(var(--padding) * 3);
 	text-align: center;
 }
 
+/* A decorative size: the glyph stands for the whole region. */
 .stateIcon {
-	width: var(--size-icon-xl);
-	height: var(--size-icon-xl);
+	width: 1.5rem;
+	height: 1.5rem;
 	color: var(--muted-foreground);
 }
 
@@ -55,5 +51,5 @@
 }
 
 .stateSpinner {
-	animation: var(--animate-spin);
+	animation: var(--keyframes-spin) 1s linear infinite;
 }

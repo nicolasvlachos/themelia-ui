@@ -1,6 +1,6 @@
 import { KeyRoundIcon } from "lucide-react"
 
-import { SensitiveAction } from "themelia-ui/admin/patterns/access"
+import { SensitiveAction } from "themelia-ui/blocks/admin/access"
 import { Button } from "themelia-ui/base/buttons"
 
 export default function BlocksSensitive() {

@@ -22,7 +22,7 @@ export default function DataViewStates() {
 				<Select aria-label="Result state" value={requestState} className={styles.stateSelect}
 					options={[{ value: "ready", label: "Ready" }, { value: "pending", label: "Updating" }, { value: "error", label: "Failed" }]}
 					onValueChange={(value) => value && setRequestState(value)} />
-				{requestState === "error" && <Button tone="neutral" buttonStyle="outline" onClick={() => setRequestState("ready")}>Restore results</Button>}
+				{requestState === "error" && <Button tone="neutral" appearance="outline" onClick={() => setRequestState("ready")}>Restore results</Button>}
 			</Stack>
 			<DataView<Booking> data={BOOKINGS.slice(0, 3)} columns={indexColumns}
 				filtering={{ filters: FILTERS, activeFilters: recoveryFilters, onFilterChange: setRecoveryFilters,
@@ -30,7 +30,7 @@ export default function DataViewStates() {
 					filterRows: requestState === "error" ? () => { throw new Error("Preview matcher failure") } : undefined,
 				}}
 				table={{ getRowId: (row) => row.id, emptyStateMessage: "No bookings match your filters",
-					emptyStateAction: <Button tone="neutral" buttonStyle="outline" onClick={() => setRecoveryFilters([])}>Clear filters</Button> }} />
+					emptyStateAction: <Button tone="neutral" appearance="outline" onClick={() => setRecoveryFilters([])}>Clear filters</Button> }} />
 		</>
 	)
 }

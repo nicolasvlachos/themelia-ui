@@ -1,22 +1,10 @@
 /*
  * Upload — dropzone, file rows, avatar and image pickers. Each target is a real file input
  * inside a labelled region, so browsing works from the keyboard; drag-and-drop is extra.
+ *
+ * The file input covers its target at zero opacity, so it cannot show its own focus: the
+ * target draws it, keyed on the input's `:focus-visible`, as a field does over its frame.
  */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). */
-:root {
-	--dropzone-bg: transparent;
-}
-
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-
-	--upload-avatar: round(calc(5rem * var(--density-scale, var(--scale))), 1px);
-}
 
 .dropzone {
 	position: relative;
@@ -24,56 +12,55 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-md);
-	padding: var(--space-2xl);
+	gap: var(--gap-sm);
+	padding: var(--padding);
 	/* The field boundary, dashed while idle so it reads as a target. */
-	border: var(--border-width) dashed var(--control-border);
+	border: var(--border-width) dashed var(--input);
 	border-radius: var(--radius);
-	background-color: var(--dropzone-bg);
 	text-align: center;
 	cursor: pointer;
 	transition:
-		border-color var(--duration-fast) var(--ease-out),
-		background-color var(--duration-fast) var(--ease-out);
+		border-color var(--duration-fast) var(--ease),
+		background-color var(--duration-fast) var(--ease);
 }
 
 .dropzoneCompact {
 	flex-direction: row;
-	padding: var(--space-lg);
 	text-align: start;
 }
 
-.dropzone:hover {
-	background-color: var(--accent-50);
+.dropzone:hover:not([data-disabled]) {
+	background-color: var(--accent);
 }
 
 /*
  * Keyed on the file input inside, and on its `:focus-visible`: the input covers the region,
- * so a pointer click focuses it too and `:focus-within` would light the ring on every click.
+ * so a pointer click focuses it too and `:focus-within` would light the outline on every click.
  */
 .dropzone:has(> .dropzoneInput:focus-visible) {
-	border-color: var(--focus-ring-color);
-	box-shadow: var(--focus-ring);
+	border-color: var(--ring);
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * -1);
 }
 
 .dropzone[data-dragging] {
 	border-style: solid;
 	border-color: var(--primary);
-	background-color: var(--primary-5);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .dropzone[data-invalid] {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
+	border-color: var(--destructive);
 }
 
-/* Focus wins the ring; invalid keeps the border, as on fields. */
+/* Focus keeps the invalid colour, as on fields. */
 .dropzone[data-invalid]:has(> .dropzoneInput:focus-visible) {
-	border-color: var(--invalid-ring-border);
+	border-color: var(--destructive);
+	outline-color: var(--destructive);
 }
 
 .dropzone[data-disabled] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
@@ -92,8 +79,8 @@
 }
 
 .dropzoneIcon {
-	width: var(--size-icon-xl);
-	height: var(--size-icon-xl);
+	width: 1.5rem;
+	height: 1.5rem;
 	flex-shrink: 0;
 	color: var(--muted-foreground);
 }
@@ -102,22 +89,14 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .dropzoneCompact .dropzoneCopy {
 	align-items: flex-start;
 }
 
-.dropzoneText {
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-}
-
 .dropzoneHint {
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--muted-foreground);
 	text-wrap: pretty;
 }
 
@@ -126,7 +105,7 @@
 .list {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -135,13 +114,13 @@
 .row {
 	display: flex;
 	align-items: center;
-	gap: var(--space-lg);
-	padding: var(--row-py) var(--row-px);
+	gap: var(--gap);
+	padding: var(--padding-sm);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 }
 
-/* Inside a card a row steps down to the control radius so the curves nest. */
+/* Inside a card a row steps down to the item radius so the curves nest. */
 :global([data-slot="card"]) .row {
 	border-radius: var(--radius-sm);
 }
@@ -150,21 +129,21 @@
 .rowActions {
 	display: inline-flex;
 	flex-shrink: 0;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 /* A row is at least two lines, so the glyph aligns with the filename, as Item's media does. */
 .row > .thumb,
 .row > .statusIcon {
 	align-self: flex-start;
-	transform: translateY(var(--item-media-offset));
+	transform: translateY(0.125rem);
 }
 
 .thumb {
 	display: flex;
 	flex-shrink: 0;
-	width: var(--size-medallion);
-	height: var(--size-medallion);
+	width: 2.5rem;
+	height: 2.5rem;
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
@@ -184,6 +163,7 @@
 	min-width: 0;
 	flex: 1;
 	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .rowName {
@@ -192,41 +172,35 @@
 	text-overflow: ellipsis;
 }
 
-.rowMeta {
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--muted-foreground);
-}
-
 .progress {
 	width: 100%;
-	height: var(--space-xs);
-	margin-top: var(--space-md);
+	height: 0.25rem;
+	margin-top: calc(var(--gap-sm) / 2);
 	overflow: hidden;
 	border-radius: var(--radius-pill);
 	/* The control-track wash, like Progress and the slider. */
-	background-color: var(--foreground-20);
+	background-color: color-mix(in oklab, var(--foreground) var(--tint-strong), transparent);
 }
 
 .progressFill {
 	height: 100%;
 	border-radius: inherit;
 	background-color: var(--primary);
-	transition: width var(--duration-normal) var(--ease-out);
+	transition: width var(--duration) var(--ease);
 }
 
 /* The FileUpload root: zone, then the rejections, then the queue. */
 .root {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 }
 
 /* Alerts, stacked tight — they are one message broken into lines, not a list of items. */
 .rejections {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 /* ── Avatar and image ─────────────────────────────────────────────────────────── */
@@ -235,7 +209,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 .mediaPicker {
@@ -246,41 +220,41 @@
 	justify-content: center;
 	overflow: hidden;
 	/* The field boundary, dashed, as on the dropzone. */
-	border: var(--border-width) dashed var(--control-border);
-	background-color: var(--dropzone-bg);
+	border: var(--border-width) dashed var(--input);
 	cursor: pointer;
 	transition:
-		border-color var(--duration-fast) var(--ease-out),
-		background-color var(--duration-fast) var(--ease-out);
+		border-color var(--duration-fast) var(--ease),
+		background-color var(--duration-fast) var(--ease);
 }
 
 /* The native input must remain the hit target above both the image and edit scrim. */
 .mediaPicker > .dropzoneInput {
-	z-index: var(--z-raised);
+	z-index: 1;
 }
 
 .mediaPicker:has(> .dropzoneInput:focus-visible) {
-	border-color: var(--focus-ring-color);
-	box-shadow: var(--focus-ring);
+	border-color: var(--ring);
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * -1);
 }
 
 .mediaPicker[data-invalid] {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
+	border-color: var(--destructive);
 }
 
 .mediaPicker[data-invalid]:has(> .dropzoneInput:focus-visible) {
-	border-color: var(--invalid-ring-border);
+	border-color: var(--destructive);
+	outline-color: var(--destructive);
 }
 
 .mediaPicker[data-dragging] {
 	border-style: solid;
 	border-color: var(--primary);
-	background-color: var(--primary-5);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .mediaPicker[data-disabled] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
@@ -291,18 +265,18 @@
 
 /* An empty picker's hover, like Dropzone's; the scrim below is only for a chosen image. */
 .mediaPicker:hover:not([data-filled]):not([data-disabled]) {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 }
 
 .avatarPicker {
-	width: var(--upload-avatar);
-	height: var(--upload-avatar);
+	width: 5rem;
+	height: 5rem;
 	border-radius: 50%;
 }
 
 .imagePicker {
 	width: 100%;
-	height: calc(10rem * var(--scale));
+	height: 10rem;
 	border-radius: var(--radius);
 }
 
@@ -312,7 +286,10 @@
 	object-fit: cover;
 }
 
-/* Shown on hover or focus, and only over a chosen image (never over the empty prompt). */
+/*
+ * Shown on hover or focus, and only over a chosen image (never over the empty prompt). A dark
+ * colour island, so its scrim and label read the same over any photograph in either theme.
+ */
 .mediaOverlay {
 	position: absolute;
 	inset: 0;
@@ -320,14 +297,12 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-2xs);
-	/* Dark enough for the white label over any photograph. */
-	background-color: color-mix(in oklab, var(--shadow-ink) 62%, transparent);
-	color: var(--inverse-foreground);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
+	gap: calc(var(--gap-sm) / 2);
+	color-scheme: dark;
+	background-color: color-mix(in oklab, var(--background) 62%, transparent);
+	color: var(--foreground);
 	opacity: 0;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition: opacity var(--duration-fast) var(--ease);
 }
 
 .mediaPicker[data-filled]:hover .mediaOverlay,
@@ -337,20 +312,18 @@
 }
 
 .mediaOverlay > svg {
-	width: var(--size-icon-xl);
-	height: var(--size-icon-xl);
+	width: 1.5rem;
+	height: 1.5rem;
 }
 
 .mediaEmpty {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: var(--space-2xs);
-	padding: var(--space-md);
+	gap: calc(var(--gap-sm) / 2);
+	padding: var(--padding-sm);
 	text-align: center;
 	color: var(--muted-foreground);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
 	pointer-events: none;
 }
 
@@ -359,19 +332,19 @@
 	.mediaPicker[data-filled]:not([data-disabled]) .mediaOverlay {
 		inset-block-start: auto;
 		flex-direction: row;
-		padding: var(--space-sm);
+		padding: var(--padding-sm);
 		opacity: 1;
 	}
 
 	.mediaOverlay > svg {
-		width: var(--size-icon);
-		height: var(--size-icon);
+		width: var(--icon-size);
+		height: var(--icon-size);
 	}
 }
 
 .mediaEmpty > svg {
-	width: var(--size-icon-xl);
-	height: var(--size-icon-xl);
+	width: 1.5rem;
+	height: 1.5rem;
 }
 
 /* ══ Queue tray ════════════════════════════════════════════════════════════════ */
@@ -379,14 +352,14 @@
 .tray {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 }
 
 .trayToolbar {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .trayCounts {
@@ -394,13 +367,13 @@
 	flex: 1;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .statusIcon {
 	display: flex;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
@@ -412,28 +385,22 @@
 }
 
 .statusQueued { color: var(--muted-foreground); }
-.statusUploading { color: var(--primary-accent); }
+.statusUploading { color: var(--primary); }
 .statusDone { color: var(--success); }
 .statusError { color: var(--destructive); }
 .statusCancelled { color: var(--muted-foreground); }
 
 /* The spinner only turns while the row is actually transferring. */
 .statusUploading > svg {
-	animation: var(--animate-spin);
-}
-
-.rowError {
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--destructive);
+	animation: var(--keyframes-spin) 1s linear infinite;
 }
 
 /* ══ Media gallery ═════════════════════════════════════════════════════════════ */
 
 .gallery {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(calc(7rem * var(--scale)), 1fr));
-	gap: var(--space-lg);
+	grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+	gap: var(--gap);
 }
 
 .tile {
@@ -445,14 +412,15 @@
 	background-color: var(--muted);
 }
 
+/* Faded, not hidden: the gap it leaves is where it lands. */
 .tile[data-dragging] {
-	opacity: var(--repeater-dragging-opacity);
+	opacity: 0.4;
 }
 
 /* The insertion point while a tile is dragged over this one. */
 .tile[data-drop] {
-	outline: var(--border-width-strong) solid var(--primary);
-	outline-offset: calc(var(--border-width-strong) * -1);
+	outline: calc(var(--border-width) * 2) solid var(--primary);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 .tileImage {
@@ -464,8 +432,8 @@
 
 /* The glyph that stands in for a picture that would not load. */
 .tileFallback {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	margin: auto;
 	color: var(--muted-foreground);
 }
@@ -485,21 +453,20 @@
 	cursor: grabbing;
 }
 
-/* Inset: the tile's `overflow: hidden` would clip an outer ring. */
+/* Inside: the tile's `overflow: hidden` would clip an outline drawn outside the handle. */
 .tileHandle:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring-inset);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /* In the tile's corner, concentric with it: the tile's radius less this inset. */
 .tileRemove {
-	--button-radius: calc(var(--radius-sm) - var(--space-xs));
+	--_button-radius: calc(var(--radius-sm) - var(--padding-sm) / 2);
 	position: absolute;
-	top: var(--space-xs);
-	inset-inline-end: var(--space-xs);
-	z-index: var(--z-raised);
+	top: calc(var(--padding-sm) / 2);
+	inset-inline-end: calc(var(--padding-sm) / 2);
+	z-index: 1;
 	opacity: 0;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition: opacity var(--duration-fast) var(--ease);
 }
 
 /* Revealed on hover, and on keyboard focus — otherwise it cannot be reached at all. */
@@ -508,16 +475,20 @@
 	opacity: 1;
 }
 
-/* An opaque inverse chip: a translucent badge would take its contrast from the image. */
+/*
+ * An opaque chip on a dark colour island: a translucent badge would take its contrast from
+ * the image.
+ */
 .tileCover {
 	position: absolute;
-	bottom: var(--space-sm);
-	inset-inline-start: var(--space-sm);
-	z-index: var(--z-raised);
+	bottom: var(--padding-sm);
+	inset-inline-start: var(--padding-sm);
+	z-index: 1;
 	pointer-events: none;
+	color-scheme: dark;
 	border-color: transparent;
-	background-color: var(--inverse-background);
-	color: var(--inverse-foreground);
+	background-color: var(--background);
+	color: var(--foreground);
 }
 
 /* The add tile matches a thumbnail's footprint so the grid stays even. */
@@ -528,44 +499,42 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	/* The field boundary, dashed, as on the dropzone. */
-	border: var(--border-width) dashed var(--control-border);
+	border: var(--border-width) dashed var(--input);
 	border-radius: var(--radius-sm);
-	background-color: var(--dropzone-bg);
 	color: var(--muted-foreground);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
 	text-align: center;
 	cursor: pointer;
 	transition:
-		border-color var(--duration-fast) var(--ease-out),
-		background-color var(--duration-fast) var(--ease-out);
+		border-color var(--duration-fast) var(--ease),
+		background-color var(--duration-fast) var(--ease);
 }
 
-.galleryAdd:hover {
-	background-color: var(--accent-50);
+.galleryAdd:hover:not([data-disabled]) {
+	background-color: var(--accent);
 }
 
 .galleryAdd:has(input:focus-visible) {
-	border-color: var(--focus-ring-color);
-	box-shadow: var(--focus-ring);
+	border-color: var(--ring);
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * -1);
 }
 
 .galleryAdd[data-dragging] {
 	border-style: solid;
 	border-color: var(--primary);
-	background-color: var(--primary-5);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .galleryAdd[data-disabled] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
 .galleryAdd > svg {
-	width: var(--size-icon-xl);
-	height: var(--size-icon-xl);
+	width: 1.5rem;
+	height: 1.5rem;
 }
 
 /* ══ FilePickerInput ═══════════════════════════════════════════════════════════════
@@ -575,13 +544,12 @@
 
 .pickerShell {
 	position: relative;
-	gap: var(--space-lg);
 	cursor: pointer;
 }
 
 .pickerIcon {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 	color: var(--muted-foreground);
 }
@@ -600,15 +568,12 @@
 
 .pickerMeta {
 	flex-shrink: 0;
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--muted-foreground);
 }
 
 /* Above the covering input, so it is clickable. */
 .pickerClear {
 	position: relative;
-	z-index: var(--z-raised);
+	z-index: 1;
 	flex-shrink: 0;
 }
 
@@ -616,6 +581,6 @@
 .dropzoneFooter {
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
-	margin-block-start: var(--space-sm);
+	gap: var(--gap-sm);
+	margin-block-start: var(--gap-sm);
 }

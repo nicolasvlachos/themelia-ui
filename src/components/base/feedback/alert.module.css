@@ -1,7 +1,7 @@
 /*
- * Alert. Each tone is a tinted surface; text stays --card-foreground in every tone and
- * only the leading icon takes the hue, so no tone needs its own readable ink in both
- * themes (warning fails that in dark).
+ * Alert. Each tone is a tinted surface, read through the shared tone rule (`data-tone`,
+ * styles/tone.css); text stays --card-foreground in every tone and only the leading icon
+ * takes the hue, as the tone's ink.
  */
 
 /*
@@ -13,15 +13,14 @@
 	position: relative;
 	display: grid;
 	width: 100%;
-	gap: var(--space-2xs);
-	padding-inline: var(--surface-px);
-	padding-block: round(calc(var(--surface-py) * 0.75), 1px);
-	border: var(--border-width) solid var(--border);
+	gap: var(--gap-sm) var(--gap);
+	padding: var(--padding);
+	border: var(--border-width) solid color-mix(in oklab, var(--tone) var(--tint-strong), transparent);
 	border-radius: var(--radius);
+	background-color: color-mix(in oklab, var(--tone) var(--tint), transparent);
 	text-align: start;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	color: var(--card-foreground);
+	--_alert-icon: var(--tone-ink);
 }
 
 /* Inside a card an alert steps down to the item radius so the curves nest. */
@@ -31,7 +30,6 @@
 
 .root:has(> svg) {
 	grid-template-columns: auto minmax(0, 1fr);
-	column-gap: var(--space-lg);
 }
 
 /* Pin every non-icon child to column 2, or auto-placement drops later children under the icon. */
@@ -45,8 +43,8 @@
 	/* Aligned to the first line of text. */
 	grid-row: 1;
 	align-self: start;
-	/* The only toned part. Neutral sets its own value so a bare alert's icon isn't full-contrast. */
-	color: var(--alert-icon-fg, currentColor);
+	/* The only toned part. */
+	color: var(--_alert-icon);
 	transform: translateY(0.125rem);
 }
 
@@ -55,8 +53,8 @@
 }
 
 .root > svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* The action is a real grid column, so long labels never overlap the text. */
@@ -68,66 +66,34 @@
 	grid-template-columns: auto minmax(0, 1fr) auto;
 }
 
-/* ── Tones ───────────────────────────────────────────────────────────────────────
- * Surface only; the ink is set once on .root.
+/* ── Quiet tones ─────────────────────────────────────────────────────────────────
+ * Neutral and secondary are emphasis, not status: the frame is the divider, not a hue.
  */
 
-.toneNeutral {
+.root:is([data-tone="neutral"], [data-tone="secondary"]) {
 	border-color: var(--border);
+}
+
+.root[data-tone="neutral"] {
 	background-color: var(--card);
-	--alert-icon-fg: var(--muted-foreground);
+	/* A bare alert's icon is supporting ink, not full contrast. */
+	--_alert-icon: var(--muted-foreground);
 }
 
-.tonePrimary {
-	border-color: var(--primary-30);
-	background-color: var(--primary-5);
-	--alert-icon-fg: var(--primary-accent);
-}
-
-.toneSecondary {
-	border-color: var(--border);
-	background-color: var(--muted-50);
-	--alert-icon-fg: var(--secondary-foreground);
-}
-
-.toneInfo {
-	border-color: var(--info-30);
-	background-color: var(--info-5);
-	--alert-icon-fg: var(--info);
-}
-
-.toneSuccess {
-	border-color: var(--success-30);
-	background-color: var(--success-5);
-	--alert-icon-fg: var(--success);
-}
-
-.toneWarning {
-	border-color: var(--warning-40);
-	background-color: var(--warning-10);
-	/* The accent, not the fill: pale amber lacks contrast on its own tint. */
-	--alert-icon-fg: var(--warning-accent);
-}
-
-.toneDestructive {
-	border-color: var(--destructive-30);
-	background-color: var(--destructive-5);
-	--alert-icon-fg: var(--destructive-accent);
+.root[data-tone="secondary"] {
+	background-color: var(--muted);
 }
 
 /*
- * Inverse: a dark slab in both themes that replaces the tone surface; `tone` still states
- * the intent. It re-points the text roles, so every Text and link inside follows.
+ * Inverse: a dark slab in both themes, drawn as a dark colour island, so every Text and
+ * link inside takes the dark theme's colours. It replaces the tone surface; `tone` still
+ * states the intent through the icon.
  */
-.variantInverse {
-	border-color: var(--inverse-background);
-	background-color: var(--inverse-background);
-	color: var(--inverse-foreground);
-	--alert-icon-fg: var(--inverse-foreground);
-	--text-role-main: var(--inverse-foreground);
-	--text-role-secondary: var(--inverse-muted);
-	--text-role-inverse: var(--inverse-background);
-	--link-color: var(--inverse-foreground);
+.root.variantInverse {
+	color-scheme: dark;
+	border-color: var(--border);
+	background-color: var(--card);
+	--surface-ground: var(--card);
 }
 
 /* ── Parts ────────────────────────────────────────────────────────────────────── */
@@ -138,8 +104,6 @@
 }
 
 .description {
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	text-wrap: balance;
 }
 
@@ -150,23 +114,23 @@
 }
 
 .description p:not(:last-child) {
-	margin-bottom: var(--space-xl);
+	margin-bottom: var(--gap);
 }
 
 .title a,
 .description a {
 	text-decoration-line: underline;
-	text-underline-offset: var(--link-underline-offset);
+	text-underline-offset: 3px;
 }
 
 .title a:hover,
 .description a:hover {
-	color: var(--text-role-main);
+	color: var(--foreground);
 }
 
 /*
- * Last column, spanning title and description, first line aligned with the title.
- * `.root > .action` outranks the column-2 rule above.
+ * Last column, spanning title and description, its top on the title's. `.root > .action`
+ * outranks the column-2 rule above.
  */
 .root > .action {
 	grid-column: -2 / -1;
@@ -175,9 +139,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
-	margin-inline-start: var(--space-md);
-	margin-block-start: calc((var(--text-sm--line-height) - var(--control-h)) / 2);
+	gap: var(--gap-sm);
 }
 
 /* Narrow screens: the action drops under the copy. */
@@ -192,7 +154,5 @@
 
 	.root > .action {
 		grid-row: auto;
-		margin-inline-start: 0;
-		margin-block-start: var(--space-sm);
 	}
 }

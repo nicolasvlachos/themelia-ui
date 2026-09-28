@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react"
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 
 import { Card } from "themelia-ui/base/cards"
@@ -28,7 +27,7 @@ const CONFIG = {
 export default function Chart() {
 	return (
 		/* Two columns, with the third chart spanning both. */
-		<Grid columns={{ base: 1, md: 2 }} gap="lg" style={{ width: "100%" }}>
+		<Grid columns={{ base: 1, md: 2 }} style={{ width: "100%" }}>
 			<Card surface="bordered" title="Revenue vs expenses" description="Bars, with a legend.">
 				<ChartContainer config={CONFIG} label="Monthly revenue and expenses, January to June">
 					<BarChart data={REVENUE}>
@@ -59,7 +58,7 @@ export default function Chart() {
 			<GridCell span="full">
 				<Card surface="bordered" title="Cumulative" description="An area, with the line indicator.">
 					{/* A wide aspect: 16:9 across the page would be half a screen tall. */}
-					<ChartContainer config={CONFIG} label="Cumulative revenue and expenses, January to June" style={{ "--chart-aspect": "48 / 9" } as CSSProperties}>
+					<ChartContainer config={CONFIG} label="Cumulative revenue and expenses, January to June" style={{ aspectRatio: "48 / 9" }}>
 						<AreaChart data={REVENUE}>
 							<CartesianGrid vertical={false} />
 							{/* A point scale again — see the note on the line chart's axis. */}

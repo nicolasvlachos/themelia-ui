@@ -52,7 +52,7 @@ export function DataTableToolbar<TData extends RowData>({
 					<ToolbarButton
 						type="button"
 						tone="neutral"
-						buttonStyle="ghost"
+						appearance="ghost"
 						iconOnly
 						aria-label={strings.toolbar.scrollLeft}
 						disabled={!scroll.canScrollLeft}
@@ -63,7 +63,7 @@ export function DataTableToolbar<TData extends RowData>({
 					<ToolbarButton
 						type="button"
 						tone="neutral"
-						buttonStyle="ghost"
+						appearance="ghost"
 						iconOnly
 						aria-label={strings.toolbar.scrollRight}
 						disabled={!scroll.canScrollRight}
@@ -72,7 +72,7 @@ export function DataTableToolbar<TData extends RowData>({
 						<ChevronRightIcon />
 					</ToolbarButton>
 					{(hasColumns || showFullscreenToggle) && (
-						<ToolbarSeparator className={styles.toolbarDivider} />
+						<ToolbarSeparator />
 					)}
 				</>
 			)}
@@ -85,7 +85,7 @@ export function DataTableToolbar<TData extends RowData>({
 						labelVisibility={labelVisibility}
 						buttonProps={{ render: <ToolbarButton /> }}
 					/>
-					{showFullscreenToggle && <ToolbarSeparator className={styles.toolbarDivider} />}
+					{showFullscreenToggle && <ToolbarSeparator />}
 				</>
 			)}
 

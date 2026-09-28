@@ -47,7 +47,7 @@ function EditorToolbarButton({
 		<BaseToolbarButton
 			type="button"
 			tone={active ? "primary" : "neutral"}
-			buttonStyle={active ? "solid" : "ghost"}
+			appearance={active ? "solid" : "ghost"}
 			iconOnly
 			/* Prevented mousedown keeps the editor's selection (a focused button would collapse it); the click still fires. */
 			onMouseDown={(event) => event.preventDefault()}
@@ -56,7 +56,6 @@ function EditorToolbarButton({
 			aria-pressed={active}
 			aria-label={config.label}
 			title={config.label}
-			className={styles.toolbarButton}
 		>
 			<Icon />
 		</BaseToolbarButton>
@@ -155,7 +154,7 @@ export function EditorCounts({ text, maxLength, strings, className }: EditorCoun
 	return (
 		<div className={cx("editor-counts--component", styles.counts, className)}>
 			{/* The wrapper's colour reaches the figures; not `numeric`, which would set the words in mono (the NumberValues already are). */}
-			<Text tag="span" size="xs" type={over ? "error" : "secondary"} weight={over ? "medium" : "regular"}>
+			<Text tag="span" size="xs" type={over ? "error" : "secondary"} weight={over ? "medium" : "normal"}>
 				<NumberValue value={characters} size="xs" type="inherit" />
 				{typeof maxLength === "number" && (
 					<>

@@ -306,7 +306,7 @@
       "title": "Analytics",
       "summary": "Every metric surface in the kit, on one data shape. A figure written as MetricData renders in a strip, a grid, a hero card or a comparison without being remapped — so the formatting, the trend inference and the empty case are decided once instead of at each call site.",
       "route": "/analytics",
-      "import": "themelia-ui/patterns/analytics",
+      "import": "themelia-ui/blocks/analytics",
       "exports": [
         "Metric",
         "MetricBar",
@@ -333,7 +333,7 @@
         "comparison",
         "block"
       ],
-      "module": "patterns/analytics",
+      "module": "blocks/analytics",
       "chooseWhen": "Figures are summarised — metric tiles, trends, comparisons, a heatmap or a titled chart card.",
       "avoidWhen": "You are rendering the chart itself with no framing."
     },
@@ -562,7 +562,7 @@
     },
     {
       "title": "Button",
-      "summary": "The action primitive. Presentation splits along two independent axes: tone is semantic colour intent, buttonStyle is fill treatment.",
+      "summary": "The action primitive. Presentation splits along two independent axes: tone is semantic colour intent, appearance is fill treatment.",
       "route": "/button",
       "import": "themelia-ui/base/buttons",
       "exports": [
@@ -653,7 +653,7 @@
       "title": "Cart, checkout & billing",
       "summary": "Reusable blocks for checkout, fulfillment, billing, and customer accounts. Each adapts to its container and keeps application actions in consumer callbacks.",
       "route": "/blocks-commerce",
-      "import": "themelia-ui/admin/patterns/commerce",
+      "import": "themelia-ui/blocks/admin/commerce",
       "exports": [
         "CartSummary",
         "TaxBreakdown",
@@ -693,7 +693,7 @@
         "stock",
         "block"
       ],
-      "module": "admin/patterns/commerce",
+      "module": "blocks/admin/commerce",
       "chooseWhen": "Admin screens present orders, invoices, carts, fulfilment and loyalty.",
       "avoidWhen": "The record is a catalogue product, whose options and readiness live in features/products."
     },
@@ -701,7 +701,7 @@
       "title": "Catalogue & partners",
       "summary": "Product search appearance, stock management, supplier profiles, and booking details. Structured for everyday catalogue operations.",
       "route": "/blocks-catalogue",
-      "import": "themelia-ui/admin/patterns/commerce",
+      "import": "themelia-ui/blocks/admin/commerce",
       "exports": [
         "SeoListing",
         "calculateSeoScore",
@@ -725,7 +725,7 @@
         "booking",
         "block"
       ],
-      "module": "admin/patterns/commerce",
+      "module": "blocks/admin/commerce",
       "chooseWhen": null,
       "avoidWhen": null
     },
@@ -2153,7 +2153,7 @@
       "title": "Order",
       "summary": "An order is not one list of goods with one status. It splits into fulfillment groups, each with its own state and location, and its money moves on an axis of its own — which is why an order can be Refunded and Unfulfilled at the same time.",
       "route": "/blocks-order",
-      "import": "themelia-ui/admin/patterns/commerce",
+      "import": "themelia-ui/blocks/admin/commerce",
       "exports": [
         "OrderHeader",
         "FulfillmentGroup",
@@ -2183,7 +2183,7 @@
         "balance",
         "block"
       ],
-      "module": "admin/patterns/commerce",
+      "module": "blocks/admin/commerce",
       "chooseWhen": null,
       "avoidWhen": null
     },
@@ -3092,7 +3092,7 @@
       "title": "Timelines, onboarding & admin",
       "summary": "Domain presentation assembled from the tiers below it. The three timeline surfaces map a vocabulary onto base/timeline rather than redrawing the rail, and nothing here fetches, navigates, or confirms a destructive action — every one takes callbacks and slots.",
       "route": "/blocks-admin",
-      "import": "themelia-ui/patterns/timelines",
+      "import": "themelia-ui/blocks/timelines",
       "exports": [
         "ChangelogTimeline",
         "MilestonesTimeline",
@@ -3118,7 +3118,7 @@
         "danger zone",
         "block"
       ],
-      "module": "patterns/timelines",
+      "module": "blocks/timelines",
       "chooseWhen": "A sequence is presented as changelog entries, milestones, or a step tracker.",
       "avoidWhen": "The entries are a system audit log, or the sequence is a calendar."
     },

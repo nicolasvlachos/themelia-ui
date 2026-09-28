@@ -41,7 +41,7 @@ function resolveRowClass<TData>(
 /** The timeline of events, grouped by date on one rail. */
 export function ActivityFeed<TData = unknown>({
 	activities = [],
-	density = "default",
+	variant = "default",
 	itemSpacing = "default",
 	groupByDate = true,
 	expandedByDefault = false,
@@ -131,7 +131,7 @@ export function ActivityFeed<TData = unknown>({
 				<Alert tone="warning" role="alert">
 					<AlertTitle>{copy.refreshError}</AlertTitle>
 					<AlertDescription>{error}</AlertDescription>
-					{onRetry && <AlertAction><Button tone="neutral" buttonStyle="outline" onClick={onRetry}>{copy.retry}</Button></AlertAction>}
+					{onRetry && <AlertAction><Button tone="neutral" appearance="outline" onClick={onRetry}>{copy.retry}</Button></AlertAction>}
 				</Alert>
 			) : <ErrorState title={copy.error} description={error} onRetry={onRetry} strings={{ retry: copy.retry }} />)}
 			{!loading && !hasError && activities.length === 0 && (
@@ -169,7 +169,7 @@ export function ActivityFeed<TData = unknown>({
 										actionsForActivity?.(activity) ?? []
 
 									const context: ActivityRenderRowContext<TData> = {
-										density,
+										variant,
 										isLast,
 										isFirstInGroup: itemIndex === 0,
 										activity,
@@ -191,7 +191,7 @@ export function ActivityFeed<TData = unknown>({
 										<ActivityRow<TData>
 											key={key}
 											activity={activity}
-											density={density}
+											variant={variant}
 											itemSpacing={itemSpacing}
 											eventConfig={config}
 											tone={tone}

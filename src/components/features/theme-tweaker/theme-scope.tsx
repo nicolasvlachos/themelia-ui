@@ -1,7 +1,7 @@
 /**
  * ThemeScope: one DOM node carrying a theme's variables. No React context: CSS variables
- * cascade to every descendant (UIProvider owns the JavaScript-side defaults). The mode
- * class is set too, since the kit's dark overrides also answer `.dark`.
+ * cascade to every descendant (UIProvider owns the JavaScript-side defaults). The mode class
+ * sets the node's `color-scheme`, which picks each colour's half.
  */
 import { forwardRef } from "react"
 
@@ -25,7 +25,7 @@ export const ThemeScope = forwardRef<HTMLDivElement, ThemeScopeProps>(function T
 			ref={ref}
 			data-theme={mode}
 			className={cx("theme-scope--component", mode, className)}
-			style={{ ...themeToStyle(theme, mode), ...style }}
+			style={{ ...themeToStyle(theme), ...style }}
 		>
 			{children}
 		</div>

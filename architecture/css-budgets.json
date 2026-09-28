@@ -23,7 +23,7 @@
       "name": "Admin resource index recipe",
       "budgetKb": 58,
       "families": [
-        "admin/patterns/commerce",
+        "blocks/admin/commerce",
         "features/table",
         "layout/app-shell"
       ]

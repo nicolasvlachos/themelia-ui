@@ -1,4 +1,4 @@
-/* Carousel — no component variables; rules read the spacing scale directly. */
+/* Carousel — rules read the theme's spacing directly; `--_fade` is the edge fade's length. */
 
 /*
  * Native CSS scroll-snap: the browser handles momentum, touch and keyboard scrolling.
@@ -7,35 +7,32 @@
 
 .root {
 	position: relative;
+	--_fade: 1.5rem;
 }
 
 /*
  * An edge fade while more content lies past it, keyed off the same `atStart`/`atEnd` as
  * the arrows. A mask (as on the tab list), not a `--background` overlay, so it works on any
- * surface and in RTL. Horizontal only.
+ * surface and in RTL. Horizontal only. A focused track drops it: the focus outline is drawn
+ * outside the track, where the mask would clip it.
  */
-.root:not([data-at-start]) > .viewport:not(.vertical):dir(ltr),
-.root:not([data-at-end]) > .viewport:not(.vertical):dir(rtl) {
-	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+.root:not([data-at-start]) > .viewport:not(.vertical, :focus-visible):dir(ltr),
+.root:not([data-at-end]) > .viewport:not(.vertical, :focus-visible):dir(rtl) {
+	mask-image: linear-gradient(to right, transparent, black var(--_fade));
 }
 
-.root:not([data-at-end]) > .viewport:not(.vertical):dir(ltr),
-.root:not([data-at-start]) > .viewport:not(.vertical):dir(rtl) {
-	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+.root:not([data-at-end]) > .viewport:not(.vertical, :focus-visible):dir(ltr),
+.root:not([data-at-start]) > .viewport:not(.vertical, :focus-visible):dir(rtl) {
+	mask-image: linear-gradient(to left, transparent, black var(--_fade));
 }
 
-.root:not([data-at-start]):not([data-at-end]) > .viewport:not(.vertical) {
-	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
-}
-
-/* The focus ring is drawn outside the track, where the mask would clip it. */
-.root > .viewport:focus-visible {
-	mask-image: none;
+.root:not([data-at-start]):not([data-at-end]) > .viewport:not(.vertical, :focus-visible) {
+	mask-image: linear-gradient(to right, transparent, black var(--_fade), black calc(100% - var(--_fade)), transparent);
 }
 
 .viewport {
 	display: flex;
-	gap: var(--space-xl);
+	gap: var(--gap);
 	position: relative;
 	overflow-x: auto;
 	overscroll-behavior-x: contain;
@@ -47,11 +44,6 @@
 
 .viewport::-webkit-scrollbar {
 	display: none;
-}
-
-.viewport:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
 }
 
 .vertical {
@@ -78,9 +70,9 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	/* Separated from the slides so the arrows don't read as part of the last card. */
-	margin-block-start: var(--space-lg);
+	margin-block-start: var(--gap);
 }
 
 /* Overlay controls carry their own ground and elevation so they read over any slide. */
@@ -88,7 +80,7 @@
 	position: absolute;
 	inset-block: 0;
 	/* Clear of the slide's own padding, so the arrow doesn't cover its text. */
-	inset-inline: var(--space-lg);
+	inset-inline: var(--padding);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -97,7 +89,7 @@
 
 .controlsOverlay > * {
 	background-color: var(--background);
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--shadow);
 }
 
 .controlsOverlay > * {
@@ -108,20 +100,20 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 .dot {
-	width: var(--space-md);
-	height: var(--space-md);
+	width: 0.5rem;
+	height: 0.5rem;
 	padding: 0;
 	border: 0;
 	border-radius: var(--radius-pill);
-	background-color: var(--muted-foreground-40);
+	background-color: color-mix(in oklab, var(--muted-foreground) var(--tint-strong), transparent);
 	cursor: pointer;
 	transition:
-		width var(--duration-fast) var(--ease-out),
-		background-color var(--duration-fast) var(--ease-out);
+		width var(--duration-fast) var(--ease),
+		background-color var(--duration-fast) var(--ease);
 }
 
 .dot[data-active] {
@@ -129,10 +121,10 @@
 }
 
 .dotsPill .dot[data-active] {
-	width: round(calc(1.25rem * var(--density-scale, var(--scale))), 1px);
+	width: 1.25rem;
 }
 
+/* The ring hugs the small dot, so it stays clear of its neighbours. */
 .dot:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	outline-offset: var(--border-width);
 }

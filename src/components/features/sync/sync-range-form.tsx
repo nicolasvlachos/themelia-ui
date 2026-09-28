@@ -121,7 +121,7 @@ export function SyncRangeForm<TSubmit = SyncRangeFormSubmit>({
 			className={cx("sync-range-form--component", styles.form, className)}
 		>
 			<section className={styles.section}>
-				<Stack gap="xs">
+				<Stack gap="sm">
 					<Label>{copy.hoursLabel}</Label>
 					<Text size="xs" type="secondary">{copy.hoursDescription}</Text>
 				</Stack>
@@ -153,8 +153,8 @@ export function SyncRangeForm<TSubmit = SyncRangeFormSubmit>({
 			{!!syncOptions?.length && (
 				// A framed section: secondary to the window.
 				<section className={styles.optional}>
-					<Stack gap="md">
-						<Stack gap="xs">
+					<Stack gap="sm">
+						<Stack gap="sm">
 							<Label>{copy.optionsLabel}</Label>
 							<Text size="xs" type="secondary">{copy.optionsDescription}</Text>
 						</Stack>

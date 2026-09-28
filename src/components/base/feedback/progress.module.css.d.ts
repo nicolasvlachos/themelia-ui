@@ -3,9 +3,5 @@ declare const styles: {
 	readonly fill: string
 	readonly indeterminate: string
 	readonly root: string
-	readonly toneDestructive: string
-	readonly toneInfo: string
-	readonly toneSuccess: string
-	readonly toneWarning: string
 }
 export default styles

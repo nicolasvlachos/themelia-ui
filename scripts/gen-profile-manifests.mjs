@@ -6,6 +6,8 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
+import { expandExports } from './lib/export-targets.mjs'
+
 const manifest = JSON.parse(readFileSync('architecture/manifest.json', 'utf8'))
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
 const OUT_DIR = 'dist/profiles'
@@ -40,7 +42,8 @@ for (const id of Object.keys(manifest.profileDefinition ?? {}).sort()) {
 }
 
 /* A subpath that is not published would send a tool to an import that cannot resolve. */
-const published = new Set(Object.keys(pkg.exports ?? {}))
+/* Expanded against dist/, so a family whose JavaScript or stylesheet was not emitted is missing. */
+const published = new Set(Object.keys(expandExports(pkg.exports)))
 const missing = Object.values(records).flatMap((record) =>
   [...record.javascriptSubpaths, ...record.cssSubpaths].filter((subpath) => !published.has(subpath)),
 )

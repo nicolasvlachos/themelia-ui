@@ -8,7 +8,7 @@
 .root {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -39,24 +39,29 @@
  *
  * A grid whose avatar column carries the thread rail. No row gap: the rail must run
  * unbroken, so spacing is padding on the parts.
+ *
+ *   --_comment-avatar         this comment's avatar column: Avatar's default size, `sm` on a reply.
+ *   --_comment-reply-avatar   a reply's, which the thread below this comment forks to.
  */
 
 .item {
+	--_comment-reply-avatar: 1.5rem;
+	--_comment-avatar: 2rem;
 	display: grid;
-	grid-template-columns: var(--size-avatar) minmax(0, 1fr);
+	grid-template-columns: var(--_comment-avatar) minmax(0, 1fr);
 	grid-template-areas:
 		"context context"
 		"gutter main"
 		". thread";
-	column-gap: var(--space-md);
+	column-gap: var(--gap-sm);
 	min-width: 0;
-	padding-block: var(--space-lg);
+	padding-block: var(--padding);
 }
 
 /* Replies: smaller avatar, tighter rhythm. */
 .item:not([data-depth="0"]) {
-	grid-template-columns: var(--size-avatar-sm) minmax(0, 1fr);
-	padding-block: var(--space-sm);
+	--_comment-avatar: var(--_comment-reply-avatar);
+	padding-block: var(--padding-sm);
 }
 
 /* "Pinned", with its glyph in the avatar column so the text aligns with the bubble. */
@@ -65,14 +70,14 @@
 	display: grid;
 	grid-template-columns: subgrid;
 	align-items: center;
-	margin-block-end: var(--space-xs);
+	margin-block-end: var(--gap-sm);
 	color: var(--muted-foreground);
 }
 
 .itemContextIcon {
 	justify-self: end;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .itemGutter {
@@ -88,7 +93,7 @@
 	content: "";
 	flex: 1;
 	width: var(--border-width);
-	margin-block-start: var(--space-xs);
+	margin-block-start: calc(var(--gap-sm) / 2);
 	border-radius: var(--radius-pill);
 	background-color: var(--border);
 }
@@ -98,7 +103,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -107,7 +112,7 @@
 .itemBubbleRow {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	max-width: 100%;
 	min-width: 0;
 }
@@ -119,7 +124,7 @@
 .itemBubble {
 	min-width: 0;
 	max-width: 100%;
-	padding: var(--space-md) var(--space-lg);
+	padding: var(--padding-sm) var(--padding);
 	border-radius: var(--radius-sm);
 	background-color: var(--muted);
 	overflow-wrap: anywhere;
@@ -129,7 +134,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
-	gap: 0 var(--space-sm);
+	gap: 0 var(--gap-sm);
 	min-width: 0;
 }
 
@@ -141,7 +146,7 @@
 .itemMeta {
 	display: inline-flex;
 	align-items: baseline;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .itemTime {
@@ -150,22 +155,22 @@
 
 .itemEdited::before {
 	content: "·";
-	margin-inline-end: var(--space-xs);
+	margin-inline-end: calc(var(--gap-sm) / 2);
 }
 
 .itemContent {
-	margin-block-start: var(--space-2xs);
+	margin-block-start: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 /* Folded: the line cap arrives inline, and the last line fades out. */
 .itemContent[data-clamped] {
 	overflow: hidden;
-	mask-image: linear-gradient(to bottom, black calc(100% - var(--space-2xl)), transparent);
+	mask-image: linear-gradient(to bottom, black calc(100% - 1lh), transparent);
 }
 
 .itemMore {
-	margin-block-start: var(--space-2xs);
+	margin-block-start: calc(var(--gap-sm) / 2);
 }
 
 .itemMenu {
@@ -182,7 +187,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
@@ -190,13 +195,13 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 /* Extra air separates the Reply word from the chips. */
 .itemReply:not(:first-child) {
-	margin-inline-start: var(--space-sm);
+	margin-inline-start: calc(var(--gap-sm) / 2);
 }
 
 /* The editor replaces the bubble at full column width. */
@@ -210,12 +215,9 @@
 .quietAction {
 	display: inline-flex;
 	align-items: center;
-	padding: 0;
-	border: 0;
-	background: none;
 	color: var(--muted-foreground);
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-out);
+	transition: color var(--duration-fast) var(--ease);
 }
 
 .quietAction:hover {
@@ -224,27 +226,26 @@
 
 /* ── Reactions ─────────────────────────────────────────────────────────────────── */
 
-/* Every chip under the bubble shares one shape: outlined, no fill, inner radius, badge height. */
+/* Every chip under the bubble shares one shape: outlined, no fill, inner radius, a badge's height. */
 .reaction,
 .reactionAdd {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-xs);
-	/* A badge's height: one xs line plus inset and border. */
-	min-height: calc(var(--text-xs) * var(--text-xs--line-height) + 2 * (var(--space-2xs) + var(--border-width)));
-	padding-inline: var(--space-sm);
-	padding-block: var(--space-2xs);
-	border: var(--border-width) solid var(--control-border);
+	gap: calc(var(--gap-sm) / 2);
+	min-height: calc(var(--control-height-sm) - var(--padding-sm));
+	padding-inline: var(--padding-sm);
+	border: var(--border-width) solid var(--input);
 	border-radius: var(--radius-sm);
 	background-color: transparent;
 	color: var(--muted-foreground);
 	cursor: pointer;
 	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		color var(--duration-fast) var(--ease-out);
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
+/* Without `onReact` a reaction is a count to read, not a control switched off: no dimming. */
 .reaction:disabled { cursor: default; }
 
 /* "Add a reaction" is an action: no border until hovered, like Reply. */
@@ -254,7 +255,7 @@
 
 /* Leading the row, it gives back its inset so the glyph aligns with the bubble's edge. */
 .itemActions > .reactionAdd:first-child {
-	margin-inline-start: calc(-1 * (var(--space-sm) + var(--border-width)));
+	margin-inline-start: calc(-1 * (var(--padding-sm) + var(--border-width)));
 }
 
 .reaction:not(:disabled):hover,
@@ -264,53 +265,42 @@
 	color: var(--foreground);
 }
 
-/* The viewer's own reaction. */
+/* The viewer's own reaction: a primary soft badge's colours, over hover. */
 .reaction[data-mine],
 .reaction[data-mine]:not(:disabled):hover {
-	/* A primary soft badge's colours. */
-	border-color: var(--primary-30);
-	background-color: var(--primary-10);
-	color: var(--primary-accent);
+	border-color: color-mix(in oklab, var(--primary) var(--tint-strong), transparent);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
+	color: var(--primary);
 }
 
 .reactionAdd svg {
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
+/* The chips sit half a gap apart, so the ring is drawn over the frame and stays off the neighbour. */
 .reaction:focus-visible,
-.reactionAdd:focus-visible,
-.reactionChoice:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+.reactionAdd:focus-visible {
+	outline-offset: calc(var(--border-width) * -1);
 }
 
-.reactionEmoji {
-	font-size: var(--text-sm);
-	line-height: var(--leading-none);
-}
-
-/* A row of choices, overriding the popover's text column; a menu's inset keeps them concentric. */
+/* A row of choices, overriding the popover's text column; the radius difference keeps them concentric. */
 .reactionPicker {
 	flex-direction: row;
-	gap: var(--space-2xs);
-	padding: var(--space-md);
+	/* A hairline between choices so a hover fill and the reader's own never merge. */
+	gap: var(--border-width);
+	padding: var(--padding-sm);
 }
 
 .reactionChoice {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: var(--size-avatar);
-	height: var(--size-avatar);
-	padding: 0;
-	border: 0;
+	width: var(--control-height);
+	height: var(--control-height);
 	border-radius: var(--radius-sm);
-	background: none;
-	font-size: var(--text-base);
-	line-height: var(--leading-none);
 	cursor: pointer;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .reactionChoice:hover {
@@ -318,7 +308,12 @@
 }
 
 .reactionChoice[data-mine] {
-	background-color: var(--primary-10);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
+}
+
+/* The choices touch, so the ring is drawn inside each. */
+.reactionChoice:focus-visible {
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /* ── Thread ────────────────────────────────────────────────────────────────────────
@@ -326,18 +321,14 @@
  * Each entry (toggle, reply, composer) forks off the rail with a curve (::before); all but
  * the last carry the rail on (::after).
  *
- *   --comment-rail-x   rail offset left of the thread: the parent's gutter gap + half its avatar.
- *   --comment-fork-y   where the curve lands: top padding + half a reply avatar or toggle line.
+ *   --_comment-rail-x   rail offset left of the thread: the parent's gutter gap + half its avatar.
+ *   --_comment-fork-y   where the curve lands: top padding + half a reply avatar or toggle line.
  */
 
 .itemThread {
-	--comment-rail-x: calc(var(--space-md) + var(--size-avatar-sm) / 2);
+	--_comment-rail-x: calc(var(--gap-sm) + var(--_comment-avatar) / 2);
 	grid-area: thread;
 	min-width: 0;
-}
-
-.item[data-depth="0"] > .itemThread {
-	--comment-rail-x: calc(var(--space-md) + var(--size-avatar) / 2);
 }
 
 .replies {
@@ -347,35 +338,35 @@
 }
 
 .threadEntry {
-	--comment-fork-y: calc(var(--space-sm) + var(--size-avatar-sm) / 2);
+	--_comment-fork-y: calc(var(--padding-sm) + var(--_comment-reply-avatar) / 2);
 	position: relative;
 	min-width: 0;
 }
 
-/* A toggle or the composer's context line: the fork lands on one xs line. */
+/* A toggle or the composer's context line: the fork lands on one line, an icon tall. */
 .threadEntry[data-entry="toggle"],
 .threadEntry[data-entry="composer"] {
-	--comment-fork-y: calc(var(--space-sm) + var(--text-xs) * var(--text-xs--line-height) / 2);
-	padding-block-start: var(--space-sm);
+	--_comment-fork-y: calc(var(--padding-sm) + var(--icon-size) / 2);
+	padding-block-start: var(--padding-sm);
 }
 
 .threadEntry[data-entry="composer"] {
-	padding-block-end: var(--space-sm);
+	padding-block-end: var(--padding-sm);
 }
 
 .threadEntry::before,
 .threadEntry:not([data-last])::after {
 	content: "";
 	position: absolute;
-	inset-inline-start: calc(-1 * var(--comment-rail-x) - var(--border-width) / 2);
+	inset-inline-start: calc(-1 * var(--_comment-rail-x) - var(--border-width) / 2);
 	pointer-events: none;
 }
 
 /* The fork: down the rail, then curving into the entry. */
 .threadEntry::before {
 	top: 0;
-	width: calc(var(--comment-rail-x) + var(--border-width) / 2 - var(--space-xs));
-	height: calc(var(--comment-fork-y) + var(--border-width) / 2);
+	width: calc(var(--_comment-rail-x) + var(--border-width) / 2 - var(--gap-sm) / 2);
+	height: calc(var(--_comment-fork-y) + var(--border-width) / 2);
 	border-inline-start: var(--border-width) solid var(--border);
 	border-block-end: var(--border-width) solid var(--border);
 	border-end-start-radius: var(--radius);
@@ -383,15 +374,15 @@
 
 /* The rail continued to the next entry. */
 .threadEntry:not([data-last])::after {
-	top: calc(var(--comment-fork-y) + var(--border-width) / 2 - var(--radius));
+	top: calc(var(--_comment-fork-y) + var(--border-width) / 2 - var(--radius));
 	bottom: 0;
 	width: var(--border-width);
 	background-color: var(--border);
 }
 
+/* One line tall, an icon's height (its xs line), as `--_comment-fork-y` for a toggle assumes. */
 .repliesToggle {
-	/* One xs line tall, as `--comment-fork-y` for a toggle assumes. */
-	min-height: calc(var(--text-xs) * var(--text-xs--line-height));
+	min-height: var(--icon-size);
 }
 
 /* ── Composer ──────────────────────────────────────────────────────────────────── */
@@ -399,7 +390,7 @@
 .composer {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -420,17 +411,17 @@
 	position: relative;
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-xs);
-	max-width: min(100%, calc(20rem * var(--scale)));
+	gap: calc(var(--gap-sm) / 2);
+	max-width: min(100%, 20rem);
 	min-width: 0;
-	padding-inline: var(--space-md);
-	padding-block: var(--space-2xs);
 	/* The reactions' chip shape (see Reactions). */
-	border: var(--border-width) solid var(--control-border);
+	min-height: calc(var(--control-height-sm) - var(--padding-sm));
+	padding-inline: var(--padding-sm);
+	border: var(--border-width) solid var(--input);
 	border-radius: var(--radius-sm);
 	background-color: transparent;
 	overflow: hidden;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 /* Only a linked chip is pressable, so only it takes the hover fill and the focus ring. */
@@ -444,69 +435,70 @@
 }
 
 .chip:has(.chipLink:focus-visible) {
-	box-shadow: var(--focus-ring);
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * 2);
 }
 
+/* The reason is worth reading, so a failed chip may take the row rather than a chip's width. */
 .chip[data-status="failed"] {
-	border-color: var(--destructive-30);
-	background-color: var(--destructive-5);
+	max-width: 100%;
+	border-color: color-mix(in oklab, var(--destructive) var(--tint-strong), transparent);
+	background-color: color-mix(in oklab, var(--destructive) var(--tint), transparent);
 }
 
 .chipIcon {
 	flex-shrink: 0;
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	color: var(--muted-foreground);
 }
 
+/* The error ink: the hue on a dark page, mixed toward the text in light to hold contrast. */
 .chip[data-status="failed"] .chipIcon {
-	color: var(--destructive-accent);
-}
-
-.chipLink,
-.chipLabel {
-	display: inline-flex;
-	align-items: baseline;
-	gap: var(--space-sm);
-	min-width: 0;
+	color: color-mix(in oklab, var(--destructive) 85%, light-dark(var(--foreground), var(--destructive)));
 }
 
 .chipLink {
+	display: inline-flex;
 	flex: 1;
+	min-width: 0;
 	text-decoration: none;
 	color: inherit;
 }
 
-
-.chipMeta {
-	flex-shrink: 0;
+/*
+ * The name and the trailing text share the row: each takes up to half and lends the other what
+ * it leaves unused. An uploader's error is text of any length, and it never squeezes out the name.
+ */
+.chipLabel {
+	display: inline-grid;
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(0, max-content);
+	align-items: baseline;
+	column-gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
 }
 
 /* A hairline along the bottom edge, so uploads never resize the tray. */
 .chipProgress {
 	position: absolute;
-	inset-inline: var(--space-md);
+	inset-inline: var(--padding-sm);
 	bottom: 0;
-	height: var(--border-width-strong);
+	height: calc(var(--border-width) * 2);
 	border-radius: var(--radius-pill);
-	background-color: var(--foreground-20);
+	background-color: color-mix(in oklab, var(--foreground) var(--tint), transparent);
 	overflow: hidden;
 }
 
 .chipProgressFill {
 	height: 100%;
 	background-color: var(--primary);
-	transition: width var(--duration-normal) var(--ease-out);
+	transition: width var(--duration) var(--ease);
 }
 
 .chipRetry,
 .chipRemove {
 	flex-shrink: 0;
-}
-
-.chipRemove svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
 }
 
 /* ── Content ───────────────────────────────────────────────────────────────────── */
@@ -519,13 +511,14 @@
 .richBlocks {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
+/* RichText's list and quote measures, so a block document reads like the editor's HTML. */
 .richList {
-	margin-block: var(--rich-text-block-gap);
-	padding-inline-start: var(--rich-text-list-indent);
+	margin-block: 0.75em;
+	padding-inline-start: 1.5em;
 	list-style: disc;
 }
 
@@ -534,18 +527,18 @@
 }
 
 .richQuote {
-	padding-inline-start: var(--rich-text-quote-indent);
-	border-inline-start: var(--border-width-strong) solid var(--border);
+	padding-inline-start: 1em;
+	border-inline-start: calc(var(--border-width) * 2) solid var(--border);
 	font-style: italic;
 }
 
 .richCite {
 	display: block;
-	margin-top: var(--space-xs);
+	margin-top: calc(var(--gap-sm) / 2);
 	font-style: normal;
 }
 
 .richDelimiter {
-	margin-block: var(--space-xl);
+	margin-block: var(--gap);
 	border-bottom: var(--border-width) dashed var(--border);
 }

@@ -11,7 +11,7 @@ import {
 	DropdownMenuLabel, DropdownMenuLinkItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/base/dropdown-menu"
 import { VisuallyHidden } from "@/components/base/display"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { resolveLinkRenderer, type LinkRenderer } from "@/lib/navigation"
@@ -52,7 +52,7 @@ export function HeaderNotifications({
 						type="button"
 						data-slot="header-notifications-trigger"
 						tone="neutral"
-						buttonStyle="ghost"
+						appearance="ghost"
 						iconOnly
 						/* The count goes in the accessible name; the badge is visual only. */
 						aria-label={
@@ -62,7 +62,10 @@ export function HeaderNotifications({
 					>
 						<BellIcon aria-hidden />
 						{unreadCount > 0 && (
-							<span aria-hidden className={styles.toolBadge}>
+							<span
+								aria-hidden
+								className={cx(styles.toolBadge, textClassName({ size: "xs", weight: "medium", lineHeight: "none" }))}
+							>
 								{badge}
 							</span>
 						)}
@@ -79,7 +82,7 @@ export function HeaderNotifications({
 					<DropdownMenuLabel className={styles.notificationsHead}>
 						{copy.heading}
 						{unreadCount > 0 && !!onMarkAllRead && (
-							<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onMarkAllRead}>
+							<Button type="button" tone="neutral" appearance="ghost" onClick={onMarkAllRead}>
 								{copy.markAllRead}
 							</Button>
 						)}

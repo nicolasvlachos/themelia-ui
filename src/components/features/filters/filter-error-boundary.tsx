@@ -61,14 +61,14 @@ class FilterErrorBoundaryBase extends Component<
 		if (fallback) return fallback
 
 		return (
-			<div className={cx("filter-error-boundary--component", styles.errorBoundary, className)}>
+			<div data-tone="destructive" className={cx("filter-error-boundary--component", styles.errorBoundary, className)}>
 				<div className={styles.errorBoundaryHead}>
 					<Text tag="span" type="inherit" weight="semibold">{labels.title}</Text>
 					{/* Retry: clearing the state re-renders the child. */}
 					<Button
 						type="button"
 						tone="destructive"
-						buttonStyle="ghost"
+						appearance="ghost"
 						iconOnly
 						aria-label={labels.retry}
 						onClick={this.retry}

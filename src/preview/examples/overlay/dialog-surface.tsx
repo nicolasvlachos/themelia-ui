@@ -7,9 +7,9 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function DialogSurface() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Confirm
 				</OverlayTrigger>
 				<OverlayContent surface="bare" showCloseButton={false}>
@@ -19,7 +19,7 @@ export default function DialogSurface() {
 					</OverlayHeader>
 					<OverlayFooter>
 						<OverlayDismissArea>
-							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button tone="neutral" appearance="outline">Cancel</Button>
 							<Button>Publish</Button>
 						</OverlayDismissArea>
 					</OverlayFooter>

@@ -10,7 +10,7 @@ export default function Affordances() {
 	const [search, setSearch] = useState("shipping")
 
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Search" helperText="Clear appears once there is a value.">
 				<SearchInput
 					value={search}

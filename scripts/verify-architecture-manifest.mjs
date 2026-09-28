@@ -7,6 +7,7 @@
  * Generators read this manifest, so an undeclared edge means they emit the wrong thing.
  */
 import { existsSync, readFileSync } from 'node:fs'
+import { matchesExport } from './lib/export-targets.mjs'
 import { ALLOWED_EDGES, actualEdges, readManifest, specifiers } from './lib/read-architecture-manifest.mjs'
 
 const manifest = readManifest()
@@ -61,7 +62,7 @@ for (const family of manifest.families) {
    * `primitives` is exempt: that barrel IS a family's entry.
    */
   for (const spec of specs) {
-    if (/^@\/components\/(base|features|layout|patterns|admin|admin\/patterns)(\/index)?$/.test(spec)) {
+    if (/^@\/components\/(base|features|layout|blocks|blocks\/admin)(\/index)?$/.test(spec)) {
       failures.push(`barrel-import     ${family.id} imports the layer barrel "${spec}", which names no family — import the family subpath`)
     }
   }
@@ -89,16 +90,20 @@ const sorted = manifest.topological()
 if (sorted.cycle) failures.push(`cycle             ${sorted.cycle.join(' → ')}`)
 
 /* ── export map accounted for ────────────────────────────────────────────────────── */
-/* A family accounts for its JS subpath and, when present, its stylesheet subpath. */
-const accounted = new Set([
-  ...manifest.families.flatMap((f) => [f.export, f.cssExport].filter(Boolean)),
-  ...manifest.nonFamilyExports.map((e) => e.export),
-])
-for (const subpath of Object.keys(pkg.exports ?? {})) {
-  if (!accounted.has(subpath)) failures.push(`unaccounted       ${subpath} is published but not in the manifest`)
+/*
+ * A family accounts for its JS subpath and, when present, its stylesheet subpath. An exact key
+ * is accounted for by a family or a non-family record; a module pattern (`./base/*`) by at
+ * least one family it publishes.
+ */
+const familySubpaths = manifest.families.flatMap((f) => [f.export, f.cssExport].filter(Boolean))
+const accounted = new Set([...familySubpaths, ...manifest.nonFamilyExports.map((e) => e.export)])
+for (const key of Object.keys(pkg.exports ?? {})) {
+  if (accounted.has(key)) continue
+  const publishesFamily = key.includes('*') && familySubpaths.some((subpath) => matchesExport({ [key]: null }, subpath))
+  if (!publishesFamily) failures.push(`unaccounted       ${key} is published but not in the manifest`)
 }
 for (const family of manifest.families) {
-  if (!(family.export in (pkg.exports ?? {}))) failures.push(`orphan            ${family.id} declares ${family.export}, which is not published`)
+  if (!matchesExport(pkg.exports, family.export)) failures.push(`orphan            ${family.id} declares ${family.export}, which is not published`)
 }
 
 /* ── classification ──────────────────────────────────────────────────────────────── */

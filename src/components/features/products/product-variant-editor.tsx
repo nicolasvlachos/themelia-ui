@@ -240,7 +240,7 @@ export function ProductVariantEditor({
 								<Button
 									type="button"
 									tone="destructive"
-									buttonStyle="ghost"
+									appearance="ghost"
 									disabled={isDisabled}
 									onClick={() => onDelete(value)}
 								>
@@ -254,7 +254,7 @@ export function ProductVariantEditor({
 								<Button
 									type="button"
 									tone="neutral"
-									buttonStyle="ghost"
+									appearance="ghost"
 									disabled={isDisabled}
 									onClick={onCancel}
 								>

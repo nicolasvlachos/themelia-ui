@@ -10,8 +10,8 @@ export default function ToggleGroupExample() {
 	const [align, setAlign] = useState("left")
 
 	return (
-		<Stack gap="xl">
-			<Stack gap="xs" align="start">
+		<Stack>
+			<Stack gap="sm" align="start">
 				<Text size="xs" type="secondary">multiple — several at once</Text>
 				<ToggleGroup multiple value={marks} onValueChange={setMarks}>
 					<Toggle value="bold" aria-label="Bold"><BoldIcon /></Toggle>
@@ -20,7 +20,7 @@ export default function ToggleGroupExample() {
 				</ToggleGroup>
 			</Stack>
 
-			<Stack gap="xs" align="start">
+			<Stack gap="sm" align="start">
 				<Text size="xs" type="secondary">one at a time</Text>
 				<ToggleGroup
 					value={[align]}
@@ -32,11 +32,11 @@ export default function ToggleGroupExample() {
 				</ToggleGroup>
 			</Stack>
 
-			<Stack gap="xs" align="start">
+			<Stack gap="sm" align="start">
 				<Text size="xs" type="secondary">attached={"{false}"} — separate buttons</Text>
 				<ToggleGroup attached={false} multiple>
-					<Toggle value="a" variant="outline">Day</Toggle>
-					<Toggle value="b" variant="outline">Week</Toggle>
+					<Toggle value="a" appearance="outline">Day</Toggle>
+					<Toggle value="b" appearance="outline">Week</Toggle>
 				</ToggleGroup>
 			</Stack>
 		</Stack>

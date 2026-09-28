@@ -1,0 +1,11 @@
+/*
+ * Spacing: two paddings and two gaps. The larger one is for containers and between groups
+ * (a card's inset, the gap between fields or sections); the smaller one is for items and
+ * inside a group (a row's inset, icon and label, title and description).
+ */
+:root {
+	--padding: 1rem;
+	--padding-sm: 0.5rem;
+	--gap: 1rem;
+	--gap-sm: 0.5rem;
+}

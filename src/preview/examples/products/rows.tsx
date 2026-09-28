@@ -22,14 +22,14 @@ export default function Rows() {
 
 	return (
 		<>
-			<Grid gap="lg">
+			<Grid>
 				<ProductReadinessCard
 					score={72}
 					items={READINESS}
 					summary="Two checks left before this can be published."
 					onSelectReadinessItem={(item) => note(`readiness: ${item.id}`)}
 				/>
-				<Stack gap="lg">
+				<Stack>
 					<ProductStructureCard
 						metrics={STRUCTURE}
 						onSelectMetric={(metric) => note(`structure: ${metric.id}`)}

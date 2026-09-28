@@ -48,8 +48,8 @@ function ActionsDemo() {
 	const cardActions = useActionSurface({ surface: "card", scope: "invoice", payload: "INV-4418" })
 
 	return (
-		<Stack gap="xl" style={{ width: "100%" }}>
-			<Stack direction="horizontal" gap="md" align="center">
+		<Stack style={{ width: "100%" }}>
+			<Stack direction="horizontal" gap="sm" align="center">
 				{pageActions.map((action) => (
 					<Button
 						key={action.key}

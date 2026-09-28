@@ -1,0 +1,12 @@
+/*
+ * Shape: two radii and one border width. `--radius` rounds whatever holds other rounded things
+ * (cards, dialogs, popovers, menus); `--radius-sm` everything inside one or smaller than one
+ * (controls, rows, chips, badges, tooltips). A container insets its items by the difference,
+ * so the corners nest: outer = inner + inset. `--radius-pill` and `50%` are shapes, not steps.
+ */
+:root {
+	--radius: 1rem;
+	--radius-sm: 0.5rem;
+	--radius-pill: 999px;
+	--border-width: 1px;
+}

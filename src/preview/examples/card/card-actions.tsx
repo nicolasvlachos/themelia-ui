@@ -4,7 +4,7 @@ import { TextLink } from "themelia-ui/base/typography"
 
 export default function CardActions() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="start">
+		<Stack direction="horizontal" wrap align="start">
 			<Card style={{ width: "18rem" }} title="Northwind Traders" description="Invoice #4417">
 				<CardFooter>
 					<CardActionStrip

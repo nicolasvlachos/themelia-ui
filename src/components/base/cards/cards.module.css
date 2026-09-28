@@ -1,23 +1,9 @@
 /*
- * Card — the single surface primitive. Every framed region in the kit is a Card; don't
- * grow parallel card-shaped chrome.
+ * Card: the single surface primitive. Every framed region in the kit is a Card; don't grow
+ * parallel card-shaped chrome. A container re-points the insets through `--_card-px` and
+ * `--_card-py` (an auth card takes its own), and `--card-collapsed-height` sets how much an
+ * expandable card shows.
  */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	/* The surface insets, re-pointable per variant (auth cards take 0). */
-	--card-px: var(--surface-px);
-	--card-py: var(--surface-py);
-
-
-	/* Collapsed height for an expandable card. */
-	--card-collapsed-height: calc(12rem * var(--scale));
-
-}
 
 /* A flush shell; header, content and footer each own the inset and can draw full-bleed dividers. */
 
@@ -35,62 +21,60 @@
 	border-radius: var(--radius);
 	background-color: var(--card);
 	--surface-ground: var(--card);
-	box-shadow: none;
 }
 
 /*
- * Framed (the default): a bezel. Outer hairline is an inset outline so clipping parents
- * can't cut it; the --space-md band equals the radius difference, so the surface corner is
- * --radius-sm by construction; the inner hairline (::after) sits above tinted regions.
+ * Framed (the default): a bezel. The outer hairline is an inset outline so clipping parents
+ * can't cut it; the band is an item inset, and the surface inside it takes the concentric
+ * corner, the card's radius less the band. The inner hairline (::after) sits above tinted regions.
  */
 .surfaceFramed {
+	--_surface-radius: max(0px, calc(var(--radius) - var(--padding-sm)));
 	position: relative;
-	border: var(--space-md) solid var(--muted-50);
+	border: var(--padding-sm) solid var(--muted);
 	border-radius: var(--radius);
 	background-color: var(--card);
 	--surface-ground: var(--card);
 	background-clip: padding-box;
 	outline: var(--border-width) solid var(--border);
 	outline-offset: calc(var(--border-width) * -1);
-	box-shadow: var(--shadow-xs);
+	box-shadow: var(--shadow);
 }
 
 .surfaceFramed::after {
 	content: "";
 	position: absolute;
 	inset: 0;
-	border-radius: var(--radius-sm);
+	border-radius: var(--_surface-radius);
 	box-shadow: inset 0 0 0 var(--border-width) var(--border);
 	pointer-events: none;
 }
 
 /* Regions painting to the surface's corner take the surface radius, not the card's. */
 .surfaceFramed > .media {
-	border-start-start-radius: var(--radius-sm);
-	border-start-end-radius: var(--radius-sm);
+	border-start-start-radius: var(--_surface-radius);
+	border-start-end-radius: var(--_surface-radius);
 }
 
 .surfaceFramed .footer {
-	border-bottom-left-radius: var(--radius-sm);
-	border-bottom-right-radius: var(--radius-sm);
+	border-bottom-left-radius: var(--_surface-radius);
+	border-bottom-right-radius: var(--_surface-radius);
 }
 
 .surfaceFramed .primaryAction {
-	border-radius: var(--radius-sm);
+	border-radius: var(--_surface-radius);
 }
 
 /* Flat: card structure without panel chrome. */
 .surfaceFlat {
 	background: none;
 	border: 0;
-	box-shadow: none;
 }
 
 .surfaceBordered {
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	background: none;
-	box-shadow: none;
 }
 
 /* ── Regions ──────────────────────────────────────────────────────────────────── */
@@ -105,17 +89,17 @@
 
 
 .header {
-	padding: var(--card-py) var(--card-px);
+	padding: var(--_card-py, var(--padding)) var(--_card-px, var(--padding));
 }
 
 .headerDivider {
-	border-bottom: var(--border-width) solid var(--border-60);
+	border-bottom: var(--border-width) solid var(--border);
 }
 
 .titleRow {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -126,23 +110,13 @@
 }
 
 .icon svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
+/* The title truncates (Text and Heading draw it) rather than pushing the controls off the row. */
 .title {
 	min-width: 0;
-	font-size: var(--text-base);
-	line-height: var(--leading-tight);
-	/* Truncates rather than pushing the header controls off the row. */
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-/* The `titleLevel` heading's weight; the Text branch takes it from its weight prop. */
-.titleRow > :is(h1, h2, h3, h4, h5, h6) {
-	font-weight: var(--weight-semibold);
 }
 
 /* Info affordance: a real button, since a `title` tooltip is unreachable by keyboard and touch. */
@@ -160,27 +134,22 @@
 }
 
 .titleInfo > svg {
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
-}
-
-.titleInfo:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .titleSuffix {
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 }
 
 .headerControls {
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 	margin-inline-start: auto;
 }
 
@@ -189,16 +158,16 @@
 }
 
 .alert {
-	padding-inline: var(--card-px);
-	padding-bottom: var(--card-py);
+	padding-inline: var(--_card-px, var(--padding));
+	padding-bottom: var(--_card-py, var(--padding));
 }
 
 .content {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
-	padding: var(--card-py) var(--card-px);
+	padding: var(--_card-py, var(--padding)) var(--_card-px, var(--padding));
 }
 
 /*
@@ -211,14 +180,14 @@
 }
 
 .footer {
-	padding: var(--card-py) var(--card-px);
-	background-color: var(--muted-20);
+	padding: var(--_card-py, var(--padding)) var(--_card-px, var(--padding));
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 	border-bottom-left-radius: inherit;
 	border-bottom-right-radius: inherit;
 }
 
 .footerDivider {
-	border-top: var(--border-width) solid var(--border-60);
+	border-top: var(--border-width) solid var(--border);
 }
 
 /* ── Expandable ───────────────────────────────────────────────────────────────── */
@@ -230,8 +199,8 @@
 .collapsible {
 	position: relative;
 	overflow: hidden;
-	max-height: var(--card-collapsed-height);
-	mask-image: linear-gradient(to bottom, black calc(100% - 3rem * var(--scale)), transparent);
+	max-height: var(--card-collapsed-height, 12rem);
+	mask-image: linear-gradient(to bottom, black calc(100% - 3rem), transparent);
 }
 
 .expanded {
@@ -242,7 +211,7 @@
 .expandToggle {
 	display: flex;
 	justify-content: center;
-	padding-bottom: var(--card-py);
+	padding-bottom: var(--_card-py, var(--padding));
 }
 
 /* ══ Action strip ══════════════════════════════════════════════════════════════════
@@ -254,12 +223,12 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .actionStripSeparated {
-	padding-top: var(--space-lg);
-	border-top: var(--border-width) solid var(--border-60);
+	padding-top: var(--padding);
+	border-top: var(--border-width) solid var(--border);
 }
 
 .actionStripEnd { justify-content: flex-end; }
@@ -277,9 +246,9 @@
 .root:has(.primaryAction) {
 	position: relative;
 	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		border-color var(--duration-fast) var(--ease-out),
-		box-shadow var(--duration-fast) var(--ease-out);
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease),
+		box-shadow var(--duration-fast) var(--ease);
 }
 
 /*
@@ -289,17 +258,18 @@
 @media (hover: hover) {
 	.surfaceCard:has(.primaryAction:hover),
 	.surfaceBordered:has(.primaryAction:hover) {
-		border-color: var(--foreground-20);
-		box-shadow: var(--shadow-sm);
+		border-color: var(--input);
+		box-shadow: var(--shadow);
 	}
 
+	/* A framed card already rests raised, so it lifts to the next step. */
 	.surfaceFramed:has(.primaryAction:hover) {
-		outline-color: var(--foreground-20);
-		box-shadow: var(--shadow-sm);
+		outline-color: var(--input);
+		box-shadow: var(--shadow-lg);
 	}
 
 	.surfaceFlat:has(.primaryAction:hover) {
-		background-color: var(--accent-50);
+		background-color: var(--accent);
 	}
 }
 
@@ -310,14 +280,9 @@
 	border-radius: inherit;
 }
 
-.primaryAction:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 /* Interactive children sit above the covering link (`.root` is its offset parent). */
 .root:has(.primaryAction) button:not(.primaryAction),
 .root:has(.primaryAction) a:not(.primaryAction) {
 	position: relative;
-	z-index: var(--z-raised);
+	z-index: 1;
 }

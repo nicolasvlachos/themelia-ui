@@ -1,4 +1,4 @@
-import { RolePermissions } from "themelia-ui/admin/patterns/access"
+import { RolePermissions } from "themelia-ui/blocks/admin/access"
 
 const GROUPS = [
 	{

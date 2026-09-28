@@ -14,7 +14,7 @@ export const OverlayHeader = React.forwardRef<HTMLDivElement, React.ComponentPro
 	function OverlayHeader({ className, ...props }, ref) {
 		return (
 			<Stack
-				gap="xs"
+				gap="sm"
 				ref={ref}
 				data-slot="overlay-header"
 				className={cx("overlay--header", styles.header, className)}

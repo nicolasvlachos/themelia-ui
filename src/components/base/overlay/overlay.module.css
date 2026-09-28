@@ -3,29 +3,48 @@
  * top layer: focus trap, Esc, inert background, focus restore and `::backdrop`, no z-index.
  *
  * `display` is set only on `[open]`; the UA's `display: none` must win while closed.
+ *
+ * Hooks a container may set: `--_overlay-max-width` (a centred surface's width) and
+ * `--_overlay-region-p` (one inset for the header, body and footer).
  */
 
 .root {
+	/*
+	 * Edge geometry, written inline by OverlayContent for each of `size`, `length` and
+	 * `inset` it is given. Declared here so a surface opened inside another starts from the
+	 * defaults instead of inheriting its host's.
+	 *
+	 *   --_edge-size    cross axis (a side panel's width)
+	 *   --_edge-cap     the ceiling on that width from `sm` up
+	 *   --_edge-inset   one gap from every viewport edge; size and length sit inside it
+	 *   --_edge-length  along the edge (its height), centred by auto margins
+	 *
+	 * Full length and zero inset weld the panel to its edge.
+	 */
+	--_edge-size: 75%;
+	--_edge-cap: 24rem;
+	--_edge-inset: 0px;
+	--_edge-length: calc(100% - var(--_edge-inset) * 2);
+
 	border: 0;
 	padding: 0;
 	max-width: none;
 	max-height: none;
 	background-color: var(--background);
 	color: var(--foreground);
-	box-shadow: var(--shadow-xl);
+	box-shadow: var(--shadow-lg);
+	/* The surface takes focus only when it holds nothing focusable; the open modal marks it. */
 	outline: none;
 
 	opacity: 0;
 
 	/* The EXIT timing: a transition is read from the state being transitioned to. */
-	transition: opacity var(--duration-fast) var(--ease-out),
-		translate var(--duration-fast) var(--ease-out),
-		scale var(--duration-fast) var(--ease-out),
+	transition:
+		opacity var(--duration-fast) var(--ease),
+		translate var(--duration-fast) var(--ease),
+		scale var(--duration-fast) var(--ease),
 		overlay var(--duration-fast) allow-discrete,
 		display var(--duration-fast) allow-discrete;
-	transition-duration: var(--overlay-duration-exit);
-	/* Quicker, but not ease-in: at this duration ease-in hangs, then vanishes. */
-	transition-timing-function: var(--ease-out);
 }
 
 /* Non-modal dialogs stay in the document layer and need viewport positioning. */
@@ -43,8 +62,7 @@
 	translate: none;
 
 	/* The ENTER timing, a little longer than the exit. */
-	transition-duration: var(--duration-normal);
-	transition-timing-function: var(--ease-out);
+	transition-duration: var(--duration);
 }
 
 /* ── Placement: centre ────────────────────────────────────────────────────────── */
@@ -54,35 +72,28 @@
 	width: 100%;
 	/*
 	 * Measured like the sheets: the viewport less the kit's gap each side (or a wider `inset`),
-	 * so `full` stays detached. --overlay-edge-inset alone is 0 and would weld it to the edges.
+	 * so `full` stays detached. --_edge-inset alone is 0 and would weld it to the edges.
 	 */
-	max-width: min(calc(100% - max(var(--overlay-edge-inset), var(--overlay-edge-inset-default)) * 2), var(--overlay-max-width));
+	max-width: min(calc(100% - max(var(--_edge-inset), var(--gap)) * 2), var(--_overlay-max-width, 32rem));
 	max-height: min(90vh, 48rem);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	/* Enters from slightly below and smaller, and leaves the same way. */
-	scale: var(--overlay-enter-scale);
-	translate: 0 var(--space-sm);
+	scale: 0.97;
+	translate: 0 var(--gap-sm);
 }
 
 @starting-style {
 	.placementCenter[open] {
 		opacity: 0;
-		scale: var(--overlay-enter-scale);
-		translate: 0 var(--space-sm);
+		scale: 0.97;
+		translate: 0 var(--gap-sm);
 	}
 }
 
 /* ── Placement: edges ─────────────────────────────────────────────────────────────
  * Each edge pins its own insets and releases the opposite one (`auto`); with both set
  * and `height: auto` the box would stretch to fill.
- *
- *   --overlay-edge-size    cross axis (a side panel's width)
- *   --overlay-edge-length  along the edge (its height), centred by auto margins
- *   --overlay-edge-inset   one gap from every viewport edge; size and length are
- *                          measured inside it
- *
- * Defaults (full length, zero inset) weld the panel to its edge.
  */
 
 /*
@@ -91,67 +102,67 @@
  */
 .placementInlineStart,
 .placementInlineEnd {
-	--inline-slide: 100%;
+	--_inline-slide: 100%;
 }
 
 :global([dir="rtl"]) .placementInlineStart,
 :global([dir="rtl"]) .placementInlineEnd {
-	--inline-slide: -100%;
+	--_inline-slide: -100%;
 }
 
 .placementInlineEnd {
-	top: var(--overlay-edge-inset);
-	bottom: var(--overlay-edge-inset);
-	inset-inline-end: var(--overlay-edge-inset);
+	top: var(--_edge-inset);
+	bottom: var(--_edge-inset);
+	inset-inline-end: var(--_edge-inset);
 	inset-inline-start: auto;
 	/* With both ends pinned and a height set, auto margins centre it. */
 	margin: auto 0;
-	height: var(--overlay-edge-length);
-	max-height: calc(100% - var(--overlay-edge-inset) * 2);
-	width: var(--overlay-edge-size, var(--overlay-edge-md));
-	max-width: calc(100% - var(--overlay-edge-inset) * 2);
+	height: var(--_edge-length);
+	max-height: calc(100% - var(--_edge-inset) * 2);
+	width: var(--_edge-size);
+	max-width: calc(100% - var(--_edge-inset) * 2);
 	border-inline-start: var(--border-width) solid var(--border);
-	translate: var(--inline-slide) 0;
+	translate: var(--_inline-slide) 0;
 }
 
 .placementInlineStart {
-	top: var(--overlay-edge-inset);
-	bottom: var(--overlay-edge-inset);
-	inset-inline-start: var(--overlay-edge-inset);
+	top: var(--_edge-inset);
+	bottom: var(--_edge-inset);
+	inset-inline-start: var(--_edge-inset);
 	inset-inline-end: auto;
 	margin: auto 0;
-	height: var(--overlay-edge-length);
-	max-height: calc(100% - var(--overlay-edge-inset) * 2);
-	width: var(--overlay-edge-size, var(--overlay-edge-md));
-	max-width: calc(100% - var(--overlay-edge-inset) * 2);
+	height: var(--_edge-length);
+	max-height: calc(100% - var(--_edge-inset) * 2);
+	width: var(--_edge-size);
+	max-width: calc(100% - var(--_edge-inset) * 2);
 	border-inline-end: var(--border-width) solid var(--border);
-	translate: calc(var(--inline-slide) * -1) 0;
+	translate: calc(var(--_inline-slide) * -1) 0;
 }
 
 .placementBlockStart {
-	top: var(--overlay-edge-inset);
+	top: var(--_edge-inset);
 	bottom: auto;
-	left: var(--overlay-edge-inset);
-	right: var(--overlay-edge-inset);
+	left: var(--_edge-inset);
+	right: var(--_edge-inset);
 	margin: 0 auto;
-	width: var(--overlay-edge-length);
-	max-width: calc(100% - var(--overlay-edge-inset) * 2);
+	width: var(--_edge-length);
+	max-width: calc(100% - var(--_edge-inset) * 2);
 	height: auto;
-	max-height: min(var(--overlay-edge-size, var(--overlay-edge-md)), calc(100% - var(--overlay-edge-inset) * 2));
+	max-height: min(var(--_edge-size), calc(100% - var(--_edge-inset) * 2));
 	border-bottom: var(--border-width) solid var(--border);
 	translate: 0 -100%;
 }
 
 .placementBlockEnd {
-	bottom: var(--overlay-edge-inset);
+	bottom: var(--_edge-inset);
 	top: auto;
-	left: var(--overlay-edge-inset);
-	right: var(--overlay-edge-inset);
+	left: var(--_edge-inset);
+	right: var(--_edge-inset);
 	margin: 0 auto;
-	width: var(--overlay-edge-length);
-	max-width: calc(100% - var(--overlay-edge-inset) * 2);
+	width: var(--_edge-length);
+	max-width: calc(100% - var(--_edge-inset) * 2);
 	height: auto;
-	max-height: min(var(--overlay-edge-size, var(--overlay-edge-md)), calc(100% - var(--overlay-edge-inset) * 2));
+	max-height: min(var(--_edge-size), calc(100% - var(--_edge-inset) * 2));
 	border-top: var(--border-width) solid var(--border);
 	translate: 0 100%;
 }
@@ -164,26 +175,26 @@
 .placementInlineEnd,
 .placementBlockStart {
 	/* Read by the close button too, which is positioned rather than in flow. */
-	--overlay-safe-top: calc(env(safe-area-inset-top) - min(env(safe-area-inset-top), var(--overlay-edge-inset)));
+	--_safe-top: calc(env(safe-area-inset-top) - min(env(safe-area-inset-top), var(--_edge-inset)));
 
-	padding-block-start: var(--overlay-safe-top);
+	padding-block-start: var(--_safe-top);
 }
 
 .placementInlineStart,
 .placementInlineEnd,
 .placementBlockEnd {
 	/* max(0, safe − inset), written without a literal zero: safe − min(safe, inset). */
-	padding-block-end: calc(env(safe-area-inset-bottom) - min(env(safe-area-inset-bottom), var(--overlay-edge-inset)));
+	padding-block-end: calc(env(safe-area-inset-bottom) - min(env(safe-area-inset-bottom), var(--_edge-inset)));
 }
 
 /*
  * From `sm`, a side sheet is capped per size: presets are viewport fractions, so each
- * carries a cap (`--overlay-edge-cap`, set in overlay.tsx); an explicit length is its own.
+ * carries a cap (`--_edge-cap`, set in overlay.tsx); an explicit length is its own.
  */
 @media (--bp-sm) {
 	.placementInlineStart,
 	.placementInlineEnd {
-		max-width: min(var(--overlay-edge-cap, 24rem), calc(100% - var(--overlay-edge-inset) * 2));
+		max-width: min(var(--_edge-cap), calc(100% - var(--_edge-inset) * 2));
 	}
 }
 
@@ -194,55 +205,52 @@
 }
 
 @starting-style {
-	.placementInlineEnd[open] { opacity: 0; translate: var(--inline-slide) 0; }
-	.placementInlineStart[open] { opacity: 0; translate: calc(var(--inline-slide) * -1) 0; }
+	.placementInlineEnd[open] { opacity: 0; translate: var(--_inline-slide) 0; }
+	.placementInlineStart[open] { opacity: 0; translate: calc(var(--_inline-slide) * -1) 0; }
 	.placementBlockStart[open] { opacity: 0; translate: 0 -100%; }
 	.placementBlockEnd[open] { opacity: 0; translate: 0 100%; }
 }
 
 /* ── Regions ──────────────────────────────────────────────────────────────────── */
 
+/*
+ * The corner dismiss, centred on the title's first line: it carries the title's type, so
+ * `1lh` is that line box. Its glyph lines up with the region inset on the trailing side.
+ */
 .close {
 	position: absolute;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: var(--control-h-sm);
-	height: var(--control-h-sm);
-	/*
-	 * Centres the glyph on the title's first line: header inset, plus half of (line box −
-	 * icon), minus the button's inset around the glyph.
-	 */
+	width: var(--control-height-sm);
+	height: var(--control-height-sm);
 	top: calc(
-		var(--overlay-safe-top, 0px)
-		+ round(calc(var(--overlay-region-p, var(--surface-py)) * 0.75), 1px) + var(--space-2xs)
-		+ (var(--text-base) * var(--leading-tight) - var(--size-icon)) / 2
-		- (var(--control-h-sm) - var(--size-icon)) / 2
+		var(--_safe-top, 0px) + var(--_overlay-region-p, var(--padding)) + (1lh - var(--control-height-sm)) / 2
 	);
-	inset-inline-end: calc(var(--overlay-region-p, var(--surface-px)) - (var(--control-h-sm) - var(--size-icon)) / 2);
+	inset-inline-end: calc(var(--_overlay-region-p, var(--padding)) - (var(--control-height-sm) - var(--icon-size)) / 2);
 	border-radius: var(--radius-sm);
+	transition: background-color var(--duration-fast) var(--ease);
+}
+
+.close:hover,
+.close:focus-visible {
+	background-color: var(--accent);
 }
 
 .close svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	pointer-events: none;
-}
-
-/* A bare button, so it draws its own ring. */
-.close:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
 }
 
 .header {
 	flex-shrink: 0;
-	/* Chrome frames the body; it needs less vertical padding than the content. */
-	padding: round(calc(var(--overlay-region-p, var(--surface-py)) * 0.75), 1px) var(--overlay-region-p, var(--surface-px));
-	padding-block-start: calc(round(calc(var(--overlay-region-p, var(--surface-py)) * 0.75), 1px) + var(--space-2xs));
-	/* Clears the close button: the region inset, half of (button + glyph), and a 2xs gap. */
-	padding-inline-end: calc(var(--overlay-region-p, var(--surface-px)) + (var(--control-h-sm) + var(--size-icon)) / 2 + var(--space-2xs));
-	border-bottom: var(--border-width) solid var(--border-60);
+	padding: var(--_overlay-region-p, var(--padding));
+	/* Clears the close button: the region inset, half of (button + glyph), and half a small gap. */
+	padding-inline-end: calc(
+		var(--_overlay-region-p, var(--padding)) + (var(--control-height-sm) + var(--icon-size)) / 2 + var(--gap-sm) / 2
+	);
+	border-bottom: var(--border-width) solid var(--border);
 	text-align: start;
 }
 
@@ -251,20 +259,19 @@
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto;
-	padding: var(--overlay-region-p, var(--surface-py)) var(--overlay-region-p, var(--surface-px));
+	padding: var(--_overlay-region-p, var(--padding));
 }
 
-/* A scrolling body takes keyboard focus; it wears the kit's inset ring, not the browser's. */
+/* A scrolling body takes keyboard focus; the surface clips, so the ring is drawn inside. */
 .body:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring-inset);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 .footer {
 	flex-shrink: 0;
-	padding: round(calc(var(--overlay-region-p, var(--surface-py)) * 0.75), 1px) var(--overlay-region-p, var(--surface-px));
-	border-top: var(--border-width) solid var(--border-60);
-	background-color: var(--muted-20);
+	padding: var(--_overlay-region-p, var(--padding));
+	border-top: var(--border-width) solid var(--border);
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 }
 
 /* No body between them: one rule, not two stacked hairlines. */
@@ -274,17 +281,11 @@
 
 .title {
 	margin: 0;
-	font-size: var(--text-base);
-	line-height: var(--leading-tight);
-	font-weight: var(--weight-semibold);
 	text-wrap: balance;
 }
 
 .description {
 	margin: 0;
-	font-size: var(--text-default, var(--text-sm));
-	line-height: var(--leading-tight);
-	color: var(--text-role-secondary);
 	text-wrap: pretty;
 }
 

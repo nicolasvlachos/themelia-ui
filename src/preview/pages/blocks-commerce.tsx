@@ -108,6 +108,12 @@ export function BlocksCommercePage() {
 				description="A prominent points balance followed by recent earnings and redemptions. Movement signs follow their direction."
 			/>
 
+			<Example
+				example="blocks-commerce/cart-summary-blueprint"
+				title="Compose your own"
+				description="The summaries are a `Card`, a `MetadataList` of `Money` rows and an action. Compose one yourself for a total the blocks do not model: the amounts stay formatted by the provider's locale and currency settings."
+			/>
+
 			<Example id="commerce-props" title="Props">
 				<Callout>
 					<strong>Amounts arrive formatted.</strong> Every surface here takes

@@ -27,7 +27,7 @@ export function AspectRatio({ ratio = 1, fit = "cover", className, style, ...pro
 			data-slot="aspect-ratio"
 			data-fit={fit}
 			className={cx("aspect-ratio--component", styles.root, className)}
-			style={mergeVars(responsiveVars("aspect-ratio", ratio), style ?? {})}
+			style={mergeVars(responsiveVars("_aspect-ratio", ratio), style ?? {})}
 			{...props}
 		/>
 	)

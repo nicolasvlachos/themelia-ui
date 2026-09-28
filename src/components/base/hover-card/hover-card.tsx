@@ -5,6 +5,7 @@
  */
 import { PreviewCard } from "@base-ui/react/preview-card"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
 
@@ -70,7 +71,7 @@ export function HoverCardContent({
 			<PreviewCard.Positioner align={align} side={side} sideOffset={sideOffset} className={styles.positioner}>
 				<PreviewCard.Popup
 					data-slot="hover-card-content"
-					className={cx("hover-card--component", styles.content, className)}
+					className={cx("hover-card--component", styles.content, textClassName({ size: "sm" }), className)}
 					{...props}
 				/>
 			</PreviewCard.Positioner>

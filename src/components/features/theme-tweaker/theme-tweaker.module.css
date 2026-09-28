@@ -18,14 +18,14 @@
 .layout {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--space-xl);
+	gap: var(--gap);
 	min-width: 0;
 }
 
 .controls {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -51,7 +51,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -66,8 +66,8 @@
 /* Ruled between rather than around: a border per field would make each a card. */
 .field {
 	min-width: 0;
-	padding-block: var(--row-py);
-	border-top: var(--border-width) solid var(--border-60);
+	padding-block: var(--padding-sm);
+	border-top: var(--border-width) solid var(--border);
 }
 
 .field:first-child {
@@ -79,15 +79,14 @@
 	flex: 1;
 	align-items: baseline;
 	justify-content: space-between;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
-
 
 .controlRow {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
@@ -96,20 +95,8 @@
 	min-width: 0;
 }
 
-.monoInput {
-	font-family: var(--font-mono);
-}
-
 .numberInput {
 	width: 7rem;
-	font-family: var(--font-mono);
-	font-variant-numeric: tabular-nums;
-}
-
-.empty {
-	padding: var(--surface-py) var(--surface-px);
-	border: var(--border-width) dashed var(--border);
-	border-radius: var(--radius);
 }
 
 /* ── The provider panel ────────────────────────────────────────────────────────── */
@@ -121,7 +108,7 @@
 .settingsGrid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--space-md);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -138,13 +125,13 @@
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .exportBlock {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -152,7 +139,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -168,26 +155,23 @@
 	max-height: 18rem;
 	min-width: 0;
 	margin: 0;
-	padding: var(--surface-py-xs) var(--surface-px-xs);
+	padding: var(--padding-sm);
 	position: relative;
 	overflow: auto;
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 	color: var(--foreground);
-	font-family: var(--font-mono);
-	font-size: var(--text-xs);
-	line-height: var(--leading-relaxed);
 }
 
+/* Inside, since the dialog body that scrolls it clips an outline drawn outside. */
 .exportCode:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 .previewCheck {
 	flex: none;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	color: var(--success);
 }

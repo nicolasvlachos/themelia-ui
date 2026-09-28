@@ -1,6 +1,6 @@
 /**
- * The theming contract: every `var()` resolves, scope boundaries keep an explicit theme,
- * density and text scale, and the type ladder holds its order under every factor.
+ * The theming contract: every `var()` resolves, a region keeps an explicit scheme, density and
+ * type factor however deep it sits, and the type ladder holds its order under every factor.
  *
  * Also the control contracts that read tokens: one control height, a 3:1 control boundary in
  * both themes, and `truncate` clipping instead of wrapping.
@@ -147,20 +147,25 @@ test.describe("cross-component consistency", () => {
 					const second = luminance(b)
 					return (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05)
 				}
-				const resolve = (token: string, scope: ParentNode = document.body) => {
+				const resolve = (value: string, scope: ParentNode = document.body) => {
 					const probe = document.createElement("span")
-					probe.style.color = `var(${token})`
+					probe.style.color = value
 					scope.append(probe)
 					const color = getComputedStyle(probe).color
 					probe.remove()
 					return toRgba(color)
 				}
 
-				const backgrounds = ["--background", "--card"].map(token => resolve(token))
-				const tokens = ["--control-border", "--control-border-hover", "--focus-ring-color"]
-				const measured = Object.fromEntries(tokens.map(token => {
-					const color = resolve(token)
-					return [token, Math.min(...backgrounds.map(background =>
+				const backgrounds = ["var(--background)", "var(--card)"].map(value => resolve(value))
+				/* The idle edge, the hover edge fields.css mixes, and the focus outline. */
+				const edges: Record<string, string> = {
+					idle: "var(--input)",
+					hover: "color-mix(in oklab, var(--input), var(--foreground) 35%)",
+					focus: "var(--ring)",
+				}
+				const measured = Object.fromEntries(Object.entries(edges).map(([edge, value]) => {
+					const color = resolve(value)
+					return [edge, Math.min(...backgrounds.map(background =>
 						ratio(over(color, background), background),
 					))]
 				}))
@@ -176,7 +181,7 @@ test.describe("cross-component consistency", () => {
 				let fieldControlBorder: number[] | null = null
 				if (field) {
 					const previous = field.style.outlineColor
-					field.style.outlineColor = "var(--control-border)"
+					field.style.outlineColor = "var(--input)"
 					fieldControlBorder = toRgba(getComputedStyle(field).outlineColor)
 					field.style.outlineColor = previous
 				}
@@ -188,256 +193,180 @@ test.describe("cross-component consistency", () => {
 			})
 
 			expect(measurements.fieldBorder, `${theme}: no shared field was rendered`).not.toBeNull()
-			expect(measurements.fieldBorder, `${theme}: shared field bypassed --control-border`).toEqual(
+			expect(measurements.fieldBorder, `${theme}: shared field bypassed --input`).toEqual(
 				measurements.fieldControlBorder,
 			)
 			/*
 			 * The idle control edge is deliberately below 3:1 (about 2.4:1 in both themes) and has its
-			 * own floor; hover (about 4.3:1) and focus still clear 3:1. The Switch's off track paints
-			 * --control-border as a fill, so this floor holds it too. See theming/focus.css.
+			 * own floor; hover and focus still clear 3:1.
 			 */
-			const floor: Record<string, number> = { "--control-border": 2.3 }
-			for (const [token, ratio] of Object.entries(measurements.measured)) {
-				expect(ratio, `${theme} ${token}: ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(floor[token] ?? 3)
+			const floor: Record<string, number> = { idle: 2.3 }
+			for (const [edge, ratio] of Object.entries(measurements.measured)) {
+				expect(ratio, `${theme} ${edge} edge: ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(floor[edge] ?? 3)
 			}
 		}
 	})
 })
 
-test.describe("the scale chain", () => {
+test.describe("scopes and schemes", () => {
+	/* A length and a used colour, read through probes: a variable holding light-dark() reads back unresolved. */
+	const probeScript = () => {
+		;(window as unknown as { probe: (markup: string) => Record<string, string> }).probe = (markup: string) => {
+			const host = document.createElement("div")
+			host.innerHTML = markup
+			document.body.append(host)
+			const target = host.querySelector("span")!
+			const read = (property: string, value: string) => {
+				const probe = document.createElement("i")
+				probe.style.setProperty(property, value)
+				target.append(probe)
+				const out = getComputedStyle(probe).getPropertyValue(property)
+				probe.remove()
+				return out
+			}
+			const result = {
+				padding: read("padding-top", "var(--padding)"),
+				text: read("font-size", "calc(var(--text-sm) * var(--text-scale))"),
+				colours: ["--background", "--foreground", "--primary", "--popover", "--success", "--ring"]
+					.map((name) => read("color", `var(${name})`))
+					.join(" | "),
+			}
+			host.remove()
+			return result
+		}
+	}
+	type Probe = { padding: string; text: string; colours: string }
+	const probe = (page: import("@playwright/test").Page, markup: string) =>
+		page.evaluate((m) => (window as unknown as { probe: (markup: string) => Probe }).probe(m), markup)
+
 	test("a default scope resets an inherited density", async ({ page }) => {
 		await page.goto(url("/scale"))
 		await page.waitForSelector("h1")
+		await page.evaluate(probeScript)
 
-		const reset = await page.evaluate(() => {
-			const outer = document.createElement("div")
-			outer.setAttribute("data-ui-scope", "")
-			outer.setAttribute("data-density", "compact")
-			const inner = document.createElement("div")
-			inner.setAttribute("data-ui-scope", "")
-			inner.setAttribute("data-density", "default")
-			outer.append(inner)
-			document.body.append(outer)
-			const value = getComputedStyle(inner).getPropertyValue("--density-scale").trim()
-			outer.remove()
-			return value
-		})
-		/* Reset to unset, so the lengths fall back to --scale again. */
-		expect(reset, "an explicit default scope must reset an inherited density preset").toBe("")
+		const compact = await probe(page, '<div data-density="compact"><span></span></div>')
+		const reset = await probe(page, '<div data-density="compact"><div data-density="default"><span></span></div></div>')
+		const plain = await probe(page, "<span></span>")
+		expect(compact.padding, "the compact preset must tighten").not.toBe(plain.padding)
+		expect(reset.padding, "an explicit default scope must reset an inherited density preset").toBe(plain.padding)
 	})
 
-	test("an outer text scale survives nested density and theme boundaries", async ({ page }) => {
+	test("an outer type factor survives nested density and theme boundaries", async ({ page }) => {
 		await page.goto(url("/scale"))
 		await page.waitForSelector("h1")
+		await page.evaluate(probeScript)
 
-		const result = await page.evaluate(() => {
-			/* A `--text-sm` probe in a scope, text-scaled or not, and optionally under a compact dark boundary. */
-			const measure = (textScale: string | null, nested: boolean) => {
-				const outer = document.createElement("div")
-				outer.setAttribute("data-ui-scope", "")
-				if (textScale) outer.style.setProperty("--text-scale", textScale)
-				let host = outer
-				if (nested) {
-					host = document.createElement("div")
-					host.setAttribute("data-ui-scope", "")
-					host.setAttribute("data-density", "compact")
-					host.setAttribute("data-theme", "dark")
-					outer.append(host)
-				}
-				const probe = document.createElement("span")
-				probe.style.fontSize = "var(--text-sm)"
-				host.append(probe)
-				document.body.append(outer)
-				const style = getComputedStyle(host)
-				const value = {
-					textScale: style.getPropertyValue("--text-scale").trim(),
-					densityScale: style.getPropertyValue("--density-scale").trim(),
-					fontSize: getComputedStyle(probe).fontSize,
-				}
-				outer.remove()
-				return value
-			}
-			return { plain: measure(null, false), scaled: measure("1.25", false), nested: measure("1.25", true) }
-		})
+		const plain = await probe(page, "<div><span></span></div>")
+		const scaled = await probe(page, '<div style="--text-scale: 1.25"><span></span></div>')
+		const nested = await probe(page, '<div style="--text-scale: 1.25"><div data-density="compact" data-theme="dark"><span></span></div></div>')
+		const compact = await probe(page, '<div data-density="compact"><span></span></div>')
 
-		expect(result.scaled.fontSize, "the outer text scale must move type").not.toBe(result.plain.fontSize)
-		expect(result.nested.textScale, "a nested boundary must keep the outer text scale").toBe("1.25")
-		expect(result.nested.densityScale, "the nested compact preset must still apply").not.toBe("")
-		expect(result.nested.fontSize, "density and theme boundaries must not move type").toBe(result.scaled.fontSize)
+		expect(scaled.text, "the outer type factor must move type").not.toBe(plain.text)
+		expect(nested.text, "density and theme boundaries must not move type").toBe(scaled.text)
+		expect(nested.padding, "the nested compact preset must still apply").toBe(compact.padding)
 	})
 
-	/*
-	 * The explicit dark block must reach every nested boundary, or a bare `<Scope>` or
-	 * `data-density` region under `.dark` re-declares the light values.
-	 */
-	test("a bare boundary nested under an explicit dark ancestor keeps the dark theme", async ({ page }) => {
+	/* A colour follows the scheme of the element that paints it, however deep the island. */
+	test("a region nested under an explicit dark ancestor paints dark", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" })
 		await page.goto(url("/tokens"))
 		await page.waitForSelector("h1")
+		await page.evaluate(probeScript)
 
-		const result = await page.evaluate(() => {
-			const tokens = ["--background", "--foreground", "--primary", "--popover", "--success", "--focus-ring-color"]
-			const build = (html: string) => {
-				const host = document.createElement("div")
-				host.innerHTML = html
-				document.body.append(host)
-				const style = getComputedStyle(host.querySelector("span")!)
-				const value = tokens.map((token) => style.getPropertyValue(token).trim()).join(" | ")
-				host.remove()
-				return value
-			}
-			return {
-				dark: build('<div class="dark"><span></span></div>'),
-				light: build('<div data-theme="light"><span></span></div>'),
-				classScope: build('<div class="dark"><div data-ui-scope=""><span></span></div></div>'),
-				attributeDensity: build('<div data-theme="dark"><div data-density="compact"><span></span></div></div>'),
-				chain: build('<div data-theme="dark"><div data-ui-scope=""><div data-density="comfortable"><span></span></div></div></div>'),
-				lightIsland: build('<div data-theme="dark"><div data-ui-scope="" data-theme="light"><span></span></div></div>'),
-				darkIslandInLight: build('<div data-theme="light"><div class="dark"><div data-ui-scope=""><span></span></div></div></div>'),
-			}
-		})
+		const read = async (markup: string) => (await probe(page, markup)).colours
+		const dark = await read('<div class="dark"><span></span></div>')
+		const light = await read('<div data-theme="light"><span></span></div>')
 
-		expect(result.dark, "the probe must tell the themes apart").not.toBe(result.light)
-		expect(result.classScope, "a `<Scope>` under `.dark` must stay dark").toBe(result.dark)
-		expect(result.attributeDensity, "a `data-density` region under `[data-theme=dark]` must stay dark").toBe(result.dark)
-		expect(result.chain, "two bare boundaries deep must still be dark").toBe(result.dark)
-		expect(result.lightIsland, "an explicit light scope inside dark stays light").toBe(result.light)
-		expect(result.darkIslandInLight, "a dark island inside light re-derives dark").toBe(result.dark)
+		expect(dark, "the probe must tell the schemes apart").not.toBe(light)
+		expect(await read('<div class="dark"><div data-ui-scope=""><span></span></div></div>'), "a `<Scope>` under `.dark` stays dark").toBe(dark)
+		expect(await read('<div data-theme="dark"><div data-density="compact"><span></span></div></div>'), "a `data-density` region under `[data-theme=dark]` stays dark").toBe(dark)
+		expect(await read('<div data-theme="dark"><div data-ui-scope=""><div data-density="comfortable"><span></span></div></div></div>'), "two boundaries deep stays dark").toBe(dark)
+		expect(await read('<div data-theme="dark"><div data-ui-scope="" data-theme="light"><span></span></div></div>'), "a light island inside dark stays light").toBe(light)
+		expect(await read('<div data-theme="light"><div class="dark"><div data-ui-scope=""><span></span></div></div></div>'), "a dark island inside light is dark").toBe(dark)
 	})
 
 	/*
-	 * The OS-preference twin must honour an explicit light choice however it is spelled: the
-	 * `.light` class on <html> (next-themes' class strategy), or a light island holding a bare
-	 * boundary. Otherwise the twin's `:root:not(…)` outranks `.light` and the app paints dark.
+	 * An explicit light choice outranks the OS preference however it is spelled: the `.light`
+	 * class on <html> (next-themes' class strategy), or a light island holding a boundary.
 	 */
 	test("an explicit light choice holds under an OS dark preference", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" })
 		await page.goto(url("/tokens"))
 		await page.waitForSelector("h1")
+		await page.evaluate(probeScript)
 
-		const result = await page.evaluate(() => {
-			const tokens = ["--background", "--foreground", "--primary", "--popover", "--success", "--focus-ring-color"]
-			const html = document.documentElement
-			const saved = { className: html.className, theme: html.getAttribute("data-theme") }
-			const read = (element: Element) => {
-				const style = getComputedStyle(element)
-				return tokens.map((token) => style.getPropertyValue(token).trim()).join(" | ")
-			}
-			const build = (markup: string) => {
-				const host = document.createElement("div")
-				host.innerHTML = markup
-				document.body.append(host)
-				const value = read(host.querySelector("span")!)
-				host.remove()
-				return value
-			}
-			const probes = () => ({
-				root: read(html),
-				bare: build("<span></span>"),
-				bareScope: build('<div data-ui-scope=""><span></span></div>'),
-			})
-			try {
-				/* No explicit choice anywhere, as `colorScheme: "system"` leaves the document. */
-				html.classList.remove("dark", "light")
-				html.removeAttribute("data-theme")
-				const system = {
-					...probes(),
-					light: build('<div data-theme="light"><span></span></div>'),
-					dark: build('<div class="dark"><span></span></div>'),
-					classIsland: build('<div class="light"><span></span></div>'),
-					scopeInClassIsland: build('<div class="light"><div data-ui-scope=""><span></span></div></div>'),
-					densityInAttributeIsland: build('<div data-theme="light"><div data-density="compact"><span></span></div></div>'),
-				}
-				html.classList.add("light")
-				return { system, htmlLight: probes() }
-			} finally {
-				html.className = saved.className
-				if (saved.theme === null) html.removeAttribute("data-theme")
-				else html.setAttribute("data-theme", saved.theme)
-			}
+		const html = page.locator("html")
+		await html.evaluate((element) => {
+			element.classList.remove("dark", "light")
+			element.removeAttribute("data-theme")
 		})
+		const read = async (markup: string) => (await probe(page, markup)).colours
+		const light = await read('<div data-theme="light"><span></span></div>')
+		const dark = await read('<div class="dark"><span></span></div>')
 
-		const { system, htmlLight } = result
-		expect(system.dark, "the probe must tell the themes apart").not.toBe(system.light)
-		expect(system.root, "with no explicit choice the OS preference applies").toBe(system.dark)
-		expect(system.bareScope, "a bare boundary follows the OS preference").toBe(system.dark)
-		expect(system.classIsland, "a `.light` island stays light").toBe(system.light)
-		expect(system.scopeInClassIsland, "a bare `<Scope>` inside a `.light` island stays light").toBe(system.light)
-		expect(system.densityInAttributeIsland, "a `data-density` region inside `[data-theme=light]` stays light").toBe(system.light)
-		expect(htmlLight.root, "`<html class=\"light\">` must outrank the OS preference").toBe(system.light)
-		expect(htmlLight.bare, "the page under `<html class=\"light\">` is light").toBe(system.light)
-		expect(htmlLight.bareScope, "a bare boundary under `<html class=\"light\">` stays light").toBe(system.light)
+		expect(dark, "the probe must tell the schemes apart").not.toBe(light)
+		expect(await read("<span></span>"), "with no explicit choice the OS preference applies").toBe(dark)
+		expect(await read('<div data-ui-scope=""><span></span></div>'), "a boundary follows the OS preference").toBe(dark)
+		expect(await read('<div class="light"><span></span></div>'), "a `.light` island stays light").toBe(light)
+		expect(await read('<div class="light"><div data-ui-scope=""><span></span></div></div>'), "a `<Scope>` inside a `.light` island stays light").toBe(light)
+		expect(await read('<div data-theme="light"><div data-density="compact"><span></span></div></div>'), "a `data-density` region inside `[data-theme=light]` stays light").toBe(light)
+
+		await html.evaluate((element) => element.classList.add("light"))
+		expect(await read("<span></span>"), "`<html class=\"light\">` outranks the OS preference").toBe(light)
+		expect(await read('<div data-ui-scope=""><span></span></div>'), "a boundary under `<html class=\"light\">` stays light").toBe(light)
 	})
 
-	/**
-	 * The type ladder keeps its order under every factor. Asserts order rather than values so a
-	 * retune survives; a type role defined as a spacing step breaks it once the factors diverge.
-	 */
+	/** Text's sizes, as Text computes them: each step times the type factor. */
 	const LADDER = ["xs", "pxs", "sm", "base", "lg", "xl", "2xl"] as const
-
-	const measure = (page: import("@playwright/test").Page, factors: Record<string, string>) =>
+	const measure = (page: import("@playwright/test").Page, wrapper: string) =>
 		page.evaluate(
-			({ roles, set }) => {
-				const root = document.documentElement
-				const previous = Object.keys(set).map((k) => [k, root.style.getPropertyValue(k)] as const)
-				for (const [k, v] of Object.entries(set)) root.style.setProperty(k, v)
-
-				const probe = document.createElement("div")
-				document.body.append(probe)
-				const read = (role: string) => {
-					probe.style.fontSize = getComputedStyle(root).getPropertyValue(`--text-${role}`).trim()
-					return parseFloat(getComputedStyle(probe).fontSize)
-				}
-				const out = Object.fromEntries(roles.map((r) => [r, read(r)]))
-
-				probe.remove()
-				for (const [k, v] of previous) {
-					if (v) root.style.setProperty(k, v)
-					else root.style.removeProperty(k)
-				}
+			({ roles, wrapper }) => {
+				const host = document.createElement("div")
+				host.innerHTML = wrapper
+				document.body.append(host)
+				const target = host.querySelector("span")!
+				const probe = document.createElement("i")
+				target.append(probe)
+				const out = Object.fromEntries(roles.map((role) => {
+					probe.style.fontSize = `calc(var(--text-${role}) * var(--text-scale))`
+					return [role, parseFloat(getComputedStyle(probe).fontSize)]
+				}))
+				host.remove()
 				return out as Record<string, number>
 			},
-			{ roles: [...LADDER], set: factors },
+			{ roles: [...LADDER], wrapper },
 		)
 
-	test("the type ladder holds its order under every factor", async ({ page }) => {
+	test("the type ladder climbs under every type factor", async ({ page }) => {
 		await page.goto(url("/typography"))
 		await page.waitForSelector("h1")
 
-		for (const [label, factors] of [
-			["default", {}],
-			["--scale: 1.25", { "--scale": "1.25" }],
-			["--scale: 0.875", { "--scale": "0.875" }],
-			["--density-scale: 1.25", { "--density-scale": "1.25" }],
-			["--density-scale: 0.875", { "--density-scale": "0.875" }],
-			["--text-scale: 1.25", { "--text-scale": "1.25" }],
-		] as const) {
-			const sizes = await measure(page, factors)
-			const detail = `${label} → ${JSON.stringify(sizes)}`
-
+		for (const wrapper of [
+			"<span></span>",
+			'<div style="--text-scale: 1.25"><span></span></div>',
+			'<div style="--text-scale: 0.875"><span></span></div>',
+		]) {
+			const sizes = await measure(page, wrapper)
+			const detail = `${wrapper} → ${JSON.stringify(sizes)}`
 			/* Non-vacuity: a ladder of seven roles that all measure the same is not a ladder. */
 			expect(new Set(Object.values(sizes)).size, detail).toBeGreaterThan(4)
-
 			for (let i = 1; i < LADDER.length; i++) {
-				const below = LADDER[i - 1]!
-				const above = LADDER[i]!
-				/* Strictly climbing: no two steps share a size. */
-				expect(sizes[above]!, `${above} must climb above ${below} — ${detail}`)
-					.toBeGreaterThan(sizes[below]!)
+				expect(sizes[LADDER[i]!]!, `${LADDER[i]} must climb above ${LADDER[i - 1]} — ${detail}`)
+					.toBeGreaterThan(sizes[LADDER[i - 1]!]!)
 			}
 		}
 	})
 
-	/* The density factor does not move type at all — ordered, and also unmoved. */
-	test("--density-scale leaves the type ladder alone", async ({ page }) => {
+	/* A density preset moves spacing and control heights; type keeps its size. */
+	test("a density preset leaves the type ladder alone", async ({ page }) => {
 		await page.goto(url("/typography"))
 		await page.waitForSelector("h1")
 
-		const base = await measure(page, {})
-		const spaced = await measure(page, { "--density-scale": "1.5" })
-
-		expect(Object.values(base).length).toBeGreaterThan(4)
-		expect(spaced, `type moved under --density-scale: ${JSON.stringify({ base, spaced })}`).toEqual(base)
+		const base = await measure(page, "<span></span>")
+		for (const density of ["compact", "comfortable"]) {
+			const spaced = await measure(page, `<div data-density="${density}"><span></span></div>`)
+			expect(spaced, `type moved under ${density}: ${JSON.stringify({ base, spaced })}`).toEqual(base)
+		}
 	})
 })
 

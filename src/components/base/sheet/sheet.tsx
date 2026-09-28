@@ -20,10 +20,10 @@ import type { SheetSide } from "./sheet.types"
 
 export type { SheetSide }
 
-// Default shape (flush, `md` wide); overridable per surface or once through the provider.
+// Default shape (flush, the default width); overridable per surface or once through the provider.
 const SHEET_DEFAULTS = {
 	side: "inline-end" as SheetSide,
-	size: "md" as OverlaySize,
+	size: "default" as OverlaySize,
 	length: "full" as OverlayLength,
 	inset: false as OverlayInset,
 }
@@ -41,7 +41,7 @@ export interface SheetContentProps
 /**
  * OverlayContent at an edge. `side` is OverlayContent's `placement` minus centre — logical,
  * so it follows the writing mode — and the sheet adds a default shape: `side="inline-end"`,
- * `size="md"`, `length="full"` and `inset={false}`. `UIProvider`'s `defaults.sheet` takes
+ * `size="default"`, `length="full"` and `inset={false}`. `UIProvider`'s `defaults.sheet` takes
  * the same four, for a product that decides the shape once.
  *
  * `modality`, `surface`, `dismissal`, `initialFocusRef` and `showCloseButton` pass through

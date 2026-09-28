@@ -11,7 +11,7 @@ const SQUARE_CORNERS = createTheme({ shared: { "--radius": "0.25rem", "--radius-
 
 export default function IsolatedThemeScope() {
 	return (
-		<Grid gap="lg">
+		<Grid>
 			<Card
 				title="App theme"
 				description="The corners every other region uses."

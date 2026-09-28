@@ -9,6 +9,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
 
+import { expandExports } from './lib/export-targets.mjs'
 import { TIERS } from './lib/tiers.mjs'
 
 /* The skill ships in the package; `install-skill` copies it into a consumer's project. */
@@ -61,7 +62,7 @@ const delivery = [
   '',
   `**The stylesheet is split per module.** ${withCss} of ${records.length} modules ship one;` +
     ' a module whose components draw nothing has none. Each module stylesheet imports',
-  '`core.css` itself, so the tokens, themes, and cascade layer order arrive automatically.',
+  '`core.css` itself, so the theme and the cascade layer order arrive automatically.',
   'Import `core.css` on its own only when application CSS needs the token contract before',
   'any component stylesheet is loaded.',
   '',
@@ -126,8 +127,8 @@ const search = [
 ]
 
 /* What the root is and which broad barrels are published, derived from package.json exports. */
-const BROAD = ['./base', './features', './patterns', './layout', './admin']
-const publishedBroad = BROAD.filter((path) => path in (pkg.exports ?? {}))
+const BROAD = ['./base', './features', './blocks', './layout']
+const publishedBroad = BROAD.filter((path) => path in expandExports(pkg.exports))
 
 const root = publishedBroad.length === 0
   ? [
@@ -222,7 +223,7 @@ const SHIPPED_FROM = new Map([
 ])
 
 /* What package.json `files` publishes — keep in step with it. */
-const PUBLISHED_FILES = new Set(['README.md', 'CHANGELOG.md', 'SECURITY.md', 'docs/README.md', 'src/styles/TOKENS.md', 'src/styles/FACTORS.md', 'src/styles/SCOPES.md'])
+const PUBLISHED_FILES = new Set(['README.md', 'CHANGELOG.md', 'SECURITY.md', 'docs/README.md', 'src/styles/TOKENS.md'])
 const isPublished = (path) => PUBLISHED_FILES.has(path) || /^docs\/(?:learn|generated|build)\//.test(path)
 
 function rewriteLinks(markdown, source) {

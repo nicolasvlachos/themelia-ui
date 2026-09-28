@@ -5,7 +5,7 @@ import { Demo } from "./_shared"
 
 export default function OverlayPlacementExample() {
 	return (
-		<Stack direction="horizontal" gap="md" wrap>
+		<Stack direction="horizontal" gap="sm" wrap>
 			{(
 				["center", "inline-start", "inline-end", "block-start", "block-end"] as OverlayPlacement[]
 			).map((placement) => (

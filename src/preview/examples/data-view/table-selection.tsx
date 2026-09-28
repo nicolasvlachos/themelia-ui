@@ -28,7 +28,7 @@ export default function TableSelection() {
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="outline"
+							appearance="outline"
 							onClick={() => setNote(`archive ${selectedRowCount}`)}
 						>
 							Archive selected

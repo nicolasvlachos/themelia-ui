@@ -17,7 +17,7 @@ export function InvoiceContent({ query = "" }: { query?: string }) {
 	const [unpaid, setUnpaid] = useState(false)
 	const rows = INVOICES.filter(row => (!unpaid || !row.paid) && `${row.id} ${row.customer}`.toLowerCase().includes(query.toLowerCase()))
 	return <Card title="Recent invoices" description="Track payments across your workspace."
-		contentTop={<Stack direction="horizontal" justify="end"><Button buttonStyle="outline" tone="neutral" aria-pressed={unpaid} onClick={() => setUnpaid(!unpaid)}>{unpaid ? "Show all" : "Unpaid only"}</Button></Stack>}
+		contentTop={<Stack gap="sm" direction="horizontal" justify="end"><Button appearance="outline" tone="neutral" aria-pressed={unpaid} onClick={() => setUnpaid(!unpaid)}>{unpaid ? "Show all" : "Unpaid only"}</Button></Stack>}
 		footerText={`${rows.length} ${rows.length === 1 ? "invoice" : "invoices"}`}>
 		<Table aria-label="Recent invoices">
 			<TableHeader><TableRow><TableHead>Invoice</TableHead><TableHead>Customer</TableHead><TableHead>Status</TableHead><TableHead align="end">Amount</TableHead></TableRow></TableHeader>
@@ -33,9 +33,9 @@ export function SettingsContent() {
 	const [saved, setSaved] = useState(false)
 	return <Card title="Workspace details" description="Shared with everyone in your workspace.">
 		<form onSubmit={event => { event.preventDefault(); setSaved(true) }}>
-			<Stack gap="lg">
+			<Stack>
 				<FormField label="Workspace name" required><Input value={name} required onChange={event => { setName(event.target.value); setSaved(false) }} /></FormField>
-				<Stack direction="horizontal" gap="md" align="center" wrap>
+				<Stack direction="horizontal" gap="sm" align="center" wrap>
 					<Button type="submit">Save changes</Button>
 					<Text size="sm" role="status">{saved ? "Workspace updated." : ""}</Text>
 				</Stack>
@@ -51,8 +51,8 @@ export function AdminContent({ currentUrl, query }: { currentUrl: string; query?
 		: currentUrl.includes("billing") ? "Billing" : "Overview"
 
 	return (
-		<Stack gap="xl">
-			<Stack gap="xs">
+		<Stack>
+			<Stack gap="sm">
 				<Heading level={3} size="xl">{title}</Heading>
 				<Text type="secondary">Northwind workspace</Text>
 			</Stack>
@@ -78,7 +78,7 @@ export function AdminContent({ currentUrl, query }: { currentUrl: string; query?
 			) : (
 				<>
 					{title === "Overview" && (
-						<Grid columns={{ base: 1, md: 3 }} gap="md">
+						<Grid columns={{ base: 1, md: 3 }} gap="sm">
 							{[["Collected", "$1,299.50"], ["Outstanding", "$2,990.00"], ["Customers", "3"]].map(([label, value]) => (
 								<Card key={label} title={label}><Text size="xl" weight="semibold">{value}</Text></Card>
 							))}

@@ -6,6 +6,7 @@ import { useId, useState, type ChangeEvent, type KeyboardEvent } from "react"
 
 import { VisuallyHidden } from "@/components/base/display"
 import { Input } from "@/components/base/text-inputs"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultTimePickerStrings, type TimePickerStrings } from "./time-picker.strings"
@@ -128,7 +129,7 @@ function TimeSegment({
 			aria-describedby={describedBy}
 			aria-invalid={invalid || undefined}
 			aria-required={required || undefined}
-			className={styles.timeSegment}
+			className={cx(styles.timeSegment, textClassName({ size: "inherit", numeric: true }))}
 			value={draft ?? pad(value)}
 			disabled={disabled}
 			onKeyDown={onKeyDown}

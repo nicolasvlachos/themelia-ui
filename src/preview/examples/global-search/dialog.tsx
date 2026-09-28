@@ -30,7 +30,7 @@ export default function Dialog() {
 
 	return (
 		<>
-			<Stack direction="horizontal" gap="md" align="center">
+			<Stack direction="horizontal" gap="sm" align="center">
 				<Button type="button" onClick={() => setOpen(true)}>Open the palette</Button>
 				<Text size="sm" type="secondary">Then press Escape, or click outside it.</Text>
 			</Stack>

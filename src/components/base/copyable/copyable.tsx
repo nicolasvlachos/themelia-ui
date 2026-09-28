@@ -106,7 +106,7 @@ export const Copyable = forwardRef<HTMLSpanElement, CopyableProps>(function Copy
 						tag="span"
 						size="inherit"
 						truncate={truncate}
-						className={cx(mono && styles.mono)}
+						mono={mono}
 					>
 						{displayValue ?? value}
 					</Text>
@@ -117,7 +117,7 @@ export const Copyable = forwardRef<HTMLSpanElement, CopyableProps>(function Copy
 				type="button"
 				iconOnly
 				tone="neutral"
-				buttonStyle="ghost"
+				appearance="ghost"
 				aria-label={buttonAriaLabel ?? (copied ? copy.copied : copy.copy)}
 				// Compact glyph, full-size target (styles/targets.css).
 				data-hit-area={compact ? "" : undefined}

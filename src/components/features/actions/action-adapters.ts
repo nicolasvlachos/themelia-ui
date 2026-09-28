@@ -193,7 +193,7 @@ export function defineSilentAction<
 type ActionPresentationSource = {
 	definition: {
 		tone?: string;
-		buttonStyle?: string;
+		appearance?: string;
 		modality?: 'none' | {
 			tone?: string;
 		};
@@ -220,8 +220,8 @@ function getActionTone(action: ActionPresentationSource) {
 	return undefined;
 }
 
-function getActionButtonStyle(action: ActionPresentationSource) {
-	const style = action.definition.buttonStyle;
+function getActionAppearance(action: ActionPresentationSource) {
+	const style = action.definition.appearance;
 	if (style === 'solid' || style === 'outline' || style === 'ghost' || style === 'link') {
 		return style;
 	}
@@ -245,7 +245,7 @@ export function toPageAction<
 		loading: action.isRunning,
 		icon: action.icon,
 		tone: getActionTone(action),
-		buttonStyle: getActionButtonStyle(action),
+		appearance: getActionAppearance(action),
 		visible: action.visible,
 		group: action.group,
 		placement: action.placement,
@@ -263,7 +263,7 @@ export function toMenuAction<
 		disabled: action.disabled || action.isRunning,
 		icon: action.icon,
 		tone: getActionTone(action) ?? 'secondary',
-		buttonStyle: getActionButtonStyle(action),
+		appearance: getActionAppearance(action),
 	};
 }
 
@@ -277,7 +277,7 @@ export function toTableAction<TData = unknown>(action: ResolvedAction<TData>) {
 		isVisible: () => action.visible,
 		icon: action.icon ? createElement(action.icon, { className: 'size-4' }) : undefined,
 		tone: getActionTone(action) ?? 'secondary',
-		buttonStyle: getActionButtonStyle(action),
+		appearance: getActionAppearance(action),
 	};
 }
 

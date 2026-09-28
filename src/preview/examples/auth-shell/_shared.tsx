@@ -43,7 +43,7 @@ export function SignInDemo({ showFailureControl = false }: { showFailureControl?
 
 	return (
 		<form noValidate aria-busy={pending || undefined} onSubmit={submit}>
-			<Stack gap="xl">
+			<Stack>
 				{state === "error" && (
 					<Alert tone="destructive">
 						<AlertTitle>Unable to sign in</AlertTitle>
@@ -85,7 +85,7 @@ export function SignInDemo({ showFailureControl = false }: { showFailureControl?
 					/>
 				)}
 				{state === "success" ? (
-					<Button fullWidth tone="neutral" buttonStyle="outline" onClick={() => {
+					<Button fullWidth tone="neutral" appearance="outline" onClick={() => {
 						setState("idle")
 						setPassword("")
 						emailRef.current?.focus()

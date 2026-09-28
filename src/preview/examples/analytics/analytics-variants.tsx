@@ -1,11 +1,11 @@
 import { Stack } from "themelia-ui/base/structure"
-import { Metric, MetricGrid } from "themelia-ui/patterns/analytics"
+import { Metric, MetricGrid } from "themelia-ui/blocks/analytics"
 
 import { CHURN, FULFILMENT, ORDERS, REVENUE } from "./data"
 
 export default function AnalyticsVariants() {
 	return (
-		<Stack gap="xl">
+		<Stack>
 			<MetricGrid metrics={[REVENUE, CHURN]} variant="bordered" columns={2} />
 			<MetricGrid metrics={[ORDERS, FULFILMENT]} variant="compact" columns={2} />
 			<MetricGrid metrics={[REVENUE, CHURN]} variant="accent" columns={2} />

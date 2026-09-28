@@ -18,7 +18,7 @@ function TopbarDemo() {
 	const sidebarSide = side === "right" ? "right" : "left"
 
 	return (
-		<Stack gap="lg" style={{ width: "100%", minWidth: 0 }}>
+		<Stack style={{ width: "100%", minWidth: 0 }}>
 			<PillRadioGroup
 				aria-label="Navigation side"
 				name="topbar-sidebar-side"
@@ -44,7 +44,7 @@ function TopbarDemo() {
 						/>
 					}
 				>
-					<Stack gap="lg">
+					<Stack>
 						{currentUrl === "/app/invoices" && (
 							<Input type="search" aria-label="Search invoices" placeholder="Search invoices…" value={query} onChange={event => setQuery(event.target.value)} />
 						)}

@@ -48,7 +48,7 @@ export function ItemPage() {
 				/>
 				<PropTable
 					rows={[
-						{ name: "--density-scale", api: ["css:--density-scale"], type: "number", default: "var(--scale)", description: "Global density factor. Scope it so a dense list can sit inside a normally-scaled card." },
+						{ name: "data-density", api: ["css:--padding-sm"], type: '"compact" | "default" | "comfortable"', description: "On any ancestor, or through a provider's `density`: a dense list inside a card at the default density." },
 					]}
 				/>
 			</Example>

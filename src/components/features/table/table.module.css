@@ -2,26 +2,37 @@
  * DataTable shell: surface, toolbar band, selection bar, sticky panes and full screen.
  * The `<table>`, cell rhythm, sort control and scroll container come from base/table.
  * `data-size` changes row padding only, never type size.
- * Derived tokens: declared at every scope boundary (styles/SCOPES.md).
  */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-	/* The selection column's width (checkbox plus two cell insets); the pinned column beside it offsets by this. */
-	--table-selection-w: calc(var(--space-xl) * 2 + var(--choice-size));
-}
 
 .root {
 	container-type: inline-size;
 	container-name: data-table;
+	/* Its own stacking context: the sticky panes and the focus ring layer inside it. */
+	position: relative;
+	isolation: isolate;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 	min-width: 0;
 	max-width: 100%;
+	/*
+	 * The selection column's width: the checkbox (1.125rem) plus the cell's two insets. The
+	 * pinned column beside it offsets by this, so it must agree with the checkbox's size.
+	 */
+	--_selection-width: calc(var(--padding) * 2 + 1.125rem);
+	/* The expand toggle's column: the chevron plus the small inset (the toggle's own size). */
+	--_expand-width: calc(var(--icon-size) + var(--padding-sm));
+	/* Everything before the identity column: the pinned offset after it, and a panel's inset. */
+	--_gutter-width: var(--_selection-width);
+}
+
+/* Leading the row, the toggle column starts at the table's own inset. */
+.root[data-expandable] {
+	--_gutter-width: calc(var(--padding) + var(--_expand-width));
+}
+
+.root[data-expandable][data-selectable] {
+	--_gutter-width: calc(var(--_selection-width) + var(--_expand-width));
 }
 
 .root[data-surface="card"] {
@@ -30,13 +41,12 @@
 	border-radius: var(--radius);
 	background-color: var(--card);
 	--surface-ground: var(--card);
-	box-shadow: none;
 }
 
 /* Hairline outline, no fill: for a table inside another card. */
 .root[data-surface="glass"] {
 	overflow: hidden;
-	border: var(--border-width) solid var(--border-60);
+	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius-sm);
 }
 
@@ -45,14 +55,18 @@
 	min-height: 0;
 }
 
-/* Covers the whole viewport, so the component also sets `role="dialog"` and traps focus. */
+/*
+ * Covers the whole viewport, so the component also sets `role="dialog"` and traps focus. At
+ * the popover tier: above sticky and docked chrome; the menus it opens portal after it at the
+ * same tier, so they still paint above it.
+ */
 .root[data-fullscreen] {
 	position: fixed;
 	inset: 0;
-	z-index: var(--z-modal, 50);
+	z-index: var(--z-popover);
 	height: 100%;
 	min-height: 0;
-	padding: var(--surface-py) var(--surface-px);
+	padding: var(--padding);
 	border: 0;
 	border-radius: 0;
 	background-color: var(--background);
@@ -60,15 +74,37 @@
 	overflow: hidden;
 }
 
-/* ── Density ───────────────────────────────────────────────────────────────────── */
-
-/* Cell insets on the spacing ladder: 8, 12 (the base table's) and 16px. */
-.root[data-size="sm"] .table :is(td, th) {
-	padding-block: var(--space-md);
+/*
+ * The scroll region's focus ring, round the whole frame and above the sticky header and
+ * columns, which paint over an outline drawn on the region itself.
+ */
+.root::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: calc(var(--z-docked) + 2);
+	border-radius: inherit;
+	pointer-events: none;
 }
 
-.root[data-size="lg"] .table :is(td, th) {
-	padding-block: var(--space-xl);
+.root:has(> .tableArea > :global(.table--container):focus-visible)::after {
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * -2);
+}
+
+.tableArea > :global(.table--container):focus-visible {
+	outline: none;
+}
+
+/* ── Density ───────────────────────────────────────────────────────────────────── */
+
+/* The small size tightens the base table's cell insets, and the head's height with them. */
+.root[data-size="sm"] .table :is(td, th) {
+	padding-block: var(--padding-sm);
+}
+
+.root[data-size="sm"] .table th {
+	height: calc(var(--control-height-sm) + var(--padding-sm));
 }
 
 /* ── The topbar ────────────────────────────────────────────────────────────────── */
@@ -88,15 +124,15 @@
 .topbarGrid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--space-lg);
-	padding: var(--row-py) var(--surface-px);
+	gap: var(--gap);
+	padding: var(--padding-sm) var(--padding);
 }
 
 .topbarStart {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -105,7 +141,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-end;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .filterInput {
@@ -129,10 +165,9 @@
 	overflow: hidden;
 }
 
-.toolbarDivider {
-	width: var(--border-width);
-	height: var(--space-lg);
-	background-color: var(--border);
+/* The group clips, so a focused control draws its outline inside. */
+.toolbar :focus-visible {
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /* ── The table area ────────────────────────────────────────────────────────────── */
@@ -150,11 +185,6 @@
 	position: relative;
 }
 
-.tableContainer:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring-inset);
-}
-
 .tableContainerScrolls {
 	height: 100%;
 	min-height: 0;
@@ -162,8 +192,9 @@
 	overflow: auto;
 }
 
+/* `maxBodyHeight`, written inline on the root. */
 .tableContainerBounded {
-	max-height: var(--data-table-body-max-height);
+	max-height: var(--_data-table-body-max-height, none);
 }
 
 /* ── Header ────────────────────────────────────────────────────────────────────── */
@@ -172,23 +203,29 @@
 	background-color: transparent;
 }
 
-/* The tint sits on the cells, so a pinned header cell layers it over its own opaque ground. */
+/*
+ * The band: the soft fill the stripes use, so the header frames the columns without competing
+ * with them. It sits on the cells, so a pinned header cell layers it over its own opaque ground.
+ */
 .header > tr:not(.groupRow) > th {
-	background-image: linear-gradient(var(--muted-50), var(--muted-50));
+	background-image: linear-gradient(
+		color-mix(in oklab, var(--muted) var(--tint-strong), transparent),
+		color-mix(in oklab, var(--muted) var(--tint-strong), transparent)
+	);
 }
 
 .header.headerTransparent > tr > th {
 	background-image: none;
 }
 
-/* The band above the columns: a softer fill than the header row so the two read as a hierarchy. */
+/* The band above the columns, in the header's own fill: the two rows read as one block. */
 .groupRow {
-	border-bottom: var(--border-width) solid var(--border-60);
+	border-bottom: var(--border-width) solid var(--border);
 }
 
 .groupHead {
-	border-inline-end: var(--border-width) solid var(--border-60);
-	background-color: var(--muted-20);
+	border-inline-end: var(--border-width) solid var(--border);
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 	color: var(--muted-foreground);
 }
 
@@ -199,7 +236,7 @@
 /* ── Rows ──────────────────────────────────────────────────────────────────────── */
 
 .row {
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .row[data-clickable] {
@@ -207,18 +244,18 @@
 }
 
 .row:hover {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 }
 
 /* Selected outranks hover. */
 .row[data-state="selected"],
 .row[data-state="selected"]:hover {
-	background-color: var(--primary-10);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
-/* Zebra striping sits under both hover and selection. */
-tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover) {
-	background-color: var(--muted-20);
+/* Zebra striping sits under both hover and selection, and counts data rows only: an open panel is not one. */
+tbody[data-striped] .row:nth-child(even of .row):not([data-state="selected"]):not(:hover) {
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 }
 
 /*
@@ -232,44 +269,59 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 	background-color: var(--surface-ground, var(--background));
 }
 
-/*
- * The identity column pinned beside the checkbox. Only the last pinned column draws the
- * edge shadow; with no selection column the first one gets it back.
- */
+/* The cell pinned beside the checkbox: the expand toggle, or the identity column when there is none. */
 .stickyColumnNext {
 	position: sticky;
-	inset-inline-start: var(--table-selection-w);
+	inset-inline-start: var(--_selection-width);
 	z-index: var(--z-sticky);
 	background-color: var(--surface-ground, var(--background));
-	box-shadow: var(--table-sticky-edge);
 }
 
-.row:hover > :is(.stickyColumn, .stickyColumnNext) {
-	background-image: linear-gradient(var(--accent-50), var(--accent-50));
+.row:hover > :is(.stickyColumn, .stickyColumnNext, .stickyColumnAfterGutter) {
+	background-image: linear-gradient(var(--accent), var(--accent));
 }
 
-.row[data-state="selected"] > :is(.stickyColumn, .stickyColumnNext),
-.row[data-state="selected"]:hover > :is(.stickyColumn, .stickyColumnNext) {
-	background-image: linear-gradient(var(--primary-10), var(--primary-10));
+.row[data-state="selected"] > :is(.stickyColumn, .stickyColumnNext, .stickyColumnAfterGutter),
+.row[data-state="selected"]:hover > :is(.stickyColumn, .stickyColumnNext, .stickyColumnAfterGutter) {
+	background-image: linear-gradient(
+		color-mix(in oklab, var(--primary) var(--tint), transparent),
+		color-mix(in oklab, var(--primary) var(--tint), transparent)
+	);
 }
 
-tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover) > :is(.stickyColumn, .stickyColumnNext) {
-	background-image: linear-gradient(var(--muted-20), var(--muted-20));
+tbody[data-striped] .row:nth-child(even of .row):not([data-state="selected"]):not(:hover) > :is(.stickyColumn, .stickyColumnNext, .stickyColumnAfterGutter) {
+	background-image: linear-gradient(
+		color-mix(in oklab, var(--muted) var(--tint-strong), transparent),
+		color-mix(in oklab, var(--muted) var(--tint-strong), transparent)
+	);
 }
 
-.stickyColumn:not(:has(~ .stickyColumnNext)) {
-	box-shadow: var(--table-sticky-edge);
+/* The identity column pinned after the expand toggle (and the checkbox before it, if any). */
+.stickyColumnAfterGutter {
+	position: sticky;
+	inset-inline-start: var(--_gutter-width);
+	z-index: var(--z-sticky);
+	background-color: var(--surface-ground, var(--background));
+}
+
+/* The last pinned cell draws the edge facing the scrolling columns. */
+.stickyColumn:not(:has(~ :is(.stickyColumnNext, .stickyColumnAfterGutter))),
+.stickyColumnNext:not(:has(~ .stickyColumnAfterGutter)),
+.stickyColumnAfterGutter {
+	box-shadow: var(--_sticky-edge);
 }
 
 /* The pinned edge faces the scrolling content: right in LTR, left in RTL. */
 .stickyColumnNext,
-.stickyColumn {
-	--table-sticky-edge: var(--border-width) 0 0 0 var(--border-60);
+.stickyColumn,
+.stickyColumnAfterGutter {
+	--_sticky-edge: var(--border-width) 0 0 0 var(--border);
 }
 
 .stickyColumnNext:dir(rtl),
-.stickyColumn:dir(rtl) {
-	--table-sticky-edge: calc(var(--border-width) * -1) 0 0 0 var(--border-60);
+.stickyColumn:dir(rtl),
+.stickyColumnAfterGutter:dir(rtl) {
+	--_sticky-edge: calc(var(--border-width) * -1) 0 0 0 var(--border);
 }
 
 /* Above both the sticky column (`--z-sticky`) and the sticky topbar (`--z-docked`). */
@@ -290,7 +342,139 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 	display: inline-flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
+}
+
+/* ── Expandable rows ───────────────────────────────────────────────────────────── */
+
+/*
+ * The gutter columns keep the widths the pinned offsets and a panel's inset are computed from,
+ * rather than taking a share of a wide table's spare width.
+ */
+:is(td, th).selectionCell {
+	width: var(--_selection-width);
+}
+
+/* The toggle alone: the checkbox cell's inset already separates the two. */
+:is(td, th).expandCell {
+	width: var(--_expand-width);
+	padding-inline: 0;
+}
+
+/* Leading the row, it starts at the table's own inset instead. */
+:is(td, th).expandCell:first-child {
+	width: calc(var(--padding) + var(--_expand-width));
+	padding-inline-start: var(--padding);
+}
+
+.expandToggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--_expand-width);
+	height: var(--_expand-width);
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--muted-foreground);
+	vertical-align: middle;
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
+}
+
+.expandToggle:hover {
+	background-color: var(--accent);
+	color: var(--foreground);
+}
+
+.expandToggle[aria-expanded="true"] {
+	color: var(--foreground);
+}
+
+.expandToggle > svg {
+	width: var(--icon-size);
+	height: var(--icon-size);
+	transition: rotate var(--duration-fast) var(--ease);
+}
+
+/* Closed, the chevron points along the reading direction; open, down. */
+.expandToggle:dir(rtl) > svg {
+	scale: -1 1;
+}
+
+.expandToggle[aria-expanded="true"] > svg {
+	rotate: 90deg;
+}
+
+.expandToggle[aria-expanded="true"]:dir(rtl) > svg {
+	rotate: -90deg;
+}
+
+/* The row and its panel read as one: the divider moves below the panel. */
+.row[data-expanded] {
+	border-bottom-color: transparent;
+}
+
+/* A well under its row. The cell's own ground covers the row hover beneath it. */
+.expandedCell {
+	padding: 0;
+	background-color: var(--muted);
+	white-space: normal;
+}
+
+/*
+ * Pinned to the part of a wide table in view (the root is the inline-size container), so a
+ * table scrolled sideways never opens a panel off-screen. Outside the clip below: a clipping
+ * ancestor would become the sticky box.
+ */
+.expandedPin {
+	position: sticky;
+	inset-inline-start: 0;
+	max-inline-size: 100cqi;
+}
+
+/* Grows from nothing on open and shrinks before the body drops it; instant under reduced motion. */
+.expandedMotion {
+	display: grid;
+	grid-template-rows: 1fr;
+	transition: grid-template-rows var(--duration) var(--ease);
+}
+
+@starting-style {
+	.expandedMotion {
+		grid-template-rows: 0fr;
+	}
+}
+
+.expandedRow[data-state="closing"] .expandedMotion {
+	grid-template-rows: 0fr;
+}
+
+.expandedClip {
+	min-height: 0;
+	overflow: hidden;
+}
+
+/* Lined up with the identity column: past the gutter, at the cell's own inset. */
+.expandedContent {
+	padding: var(--padding-sm) var(--padding) var(--padding);
+	padding-inline-start: calc(var(--_gutter-width) + var(--padding));
+	/*
+	 * Whole pixels: a panel ending on a half pixel puts every row below it on one, where
+	 * Chromium stops painting row dividers under pinned cells. Engines without `calc-size()`
+	 * keep the plain height, and have no such trouble.
+	 */
+	height: calc-size(auto, round(up, size, 1px));
+}
+
+.expandedMessage {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gap-sm);
 }
 
 /* ── Footer ────────────────────────────────────────────────────────────────────── */
@@ -301,8 +485,8 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
-	padding: var(--row-py) var(--surface-px);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm) var(--padding);
 }
 
 /* ── Cells ─────────────────────────────────────────────────────────────────────── */
@@ -312,27 +496,26 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 	white-space: nowrap;
 }
 
-/* Two lines in one cell, at tight leading so the row keeps its neighbours' height. */
+/* Two lines in one cell, at tight leading (textClassName) so the row keeps its neighbours' height. */
 .cellStack {
 	display: inline-flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
-	line-height: var(--leading-tight);
 }
 
 .cluster {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .iconCell {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -347,8 +530,8 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 }
 
 .cellIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* ── The index cell ────────────────────────────────────────────────────────────── */
@@ -361,7 +544,7 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 .resourceCell {
 	display: inline-flex;
 	align-items: flex-start;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -372,7 +555,7 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 .resourceBody {
 	display: inline-flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
@@ -381,7 +564,7 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 	display: inline-flex;
 	flex-wrap: nowrap;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -396,17 +579,12 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 	text-decoration: underline;
 	text-decoration-style: dotted;
 	text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
-	text-underline-offset: var(--link-underline-offset);
+	text-underline-offset: 3px;
 	border-radius: var(--radius-sm);
 }
 
 .resourceLink:hover {
-	text-decoration-color: var(--link-color);
-}
-
-.resourceLink:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	text-decoration-color: var(--link);
 }
 
 .resourceFacts {
@@ -419,6 +597,6 @@ tbody[data-striped] .row:nth-child(even):not([data-state="selected"]):not(:hover
 .resourceFact {
 	display: inline-flex;
 	align-items: baseline;
-	gap: var(--space-xs);
-	margin-inline-end: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
+	margin-inline-end: calc(var(--gap-sm) / 2);
 }

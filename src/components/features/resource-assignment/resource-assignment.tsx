@@ -171,7 +171,7 @@ export function SharedResourceCard<
 		<>
 			{headerAction}
 			{inlineChange && (
-				<Button type="button" tone="neutral" buttonStyle="outline" onClick={openSelectorFromClick}>
+				<Button type="button" tone="neutral" appearance="outline" onClick={openSelectorFromClick}>
 					{changeLabel}
 				</Button>
 			)}
@@ -215,7 +215,7 @@ export function SharedResourceCard<
 				title={copy.noResourceSelected}
 				description={false}
 				action={
-					<Button type="button" tone="neutral" buttonStyle="outline" onClick={openSelectorFromClick}>
+					<Button type="button" tone="neutral" appearance="outline" onClick={openSelectorFromClick}>
 						{changeLabel}
 					</Button>
 				}
@@ -226,7 +226,7 @@ export function SharedResourceCard<
 	/* The view action is a Button rendered as an anchor: link semantics, card-action chrome. */
 	const viewNode = context.hasResource
 		? (viewAction ?? (viewLink ? (
-				<Button render={<a href={viewLink.href} />} tone="neutral" buttonStyle="outline">
+				<Button render={<a href={viewLink.href} />} tone="neutral" appearance="outline">
 					<EyeIcon aria-hidden />
 						{viewLink.label}
 				</Button>
@@ -299,11 +299,11 @@ export function SharedResourceCard<
 						/>
 					)}
 
-					<Stack direction="horizontal" gap="md" justify="end" className={styles.dialogFooter}>
+					<Stack direction="horizontal" gap="sm" justify="end" className={styles.dialogFooter}>
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="outline"
+							appearance="outline"
 							onClick={context.closeSelector}
 							disabled={context.isConfirming}
 						>

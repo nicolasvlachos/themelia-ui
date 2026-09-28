@@ -41,7 +41,7 @@ export function FullscreenToggle({
 			render={render}
 			type="button"
 			tone="neutral"
-			buttonStyle="ghost"
+			appearance="ghost"
 			iconOnly
 			aria-label={label}
 			// A toggle reports its own state; the icon carries none for a screen reader.

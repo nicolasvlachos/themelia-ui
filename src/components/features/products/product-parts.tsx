@@ -13,7 +13,7 @@ import { Empty } from "@/components/base/feedback"
 import {
 	Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle,
 } from "@/components/base/item"
-import { DisplayLabel, Text } from "@/components/base/typography"
+import { DisplayLabel, Text, textClassName } from "@/components/base/typography"
 import { PreviewImage } from "@/components/base/upload"
 import { Value } from "@/components/primitives"
 import { cx } from "@/lib/cx"
@@ -123,7 +123,6 @@ export function ProductEmptyState({
 }) {
 	return (
 		<Empty
-			padding="md"
 			border
 			title={title}
 			description={description}
@@ -233,7 +232,16 @@ export function ProductStructureMetricRow({
 			media={metric.icon}
 			trailing={
 				<>
-					<Value weight="semibold" className={cx("product-structure-metric-row--component", styles.numeric)}>{metric.value}</Value>
+					{/* Tabular figures through Text's classes: Value takes no `numeric`. */}
+					<Value
+						weight="semibold"
+						className={cx(
+							"product-structure-metric-row--component",
+							textClassName({ size: "inherit", numeric: true }),
+						)}
+					>
+						{metric.value}
+					</Value>
 					{actions}
 				</>
 			}

@@ -2,17 +2,6 @@
  * Stepper — numbered markers, connectors and a label per step. Each item holds a TARGET
  * (a button when pressable, else a span), so the geometry never changes with interactivity.
  */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	/* A label narrower than this wraps to three lines and the bar's rhythm breaks down. */
-	--stepper-item-min: calc(7rem * var(--scale));
-
-}
 
 .stepper {
 	margin: 0;
@@ -38,7 +27,7 @@
 /* The bar marker's ring weight, so a finished stretch reads as one line. */
 .stepLine {
 	flex: 1;
-	height: var(--border-width-strong);
+	height: calc(var(--border-width) * 2);
 	background-color: var(--border);
 }
 
@@ -50,14 +39,13 @@
 	border-radius: var(--radius-sm);
 	background: none;
 	color: inherit;
-	font: inherit;
 	text-align: start;
 	cursor: pointer;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .stepButton:hover:not(:disabled) {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 }
 
 /* Not `opacity`: an upcoming step is unreachable, not faded out. */
@@ -65,9 +53,9 @@
 	cursor: default;
 }
 
+/* Inside: a caller scrolls a wide stepper, and an outline outside the step is cut by its scroller. */
 .stepButton:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /* ══ bar ═══════════════════════════════════════════════════════════════════════════ */
@@ -75,12 +63,13 @@
 /*
  * Three rows (rail, label, hint) shared by every step through subgrid, so hints stay on one
  * line when a label wraps. `fit-content`: the bar does not scroll itself — a caller wraps
- * it in a scroller, as StepsBar does.
+ * it in a scroller, as StepsBar does. A label narrower than 7rem wraps to three lines and
+ * the bar's rhythm breaks down.
  */
 .stepper[data-variant="bar"] {
 	display: grid;
 	grid-auto-flow: column;
-	grid-auto-columns: minmax(var(--stepper-item-min), 1fr);
+	grid-auto-columns: minmax(7rem, 1fr);
 	grid-template-rows: auto auto auto;
 	min-width: fit-content;
 }
@@ -108,16 +97,16 @@
 }
 
 .stepper[data-variant="bar"] .stepMarker {
-	width: var(--size-icon-2xl);
-	height: var(--size-icon-2xl);
-	border: var(--border-width-strong) solid var(--border);
+	width: 2.5rem;
+	height: 2.5rem;
+	border: calc(var(--border-width) * 2) solid var(--border);
 	background-color: var(--surface-ground, var(--background));
 	color: var(--muted-foreground);
 }
 
 .stepper[data-variant="bar"] .stepCheck {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* The travelled line, finished marks and current one share one tone (see TimelineStatus). */
@@ -133,8 +122,8 @@
 /* Only the current step is filled; a finished step keeps the tone in its ring. */
 .stepper[data-variant="bar"] .step[data-status="completed"] .stepMarker {
 	border-color: var(--primary);
-	background-color: var(--primary-10);
-	color: var(--primary-accent);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
+	color: var(--primary);
 }
 
 .stepper[data-variant="bar"] .step[data-status="current"] .stepMarker {
@@ -150,16 +139,16 @@
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
-	padding-inline: var(--space-sm);
+	padding-inline: var(--padding-sm);
 	text-align: center;
 }
 
 .stepper[data-variant="bar"] .stepLabel {
-	margin-block-start: var(--space-md);
+	margin-block-start: var(--gap-sm);
 }
 
 .stepper[data-variant="bar"] .stepHint {
-	margin-block-start: var(--space-2xs);
+	margin-block-start: calc(var(--gap-sm) / 2);
 }
 
 /* ══ trail ═════════════════════════════════════════════════════════════════════════ */
@@ -167,7 +156,7 @@
 .stepper[data-variant="trail"] {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 /* Equal shares, so markers keep their places whatever the label lengths. */
@@ -175,15 +164,15 @@
 	display: flex;
 	flex: 1;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .stepper[data-variant="trail"] .stepTarget {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
-	padding: var(--space-2xs) var(--space-md);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	border-radius: var(--radius-sm);
 }
 
@@ -191,17 +180,17 @@
 	display: inline-flex;
 }
 
-/* The marker carries the state — a tick, a number, a ring. */
+/* The marker carries the state — a tick, a number, a ring. An icon and the item padding across. */
 .stepper[data-variant="trail"] .stepMarker {
-	width: var(--space-2xl);
-	height: var(--space-2xl);
+	width: calc(var(--icon-size) + var(--padding-sm));
+	height: calc(var(--icon-size) + var(--padding-sm));
 	background-color: var(--muted);
 	color: var(--muted-foreground);
 }
 
 .stepper[data-variant="trail"] .stepCheck {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .stepper[data-variant="trail"] .step[data-status="completed"] .stepMarker {
@@ -212,7 +201,7 @@
 /* The ring is what separates "here" from "done" at a glance. */
 .stepper[data-variant="trail"] .step[data-status="current"] .stepMarker {
 	background-color: var(--primary);
-	box-shadow: 0 0 0 var(--space-xs) var(--primary-20);
+	box-shadow: 0 0 0 calc(var(--border-width) * 4) color-mix(in oklab, var(--primary) var(--tint), transparent);
 	color: var(--primary-foreground);
 }
 
@@ -235,7 +224,7 @@
 		display: flex;
 		flex-direction: column;
 		/* The primary-to-secondary line gap, as in Item. */
-		gap: var(--space-2xs);
+		gap: calc(var(--gap-sm) / 2);
 		width: auto;
 		height: auto;
 		min-width: 0;

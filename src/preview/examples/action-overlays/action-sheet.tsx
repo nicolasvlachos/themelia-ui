@@ -9,14 +9,14 @@ import { wait } from "./data"
 
 export default function ActionSheetExample() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap>
+		<Stack direction="horizontal" wrap>
 			<ActionSheet
 				title="Edit invoice"
 				description="Longer work than a dialog comfortably holds."
-				trigger={<Button tone="neutral" buttonStyle="outline">Modal sheet</Button>}
+				trigger={<Button tone="neutral" appearance="outline">Modal sheet</Button>}
 				onAsyncConfirm={() => wait(700)}
 			>
-				<Stack gap="md">
+				<Stack gap="sm">
 					<FormField label="Reference">
 						<Input defaultValue="INV-4417" />
 					</FormField>
@@ -32,7 +32,7 @@ export default function ActionSheetExample() {
 				modality="non-modal"
 				showFooter={false}
 				inset
-				trigger={<Button tone="neutral" buttonStyle="outline">Non-modal inspector</Button>}
+				trigger={<Button tone="neutral" appearance="outline">Non-modal inspector</Button>}
 			>
 				<Text size="sm" type="secondary">
 					Scroll and click the page behind this panel — it is not inert.

@@ -12,13 +12,13 @@ import { Example } from "../partials/example"
 export function ThemeTweakerPage() {
 	return (
 		<ComponentPage>
-			<Stack gap="lg">
+			<Stack>
 				<Text type="secondary">Changes stay active as you navigate and are remembered in this browser. Use the floating palette button to edit alongside any page. Reset app theme restores the app defaults.</Text>
 				<Text>Currency format: <Money amount={1234.56} /></Text>
 				<AppThemeEditor showIntro />
 				<Accordion items={[{
 					value: "integration", title: "Integrate in your app",
-					content: <Stack gap="md">
+					content: <Stack gap="sm">
 						<Text>Keep theme and provider state above your router. Apply it there with useAppliedTheme and give your UIProvider the same config and themeToStyle(theme). The editor can then open and close without removing the theme. This app does exactly that: its editor is a controlled ThemeTweaker with <code>{"apply={false}"}</code>, whose Provider section is UIConfigSettings, and its theme lives on the shared root rather than in a ThemeScope.</Text>
 						<CodeBlock code={'import { ThemeTweaker, ThemeScope, UIConfigSettings, useAppliedTheme, themeToStyle } from "themelia-ui/features/theme-tweaker"'} />
 						<PropTable owners={["ThemeTweaker", "useAppliedTheme", "ThemeScope", "UIConfigSettings"]} />

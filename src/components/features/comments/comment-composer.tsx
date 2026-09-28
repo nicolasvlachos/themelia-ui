@@ -352,9 +352,9 @@ export function CommentComposer<TResource extends string = string>({
 			)}
 
 			{footerRow && (
-				<Stack direction="horizontal" align="center" justify="end" gap="md">
+				<Stack direction="horizontal" align="center" justify="end" gap="sm">
 					{!!onCancel && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onCancel} disabled={submitting}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onCancel} disabled={submitting}>
 							{copy.composerCancel}
 						</Button>
 					)}

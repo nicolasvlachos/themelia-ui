@@ -1,25 +1,18 @@
-/* Progress. Without a value it is indeterminate: a travelling band, not a bar frozen mid-way. */
 /*
- * Referenced through a custom property: CSS Modules would rename a keyframe named directly
- * in `animation`, but the keyframes are global (styles/theming/animation.css).
+ * Progress. Without a value it is indeterminate: a travelling band, not a bar frozen mid-way.
+ * The fill is the tone's ink (`data-tone`, read through the shared tone rule): pale amber
+ * lacks contrast on the track as a plain fill. A container re-colours one bar through
+ * `--_progress-fill`.
  */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-	--animate-progress-indeterminate: progress-indeterminate 1.2s var(--ease-in-out) infinite;
-}
 
 .root {
 	position: relative;
 	overflow: hidden;
 	width: 100%;
-	height: var(--space-md);
+	height: 0.5rem;
 	border-radius: var(--radius-pill);
-	/* The same wash as a control track. */
-	background-color: var(--foreground-20);
+	/* A foreground wash, so the track shows on any surface. */
+	background-color: color-mix(in oklab, var(--foreground) var(--tint), transparent);
 }
 
 .fill {
@@ -27,8 +20,8 @@
 	/* Pinned to inline-start, so it mirrors with direction. */
 	margin-inline-end: auto;
 	border-radius: inherit;
-	background-color: var(--progress-fill);
-	transition: width var(--duration-normal) var(--ease-out);
+	background-color: var(--_progress-fill, var(--tone-ink));
+	transition: width var(--duration) var(--ease);
 }
 
 .indeterminate {
@@ -39,16 +32,10 @@
 	/* The keyframes' 250% is this width's reciprocal — change them together. */
 	width: 40%;
 	border-radius: inherit;
-	background-color: var(--progress-fill);
-	animation: var(--animate-progress-indeterminate);
+	background-color: var(--_progress-fill, var(--tone-ink));
+	animation: var(--keyframes-progress) 1.2s ease-in-out infinite;
 }
 
 :global([dir="rtl"]) .indeterminate {
 	animation-direction: reverse;
 }
-
-.toneSuccess { --progress-fill: var(--success); }
-/* The accent: light --warning lacks contrast on the track. */
-.toneWarning { --progress-fill: var(--warning-accent); }
-.toneDestructive { --progress-fill: var(--destructive); }
-.toneInfo { --progress-fill: var(--info); }

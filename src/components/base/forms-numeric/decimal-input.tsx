@@ -7,6 +7,7 @@ import { MinusIcon, PlusIcon } from "lucide-react"
 import * as React from "react"
 
 import { Input, type InputProps } from "@/components/base/text-inputs"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultDecimalInputStrings, type DecimalInputStrings } from "./forms-numeric.strings"
@@ -249,7 +250,7 @@ export const DecimalInput = React.forwardRef<HTMLInputElement, DecimalInputProps
 					adjust(event.key === "ArrowUp" ? 1 : -1)
 				}
 			}}
-			className={cx(showSteppers ? styles.stepperInput : styles.numericInput, className)}
+			className={cx(showSteppers && styles.stepperInput, textClassName({ size: "inherit", numeric: true }), className)}
 		/>
 	)
 

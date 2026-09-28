@@ -8,9 +8,9 @@ export default function OtpInputExample() {
 	const [code, setCode] = useState("")
 
 	return (
-		<Stack gap="lg" align="start">
+		<Stack align="start">
 			<OtpInput length={6} value={code} onValueChange={setCode} />
-			<Stack gap="xs" align="start">
+			<Stack gap="sm" align="start">
 				<Text size="xs" type="secondary">groupSize={"{3}"} — written as "123 456"</Text>
 				<OtpInput length={6} groupSize={3} />
 			</Stack>

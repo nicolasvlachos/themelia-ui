@@ -3,7 +3,7 @@ import * as React from "react"
 
 import { Stack } from "@/components/base/structure"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/base/tooltip"
-import { Text } from "@/components/base/typography"
+import { Heading, Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "../cards.module.css"
@@ -41,9 +41,8 @@ export function CardHeader({
 	/** Renders the title as a heading of this level. See `CardProps.titleLevel`. */
 	titleLevel?: 1 | 2 | 3 | 4 | 5 | 6
 }) {
-	const TitleHeading = titleLevel ? (`h${titleLevel}` as const) : null
 	return (
-		<Stack gap="xs"
+		<Stack gap="sm"
 			data-slot="card-header"
 			className={cx("card--header", styles.header, divider && styles.headerDivider, className)}
 			{...props}
@@ -52,10 +51,12 @@ export function CardHeader({
 			<div className={styles.titleRow}>
 				{!!icon && <span className={styles.icon}>{icon}</span>}
 				{!!title &&
-					(TitleHeading ? (
-						<TitleHeading className={cx("card--title", styles.title)}>{title}</TitleHeading>
+					(titleLevel ? (
+						<Heading level={titleLevel} size="base" truncate className={cx("card--title", styles.title)}>
+							{title}
+						</Heading>
 					) : (
-						<Text tag="span" size="inherit" weight="semibold" className={cx("card--title", styles.title)}>
+						<Text tag="span" size="base" weight="semibold" lineHeight="tight" truncate className={cx("card--title", styles.title)}>
 							{title}
 						</Text>
 					))}

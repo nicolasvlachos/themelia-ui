@@ -1,4 +1,4 @@
-import { MetricGrid } from "themelia-ui/patterns/analytics"
+import { MetricGrid } from "themelia-ui/blocks/analytics"
 
 import { METRICS } from "./data"
 

@@ -1,37 +1,37 @@
 /*
  * NavigationMenu — a bar of entries and the one panel they share, which resizes between
  * entries (the primitive's viewport); panel styles live on the popup, not on each content.
+ * Entries take their type from Text (navigation-menu.tsx).
  */
 .root {
 	position: relative;
 }
 
+/* Half the small gap between entries, so two filled entries never touch. */
 .list {
 	display: flex;
 	align-items: center;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
+/* A labelled control: the control height and a button's inset. */
 .trigger,
 .link {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
-	height: var(--control-h);
-	padding-inline: var(--control-px);
+	gap: var(--gap-sm);
+	height: var(--control-height);
+	padding-inline: var(--padding);
 	border: 0;
 	border-radius: var(--radius-sm);
 	background: none;
 	color: var(--foreground);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
 	text-decoration: none;
 	cursor: pointer;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .trigger:hover,
@@ -43,41 +43,35 @@
 /* The caret sits a step quieter than the word, and turns while its panel is open. */
 .indicator {
 	display: inline-flex;
-	margin-inline-end: calc(var(--space-2xs) * -1);
 	color: var(--muted-foreground);
-	transition: rotate var(--duration-fast) var(--ease-out);
+	transition: rotate var(--duration-fast) var(--ease);
 }
 
 .indicator > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .indicator[data-popup-open] {
 	rotate: 180deg;
 }
 
-.trigger:focus-visible,
-.link:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 .positioner {
 	z-index: var(--z-popover);
 }
 
+/* A floating surface: the large shadow over a hairline. */
 .popup {
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
-	box-shadow: var(--popover-shadow);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
 	/* Animates its size between entries; `overflow: hidden` clips the outgoing panel. */
 	overflow: hidden;
 	transition:
-		width var(--duration-normal) var(--ease-out),
-		height var(--duration-normal) var(--ease-out),
-		opacity var(--duration-fast) var(--ease-out);
+		width var(--duration) var(--ease),
+		height var(--duration) var(--ease),
+		opacity var(--duration-fast) var(--ease);
 }
 
 .popup[data-starting-style],
@@ -89,17 +83,21 @@
 	position: relative;
 }
 
-/* A panel is a list of destinations, one per row. */
+/*
+ * A panel is a list of destinations, one per row. Its inset is the popup's radius less a
+ * row's, so the rows sit concentric in it.
+ */
 .content {
 	display: grid;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 12rem;
-	padding: var(--space-md);
+	padding: calc(var(--radius) - var(--radius-sm));
 }
 
-/* A panel row: the whole width is the target. */
+/* A panel row: the whole width is the target, inset as a list row is. */
 .content .link {
 	justify-content: flex-start;
 	width: 100%;
+	padding-inline: var(--padding-sm);
 	border-radius: var(--radius-sm);
 }

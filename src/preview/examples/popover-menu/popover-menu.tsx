@@ -12,10 +12,10 @@ export default function PopoverMenuExample() {
 	const [owner, setOwner] = useState("jane")
 
 	return (
-		<Stack direction="horizontal" gap="xl" align="center">
+		<Stack direction="horizontal" align="center">
 			<PopoverMenu
 				trigger={
-					<Button buttonStyle="outline" tone="neutral">
+					<Button appearance="outline" tone="neutral">
 						Owner
 						<ChevronDownIcon />
 					</Button>
@@ -30,7 +30,7 @@ export default function PopoverMenuExample() {
 			/>
 			<PopoverMenu
 				trigger={
-					<Button buttonStyle="outline" tone="neutral">
+					<Button appearance="outline" tone="neutral">
 						No search
 						<ChevronDownIcon />
 					</Button>
@@ -41,7 +41,7 @@ export default function PopoverMenuExample() {
 			/>
 			<PopoverMenu
 				trigger={
-					<Button buttonStyle="outline" tone="neutral">
+					<Button appearance="outline" tone="neutral">
 						Loading
 						<ChevronDownIcon />
 					</Button>

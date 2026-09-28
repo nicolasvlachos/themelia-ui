@@ -10,57 +10,65 @@ test("native color scheme follows explicit and system theme scopes", async ({ pa
 	await page.goto("/")
 	await expect(page.locator("main h1").first()).toBeVisible()
 
+	/* Which half a light-dark() colour takes where the probe sits: the used scheme, measured. */
+	const LIGHT = "rgb(1, 2, 3)"
+	const DARK = "rgb(4, 5, 6)"
+	const probe = (parent: string, id: string) =>
+		page.evaluate(
+			({ parent, id, light, dark }) => {
+				const span = document.createElement("span")
+				span.id = id
+				span.style.color = `light-dark(${light}, ${dark})`
+				document.querySelector(parent)?.append(span)
+			},
+			{ parent, id, light: LIGHT, dark: DARK },
+		)
+	await probe("body", "root-probe")
 	const root = page.locator("html")
-	await expect(root).toHaveCSS("color-scheme", "light")
+	const rootProbe = page.locator("#root-probe")
+	await expect(rootProbe).toHaveCSS("color", LIGHT)
 
 	await root.evaluate((element) => element.setAttribute("data-theme", "dark"))
-	await expect(root).toHaveCSS("color-scheme", "dark")
+	await expect(rootProbe).toHaveCSS("color", DARK)
 
-	const nestedLight = page.locator("body").locator("[data-test-color-scheme]")
 	await page.locator("body").evaluate((body) => {
 		const scope = document.createElement("div")
 		scope.dataset.testColorScheme = ""
 		scope.dataset.theme = "light"
 		body.append(scope)
 	})
-	await expect(nestedLight).toHaveCSS("color-scheme", "light")
+	await probe("[data-test-color-scheme]", "nested-probe")
+	await expect(page.locator("#nested-probe")).toHaveCSS("color", LIGHT)
 
 	await root.evaluate((element) => element.removeAttribute("data-theme"))
 	await page.emulateMedia({ colorScheme: "dark" })
-	await expect(root).toHaveCSS("color-scheme", "dark")
+	await expect(rootProbe).toHaveCSS("color", DARK)
 
 	await root.evaluate((element) => element.setAttribute("data-theme", "light"))
-	await expect(root).toHaveCSS("color-scheme", "light")
+	await expect(rootProbe).toHaveCSS("color", LIGHT)
 })
 
-test("documented overrides reach cards, content blocks and overlays", async ({ page }) => {
+test("a theme override reaches cards, content blocks and overlays", async ({ page }) => {
+	/* The container inset and the interface font, set once at the root as a consumer's theme does. */
 	const visit = async (route: string) => {
 		await visitRoute(page, route)
-		await page.addStyleTag({ content: ":root { --surface-x: 2rem; --surface-y: 1.5rem; --font-sans: Georgia, serif; }" })
+		await page.addStyleTag({ content: ":root { --padding: 2rem; --font-sans: Georgia, serif; }" })
 	}
 
 	await visit("/card")
-	const header = await page.locator('[data-slot="card-header"]').first().evaluate(el => {
-		const s = getComputedStyle(el)
-		return { x: parseFloat(s.paddingLeft), y: parseFloat(s.paddingTop), font: s.fontFamily }
-	})
-	/* The injected --surface-x / --surface-y ratio (2rem / 1.5rem), each rounded to a pixel. */
-	expect(header.x / header.y).toBeCloseTo(4 / 3, 1)
-	expect(header.font).toContain("Georgia")
+	const header = page.locator('[data-slot="card-header"]').first()
+	await expect(header).toHaveCSS("padding-left", "32px")
+	await expect(header).toHaveCSS("font-family", /Georgia/)
 
 	await visit("/content-block")
 	const framed = page.locator(".content-block--component").filter({ hasText: 'surface="bordered"' }).first()
-	await page.addStyleTag({ content: ".content-block--component { --content-block-p: 10px; }" })
-	await expect(framed).toHaveCSS("padding-left", "10px")
-	await expect(framed).toHaveCSS("padding-top", "10px")
+	await expect(framed).toHaveCSS("padding-left", "32px")
 
 	await visit("/overlay")
 	await page.getByRole("button", { name: "center", exact: true }).click()
 	const body = page.getByRole("dialog", { name: "center", exact: true }).locator('[data-slot="overlay-body"]')
 	await expect(body).toHaveCSS("font-family", /Georgia/)
-	await page.addStyleTag({ content: '[data-slot="overlay-content"] { --overlay-region-p: 10px; }' })
-	await expect(body).toHaveCSS("padding-left", "10px")
-	await expect(body).toHaveCSS("padding-top", "10px")
+	await expect(body).toHaveCSS("padding-left", "32px")
 })
 
 test('feature primary text follows a consumer typography override', async ({ page }) => {

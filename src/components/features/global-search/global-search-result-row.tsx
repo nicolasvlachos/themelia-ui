@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/base/avatar"
 import { Badge } from "@/components/base/badge"
 import { IconBadge } from "@/components/base/display"
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/base/item"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import type { GlobalSearchResult } from "./global-search.types"
@@ -47,9 +47,9 @@ export function GlobalSearchResultRow<TGroup extends string = string>({
 }: GlobalSearchResultRowProps<TGroup>) {
 	const { avatar, thumbnail } = result
 	const media = avatar ? (
-		<Avatar data-tone={avatar.tone ?? "neutral"} className={styles.avatar}>
+		<Avatar data-tone={avatar.tone ?? "neutral"}>
 			{!!avatar.src && <AvatarImage src={avatar.src} alt="" />}
-			<AvatarFallback className={styles.avatarFallback}>{avatar.initials}</AvatarFallback>
+			<AvatarFallback className={cx(styles.avatarFallback, textClassName({ size: "inherit", weight: "semibold" }))}>{avatar.initials}</AvatarFallback>
 		</Avatar>
 	) : thumbnail?.src ? (
 		<Avatar className={styles.imageThumbnail}>
@@ -82,13 +82,13 @@ export function GlobalSearchResultRow<TGroup extends string = string>({
 							<Text tag="span" size="xs" type="secondary">{highlight(result.subtitle, query)}</Text>
 						)}
 						{result.meta?.map((meta, index) => (
-							<Text key={index} tag="span" size="xs" type="secondary" className={cx(styles.meta, meta.mono && styles.metaMono)}>
+							<Text key={index} tag="span" size="xs" type="secondary" mono={meta.mono} className={styles.meta}>
 								{meta.icon && <span aria-hidden className={styles.metaIcon}>{meta.icon}</span>}
 								{meta.label}
 							</Text>
 						))}
 						{result.timestamp && <Text tag="span" size="xs" type="secondary">{result.timestamp}</Text>}
-						{result.tags?.map((tag) => <Badge key={tag} variant="outline" tone="neutral">{tag}</Badge>)}
+						{result.tags?.map((tag) => <Badge key={tag} appearance="outline" tone="neutral">{tag}</Badge>)}
 					</div>
 				)}
 				{hasFigure && (
@@ -100,7 +100,7 @@ export function GlobalSearchResultRow<TGroup extends string = string>({
 			</ItemContent>
 			{hasFigure && (
 				<span className={styles.figure}>
-					{result.rightValue != null && <Text tag="span" weight="semibold" className={styles.figureValue}>{result.rightValue}</Text>}
+					{result.rightValue != null && <Text tag="span" weight="semibold" numeric>{result.rightValue}</Text>}
 					{result.rightLabel != null && <Text tag="span" size="xs" type="secondary">{result.rightLabel}</Text>}
 				</span>
 			)}

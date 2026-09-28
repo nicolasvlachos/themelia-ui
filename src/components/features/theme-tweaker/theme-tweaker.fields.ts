@@ -1,150 +1,135 @@
 /**
- * The catalog of editable variables: every public raw token the stylesheet declares at
- * `:root`, and nothing derived from one (a derived token would stop following its source).
- * Grouped by what a variable does, not by the file that declares it.
+ * The catalog of editable variables: every variable of the theme (styles/theme/*.css), grouped
+ * by what it does. Every one of them is read by the kit, so every control changes something.
+ * A colour is edited per mode: the edit lands in that mode's half of its `light-dark()` pair.
  */
 import type {
 	ThemeTweakerField, ThemeTweakerFieldKind, ThemeTweakerFieldScope, ThemeTweakerGroup,
 	ThemeTweakerRangeControl, ThemeTweakerSection, ThemeVariableName,
 } from "./theme-tweaker.types"
 
-const THEME_COLORS = [
+const SURFACE_COLORS = [
 	"--background", "--foreground", "--card", "--card-foreground", "--popover",
-	"--popover-foreground",
+	"--popover-foreground", "--muted", "--muted-foreground", "--accent", "--accent-foreground",
+	"--border", "--input", "--ring",
+] as const satisfies readonly ThemeVariableName[]
+
+const BRAND_COLORS = [
 	"--primary", "--primary-foreground", "--secondary", "--secondary-foreground",
-	"--muted", "--muted-foreground", "--accent", "--accent-foreground",
-	"--destructive", "--destructive-foreground", "--border", "--input", "--ring",
+	"--destructive", "--destructive-foreground",
+] as const satisfies readonly ThemeVariableName[]
+
+const CHART_COLORS = [
 	"--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5",
-	"--sidebar", "--sidebar-foreground", "--sidebar-primary", "--sidebar-primary-foreground",
-	"--sidebar-accent", "--sidebar-accent-foreground", "--sidebar-border", "--sidebar-ring",
+] as const satisfies readonly ThemeVariableName[]
+
+const SIDEBAR_COLORS = [
+	"--sidebar", "--sidebar-foreground", "--sidebar-accent", "--sidebar-accent-foreground",
+	"--sidebar-border", "--sidebar-ring",
 ] as const satisfies readonly ThemeVariableName[]
 
 const STATE_COLORS = [
 	"--success", "--success-foreground", "--info", "--info-foreground",
-	"--warning", "--warning-foreground", "--warning-accent",
-	"--link-color", "--primary-accent",
-	"--inverse-background", "--inverse-foreground", "--inverse-muted", "--inverse-subtle",
-	"--inverse-disabled", "--inverse-surface", "--inverse-surface-strong",
-	"--inverse-border", "--inverse-decoration",
+	"--warning", "--warning-foreground", "--link",
 ] as const satisfies readonly ThemeVariableName[]
 
-/* Kept apart from THEME_COLORS, which is consumed by index-based slices below. */
-const SURFACE_COLORS = ["--overlay-backdrop"] as const satisfies readonly ThemeVariableName[]
+/* One colour for both modes: the scrim is dark either way. */
+const SHARED_COLORS = ["--overlay-backdrop"] as const satisfies readonly ThemeVariableName[]
+
+const TINTS = ["--tint", "--tint-strong"] as const satisfies readonly ThemeVariableName[]
 
 const FONT_VARIABLES = [
-	"--font-heading", "--font-sans", "--font-serif", "--font-mono",
+	"--font-sans", "--font-heading", "--font-mono",
 ] as const satisfies readonly ThemeVariableName[]
 
-/* The ramp in styles/tokens/foundation.css, which stops at 2xl. */
-const TEXT_STEPS = ["xs", "pxs", "sm", "base", "lg", "xl", "2xl"] as const
-
-/* Each step's size and line height are edited together. */
-const TYPOGRAPHY_VARIABLES = TEXT_STEPS.flatMap((step) => [
-	`--text-${step}` as ThemeVariableName,
-	`--text-${step}--line-height` as ThemeVariableName,
-])
-
-/* --shadow-2xs, --shadow and --shadow-2xl are shadcn compatibility names nothing reads, so they are not offered. */
-const SHADOW_VARIABLES = [
-	"--shadow-xs", "--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl",
+const TYPE_SCALE = [
+	"--text-scale", "--text-xs", "--text-pxs", "--text-sm", "--text-base", "--text-lg",
+	"--text-xl", "--text-2xl",
 ] as const satisfies readonly ThemeVariableName[]
 
-const STRUCTURAL_VARIABLES = [
-	"--density-scale",
-	"--height-control", "--control-x",
-	"--row-x", "--row-y", "--surface-x", "--surface-y",
-	"--icon", "--avatar",
-	"--shell-header-height", "--sidebar-width",
+const SHAPE = ["--radius", "--radius-sm", "--radius-pill", "--border-width"] as const satisfies readonly ThemeVariableName[]
+
+const ELEVATION = ["--shadow", "--shadow-lg"] as const satisfies readonly ThemeVariableName[]
+
+const SPACING = ["--padding", "--padding-sm", "--gap", "--gap-sm"] as const satisfies readonly ThemeVariableName[]
+
+const CONTROLS = [
+	"--control-height", "--control-height-sm", "--icon-size", "--icon-size-sm",
 ] as const satisfies readonly ThemeVariableName[]
 
-const LAYOUT_VARIABLES = [
-	"--content-width-sm", "--content-width-md", "--content-width-lg",
-	"--content-width-xl", "--content-width-2xl",
-	"--adaptive-grid-min-sm", "--adaptive-grid-min-md", "--adaptive-grid-min-lg",
-] as const satisfies readonly ThemeVariableName[]
+const MOTION = ["--duration-fast", "--duration", "--ease", "--disabled-opacity"] as const satisfies readonly ThemeVariableName[]
+
+const SHELL = ["--sidebar-width", "--header-height", "--content-width"] as const satisfies readonly ThemeVariableName[]
 
 const DESCRIPTIONS: Partial<Record<ThemeVariableName, string>> = {
 	"--background": "The page's canvas.",
 	"--foreground": "Text and icons on the canvas.",
+	"--card": "Framed regions: cards, table frames, panels.",
+	"--popover": "Anchored popups, menus, palettes and toasts.",
+	"--muted": "Wells and placeholders.",
+	"--muted-foreground": "Supporting text: descriptions, metadata, hints.",
+	"--accent": "The one hover and current-item fill.",
+	"--border": "Every divider and frame.",
+	"--input": "The frame of a control.",
+	"--ring": "The focus outline.",
 	"--primary": "Brand and primary-action colour.",
 	"--primary-foreground": "Text and icons on a solid primary fill.",
-	"--muted": "Subdued backgrounds — passive regions, skeletons.",
-	"--muted-foreground": "Secondary text, metadata, and passive icons.",
-	"--border": "Dividers, outlines, and surface borders.",
-	"--ring": "The focus-visible ring.",
-	"--link-color": "Inline links and copyable values.",
-	"--overlay-backdrop": "The scrim behind dialogs, sheets, and drawers.",
-	"--primary-accent": "Brand colour as a FOREGROUND — icons, spinners, active marks.",
-	"--warning-accent": "Warning colour as a foreground on a tinted warning surface.",
-	"--radius": "The container corner — cards, dialogs, popovers, menus.",
-	"--radius-sm": "The inner corner — inputs, buttons, rows, chips, badges, tooltips.",
-	"--density-scale": "Multiplies spacing, controls, rows and everything density-sensitive; type follows --text-scale.",
-	"--height-control": "Base height for every control — buttons, inputs, selects, triggers.",
-	"--control-x": "Inline inset for actions and form controls.",
-	"--row-x": "Inline inset shared by collection, menu, command, and table rows.",
-	"--row-y": "Vertical inset shared by those same rows.",
-	"--surface-x": "Inline inset for cards, dialogs, panels, and content surfaces.",
-	"--surface-y": "Vertical inset for those same surfaces.",
-	"--icon": "Default interface icon size.",
-	"--avatar": "Default avatar size in ordinary rows and cards.",
-	"--shell-header-height": "Minimum application-header height.",
-	"--sidebar-width": "Expanded sidebar width, for Sidebar and every shell.",
-	"--content-width-lg": "The default readable measure used by Container.",
-	"--adaptive-grid-min-md": "Default minimum column width used by AdaptiveGrid.",
-}
-
-const LABELS: Partial<Record<ThemeVariableName, string>> = {
-	"--density-scale": "Density scale",
-	"--height-control": "Control height",
-	"--control-x": "Control horizontal padding",
-	"--row-x": "Row horizontal padding",
-	"--row-y": "Row vertical padding",
-	"--surface-x": "Surface horizontal padding",
-	"--surface-y": "Surface vertical padding",
-	"--icon": "Interface icon size",
-	"--avatar": "Default avatar size",
-	"--shell-header-height": "Header height",
-	"--sidebar-width": "Sidebar width",
-	"--content-width-sm": "Small content width",
-	"--content-width-md": "Medium content width",
-	"--content-width-lg": "Large content width",
-	"--content-width-xl": "Extra-large content width",
-	"--content-width-2xl": "Maximum content width",
-	"--adaptive-grid-min-sm": "Compact adaptive column",
-	"--adaptive-grid-min-md": "Default adaptive column",
-	"--adaptive-grid-min-lg": "Spacious adaptive column",
+	"--secondary": "The quiet solid fill.",
+	"--destructive": "Destructive actions and errors.",
+	"--link": "Inline links.",
+	"--overlay-backdrop": "The scrim behind dialogs, sheets and drawers.",
+	"--tint": "The soft fill a tone paints: a selected row, a soft badge, an alert's wash.",
+	"--tint-strong": "The line a tone paints: a tinted edge or rule.",
+	"--font-sans": "The interface font.",
+	"--font-heading": "Headings; the interface font when unset.",
+	"--font-mono": "Codes, identifiers and keys.",
+	"--text-scale": "Multiplies every type size, control labels included; geometry stays put.",
+	"--radius": "The container corner: cards, dialogs, popovers, menus.",
+	"--radius-sm": "The item corner: controls, rows, chips, badges, tooltips.",
+	"--radius-pill": "The round end of pills, switches and tracks.",
+	"--border-width": "Every hairline; marks and focus draw at twice it.",
+	"--shadow": "Raised: a framed card, a raised chip, a thumb.",
+	"--shadow-lg": "Floating: popovers, menus, dialogs, toasts.",
+	"--padding": "Container insets: cards, dialogs, sheets, popovers.",
+	"--padding-sm": "Item insets: rows, cells, chips, fields.",
+	"--gap": "Between groups: fields, cards, sections.",
+	"--gap-sm": "Inside a group: icon and label, title and description.",
+	"--control-height": "Buttons, fields, selects and triggers.",
+	"--control-height-sm": "The smaller control.",
+	"--icon-size": "Icons beside text and inside controls.",
+	"--icon-size-sm": "Icons in dense rows and chips.",
+	"--duration-fast": "State changes: hover, press, colour.",
+	"--duration": "Entrances: popups, dialogs, panels.",
+	"--ease": "The easing every transition shares.",
+	"--disabled-opacity": "How far a disabled control fades.",
+	"--sidebar-width": "The expanded sidebar, for Sidebar and every shell.",
+	"--header-height": "Every shell's top bar.",
+	"--content-width": "The readable page measure Container uses.",
 }
 
 /* Ranges within which the kit still looks like itself; other values go in the raw text box. */
 const RANGE_CONTROLS: Partial<Record<ThemeVariableName, ThemeTweakerRangeControl>> = {
 	"--radius": { type: "range", min: 0, max: 1.5, step: 0.0625, unit: "rem", decimalPlaces: 4 },
 	"--radius-sm": { type: "range", min: 0, max: 1, step: 0.0625, unit: "rem", decimalPlaces: 4 },
-	"--density-scale": { type: "range", min: 0.75, max: 1.35, step: 0.025, decimalPlaces: 3, fallback: 1 },
-	"--height-control": { type: "range", min: 1.5, max: 3.5, step: 0.0625, unit: "rem", decimalPlaces: 4 },
-	"--control-x": { type: "range", min: 0.25, max: 1.5, step: 0.0625, unit: "rem", decimalPlaces: 4 },
-	"--row-x": { type: "range", min: 0.25, max: 1.5, step: 0.0625, unit: "rem", decimalPlaces: 4 },
-	"--row-y": { type: "range", min: 0.25, max: 1.25, step: 0.0625, unit: "rem", decimalPlaces: 4 },
-	"--surface-x": { type: "range", min: 0.5, max: 2.5, step: 0.0625, unit: "rem", decimalPlaces: 4 },
-	"--surface-y": { type: "range", min: 0.5, max: 2.5, step: 0.0625, unit: "rem", decimalPlaces: 4 },
-	"--icon": { type: "range", min: 0.75, max: 2, step: 0.0625, unit: "rem", decimalPlaces: 4 },
-	"--avatar": { type: "range", min: 1.5, max: 4, step: 0.125, unit: "rem", decimalPlaces: 3 },
-	"--shell-header-height": { type: "range", min: 3, max: 7, step: 0.125, unit: "rem", decimalPlaces: 3 },
+	"--text-scale": { type: "range", min: 0.85, max: 1.3, step: 0.025, decimalPlaces: 3, fallback: 1 },
+	"--padding": { type: "range", min: 0.5, max: 2, step: 0.0625, unit: "rem", decimalPlaces: 4 },
+	"--padding-sm": { type: "range", min: 0.25, max: 1, step: 0.0625, unit: "rem", decimalPlaces: 4 },
+	"--gap": { type: "range", min: 0.5, max: 2, step: 0.0625, unit: "rem", decimalPlaces: 4 },
+	"--gap-sm": { type: "range", min: 0.25, max: 1, step: 0.0625, unit: "rem", decimalPlaces: 4 },
+	"--control-height": { type: "range", min: 1.75, max: 3, step: 0.0625, unit: "rem", decimalPlaces: 4 },
+	"--control-height-sm": { type: "range", min: 1.5, max: 2.5, step: 0.0625, unit: "rem", decimalPlaces: 4 },
+	"--icon-size": { type: "range", min: 0.75, max: 1.5, step: 0.0625, unit: "rem", decimalPlaces: 4 },
+	"--icon-size-sm": { type: "range", min: 0.5, max: 1, step: 0.0625, unit: "rem", decimalPlaces: 4 },
+	"--disabled-opacity": { type: "range", min: 0.3, max: 0.7, step: 0.05, decimalPlaces: 2, fallback: 0.5 },
 	"--sidebar-width": { type: "range", min: 12, max: 24, step: 0.25, unit: "rem", decimalPlaces: 2 },
-	"--content-width-sm": { type: "range", min: 20, max: 72, step: 1, unit: "rem", decimalPlaces: 0 },
-	"--content-width-md": { type: "range", min: 24, max: 80, step: 1, unit: "rem", decimalPlaces: 0 },
-	"--content-width-lg": { type: "range", min: 32, max: 96, step: 1, unit: "rem", decimalPlaces: 0 },
-	"--content-width-xl": { type: "range", min: 40, max: 108, step: 1, unit: "rem", decimalPlaces: 0 },
-	"--content-width-2xl": { type: "range", min: 48, max: 120, step: 1, unit: "rem", decimalPlaces: 0 },
-	"--adaptive-grid-min-sm": { type: "range", min: 8, max: 24, step: 0.5, unit: "rem", decimalPlaces: 1 },
-	"--adaptive-grid-min-md": { type: "range", min: 8, max: 32, step: 0.5, unit: "rem", decimalPlaces: 1 },
-	"--adaptive-grid-min-lg": { type: "range", min: 12, max: 40, step: 0.5, unit: "rem", decimalPlaces: 1 },
+	"--header-height": { type: "range", min: 3, max: 5, step: 0.125, unit: "rem", decimalPlaces: 3 },
+	"--content-width": { type: "range", min: 40, max: 96, step: 1, unit: "rem", decimalPlaces: 0 },
 }
 
-/** `--sidebar-primary-foreground` → "Sidebar Primary Foreground". */
+/** `--sidebar-accent-foreground` → "Sidebar Accent Foreground". */
 function labelFromName(name: ThemeVariableName): string {
 	return name
 		.replace(/^--/, "")
-		.replace(/--/g, " · ")
 		.split("-")
 		.map((part) =>
 			// Three letters or fewer is an abbreviation (XS, 2XL, PXS).
@@ -153,17 +138,12 @@ function labelFromName(name: ThemeVariableName): string {
 		.join(" ")
 }
 
-function genericDescription(name: ThemeVariableName, group: ThemeTweakerGroup): string {
+function genericDescription(name: ThemeVariableName): string {
 	if (name.startsWith("--chart-")) return "A categorical series colour. Keep status meaning out of it."
-	if (name.startsWith("--sidebar-")) return "A sidebar-specific colour."
-	if (name.startsWith("--inverse-")) return "An explicitly inverse surface or content colour."
-	if (name.endsWith("-foreground")) return "The foreground paired with the matching fill."
-	if (name.endsWith("--line-height")) return "Line height for the matching type step."
+	if (name.startsWith("--sidebar")) return "A sidebar colour."
+	if (name.endsWith("-foreground")) return "Text and icons on the matching fill."
 	if (name.startsWith("--text-")) return "Font size for the matching type step."
-	if (name.startsWith("--font-")) return "Font stack for the matching content role."
-	if (name.startsWith("--shadow")) return "An elevation step used by surfaces and overlays."
-	if (group === "states") return "A semantic state colour shared by every status surface."
-	return "A public theme variable used across the kit."
+	return "A theme variable the kit reads."
 }
 
 function fields(
@@ -175,8 +155,8 @@ function fields(
 ): ThemeTweakerField[] {
 	return names.map((name) => ({
 		name,
-		label: LABELS[name] ?? labelFromName(name),
-		description: DESCRIPTIONS[name] ?? genericDescription(name, group),
+		label: labelFromName(name),
+		description: DESCRIPTIONS[name] ?? genericDescription(name),
 		group,
 		section,
 		scope,
@@ -186,23 +166,21 @@ function fields(
 }
 
 export const defaultThemeTweakerFields: readonly ThemeTweakerField[] = [
-	...fields(THEME_COLORS.slice(0, 6), "colors", "surfaces-content", "mode", "color"),
-	...fields(SURFACE_COLORS, "colors", "surfaces-content", "shared", "color"),
-	...fields(THEME_COLORS.slice(6, 19), "colors", "brand-actions", "mode", "color"),
-	...fields(THEME_COLORS.slice(19, 24), "colors", "charts", "mode", "color"),
-	...fields(THEME_COLORS.slice(24), "colors", "sidebar", "mode", "color"),
-	...fields(STATE_COLORS.slice(0, 9), "states", "semantic-feedback", "mode", "color"),
-	...fields(STATE_COLORS.slice(9), "states", "inverse-surfaces", "mode", "color"),
+	...fields(SURFACE_COLORS, "colors", "surfaces-content", "mode", "color"),
+	...fields(SHARED_COLORS, "colors", "surfaces-content", "shared", "color"),
+	...fields(BRAND_COLORS, "colors", "brand-actions", "mode", "color"),
+	...fields(CHART_COLORS, "colors", "charts", "mode", "color"),
+	...fields(SIDEBAR_COLORS, "colors", "sidebar", "mode", "color"),
+	...fields(STATE_COLORS, "states", "semantic-feedback", "mode", "color"),
+	...fields(TINTS, "states", "tints", "shared", "length"),
 	...fields(FONT_VARIABLES, "typography", "font-families", "shared", "font"),
-	...fields(TYPOGRAPHY_VARIABLES, "typography", "type-scale", "shared", "length"),
-	...fields(["--radius", "--radius-sm"], "shape", "radius", "shared", "length"),
-	/* Elevation is mode-scoped: a shadow tuned for white smudges on near-black. */
-	...fields(SHADOW_VARIABLES, "shape", "elevation", "mode", "shadow"),
-	...fields(STRUCTURAL_VARIABLES.slice(0, 2), "structure", "global-scales", "shared", "number"),
-	...fields(STRUCTURAL_VARIABLES.slice(2, 5), "structure", "actions-controls", "shared", "length"),
-	...fields(STRUCTURAL_VARIABLES.slice(5, 9), "structure", "rows-surfaces", "shared", "length"),
-	...fields(STRUCTURAL_VARIABLES.slice(9, 11), "structure", "media", "shared", "length"),
-	...fields(STRUCTURAL_VARIABLES.slice(11), "structure", "application-shell", "shared", "length"),
-	...fields(LAYOUT_VARIABLES.slice(0, 5), "structure", "content-widths", "shared", "length"),
-	...fields(LAYOUT_VARIABLES.slice(5), "structure", "adaptive-layout", "shared", "length"),
+	...fields(TYPE_SCALE.slice(0, 1), "typography", "type-scale", "shared", "number"),
+	...fields(TYPE_SCALE.slice(1), "typography", "type-scale", "shared", "length"),
+	...fields(SHAPE, "shape", "radius", "shared", "length"),
+	...fields(ELEVATION, "shape", "elevation", "shared", "shadow"),
+	...fields(SPACING, "structure", "spacing", "shared", "length"),
+	...fields(CONTROLS, "structure", "controls", "shared", "length"),
+	...fields(MOTION.slice(0, 3), "structure", "motion", "shared", "length"),
+	...fields(MOTION.slice(3), "structure", "motion", "shared", "number"),
+	...fields(SHELL, "structure", "application-shell", "shared", "length"),
 ]

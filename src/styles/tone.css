@@ -1,0 +1,61 @@
+/*
+ * The tone rule. A component with a `tone` prop renders `data-tone`, and reads three
+ * variables instead of naming a colour:
+ *
+ *   --tone             the hue: a solid fill, a tint, a line
+ *   --tone-foreground  text and icons on a solid fill
+ *   --tone-ink         the hue as text or a glyph, on the page or on a tint
+ *
+ *   .soft  { background-color: color-mix(in oklab, var(--tone) var(--tint), transparent); color: var(--tone-ink); }
+ *   .solid { background-color: var(--tone); color: var(--tone-foreground); }
+ *
+ * The ink is the hue itself on a dark page. On a light one it mixes toward the text colour
+ * by as much as the hue needs to hold contrast: none for most, more for red, most for amber,
+ * which is light. Secondary's ink is the text colour. In `base`, so a component's own rule
+ * outranks it.
+ */
+@layer base {
+	/* Each toned element restates its share, so a chip nested in a warning one does not inherit 45%. */
+	:is([data-tone], [data-ref-tone]) {
+		--_tone-ink: 100%;
+		--tone-ink: color-mix(in oklab, var(--tone) var(--_tone-ink), light-dark(var(--foreground), var(--tone)));
+	}
+
+	:is([data-tone="neutral"], [data-ref-tone="neutral"]) {
+		--tone: var(--foreground);
+		--tone-foreground: var(--background);
+	}
+
+	:is([data-tone="primary"], [data-ref-tone="primary"]) {
+		--tone: var(--primary);
+		--tone-foreground: var(--primary-foreground);
+	}
+
+	:is([data-tone="secondary"], [data-ref-tone="secondary"]) {
+		--tone: var(--muted-foreground);
+		--tone-foreground: var(--background);
+		--tone-ink: var(--foreground);
+	}
+
+	:is([data-tone="info"], [data-ref-tone="info"]) {
+		--tone: var(--info);
+		--tone-foreground: var(--info-foreground);
+	}
+
+	:is([data-tone="success"], [data-ref-tone="success"]) {
+		--tone: var(--success);
+		--tone-foreground: var(--success-foreground);
+	}
+
+	:is([data-tone="warning"], [data-ref-tone="warning"]) {
+		--tone: var(--warning);
+		--tone-foreground: var(--warning-foreground);
+		--_tone-ink: 45%;
+	}
+
+	:is([data-tone="destructive"], [data-ref-tone="destructive"]) {
+		--tone: var(--destructive);
+		--tone-foreground: var(--destructive-foreground);
+		--_tone-ink: 85%;
+	}
+}

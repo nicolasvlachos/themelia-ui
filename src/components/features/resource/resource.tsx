@@ -112,7 +112,6 @@ export function ResourceActionBar({
 		>
 			<Stack
 				direction={{ base: "vertical", sm: "horizontal" }}
-				gap="lg"
 				align={{ sm: "center" }}
 				justify={{ sm: "between" }}
 				wrap={{ sm: false }}
@@ -120,7 +119,7 @@ export function ResourceActionBar({
 				<Stack
 					data-slot="resource-action-leading"
 					direction="horizontal"
-					gap="md"
+					gap="sm"
 					align="center"
 					wrap
 					className={styles.actionBarLeading}
@@ -131,7 +130,7 @@ export function ResourceActionBar({
 					<Stack
 						data-slot="resource-action-trailing"
 						direction="horizontal"
-						gap="md"
+						gap="sm"
 						align="center"
 						className={styles.actionBarTrailing}
 					>
@@ -237,7 +236,7 @@ function ResourceShellFrame({
 				data-has-aside={slots?.aside ? "" : undefined}
 				className={styles.layout}
 			>
-				<Stack gap="xl" className={styles.primary}>
+				<Stack className={styles.primary}>
 					{!!header && (
 						<div data-slot={`resource-${variant}-header`}>{header}</div>
 					)}
@@ -290,7 +289,7 @@ export function TabbedResourceShell({
 	const copy = { ...defaultResourceStrings, ...strings }
 
 	const toolbarNode = (
-		<Stack gap="lg" data-slot="tabbed-resource-toolbar">
+		<Stack data-slot="tabbed-resource-toolbar">
 			<OverflowTabBar
 				items={tabs}
 				value={activeTab}
@@ -321,7 +320,7 @@ export function ResourceDetailsSection({
 	help,
 	children,
 	footer,
-	padding = "md",
+	padding = "default",
 	surface = "bordered",
 	className,
 	contentClassName,
@@ -340,7 +339,7 @@ export function ResourceDetailsSection({
 					<MetadataList
 						items={metadata}
 						columns={metadataColumns}
-						density={metadataDense ? "compact" : "default"}
+						size={metadataDense ? "sm" : "default"}
 					/>
 				)}
 				{body}

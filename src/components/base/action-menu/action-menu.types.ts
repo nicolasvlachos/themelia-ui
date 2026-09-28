@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from "react"
 
-import type { ButtonStyle, ButtonTone } from "@/components/base/buttons"
+import type { ButtonAppearance, ButtonTone } from "@/components/base/buttons"
 
 /** A Lucide icon, any component taking a className, or an already-rendered node. */
 export type ActionIcon = ComponentType<{ className?: string }> | ReactNode
@@ -47,7 +47,7 @@ export interface ActionDefinition {
 	/** Semantic intent. `destructive` also moves the entry last and separates it. */
 	tone?: ButtonTone
 	/** Treatment when the action renders as a button. `link` is a ghost that underlines. */
-	buttonStyle?: ButtonStyle | "link"
+	appearance?: ButtonAppearance | "link"
 	/**
 	 * `false` omits the action entirely.
 	 * @default true

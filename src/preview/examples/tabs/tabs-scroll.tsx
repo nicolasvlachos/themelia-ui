@@ -10,7 +10,7 @@ export default function TabsScroll() {
 	return (
 		<>
 			<Switch checked={edgeFade} onChange={event => setEdgeFade(event.target.checked)} label="Fade overflowing edges" />
-			<Stack maxWidth="22rem">
+			<Stack gap="sm" maxWidth="22rem">
 				<Tabs defaultValue="overview">
 					<TabList label="Scrollable sections" variant="enclosed" edgeFade={edgeFade}>
 						{["Overview", "Activity", "Settings", "Billing", "Members", "Integrations", "Audit log"].map(label => <Tab key={label} value={label.toLowerCase()}>{label}</Tab>)}

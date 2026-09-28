@@ -17,7 +17,7 @@ const FORBIDDEN = [
   [/from\s+["']@\//, 'a source alias — a consumer has no `@/`'],
   [/from\s+["'][^"']*\/src\//, 'a path into this repository'],
   [/["']themelia-ui\/style\.css["']/, 'the full catalogue stylesheet, which defeats exact CSS'],
-  [/["']themelia-ui\/(base|features|patterns|layout|admin)["']/, 'a broad barrel that is not published'],
+  [/["']themelia-ui\/(base|features|blocks|layout)["']/, 'a broad barrel that is not published'],
 ]
 
 /** Every `themelia-ui/...` specifier in a source tree. */

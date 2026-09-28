@@ -12,7 +12,7 @@ export default function AsyncPreviewStates() {
 	const failedOnce = useRef(false)
 
 	return (
-		<Stack direction="horizontal" gap="xl" wrap>
+		<Stack direction="horizontal" wrap>
 			<AsyncPreview.Root<Customer, null, "slow">
 				type="slow"
 				context={null}
@@ -69,7 +69,7 @@ export default function AsyncPreviewStates() {
 								<Text size="xs" type="secondary">
 									{(state.error as Error).message}
 								</Text>
-								<Button tone="neutral" buttonStyle="outline" onClick={state.refresh}>
+								<Button tone="neutral" appearance="outline" onClick={state.refresh}>
 									Try again
 								</Button>
 							</>

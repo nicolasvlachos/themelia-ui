@@ -107,7 +107,7 @@ export function Panel({
 
 				{/* embedded in a docs page, so the page's own <main> stays the only one */}
 				<SidebarInset render={<div />}>
-					<Stack gap="md" style={{ padding: "var(--space-xl)" }}>
+					<Stack gap="sm" style={{ padding: "var(--padding)" }}>
 						<SidebarTrigger />
 						<Text size="xs" type="secondary">
 							SidebarInset renders the page beside the panel — as a real{" "}

@@ -6,7 +6,7 @@ import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function MoneyProviderExample() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<UIProvider
 				config={{
 					formatting: { locale: "de-DE" },

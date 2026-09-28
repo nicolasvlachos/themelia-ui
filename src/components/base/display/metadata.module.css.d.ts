@@ -20,6 +20,5 @@ declare const styles: {
 	readonly title: string
 	readonly titleSeparator: string
 	readonly tooltip: string
-	readonly value: string
 }
 export default styles

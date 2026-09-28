@@ -9,7 +9,7 @@ import {
 } from "lucide-react"
 
 import { Textarea } from "@/components/base/text-inputs"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import {
@@ -148,12 +148,13 @@ export function RichTextEditor({
 		setSourceDraft({ raw: next, html: read() })
 	}, [read, write])
 
+	/* The floors (a page's editor, a compact box) are the stylesheet's; the props replace them inline. */
 	const bodyStyle = useMemo(
 		() => ({
-			minHeight: minHeight ?? (compact ? "var(--editor-min-h-compact)" : "var(--editor-min-h)"),
+			...(minHeight ? { minHeight } : {}),
 			...(maxHeight ? { maxHeight, overflowY: "auto" as const } : {}),
 		}),
-		[compact, maxHeight, minHeight],
+		[maxHeight, minHeight],
 	)
 
 	/* Both derived from the controlled `value`, not read from the DOM during render. */
@@ -185,7 +186,7 @@ export function RichTextEditor({
 					onChange={handleSourceChange}
 					disabled={disabled}
 					spellCheck={false}
-					className={styles.source}
+					className={cx(styles.source, textClassName({ mono: true }))}
 					style={bodyStyle}
 				/>
 			)}

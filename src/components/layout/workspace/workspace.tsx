@@ -107,7 +107,7 @@ export function WorkspaceRecordHeader({
 				metadata?.length ? (
 					<MetadataList
 						layout="inline"
-						density="compact"
+						size="sm"
 						itemSeparator
 						aria-label={copy.metadata}
 						className={styles.metadata}

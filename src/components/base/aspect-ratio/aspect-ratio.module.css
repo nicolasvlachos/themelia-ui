@@ -1,17 +1,18 @@
 /*
- * The ratio box. The direct child fills it (media also takes the fit). Breakpoint
- * variables reset to `initial`, as in `Stack`, so nested boxes don't inherit a parent's ratio.
+ * The ratio box. The direct child fills it (media also takes the fit). The ratio arrives as
+ * private per-breakpoint variables (aspect-ratio.tsx), reset to `initial` here, as in
+ * `Stack`, so nested boxes don't inherit a parent's ratio.
  */
 .root {
-	--aspect-ratio-base: initial;
-	--aspect-ratio-sm: initial;
-	--aspect-ratio-md: initial;
-	--aspect-ratio-lg: initial;
-	--aspect-ratio-xl: initial;
-	--aspect-ratio-2xl: initial;
+	--_aspect-ratio-base: initial;
+	--_aspect-ratio-sm: initial;
+	--_aspect-ratio-md: initial;
+	--_aspect-ratio-lg: initial;
+	--_aspect-ratio-xl: initial;
+	--_aspect-ratio-2xl: initial;
 	position: relative;
 	width: 100%;
-	aspect-ratio: var(--aspect-ratio-base, 1);
+	aspect-ratio: var(--_aspect-ratio-base, 1);
 	overflow: hidden;
 }
 
@@ -37,30 +38,30 @@
 
 @media (--bp-sm) {
 	.root {
-		aspect-ratio: var(--aspect-ratio-sm, var(--aspect-ratio-base, 1));
+		aspect-ratio: var(--_aspect-ratio-sm, var(--_aspect-ratio-base, 1));
 	}
 }
 
 @media (--bp-md) {
 	.root {
-		aspect-ratio: var(--aspect-ratio-md, var(--aspect-ratio-sm, var(--aspect-ratio-base, 1)));
+		aspect-ratio: var(--_aspect-ratio-md, var(--_aspect-ratio-sm, var(--_aspect-ratio-base, 1)));
 	}
 }
 
 @media (--bp-lg) {
 	.root {
-		aspect-ratio: var(--aspect-ratio-lg, var(--aspect-ratio-md, var(--aspect-ratio-sm, var(--aspect-ratio-base, 1))));
+		aspect-ratio: var(--_aspect-ratio-lg, var(--_aspect-ratio-md, var(--_aspect-ratio-sm, var(--_aspect-ratio-base, 1))));
 	}
 }
 
 @media (--bp-xl) {
 	.root {
-		aspect-ratio: var(--aspect-ratio-xl, var(--aspect-ratio-lg, var(--aspect-ratio-md, var(--aspect-ratio-sm, var(--aspect-ratio-base, 1)))));
+		aspect-ratio: var(--_aspect-ratio-xl, var(--_aspect-ratio-lg, var(--_aspect-ratio-md, var(--_aspect-ratio-sm, var(--_aspect-ratio-base, 1)))));
 	}
 }
 
 @media (--bp-2xl) {
 	.root {
-		aspect-ratio: var(--aspect-ratio-2xl, var(--aspect-ratio-xl, var(--aspect-ratio-lg, var(--aspect-ratio-md, var(--aspect-ratio-sm, var(--aspect-ratio-base, 1))))));
+		aspect-ratio: var(--_aspect-ratio-2xl, var(--_aspect-ratio-xl, var(--_aspect-ratio-lg, var(--_aspect-ratio-md, var(--_aspect-ratio-sm, var(--_aspect-ratio-base, 1))))));
 	}
 }

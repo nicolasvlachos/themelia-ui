@@ -4,6 +4,7 @@
  */
 import * as React from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import type { StringsProp } from "@/lib/strings"
 
@@ -77,22 +78,29 @@ export function SectionNav({
 			className={cx("section-nav--component", styles.sectionNav, className)}
 			{...props}
 		>
-			{items.map((item) => (
-				<a
-					key={item.id}
-					href={`#${item.id}`}
-					/*
-					 * `aria-current="true"`, not `"page"` — these are locations within the
-					 * current page, and claiming each is a page would be a lie to a screen
-					 * reader about where the reader is.
-					 */
-					aria-current={item.id === activeId ? "true" : undefined}
-					className={cx(styles.sectionItem, (item.depth ?? 1) > 1 && styles.sectionItemNested)}
-					onClick={() => onSelect?.(item.id)}
-				>
-					{item.label}
-				</a>
-			))}
+			{items.map((item) => {
+				const current = item.id === activeId
+				return (
+					<a
+						key={item.id}
+						href={`#${item.id}`}
+						/*
+						 * `aria-current="true"`, not `"page"` — these are locations within the
+						 * current page, and claiming each is a page would be a lie to a screen
+						 * reader about where the reader is.
+						 */
+						aria-current={current ? "true" : undefined}
+						className={cx(
+							styles.sectionItem,
+							(item.depth ?? 1) > 1 && styles.sectionItemNested,
+							textClassName({ size: "sm", weight: current ? "medium" : "normal" }),
+						)}
+						onClick={() => onSelect?.(item.id)}
+					>
+						{item.label}
+					</a>
+				)
+			})}
 		</nav>
 	)
 }

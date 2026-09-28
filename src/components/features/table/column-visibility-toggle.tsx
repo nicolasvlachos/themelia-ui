@@ -47,7 +47,7 @@ export function ColumnVisibilityToggle<TData extends RowData>({
 			preserveOrder
 			buttonProps={{
 				tone: "neutral",
-				buttonStyle: "ghost",
+				appearance: "ghost",
 				iconOnly: labelVisibility === "hidden",
 				...buttonProps,
 				className: cx("column-visibility-toggle--component", buttonProps?.className, className),

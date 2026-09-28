@@ -5,6 +5,7 @@
  */
 import type { ReactNode, Ref } from "react"
 
+import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import {
 	useFormatting, useMoneyConfig,
@@ -210,26 +211,34 @@ export function Money({
 	)
 	const resolvedLayout = layout ?? money.layout
 	const emphasis = secondaryEmphasis
+	/* `match` sets the second amount at the first's size and ink; `discrete` and `muted` a step quieter. */
+	const match = emphasis === "match"
 
 	return (
 		<ValueRoot
 			hook="money"
 			numeric
 			align={align}
+			lineHeight={resolvedLayout === "stacked" ? "tight" : undefined}
 			data-layout={resolvedLayout}
 			className={cx(styles.pair, resolvedLayout === "stacked" && styles.stacked, className)}
 			{...props}
 		>
-			<span className={styles.primary}>{primaryLabel}</span>
+			<span>{primaryLabel}</span>
 			{resolvedLayout === "inline" && (
 				/* Punctuation for the eye only; not read aloud. */
 				<span className={styles.separator} aria-hidden>
 					{separator}
 				</span>
 			)}
-			<span className={styles.secondary} data-emphasis={emphasis}>
+			<Text
+				tag="span"
+				size={match ? "inherit" : "xs"}
+				type={match ? "inherit" : "secondary"}
+				data-emphasis={emphasis}
+			>
 				{secondaryLabel}
-			</span>
+			</Text>
 		</ValueRoot>
 	)
 }

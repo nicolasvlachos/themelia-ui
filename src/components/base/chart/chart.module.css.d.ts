@@ -8,9 +8,7 @@ declare const styles: {
 	readonly legendItem: string
 	readonly sparkline: string
 	readonly tooltip: string
-	readonly tooltipLabel: string
 	readonly tooltipName: string
 	readonly tooltipRow: string
-	readonly tooltipValue: string
 }
 export default styles

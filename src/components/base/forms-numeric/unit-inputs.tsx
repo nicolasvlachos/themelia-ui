@@ -5,6 +5,7 @@
 import { Fragment, forwardRef, useCallback, useId, useMemo, useState } from "react"
 
 import { Select } from "@/components/base/choice-inputs"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { DecimalInput } from "./decimal-input"
@@ -301,7 +302,7 @@ export const DimensionsInput = forwardRef<HTMLDivElement, DimensionsInputProps>(
 						)}
 						<div className={styles.field}>
 							{/* A real label: clicking the caption focuses its box. */}
-							<label id={`${base}-${axis}-caption`} htmlFor={index === 0 && id ? id : `${base}-${axis}`} className={styles.subLabel}>
+							<label id={`${base}-${axis}-caption`} htmlFor={index === 0 && id ? id : `${base}-${axis}`} className={textClassName({ size: "xs", type: "secondary" })}>
 								{copy[axis]}
 							</label>
 							<DecimalInput
@@ -319,8 +320,8 @@ export const DimensionsInput = forwardRef<HTMLDivElement, DimensionsInputProps>(
 					</Fragment>
 				))}
 				{showUnitSelector && (
-					<div className={styles.field} style={{ flex: "0 0 auto", width: "var(--numeric-unit-w)" }}>
-						<span className={styles.subLabel}>{copy.unit}</span>
+					<div className={cx(styles.field, styles.unitField)}>
+						<span className={textClassName({ size: "xs", type: "secondary" })}>{copy.unit}</span>
 						<Select
 							options={options}
 							value={resolvedUnit}
@@ -398,7 +399,7 @@ export const CoordinatesInput = forwardRef<HTMLDivElement, CoordinatesInputProps
 			<div ref={ref} className={cx("coordinates-input--component", styles.row, className)}>
 				{/* Latitude ±90, longitude ±180 — distinct bounds on purpose. */}
 				<div className={styles.field}>
-					<label id={`${base}-latitude-caption`} htmlFor={id ?? `${base}-latitude`} className={styles.subLabel}>
+					<label id={`${base}-latitude-caption`} htmlFor={id ?? `${base}-latitude`} className={textClassName({ size: "xs", type: "secondary" })}>
 						{copy.latitude}
 					</label>
 					<DecimalInput
@@ -413,7 +414,7 @@ export const CoordinatesInput = forwardRef<HTMLDivElement, CoordinatesInputProps
 					/>
 				</div>
 				<div className={styles.field}>
-					<label id={`${base}-longitude-caption`} htmlFor={`${base}-longitude`} className={styles.subLabel}>
+					<label id={`${base}-longitude-caption`} htmlFor={`${base}-longitude`} className={textClassName({ size: "xs", type: "secondary" })}>
 						{copy.longitude}
 					</label>
 					<DecimalInput

@@ -15,7 +15,7 @@ export default function Output() {
 
 	return (
 		<>
-			<Stack gap="lg">
+			<Stack>
 				<AiArtifact
 					title="totals.ts"
 					subtitle="TypeScript · 11 lines"
@@ -36,7 +36,7 @@ export default function Output() {
 				<AiSources sources={SOURCES} defaultExpanded />
 				<AiSources sources={SOURCES} variant="avatars" />
 
-				<Stack direction="horizontal" gap="md" wrap>
+				<Stack direction="horizontal" gap="sm" wrap>
 					{attachments.map((attachment) => (
 						<AiAttachment
 							key={attachment.id}

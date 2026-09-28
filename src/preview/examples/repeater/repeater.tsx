@@ -23,7 +23,7 @@ export default function RepeaterExample() {
 		})
 
 	return (
-		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack gap="sm" style={{ maxWidth: "34rem", width: "100%" }}>
 			<FormField htmlFor={false} label="Contacts" helperText="Drag a handle, or focus it and press ↑ / ↓.">
 				<Repeater
 					items={contacts}
@@ -40,7 +40,7 @@ export default function RepeaterExample() {
 					onMove={move}
 				>
 					{(contact, { index }) => (
-						<Stack direction="horizontal" gap="md" style={{ width: "100%" }}>
+						<Stack direction="horizontal" gap="sm" style={{ width: "100%" }}>
 							<Input
 								value={contact.name}
 								aria-label="Name"

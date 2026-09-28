@@ -10,9 +10,9 @@ import { Input } from "themelia-ui/base/text-inputs"
 
 export default function Sheet() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Open sheet
 				</OverlayTrigger>
 				<SheetContent side="inline-end">
@@ -21,7 +21,7 @@ export default function Sheet() {
 						<OverlayDescription>Native top layer — the list behind stays in view and cannot clip it.</OverlayDescription>
 					</OverlayHeader>
 					<OverlayBody>
-						<Stack gap="md">
+						<Stack gap="sm">
 							<FormField label="Venue">
 								<Input defaultValue="Marlow Hall" />
 							</FormField>
@@ -31,7 +31,7 @@ export default function Sheet() {
 						</Stack>
 					</OverlayBody>
 					<OverlayFooter>
-						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+						<OverlayClose render={<Button tone="neutral" appearance="outline" />}>
 							Cancel
 						</OverlayClose>
 						<OverlayClose render={<Button />}>

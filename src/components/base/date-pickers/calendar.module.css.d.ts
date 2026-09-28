@@ -6,7 +6,6 @@ declare const styles: {
 	readonly body: string
 	readonly calendar: string
 	readonly caption: string
-	readonly captionRange: string
 	readonly cell: string
 	readonly day: string
 	readonly grid: string

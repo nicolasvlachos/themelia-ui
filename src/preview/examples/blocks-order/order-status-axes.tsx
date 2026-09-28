@@ -1,9 +1,9 @@
-import { OrderHeader } from "themelia-ui/admin/patterns/commerce"
+import { OrderHeader } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 export default function OrderStatusAxes() {
 	return (
-		<Stack gap="xl">
+		<Stack>
 			<OrderHeader
 				orderNumber="1036"
 				paymentStatus="refunded"

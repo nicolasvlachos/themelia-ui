@@ -13,7 +13,6 @@ declare const styles: {
 	readonly root: string
 	readonly shell: string
 	readonly shellAlignStart: string
-	readonly sizeLg: string
 	readonly sizeSm: string
 	readonly split: string
 	readonly splitContainer: string

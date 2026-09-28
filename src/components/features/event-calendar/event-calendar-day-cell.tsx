@@ -9,7 +9,7 @@ import { cx } from "@/lib/cx"
 
 import { EventCalendarEventBadge } from "./event-calendar-event-badge"
 import { defaultEventCalendarStrings } from "./event-calendar.strings"
-import { resolveCategoryColorToken, type EventCalendarDayCellProps } from "./event-calendar.types"
+import { resolveCategoryTone, type EventCalendarDayCellProps } from "./event-calendar.types"
 import { getCategoryById } from "./use-event-calendar-data"
 import styles from "./event-calendar.module.css"
 
@@ -34,12 +34,12 @@ export function EventCalendarDayCell({
 	const shown = events.slice(0, maxEvents)
 	const remaining = Math.max(0, eventCount - maxEvents)
 
-	/* Overflow dots show the hidden events' categories. */
-	const overflowTokens = [
+	/* Overflow dots show the hidden events' categories, one per tone. */
+	const overflowTones = [
 		...new Set(
 			events
 				.slice(maxEvents)
-				.map((event) => resolveCategoryColorToken(getCategoryById(categories, event.category))),
+				.map((event) => resolveCategoryTone(getCategoryById(categories, event.category))),
 		),
 	].slice(0, 3)
 
@@ -85,8 +85,8 @@ export function EventCalendarDayCell({
 				{remaining > 0 && (
 					<div data-slot="event-calendar-overflow" className={styles.overflow}>
 						<span aria-hidden className={styles.overflowDots}>
-							{overflowTokens.map((token) => (
-								<span key={token} data-token={token} className={styles.dot} />
+							{overflowTones.map((tone) => (
+								<span key={tone} data-tone={tone} className={styles.dot} />
 							))}
 						</span>
 						<VisuallyHidden>{copy.moreEvents(remaining)}</VisuallyHidden>

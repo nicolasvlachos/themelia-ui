@@ -7,7 +7,7 @@ export default function UploadTrayExample() {
 	const items = QUEUE
 
 	return (
-		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack gap="sm" style={{ maxWidth: "34rem", width: "100%" }}>
 			<UploadTray
 				items={items}
 				onAddFiles={() => {}}

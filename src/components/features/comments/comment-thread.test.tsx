@@ -125,7 +125,7 @@ describe("body clamp", () => {
 	})
 })
 
-describe("attachments fold", () => {
+describe("attachments", () => {
 	const files = (count: number) =>
 		Array.from({ length: count }, (_, index) => ({ id: `a${index}`, name: `file-${index}.pdf`, url: "#" }))
 
@@ -137,6 +137,12 @@ describe("attachments fold", () => {
 		fireEvent.click(more)
 		expect(screen.getAllByText(/file-\d\.pdf/)).toHaveLength(5)
 		expect(screen.getByRole("button", { name: "Show fewer" })).toHaveAttribute("aria-expanded", "true")
+	})
+
+	it("names each file's link by its file, so the links can be told apart", () => {
+		render(<CommentItem comment={{ ...root, attachments: files(2) }} />)
+		expect(screen.getByRole("link", { name: /file-0\.pdf/ })).toBeInTheDocument()
+		expect(screen.getByRole("link", { name: /file-1\.pdf/ })).toBeInTheDocument()
 	})
 
 	it("never folds a single file away", () => {

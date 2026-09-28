@@ -1,5 +1,5 @@
 /**
- * ActivityRow — one entry on the rail. Density changes how much is drawn, not the data.
+ * ActivityRow — one entry on the rail. The variant changes how much is drawn, not the data.
  *
  * `onActivityClick` makes the row a keyboard `button` only when nothing inside it is
  * focusable; otherwise it stays a pointer affordance so nested controls remain reachable.
@@ -19,7 +19,7 @@ import {
 import { defaultActivitiesStrings } from "./activities.strings"
 import { ActivityHeadline } from "./activity-headline"
 import type {
-	ActivityAction, ActivityActor, ActivityDensity, ActivityEventConfig, ActivityItem,
+	ActivityAction, ActivityActor, ActivityVariant, ActivityEventConfig, ActivityItem,
 	ActivityItemSpacing, ActivityResourceConfig, ActivityResourceRef, ActivityTone,
 } from "./activities.types"
 import styles from "./activities.module.css"
@@ -29,7 +29,7 @@ const METADATA_PREVIEW = 3
 
 export interface ActivityRowProps<TData = unknown> {
 	activity: ActivityItem<TData>
-	density: ActivityDensity
+	variant: ActivityVariant
 	itemSpacing: ActivityItemSpacing
 	eventConfig: ActivityEventConfig
 	tone: ActivityTone
@@ -82,7 +82,7 @@ function MetadataPreview({
 		<div className={styles.metaPreview}>
 			<MetadataList
 				layout="inline"
-				density="compact"
+				size="sm"
 				itemSeparator
 				items={visible.map((entry) => ({ id: entry.label, label: entry.label, value: entry.value }))}
 			/>
@@ -100,7 +100,7 @@ function MetadataGrid({ metadata }: { metadata: NonNullable<ActivityItem["metada
 	return (
 		<MetadataList
 			columns={{ base: 2 }}
-			density="compact"
+			size="sm"
 			className={styles.metaGrid}
 			items={metadata.map((entry) => ({
 				id: entry.label,
@@ -112,13 +112,13 @@ function MetadataGrid({ metadata }: { metadata: NonNullable<ActivityItem["metada
 }
 
 /**
- * One entry on the rail. Density changes the marker size and the row rhythm together —
+ * One entry on the rail. The variant changes the marker size and the row rhythm together —
  * changing one without the other is what makes a compact feed look mis-aligned rather than
  * dense.
  */
 export function ActivityRow<TData = unknown>({
 	activity,
-	density,
+	variant,
 	itemSpacing,
 	eventConfig,
 	tone,
@@ -164,7 +164,7 @@ export function ActivityRow<TData = unknown>({
 	const hasPanel = hasMetadata || hasChanges || hasDetails || hasCustomDetails || hasResources
 	const hasDescription = activity.description !== undefined && activity.description !== null && activity.description !== ""
 
-	const rich = density === "rich"
+	const rich = variant === "rich"
 	/* Collapsible by default only for metadata/changes; a lone details node is the point of the row. */
 	const collapsible = detailsCollapsible ?? (hasMetadata || hasChanges || hasResources)
 	const showPanel = rich && hasPanel && (!collapsible || expanded)
@@ -197,7 +197,7 @@ export function ActivityRow<TData = unknown>({
 	return (
 		<div
 			data-slot="activity-row"
-			data-activity-density={density}
+			data-variant={variant}
 			data-spacing={itemSpacing}
 			data-last={last || undefined}
 			data-interactive={interactive || undefined}
@@ -219,7 +219,7 @@ export function ActivityRow<TData = unknown>({
 				<ActivityMarker
 					icon={<Icon />}
 					tone={tone}
-					density={density}
+					variant={variant}
 					last={last}
 					className={markerClassName}
 				/>
@@ -267,7 +267,7 @@ export function ActivityRow<TData = unknown>({
 				</div>
 
 				{/* A compact row is one line by definition, so the description is dropped. */}
-				{density !== "compact" && hasDescription && (
+				{variant !== "compact" && hasDescription && (
 					<Text tag="div" type="secondary" lineHeight="relaxed" className={styles.description}>
 						{activity.description}
 					</Text>
@@ -339,7 +339,7 @@ export function ActivityRow<TData = unknown>({
 											key={action.id}
 											type="button"
 											tone={action.tone === "destructive" ? "destructive" : "neutral"}
-											buttonStyle="ghost"
+											appearance="ghost"
 											disabled={action.disabled}
 											onClick={(event) => {
 												event.stopPropagation()

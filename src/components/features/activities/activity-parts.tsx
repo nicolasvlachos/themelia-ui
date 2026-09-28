@@ -12,7 +12,7 @@ import { DisplayLabel, Text, TextLink } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import type {
-	ActivityAction, ActivityChange, ActivityDensity, ActivityItem,
+	ActivityAction, ActivityChange, ActivityVariant, ActivityItem,
 	ActivityResourceConfig, ActivityResourceRef, ActivityTone,
 } from "./activities.types"
 import styles from "./activities.module.css"
@@ -22,7 +22,7 @@ import styles from "./activities.module.css"
 export interface ActivityMarkerProps {
 	icon: ReactNode
 	tone: ActivityTone
-	density: ActivityDensity
+	variant: ActivityVariant
 	/** The rail stops at the last row rather than running into nothing. */
 	last: boolean
 	className?: string
@@ -32,15 +32,15 @@ export interface ActivityMarkerProps {
  * The dot on the rail. It knows whether it is last, because the connector below it is what
  * tells a reader the run has ended.
  */
-export function ActivityMarker({ icon, tone, density, last, className }: ActivityMarkerProps) {
+export function ActivityMarker({ icon, tone, variant, last, className }: ActivityMarkerProps) {
 	return (
 		<div
 			data-slot="activity-marker"
 			data-tone={tone}
-			data-activity-density={density}
+			data-variant={variant}
 			className={cx("activity-marker--component", styles.marker, className)}
 		>
-			{density === "compact" ? (
+			{variant === "compact" ? (
 				// A dot: an audit trail read by scanning does not need an icon per row.
 				<span aria-hidden className={styles.markerDot} />
 			) : (
@@ -90,7 +90,7 @@ function ChangeValue({ change }: { change: ActivityChange }) {
 	return (
 		<span className={styles.changeValues}>
 			{hasOld && (
-				<Text tag="span" size="inherit" type="inherit" className={styles.changeOld}>
+				<Text tag="span" size="inherit" type="inherit" data-tone="destructive" className={styles.changeOld}>
 					{change.old}
 				</Text>
 			)}
@@ -101,7 +101,7 @@ function ChangeValue({ change }: { change: ActivityChange }) {
 				</Text>
 			)}
 			{hasNew && (
-				<Text tag="span" size="inherit" type="inherit" className={styles.changeNew}>
+				<Text tag="span" size="inherit" type="inherit" data-tone="success" className={styles.changeNew}>
 					{change.new}
 				</Text>
 			)}
@@ -127,7 +127,7 @@ export function ActivityChanges({
 	return (
 		<MetadataList
 			layout="rows"
-			density="compact"
+			size="sm"
 			className={cx("activity-changes--component", !bare && styles.changes, className)}
 			items={changes.map(change => ({
 				id: change.key,
@@ -250,7 +250,7 @@ export function ActivityActionsMenu<TData = unknown>({
 			actions={definitions}
 			strings={{ trigger: label }}
 			align="end"
-			buttonProps={{ iconOnly: true, buttonStyle: "ghost", tone: "neutral" }}
+			buttonProps={{ iconOnly: true, appearance: "ghost", tone: "neutral" }}
 		/>
 	)
 }
@@ -316,7 +316,6 @@ export function ActivityEmptyState({
 }: ActivityEmptyStateProps) {
 	return (
 		<Empty
-			padding="md"
 			title={title}
 			description={hint ?? false}
 			media={<ActivityIcon />}

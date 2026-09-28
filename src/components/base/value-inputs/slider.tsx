@@ -33,15 +33,10 @@ export interface SliderFieldProps<TValue extends number | number[] = number | nu
 	/** Applies the invalid treatment. The message stays on the FormField. */
 	invalid?: boolean
 	/**
-	 * The track's direction. A vertical slider takes its height from
-	 * `--slider-vertical-min-h`, because a slider has no content to size it.
+	 * The track's direction. A vertical slider takes its height from its container, with a
+	 * 10rem floor, because a slider has no content to size it.
 	 */
 	orientation?: "horizontal" | "vertical"
-	/**
-	 * Track and thumb size: `md` is a larger drag target (touch, media controls). A slider is
-	 * dragged, which is why this one keeps a size prop.
-	 */
-	size?: "sm" | "md"
 
 	/** Native-shaped handler, for form libraries. */
 	onChange?: (event: SliderChangeEvent<TValue extends number ? number : TValue>) => void
@@ -91,7 +86,6 @@ export const SliderField = forwardRef(function SliderField<TValue extends number
 		disabled = false,
 		invalid = false,
 		orientation = "horizontal",
-		size = "sm",
 		onChange,
 		onValueChange,
 		onValueCommitted,
@@ -127,8 +121,7 @@ export const SliderField = forwardRef(function SliderField<TValue extends number
 	return (
 		<FieldPrimitive.Root
 			invalid={invalid || (ariaInvalid !== undefined && ariaInvalid !== false && ariaInvalid !== "false")}
-			data-size={size}
-			className={cx("slider--component", styles.sliderRoot, size === "md" && styles.sliderMd, className)}
+			className={cx("slider--component", styles.sliderRoot, className)}
 		>
 			<SliderPrimitive.Root
 				ref={ref}
@@ -171,7 +164,7 @@ export const SliderField = forwardRef(function SliderField<TValue extends number
 					))}
 				</SliderPrimitive.Control>
 				{showValue && (
-					<SliderPrimitive.Value render={<Text tag="span" size="inherit" type={invalid ? "error" : "secondary"} className={styles.sliderValue} />}>
+					<SliderPrimitive.Value render={<Text tag="span" size="inherit" numeric type={invalid ? "error" : "secondary"} className={styles.sliderValue} />}>
 						{(_formatted, values) => values.map(renderValue).join("–")}
 					</SliderPrimitive.Value>
 				)}

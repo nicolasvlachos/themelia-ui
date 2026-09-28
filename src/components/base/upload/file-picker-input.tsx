@@ -99,14 +99,12 @@ export function FilePickerInput({
 				{file ? file.name : copy.empty}
 			</span>
 			{!!file && (
-				<span className={styles.pickerMeta}>
-					<FileSize value={file.size} />
-				</span>
+				<FileSize value={file.size} size="xs" type="secondary" className={styles.pickerMeta} />
 			)}
 			{!!file && !disabled && (
 				<Button
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					aria-label={copy.clear}
 					className={styles.pickerClear}

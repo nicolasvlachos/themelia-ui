@@ -115,7 +115,7 @@ export function OverlayPage() {
 			<Example
 				example="overlay/sheet"
 				title="Sheet"
-				description={'SheetContent is OverlayContent at an edge. `side` is `placement` under the name a panel is read by, and it adds a default shape — flush, full length, `size="md"` — that the provider can change once. Everything else, header and footer included, is Overlay\'s own part. The sides span the viewport; top and bottom size to their content.'}
+				description={'SheetContent is OverlayContent at an edge. `side` is `placement` under the name a panel is read by, and it adds a default shape — flush, full length, the default size — that the provider can change once. Everything else, header and footer included, is Overlay\'s own part. The sides span the viewport; top and bottom size to their content.'}
 			/>
 
 			<Example

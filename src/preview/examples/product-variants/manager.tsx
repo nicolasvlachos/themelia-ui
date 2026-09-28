@@ -59,7 +59,7 @@ export default function Manager() {
 				{catalogue.variants.length} rows exist
 			</Text>
 
-			<Grid gap="lg">
+			<Grid>
 				<ProductOptionsSummary
 					options={OPTION_SUMMARY}
 					onManageOptions={() => note("manage options")}
@@ -78,7 +78,7 @@ export default function Manager() {
 				onDeleteVariant={(variant) => note(`delete ${variant.id}`)}
 			/>
 
-			<Stack direction="horizontal" gap="md" align="center">
+			<Stack direction="horizontal" gap="sm" align="center">
 				<Text size="sm" type="secondary">Group by</Text>
 				<PillRadioGroup
 					value={groupBy}

@@ -4,13 +4,13 @@ import { ExternalLinkIcon, RotateCwIcon } from "lucide-react"
 import { PillRadioGroup, Select } from "themelia-ui/base/choice-inputs"
 import { Stack } from "themelia-ui/base/structure"
 import { Text } from "themelia-ui/base/typography"
-import { ActivityFeed, type ActivityDensity } from "themelia-ui/features/activities"
+import { ActivityFeed, type ActivityVariant } from "themelia-ui/features/activities"
 
 import styles from "./activities.module.css"
 import { ACTIVITIES, REGISTRY } from "./data"
 
 export default function ActivityFeedExample() {
-	const [density, setDensity] = useState<ActivityDensity>("rich")
+	const [variant, setVariant] = useState<ActivityVariant>("rich")
 	const [activities, setActivities] = useState(ACTIVITIES)
 	const [feedState, setFeedState] = useState("ready")
 	const [log, setLog] = useState<string[]>([])
@@ -21,8 +21,8 @@ export default function ActivityFeedExample() {
 		<>
 			<Stack direction="horizontal" gap="sm" wrap>
 				<PillRadioGroup
-					value={density}
-					onValueChange={(next) => next && setDensity(next as ActivityDensity)}
+					value={variant}
+					onValueChange={(next) => next && setVariant(next as ActivityVariant)}
 					options={[
 						{ value: "compact", label: "compact" },
 						{ value: "default", label: "default" },
@@ -43,7 +43,7 @@ export default function ActivityFeedExample() {
 				loading={feedState === "refreshing" || feedState === "loading"}
 				error={feedState === "error" || feedState === "initial-error" ? "The activity service is unavailable. Try again to reload history." : undefined}
 				onRetry={() => setFeedState("ready")}
-				density={density}
+				variant={variant}
 				currentUserId="u1"
 				resources={REGISTRY}
 				onActorClick={(actor) => note(`actor: ${actor.name}`)}

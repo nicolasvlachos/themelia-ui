@@ -2,19 +2,16 @@ import type { Locale } from "date-fns"
 
 import type { ComponentScale } from "@/lib/component-vocabulary"
 
-import type { PaletteToken, SemanticToken } from "./tokens.generated"
+import type { SemanticToken } from "./tokens.generated"
 
 export type { ComponentScale }
-export type { PaletteToken, SemanticToken }
+export type { SemanticToken }
 
-/** Spacing and control-geometry preset. Sets `--density-scale` through `data-density`. */
+/** Spacing and control-height preset, set through `data-density` (styles/theme/density.css). */
 export type Density = "compact" | "default" | "comfortable"
 
-/**
- * Step on the type scale. `inherit` lets the surrounding size flow through.
- * `xxs` is deprecated: it renders as `xs`, so write `xs`.
- */
-export type TextSize = "inherit" | "xxs" | "xs" | "pxs" | "sm" | "base" | "lg" | "xl"
+/** Step on the type scale. `inherit` lets the surrounding size flow through. */
+export type TextSize = "inherit" | "xs" | "pxs" | "sm" | "base" | "lg" | "xl"
 
 export type ColorScheme = "light" | "dark" | "system"
 
@@ -27,10 +24,11 @@ export interface ThemeConfig {
 	 * Not derived from `radius`: set both.
 	 */
 	radiusSm?: string
-	/** Semantic colour overrides. Prefer these to `palette`. */
+	/**
+	 * Colour overrides, one value for both modes or a `light-dark(light, dark)` pair. Keys
+	 * omit `--`.
+	 */
 	colors?: Partial<Record<SemanticToken, string>>
-	/** Primitive ramp overrides: moves every semantic resolving through the step. */
-	palette?: Partial<Record<PaletteToken, string>>
 	/** Escape hatch for custom properties the kit does not define. Keys omit `--`. */
 	vars?: Record<string, string>
 }
@@ -56,8 +54,8 @@ export interface TypographyConfig {
 }
 
 export interface MotionConfig {
-	/** Duration overrides, keyed without the `--duration-` prefix. */
-	durations?: Partial<Record<"instant" | "fast" | "normal", string>>
+	/** The two durations: `fast` writes `--duration-fast`, `normal` writes `--duration`. */
+	durations?: Partial<Record<"fast" | "normal", string>>
 	/** `true` forces motion off; unset respects `prefers-reduced-motion`. */
 	reduced?: boolean
 }
@@ -179,7 +177,7 @@ export interface DatesConfig {
  * ```ts
  * declare module "@/lib/ui-provider" {
  *   interface ComponentDefaults {
- *     button: { tone: ButtonTone; buttonStyle: ButtonStyle }
+ *     button: { tone: ButtonTone; appearance: ButtonAppearance }
  *   }
  * }
  * ```
@@ -197,17 +195,17 @@ export interface UIConfig {
 	 * @default "system"
 	 */
 	colorScheme?: ColorScheme
-	/** Radius, colour, palette and custom-property overrides. */
+	/** Radius, colour and custom-property overrides. */
 	theme?: ThemeConfig
 	/**
-	 * Named spacing and control-geometry preset: `compact`, `default` and `comfortable` scale
-	 * by 0.941176 (32px actions), 1 and 1.075. Readable typography is unchanged.
+	 * Named spacing and control-height preset. `compact` sets 12px insets and gaps and 32px
+	 * controls, `default` 16px and 34px, `comfortable` 20px and 36px. Type keeps its size.
 	 * @default "default"
 	 */
 	density?: Density
 	/**
-	 * Master factor (`--scale`). Geometry, spacing, icons and the type ramp follow it by
-	 * default; use `density` or `typography.scale` to move only one of them.
+	 * Master factor. The provider writes the spacing, control and icon lengths at this scale,
+	 * rounded to whole pixels, and type follows it unless `typography.scale` is set.
 	 * @default 1
 	 */
 	scale?: number

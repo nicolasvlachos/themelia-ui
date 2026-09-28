@@ -1,7 +1,7 @@
 {
   "note": "Hand-authored consumer selection guidance, one entry per family in architecture/manifest.json. Alternatives name family ids, never symbols.",
   "families": {
-    "admin/patterns/access": {
+    "blocks/admin/access": {
       "chooseWhen": "Admin screens present credentials, role permissions and destructive confirmations.",
       "avoidWhen": "You are changing who a resource is shared with.",
       "alternatives": [
@@ -9,7 +9,7 @@
         "features/overlays"
       ]
     },
-    "admin/patterns/commerce": {
+    "blocks/admin/commerce": {
       "chooseWhen": "Admin screens present orders, invoices, carts, fulfilment and loyalty.",
       "avoidWhen": "The record is a catalogue product, whose options and readiness live in features/products.",
       "alternatives": [
@@ -98,7 +98,7 @@
       "chooseWhen": "Rendering a Recharts chart that must inherit the kit's tokens, legend and tooltip chrome.",
       "avoidWhen": "The number is a single figure with a trend, or the chart needs a titled card frame.",
       "alternatives": [
-        "patterns/analytics"
+        "blocks/analytics"
       ]
     },
     "base/choice-inputs": {
@@ -380,7 +380,7 @@
       "chooseWhen": "Composing a generic vertical sequence of dated entries.",
       "avoidWhen": "The sequence is a changelog, milestones or a step tracker.",
       "alternatives": [
-        "patterns/timelines",
+        "blocks/timelines",
         "features/activities"
       ]
     },
@@ -451,7 +451,7 @@
       "chooseWhen": "An audit or activity log renders actor, change and time, grouped by day.",
       "avoidWhen": "The entries are milestones or a changelog, or the thread is a discussion.",
       "alternatives": [
-        "patterns/timelines",
+        "blocks/timelines",
         "features/comments"
       ]
     },
@@ -501,7 +501,7 @@
       "avoidWhen": "The user is picking a date, or the sequence is chronological rather than spatial.",
       "alternatives": [
         "base/date-pickers",
-        "patterns/timelines"
+        "blocks/timelines"
       ]
     },
     "features/filters": {
@@ -562,7 +562,7 @@
       "chooseWhen": "Presenting catalogue records — options, readiness, policies and quotes — in the admin profile.",
       "avoidWhen": "The record is an order, invoice or shipment.",
       "alternatives": [
-        "admin/patterns/commerce",
+        "blocks/admin/commerce",
         "features/resource"
       ]
     },
@@ -578,7 +578,7 @@
       "chooseWhen": "A resource is shared with or assigned to principals through a dialog.",
       "avoidWhen": "You are displaying permissions rather than changing them.",
       "alternatives": [
-        "admin/patterns/access",
+        "blocks/admin/access",
         "features/overlays"
       ]
     },
@@ -732,21 +732,21 @@
         "layout/auth"
       ]
     },
-    "patterns/analytics": {
+    "blocks/analytics": {
       "chooseWhen": "Figures are summarised — metric tiles, trends, comparisons, a heatmap or a titled chart card.",
       "avoidWhen": "You are rendering the chart itself with no framing.",
       "alternatives": [
         "base/chart"
       ]
     },
-    "patterns/onboarding": {
+    "blocks/onboarding": {
       "chooseWhen": "A checklist tracks setup tasks the user completes over time.",
       "avoidWhen": "The steps are one linear flow with a current position.",
       "alternatives": [
-        "patterns/timelines"
+        "blocks/timelines"
       ]
     },
-    "patterns/timelines": {
+    "blocks/timelines": {
       "chooseWhen": "A sequence is presented as changelog entries, milestones, or a step tracker.",
       "avoidWhen": "The entries are a system audit log, or the sequence is a calendar.",
       "alternatives": [

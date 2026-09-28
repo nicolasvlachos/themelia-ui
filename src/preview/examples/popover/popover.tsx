@@ -11,9 +11,9 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function PopoverExample() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap>
+		<Stack direction="horizontal" wrap>
 			<Popover>
-				<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<PopoverTrigger render={<Button tone="neutral" appearance="outline" />}>
 					<SlidersHorizontalIcon aria-hidden="true" />
 					Filters
 				</PopoverTrigger>
@@ -28,7 +28,7 @@ export default function PopoverExample() {
 						<Checkbox label="On hold" />
 					</Stack>
 					<PopoverFooter>
-						<Button tone="neutral" buttonStyle="ghost">
+						<Button tone="neutral" appearance="ghost">
 							Reset
 						</Button>
 						<Button>Apply</Button>
@@ -37,7 +37,7 @@ export default function PopoverExample() {
 			</Popover>
 
 			<Popover>
-				<PopoverTrigger render={<Button tone="neutral" buttonStyle="ghost" iconOnly aria-label="About this figure" />}>
+				<PopoverTrigger render={<Button tone="neutral" appearance="ghost" iconOnly aria-label="About this figure" />}>
 					<InfoIcon aria-hidden="true" />
 				</PopoverTrigger>
 				<PopoverContent width="18rem">

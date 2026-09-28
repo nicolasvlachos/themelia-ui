@@ -12,7 +12,7 @@ export default function Time() {
 	const [instant, setInstant] = useState<string | undefined>("2026-03-12T09:30:00.000Z")
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
 			<FormField label="Start time">
 				<TimePicker value={time} onValueChange={setTime} minuteStep={15} />
 			</FormField>

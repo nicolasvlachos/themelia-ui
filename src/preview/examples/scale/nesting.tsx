@@ -7,13 +7,13 @@ import { ControlRow } from "./_shared"
 export default function Nesting() {
 	return (
 		<UIProvider config={{ scale: 1.125 }}>
-			<Stack gap="lg">
+			<Stack>
 				<Text type="secondary" size="sm">
 					Outer scope — 1.125
 				</Text>
 				<ControlRow />
 				<UIProvider config={{ scale: 0.8 }}>
-					<Stack gap="md">
+					<Stack gap="sm">
 						<Text type="secondary" size="sm">
 							Nested scope — 0.8
 						</Text>

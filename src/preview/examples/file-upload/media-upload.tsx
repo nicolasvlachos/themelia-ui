@@ -10,8 +10,8 @@ export default function MediaUpload() {
 	const [error, setError] = useState<string>()
 
 	return (
-		<Stack direction={{ base: "vertical", sm: "horizontal" }} gap="2xl" align="start" style={{ width: "100%" }}>
-			<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack direction={{ base: "vertical", sm: "horizontal" }} align="start" style={{ width: "100%" }}>
+			<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 				<FormField label="Profile photo" helperText="Nothing stored yet.">
 					<AvatarUpload />
 				</FormField>
@@ -21,7 +21,7 @@ export default function MediaUpload() {
 						onValueChange={() => setError(undefined)} />
 				</FormField>
 			</Stack>
-			<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+			<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 				<FormField label="Profile photo" helperText="Your current profile photo.">
 					<AvatarUpload previewUrl={SAMPLE_IMAGE_URL} />
 				</FormField>

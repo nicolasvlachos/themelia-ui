@@ -19,8 +19,8 @@ const FEATURES = [
 	},
 	{
 		icon: <PaletteIcon />,
-		title: "The provider is the token system",
-		body: "UIProvider renders an element, writes tokens onto it, and supplies config through context. Being a DOM boundary is what makes nesting and runtime changes work at all.",
+		title: "The provider is a DOM boundary",
+		body: "UIProvider renders an element, writes theme variables onto it, and supplies config through context. Being an element is what makes nesting and runtime changes work at all.",
 	},
 	{
 		icon: <BoxIcon />,
@@ -29,8 +29,8 @@ const FEATURES = [
 	},
 	{
 		icon: <ZapIcon />,
-		title: "Three levels of tokens",
-		body: "The palette carries no meaning, semantic tokens carry no value, and the theming layer computes everything else. Swapping semantic tokens rethemes components; swapping the palette rethemes modes.",
+		title: "One level of variables",
+		body: "About eighty variables at :root, each colour one light-dark() pair. Components derive everything else where they use it, so an override anywhere reaches every reader below it.",
 	},
 ]
 
@@ -41,7 +41,7 @@ export function OverviewPage() {
 				<Heading level={1} size="2xl">
 					A React component library on CSS Modules
 				</Heading>
-				<div style={{ marginTop: "var(--space-lg)" }}>
+				<div style={{ marginTop: "var(--gap)" }}>
 					<Text type="secondary" size="lg">
 						Built on Base UI and native elements. No Tailwind, no shadcn, no utility classes —
 						every component is authored, tokenized, and yours to edit.
@@ -51,7 +51,7 @@ export function OverviewPage() {
 					<Button render={<Link to="/tokens" />}>
 						Get started
 					</Button>
-					<Button tone="neutral" buttonStyle="outline" render={<Link to="/components" />}>
+					<Button tone="neutral" appearance="outline" render={<Link to="/components" />}>
 						Browse components
 					</Button>
 				</div>
@@ -67,7 +67,7 @@ export function OverviewPage() {
 						ever points down.
 					</Text>
 				</div>
-				<Stack gap="md">
+				<Stack gap="sm">
 					{/* Read from the generated index, so it cannot go stale. */}
 					{TIERS.map((tier) => (
 						<Text key={tier.id}>
@@ -124,7 +124,7 @@ export function App({ children }) {
 							<Heading level={3} size="sm">
 								{feature.title}
 							</Heading>
-							<div style={{ marginTop: "var(--space-xs)" }}>
+							<div style={{ marginTop: "calc(var(--gap-sm) / 2)" }}>
 								<Text type="secondary" size="sm">
 									{feature.body}
 								</Text>

@@ -21,7 +21,7 @@ export function AnalyticsPage() {
 			<Example
 				example="analytics/analytics-variants"
 				title="Seven variants, one shape"
-				description="Every variant reads the same MetricData, so moving a figure between them is a prop change. There is no size prop: the kit has one `--scale`, and a metric inside a compact scope is already smaller. Note where tone is NOT used — a revenue figure reports no state, and painting a grid of them one colour is the trap of treating semantic state tokens as a palette. Tone marks the colored variant, whose segments genuinely track progress."
+				description="Every variant reads the same MetricData, so moving a figure between them is a prop change. There is no size prop: a metric inside a compact or scaled scope is already smaller. Note where tone is NOT used — a revenue figure reports no state, and painting a grid of them one colour is the trap of treating semantic state tokens as a palette. Tone marks the colored variant, whose segments genuinely track progress."
 			/>
 
 			<Example
@@ -58,6 +58,12 @@ export function AnalyticsPage() {
 				example="analytics/analytics-ruler"
 				title="Time ruler"
 				description="Twenty-four hours as one bar, shaded by how busy each was. Four bands rather than a continuous ramp: a reader cannot rank 24 shades, but can rank four. The peak hour is ringed and the marker pins the current hour."
+			/>
+
+			<Example
+				example="analytics/analytics-blueprint"
+				title="Compose your own"
+				description="When a variant does not fit, build the tile from the parts the block uses: `Card`, `IconBadge` and `DisplayLabel` for the heading, `Money` for the figure, a toned `Badge` for the change and `Sparkline` for the series. The block is these parts in a fixed arrangement; nothing here is private to it."
 			/>
 
 			<Example id="analytics-props" title="Props">

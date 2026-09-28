@@ -391,7 +391,7 @@ test.describe("progress presentation", () => {
 
 		const circles = page.locator('[data-slot="progress-circle"]')
 		await expect(circles.first()).toHaveAttribute("aria-valuenow", "24")
-		await expect(circles.first()).toHaveCSS("--progress-sweep", "24%")
+		await expect(circles.first()).toHaveCSS("--_progress-sweep", "24%")
 	})
 })
 
@@ -409,8 +409,11 @@ function invitingDisabledControls() {
 		const m = typeof cls === "string" ? cls.match(/([a-z0-9-]+)--component/) : null
 		return m ? m[1] : "(unowned)"
 	}
-	/* Neutral, or an outright refusal. `text` is a caret over prose, not an invitation. */
-	const CALM = new Set(["not-allowed", "default", "auto", "text"])
+	/*
+	 * Neutral, busy, or an outright refusal. `text` is a caret over prose, and `progress` or
+	 * `wait` on a loading control says it is working: neither invites a click.
+	 */
+	const CALM = new Set(["not-allowed", "default", "auto", "text", "progress", "wait"])
 	const out: string[] = []
 	for (const host of Array.from(scope.querySelectorAll<HTMLElement>("[disabled], [aria-disabled='true'], [data-disabled]"))) {
 		for (const el of [host, ...Array.from(host.querySelectorAll<HTMLElement>("*"))]) {
@@ -698,29 +701,27 @@ test.describe("selection and overlays", () => {
 
 		const read = async (index: number) => {
 			const trigger = triggers.nth(index)
-			/* The trigger sits inside the compact scope: its value is what a hosted popup inherits. */
+			/* The trigger sits inside the compact scope: its inset is what a hosted popup inherits. */
 			const scope = await trigger.evaluate((node) =>
-				getComputedStyle(node).getPropertyValue("--density-scale").trim(),
+				getComputedStyle(node).getPropertyValue("--padding-sm").trim(),
 			)
 			await trigger.click()
 			const popup = page.locator("[data-slot='dropdown-menu-content']").first()
 			await expect(popup).toBeVisible()
-			const scale = await popup.evaluate((node) =>
-				getComputedStyle(node).getPropertyValue("--density-scale").trim(),
+			const inset = await popup.evaluate((node) =>
+				getComputedStyle(node).getPropertyValue("--padding-sm").trim(),
 			)
 			await page.keyboard.press("Escape")
 			await expect(popup).toBeHidden()
-			return { scope, popup: scale }
+			return { scope, popup: inset }
 		}
 
 		const withoutHost = await read(0)
 		const withHost = await read(1)
 
-		/* Unset at the root: the lengths fall back to --scale. */
-		expect(withoutHost.popup, "the unhosted menu should sit at the root's density").toBe("")
-		expect(withHost.scope, "the example's scope should set a density").not.toBe("")
-		/* Numeric: the same factor can be written with different digits. */
-		expect(Number(withHost.popup), "the hosted menu should inherit the compact scope").toBeCloseTo(Number(withHost.scope), 5)
+		expect(withHost.scope, "the example's scope should set a density").not.toBe(withoutHost.popup)
+		expect(withoutHost.popup, "the unhosted menu should sit at the root's density").not.toBe(withoutHost.scope)
+		expect(withHost.popup, "the hosted menu should inherit the compact scope").toBe(withHost.scope)
 	})
 })
 

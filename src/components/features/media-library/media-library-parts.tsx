@@ -28,7 +28,7 @@ import {
 } from "./use-media-library"
 import type { MediaLibraryStrings } from "./media-library.strings"
 import type {
-	MediaLibraryCollectionOption, MediaLibraryTab, MediaLibraryDensity,
+	MediaLibraryCollectionOption, MediaLibraryTab, MediaLibrarySize,
 	MediaLibraryItemType, MediaLibrarySelectionMode, MediaLibrarySort,
 	MediaLibraryStagedFile, MediaLibraryTypeFilter, MediaLibraryUploadOptions,
 	MediaLibraryView, ResolvedMediaLibraryAccessors,
@@ -73,7 +73,7 @@ function Segmented({
 						key={option.value}
 						type="button"
 						tone="neutral"
-						buttonStyle="ghost"
+						appearance="ghost"
 						iconOnly={option.iconOnly}
 						role={role === "tablist" ? "tab" : undefined}
 						aria-selected={role === "tablist" ? active : undefined}
@@ -114,7 +114,6 @@ export function MediaLibraryEmptyState({
 			description={description ?? false}
 			media={icon ?? <ImageIcon />}
 			mediaVariant="icon-soft"
-			padding="md"
 			border
 			action={action}
 			className={cx("media-library-empty-state--component", styles.emptyState, className)}
@@ -227,7 +226,7 @@ export function MediaLibraryToolbar({
 					/>
 
 					{hasFilters && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onClearFilters}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onClearFilters}>
 							{strings.clearFilters}
 						</Button>
 					)}
@@ -256,7 +255,8 @@ export function MediaLibraryToolbar({
 export interface MediaLibraryCardProps<TItem> {
 	item: TItem
 	selected?: boolean
-	density?: MediaLibraryDensity
+	/** Tile size: `sm` fits more tiles in a row. */
+	size?: MediaLibrarySize
 	showMeta?: boolean
 	selectionMode?: MediaLibrarySelectionMode
 	accessors: ResolvedMediaLibraryAccessors<TItem>
@@ -268,17 +268,17 @@ export interface MediaLibraryCardProps<TItem> {
 
 /** One asset in the grid, with its preview, name and selection control. */
 export function MediaLibraryCard<TItem>({
-	item, selected = false, density = "comfortable", showMeta = true,
+	item, selected = false, size = "default", showMeta = true,
 	accessors, strings, onToggle, onDetails, className,
 }: MediaLibraryCardProps<TItem>) {
 	const name = accessors.getName(item)
-	const size = accessors.getSize(item)
+	const fileSize = accessors.getSize(item)
 	const dimensions = getMediaLibraryDimensions(item, accessors)
 
 	return (
 		<div
 			data-selected={selected || undefined}
-			data-media-density={density}
+			data-size={size}
 			className={cx("media-library-card--component", styles.card, className)}
 		>
 			{/* The tile owns selection; the decorative check shares its state. */}
@@ -304,7 +304,7 @@ export function MediaLibraryCard<TItem>({
 				</Text>
 				{showMeta && (
 					<Text tag="span" size="xs" type="secondary" truncate>
-						{[dimensions, size === undefined ? "" : formatMediaLibrarySize(size)]
+						{[dimensions, fileSize === undefined ? "" : formatMediaLibrarySize(fileSize)]
 							.filter(Boolean)
 							.join(" · ")}
 					</Text>
@@ -315,7 +315,7 @@ export function MediaLibraryCard<TItem>({
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					onClick={(event) => { event.currentTarget.focus(); onDetails() }}
 					aria-label={(strings.assetAction ?? defaultMediaLibraryStrings.assetAction)(strings.details, name)}
@@ -387,7 +387,7 @@ export function MediaLibraryList<TItem>({
 							<Button
 								type="button"
 								tone="neutral"
-								buttonStyle="ghost"
+								appearance="ghost"
 								onClick={(event) => { event.currentTarget.focus(); onDetails(id) }}
 							>
 								{strings.details}
@@ -482,7 +482,6 @@ export function MediaLibraryUploadPanel({
 					<Empty
 						title={strings.upload.emptyTitle}
 						description={strings.upload.emptyDescription}
-						padding="md"
 					/>
 				))
 			) : (
@@ -508,7 +507,7 @@ export function MediaLibraryUploadPanel({
 								<Button
 									type="button"
 									tone="neutral"
-									buttonStyle="ghost"
+									appearance="ghost"
 									iconOnly
 									aria-label={`${strings.upload.remove}: ${file.name}`}
 									disabled={uploading}
@@ -522,13 +521,13 @@ export function MediaLibraryUploadPanel({
 
 					{showActions && <div className={styles.uploadActions}>
 						<Text type="secondary">{strings.upload.staged(stagedFiles.length)}</Text>
-						<Stack direction="horizontal" gap="md">
+						<Stack direction="horizontal" gap="sm">
 							{uploading ? (
-								<Button type="button" tone="neutral" buttonStyle="outline" onClick={onCancel}>
+								<Button type="button" tone="neutral" appearance="outline" onClick={onCancel}>
 									{strings.upload.cancel}
 								</Button>
 							) : (
-								<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onClear}>
+								<Button type="button" tone="neutral" appearance="ghost" onClick={onClear}>
 									{strings.upload.clear}
 								</Button>
 							)}
@@ -590,7 +589,7 @@ export function MediaLibraryFooterSummary({
 			<>
 				<Text>{strings.selectedCount(selectedIds.length)}</Text>
 				{!!onClearSelection && (
-					<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onClearSelection}>
+					<Button type="button" tone="neutral" appearance="ghost" onClick={onClearSelection}>
 						{strings.clearSelection}
 					</Button>
 				)}
@@ -660,7 +659,7 @@ export function MediaLibraryFooterActions<TItem>({
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 				onClick={onCancelUpload}
 				>
 					{uploading ? strings.upload.cancel : cancelLabel ?? strings.cancel}
@@ -679,7 +678,7 @@ export function MediaLibraryFooterActions<TItem>({
 
 	return (
 		<div className={wrapper}>
-			<Button type="button" tone="neutral" buttonStyle="outline" onClick={onCancel}>
+			<Button type="button" tone="neutral" appearance="outline" onClick={onCancel}>
 				{uploading ? strings.upload.cancel : cancelLabel ?? strings.cancel}
 			</Button>
 			<Button type="button" disabled={selectedIds.length === 0 || selectedItems.length !== selectedIds.length} onClick={onConfirm}>

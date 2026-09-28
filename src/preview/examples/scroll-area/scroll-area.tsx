@@ -7,13 +7,13 @@ const SCROLL_FRAME = {
 	maxHeight: "9rem",
 	border: "var(--border-width) solid var(--border)",
 	borderRadius: "var(--radius)",
-	padding: "var(--surface-y) var(--surface-x)",
+	padding: "var(--padding)",
 } as const
 
 export default function ScrollAreaExample() {
 	return (
 		<ScrollArea style={SCROLL_FRAME}>
-			<Stack gap="xs">
+			<Stack gap="sm">
 				{Array.from({ length: 12 }, (_, index) => (
 					<Text key={index} size="sm" type="secondary">
 						Scrollable line {index + 1}

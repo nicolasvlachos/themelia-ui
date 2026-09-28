@@ -19,12 +19,12 @@ import { SignInDemo } from "./_shared"
 function WorkspacePanel() {
 	return (
 		<>
-			<Stack gap="xl">
+			<Stack>
 				<DisplayLabel>Built for your team</DisplayLabel>
 				<Heading level={3} size="2xl">A clearer start to your working day.</Heading>
 				<Text type="secondary" lineHeight="relaxed">Bring your people, projects, and decisions into one shared workspace.</Text>
 			</Stack>
-			<Stack gap="lg">
+			<Stack>
 				<Text type="inherit" size="lg" lineHeight="relaxed">“Everything we need is ready when we sign in. We spend more time doing the work together.”</Text>
 				<Text type="secondary" size="sm">Jordan Lee · Operations at Northwind</Text>
 			</Stack>
@@ -61,10 +61,10 @@ export default function AuthSplit() {
 
 	return (
 		<>
-			<Stack direction="horizontal" align="center" justify="between" gap="lg" wrap>
+			<Stack direction="horizontal" align="center" justify="between" wrap>
 				<Checkbox label="Show the panel on small screens" checked={stackedPanel} onChange={(event) => setStackedPanel(event.target.checked)} />
 				<Overlay>
-					<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>Expand split preview</OverlayTrigger>
+					<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>Expand split preview</OverlayTrigger>
 					<DialogContent className={styles.expandedDialog} aria-labelledby={expandedTitleId} aria-describedby={expandedDescriptionId}>
 						<OverlayHeader>
 							<OverlayTitle id={expandedTitleId}>Split auth preview</OverlayTitle>

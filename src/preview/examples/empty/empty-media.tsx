@@ -5,7 +5,7 @@ import { Grid } from "themelia-ui/base/structure"
 
 export default function EmptyMedia() {
 	return (
-		<Grid columns={{ base: 1, md: 3 }} gap="xl">
+		<Grid columns={{ base: 1, md: 3 }}>
 			<Empty
 				padding="sm"
 				border

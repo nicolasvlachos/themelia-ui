@@ -1,19 +1,19 @@
 /*
  * App shells: the frame a page sits in. The sidebar handles its own column; these add the
- * toolbar and the content well around it.
+ * toolbar and the content well around it. Every top bar is the theme's `--header-height`.
  */
 .toolbar {
 	position: sticky;
 	top: 0;
 	z-index: var(--z-sticky);
 	display: flex;
-	min-height: var(--shell-header-h);
+	min-height: var(--header-height);
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	flex-wrap: wrap;
-	padding-block: var(--space-sm);
-	padding-inline: var(--space-xl);
+	padding-block: var(--padding-sm);
+	padding-inline: var(--padding);
 	background-color: var(--background);
 }
 
@@ -27,7 +27,7 @@
 	display: flex;
 	min-width: 0;
 	align-items: center;
-	gap: var(--space-lg);
+	gap: var(--gap);
 }
 
 .toolbarStart {
@@ -39,13 +39,13 @@
 	min-height: 0;
 	overflow: auto;
 	flex: 1;
-	padding: var(--space-2xl);
+	padding: var(--padding);
 }
 
 /* Caps the measure on wide screens. */
 .contentBounded {
 	width: 100%;
-	max-width: var(--content-width-xl);
+	max-width: 80rem;
 	margin-inline: auto;
 }
 
@@ -63,13 +63,13 @@
 	top: 0;
 	z-index: var(--z-sticky);
 	display: flex;
-	min-height: var(--shell-header-h);
+	min-height: var(--header-height);
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	flex-wrap: wrap;
-	padding-block: var(--space-sm);
-	padding-inline: var(--space-xl);
+	padding-block: var(--padding-sm);
+	padding-inline: var(--padding);
 	border-bottom: var(--border-width) solid var(--border);
 	background-color: var(--background);
 }
@@ -78,7 +78,7 @@
 @supports (backdrop-filter: blur(1px)) {
 	.toolbar,
 	.stackedHeader {
-		background-color: var(--background-70);
+		background-color: color-mix(in oklab, var(--background) 70%, transparent);
 		backdrop-filter: blur(12px);
 	}
 }
@@ -99,7 +99,7 @@
 }
 
 .stacked[data-bounded] .stackedContent {
-	max-width: var(--content-width-lg);
+	max-width: var(--content-width);
 }
 
 .stackedContent {
@@ -108,7 +108,7 @@
 	overflow: auto;
 	width: 100%;
 	margin-inline: auto;
-	padding: var(--space-2xl);
+	padding: var(--padding);
 }
 
 /* ══ TopbarSidebarLayout ═══════════════════════════════════════════════════════════
@@ -135,11 +135,11 @@
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	flex-wrap: wrap;
-	padding-block: var(--space-sm);
-	min-height: var(--shell-header-h);
-	padding-inline: var(--space-xl);
+	padding-block: var(--padding-sm);
+	min-height: var(--header-height);
+	padding-inline: var(--padding);
 	border-bottom: var(--border-width) solid var(--border);
 	background-color: var(--background);
 }
@@ -167,11 +167,12 @@
 	}
 }
 
+/* Its controls sit half the small gap apart, so two filled controls never touch. */
 .topbarEnd {
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	margin-inline-start: auto;
 }
 
@@ -201,7 +202,7 @@
 	/* Contains absolutely positioned descendants. */
 	position: relative;
 	overflow: auto;
-	padding: var(--space-2xl);
+	padding: var(--padding);
 }
 
 /* The sidebar column exists from md up; below it, `drawer` mode opens the rail as a sheet. */

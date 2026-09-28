@@ -3,7 +3,7 @@ import { useCallback, useImperativeHandle, useRef, useState, type Ref } from "re
 import { Button } from "themelia-ui/base/buttons"
 import { Popover, PopoverTrigger } from "themelia-ui/base/popover"
 import { Stack } from "themelia-ui/base/structure"
-import { Text } from "themelia-ui/base/typography"
+import { Text, textClassName } from "themelia-ui/base/typography"
 import {
 	MentionChip, MentionInlineSuggestions, MentionPicker, parseMentionsFromHtml, useMentions,
 	type MentionEditorHandle,
@@ -69,6 +69,7 @@ function MiniEditor({
 			ref={host}
 			contentEditable
 			suppressContentEditableWarning
+			tabIndex={0}
 			role="textbox"
 			aria-multiline
 			aria-label={placeholder}
@@ -79,7 +80,7 @@ function MiniEditor({
 				onInput(event.currentTarget.innerHTML)
 				onCaretChange()
 			}}
-			className={styles.editor}
+			className={`${styles.editor} ${textClassName({ lineHeight: "relaxed" })}`}
 		/>
 	)
 }
@@ -130,11 +131,11 @@ export default function MentionInline() {
 				/>
 			</div>
 
-			<Stack direction="horizontal" gap="md" align="center" wrap>
+			<Stack direction="horizontal" gap="sm" align="center" wrap>
 				<Popover open={mentions.pickerOpen && !mentions.triggerActive} onOpenChange={mentions.setPickerOpen}>
 					<PopoverTrigger
 						render={
-							<Button tone="neutral" buttonStyle="outline">
+							<Button tone="neutral" appearance="outline">
 								Insert reference
 							</Button>
 						}
@@ -173,7 +174,7 @@ export default function MentionInline() {
 			)}
 
 			{!!html && (
-				<Text size="xs" type="secondary" className={styles.source}>
+				<Text size="xs" type="secondary" mono className={styles.source}>
 					{html}
 				</Text>
 			)}

@@ -37,7 +37,7 @@ export interface AuthFooterLinksProps extends LayoutNavigationAdapter {
 }
 
 export type AuthShellVariant = "card" | "bare" | "split"
-export type AuthShellSize = "sm" | "md" | "lg"
+export type AuthShellSize = "default" | "sm"
 export type AuthSplitSide = "start" | "end"
 /** What the panel does below 56rem of available width: disappear, or fall under the form. */
 export type AuthSplitMobile = "hidden" | "stacked"

@@ -1,6 +1,6 @@
 import { BanIcon } from "lucide-react"
 
-import { FulfillmentGroup, type OrderLine } from "themelia-ui/admin/patterns/commerce"
+import { FulfillmentGroup, type OrderLine } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 const LINES: OrderLine[] = [
@@ -35,7 +35,7 @@ const LINES: OrderLine[] = [
 
 export default function OrderFulfillment() {
 	return (
-		<Stack gap="xl">
+		<Stack>
 			<FulfillmentGroup
 				status="unfulfilled"
 				location="Bul Bulgaria 111"

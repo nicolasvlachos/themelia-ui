@@ -1,39 +1,31 @@
 /**
- * Button — the kit's action primitive. `tone` (colour intent) and `buttonStyle` (fill) are
- * independent axes; the tone × style matrix lives in button-tones.module.css.
- * Defaults resolve through the provider, so a scope can restyle every button in it.
+ * Button — the kit's action primitive. `tone` (colour intent) and `appearance` (fill) are
+ * independent axes: the tone reaches the stylesheet as `data-tone`, through the shared tone
+ * rule, and button-tones.module.css applies each appearance to it. Defaults resolve through
+ * the provider, so a scope can restyle every button in it.
  */
 import * as React from "react"
 
 import { Slot } from "@/components/base/slot"
+import { textClassName } from "@/components/base/typography"
 import { cvm } from "@/lib/cvm"
 import { cx } from "@/lib/cx"
 import { useDefaults } from "@/lib/ui-provider"
 
 import styles from "./button.module.css"
 import toneStyles from "./button-tones.module.css"
-import type { ButtonStyle, ButtonTone } from "./button.types"
+import type { ButtonAppearance, ButtonTone } from "./button.types"
 
-/* Explicit maps keep the camel-cased module lookups type-checked. */
-const TONE_CLASS: Record<ButtonTone, string> = {
-	neutral: toneStyles.toneNeutral,
-	primary: toneStyles.tonePrimary,
-	secondary: toneStyles.toneSecondary,
-	info: toneStyles.toneInfo,
-	success: toneStyles.toneSuccess,
-	warning: toneStyles.toneWarning,
-	destructive: toneStyles.toneDestructive,
-}
-
-const STYLE_CLASS: Record<ButtonStyle, string> = {
-	solid: toneStyles.styleSolid,
-	outline: toneStyles.styleOutline,
-	ghost: toneStyles.styleGhost,
+/* An explicit map keeps the camel-cased module lookups type-checked. */
+const APPEARANCE_CLASS: Record<ButtonAppearance, string> = {
+	solid: toneStyles.appearanceSolid,
+	outline: toneStyles.appearanceOutline,
+	ghost: toneStyles.appearanceGhost,
 }
 
 const BUTTON_DEFAULTS = {
 	tone: "primary" as ButtonTone,
-	buttonStyle: "solid" as ButtonStyle,
+	appearance: "solid" as ButtonAppearance,
 }
 
 const shapeVariants = cvm(styles.root, {
@@ -54,7 +46,7 @@ export interface ButtonProps extends Omit<React.ComponentProps<"button">, "child
 	 * Fill treatment, independent of `tone`. `UIProvider` defaults can change it.
 	 * @default "solid"
 	 */
-	buttonStyle?: ButtonStyle
+	appearance?: ButtonAppearance
 	/** Square button sized to its height. The label becomes the accessible name. */
 	iconOnly?: boolean
 	/** Stretches the button to its container's width. */
@@ -77,12 +69,12 @@ export interface ButtonProps extends Omit<React.ComponentProps<"button">, "child
 }
 
 /**
- * The kit's action primitive. No `size` prop by design: geometry follows the scale factors,
- * so a denser region is a scope (styles/FACTORS.md).
+ * The kit's action primitive. No `size` prop by design: geometry follows the provider's density
+ * and scale, so a denser region is a scope.
  */
 export function Button({
 	tone,
-	buttonStyle,
+	appearance,
 	iconOnly = false,
 	fullWidth = false,
 	loading = false,
@@ -106,9 +98,10 @@ export function Button({
 
 	const defaults = useDefaults("button", BUTTON_DEFAULTS)
 	const resolvedTone = tone ?? defaults.tone
-	const resolvedStyle = buttonStyle ?? defaults.buttonStyle
+	const resolvedAppearance = appearance ?? defaults.appearance
 
 	const polymorphic = render !== undefined
+	const inline = (props as Record<string, unknown>)["data-slot"] === "text-button"
 	const Comp = polymorphic ? Slot : "button"
 
 	/*
@@ -129,7 +122,7 @@ export function Button({
 		<Comp
 			data-slot="button"
 			data-tone={resolvedTone}
-			data-style={resolvedStyle}
+			data-appearance={resolvedAppearance}
 			data-loading={loading ? "" : undefined}
 			type={polymorphic ? undefined : "button"}
 			disabled={polymorphic ? undefined : disabled}
@@ -139,8 +132,11 @@ export function Button({
 			className={cx(
 				"button--component",
 				shapeVariants({ iconOnly, fullWidth }),
-				TONE_CLASS[resolvedTone],
-				STYLE_CLASS[resolvedStyle],
+				APPEARANCE_CLASS[resolvedAppearance],
+				/* A text button is prose: it takes the surrounding size. */
+				inline
+					? textClassName({ size: "inherit", weight: "medium" })
+					: textClassName({ size: "sm", weight: "medium", lineHeight: "none" }),
 				className,
 			)}
 			{...props}

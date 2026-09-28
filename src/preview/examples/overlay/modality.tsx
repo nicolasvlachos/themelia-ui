@@ -12,8 +12,8 @@ export default function Modality() {
 	const [nonModal, setNonModal] = useState(false)
 
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="center">
-			<Button tone="neutral" buttonStyle="outline" onClick={() => setNonModal(true)}>
+		<Stack direction="horizontal" wrap align="center">
+			<Button tone="neutral" appearance="outline" onClick={() => setNonModal(true)}>
 				Open non-modal
 			</Button>
 			<Text type="secondary" size="sm">
@@ -29,7 +29,7 @@ export default function Modality() {
 						<Text type="secondary">Scroll the page behind; this stays where it is.</Text>
 					</OverlayBody>
 					<OverlayFooter>
-						<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+						<OverlayClose render={<Button tone="neutral" appearance="outline" />}>
 							Close
 						</OverlayClose>
 					</OverlayFooter>

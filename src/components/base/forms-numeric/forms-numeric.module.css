@@ -3,17 +3,6 @@
  * Height, border, focus and invalid state come from the shared field surface
  * (styles/fields.css): the stepper group is `data-field-shell`, its input `data-field-control`.
  */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	--numeric-unit-w: calc(6rem * var(--scale));
-
-}
-
 
 /* Input and buttons share the shell's single border and radius, reading as one control. */
 .stepperGroup {
@@ -27,7 +16,7 @@
 .stepperButton {
 	display: inline-flex;
 	flex-shrink: 0;
-	width: var(--control-h);
+	width: var(--control-height);
 	align-items: center;
 	justify-content: center;
 	border: 0;
@@ -35,12 +24,12 @@
 	color: var(--muted-foreground);
 	cursor: pointer;
 	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		color var(--duration-fast) var(--ease-out);
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
-.stepperButton:first-child { border-inline-end: var(--border-width) solid var(--control-border); }
-.stepperButton:last-child { border-inline-start: var(--border-width) solid var(--control-border); }
+.stepperButton:first-child { border-inline-end: var(--border-width) solid var(--input); }
+.stepperButton:last-child { border-inline-start: var(--border-width) solid var(--input); }
 
 .stepperButton:hover:not(:disabled) {
 	background-color: var(--accent);
@@ -53,17 +42,15 @@
 }
 
 .stepperButton > svg {
-	/* --size-icon already carries --density-scale; don't scale it again. */
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
-/* Tabular, so digits don't shift as the value is stepped. */
+/* Centred between the steppers; tabular (decimal-input.tsx), so digits don't shift as the value steps. */
 .stepperInput {
 	flex: 1;
 	min-width: 0;
 	text-align: center;
-	font-variant-numeric: tabular-nums;
 }
 
 /* A unit inside the stepper group: addon colour, no border — borders mark the clickable parts. */
@@ -71,14 +58,9 @@
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
-	padding-inline-end: var(--control-px-sm);
+	padding-inline-end: var(--padding-sm);
 	color: var(--muted-foreground);
 	white-space: nowrap;
-}
-
-/* A plain numeric field still wants tabular figures. */
-.numericInput {
-	font-variant-numeric: tabular-nums;
 }
 
 /* ── Composite rows ───────────────────────────────────────────────────────────── */
@@ -87,7 +69,7 @@
 	display: flex;
 	min-width: 0;
 	align-items: flex-start;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .grow {
@@ -95,14 +77,15 @@
 	flex: 1;
 }
 
+/* The unit selector's column: wide enough for the longest unit and the chevron. */
 .unitColumn {
 	flex-shrink: 0;
-	width: var(--numeric-unit-w);
+	width: 6rem;
 }
 
 .currencyColumn {
 	flex-shrink: 0;
-	width: calc(7rem * var(--scale));
+	width: 7rem;
 }
 
 .field {
@@ -111,23 +94,23 @@
 	flex: 1;
 	flex-direction: column;
 	/* FormField's caption-to-control gap. */
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 /* Wraps: each axis keeps a readable floor and the unit selector drops to the next line first. */
 .dimensions {
 	flex-wrap: wrap;
-	row-gap: var(--space-md);
+	row-gap: var(--gap-sm);
 }
 
 .dimensions > .field {
-	flex: 1 1 calc(4.5rem * var(--scale));
+	flex: 1 1 4.5rem;
 }
 
-.subLabel {
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--muted-foreground);
+/* The unit selector's column keeps the unit column's width instead of flexing with the axes. */
+.dimensions > .unitField {
+	flex: 0 0 auto;
+	width: 6rem;
 }
 
 /* The × separator between dimension fields, aligned with the boxes rather than the captions. */
@@ -135,7 +118,7 @@
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	height: var(--control-h);
+	height: var(--control-height);
 	/* Bottom-aligned: the row is `flex-start` and columns may start with a caption. */
 	align-self: flex-end;
 	color: var(--muted-foreground);

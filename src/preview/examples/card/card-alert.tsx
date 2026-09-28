@@ -5,7 +5,7 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function CardAlert() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
 			<Card title="Domain" alert="Verification expires in 3 days." alertTone="warning">
 				<Text size="sm" type="secondary">
 					acme.com

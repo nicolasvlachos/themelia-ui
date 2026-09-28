@@ -5,7 +5,7 @@ import { Input, NativeSelect, Textarea } from "themelia-ui/base/text-inputs"
 
 export default function SharedSurface() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Input">
 				<Input placeholder="Northwind Traders" />
 			</FormField>

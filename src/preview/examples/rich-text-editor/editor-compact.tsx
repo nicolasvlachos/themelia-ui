@@ -33,7 +33,7 @@ export default function EditorCompact() {
 				},
 			]}
 			footerSlot={
-				<Stack direction="horizontal" align="center" justify="between" gap="md">
+				<Stack direction="horizontal" align="center" justify="between" gap="sm">
 					<Text size="xs" type="secondary">
 						Markdown is not parsed — use the toolbar.
 					</Text>

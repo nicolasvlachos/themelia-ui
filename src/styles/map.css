@@ -1,21 +1,23 @@
 /*
  * Leaflet's chrome, retuned. Unlayered because leaflet.css is: its unlayered rules would
  * beat anything in `@layer components`. Every rule is qualified by a kit class for
- * specificity, so none needs `!important`. Only what Leaflet paints lives here.
+ * specificity, so none needs `!important`. Only what Leaflet paints lives here, which is also
+ * why the type below is set directly rather than through Text: Text's classes are layered.
  */
 
+/* The page's face, not Leaflet's Helvetica; Leaflet's own size stays for its chrome. */
 .map--component.leaflet-container {
 	background-color: var(--muted);
-	font-family: var(--font-sans);
+	font-family: inherit;
 }
 
 /*
- * The map takes keyboard focus (the arrow keys pan it), so it draws the kit's ring, inset over
- * the tiles. The browser's default ring sits outside, where the frame around a map clips it.
+ * The map takes keyboard focus (the arrow keys pan it), so it draws the shared outline
+ * (styles/focus.css), inset over the tiles: Leaflet's own offset puts it outside, where the
+ * frame around a map clips it.
  */
 .map--component.leaflet-container:focus-visible {
-	outline: var(--focus-ring-width) solid var(--focus-ring-color);
-	outline-offset: calc(-1 * var(--focus-ring-width));
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /*
@@ -28,18 +30,24 @@
 
 /* ── The panes Leaflet paints itself ──────────────────────────────────────────── */
 
+/* An anchored popup, as the kit draws one: the popover ground, a hairline and the floating shadow. */
 .map--component .leaflet-popup-content-wrapper {
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
-	box-shadow: var(--popover-shadow);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
 }
 
+/* Text's `sm` step on an open line box, for whatever the popup holds that Text does not. */
 .map--component .leaflet-popup-content {
-	margin: var(--surface-py) var(--surface-px);
-	font-family: var(--font-sans);
-	font-size: var(--text-sm);
-	line-height: var(--leading-normal);
+	margin: var(--padding);
+	font-size: calc(var(--text-sm) * var(--text-scale));
+	line-height: 1.5;
+}
+
+/* Leaflet spaces popup paragraphs apart; the kit's own reset (and Text) leaves that to the content. */
+.map--component .leaflet-popup-content p {
+	margin: 0;
 }
 
 /* The tip is a rotated square; it matches the wrapper it points from. */
@@ -56,12 +64,17 @@
 	color: var(--foreground);
 }
 
-/* Chrome removed: the component draws its own tooltip and arrow on the side it chooses. */
+/*
+ * Leaflet's tooltip, redrawn as the kit's inverse annotation; MapTooltip adds its arrow on the
+ * side it chooses (Leaflet's single tip cannot) and takes its type from Text's classes.
+ */
 .map--component .leaflet-tooltip {
-	padding: 0;
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	border: 0;
-	background: none;
-	box-shadow: none;
+	border-radius: var(--radius-sm);
+	background-color: var(--foreground);
+	color: var(--background);
+	box-shadow: var(--shadow);
 }
 
 .map--component .leaflet-tooltip::before {
@@ -72,15 +85,14 @@
 
 .map--component.leaflet-container .leaflet-control-attribution {
 	border-radius: var(--radius-sm) 0 0 0;
-	background-color: var(--background-80);
+	background-color: color-mix(in oklab, var(--background) 80%, transparent);
 	color: var(--muted-foreground);
-	font-family: var(--font-sans);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
+	font-size: calc(var(--text-xs) * var(--text-scale));
+	line-height: calc(1 / 0.75);
 }
 
 .map--component .leaflet-control-attribution a {
-	color: var(--link-color);
+	color: var(--link);
 }
 
 /* ── leaflet-draw's toolbar ───────────────────────────────────────────────────── */
@@ -91,17 +103,17 @@
 	display: none;
 }
 
-/* The on-map instruction tooltip stays, drawn as the kit's inverse Tooltip. */
+/* The on-map instruction tooltip stays, drawn as the kit's inverse annotation. */
 .map--component .leaflet-draw-tooltip {
 	border: var(--border-width) solid var(--foreground);
 	border-radius: var(--radius-sm);
-	padding-block: var(--space-sm);
-	padding-inline: var(--control-px);
+	padding-block: calc(var(--padding-sm) / 2);
+	padding-inline: var(--padding-sm);
 	background-color: var(--foreground);
 	color: var(--background);
-	font-family: var(--font-sans);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
+	font-family: inherit;
+	font-size: calc(var(--text-xs) * var(--text-scale));
+	line-height: calc(1 / 0.75);
 }
 
 /* Physical on purpose: Leaflet positions this arrow in physical terms. */
@@ -111,7 +123,7 @@
 
 /* leaflet-draw's second line: the tooltip's ink, receded. */
 .map--component .leaflet-draw-tooltip-subtext {
-	color: var(--background-70);
+	color: color-mix(in oklab, var(--background) 70%, transparent);
 }
 
 /* ── Marker clusters ──────────────────────────────────────────────────────────── */
@@ -122,12 +134,11 @@
 	align-items: center;
 	justify-content: center;
 	border-radius: var(--radius-pill);
-	background-color: var(--primary-20);
-	color: var(--primary-accent);
-	font-family: var(--font-sans);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-semibold);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
+	color: var(--primary);
+	font-size: calc(var(--text-xs) * var(--text-scale));
+	line-height: calc(1 / 0.75);
+	font-weight: 600;
 }
 
 .map--component .marker-cluster div {
@@ -138,5 +149,5 @@
 	height: 100%;
 	margin: 0;
 	border-radius: var(--radius-pill);
-	background-color: var(--primary-10);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }

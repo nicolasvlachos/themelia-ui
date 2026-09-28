@@ -55,7 +55,7 @@ function SingleCombobox({ id }: { id?: string }) {
 
 export default function ComboboxField() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Plain input, for comparison">
 				<Input placeholder="A regular text field" />
 			</FormField>

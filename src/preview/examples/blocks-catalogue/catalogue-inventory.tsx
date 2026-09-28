@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { InventorySection, type InventorySectionValue } from "themelia-ui/admin/patterns/commerce"
+import { InventorySection, type InventorySectionValue } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 const INVENTORY: InventorySectionValue = {

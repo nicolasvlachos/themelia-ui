@@ -11,7 +11,7 @@ const TONES: NonNullable<MentionResource["tone"]>[] = ["primary", "secondary", "
 
 export default function MentionTones() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<Text>
 				The same chip in body copy:{" "}
 				<MentionChip mention={STORED_MENTIONS[0]!} resource={RESOURCES.user} />{" "}

@@ -1,4 +1,4 @@
-/* ButtonGroup — buttons acting as one control; neighbours overlap so each seam is one hairline. */
+/* ButtonGroup: buttons acting as one control; neighbours overlap so each seam is one hairline. */
 .root {
 	display: inline-flex;
 	align-items: center;
@@ -43,7 +43,7 @@
 /* Hovered or focused segments lift above neighbours so their border is unbroken. */
 .root > :not([data-slot="loader-button-status"]):hover,
 .root > :not([data-slot="loader-button-status"]):focus-visible {
-	z-index: var(--z-raised);
+	z-index: 1;
 }
 
 .vertical {
@@ -59,26 +59,24 @@
 
 /* ══ Group segments ════════════════════════════════════════════════════════════════ */
 
-/* A non-interactive segment — a unit, a prefix, a count — with the buttons' edge. */
+/* A non-interactive segment (a unit, a prefix, a count) with the buttons' edge. */
 .groupText {
 	display: inline-flex;
 	align-items: center;
-	height: var(--button-h);
-	padding-inline: var(--space-lg);
-	border: var(--border-width) solid var(--control-border);
+	height: var(--control-height);
+	padding-inline: var(--padding-sm);
+	border: var(--border-width) solid var(--input);
 	border-radius: var(--radius-sm);
-	background-color: var(--foreground-8);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
+	background-color: var(--muted);
 	white-space: nowrap;
 }
 
-/* An inner rule: between outline segments it sits beside their edges, so it must be softer. */
+/* An inner rule between segments. */
 .groupSeparator {
 	flex-shrink: 0;
 	align-self: stretch;
 	width: var(--border-width);
-	background-color: var(--border-60);
+	background-color: var(--border);
 }
 
 .groupSeparatorVertical {

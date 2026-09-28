@@ -6,7 +6,7 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 import type { ComponentProps, ReactNode } from "react"
 
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
 
@@ -87,7 +87,7 @@ export function SelectPopupItem({ className, children, ...props }: SelectPrimiti
 	return (
 		<SelectPrimitive.Item
 			data-slot="select-item"
-			className={cx("select-popup--item", styles.item, className)}
+			className={cx("select-popup--item", styles.item, textClassName({ size: "sm" }), className)}
 			{...props}
 		>
 			<SelectPrimitive.ItemText className={styles.itemText}>
@@ -114,7 +114,7 @@ export function SelectPopupLabel({ className, children, ...props }: SelectPrimit
 	return (
 		<SelectPrimitive.GroupLabel
 			data-slot="select-label"
-			className={cx("select-popup--label", styles.label, className)}
+			className={cx("select-popup--label", styles.label, textClassName({ size: "xs", weight: "medium" }), className)}
 			{...props}
 		>
 			{children}

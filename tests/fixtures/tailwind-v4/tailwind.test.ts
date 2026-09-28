@@ -17,8 +17,8 @@ const CANDIDATES = [
 	"text-muted-foreground",
 	"rounded-sm",
 	"text-sm",
-	"shadow-md",
-	"p-md",
+	"shadow-lg",
+	"p-padding",
 	"font-sans",
 ]
 
@@ -78,7 +78,7 @@ test.describe("Tailwind v4 bridge", () => {
 		/* Colours are bridged under a different key: a same-name key would emit `--primary: var(--primary)` and cycle. */
 		expect(css).toMatch(/\.bg-primary\s*\{\s*background-color:\s*var\(--primary\);?\s*\}/)
 		expect(css).toMatch(/\.text-muted-foreground\s*\{\s*color:\s*var\(--muted-foreground\);?\s*\}/)
-		expect(css).toMatch(/\.p-md\s*\{\s*padding:\s*var\(--space-md\);?\s*\}/)
+		expect(css).toMatch(/\.p-padding\s*\{\s*padding:\s*var\(--padding\);?\s*\}/)
 	})
 
 	test("the kit keeps its small radius; without the bridge Tailwind takes it", async ({
@@ -96,13 +96,13 @@ test.describe("Tailwind v4 bridge", () => {
 		expect(await styleOf(p, "#r", "borderRadius")).toBe("4px")
 	})
 
-	test("explicit whole-UI scale still moves type; without the bridge it stops", async ({ page: p }) => {
-		const body = `<p id="t" style="font-size: var(--text-sm)">x</p>`
-		const scaled = `style="--scale: 0.875"`
+	test("the type factor moves a type utility as it moves Text; without the bridge it stops", async ({ page: p }) => {
+		const body = `<p id="t" class="text-sm">x</p>`
+		const scaled = `style="--text-scale: 0.875"`
 
 		/*
-		 * Explicit --scale is the whole-UI factor, so its --text-scale fallback takes 14px to
-		 * 12.25px. Named density presets are geometry-only; the source token tests cover them.
+		 * The provider writes --text-scale for `scale` and `typography.scale`; the bridged step
+		 * multiplies by it, so 14px becomes 12.25px. Density presets leave type alone.
 		 */
 		const withBridge = await tailwind(true)
 		await p.setContent(page(withBridge, body))
@@ -110,7 +110,7 @@ test.describe("Tailwind v4 bridge", () => {
 		await p.setContent(page(withBridge, body, scaled))
 		expect(await styleOf(p, "#t", "fontSize")).toBe("12.25px")
 
-		/* Falsification: Tailwind's flat `--text-sm: 0.875rem` carries no `var(--text-scale)`. */
+		/* Falsification: Tailwind's own `--text-sm: 0.875rem` carries no factor. */
 		const without = await tailwind(false)
 		await p.setContent(page(without, body, scaled))
 		expect(await styleOf(p, "#t", "fontSize")).toBe("14px")

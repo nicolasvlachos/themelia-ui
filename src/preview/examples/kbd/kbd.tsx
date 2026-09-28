@@ -5,7 +5,7 @@ import { Text } from "themelia-ui/base/typography"
 export default function KbdExample() {
 	return (
 		<Stack gap="sm">
-			<Stack direction="horizontal" gap="md" align="center">
+			<Stack direction="horizontal" gap="sm" align="center">
 				<Text size="sm" type="secondary">Open the palette with</Text>
 				<Kbd>⌘K</Kbd>
 				<Text size="sm" type="secondary">or</Text>
@@ -13,7 +13,7 @@ export default function KbdExample() {
 				<Text size="sm" type="secondary">· close with</Text>
 				<Kbd>Esc</Kbd>
 			</Stack>
-			<Stack direction="horizontal" gap="md" align="center">
+			<Stack direction="horizontal" gap="sm" align="center">
 				<Text size="sm" type="secondary">Go to the inbox with</Text>
 				{/* A sequence: G, then I. The wider gap between caps says "in turn". */}
 				<KbdGroup>

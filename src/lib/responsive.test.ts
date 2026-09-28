@@ -9,7 +9,7 @@ import { BREAKPOINT_MIN_WIDTH } from "./responsive"
 
 describe("BREAKPOINT_MIN_WIDTH", () => {
 	it("matches every min-width breakpoint in breakpoints.css", () => {
-		const css = readFileSync("src/styles/theming/breakpoints.css", "utf8")
+		const css = readFileSync("src/styles/breakpoints.css", "utf8")
 		const declared = Object.fromEntries(
 			[...css.matchAll(/@custom-media --bp-(sm|md|lg|xl|2xl) \(min-width: ([\d.]+)rem\)/g)].map(
 				(match) => [match[1], Number(match[2]) * 16],

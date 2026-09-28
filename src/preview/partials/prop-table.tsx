@@ -356,7 +356,7 @@ function GeneratedTable({ owner, owners, symbols }: { owner?: string; owners?: s
 					const line = inheritsLine(found.inherits, found.rows.length)
 					/* A part's heading sits nearer its own table than the table before it. */
 					return (
-						<Stack key={name} gap="md">
+						<Stack key={name} gap="sm">
 							<Heading
 								level={3}
 								size="sm"

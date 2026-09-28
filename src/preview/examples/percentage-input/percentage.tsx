@@ -5,7 +5,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function Percentage() {
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="VAT rate">
 				<PercentageInput defaultValue="21" />
 			</FormField>

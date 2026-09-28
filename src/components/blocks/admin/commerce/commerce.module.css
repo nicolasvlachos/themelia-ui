@@ -1,0 +1,847 @@
+/*
+ * Commerce blocks: carts, invoices, orders, the customer's record. They share one shape,
+ * a tinted panel of label/amount rows (`.summaryPanel` + `.amountRow`). A line item's
+ * thumbnail and a booking's date tile share one fixed size, 3.75rem.
+ */
+
+/*
+ * Shared stack rhythm for every block, and the query container for the grids inside it
+ * (an element cannot match its own container query).
+ */
+.block {
+	container-type: inline-size;
+	container-name: commerce-block;
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+	width: 100%;
+	min-width: 0;
+}
+
+/* ══ Summary ledger ════════════════════════════════════════════════════════════════ */
+
+/* A quieter ground than its card, so the rows read as a sub-total block. */
+.summaryPanel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-sm);
+	padding: var(--padding);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+}
+
+/*
+ * Label, optional note, amount: the note gets its own column so notes align down a stack,
+ * and collapses when empty. Baseline, because label and amount sit on different type steps.
+ */
+.amountRow {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, auto);
+	align-items: baseline;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+.amountLabel {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.amountNote {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.amountNote:empty { display: none; }
+.amountRow:not(:has(.amountNote:not(:empty))) { grid-template-columns: minmax(0, 1fr) minmax(0, auto); }
+
+.amountValue {
+	text-align: end;
+	overflow-wrap: anywhere;
+}
+
+/* A rollup under the lines it rolls up, ruled off midway between the two. */
+.summaryRollup {
+	padding-block-start: var(--gap-sm);
+	border-block-start: var(--border-width) solid var(--border);
+}
+
+/* ══ Cart ══════════════════════════════════════════════════════════════════════════ */
+
+.cartThumb {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	background-color: var(--muted);
+}
+
+/* Stacked, the price sits under the title like a description line. */
+.commerceLine {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	row-gap: calc(var(--gap-sm) / 2);
+}
+
+.summaryLineMedia { grid-row: 1 / span 2; }
+.summaryLineBody { grid-column: 2; grid-row: 1; min-width: 0; }
+.summaryLineTitle { display: block; overflow-wrap: anywhere; }
+
+/* Prices remain in the text column when a row is too narrow for a trailing lane. */
+.summaryLinePrice {
+	grid-column: 2;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+@container item (--cq-xs) {
+	.summaryLineMedia { grid-row: 1; }
+	.summaryLinePrice { grid-column: 3; grid-row: 1; text-align: end; }
+}
+
+/* A calendar tile, with the appointment time in the adjacent content row. */
+.bookingDate {
+	min-inline-size: 3.75rem;
+	min-block-size: 3.75rem;
+}
+
+/* ══ Coupon ════════════════════════════════════════════════════════════════════════ */
+
+.couponForm {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: var(--gap-sm);
+}
+
+.couponField {
+	flex: 1 1 10rem;
+	min-width: 0;
+}
+
+/* The applied state reads as a result: the code is the subject, Remove the quiet way out. */
+.couponApplied {
+	display: flex;
+	align-items: center;
+	gap: var(--gap);
+	padding: var(--padding);
+	border: var(--border-width) solid color-mix(in oklab, var(--success) var(--tint-strong), transparent);
+	border-radius: var(--radius-sm);
+	background-color: color-mix(in oklab, var(--success) var(--tint), transparent);
+}
+
+.couponAppliedBody {
+	display: inline-flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+	flex: 1;
+}
+
+/* A long code wraps anywhere rather than pushing the amount off the panel. */
+.couponCode {
+	overflow-wrap: anywhere;
+}
+
+.couponAmount {
+	flex-shrink: 0;
+}
+
+/* ══ Order, shipment, refund ═══════════════════════════════════════════════════════ */
+
+.orderFact {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+}
+
+.paymentTimeline {
+	min-width: 0;
+}
+
+/* ── Refund stages ──────────────────────────────────────────────────────────────── */
+
+.refundStages {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--gap-sm);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+@container commerce-block (--cq-xs) {
+	.refundStages { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* A stage not yet reached recedes; its label takes the colour (`type="inherit"`). */
+.refundStage {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-sm);
+	flex: 1;
+	min-width: 0;
+	overflow-wrap: anywhere;
+	color: var(--muted-foreground);
+}
+
+.refundStage[data-reached] {
+	color: var(--foreground);
+}
+
+/* A thin track, so its unreached stretch takes the stronger tint to stay visible. */
+.refundBar {
+	display: block;
+	height: 0.25rem;
+	border-radius: var(--radius-pill);
+	background-color: color-mix(in oklab, var(--foreground) var(--tint-strong), transparent);
+}
+
+.refundStage[data-reached] .refundBar {
+	background-color: var(--success);
+}
+
+/* The stage in flight is primary, not success — it has not finished yet. */
+.refundStage[data-current]:not(:last-child) .refundBar {
+	background-color: var(--primary);
+}
+
+/* ══ Invoice ═══════════════════════════════════════════════════════════════════════ */
+
+.invoiceLines {
+	container: commerce-invoice / inline-size;
+	min-width: 0;
+}
+
+.invoiceTable { display: none; }
+.invoiceMobile { display: grid; gap: var(--gap); }
+
+@container commerce-invoice (--cq-md) {
+	.invoiceTable { display: block; }
+	.invoiceMobile { display: none; }
+}
+
+.invoiceParties {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--gap);
+}
+
+@container commerce-block (--cq-sm) {
+
+	.invoiceParties {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.invoiceMini {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+.invoiceMiniHead {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+.invoiceMiniFoot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--gap);
+	min-width: 0;
+}
+
+.invoiceMiniMeta {
+	display: inline-flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+}
+
+/* ══ Account ═══════════════════════════════════════════════════════════════════════ */
+
+/*
+ * A real <address>, which browsers italicise by default. It is a postal block, not an aside,
+ * so its lines stack on their own line height, with no gap between them. A caller sets the
+ * size on the element (Text's classes) and every line inherits it, the `Phone` primitive
+ * included.
+ */
+.address {
+	display: flex;
+	flex-direction: column;
+	font-style: normal;
+	min-width: 0;
+}
+
+/* The recipient heads the block, as a title does its description. */
+.addressName {
+	margin-block-end: calc(var(--gap-sm) / 2);
+}
+
+/* The action row a block ends on. */
+.blockActions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gap-sm);
+}
+
+.paymentIdentity {
+	display: flex;
+	align-items: center;
+	gap: var(--gap);
+	min-width: 0;
+}
+
+.paymentIdentityBody {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+	flex: 1;
+}
+
+.perks {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-sm);
+}
+
+.perkList {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+	gap: var(--gap-sm) var(--gap);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.perk {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--gap-sm);
+}
+
+.perkIcon {
+	flex-shrink: 0;
+	width: var(--icon-size);
+	height: var(--icon-size);
+	color: var(--muted-foreground);
+}
+
+/* ══ Booking ═══════════════════════════════════════════════════════════════════════ */
+
+.bookingDetails {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--gap);
+	margin: 0;
+}
+
+.bookingDetail {
+	display: grid;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+}
+
+/* A full-width fact gets its own ground — it is usually a note or an address. */
+.bookingDetail[data-full] {
+	padding: var(--padding-sm);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+}
+
+.bookingValue {
+	margin: 0;
+	min-width: 0;
+}
+
+.bookingAction {
+	display: flex;
+	justify-content: flex-end;
+	padding-block-start: var(--gap);
+	border-block-start: var(--border-width) solid var(--border);
+}
+
+@container commerce-block (--cq-md) {
+
+	.bookingDetails {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.bookingDetail[data-full] {
+		grid-column: span 2;
+	}
+}
+
+/* ══ Loyalty ═══════════════════════════════════════════════════════════════════════ */
+
+.loyaltyBalance {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+}
+
+.loyaltyActivity {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+.loyaltyFigure {
+	display: inline-flex;
+	align-items: baseline;
+	gap: var(--gap-sm);
+}
+
+/* ══ Vendor ════════════════════════════════════════════════════════════════════════ */
+
+.vendorIdentity {
+	display: flex;
+	align-items: center;
+	gap: var(--gap);
+	min-width: 0;
+}
+
+.vendorIdentityBody {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+	flex: 1;
+}
+
+/* An even minimum row height puts the verified mark on a whole pixel, whatever the name's line-height. */
+.vendorName {
+	display: inline-flex;
+	flex-wrap: wrap;
+	overflow-wrap: anywhere;
+	align-items: center;
+	gap: var(--gap-sm);
+	min-height: calc(var(--icon-size) + var(--padding-sm));
+	min-width: 0;
+}
+
+/* A smaller IconBadge, set through its size hook so the name's line keeps its height. */
+.vendorVerified {
+	--_icon-badge-size: var(--icon-size);
+}
+
+.vendorStats {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--gap);
+}
+
+.vendorActions {
+	border-block-start: var(--border-width) solid var(--border);
+	padding-block-start: var(--gap);
+}
+
+.vendorStat {
+	overflow-wrap: anywhere;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+	padding: var(--padding);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+}
+
+/* ══ SEO listing ═══════════════════════════════════════════════════════════════════ */
+
+/* The result preview and its compact, consistently aligned diagnostic rows. */
+.seoPreview { min-width: 0; }
+.seoUrl { min-width: 0; overflow-wrap: anywhere; }
+.seoTitle { overflow-wrap: anywhere; }
+.seoDescription {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+}
+.seoChecks { margin: 0; padding: 0; list-style: none; }
+.seoCheck {
+	display: flex;
+	align-items: center;
+	gap: var(--gap-sm);
+	min-width: 0;
+	padding-block: var(--padding-sm);
+}
+.seoCheck + .seoCheck { border-block-start: var(--border-width) solid var(--border); }
+/* The verdict reaches the icon as `data-tone`, through the shared tone rule. */
+.seoCheckIcon { flex-shrink: 0; width: var(--icon-size); height: var(--icon-size); color: var(--tone-ink); }
+.seoCheckBody { display: flex; flex-direction: column; gap: calc(var(--gap-sm) / 2); min-width: 0; flex: 1; }
+
+/* ══ InventorySection ══════════════════════════════════════════════════════════════ */
+
+.inventoryGroup {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.inventoryLegend {
+	width: 100%;
+	padding: var(--gap) 0 0;
+	margin-block-end: var(--gap);
+	border-block-start: var(--border-width) solid var(--border);
+}
+
+.inventoryToggle {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+}
+
+.inventoryFields {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--gap);
+	min-width: 0;
+}
+
+@container commerce-block (--cq-md) {
+
+	.inventoryFields {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+/* ══ Order header ══════════════════════════════════════════════════════════════════ */
+
+.orderHeader {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+/* Wraps: two status badges and a long order reference overrun a narrow column. */
+.orderHeaderTop {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+/* Pushed to the trailing edge, so the overflow sits where every other one does. */
+.orderHeaderActions {
+	margin-inline-start: auto;
+}
+
+/* The disclosure over the event list: flush and quiet. */
+.orderHistoryToggle {
+	justify-content: flex-start;
+	padding-inline: 0;
+	text-align: start;
+}
+
+.orderHistory {
+	padding-block-start: var(--gap);
+}
+
+/* ══ FulfillmentGroup ══════════════════════════════════════════════════════════════ */
+
+/*
+ * One frame in three ruled bands (header, items, actions) sharing one inset, so a row's
+ * title starts under the status it belongs to.
+ */
+.group {
+	container-type: inline-size;
+	container-name: fulfillment-group;
+	--_content-block-gap: 0;
+	min-width: 0;
+}
+
+.groupHead {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-sm);
+	padding: var(--padding);
+	border-block-end: var(--border-width) solid var(--border);
+	min-width: 0;
+}
+
+.groupHeadTop {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gap-sm) var(--gap);
+	min-width: 0;
+}
+
+/* A place and a standing fact: both annotate the status, neither is one. */
+.groupLocation,
+.groupNotice {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--gap-sm);
+	min-width: 0;
+	color: var(--muted-foreground);
+}
+
+.groupMarkIcon {
+	flex-shrink: 0;
+	width: var(--icon-size);
+	height: var(--icon-size);
+}
+
+.groupItems {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.groupActions {
+	display: flex;
+	justify-content: flex-end;
+	padding: var(--padding);
+	border-block-start: var(--border-width) solid var(--border);
+}
+
+/* ══ OrderLineItem ═════════════════════════════════════════════════════════════════ */
+
+/* Stacked by default; four columns once the group is wide enough. Its inset is the group's. */
+.lineItem {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: start;
+	gap: var(--gap-sm) var(--gap);
+	padding: var(--padding);
+	min-width: 0;
+}
+
+.lineItem + .lineItem {
+	border-block-start: var(--border-width) solid var(--border);
+}
+
+.lineThumb {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	flex-shrink: 0;
+	width: 3.75rem;
+	height: 3.75rem;
+	border: var(--border-width) solid var(--border);
+	border-radius: var(--radius-sm);
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+}
+
+.lineThumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.lineThumbIcon {
+	width: var(--icon-size);
+	height: var(--icon-size);
+}
+
+.lineBody {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+}
+
+.lineMeta {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+/* `unit × quantity` reads as one figure, so its parts sit a word apart. */
+.linePrice {
+	display: inline-flex;
+	align-items: center;
+	gap: calc(var(--gap-sm) / 2);
+	/* Under the body while stacked, so it does not sit alone in the thumbnail's column. */
+	grid-column: 2;
+}
+
+.lineTotal {
+	grid-column: 2;
+}
+
+@container fulfillment-group (--cq-md) {
+
+	.lineItem {
+		grid-template-columns: auto 1fr auto auto;
+		align-items: center;
+	}
+
+	.linePrice,
+	.lineTotal {
+		grid-column: auto;
+	}
+
+	.lineTotal {
+		/* A column of totals compares only if they end on the same edge. */
+		text-align: end;
+		min-width: 5rem;
+	}
+}
+
+/* ══ Transactions ══════════════════════════════════════════════════════════════════ */
+
+.transactions {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	min-width: 0;
+}
+
+.transaction {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--gap);
+	padding: var(--padding);
+	min-width: 0;
+}
+
+.transaction + .transaction {
+	border-block-start: var(--border-width) solid var(--border);
+}
+
+/* A failed attempt is the reason someone opened the ledger, so it is tinted, not hidden. */
+.transaction[data-status="failure"] {
+	background-color: color-mix(in oklab, var(--destructive) var(--tint), transparent);
+}
+
+.transactionBody {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+	flex: 1;
+}
+
+.transactionHead {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+.transactionMeta {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+/* Never tinted by direction: the sign already says which way the money went. */
+.transactionAmount {
+	flex-shrink: 0;
+}
+
+/* ══ OrderCustomer ═════════════════════════════════════════════════════════════════ */
+
+.customerSection {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+}
+
+.customerSectionHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+.customerIdentity {
+	display: flex;
+	align-items: center;
+	gap: var(--gap);
+	min-width: 0;
+}
+
+.customerIdentityBody {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: calc(var(--gap-sm) / 2);
+	min-width: 0;
+}
+
+/*
+ * The whole name block is the pressable area, start-aligned rather than a centred button row.
+ * The negative margin pulls its text back onto the column the avatar's neighbours start on.
+ */
+.customerName {
+	height: auto;
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
+	margin-inline-start: calc(var(--padding-sm) * -1);
+	justify-content: flex-start;
+	text-align: start;
+}
+
+.customerContact {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+.customerContactLine {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--gap-sm);
+	min-width: 0;
+}
+
+.customerContactIcon {
+	display: inline-flex;
+	flex-shrink: 0;
+	color: var(--muted-foreground);
+}
+
+.customerContactIcon svg {
+	width: var(--icon-size);
+	height: var(--icon-size);
+}
+
+.customerAddresses {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--gap);
+	min-width: 0;
+}
+
+@container commerce-block (--cq-sm) {
+
+	.customerAddresses {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}

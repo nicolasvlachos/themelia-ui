@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/base/buttons"
 import { useCopyToClipboard } from "@/components/base/copyable"
 import { DisplayLabel, Text } from "@/components/base/typography"
-import { Duration, SecondaryValue } from "@/components/primitives"
+import { Duration } from "@/components/primitives"
 import { cx } from "@/lib/cx"
 
 import {
@@ -36,24 +36,26 @@ export function AiShimmer({
 	children = "Thinking…",
 	paused = false,
 	duration,
+	size,
 	className,
 }: AiShimmerProps) {
 	/* `paused` is an explicit opt-out; reduced motion is handled in CSS. */
 	if (paused) {
 		return (
-			<Text tag="span" type="secondary" weight="medium" className={className}>
+			<Text tag="span" size={size} type="secondary" weight="medium" className={className}>
 				{children}
 			</Text>
 		)
 	}
 
 	/* `CSSProperties` has no index signature for custom properties; widen it for this one. */
-	const style: CSSProperties & Partial<Record<"--ai-shimmer-duration", string>> =
-		duration === undefined ? {} : { "--ai-shimmer-duration": `${duration}s` }
+	const style: CSSProperties & Partial<Record<"--_ai-shimmer-duration", string>> =
+		duration === undefined ? {} : { "--_ai-shimmer-duration": `${duration}s` }
 
 	return (
 		<Text
 			tag="span"
+			size={size}
 			type="inherit"
 			weight="medium"
 			role="status"
@@ -99,7 +101,13 @@ export function AiMessageBubble({
 	return (
 		<div data-role={role} className={cx("ai-message-bubble--component", styles.turn, className)}>
 			{avatar ?? (
-				<span aria-label={avatarLabel} data-role={role} className={styles.avatar}>
+				<span
+					aria-label={avatarLabel}
+					data-role={role}
+					/* The assistant's own avatar is primary; the reader's and the system's stay neutral. */
+					data-tone={role === "assistant" ? "primary" : undefined}
+					className={styles.avatar}
+				>
 					<FallbackIcon aria-hidden />
 				</span>
 			)}
@@ -109,7 +117,7 @@ export function AiMessageBubble({
 					<div className={styles.turnMeta}>
 						{!!authorName && <Text tag="span" weight="medium">{authorName}</Text>}
 						{!!timestamp && (
-							<SecondaryValue size="xs" className={styles.numeric}>{timestamp}</SecondaryValue>
+							<Text tag="span" size="xs" type="secondary" numeric>{timestamp}</Text>
 						)}
 					</div>
 				)}
@@ -128,7 +136,7 @@ export function AiMessageBubble({
 							<Button
 								type="button"
 								tone="neutral"
-								buttonStyle="ghost"
+								appearance="ghost"
 								iconOnly
 								aria-label={copy.copyAria}
 								onClick={() => void writeCopy(body)}
@@ -141,7 +149,7 @@ export function AiMessageBubble({
 							<Button
 								type="button"
 								tone="neutral"
-								buttonStyle="ghost"
+								appearance="ghost"
 								iconOnly
 								aria-label={copy.regenerateAria}
 								onClick={onRegenerate}
@@ -273,7 +281,7 @@ export function AiChainOfThought({
 			{!hideHeader && (
 				<div className={styles.chainHeader}>
 					<DisplayLabel>{copy.title}</DisplayLabel>
-					{streaming && <AiShimmer className={styles.chainHint}>{copy.streamingHint}</AiShimmer>}
+					{streaming && <AiShimmer size="xs" className={styles.chainHint}>{copy.streamingHint}</AiShimmer>}
 				</div>
 			)}
 

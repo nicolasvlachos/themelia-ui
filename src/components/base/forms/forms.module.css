@@ -5,18 +5,15 @@
 .field {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
+/* The label's type is Text's (form-field.tsx); this rule lays it out. */
 .label {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-2xs);
-	color: var(--foreground);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
+	gap: calc(var(--gap-sm) / 2);
 	/* The label is a click target for its control, so it must not stretch the full row. */
 	width: fit-content;
 }
@@ -28,28 +25,29 @@
 /* Horizontal: the label beside the control, for settings rows. */
 /*
  * Wraps: the body keeps a floor of one label column and drops under the label, with the
- * vertical gap, when both don't fit.
+ * vertical gap, when both don't fit. A settings page sets `--_field-label-width` to align
+ * its labels down one column.
  */
 .fieldHorizontal {
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: start;
-	column-gap: var(--space-xl);
-	row-gap: var(--space-sm);
+	column-gap: var(--gap);
+	row-gap: var(--gap-sm);
 }
 
 .fieldHorizontal .label {
 	flex-shrink: 0;
-	width: var(--field-label-width);
+	width: var(--_field-label-width, 12rem);
 	/* Centred on the control's first line. */
-	margin-top: calc((var(--control-h) - 1lh) / 2);
+	margin-top: calc((var(--control-height) - 1lh) / 2);
 }
 
 .fieldHorizontalBody {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
-	flex: 1 1 var(--field-label-width);
+	gap: var(--gap-sm);
+	flex: 1 1 var(--_field-label-width, 12rem);
 	min-width: 0;
 }
 
@@ -57,7 +55,7 @@
 .group {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 	border: 0;
 	padding: 0;
 	margin: 0;
@@ -66,7 +64,7 @@
 
 .groupLegend {
 	padding: 0;
-	margin-bottom: var(--space-xs);
+	margin-bottom: calc(var(--gap-sm) / 2);
 }
 
 /* ══ Workflow ══════════════════════════════════════════════════════════════════════ */
@@ -74,7 +72,7 @@
 .section {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 }
 
 /*
@@ -93,7 +91,7 @@
 }
 
 .actionsRow {
-	padding: var(--surface-py) var(--surface-px);
+	padding: var(--padding);
 	border-top: var(--border-width) solid var(--border);
 	/* Opaque unless the browser can blur behind a translucent bar (below), the header's recipe. */
 	background-color: var(--background);
@@ -101,7 +99,7 @@
 
 @supports (backdrop-filter: blur(1px)) {
 	.actionsRow {
-		background-color: var(--background-70);
+		background-color: color-mix(in oklab, var(--background) 70%, transparent);
 		backdrop-filter: blur(12px);
 	}
 }
@@ -110,7 +108,7 @@
 	display: flex;
 	min-width: 0;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 }
 
 @container (min-width: 32rem) {
@@ -121,12 +119,10 @@
 	}
 }
 
+/* Text's `xs` in the secondary colour (workflow.tsx), for status that is not a plain string. */
 .actionsLeading {
 	min-width: 0;
 	flex: 1;
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--muted-foreground);
 }
 
 .actionsTrailing {
@@ -135,7 +131,7 @@
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: flex-end;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 @container (min-width: 32rem) {
@@ -145,42 +141,26 @@
 	}
 }
 
-/* A real `<ul>`; the indent lines markers up under the alert's text column. */
+/* A real `<ul>` in Text's `xs`; the indent lines markers up under the alert's text column. */
 .summaryList {
 	margin: 0;
-	padding-inline-start: var(--space-xl);
+	padding-inline-start: var(--padding);
 	list-style: disc;
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
 }
 
 /* Separate entries so lines don't weld together (audit/layout-heuristics.spec.ts, WELDED). */
 .summaryList > li + li {
-	margin-block-start: var(--space-2xs);
-}
-
-/* The summary takes focus after a failed submit; ring only for :focus-visible. */
-.errorSummary:focus {
-	outline: none;
-}
-
-.errorSummary:focus-visible {
-	box-shadow: var(--focus-ring);
+	margin-block-start: calc(var(--gap-sm) / 2);
 }
 
 /* An item that links to its field reads as a link, in the summary's own colour. */
 .summaryList a {
 	color: inherit;
 	text-decoration-line: underline;
-	text-underline-offset: var(--link-underline-offset);
+	text-underline-offset: 3px;
 	border-radius: var(--radius-sm);
 }
 
-.summaryList a:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 .submitSpinner {
-	animation: var(--animate-spin);
+	animation: var(--keyframes-spin) 1s linear infinite;
 }

@@ -34,8 +34,8 @@ export default function ActivityLogExample() {
 	return (
 		<>
 			<Stack direction="horizontal" gap="sm" wrap>
-				<Button tone="neutral" buttonStyle="outline" onClick={() => setEntries([])} disabled={entries.length === 0}>Show empty log</Button>
-				<Button tone="neutral" buttonStyle="outline" onClick={() => setEntries(ENTRIES)}>Restore sample</Button>
+				<Button tone="neutral" appearance="outline" onClick={() => setEntries([])} disabled={entries.length === 0}>Show empty log</Button>
+				<Button tone="neutral" appearance="outline" onClick={() => setEntries(ENTRIES)}>Restore sample</Button>
 				<Select aria-label="Log state" value={logState} className={styles.stateSelect}
 					options={[{ value: "ready", label: "Loaded" }, { value: "loading", label: "Updating" }, { value: "error", label: "Failed" }]}
 					onValueChange={(value) => value && setLogState(value)} />

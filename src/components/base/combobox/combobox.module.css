@@ -1,43 +1,38 @@
 /*
- * Combobox — component variables. The input and chips container carry
- * `data-field-control` / `data-field-shell`, so height, border, radius, focus and invalid
- * state come from styles/fields.css; this file owns the popup, rows and chips.
+ * Combobox. The input and chips container carry `data-field-control` / `data-field-shell`,
+ * so height, border, radius, focus and invalid state come from styles/fields.css; this file
+ * owns the popup, rows and chips.
  */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). */
-:root {
-	--combobox-popup-max-height: 24rem;
-}
-
 
 /* ── Field ───────────────────────────────────────────────────────────────────────── */
 
 .inputWrap {
+	/* A trailing control: the icon plus the small padding, the glyph button's size. */
+	--_action: calc(var(--icon-size) + var(--padding-sm));
+	/* The controls' inset from the field's edge, and the space between two of them. */
+	--_inset: calc(var(--padding-sm) / 2);
+
 	position: relative;
 	width: 100%;
 }
 
-/* Room for the trailing controls, computed from the tokens that size them. */
+/* Room for the trailing controls, computed from the variables that size them. */
 .inputWrap .input {
-	padding-inline-end: calc(
-		var(--space-xs) * 2 + var(--size-icon) + var(--space-xs) * 2
-	);
+	padding-inline-end: calc(var(--_inset) * 2 + var(--_action));
 }
 
 .inputWrap[data-has-clear] .input {
-	padding-inline-end: calc(
-		var(--space-xs) * 2 + var(--size-icon) * 2 + var(--space-xs) * 4 +
-			var(--space-2xs)
-	);
+	padding-inline-end: calc(var(--_inset) * 3 + var(--_action) * 2);
 }
 
 .actions {
 	position: absolute;
 	top: 50%;
-	inset-inline-end: var(--space-xs);
+	inset-inline-end: var(--_inset);
 	translate: 0 -50%;
 	display: flex;
 	align-items: center;
-	gap: var(--space-2xs);
+	gap: var(--_inset);
 	color: var(--muted-foreground);
 }
 
@@ -45,33 +40,27 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	padding: var(--space-xs);
+	padding: calc(var(--padding-sm) / 2);
 	border: 0;
 	border-radius: var(--radius-sm);
 	background: none;
 	color: inherit;
 	cursor: pointer;
-	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		box-shadow var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
-.action:hover {
+.action:hover:not(:disabled, [data-disabled]) {
 	background-color: var(--accent);
 }
 
-.action:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 .action:disabled {
-	pointer-events: none;
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
 }
 
 .action > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* The whole-field trigger, for a select-like combobox with no free text. */
@@ -79,7 +68,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	text-align: start;
 	cursor: default;
 }
@@ -98,8 +87,8 @@
 }
 
 .triggerIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* ── Popup ───────────────────────────────────────────────────────────────────────── */
@@ -110,11 +99,14 @@
 }
 
 .popup {
+	/* The tallest the list grows before it scrolls. */
+	--_max-height: 24rem;
+
 	/* Anchor width, unlike the dropdown menu: a listbox lines up with its field. */
 	width: var(--anchor-width);
-	min-width: calc(9rem * var(--scale));
+	min-width: 9rem;
 	max-width: var(--available-width);
-	max-height: min(var(--available-height), var(--combobox-popup-max-height));
+	max-height: min(var(--available-height), var(--_max-height));
 	/* A column, so a search band keeps its height while the list scrolls. */
 	display: flex;
 	flex-direction: column;
@@ -122,12 +114,11 @@
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
-	/* The popup boundary is the shadow's hairline ring, never a real border. */
-	box-shadow: var(--popover-shadow);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
 	transform-origin: var(--transform-origin);
 	transition:
-		opacity var(--duration-fast) var(--ease-out),
-		scale var(--duration-fast) var(--ease-out);
+		opacity var(--duration-fast) var(--ease),
+		scale var(--duration-fast) var(--ease);
 }
 
 .popup[data-starting-style],
@@ -136,13 +127,15 @@
 	scale: 0.95;
 }
 
+/* The container radius less the row radius, so the rows' corners nest in the popup's. */
 .list {
 	flex: 1 1 auto;
 	min-height: 0;
-	max-height: min(var(--combobox-popup-max-height), var(--available-height));
+	max-height: min(var(--_max-height, 24rem), var(--available-height));
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	padding: var(--space-md);
+	padding: calc(var(--radius) - var(--radius-sm));
+	/* Focus stays in the field; the highlighted row is the indicator. */
 	outline: none;
 }
 
@@ -151,18 +144,16 @@
 	display: none;
 }
 
+/* A row is at least an icon with the small padding above and below it. */
 .item {
 	display: flex;
 	width: 100%;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
-	min-height: var(--menu-row-min-h);
-	/* The shared menu row (theming/sizing.css), same as dropdown items. */
-	padding: var(--menu-row-py) var(--row-px);
+	gap: var(--gap-sm);
+	min-height: calc(var(--icon-size) + var(--padding-sm) * 2);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	border-radius: var(--radius-sm);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	cursor: default;
 	user-select: none;
 	outline: none;
@@ -174,7 +165,7 @@
 }
 
 .item[data-disabled] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
@@ -183,7 +174,7 @@
 	min-width: 0;
 	flex: 1;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -198,28 +189,23 @@
 }
 
 .indicator > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .group {
 	overflow: hidden;
 }
 
+/* The row inset, so the caption aligns with the labels under it. */
 .groupLabel {
-	/* The row inset, so the caption aligns with the labels under it. */
-	padding: var(--space-sm) var(--row-px);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-medium);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	color: var(--muted-foreground);
 }
 
 .empty {
-	padding-block: var(--space-2xl);
+	padding-block: var(--padding);
 	text-align: center;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	color: var(--muted-foreground);
 }
 
@@ -230,10 +216,8 @@
 .status {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
-	padding: var(--space-md) var(--row-px);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
 	color: var(--muted-foreground);
 }
 
@@ -243,32 +227,29 @@
 
 .separator {
 	height: var(--border-width);
-	margin-inline: calc(var(--space-md) * -1);
-	margin-block: var(--space-xs);
-	background-color: var(--border-60);
+	margin-inline: calc((var(--radius) - var(--radius-sm)) * -1);
+	margin-block: calc(var(--gap-sm) / 2);
+	background-color: var(--border);
 }
 
 /* ── Chips ───────────────────────────────────────────────────────────────────────── */
 
 .chips {
 	flex-wrap: wrap;
-	gap: var(--space-sm);
-	padding-block: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
+	padding-block: calc(var(--padding-sm) / 2);
 }
 
+/* The glyph button's height (icon plus the small padding), so a row of chips fits the field. */
 .chip {
 	display: inline-flex;
 	align-items: center;
-	/* Whole-pixel line height, so the remove button centres on a whole pixel. */
-	line-height: var(--leading-12);
-	gap: var(--space-xs);
-	padding: var(--space-2xs) var(--space-md);
+	gap: calc(var(--gap-sm) / 2);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	/* Nested in the field, so tighter than the field's radius. */
 	border-radius: var(--radius-sm);
-	background-color: var(--foreground-8);
+	background-color: color-mix(in oklab, var(--foreground) var(--tint), transparent);
 	color: var(--foreground);
-	font-size: var(--text-xs);
-	font-weight: var(--weight-medium);
 }
 
 /* Highlight the keyboard target: backspacing through chips is how keyboard users remove them. */
@@ -287,7 +268,9 @@
 	background: none;
 	color: var(--muted-foreground);
 	cursor: pointer;
-	transition: var(--transition-control);
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 /* On the highlighted chip the glyph takes the chip's ink; muted would vanish on --primary. */
@@ -301,47 +284,46 @@
 	color: var(--foreground);
 }
 
-.chipRemove:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 .chipRemove > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 /*
  * Search band in a trigger-only popup: the command palette's inset field, tinted with an
- * edge in the same tint (inside its height), no halo since the popup frames it. It owns
- * the keyboard while open.
+ * edge in the same tint (inside its height), the ring drawn over its frame. It owns the
+ * keyboard while open.
  */
 .popupSearch {
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-md);
-	height: var(--control-h-sm);
-	margin: var(--space-md);
+	gap: var(--gap-sm);
+	height: var(--control-height-sm);
+	/* The list's inset, so the band lines up with the rows under it. */
+	margin: calc(var(--radius) - var(--radius-sm));
 	margin-block-end: 0;
-	padding-inline: var(--control-px-2xs);
-	border: var(--border-width) solid var(--input-30);
+	padding-inline: var(--padding-sm);
+	border: var(--border-width) solid color-mix(in oklab, var(--input) var(--tint-strong), transparent);
 	border-radius: var(--radius-sm);
-	background-color: var(--input-30);
+	background-color: color-mix(in oklab, var(--input) var(--tint-strong), transparent);
 }
 
-/* Focus firms the edge as on a field. */
+/* Focus firms the edge and draws the ring over it, as on a field. */
 .popupSearch:has(.popupSearchInput:focus-visible) {
-	border-color: var(--focus-ring-color);
+	border-color: var(--ring);
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * -1);
 }
 
 .popupSearchIcon {
 	flex-shrink: 0;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	color: var(--muted-foreground);
 }
 
+/* The band draws the ring (above), so the field itself does not. */
 .popupSearchInput {
 	flex: 1;
 	min-width: 0;
@@ -349,9 +331,6 @@
 	padding: 0;
 	background: none;
 	color: inherit;
-	font: inherit;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	outline: none;
 }
 
@@ -371,7 +350,6 @@ input.chipsInput {
 	border: 0;
 	background: transparent;
 	color: inherit;
-	font: inherit;
 	outline: none;
 }
 
@@ -385,7 +363,7 @@ input.chipsInput {
 	z-index: var(--z-popover);
 	background-color: var(--overlay-backdrop);
 	backdrop-filter: var(--overlay-backdrop-filter);
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition: opacity var(--duration-fast) var(--ease);
 }
 
 .backdrop[data-starting-style],

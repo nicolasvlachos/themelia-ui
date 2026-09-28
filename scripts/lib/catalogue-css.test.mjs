@@ -80,7 +80,8 @@ test('the built catalogue loses no class and no custom property', { skip: !built
 
   /* Non-vacuity: a comparison of two empty sets passes and proves nothing. */
   assert.ok(sourceClasses.size > 1000, `only ${sourceClasses.size} classes across the family sheets`)
-  assert.ok(sourceProperties.size > 400, `only ${sourceProperties.size} custom properties`)
+  /* The theme alone declares about eighty; component variables are private (`--_x`) and not counted. */
+  assert.ok(sourceProperties.size > 70, `only ${sourceProperties.size} custom properties`)
 
   const catalogueClasses = classes(catalogue)
   const catalogueProperties = properties(catalogue)

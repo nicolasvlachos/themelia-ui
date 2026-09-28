@@ -3,7 +3,7 @@ import type { ReactNode } from "react"
 
 import { VisuallyHidden } from "@/components/base/display"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/base/tooltip"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "../choice.module.css"
@@ -23,7 +23,7 @@ export function ChoiceLabel({
 	descriptionId,
 }: {
 	option: ChoiceOption
-	weight?: "regular" | "medium" | "semibold"
+	weight?: "normal" | "medium" | "semibold"
 	className?: string
 	/** Id for the hidden copy of the tooltip, which the option points `aria-describedby` at. */
 	descriptionId?: string
@@ -39,7 +39,7 @@ export function ChoiceLabel({
 	if (option.tooltip == null) return <span className={cx("choice-label--component", className)}>{label}</span>
 
 	return (
-		<span className={cx(styles.labelLine, className)}>
+		<span className={cx(styles.labelLine, textClassName({ size: "sm" }), className)}>
 			{label}
 			<Tooltip>
 				<TooltipTrigger
@@ -58,8 +58,8 @@ export function ChoiceLabel({
 }
 
 /**
- * A card's title and description as one block, so they sit at `--space-xs` instead of the
- * card's icon-to-text gap.
+ * A card's title and description as one block, so they sit at half the small gap instead of
+ * the card's icon-to-text gap.
  */
 export function ChoiceCardText({ children }: { children: ReactNode }) {
 	return <span className={cx("choice-card-text--component", styles.cardText)}>{children}</span>
@@ -68,7 +68,7 @@ export function ChoiceCardText({ children }: { children: ReactNode }) {
 export function ChoiceDescription({ children }: { children: ReactNode }) {
 	if (children == null || children === false) return null
 	return isSimpleText(children) ? (
-		<Text tag="span" size="inherit" type="secondary" className={cx("choice-description--component", styles.description)}>
+		<Text tag="span" size="xs" type="secondary" className={cx("choice-description--component", styles.description)}>
 			{children}
 		</Text>
 	) : (

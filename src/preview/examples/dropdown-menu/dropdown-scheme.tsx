@@ -9,9 +9,9 @@ import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function DropdownScheme() {
 	return (
-		<Stack direction="horizontal" gap="lg">
+		<Stack direction="horizontal">
 			<DropdownMenu>
-				<DropdownMenuTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
+				<DropdownMenuTrigger render={<Button appearance="outline" tone="neutral" />}>
 					Default <ChevronDownIcon />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>
@@ -21,7 +21,7 @@ export default function DropdownScheme() {
 			</DropdownMenu>
 			<UIProvider config={{ overlay: { darkMenus: false } }}>
 				<DropdownMenu>
-					<DropdownMenuTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
+					<DropdownMenuTrigger render={<Button appearance="outline" tone="neutral" />}>
 						Follows the page <ChevronDownIcon />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>

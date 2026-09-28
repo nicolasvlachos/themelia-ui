@@ -15,9 +15,9 @@ export default function DropdownMenuExample() {
 	const [sort, setSort] = useState("date")
 
 	return (
-		<Stack direction="horizontal" gap="lg">
+		<Stack direction="horizontal">
 			<DropdownMenu>
-				<DropdownMenuTrigger render={<Button buttonStyle="outline" tone="neutral" />}>
+				<DropdownMenuTrigger render={<Button appearance="outline" tone="neutral" />}>
 					Options <ChevronDownIcon />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>

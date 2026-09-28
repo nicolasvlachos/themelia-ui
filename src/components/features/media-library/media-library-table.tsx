@@ -37,7 +37,7 @@ export function MediaLibraryTable<TItem>({ items, selectedSet, accessors, string
 			const selected = selectedSet.has(id)
 			return <TableRow key={id} data-state={selected ? "selected" : undefined} data-selected={selected || undefined}>
 				<TableCell><Checkbox checked={selected} aria-label={copy.assetAction(selected ? copy.deselect : copy.select, name)} onChange={() => onToggle(id)} /></TableCell>
-				<TableCell><Button tone="neutral" buttonStyle="ghost" onClick={(event) => { event.currentTarget.focus(); onDetails(id) }} className={styles.tableName}>
+				<TableCell><Button tone="neutral" appearance="ghost" onClick={(event) => { event.currentTarget.focus(); onDetails(id) }} className={styles.tableName}>
 					<MediaPreview item={item} accessors={accessors} className={styles.rowPreview} />
 					<Text tag="span" truncate title={name}>{name}</Text>
 				</Button></TableCell>
@@ -46,7 +46,7 @@ export function MediaLibraryTable<TItem>({ items, selectedSet, accessors, string
 				<TableCell align="end"><FileSize value={accessors.getSize(item)} /></TableCell>
 				<TableCell><DatePrimitive value={accessors.getUploadedAt(item)} /></TableCell>
 				<TableCell align="end"><NumberPrimitive value={accessors.getUsageCount(item)} /></TableCell>
-				<TableCell><Button tone="neutral" buttonStyle="ghost" aria-label={copy.assetAction(copy.details, name)} onClick={(event) => { event.currentTarget.focus(); onDetails(id) }}>{copy.details}</Button></TableCell>
+				<TableCell><Button tone="neutral" appearance="ghost" aria-label={copy.assetAction(copy.details, name)} onClick={(event) => { event.currentTarget.focus(); onDetails(id) }}>{copy.details}</Button></TableCell>
 			</TableRow>
 		})}</TableBody>
 	</Table>

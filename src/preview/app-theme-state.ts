@@ -4,28 +4,8 @@ import { type UIConfig } from "@/lib/ui-provider"
 import { createTheme, useAppliedTheme, type ThemeDefinition } from "@/components/features/theme-tweaker"
 
 const STORAGE_KEY = "themelia-ui:app-theme:v1"
-const STORAGE_VERSION = 4
+const STORAGE_VERSION = 5
 const DEFAULT_CONFIG: UIConfig = { colorScheme: "system", density: "default" }
-
-/* A saved name that 2.0 renamed carries its value over, so a stored theme keeps its look. */
-const RENAMED: Record<string, string> = { "--height-action": "--height-control", "--space-scale": "--density-scale" }
-
-function migrateTheme(theme: ThemeDefinition, version: number): ThemeDefinition {
-	if (version >= STORAGE_VERSION) return theme
-	const shared: Record<string, string | undefined> = { ...theme.shared }
-	/* Versions 1–2 saved one radius; the inner one is its own value now (half, as in the defaults). */
-	const radius = shared["--radius"]
-	if (version < 3 && radius !== undefined && shared["--radius-sm"] === undefined) {
-		if (radius === "1rem" || radius === "0.875rem") delete shared["--radius"]
-		else shared["--radius-sm"] = radius === "0rem" ? "0rem" : `calc(${radius} / 2)`
-	}
-	for (const [from, to] of Object.entries(RENAMED)) {
-		if (shared[from] === undefined) continue
-		shared[to] ??= shared[from]
-		delete shared[from]
-	}
-	return { ...theme, shared: shared as ThemeDefinition["shared"] }
-}
 
 function validConfig(config: UIConfig) {
 	try {
@@ -40,8 +20,10 @@ function validConfig(config: UIConfig) {
 function readSettings(): { theme: ThemeDefinition; config: UIConfig } {
 	try {
 		const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null")
-		if ([1, 2, 3, STORAGE_VERSION].includes(saved?.version) && saved.theme && saved.config && validConfig(saved.config)) {
-			return { theme: createTheme(migrateTheme(saved.theme, saved.version)), config: saved.config }
+		if (typeof saved?.version === "number" && saved.version <= STORAGE_VERSION && saved.config && validConfig(saved.config)) {
+			/* An older format's theme names variables the theme no longer declares; its config still applies. */
+			const theme = saved.version === STORAGE_VERSION && saved.theme ? createTheme(saved.theme) : createTheme()
+			return { theme, config: saved.config }
 		}
 	} catch { /* Storage is optional; a fresh session always works. */ }
 	return { theme: createTheme(), config: DEFAULT_CONFIG }

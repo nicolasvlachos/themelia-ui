@@ -20,7 +20,6 @@ export function GlobalSearchEmptyState({ title, hint, className }: GlobalSearchE
 			description={hint}
 			media={<SearchIcon />}
 			mediaVariant="icon-soft"
-			padding="md"
 			className={cx("global-search-empty-state--component", className)}
 		/>
 	)

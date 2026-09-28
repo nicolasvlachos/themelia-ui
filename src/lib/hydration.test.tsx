@@ -46,7 +46,7 @@ const cases: Array<[string, () => React.ReactElement]> = [
 	["Page", () => <Page><PageHeader title="Invoices" /></Page>],
 	["Progress", () => <Progress value={40} />],
 	["Skeleton", () => <Skeleton />],
-	["Stack", () => <Stack>x</Stack>],
+	["Stack", () => <Stack gap="sm">x</Stack>],
 	["Table", () => (
 		<Table><TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody></Table>
 	)],

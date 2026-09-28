@@ -1,6 +1,6 @@
 import { BanknoteIcon, CreditCardIcon } from "lucide-react"
 
-import { PaymentTimeline } from "themelia-ui/admin/patterns/commerce"
+import { PaymentTimeline } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 export default function PaymentTimelineExample() {

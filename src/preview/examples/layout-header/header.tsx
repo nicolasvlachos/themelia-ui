@@ -16,11 +16,11 @@ export default function HeaderExample() {
 					center: <SearchInput placeholder="Search invoices…" />,
 					right: (
 						<>
-							<Button tone="neutral" buttonStyle="outline">
+							<Button tone="neutral" appearance="outline">
 								<PlusIcon />
 								New
 							</Button>
-							<Button iconOnly tone="neutral" buttonStyle="ghost" aria-label="Notifications">
+							<Button iconOnly tone="neutral" appearance="ghost" aria-label="Notifications">
 								<BellIcon />
 							</Button>
 							<Avatar size="sm">

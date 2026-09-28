@@ -4,6 +4,7 @@
  */
 import * as React from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./choice.module.css"
@@ -26,10 +27,11 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(function S
 	ref,
 ) {
 	return (
-		<label className={cx("switch--component", styles.field, className)}>
+		<label className={cx("switch--component", styles.field, textClassName({ size: "sm" }), className)}>
 			<input
 				ref={ref}
 				type="checkbox"
+				// oxlint-disable-next-line jsx-a11y/role-has-required-aria-props -- a native checkbox exposes its checked state to the switch role
 				role="switch"
 				data-slot="switch"
 				className={styles.input}

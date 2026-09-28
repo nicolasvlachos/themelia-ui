@@ -6,10 +6,10 @@ import { Text } from "themelia-ui/base/typography"
 
 export function ControlRow() {
 	return (
-		<Stack direction="horizontal" gap="md" align="center" wrap>
+		<Stack direction="horizontal" gap="sm" align="center" wrap>
 			<Text size="sm">Label</Text>
 			<Button>Save</Button>
-			<Button tone="neutral" buttonStyle="outline">
+			<Button tone="neutral" appearance="outline">
 				Cancel
 			</Button>
 			<Button iconOnly aria-label="Add">

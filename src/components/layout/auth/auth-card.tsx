@@ -5,7 +5,7 @@
 import type { ComponentProps, ReactNode } from "react"
 
 import { Card } from "@/components/base/cards"
-import { DisplayLabel } from "@/components/base/typography"
+import { DisplayLabel, Heading } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./auth.module.css"
@@ -34,7 +34,11 @@ export interface AuthCardProps extends Omit<ComponentProps<"div">, "title"> {
 	level?: 1 | 2 | 3
 }
 
-/* A Card with a wider inset, a heavier shadow and a page-scale title (auth.module.css). */
+/*
+ * A Card with a wider inset and a heavier shadow (auth.module.css), and a page-scale title:
+ * the page's heading, a size above a card's. Card sets the type of a title it heads itself,
+ * so the heading goes in as the title rather than through `titleLevel`.
+ */
 export function AuthCard({
 	surface = "card",
 	eyebrow,
@@ -57,8 +61,7 @@ export function AuthCard({
 			surface={surface === "bare" ? "flat" : "framed"}
 			media={media ? <div className={styles.cardMedia}>{media}</div> : undefined}
 			headerStart={eyebrow ? <DisplayLabel>{eyebrow}</DisplayLabel> : undefined}
-			title={title}
-			titleLevel={level}
+			title={title ? <Heading level={level} size="xl">{title}</Heading> : undefined}
 			description={description}
 			headerEnd={headerEnd}
 			alert={banner}

@@ -8,6 +8,8 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, unlinkSync } from 'node:fs'
 
+import { expandExports } from './lib/export-targets.mjs'
+
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
 const failures = []
 
@@ -29,7 +31,7 @@ if (!publint.ok) {
 }
 
 /* ── arethetypeswrong: what each entrypoint's TYPES resolve to, per module system ─── */
-const cssEntrypoints = Object.keys(pkg.exports)
+const cssEntrypoints = Object.keys(expandExports(pkg.exports))
   .filter((subpath) => subpath.endsWith('.css'))
   .map((subpath) => (subpath === '.' ? pkg.name : `${pkg.name}${subpath.slice(1)}`))
 

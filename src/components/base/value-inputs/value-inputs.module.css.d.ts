@@ -10,7 +10,6 @@ declare const styles: {
 	readonly phoneRoot: string
 	readonly slider: string
 	readonly sliderControl: string
-	readonly sliderMd: string
 	readonly sliderRange: string
 	readonly sliderRoot: string
 	readonly sliderThumb: string
@@ -21,7 +20,6 @@ declare const styles: {
 	readonly tagsClear: string
 	readonly tagsFooter: string
 	readonly tagsInput: string
-	readonly tagsOverLimit: string
 	readonly tagsShell: string
 }
 export default styles

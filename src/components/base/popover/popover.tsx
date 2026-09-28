@@ -5,7 +5,7 @@ import { Slot } from "@/components/base/slot"
 import { cx } from "@/lib/cx"
 import { renderWithChildren } from "@/lib/render-with-children"
 import { useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 
 import styles from "./popover.module.css"
 
@@ -188,7 +188,13 @@ function PopoverContent({
 		>
 			<PopoverPrimitive.Popup
 				data-slot="popover-content"
-				className={cx("popover-content--component", styles.content, inset === "flush" && styles.insetFlush, className)}
+				className={cx(
+					"popover-content--component",
+					styles.content,
+					inset === "flush" && styles.insetFlush,
+					textClassName({ size: "sm" }),
+					className,
+				)}
 				style={{
 					...widthStyle,
 					...(minWidth != null && { minWidth: size(minWidth) }),
@@ -210,7 +216,13 @@ function PopoverContent({
 
 /** The band at the top of the panel, for its title and description. */
 function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="popover-header" className={cx("popover-header--component", styles.header, className)} {...props} />
+	return (
+		<div
+			data-slot="popover-header"
+			className={cx("popover-header--component", styles.header, textClassName({ size: "sm" }), className)}
+			{...props}
+		/>
+	)
 }
 
 /**
@@ -221,7 +233,7 @@ function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
 	return (
 		<PopoverPrimitive.Title
 			data-slot="popover-title"
-			className={cx("popover-title--component", styles.title, className)}
+			className={cx("popover-title--component", textClassName({ size: "sm", weight: "medium" }), className)}
 			{...props}
 		/>
 	)

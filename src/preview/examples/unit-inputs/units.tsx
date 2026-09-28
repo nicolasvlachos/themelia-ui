@@ -17,7 +17,7 @@ export default function Units() {
 	const [coordinates, setCoordinates] = useState<CoordinatesValue>({ latitude: "52.370216", longitude: "4.895168" })
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
 			<FormField label="Shipping weight">
 				<WeightInput
 					value={weight}

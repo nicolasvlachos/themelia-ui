@@ -6,6 +6,15 @@ declare const styles: {
 	readonly cluster: string
 	readonly emptyCell: string
 	readonly emptyRow: string
+	readonly expandCell: string
+	readonly expandToggle: string
+	readonly expandedCell: string
+	readonly expandedClip: string
+	readonly expandedContent: string
+	readonly expandedMessage: string
+	readonly expandedMotion: string
+	readonly expandedPin: string
+	readonly expandedRow: string
 	readonly filterInput: string
 	readonly footer: string
 	readonly groupHead: string
@@ -26,17 +35,17 @@ declare const styles: {
 	readonly rootFill: string
 	readonly row: string
 	readonly rowActions: string
+	readonly selectionCell: string
 	readonly stickyColumn: string
+	readonly stickyColumnAfterGutter: string
 	readonly stickyColumnNext: string
 	readonly stickyCorner: string
 	readonly table: string
 	readonly tableArea: string
 	readonly tableAreaScrolls: string
-	readonly tableContainer: string
 	readonly tableContainerBounded: string
 	readonly tableContainerScrolls: string
 	readonly toolbar: string
-	readonly toolbarDivider: string
 	readonly topbar: string
 	readonly topbarEnd: string
 	readonly topbarGrid: string

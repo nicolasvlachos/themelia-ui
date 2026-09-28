@@ -48,7 +48,7 @@ export function MediaPreview<TItem>({
 		<span
 			data-tinted={tint ? "" : undefined}
 			className={cx("media-preview--component", styles.preview, styles.previewFallback, className)}
-			style={tint ? ({ "--media-tint": tint } as CSSProperties) : undefined}
+			style={tint ? ({ "--_media-tint": tint } as CSSProperties) : undefined}
 		>
 			{TYPE_ICON[type]}
 		</span>

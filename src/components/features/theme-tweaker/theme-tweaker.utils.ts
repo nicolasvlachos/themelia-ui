@@ -6,6 +6,7 @@
  * export never silently drops one; the live preview skips it, since half-typed values are normal.
  */
 import { DEFAULT_UI_CONFIG, mergeUIConfig, type UIConfig } from "@/lib/ui-provider"
+import { THEME_DEFAULTS } from "@/lib/ui-provider/tokens.generated"
 
 import type {
 	CreateThemeExportArtifactOptions, SerializeThemeOptions, ThemeDefinition,
@@ -13,27 +14,8 @@ import type {
 	ThemeVariableName,
 } from "./theme-tweaker.types"
 
-/*
- * The kit's own theme selectors (scripts/gen-theme.mjs): semantic and type tokens are
- * re-derived at every scope boundary, so a value set on `:root` alone stops at the first
- * provider. Each mode excludes the other, so a light-only edit never reaches a dark scope.
- */
-const BOUNDARY = ":is(:root, [data-ui-scope], [data-density], [data-theme])"
-export const defaultThemeSelectors: ThemeSelectors = {
-	shared: ":root,\n[data-ui-scope],\n[data-density],\n[data-theme],\n.light,\n.dark",
-	light: [
-		".light",
-		'[data-theme="light"]',
-		':is(.light, [data-theme="light"]) :is([data-ui-scope], [data-density]):not(.dark, [data-theme="dark"])',
-	].join(",\n"),
-	dark: [
-		".dark",
-		'[data-theme="dark"]',
-		':is(.dark, [data-theme="dark"]) :is([data-ui-scope], [data-density]):not(.light, [data-theme="light"])',
-	].join(",\n"),
-	systemLight: `${BOUNDARY}:not(.dark, [data-theme="dark"], :is(.dark, [data-theme="dark"]) *)`,
-	systemDark: `${BOUNDARY}:not(.light, [data-theme="light"], :is(.light, [data-theme="light"]) *)`,
-}
+/* The whole application: every colour carries both modes, so one selector is enough. */
+export const defaultThemeSelectors: ThemeSelectors = { shared: ":root" }
 
 const VARIABLE_NAME_PATTERN = /^--[a-z][a-z0-9-]*$/i
 const UNSAFE_CSS = /[;{}]/
@@ -91,39 +73,69 @@ function validateSelector(selector: string, scope: keyof ThemeSelectors): string
 	return value
 }
 
-function serializeBlock(selector: string, overrides: ThemeOverrides, media?: string): string | null {
-	const entries = validatedEntries(overrides)
-	if (entries.length === 0) return null
-	const block = [selector + " {", ...entries.map(([name, value]) => `\t${name}: ${value};`), "}"]
-	if (!media) return block.join("\n")
-	return [`@media ${media} {`, ...block.map((line) => `\t${line}`), "}"].join("\n")
+/**
+ * The two halves of a `light-dark(light, dark)` value, split at its top-level comma so a
+ * `color-mix(…)` half stays whole; `null` for any other value.
+ */
+export function splitLightDark(value: string): [string, string] | null {
+	const text = value.trim()
+	if (!text.startsWith("light-dark(") || !text.endsWith(")")) return null
+	const inner = text.slice("light-dark(".length, -1)
+	let depth = 0
+	for (let index = 0; index < inner.length; index++) {
+		const character = inner[index]
+		if (character === "(") depth++
+		else if (character === ")") depth--
+		else if (character === "," && depth === 0) {
+			return [inner.slice(0, index).trim(), inner.slice(index + 1).trim()]
+		}
+	}
+	return null
+}
+
+/** The kit's own value for one mode, when the theme declares the variable as a pair. */
+function defaultHalf(name: ThemeVariableName, mode: ThemeMode): string | undefined {
+	const declared = (THEME_DEFAULTS as Record<string, string | undefined>)[name]
+	const halves = declared ? splitLightDark(declared) : null
+	return halves ? halves[mode === "light" ? 0 : 1] : undefined
+}
+
+/**
+ * The mode-scoped edits as declarations: each colour one `light-dark()` pair, the half left
+ * unedited taken from the kit's theme, so a light-only edit leaves dark as the kit draws it.
+ */
+function pairedOverrides(theme: ThemeDefinition): ThemeOverrides {
+	const names = new Set([...Object.keys(theme.light), ...Object.keys(theme.dark)] as ThemeVariableName[])
+	const paired: ThemeOverrides = {}
+	for (const name of names) {
+		const lightEdit = theme.light[name]?.trim() || undefined
+		const darkEdit = theme.dark[name]?.trim() || undefined
+		const light = lightEdit ?? defaultHalf(name, "light") ?? darkEdit
+		const dark = darkEdit ?? defaultHalf(name, "dark") ?? lightEdit
+		if (!light || !dark) continue
+		paired[name] = light === dark ? light : `light-dark(${light}, ${dark})`
+	}
+	return paired
+}
+
+/** Every declaration the theme makes: its shared values and its colour pairs. */
+function themeDeclarations(theme: ThemeDefinition): ThemeOverrides {
+	return { ...theme.shared, ...pairedOverrides(theme) }
 }
 
 export function serializeTheme(
 	theme: ThemeDefinition,
 	options: SerializeThemeOptions = {},
 ): string {
-	const selectors = options.selectors ?? defaultThemeSelectors
-	const blocks = [
-		serializeBlock(validateSelector(selectors.shared, "shared"), theme.shared),
-		/* OS preference first, so an explicit theme below wins at equal specificity. */
-		selectors.systemLight
-			? serializeBlock(validateSelector(selectors.systemLight, "systemLight"), theme.light, "(prefers-color-scheme: light)")
-			: null,
-		selectors.systemDark
-			? serializeBlock(validateSelector(selectors.systemDark, "systemDark"), theme.dark, "(prefers-color-scheme: dark)")
-			: null,
-		serializeBlock(validateSelector(selectors.light, "light"), theme.light),
-		serializeBlock(validateSelector(selectors.dark, "dark"), theme.dark),
-	].filter((block): block is string => block !== null)
-
+	const selector = validateSelector((options.selectors ?? defaultThemeSelectors).shared, "shared")
+	const entries = validatedEntries(themeDeclarations(theme))
 	const banner =
 		options.banner === false ? null : `/* ${options.banner ?? "Themelia UI theme overrides"} */`
+	const block = entries.length
+		? [`${selector} {`, ...entries.map(([name, value]) => `\t${name}: ${value};`), "}"].join("\n")
+		: "/* No explicit overrides. */"
 
-	return `${[
-		...(banner ? [banner] : []),
-		...(blocks.length > 0 ? blocks : ["/* No explicit overrides. */"]),
-	].join("\n\n")}\n`
+	return `${[...(banner ? [banner] : []), block].join("\n\n")}\n`
 }
 
 /**
@@ -146,7 +158,10 @@ export function serializeUIConfig(config: UIConfig = {}): string {
 	)} satisfies UIConfig\n`
 }
 
-/** Shared first, then the mode's, so a mode-scoped edit wins. */
+/**
+ * The values the theme gives in one mode: shared first, then that mode's colour halves. For
+ * showing a value; the element's `color-scheme` is what picks the half on the page.
+ */
 export function getActiveThemeOverrides(
 	theme: ThemeDefinition,
 	mode: ThemeMode = theme.mode,
@@ -154,30 +169,23 @@ export function getActiveThemeOverrides(
 	return { ...theme.shared, ...theme[mode] }
 }
 
-export function themeToStyle(theme: ThemeDefinition, mode: ThemeMode = theme.mode): ThemeStyle {
-	// Non-strict: runs on every keystroke, so a half-typed value is skipped rather than thrown.
-	return Object.fromEntries(validatedEntries(getActiveThemeOverrides(theme, mode), false)) as ThemeStyle
-}
-
-export function countThemeOverrides(theme: ThemeDefinition): number {
-	return (
-		validatedEntries(theme.shared, false).length +
-		validatedEntries(theme.light, false).length +
-		validatedEntries(theme.dark, false).length
-	)
-}
-
 /**
- * Selectors that scope a theme to one subtree. Each mode gets two forms (the scope carrying
- * the class, and the scope inside an element that carries it).
+ * The theme as an inline style: shared values and each colour's `light-dark()` pair. The
+ * element's `color-scheme` (set by `.light`, `.dark` or `data-theme`) picks the half.
  */
+export function themeToStyle(theme: ThemeDefinition): ThemeStyle {
+	// Non-strict: runs on every keystroke, so a half-typed value is skipped rather than thrown.
+	return Object.fromEntries(validatedEntries(themeDeclarations(theme), false)) as ThemeStyle
+}
+
+/** How many variables the theme changes; a colour edited in both modes counts once. */
+export function countThemeOverrides(theme: ThemeDefinition): number {
+	return validatedEntries(themeDeclarations(theme), false).length
+}
+
+/** The selector that scopes a theme to one subtree instead of the document. */
 export function createScopedThemeSelectors(scopeSelector: string): ThemeSelectors {
-	const scope = validateSelector(scopeSelector, "shared")
-	return {
-		shared: scope,
-		light: `${scope},\n${scope}.light,\n.light ${scope}`,
-		dark: `${scope}.dark,\n.dark ${scope}`,
-	}
+	return { shared: validateSelector(scopeSelector, "shared") }
 }
 
 export function createThemeExportArtifact(

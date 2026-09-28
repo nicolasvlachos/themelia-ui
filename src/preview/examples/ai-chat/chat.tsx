@@ -73,7 +73,7 @@ export default function Chat() {
 						status: streaming ? "working" : "idle",
 					}}
 					headerActions={
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={() => note("settings")}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={() => note("settings")}>
 							Settings
 						</Button>
 					}

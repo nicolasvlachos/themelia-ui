@@ -1,4 +1,4 @@
-import { ShipmentTracking } from "themelia-ui/admin/patterns/commerce"
+import { ShipmentTracking } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 export default function ShipmentTrackingExample() {

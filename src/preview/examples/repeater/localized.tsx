@@ -14,7 +14,7 @@ export default function Localized() {
 	const [name, setName] = useState<LocalizedValue>({ en: "Invoice", nl: "Factuur" })
 
 	return (
-		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack gap="sm" style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField htmlFor={false} label="Display name" helperText="Switch locale — the value follows.">
 				<LocalizedStringField locales={LOCALES} value={name} onValueChange={setName} />
 			</FormField>

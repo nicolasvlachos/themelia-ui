@@ -6,7 +6,7 @@
  */
 import * as React from "react"
 
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./forms.module.css"
@@ -159,7 +159,7 @@ export function FormField({
 		<label
 			id={labelId}
 			htmlFor={controlId}
-			className={cx("form-field--label", styles.label)}
+			className={cx("form-field--label", styles.label, textClassName({ size: "sm", weight: "medium", type: "main" }))}
 		>
 			{label}
 			{!!required && (

@@ -6,7 +6,7 @@ export default function ToastActions() {
 	return (
 		<Stack direction="horizontal" gap="sm" wrap>
 			<Button
-				buttonStyle="outline"
+				appearance="outline"
 				tone="neutral"
 				onClick={() =>
 					toast("Invoice deleted", {
@@ -19,7 +19,7 @@ export default function ToastActions() {
 				With undo
 			</Button>
 			<Button
-				buttonStyle="outline"
+				appearance="outline"
 				tone="neutral"
 				onClick={() =>
 					toast.warning("Discard unsaved changes?", {

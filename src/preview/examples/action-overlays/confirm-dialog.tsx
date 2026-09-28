@@ -6,11 +6,11 @@ import { wait } from "./data"
 
 export default function ConfirmDialogExample() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap>
+		<Stack direction="horizontal" wrap>
 			<ConfirmDialog
 				title="Discard your changes?"
 				description="The draft has unsaved edits."
-				trigger={<Button tone="neutral" buttonStyle="outline">Neutral</Button>}
+				trigger={<Button tone="neutral" appearance="outline">Neutral</Button>}
 			/>
 			<ConfirmDialog
 				destructive

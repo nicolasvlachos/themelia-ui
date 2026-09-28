@@ -8,9 +8,9 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function OverlayStructure() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Open a long surface
 				</OverlayTrigger>
 				<OverlayContent>
@@ -25,7 +25,7 @@ export default function OverlayStructure() {
 					</OverlayBody>
 					<OverlayFooter>
 						<OverlayDismissArea>
-							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button tone="neutral" appearance="outline">Cancel</Button>
 							<Button>Save</Button>
 						</OverlayDismissArea>
 					</OverlayFooter>

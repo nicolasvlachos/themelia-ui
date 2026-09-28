@@ -5,7 +5,7 @@ import { Demo } from "./_shared"
 
 export default function SpinnerTone() {
 	return (
-		<Stack direction="horizontal" gap="2xl" align="end">
+		<Stack direction="horizontal" align="end">
 			<Demo caption='tone="primary" — default'><Spinner /></Demo>
 			<Demo caption='tone="neutral"'><Spinner tone="neutral" /></Demo>
 			<Demo caption='tone="success"'><Spinner tone="success" /></Demo>

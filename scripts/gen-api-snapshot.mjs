@@ -6,13 +6,13 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 
 import { apiExportsFor } from './lib/api-exports.mjs'
-import { typesFor as typesForEntry } from './lib/export-targets.mjs'
+import { expandExports, typesFor as typesForEntry } from './lib/export-targets.mjs'
 
 const OUT = 'architecture/api-snapshot.json'
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
 
-const entrypoints = Object.entries(pkg.exports)
+const entrypoints = Object.entries(expandExports(pkg.exports))
   .map(([subpath, target]) => [subpath, typesForEntry(target)])
   .filter(([, types]) => types)
 const declarations = apiExportsFor(entrypoints.map(([, file]) => file))

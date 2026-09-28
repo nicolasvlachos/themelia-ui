@@ -10,7 +10,7 @@ export default function SliderOrientation() {
 	const [range, setRange] = useState<number[]>([20, 70])
 
 	return (
-		<Stack direction="horizontal" gap="2xl" align="start">
+		<Stack direction="horizontal" align="start">
 			<FormField label="Level">
 				<SliderField
 					orientation="vertical"

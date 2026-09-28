@@ -14,7 +14,7 @@ export default function FormActions() {
 						</Text>
 					}
 				>
-					<Button tone="neutral" buttonStyle="outline">
+					<Button tone="neutral" appearance="outline">
 						Discard
 					</Button>
 					<Button>Save</Button>

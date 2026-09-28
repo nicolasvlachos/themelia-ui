@@ -69,7 +69,7 @@ export interface AuthShellProps
 	languageLinks?: AuthLink[]
 	/** A rendered control, when a link row is not the right shape for it. */
 	languageSwitcher?: ReactNode
-	/** The surface width. */
+	/** The surface width: `default`, or `sm` for a single short form such as a code entry. */
 	size?: AuthShellSize
 	/**
 	 * `card` (default) puts the content on a raised surface; `bare` does not; `split` puts
@@ -140,7 +140,7 @@ export function AuthShell({
 	policyLinks,
 	languageLinks,
 	languageSwitcher,
-	size = "md",
+	size = "default",
 	variant = "card",
 	align = "center",
 	splitPanel,
@@ -175,7 +175,6 @@ export function AuthShell({
 				className={cx(
 					styles.surface,
 					size === "sm" && styles.sizeSm,
-					size === "lg" && styles.sizeLg,
 				)}
 			>
 				{!!brand && <Brand brand={brand} renderLink={renderLink} />}

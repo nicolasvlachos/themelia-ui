@@ -5,15 +5,15 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function IconBadgeExample() {
 	return (
-		<Stack gap="xl">
-			<Stack direction="horizontal" gap="lg" wrap align="center">
+		<Stack>
+			<Stack direction="horizontal" wrap align="center">
 				{(["neutral", "primary", "success", "warning", "destructive", "info"] as const).map(
 					(tone) => (
 						<IconBadge key={tone} icon={CreditCardIcon} tone={tone} />
 					),
 				)}
 			</Stack>
-			<Stack direction="horizontal" gap="lg" wrap align="center">
+			<Stack direction="horizontal" wrap align="center">
 				{(["neutral", "primary", "success", "warning", "destructive", "info"] as const).map(
 					(tone) => (
 						<IconBadge key={tone} icon={CreditCardIcon} tone={tone} shape="circle" solid />

@@ -6,6 +6,7 @@ import {
 } from "react"
 
 import { VisuallyHidden } from "@/components/base/display"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultTagsInputStrings, type TagsInputStrings } from "./value-inputs.strings"
@@ -240,7 +241,7 @@ export function TagsInput({
 					renderTag ? (
 						renderTag(tag, index, remove)
 					) : (
-						<span key={`${tag}-${index}`} className={styles.tag}>
+						<span key={`${tag}-${index}`} className={cx(styles.tag, textClassName({ size: "xs", weight: "medium" }))}>
 							{tag}
 							<button
 								type="button"
@@ -293,8 +294,8 @@ export function TagsInput({
 			</div>
 
 			{hasFooter && (
-				<div className={styles.tagsFooter}>
-					<span className={cx(overLimit && styles.tagsOverLimit)}>{showCount ? summary : null}</span>
+				<div className={cx(styles.tagsFooter, textClassName({ size: "xs", type: "secondary" }))}>
+					<span className={overLimit ? textClassName({ size: "inherit", type: "error" }) : undefined}>{showCount ? summary : null}</span>
 					{showClearAll && tags.length > 0 && (
 						<button
 							type="button"

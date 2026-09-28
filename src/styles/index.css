@@ -3,49 +3,42 @@
  *
  * Layer order is the override story; later layers win regardless of specificity:
  *
- *   tokens     primitives (palette) and the raw tunable contract
- *   theming    wiring derived from tokens (never raw values)
- *   base       element reset
+ *   tokens     the theme: raw values, declared once at :root
+ *   base       element reset, and the tone and focus rules components read and outrank
  *   components CSS-Module rules (see vite.config.ts)
  *   utilities  the escape-hatch helpers the kit ships
  *
  * Consumer unlayered CSS outranks every layer. `@import` cannot sit inside `@layer {}`,
  * hence the `layer(...)` form on each import.
  */
-@layer tokens, theming, base, components, utilities;
+@layer tokens, base, components, utilities;
 
 /* The default typefaces. Unlayered: a layer cannot hold @font-face. */
 @import "./fonts.css";
 
-/* ── tokens: the raw contract ─────────────────────────────────────────────────── */
-/* Primitives first: the theme resolves its semantics against these. */
-@import "./tokens/palette.css" layer(tokens);
-@import "./themes/default.css" layer(tokens);
-@import "./tokens/foundation.css" layer(tokens);
-@import "./tokens/primitives.css" layer(tokens);
-@import "./tokens/states.css" layer(tokens);
-@import "./tokens/layout.css" layer(tokens);
-@import "./tokens/components.css" layer(tokens);
+/* ── tokens: the theme, one file per responsibility ───────────────────────────── */
+@import "./theme/colour.css" layer(tokens);
+@import "./theme/shape.css" layer(tokens);
+@import "./theme/spacing.css" layer(tokens);
+@import "./theme/size.css" layer(tokens);
+@import "./theme/typography.css" layer(tokens);
+@import "./theme/elevation.css" layer(tokens);
+@import "./theme/motion.css" layer(tokens);
+@import "./theme/layout.css" layer(tokens);
+@import "./theme/density.css" layer(tokens);
 
-/* ── theming: computed wiring ─────────────────────────────────────────────────── */
-@import "./theming/breakpoints.css";
-@import "./theming/colors.css" layer(theming);
-@import "./theming/sizing.css" layer(theming);
-@import "./theming/typography.css" layer(theming);
-@import "./theming/focus.css" layer(theming);
-@import "./theming/motion.css" layer(theming);
-@import "./theming/layers.css" layer(theming);
-@import "./theming/animation.css" layer(theming);
-
-/* Per-family contracts. A module whose contract is missing here renders unstyled. */
-@import "./theming/overlay.css" layer(theming);
-@import "./theming/layout.css" layer(theming);
-@import "./theming/field.css" layer(theming);
-@import "./theming/feedback.css" layer(theming);
-@import "./theming/text.css" layer(theming);
+/* Media conditions, resolved at build time (vite.shared.ts). */
+@import "./breakpoints.css";
 
 /* ── base: element reset (declares its own @layer base) ───────────────────────── */
 @import "./base.css";
+
+/* Keyframes, named through --keyframes-* so CSS Modules do not rename them. */
+@import "./animation.css";
+
+/* The tone rule and the focus rule, which components read and outrank. */
+@import "./tone.css";
+@import "./focus.css";
 
 /* The shared field surface. */
 @import "./fields.css";

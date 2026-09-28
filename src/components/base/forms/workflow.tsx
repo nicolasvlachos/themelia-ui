@@ -8,7 +8,7 @@ import { CheckIcon, Loader2Icon } from "lucide-react"
 import { Button, type ButtonProps } from "@/components/base/buttons"
 import { Card, type CardSurface } from "@/components/base/cards"
 import { Alert, AlertAction, AlertDescription, AlertTitle, type AlertTone } from "@/components/base/feedback"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import type { StringsProp } from "@/lib/strings"
 
@@ -91,7 +91,7 @@ export function FormActionsBar({ children, leading, trailing, sticky = false, cl
 			<div data-slot="form-actions-bar" className={styles.actionsRow}>
 				<div className={styles.actionsLayout}>
 					{leading != null && (
-						<div className={styles.actionsLeading}>
+						<div className={cx(styles.actionsLeading, textClassName({ size: "xs", type: "secondary" }))}>
 							{isSimpleText(leading) ? (
 								<Text tag="span" size="xs" type="secondary">
 									{leading}
@@ -161,12 +161,12 @@ export function ErrorSummary({
 			tone="destructive"
 			tabIndex={-1}
 			aria-labelledby={titleId}
-			className={cx("error-summary--component", styles.errorSummary, className)}
+			className={cx("error-summary--component", className)}
 		>
 			<AlertTitle id={titleId}>{title ?? copy.title(count)}</AlertTitle>
 			{!!description && <AlertDescription>{description}</AlertDescription>}
 			{errors.length > 0 && (
-				<ul className={styles.summaryList}>
+				<ul className={cx(styles.summaryList, textClassName({ size: "xs" }))}>
 					{errors.map((error, index) => (
 						<li key={index}>{error}</li>
 					))}

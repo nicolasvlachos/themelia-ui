@@ -110,7 +110,7 @@ export function ProductOptionsMatrix({
 	}
 
 	const editor = (option: ProductOptionGroup) => (
-		<Stack gap="lg" className={styles.optionEditor}>
+		<Stack className={styles.optionEditor}>
 			<FormField label={copy.nameLabel}>
 				<Input
 					value={draft.name}
@@ -183,7 +183,7 @@ export function ProductOptionsMatrix({
 						<Button
 							type="button"
 							tone="destructive"
-							buttonStyle="ghost"
+							appearance="ghost"
 							onClick={() => requestDelete(option)}
 						>
 							{copy.deleteLabel}
@@ -194,7 +194,7 @@ export function ProductOptionsMatrix({
 					<Button
 						type="button"
 						tone="neutral"
-						buttonStyle="ghost"
+						appearance="ghost"
 						onClick={() => {
 							onCancelEditingOption?.(option, draft)
 							stopEditing()

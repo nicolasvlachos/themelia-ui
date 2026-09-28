@@ -4,6 +4,7 @@ import { Toolbar as ToolbarPrimitive } from "@base-ui/react/toolbar"
 import * as React from "react"
 
 import { Button, type ButtonProps } from "@/components/base/buttons"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./toolbar.module.css"
@@ -45,19 +46,19 @@ export function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
 
 export interface ToolbarButtonProps
 	extends Omit<ToolbarPrimitive.Button.Props, "render">,
-		Pick<ButtonProps, "tone" | "buttonStyle" | "iconOnly" | "loading" | "fullWidth"> {
+		Pick<ButtonProps, "tone" | "appearance" | "iconOnly" | "loading" | "fullWidth"> {
 	/** Replaces the kit Button while retaining toolbar navigation behavior. */
 	render?: React.ReactElement
 }
 
 /**
  * A toolbar item rendered through the kit Button: Base UI owns the navigation behaviour, the
- * Button its look. It takes `tone`, `buttonStyle`, `iconOnly`, `loading` and `render`.
+ * Button its look. It takes `tone`, `appearance`, `iconOnly`, `loading` and `render`.
  */
 export function ToolbarButton({
 	render,
 	tone = "neutral",
-	buttonStyle = "ghost",
+	appearance = "ghost",
 	iconOnly,
 	loading,
 	fullWidth,
@@ -72,7 +73,7 @@ export function ToolbarButton({
 				render ?? (
 					<Button
 						tone={tone}
-						buttonStyle={buttonStyle}
+						appearance={appearance}
 						iconOnly={iconOnly}
 						loading={loading}
 						fullWidth={fullWidth}
@@ -92,7 +93,7 @@ export function ToolbarLink({ className, ...props }: ToolbarLinkProps) {
 	return (
 		<ToolbarPrimitive.Link
 			data-slot="toolbar-link"
-			className={cx("toolbar--link", styles.link, className)}
+			className={cx("toolbar--link", styles.link, textClassName({ size: "sm", lineHeight: "none" }), className)}
 			{...props}
 		/>
 	)

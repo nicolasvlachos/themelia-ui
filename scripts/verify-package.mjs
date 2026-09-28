@@ -11,7 +11,7 @@ import { dirname, resolve as resolvePath } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 import { cssSpecifierFindings } from './lib/css-specifiers.mjs'
-import { targetPaths } from './lib/export-targets.mjs'
+import { expandExports, targetPaths } from './lib/export-targets.mjs'
 import { readManifest } from './lib/read-architecture-manifest.mjs'
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
@@ -30,8 +30,8 @@ if (!existsSync('dist')) {
 const buildCommand = JSON.parse(readFileSync('package.json', 'utf8')).scripts['build:lib'] ?? ''
 const buildScripts = [...buildCommand.matchAll(/scripts\/[\w.-]+\.mjs/g)].map((m) => m[0])
 /*
- * package.json is left out: gen-exports.mjs writes it during the build. missing-target and
- * loads catch a package.json that has drifted from dist/.
+ * package.json is left out: its exports are patterns over dist/, not a build input.
+ * missing-target and loads catch a package.json that has drifted from dist/.
  */
 const SOURCE_GLOBS = ['src', 'vite.lib.config.ts', 'vite.shared.ts', 'tsconfig.json', ...buildScripts]
 
@@ -79,7 +79,8 @@ if (newestSource.mtime > oldestBuilt.mtime) {
 
 /* ── missing-target ─────────────────────────────────────────────────────────────── */
 let targets = 0
-for (const [subpath, value] of Object.entries(pkg.exports ?? {})) {
+const published = expandExports(pkg.exports)
+for (const [subpath, value] of Object.entries(published)) {
   for (const p of targetPaths(value)) {
     if (p.includes('*')) continue
     targets++
@@ -190,7 +191,7 @@ function reaches(entry, dep) {
   return false
 }
 
-const subpaths = Object.keys(pkg.exports ?? {})
+const subpaths = Object.keys(published)
   .filter((s) => !s.includes('*') && s !== './package.json')
   .map((s) => (s === '.' ? 'index' : s.slice(2)))
   .filter((s) => existsSync(`dist/${s}.js`))
@@ -282,7 +283,7 @@ if (failures.length) {
   process.exit(1)
 }
 console.log(
-  `PASS verify package — ${Object.keys(pkg.exports).length} subpaths, ${targets} targets present, ` +
+  `PASS verify package — ${Object.keys(published).length} subpaths, ${targets} targets present, ` +
     `${bundles.length} bundles clean, ${sample.length} entries execute in Node, ` +
     `${optionalPeers.length} optional peers contained across ${checked} checks, ` +
     'every bare import declared, ' +

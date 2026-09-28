@@ -4,14 +4,13 @@ declare const styles: {
 	readonly dimensions: string
 	readonly field: string
 	readonly grow: string
-	readonly numericInput: string
 	readonly row: string
 	readonly separator: string
 	readonly stepperAdornment: string
 	readonly stepperButton: string
 	readonly stepperGroup: string
 	readonly stepperInput: string
-	readonly subLabel: string
 	readonly unitColumn: string
+	readonly unitField: string
 }
 export default styles

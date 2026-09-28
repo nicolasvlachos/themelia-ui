@@ -72,7 +72,7 @@ export function SidebarWorkspace({
 						link({ ...rest, children: children ?? null }) as ReactElement
 					}
 					renderTrigger={
-						<SidebarMenuButton size="lg" className={styles.workspaceTrigger}>
+						<SidebarMenuButton className={styles.workspaceTrigger}>
 							<span className={styles.workspaceMark}>{mark}</span>
 							{/* The mark is an image, so name the control's action. */}
 							<VisuallyHidden>{copy.select}</VisuallyHidden>

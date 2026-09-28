@@ -11,9 +11,9 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function AlertDialog() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="destructive" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="destructive" appearance="outline" />}>
 					Delete account
 				</OverlayTrigger>
 				<AlertDialogContent>
@@ -25,7 +25,7 @@ export default function AlertDialog() {
 						<Text type="secondary">Every project and invoice is removed permanently.</Text>
 					</OverlayBody>
 					<OverlayFooter>
-						<AlertDialogCancel render={<Button tone="neutral" buttonStyle="outline" />}>
+						<AlertDialogCancel render={<Button tone="neutral" appearance="outline" />}>
 							Cancel
 						</AlertDialogCancel>
 						{/* The answer is an Action, not a second Cancel: they read the same only until a caller hooks the one that commits. */}

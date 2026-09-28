@@ -16,7 +16,7 @@ export default function DatePickerExample() {
 	const presets = useMemo(() => createRangePresets({ weekStartsOn }), [weekStartsOn])
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Due date">
 				<DatePicker value={day} onValueChange={(next) => setDay(next as Date)} clearable />
 			</FormField>

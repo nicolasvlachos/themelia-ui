@@ -46,15 +46,13 @@ export function deriveThemePalette({ primary, mode = "light" }: ThemePaletteReci
 		"--border": "color-mix(in oklch, var(--primary) 14%, var(--background))",
 		"--input": "color-mix(in oklch, var(--primary) 18%, var(--background))",
 		"--ring": "var(--primary)",
-		"--link-color": "var(--primary)",
+		"--link": "var(--primary)",
 		/* Each series walks the primary toward a semantic without landing on a status colour. */
 		"--chart-1": "var(--primary)",
 		"--chart-2": "color-mix(in oklch, var(--primary) 68%, var(--info))",
 		"--chart-3": "color-mix(in oklch, var(--primary) 60%, var(--success))",
 		"--chart-4": "color-mix(in oklch, var(--primary) 58%, var(--warning))",
 		"--chart-5": "color-mix(in oklch, var(--primary) 52%, var(--destructive))",
-		"--sidebar-primary": "var(--primary)",
-		"--sidebar-primary-foreground": "var(--primary-foreground)",
 		"--sidebar-accent": "var(--accent)",
 		"--sidebar-accent-foreground": "var(--accent-foreground)",
 		"--sidebar-border": "var(--border)",
@@ -63,8 +61,9 @@ export function deriveThemePalette({ primary, mode = "light" }: ThemePaletteReci
 }
 
 /*
- * Only the ladder styles/tokens/foundation.css declares; a step nothing reads is noise.
- * Body steps are fixed ratios of the base; only headings follow the modular ratio.
+ * Only the steps styles/theme/typography.css declares; a step nothing reads is noise. Body
+ * steps are fixed ratios of the base; only headings follow the modular ratio. Line heights
+ * are Text's own ratios, so they follow the size without a variable.
  */
 const BODY_STEPS = { xs: 0.75, pxs: 0.8125, sm: 0.875, base: 1 } as const
 
@@ -82,39 +81,26 @@ export function deriveThemeTypeScale({
 		// 12px floor: below it the smallest step stops being readable at any base.
 		const pixels = Math.max(12, base * factor)
 		overrides[`--text-${name}`] = `${Number((pixels / 16).toFixed(4))}rem`
-		// The looser of 6px of leading or 1.45×.
-		overrides[`--text-${name}--line-height`] =
-			`${Number((Math.max(pixels + 6, pixels * 1.45) / pixels).toFixed(4))}`
 	}
 
 	HEADING_STEPS.forEach((name, index) => {
 		const pixels = base * step ** (index + 1)
 		overrides[`--text-${name}`] = `${Number((pixels / 16).toFixed(4))}rem`
-		// Tighter as the type grows: display sizes need less leading, not more.
-		overrides[`--text-${name}--line-height`] =
-			`${Number(clamp(1.55 - index * 0.065, 1, 1.5).toFixed(4))}`
 	})
 
 	return overrides
 }
 
 /**
- * The whole shadow ladder from one intensity: the default theme's geometry and
- * `--shadow-ink`, with every layer's ink scaled so 0.8 reproduces it exactly.
+ * The two shadows from one intensity: the default theme's geometry, with every layer's ink
+ * scaled so 0.8 reproduces it exactly.
  */
 export function deriveThemeElevation({ intensity }: ThemeElevationRecipe): ThemeOverrides {
 	const value = clamp(intensity, 0, 1)
-	const ink = (percent: number) =>
-		`color-mix(in oklab, var(--shadow-ink) ${Number(((value / 0.8) * percent).toFixed(2))}%, transparent)`
+	const ink = (percent: number) => `oklch(0 0 0 / ${Number(((value / 0.8) * percent).toFixed(2))}%)`
 
 	return {
-		"--shadow-2xs": `0 1px 2px 0px ${ink(4)}`,
-		"--shadow-xs": `0 1px 2px 0px ${ink(6)}, 0 1px 1px -1px ${ink(6)}`,
-		"--shadow-sm": `0 1px 2px 0px ${ink(6)}, 0 2px 4px -2px ${ink(10)}`,
-		"--shadow": `0 1px 3px 0px ${ink(8)}, 0 4px 8px -4px ${ink(12)}`,
-		"--shadow-md": `0 2px 4px -1px ${ink(8)}, 0 8px 16px -8px ${ink(16)}`,
+		"--shadow": `0 1px 2px 0 ${ink(6)}, 0 1px 1px -1px ${ink(6)}`,
 		"--shadow-lg": `0 4px 8px -2px ${ink(10)}, 0 12px 24px -12px ${ink(18)}`,
-		"--shadow-xl": `0 8px 16px -4px ${ink(12)}, 0 20px 40px -20px ${ink(22)}`,
-		"--shadow-2xl": `0 16px 32px -8px ${ink(18)}, 0 32px 64px -28px ${ink(28)}`,
 	}
 }

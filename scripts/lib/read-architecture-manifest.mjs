@@ -126,9 +126,8 @@ export const ALLOWED_EDGES = {
   base: ['foundation', 'typography', 'primitives'],
   layout: ['foundation', 'typography', 'primitives', 'base'],
   features: ['foundation', 'typography', 'primitives', 'base'],
-  patterns: ['foundation', 'typography', 'primitives', 'base', 'layout', 'features'],
-  blocks: ['foundation', 'typography', 'primitives', 'base', 'patterns', 'layout', 'features'],
-  admin: ['foundation', 'typography', 'primitives', 'base', 'patterns', 'layout', 'features'],
+  blocks: ['foundation', 'typography', 'primitives', 'base', 'layout', 'features'],
+  admin: ['foundation', 'typography', 'primitives', 'base', 'blocks', 'layout', 'features'],
 }
 
 export function readManifest() {

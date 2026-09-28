@@ -10,6 +10,8 @@ import { existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync
 import { dirname, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 
+import { expandExports } from './lib/export-targets.mjs'
+
 const index = JSON.parse(readFileSync('docs/generated/component-index.json', 'utf8'))
 const records = Object.values(index.modules)
 const name = index.package ?? 'themelia-ui'
@@ -52,7 +54,7 @@ for (const record of records) {
   /* A stylesheet a consumer is told to import must be inside the package. */
   if (record.css) {
     const subpath = record.css.slice(name.length)
-    const exports = JSON.parse(readFileSync(`${root}/package/package.json`, 'utf8')).exports ?? {}
+    const exports = expandExports(JSON.parse(readFileSync(`${root}/package/package.json`, 'utf8')).exports, `${root}/package`)
     const target = exports[`.${subpath}`]
     const resolved = typeof target === 'string' ? target : (target?.default ?? target?.style)
     if (!resolved || !existsSync(`${root}/package/${resolved.replace(/^\.\//, '')}`)) {

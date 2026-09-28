@@ -11,7 +11,7 @@ export default function Turn() {
 
 	return (
 		<>
-			<Stack gap="lg">
+			<Stack>
 				<AiMessageBubble
 					role="user"
 					authorName="You"

@@ -182,7 +182,7 @@ export function ComboboxDropdown<T>({
 								<Button
 									type="button"
 									tone="neutral"
-									buttonStyle="ghost"
+									appearance="ghost"
 									/* Prevented: inside a listbox the press would select the option under the pointer. */
 									onClick={(event) => {
 										event.preventDefault()

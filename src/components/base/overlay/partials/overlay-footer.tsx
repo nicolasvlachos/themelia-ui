@@ -16,7 +16,7 @@ export const OverlayFooter = React.forwardRef<HTMLDivElement, React.ComponentPro
 				direction="horizontal"
 				align="center"
 				wrap
-				gap="md"
+				gap="sm"
 				justify="end"
 				ref={ref}
 				data-slot="overlay-footer"

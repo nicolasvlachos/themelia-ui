@@ -10,7 +10,7 @@
 .layout {
 	display: grid;
 	min-width: 0;
-	gap: var(--space-2xl);
+	gap: var(--gap);
 }
 
 .primary,
@@ -28,15 +28,20 @@
 
 /* ── Header ────────────────────────────────────────────────────────────────────── */
 
-.headerAvatar,
+/* The page's identity mark: larger than a row's avatar, and its glyph with it. */
+.headerAvatar {
+	width: 3rem;
+	height: 3rem;
+}
+
+/* IconBadge takes its size from its hook. */
 .headerIcon {
-	width: var(--resource-media);
-	height: var(--resource-media);
+	--_icon-badge-size: 3rem;
 }
 
 .headerIcon svg {
-	width: var(--size-icon-lg);
-	height: var(--size-icon-lg);
+	width: 1.25rem;
+	height: 1.25rem;
 }
 
 .headerBadges {
@@ -44,7 +49,7 @@
 }
 
 .headerMetadata {
-	margin-top: var(--space-sm);
+	margin-top: var(--gap-sm);
 }
 
 /* ── Action bar ────────────────────────────────────────────────────────────────── */
@@ -54,25 +59,25 @@
  * a ground and an edge, because rows scroll under it.
  */
 .actionBar {
-	padding-block: var(--row-py);
+	padding-block: var(--padding-sm);
 }
 
 /*
- * Pinned below the app shell header (`--shell-header-h`), not the viewport top, and dressed
+ * Pinned below the app shell header (`--header-height`), not the viewport top, and dressed
  * as the header is: its edge and ground, frosted where the browser can blur.
  */
 .actionBarSticky {
 	position: sticky;
-	top: var(--shell-header-h);
+	top: var(--header-height);
 	z-index: var(--z-sticky);
-	padding-inline: var(--surface-px);
+	padding-inline: var(--padding);
 	border-bottom: var(--border-width) solid var(--border);
 	background-color: var(--background);
 }
 
 @supports (backdrop-filter: blur(1px)) {
 	.actionBarSticky {
-		background-color: var(--background-70);
+		background-color: color-mix(in oklab, var(--background) 70%, transparent);
 		backdrop-filter: blur(12px);
 	}
 }
@@ -97,18 +102,17 @@
 
 /* ── Details section ───────────────────────────────────────────────────────────── */
 
-.section[data-padding="sm"] { padding: var(--surface-py-xs) var(--surface-px-xs); }
-.section[data-padding="md"] { padding: var(--surface-py) var(--surface-px); }
-.section[data-padding="lg"] { padding: var(--surface-py-lg) var(--surface-px-lg); }
+.section[data-padding="default"] { padding: var(--padding); }
+.section[data-padding="sm"] { padding: var(--padding-sm); }
 
 .sectionContent {
 	display: grid;
-	gap: var(--space-2xl);
+	gap: var(--gap);
 	min-width: 0;
 }
 
 .sectionFooter {
-	margin-top: var(--space-xl);
-	padding-top: var(--space-lg);
-	border-top: var(--border-width) solid var(--border-60);
+	margin-top: var(--gap);
+	padding-top: var(--padding);
+	border-top: var(--border-width) solid var(--border);
 }

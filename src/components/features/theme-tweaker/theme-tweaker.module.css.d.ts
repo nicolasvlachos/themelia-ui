@@ -3,7 +3,6 @@ declare const styles: {
 	readonly controlInput: string
 	readonly controlRow: string
 	readonly controls: string
-	readonly empty: string
 	readonly exportBlock: string
 	readonly exportBlockHeader: string
 	readonly exportCode: string
@@ -14,7 +13,6 @@ declare const styles: {
 	readonly layout: string
 	readonly layoutWithPreview: string
 	readonly minWidth: string
-	readonly monoInput: string
 	readonly numberInput: string
 	readonly preview: string
 	readonly previewCheck: string

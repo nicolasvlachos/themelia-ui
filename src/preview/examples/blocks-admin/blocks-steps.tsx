@@ -1,5 +1,5 @@
 import { Stack } from "themelia-ui/base/structure"
-import { Steps, StepsBar, type Step } from "themelia-ui/patterns/timelines"
+import { Steps, StepsBar, type Step } from "themelia-ui/blocks/timelines"
 
 const STEPS: Step[] = [
 	{ id: "1", title: "Create your workspace", description: "Name it and pick a region.", status: "completed", timestamp: "Done 14 Aug" },
@@ -10,7 +10,7 @@ const STEPS: Step[] = [
 
 export default function BlocksSteps() {
 	return (
-		<Stack gap="2xl">
+		<Stack>
 			<StepsBar steps={STEPS} />
 			<Steps steps={STEPS} />
 		</Stack>

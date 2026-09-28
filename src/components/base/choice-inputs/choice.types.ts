@@ -34,7 +34,7 @@ export interface ChoiceGroupBaseProps {
 }
 
 /**
- * Column cap for card groups. There is no `size` prop: geometry follows `--density-scale`
- * (styles/FACTORS.md).
+ * Column cap for card groups. There is no `size` prop: spacing follows the density a scope
+ * sets.
  */
 export type ChoiceColumns = 1 | 2 | 3 | 4

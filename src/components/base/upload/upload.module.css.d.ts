@@ -8,7 +8,6 @@ declare const styles: {
 	readonly dropzoneHint: string
 	readonly dropzoneIcon: string
 	readonly dropzoneInput: string
-	readonly dropzoneText: string
 	readonly gallery: string
 	readonly galleryAdd: string
 	readonly imagePicker: string
@@ -31,8 +30,6 @@ declare const styles: {
 	readonly row: string
 	readonly rowActions: string
 	readonly rowBody: string
-	readonly rowError: string
-	readonly rowMeta: string
 	readonly rowName: string
 	readonly statusCancelled: string
 	readonly statusDone: string

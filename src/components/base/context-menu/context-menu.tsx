@@ -12,6 +12,7 @@ import {
 	DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut,
 	DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger,
 } from "@/components/base/dropdown-menu"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useOverlayConfig, useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
 
@@ -57,10 +58,19 @@ function ContextMenuContent({
 	return (
 		<ContextMenuPrimitive.Portal container={portalContainer}>
 			<ContextMenuPrimitive.Positioner className={styles.positioner}>
-				{/* The dropdown's scheme rule: dark unless the provider sets `overlay.darkMenus: false`. */}
+				{/*
+				 * The dropdown's scheme rule: a `color-scheme: dark` island through the global `dark`
+				 * class, unless the provider sets `overlay.darkMenus: false`.
+				 */}
 				<ContextMenuPrimitive.Popup
 					data-slot="context-menu-content"
-					className={cx("context-menu-content--component", darkMenus && "dark", styles.content, className)}
+					className={cx(
+						"context-menu-content--component",
+						darkMenus && "dark",
+						styles.content,
+						textClassName({ size: "sm" }),
+						className,
+					)}
 					{...props}
 				/>
 			</ContextMenuPrimitive.Positioner>

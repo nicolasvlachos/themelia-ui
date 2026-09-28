@@ -1,4 +1,4 @@
-import { FulfillmentGroup, OrderLineItem, type OrderLine } from "themelia-ui/admin/patterns/commerce"
+import { FulfillmentGroup, OrderLineItem, type OrderLine } from "themelia-ui/blocks/admin/commerce"
 
 const PERSONALISED: OrderLine = {
 	id: "4",

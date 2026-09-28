@@ -1,33 +1,28 @@
 /* HoverCard — popover chrome, not tooltip padding: it holds an avatar, a name and copy. */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). A barely-there entrance scale. */
-:root {
-	--hover-card-enter-scale: 0.98;
-}
 
 .positioner {
 	z-index: var(--z-popover);
 }
 
 .content {
-	width: calc(18rem * var(--scale));
+	width: 18rem;
 	/* The positioner's room to the collision edge, also inside a scoped portal host. */
-	max-width: var(--available-width, calc(100vw - var(--space-2xl)));
-	padding: var(--surface-py) var(--surface-px);
+	max-width: var(--available-width, calc(100vw - var(--gap) * 2));
+	padding: var(--padding);
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	--surface-ground: var(--popover);
 	color: var(--popover-foreground);
-	box-shadow: var(--popover-shadow);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
 	opacity: 0;
-	scale: var(--hover-card-enter-scale);
+	/* A barely-there entrance scale. */
+	scale: 0.98;
 	transform-origin: var(--transform-origin);
 	transition:
-		opacity var(--duration-instant) var(--ease-out),
-		scale var(--duration-instant) var(--ease-out),
-		overlay var(--duration-instant) allow-discrete,
-		display var(--duration-instant) allow-discrete;
+		opacity var(--duration-fast) var(--ease),
+		scale var(--duration-fast) var(--ease),
+		overlay var(--duration-fast) allow-discrete,
+		display var(--duration-fast) allow-discrete;
 }
 
 .content[data-open] {
@@ -39,6 +34,6 @@
 @starting-style {
 	.content[data-open] {
 		opacity: 0;
-		scale: var(--hover-card-enter-scale);
+		scale: 0.98;
 	}
 }

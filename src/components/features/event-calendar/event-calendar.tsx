@@ -175,7 +175,7 @@ export function EventCalendar({
 		<div
 			data-slot="event-calendar"
 			className={cx("event-calendar--component", styles.root, className)}
-			style={{ "--calendar-columns": gridColumns } as CSSProperties}
+			style={{ "--_calendar-columns": gridColumns } as CSSProperties}
 		>
 			{showHeader && (
 				<EventCalendarHeader
@@ -210,7 +210,7 @@ export function EventCalendar({
 			)}
 
 			{!calendar.hasEvents && emptyStateMessage ? (
-				<Empty title={emptyStateMessage} description={false} padding="md" border />
+				<Empty title={emptyStateMessage} description={false} border />
 			) : calendar.viewMode === "agenda" ? (
 				<AgendaView
 					days={days}
@@ -287,7 +287,7 @@ function AgendaView({
 	const withEvents = days.filter((day) => day.eventCount > 0)
 
 	if (withEvents.length === 0) {
-		return <Empty title={emptyLabel} description={false} padding="md" border />
+		return <Empty title={emptyLabel} description={false} border />
 	}
 
 	return (

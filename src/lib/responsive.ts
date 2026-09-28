@@ -5,7 +5,7 @@ export type Breakpoint = "base" | "sm" | "md" | "lg" | "xl" | "2xl"
 export const BREAKPOINTS: Breakpoint[] = ["base", "sm", "md", "lg", "xl", "2xl"]
 
 /**
- * Each `--bp-*` min-width from styles/theming/breakpoints.css in px (rem × 16), for the
+ * Each `--bp-*` min-width from styles/breakpoints.css in px (rem × 16), for the
  * JavaScript that cannot read a custom media query. responsive.test.ts holds them in step.
  */
 export const BREAKPOINT_MIN_WIDTH: Record<Exclude<Breakpoint, "base">, number> = {

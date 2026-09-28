@@ -8,10 +8,10 @@ import type { RowData } from "@tanstack/react-table"
 import type { ReactNode } from "react"
 
 import { TableHead, TableHeader, TableRow } from "@/components/base/table"
-import { DisplayLabel } from "@/components/base/typography"
+import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
-import { resolveCellClassName } from "./table-helpers"
+import { pinnedCellCount, resolveCellClassName } from "./table-helpers"
 import type { DataTableHeaderProps } from "./table.types"
 import styles from "./table.module.css"
 
@@ -26,10 +26,12 @@ export function DataTableHeader<TData extends RowData>({
 	cellClassName,
 	stickyFirstColumn = false,
 	hasSelectionColumn = false,
+	hasExpandColumn = false,
 	columnGroups,
 	headerTransparent = false,
 }: DataTableHeaderProps<TData>) {
 	const headerGroups = table.getHeaderGroups()
+	const pinned = pinnedCellCount(hasSelectionColumn, hasExpandColumn)
 
 	/**
 	 * The band above the header row, built by walking the visible header order and coalescing
@@ -47,7 +49,11 @@ export function DataTableHeader<TData extends RowData>({
 			if (span === 0) return
 			cells.push(
 				<TableHead key={`group-${current ?? "none"}-${cells.length}`} colSpan={span} align="center" className={styles.groupHead}>
-					{!!current && <DisplayLabel>{current}</DisplayLabel>}
+					{!!current && (
+						<Text tag="span" size="inherit" weight="medium" type="secondary">
+							{current}
+						</Text>
+					)}
 				</TableHead>,
 			)
 		}
@@ -100,12 +106,10 @@ export function DataTableHeader<TData extends RowData>({
 										stickyFirstColumn,
 										index,
 										hasSelectionColumn,
+										hasExpandColumn,
 									),
 									// Above the sticky header, so a pinned first column does not slide under it.
-									stickyHeader &&
-										stickyFirstColumn &&
-										(index === 0 || (hasSelectionColumn && index === 1)) &&
-										styles.stickyCorner,
+									stickyHeader && stickyFirstColumn && index < pinned && styles.stickyCorner,
 								)}
 							>
 								{flexRender(header.column.columnDef.header, header.getContext())}

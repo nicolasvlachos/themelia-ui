@@ -22,7 +22,7 @@ export default function ResourceShow() {
 							{ label: "Amount", value: { kind: "money", value: 48_200, currency: "USD" } },
 							{ label: "Terms", value: "Net 14" },
 						]} />}
-						actions={<Button tone="neutral" buttonStyle="outline">Send reminder</Button>}
+						actions={<Button tone="neutral" appearance="outline">Send reminder</Button>}
 					/>
 				),
 				aside: (

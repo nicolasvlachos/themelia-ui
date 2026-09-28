@@ -8,7 +8,7 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function ContentBlockFlush() {
 	return (
-		<Grid columns={2} gap="lg">
+		<Grid columns={2}>
 			<GridCell>
 				<ContentBlock surface="card" flush>
 					<ItemGroup ruled>
@@ -16,7 +16,7 @@ export default function ContentBlockFlush() {
 							{ name: "Production", value: "sk_live_••••0b3d" },
 							{ name: "Staging", value: "sk_test_••••a771" },
 						].map((row) => (
-							<Item key={row.name} style={{ paddingInline: "var(--space-xl)" }}>
+							<Item key={row.name} style={{ paddingInline: "var(--padding)" }}>
 								<ItemMedia>
 									<IconBadge icon={KeyRoundIcon} />
 								</ItemMedia>

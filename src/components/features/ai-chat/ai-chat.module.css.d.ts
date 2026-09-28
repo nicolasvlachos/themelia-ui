@@ -68,7 +68,6 @@ declare const styles: {
 	readonly message: string
 	readonly messageBelow: string
 	readonly messages: string
-	readonly numeric: string
 	readonly outcome: string
 	readonly pre: string
 	readonly preWrap: string

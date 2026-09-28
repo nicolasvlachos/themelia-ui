@@ -6,7 +6,7 @@ import { searchCountries, type Country } from "./data"
 
 export default function ComboboxPicker() {
 	return (
-		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack gap="sm" style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Destination" helperText="Open it to browse, or type to search.">
 				<ResourceCombobox<Country>
 					fetcher={searchCountries}

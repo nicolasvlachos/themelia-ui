@@ -71,14 +71,14 @@ export function DataViewToolbar({
 			className={cx("data-view-toolbar--component", styles.toolbar, className)}
 		>
 			<div className={styles.toolbarInner}>
-				<Stack direction="horizontal" wrap align="center" gap="md" className={styles.toolbarLeading}>
+				<Stack direction="horizontal" wrap align="center" gap="sm" className={styles.toolbarLeading}>
 					{leading}
 					{search}
 					{filters}
 					{views}
 				</Stack>
 				{!!actions && (
-					<Stack direction="horizontal" wrap align="center" gap="md" className={styles.toolbarActions}>
+					<Stack direction="horizontal" wrap align="center" gap="sm" className={styles.toolbarActions}>
 						{actions}
 					</Stack>
 				)}
@@ -210,12 +210,12 @@ export function DataView<TData extends RowData, TValue = unknown>({
 				surface="flat"
 				topbarContent={
 					hasTopbar ? (
-						<Stack gap="lg" className={styles.topbar}>
+						<Stack className={styles.topbar}>
 							{slots?.topbarContent}
 							{failed && <Alert tone="warning" role="alert"><AlertDescription>{copy.filterError}</AlertDescription></Alert>}
 
 							{hasAuxRow && (
-								<Stack direction="horizontal" gap="md" align="center" wrap>
+								<Stack direction="horizontal" gap="sm" align="center" wrap>
 									{slots?.toolbarStart}
 									{showSelect && <FilterTabs tabs={tabs} display="select" label={filtering?.tabsLabel} />}
 									{slots?.toolbarAfterFilters}

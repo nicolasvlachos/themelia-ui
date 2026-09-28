@@ -5,7 +5,7 @@ import { Input, NativeSelect } from "themelia-ui/base/text-inputs"
 
 export default function States() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Default" helperText="The supporting line.">
 				<Input placeholder="name@example.com" />
 			</FormField>

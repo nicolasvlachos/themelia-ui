@@ -1,5 +1,5 @@
-/** Canonical three-step scale for package-owned component recipes. */
-export const COMPONENT_SCALES = ['sm', 'md', 'lg'] as const;
+/** Canonical two-step scale for package-owned component recipes: the default and a smaller one. */
+export const COMPONENT_SCALES = ['default', 'sm'] as const;
 
 export type ComponentScale = (typeof COMPONENT_SCALES)[number];
 

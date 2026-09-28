@@ -8,7 +8,7 @@
 	container-name: media-library;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -16,12 +16,12 @@
 .header {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 .libraryTabs {
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .libraryTabList {
@@ -37,7 +37,7 @@
 .toolbar {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -48,7 +48,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -64,7 +64,7 @@
 	display: flex;
 	flex: 1 1 20rem;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 12rem;
 }
 
@@ -74,13 +74,13 @@
 
 /* A live query tints the field: nothing else says the grid below is filtered. */
 .toolbarField[data-active] {
-	border-color: var(--primary-30);
-	background-color: var(--primary-5);
+	border-color: color-mix(in oklab, var(--primary) var(--tint-strong), transparent);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .toolbarQuery {
 	display: flex;
-	padding-inline: var(--space-xs);
+	padding-inline: calc(var(--padding-sm) / 2);
 	min-width: 0;
 }
 
@@ -101,23 +101,25 @@
 
 /*
  * Segmented control: a muted track with a raised chip on the active segment, so both
- * options stay visible and the pair reads as one switch.
+ * options stay visible and the pair reads as one switch. The track is a control-height row
+ * of small-control segments; its inset is exactly the difference.
  */
 .segmented {
+	--_segment-inset: calc((var(--control-height) - var(--control-height-sm)) / 2);
+
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-2xs);
-	height: var(--control-h);
-	padding: var(--space-2xs);
+	gap: var(--_segment-inset);
+	height: var(--control-height);
+	padding: var(--_segment-inset);
 	border-radius: var(--radius-sm);
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 }
 
-/* The segment gives back the track's padding, so the pair stays one control-height row. */
 .segment {
-	--button-h: calc(var(--control-h) - var(--space-2xs) * 2);
+	--_button-height: var(--control-height-sm);
 	/* Concentric with the track: its radius less the inset. */
-	--button-radius: calc(var(--radius-sm) - var(--space-2xs));
+	--_button-radius: calc(var(--radius-sm) - var(--_segment-inset));
 
 	box-shadow: none;
 }
@@ -130,7 +132,7 @@
 .segmented .segment[data-active]:hover:not(:disabled) {
 	background-color: var(--popover);
 	color: var(--foreground);
-	box-shadow: var(--shadow-xs);
+	box-shadow: var(--shadow);
 }
 
 /* Four text filters need two rows in an embedded phone-width browser. */
@@ -148,14 +150,14 @@
 .browse {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
 .workspace {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -180,13 +182,13 @@
 .grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
-.grid[data-media-density="compact"] {
+.grid[data-size="sm"] {
 	grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 /* ── One card ──────────────────────────────────────────────────────────────────── */
@@ -195,7 +197,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -211,50 +213,43 @@
 	background-color: var(--muted);
 	cursor: pointer;
 	transition:
-		border-color var(--duration-fast) var(--ease-out),
-		box-shadow var(--duration-fast) var(--ease-out);
+		border-color var(--duration-fast) var(--ease),
+		box-shadow var(--duration-fast) var(--ease);
 }
 
 .cardTile:hover {
-	box-shadow: var(--shadow-sm);
-}
-
-.cardTile:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	box-shadow: var(--shadow);
 }
 
 /* Selection is a ring, not a fill: tinting the asset changes what the reader is judging. */
 .card[data-selected] .cardTile {
 	border-color: var(--primary);
-	box-shadow: 0 0 0 var(--focus-ring-width) var(--primary-40);
+	box-shadow: 0 0 0 calc(var(--border-width) * 2) color-mix(in oklab, var(--primary) var(--tint-strong), transparent);
 }
-
-.card[data-selected] .cardTile:focus-visible { box-shadow: var(--focus-ring); }
 
 .cardTileWrap { position: relative; display: block; }
 
 /* One state marker, with a solid ground over any artwork. The tile owns selection. */
 .cardCheck {
- position: absolute;
- top: var(--space-sm);
- inset-inline-start: var(--space-sm);
- display: inline-flex;
- align-items: center;
- justify-content: center;
- width: var(--size-icon-lg);
- height: var(--size-icon-lg);
- border: var(--border-width) solid var(--control-border);
- /* A checkbox's corner: the item radius. */
- border-radius: var(--radius-sm);
- background: var(--background);
- color: var(--primary-foreground);
- box-shadow: var(--shadow-sm);
- pointer-events: none;
- opacity: 0;
- transition: opacity var(--duration-fast) var(--ease-out);
+	position: absolute;
+	top: var(--padding-sm);
+	inset-inline-start: var(--padding-sm);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.25rem;
+	height: 1.25rem;
+	border: var(--border-width) solid var(--input);
+	/* A checkbox's corner: the item radius. */
+	border-radius: var(--radius-sm);
+	background: var(--background);
+	color: var(--primary-foreground);
+	box-shadow: var(--shadow);
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity var(--duration-fast) var(--ease);
 }
-.cardCheck > svg { width: var(--size-icon); height: var(--size-icon); }
+.cardCheck > svg { width: var(--icon-size); height: var(--icon-size); }
 .cardCheck[data-selected] { background: var(--primary); border-color: var(--primary); }
 .card:hover .cardCheck,
 .card:focus-within .cardCheck,
@@ -264,21 +259,20 @@
 	display: flex;
 	flex-direction: column;
 	/* Keep a gap so the filename and its detail line read as two lines. */
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
-	line-height: var(--leading-tight);
 }
 
 
 /* Revealed on hover or focus INSIDE the card, so a keyboard reaches it too. */
 .cardDetails {
 	position: absolute;
-	top: var(--space-sm);
-	inset-inline-end: var(--space-sm);
+	top: var(--padding-sm);
+	inset-inline-end: var(--padding-sm);
 	background: var(--background);
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--shadow);
 	opacity: 0;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition: opacity var(--duration-fast) var(--ease);
 }
 
 .card:hover .cardDetails,
@@ -301,18 +295,20 @@
 	color: var(--muted-foreground);
 }
 
+/* The stand-in's glyph is an illustration of the file type, drawn at the tile's scale. */
 .previewFallback > svg {
-	width: var(--size-icon-2xl);
-	height: var(--size-icon-2xl);
+	width: 2.5rem;
+	height: 2.5rem;
 }
 
 /*
  * A tinted stand-in derives its glyph from the item's runtime tint (a deeper shade), so it
- * stays legible on any colour. The fallbacks cover the frame before the inline value lands.
+ * stays legible on any colour: the tint is the same in both schemes, so its ink is the
+ * scheme's darkest. The fallbacks cover the frame before the inline value lands.
  */
 .previewFallback[data-tinted] {
-	background-color: var(--media-tint, var(--muted));
-	color: color-mix(in oklab, var(--media-tint, var(--muted-foreground)) 50%, var(--shadow-ink));
+	background-color: var(--_media-tint, var(--muted));
+	color: color-mix(in oklab, var(--_media-tint, var(--muted-foreground)) 35%, light-dark(var(--foreground), var(--background)));
 }
 
 /* ── The table view ────────────────────────────────────────────────────────────── */
@@ -320,7 +316,7 @@
 .list {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -330,30 +326,30 @@
 .row {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
-	padding: var(--space-xs);
+	padding: var(--padding-sm);
 	border: var(--border-width) solid transparent;
 	border-radius: var(--radius-sm);
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .row:hover {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 }
 
 /* Selection outranks hover. */
 .row[data-selected],
 .row[data-selected]:hover {
 	border-color: transparent;
-	background-color: var(--primary-10);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .rowMain {
 	display: flex;
 	flex: 1;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 	padding: 0;
 	border: 0;
@@ -364,24 +360,18 @@
 	border-radius: var(--radius-sm);
 }
 
-.rowMain:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 .rowPreview {
 	flex: none;
-	width: var(--size-icon-2xl);
-	height: var(--size-icon-2xl);
+	width: 2.5rem;
+	height: 2.5rem;
 	border-radius: var(--radius-sm);
 }
 
 .rowBody {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
-	line-height: var(--leading-tight);
 }
 
 .rowSize {
@@ -391,7 +381,7 @@
 /* ── The detail column ─────────────────────────────────────────────────────────── */
 
 .detail {
-	scroll-margin-block-start: calc(var(--shell-header-h) + var(--space-md));
+	scroll-margin-block-start: calc(var(--header-height) + var(--gap-sm));
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
@@ -404,18 +394,18 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
-	padding: var(--surface-py-xs) var(--surface-px-xs);
-	border-bottom: var(--border-width) solid var(--border-60);
+	padding: var(--padding-sm);
+	border-bottom: var(--border-width) solid var(--border);
 }
 
 .detailBody {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
-	padding: var(--surface-py-xs) var(--surface-px-xs);
+	padding: var(--padding-sm);
 }
 
 .detailPreview {
@@ -430,9 +420,9 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
-	padding: var(--surface-py-xs) var(--surface-px-xs);
-	border-top: var(--border-width) solid var(--border-60);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
+	border-top: var(--border-width) solid var(--border);
 }
 
 /* ── Upload ────────────────────────────────────────────────────────────────────── */
@@ -440,15 +430,15 @@
 .upload {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
 .uploadOptions {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
-	padding: var(--surface-py-xs) var(--surface-px-xs);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius-sm);
 }
@@ -456,7 +446,7 @@
 .uploadOptionsGrid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 @container media-library (width >= 42rem) {
@@ -468,7 +458,7 @@
 .stagedList {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -477,9 +467,9 @@
 .staged {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
-	padding: var(--space-xs) var(--space-md);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius-sm);
 }
@@ -491,15 +481,15 @@
 }
 
 .stagedIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .stagedBody {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
@@ -508,7 +498,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 /* ── Footer ────────────────────────────────────────────────────────────────────── */
@@ -518,20 +508,20 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 /* `bare` drops both, for a shell that already draws its own footer rule. */
 .footer[data-chrome="section"] {
-	padding-top: var(--space-lg);
-	border-top: var(--border-width) solid var(--border-60);
+	padding-top: var(--padding);
+	border-top: var(--border-width) solid var(--border);
 }
 
 .footerSummary {
 	display: flex;
 	align-items: center;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -543,7 +533,7 @@
 	display: flex;
 	flex: 1 1 100%;
 	flex-direction: column-reverse;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -563,7 +553,7 @@
 	container-name: media-gallery;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -571,22 +561,21 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .galleryList {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	margin: 0;
 	padding: 0;
 	list-style: none;
 	min-width: 0;
 }
 
-.galleryList[data-media-density="compact"] {
+.galleryList[data-size="sm"] {
 	grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
-	gap: var(--space-sm);
 }
 
 /* A single row that scrolls, for a gallery sitting inside a form field. */
@@ -606,7 +595,10 @@
 	flex-direction: column;
 }
 
+/* The badge and the controls sit this far in from the tile's edge, concentric with its corner. */
 .galleryItem {
+	--_tile-inset: calc(var(--padding-sm) / 2);
+
 	position: relative;
 	aspect-ratio: 1;
 	overflow: hidden;
@@ -617,7 +609,7 @@
 
 .galleryItem[data-primary] {
 	border-color: var(--primary);
-	box-shadow: 0 0 0 var(--focus-ring-width) var(--primary-40);
+	box-shadow: 0 0 0 calc(var(--border-width) * 2) color-mix(in oklab, var(--primary) var(--tint-strong), transparent);
 }
 
 .galleryPreview {
@@ -625,33 +617,32 @@
 	height: 100%;
 }
 
-/* Solid, not the soft badge tint: it sits on arbitrary artwork. */
+/* Solid (the component asks for it), not the soft badge tint: it sits on arbitrary artwork. */
 .galleryBadge {
 	position: absolute;
-	top: var(--space-xs);
-	inset-inline-start: var(--space-xs);
+	top: var(--_tile-inset);
+	inset-inline-start: var(--_tile-inset);
 	/* Concentric with the tile's corner, like the controls opposite. */
-	border-radius: calc(var(--radius-sm) - var(--space-xs));
-	border-color: transparent;
-	background-color: var(--primary);
-	color: var(--primary-foreground);
+	border-radius: calc(var(--radius-sm) - var(--_tile-inset));
 }
 
 /* Controls on the asset get their own ground and appear on hover or focus. */
 .galleryControls {
+	--_controls-inset: calc(var(--padding-sm) / 4);
+
 	position: absolute;
-	inset-inline-end: var(--space-xs);
-	bottom: var(--space-xs);
+	inset-inline-end: var(--_tile-inset);
+	bottom: var(--_tile-inset);
 	display: flex;
 	align-items: center;
-	gap: var(--space-2xs);
-	padding: var(--space-2xs);
+	gap: var(--_controls-inset);
+	padding: var(--_controls-inset);
 	/* Concentric: the tile's radius less this inset, and the buttons' less theirs. */
-	border-radius: calc(var(--radius-sm) - var(--space-xs));
+	border-radius: calc(var(--radius-sm) - var(--_tile-inset));
 	background-color: var(--background);
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--shadow);
 	opacity: 0;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition: opacity var(--duration-fast) var(--ease);
 }
 
 .galleryItem:hover .galleryControls,
@@ -659,32 +650,32 @@
 	opacity: 1;
 }
 
-/* Tile-sized buttons: four at control height overflow an 8rem tile. */
+/* Tile-sized buttons, an icon and the small inset: four at control height overflow an 8rem tile. */
 .galleryControls > button {
-	--button-h: var(--control-h-2xs);
-	--button-radius: calc(var(--radius-sm) - var(--space-xs) - var(--space-2xs));
+	--_button-height: calc(var(--icon-size) + var(--padding-sm));
+	--_button-radius: calc(var(--radius-sm) - var(--_tile-inset) - var(--_controls-inset));
 }
 
-/* Inset ring: the tile's clip cuts an outer one. */
+/* Inside the button: the tile's clip cuts an outline drawn outside it. */
 .galleryControls > button:focus-visible {
-	box-shadow: var(--focus-ring-inset);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /* Stands in for the grid, so it holds a minimum height and filtering does not jump the page. */
 .emptyState {
 	min-height: 16rem;
-	background-color: var(--muted-20);
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 }
 
 @media (hover: none), (pointer: coarse) {
- .cardCheck, .cardDetails, .galleryControls { opacity: 1; }
+	.cardCheck, .cardDetails, .galleryControls { opacity: 1; }
 }
-.rowPreview.previewFallback > svg { width: var(--size-icon-lg); height: var(--size-icon-lg); }
+.rowPreview.previewFallback > svg { width: 1.25rem; height: 1.25rem; }
 .table { min-width: 0; border: var(--border-width) solid var(--border); border-radius: var(--radius); }
-.tableName { justify-content: flex-start; min-width: 12rem; max-width: 20rem; height: auto; padding: var(--space-xs); }
-.selectionBar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-md); min-height: var(--control-h); }
+.tableName { justify-content: flex-start; min-width: 12rem; max-width: 20rem; height: auto; padding: calc(var(--padding-sm) / 2); }
+.selectionBar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--gap-sm); min-height: var(--control-height); }
 @container media-library (width < 44rem) {
- .workspace[data-detail] .detail { grid-row: 1; }
+	.workspace[data-detail] .detail { grid-row: 1; }
 }
 
 @container media-library (width < 32rem) {

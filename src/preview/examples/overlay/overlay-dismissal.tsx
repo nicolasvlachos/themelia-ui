@@ -4,7 +4,7 @@ import { Demo } from "./_shared"
 
 export default function OverlayDismissal() {
 	return (
-		<Stack direction="horizontal" gap="md" wrap>
+		<Stack direction="horizontal" gap="sm" wrap>
 			<Demo label="no backdrop dismiss" dismissal={{ backdrop: false }} />
 			<Demo label="no escape" dismissal={{ escape: false }} />
 		</Stack>

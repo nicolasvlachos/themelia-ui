@@ -9,7 +9,7 @@ export default function StringRepeaterExample() {
 	const [domains, setDomains] = useState(["acme.com", "acme.dev"])
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField htmlFor={false} label="Allowed domains" helperText="Drag the handle, or focus it and press ↑ / ↓.">
 				<StringRepeater
 					value={domains}

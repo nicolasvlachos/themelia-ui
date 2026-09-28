@@ -8,7 +8,7 @@ import type { ComponentProps, ReactNode } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/base/avatar"
 import { Badge, type BadgeTone } from "@/components/base/badge"
 import { DatePrimitive, EmptyValue, Money, formatInitials } from "@/components/primitives"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./table.module.css"
@@ -154,7 +154,7 @@ export function DateMetaCell({
 	return (
 		<span className={cx("date-meta-cell--component", styles.iconCell, styles.iconCellTop, className)}>
 			{showIcon && <span className={styles.cellIcon}>{icon ?? <CalendarIcon />}</span>}
-			<span className={styles.cellStack}>
+			<span className={cx(styles.cellStack, textClassName({ size: "inherit", lineHeight: "tight" }))}>
 				<DatePrimitive value={value} pattern={pattern} type="secondary" emptyLabel={emptyLabel} />
 				{!!secondaryNode && (
 					<Text tag="span" size="xs" type="secondary">{secondaryNode}</Text>
@@ -234,7 +234,7 @@ export function AvatarCell({
 					{formatInitials(name, { strategy: "first-words" }) || (icon ?? <MailIcon />)}
 				</AvatarFallback>
 			</Avatar>
-			<span className={styles.cellStack}>
+			<span className={cx(styles.cellStack, textClassName({ size: "inherit", lineHeight: "tight" }))}>
 				<Text tag="span" weight="medium" truncate>{name}</Text>
 				{!!subtitle && (
 					<Text tag="span" size="xs" type="secondary" truncate>

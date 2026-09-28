@@ -65,37 +65,31 @@ below a slice as well as at it:
 </UIProvider>
 ```
 
-This applies to every record-shaped field: `theme.colors`, `theme.palette`, `theme.vars`,
-`typography.fonts`, `typography.sizes` and `motion.durations`. Below them a record is a flat
-map of token to value, and a value is replaced, not merged.
+This applies to every record-shaped field: `theme.colors`, `theme.vars`, `typography.fonts`,
+`typography.sizes` and `motion.durations`. Below them a record is a flat map of variable to
+value, and a value is replaced, not merged.
 
 That is the configuration components read, and the CSS follows it: each scope writes the
 merged overrides on its element, so inside the nested scope above `--primary` is red and
-`--secondary` is green. Raw inputs (palette steps, radii, fonts, durations and the scale
-factors) inherit through every boundary. Semantic colours and type sizes do not: a `Scope`,
-or any other element on the boundary list, declares them again from the palette. To keep a
-colour across one of those, set it through `theme.palette` or declare it at the boundary
-list; see [Theming](./theming.md#setting-a-theme).
+`--secondary` is green. Nothing below `:root` declares a theme variable again, so every value
+inherits through any element, a `Scope` or a `data-density` region included; see
+[Theming](./theming.md#setting-a-theme).
 
 ## Scope — tokens only
 
-Overriding a factor requires a **scope boundary**, not just any element:
+`Scope` sets theme variables on a region, without the config machinery:
 
 ```tsx fragment — shape only, not a program
-<Scope vars={{ "--density-scale": 0.8 }}>
+<Scope vars={{ "--control-height": "2.5rem" }}>
   <Toolbar />
 </Scope>
 ```
 
 `Scope` renders a `div` without layout. `render` picks another element, as on every
-component (`render={<section />}`), and `transparent={false}` gives it a box.
-
-Derived tokens are declared at `:root, [data-ui-scope], [data-density], [data-theme], .light,
-.dark` (see [`src/styles/SCOPES.md`](../../src/styles/SCOPES.md)). A plain
-`<div style={{ "--density-scale": 0.8 }}>` sets the variable and nothing reads it: the
-measurements above it already resolved against the old value. `Scope` renders
-`data-ui-scope`, which puts the element on that list and makes every derived token
-re-compute.
+component (`render={<section />}`), and `transparent={false}` gives it a box. Every
+component inside reads the variables it sets, because components compute from the theme where
+they use it; any element with a `style` does the same, and `Scope` only adds the missing
+layout rule and the `data-ui-scope` marker.
 
 ## Portals and scopes
 

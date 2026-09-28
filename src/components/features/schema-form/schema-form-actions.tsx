@@ -38,14 +38,14 @@ export function SchemaFormActions({
 			direction="horizontal"
 			align="center"
 			justify="end"
-			gap="md"
+			gap="sm"
 			className={cx("schema-form-actions--component", className)}
 		>
 			{showReset && (
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="outline"
+					appearance="outline"
 					// Also while submitting: a mid-write reset would hide which values the server got.
 					disabled={disabled || resetDisabled || submitting}
 					onClick={onReset}

@@ -34,7 +34,7 @@ describe("Toolbar", () => {
 			"button--component",
 		)
 		expect(screen.getByRole("button", { name: "Bold" })).toHaveAttribute("data-tone", "neutral")
-		expect(screen.getByRole("button", { name: "Bold" })).toHaveAttribute("data-style", "ghost")
+		expect(screen.getByRole("button", { name: "Bold" })).toHaveAttribute("data-appearance", "ghost")
 		expect(screen.getByRole("link", { name: "Help" })).toHaveClass("toolbar--link")
 		expect(screen.getByRole("textbox", { name: "Size" })).toHaveClass("toolbar--input")
 	})

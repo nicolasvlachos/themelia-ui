@@ -1,4 +1,4 @@
-import { TaxBreakdown } from "themelia-ui/admin/patterns/commerce"
+import { TaxBreakdown } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 export default function TaxBreakdownExample() {

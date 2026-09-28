@@ -331,7 +331,7 @@ export function AiChatConversation({
 					<Button
 						type="button"
 						tone="neutral"
-						buttonStyle="outline"
+						appearance="outline"
 						aria-label={copy.scrollToBottomAria}
 						onClick={() => scrollToBottom("smooth")}
 					>
@@ -374,7 +374,6 @@ export function AiChatEmptyState({
 				mediaVariant="icon-soft"
 				title={title}
 				description={description ?? false}
-				padding="md"
 			/>
 			{!!below && <div className={styles.emptyBelow}>{below}</div>}
 		</div>
@@ -423,7 +422,7 @@ export function AiChatQueue({
 								<Button
 									type="button"
 									tone="neutral"
-									buttonStyle="ghost"
+									appearance="ghost"
 									iconOnly
 									aria-label={copy.cancelAria}
 									onClick={() => {
@@ -605,7 +604,7 @@ export function AiChatPromptInput({
 					<Button
 						type="button"
 						tone="neutral"
-						buttonStyle="ghost"
+						appearance="ghost"
 						iconOnly
 						aria-label={copy.attachAria}
 						disabled={disabled || !onAttach}

@@ -1,21 +1,22 @@
 /*
- * Forced colors — restores the focus ring. Components pair `box-shadow: var(--focus-ring)`
- * with `outline: none`, and forced-colors mode drops box-shadow, leaving no focus at all.
- * In `utilities` because it must outrank those `outline: none` rules in `components`.
- * System colours only: the user's palette is the only palette in this mode.
+ * Forced colors — restores the focus outline. A component that shows focus another way (a
+ * menu's highlight fill, a field's frame) removes the outline, and forced-colors mode drops
+ * fills and shadows, leaving no focus at all. In `utilities` because it must outrank those
+ * `outline: none` rules in `components`. System colours only: the user's palette is the only
+ * palette in this mode.
  */
 @layer utilities {
 	@media (forced-colors: active) {
-		/* `:focus-visible`, not `:focus`, so a pointer click draws no ring. */
+		/* `:focus-visible`, not `:focus`, so a pointer click draws no outline. */
 		*:focus-visible {
-			outline: var(--focus-ring-width) solid Highlight;
-			outline-offset: 2px;
+			outline: calc(var(--border-width) * 2) solid Highlight;
+			outline-offset: calc(var(--border-width) * 2);
 		}
 
-		/* A shelled field shows focus on the shell, as the normal ring does. */
+		/* A shelled field shows focus on the shell, as the normal outline does. */
 		[data-field-shell]:has([data-field-control]:focus-visible) {
-			outline: var(--focus-ring-width) solid Highlight;
-			outline-offset: 2px;
+			outline: calc(var(--border-width) * 2) solid Highlight;
+			outline-offset: calc(var(--border-width) * 2);
 		}
 	}
 }

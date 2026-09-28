@@ -1,4 +1,4 @@
-import { InvoiceLineItems } from "themelia-ui/admin/patterns/commerce"
+import { InvoiceLineItems } from "themelia-ui/blocks/admin/commerce"
 
 export default function InvoiceLineItemsExample() {
 	return (

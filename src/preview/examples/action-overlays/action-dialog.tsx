@@ -14,12 +14,12 @@ export default function ActionDialogExample() {
 	const [failure, setFailure] = useState<string | null>(null)
 
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="center">
-			<Stack direction="horizontal" gap="lg" wrap>
+		<Stack direction="horizontal" wrap align="center">
+			<Stack direction="horizontal" wrap>
 				<ActionDialog
 					title="Rename workspace"
 					description="The name appears in the sidebar and in invitations."
-					trigger={<Button tone="neutral" buttonStyle="outline">Plain</Button>}
+					trigger={<Button tone="neutral" appearance="outline">Plain</Button>}
 					onConfirm={() => setSaved("renamed")}
 				>
 					<FormField label="Name">
@@ -34,14 +34,14 @@ export default function ActionDialogExample() {
 					emphasis
 					showIcon
 					alertMessage="Members are notified by email as soon as it publishes."
-					trigger={<Button tone="neutral" buttonStyle="outline">Toned</Button>}
+					trigger={<Button tone="neutral" appearance="outline">Toned</Button>}
 					onConfirm={() => setSaved("published")}
 				/>
 
 				<ActionDialog
 					title="Saving takes a moment"
 					description="The confirm shows a spinner and both buttons disable until it settles."
-					trigger={<Button tone="neutral" buttonStyle="outline">Async confirm</Button>}
+					trigger={<Button tone="neutral" appearance="outline">Async confirm</Button>}
 					onAsyncConfirm={async () => {
 						await wait(1200)
 						setSaved("saved after a delay")
@@ -54,7 +54,7 @@ export default function ActionDialogExample() {
 					tone="destructive"
 					onOpenChange={() => setFailure(null)}
 					description="A rejection leaves the overlay open and reports through onError — closing it would take the form away at the moment you most need to see what went wrong."
-					trigger={<Button tone="neutral" buttonStyle="outline">Async that rejects</Button>}
+					trigger={<Button tone="neutral" appearance="outline">Async that rejects</Button>}
 					onAsyncConfirm={async () => {
 						await wait(900)
 						throw new Error("Could not reach the server")

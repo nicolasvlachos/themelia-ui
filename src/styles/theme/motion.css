@@ -1,0 +1,18 @@
+/*
+ * Motion: two durations and one easing. Modules transition an explicit property list, never
+ * `all`. `prefers-reduced-motion` and the provider's `motion.reduced` set both durations to 0.
+ */
+:root {
+	--duration-fast: 150ms;
+	--duration: 200ms;
+	/* A strong ease-out: motion starts at once and settles without a sluggish tail. */
+	--ease: cubic-bezier(0.23, 1, 0.32, 1);
+	--disabled-opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--duration-fast: 0ms;
+		--duration: 0ms;
+	}
+}

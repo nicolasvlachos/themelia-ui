@@ -53,7 +53,7 @@ function Header({
 			<Button
 				iconOnly
 				tone="neutral"
-				buttonStyle="ghost"
+				appearance="ghost"
 				className={styles.navToggle}
 				aria-label="Toggle navigation"
 				onClick={onToggleNav}
@@ -92,7 +92,7 @@ function Header({
 				<Button
 					iconOnly
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
 					onClick={() => setScheme(isDark ? "light" : "dark")}
 				>

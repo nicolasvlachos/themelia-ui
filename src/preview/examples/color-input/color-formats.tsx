@@ -5,7 +5,7 @@ import { ColorInput } from "themelia-ui/base/value-inputs"
 
 export default function ColorFormats() {
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="oklch (default)" helperText="Pick a colour from the swatch to see the notation change.">
 				<ColorInput defaultValue="oklch(0.45 0.12 155)" />
 			</FormField>

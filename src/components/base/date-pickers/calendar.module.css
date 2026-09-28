@@ -1,47 +1,34 @@
 /*
  * Calendar and date pickers. The trigger wears the shared field surface
- * (styles/fields.css); this file owns the grid, its cells and the time segments.
+ * (styles/fields.css); this file owns the grid, its cells and the time segments. Type is
+ * Text's, lent to the buttons and cells through `textClassName`.
  */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
 
-	--calendar-nav-size: round(calc(1.75rem * var(--density-scale, var(--scale))), 1px);
-
-	/* Fixed square cell, so the grid keeps its shape from month to month. */
-	--calendar-cell: round(calc(2.25rem * var(--density-scale, var(--scale))), 1px);
-
-}
-
-
+/* A fixed square cell, so the grid keeps its shape from month to month. */
 .calendar {
+	--_cell: 2.25rem;
+
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
-	padding: var(--space-lg);
+	gap: var(--gap-sm);
+	padding: var(--padding);
 }
 
 .header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .caption {
 	display: flex;
 	align-items: center;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	border: 0;
 	background: none;
-	padding: 0 var(--space-2xs);
+	padding: 0 calc(var(--padding-sm) / 2);
 	border-radius: var(--radius-sm);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
 	color: inherit;
 	cursor: pointer;
 }
@@ -50,41 +37,26 @@
 	background-color: var(--accent);
 }
 
-.caption:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 .caption > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
-}
-
-/* A multi-month header names the span rather than a single month. */
-.captionRange {
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .monthColumn {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 /* Each grid's own caption, so the second month in a range view is not anonymous. */
 .monthCaption {
 	text-align: center;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
 }
 
 .navButton {
 	display: inline-flex;
-	width: var(--calendar-nav-size);
-	height: var(--calendar-nav-size);
+	width: var(--control-height-sm);
+	height: var(--control-height-sm);
 	align-items: center;
 	justify-content: center;
 	border: 0;
@@ -99,24 +71,19 @@
 	color: var(--accent-foreground);
 }
 
-.navButton:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 .navButton:disabled {
 	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
 .navButton > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .grid {
 	display: grid;
-	grid-template-columns: repeat(7, var(--calendar-cell));
+	grid-template-columns: repeat(7, var(--_cell));
 	/* No gap, so a selected range reads as one continuous band. */
 	gap: 0;
 }
@@ -131,27 +98,23 @@
 
 .weekday {
 	display: flex;
-	height: var(--calendar-cell);
+	height: var(--_cell);
 	align-items: center;
 	justify-content: center;
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-medium);
-	color: var(--muted-foreground);
 }
 
 .cell {
 	position: relative;
 	display: flex;
-	width: var(--calendar-cell);
-	height: var(--calendar-cell);
+	width: var(--_cell);
+	height: var(--_cell);
 	align-items: center;
 	justify-content: center;
 }
 
 .day {
 	position: relative;
-	z-index: var(--z-raised);
+	z-index: 1;
 	display: inline-flex;
 	width: 100%;
 	height: 100%;
@@ -162,13 +125,10 @@
 	border-radius: var(--radius-sm);
 	background: none;
 	color: inherit;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-variant-numeric: tabular-nums;
 	cursor: pointer;
 	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		color var(--duration-fast) var(--ease-out);
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 .day:hover:not(:disabled):not([aria-disabled="true"]):not([data-selected]) {
@@ -176,9 +136,9 @@
 	color: var(--accent-foreground);
 }
 
+/* The days touch, so a focused one rises above its neighbours or the next fill covers its outline. */
 .day:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	z-index: 2;
 }
 
 /* Today is outlined, not filled, so it doesn't compete with the selection. */
@@ -189,7 +149,6 @@
 .day[data-selected] {
 	background-color: var(--primary);
 	color: var(--primary-foreground);
-	font-weight: var(--weight-medium);
 }
 
 /*
@@ -216,14 +175,16 @@
 	background: none;
 }
 
-/* The range band is painted on the cell, behind the day, so a week joins into one strip. */
+/*
+ * The range band is painted on the cell, behind the day, so a week joins into one strip:
+ * the selected tint, a little shorter than the solid ends.
+ */
 .cell[data-in-range]::before {
 	content: "";
 	position: absolute;
-	inset-block: var(--space-2xs);
+	inset-block: calc(var(--padding-sm) / 4);
 	inset-inline: 0;
-	/* Quieter than the ends; 15% is the lowest step where the hue still reads. */
-	background-color: var(--primary-15);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .cell[data-range-start]::before { border-start-start-radius: var(--radius-sm); border-end-start-radius: var(--radius-sm); }
@@ -234,21 +195,22 @@
 .monthGrid {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 .monthCell {
 	display: inline-flex;
-	height: var(--calendar-cell);
+	height: var(--_cell);
 	align-items: center;
 	justify-content: center;
 	border: var(--border-width) solid transparent;
 	border-radius: var(--radius-sm);
 	background: none;
 	color: inherit;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 .monthCell:hover:not(:disabled):not([data-selected]) {
@@ -256,9 +218,9 @@
 	color: var(--accent-foreground);
 }
 
-.monthCell:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+.monthCell:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
 }
 
 .monthCell[data-selected] {
@@ -281,12 +243,12 @@
 /* Presets rail: full-width, start-aligned buttons scan as a list. */
 .presets {
 	display: flex;
-	width: calc(9rem * var(--scale));
+	width: 9rem;
 	flex-shrink: 0;
 	flex-direction: column;
-	gap: var(--space-2xs);
-	padding: var(--space-lg);
-	border-inline-end: var(--border-width) solid var(--border-60);
+	gap: calc(var(--gap-sm) / 2);
+	padding: var(--padding);
+	border-inline-end: var(--border-width) solid var(--border);
 }
 
 .presets > button {
@@ -303,12 +265,12 @@
 /* A rule between months, so two seven-column grids don't read as one of fourteen. */
 .months {
 	display: flex;
-	gap: var(--space-xl);
+	gap: var(--gap);
 }
 
 .months > * + * {
-	padding-inline-start: var(--space-xl);
-	border-inline-start: var(--border-width) solid var(--border-60);
+	padding-inline-start: var(--padding);
+	border-inline-start: var(--border-width) solid var(--border);
 }
 
 /* Narrow screens: stack the months and put the presets above the grid. */
@@ -319,9 +281,9 @@
 
 	.months > * + * {
 		padding-inline-start: 0;
-		padding-block-start: var(--space-xl);
+		padding-block-start: var(--padding);
 		border-inline-start: 0;
-		border-block-start: var(--border-width) solid var(--border-60);
+		border-block-start: var(--border-width) solid var(--border);
 	}
 
 	.body {
@@ -333,7 +295,7 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		border-inline-end: 0;
-		border-block-end: var(--border-width) solid var(--border-60);
+		border-block-end: var(--border-width) solid var(--border);
 	}
 
 	.presets > button {
@@ -346,19 +308,19 @@
 .time {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 /* Width goes on the field frame, not the inner input (see text-inputs/input.tsx). */
 .time > :global([data-slot="input-frame"]) {
 	flex: none;
-	width: calc(3rem * var(--scale));
+	width: 3rem;
 }
 
+/* Tabular (time-picker.tsx), so the two digits hold their place as they change. */
 .timeSegment {
 	width: 100%;
 	text-align: center;
-	font-variant-numeric: tabular-nums;
 }
 
 .timeSeparator {
@@ -379,7 +341,7 @@
 	width: 100%;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	text-align: start;
 	cursor: default;
 }
@@ -389,20 +351,20 @@
  * places the calendar glyph right beside the clear.
  */
 .triggerFrameClearable > .trigger {
-	padding-inline-end: calc(var(--space-md) + var(--size-icon) + var(--space-sm));
+	padding-inline-end: calc(var(--padding-sm) + var(--icon-size) + var(--gap-sm));
 }
 
 .triggerClear {
 	position: absolute;
 	top: 50%;
-	inset-inline-end: var(--space-md);
+	inset-inline-end: var(--padding-sm);
 	translate: 0 -50%;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	/* Same token the trigger's padding reserves. */
-	width: var(--size-icon);
-	height: var(--size-icon);
+	/* The size the trigger's padding reserves. */
+	width: var(--icon-size);
+	height: var(--icon-size);
 	padding: 0;
 	border: 0;
 	/* A glyph button takes the item radius, like every control. */
@@ -410,22 +372,24 @@
 	background: none;
 	color: var(--muted-foreground);
 	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
-/* Its own control inside the field's lane, so it draws its own ring. */
-.triggerClear:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
-.triggerClear:hover {
+.triggerClear:hover:not(:disabled) {
 	background-color: var(--accent);
 	color: var(--foreground);
 }
 
+.triggerClear:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
+}
+
 .triggerClear > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .triggerPlaceholder {
@@ -438,8 +402,8 @@
 }
 
 .triggerIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* ══ Header and footer bands ═══════════════════════════════════════════════════════
@@ -449,8 +413,8 @@
 .band {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
-	padding: var(--space-lg);
+	gap: var(--gap-sm);
+	padding: var(--padding);
 	min-width: 0;
 }
 
@@ -458,7 +422,7 @@
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
@@ -466,6 +430,6 @@
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	margin-inline-start: auto;
 }

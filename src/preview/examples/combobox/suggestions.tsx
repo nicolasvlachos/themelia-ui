@@ -6,7 +6,7 @@ import { matching, wait, type Country } from "./data"
 
 export default function Suggestions() {
 	return (
-		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack gap="sm" style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Search">
 				<SuggestionsCombobox<Country>
 					fetchData={async (needle, context) => {

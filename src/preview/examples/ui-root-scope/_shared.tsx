@@ -10,14 +10,14 @@ export function Sample({ label }: { label: string }) {
 	return (
 		<Card>
 			<CardContent>
-				<Stack gap="md">
+				<Stack gap="sm">
 					<Text size="xs" type="secondary">
 						{label}
 					</Text>
 					<Input placeholder="Search orders" aria-label={`Search in ${label}`} />
 					<Stack direction="horizontal" gap="sm" align="center">
 						<Button>Save</Button>
-						<Button tone="neutral" buttonStyle="outline">
+						<Button tone="neutral" appearance="outline">
 							Cancel
 						</Button>
 						<Badge tone="success">Live</Badge>

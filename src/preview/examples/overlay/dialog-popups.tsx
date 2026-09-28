@@ -24,9 +24,9 @@ const INVITE_ACTIONS: ActionDefinition[] = [
 
 export default function DialogPopups() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Invite member
 				</OverlayTrigger>
 				<OverlayContent>
@@ -35,7 +35,7 @@ export default function DialogPopups() {
 						<OverlayDescription>They receive an email with a link to join.</OverlayDescription>
 					</OverlayHeader>
 					<OverlayBody>
-						<Stack gap="md">
+						<Stack gap="sm">
 							<FormField label="Email">
 								<Input placeholder="name@example.com" />
 							</FormField>
@@ -45,13 +45,13 @@ export default function DialogPopups() {
 						</Stack>
 					</OverlayBody>
 					<OverlayFooter>
-						<Stack direction="horizontal" gap="md" align="center" wrap>
+						<Stack direction="horizontal" gap="sm" align="center" wrap>
 							<ActionMenu actions={INVITE_ACTIONS} label="More" />
-							<TooltipButton tooltip="Copy an invite link instead" tone="neutral" buttonStyle="ghost">
+							<TooltipButton tooltip="Copy an invite link instead" tone="neutral" appearance="ghost">
 								Copy link
 							</TooltipButton>
 							<OverlayDismissArea>
-								<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+								<Button tone="neutral" appearance="outline">Cancel</Button>
 								<Button>Send invite</Button>
 							</OverlayDismissArea>
 						</Stack>

@@ -5,10 +5,10 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function PopoverPlacement() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap>
+		<Stack direction="horizontal" wrap>
 			{(["top", "right", "bottom", "left"] as const).map((side) => (
 				<Popover key={side}>
-					<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					<PopoverTrigger render={<Button tone="neutral" appearance="outline" />}>
 						{side}
 					</PopoverTrigger>
 					<PopoverContent side={side}>
@@ -17,7 +17,7 @@ export default function PopoverPlacement() {
 				</Popover>
 			))}
 			<Popover>
-				<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<PopoverTrigger render={<Button tone="neutral" appearance="outline" />}>
 					width=&quot;trigger&quot;
 				</PopoverTrigger>
 				<PopoverContent width="trigger">

@@ -1,7 +1,7 @@
 /*
  * Item and its parts. The root renders through `useRender`, so its tag is the caller's;
  * variant and size arrive as `data-*`. `:global()` is used only for cross-module
- * selectors (card and dropdown-menu slots).
+ * selectors (card and dropdown-menu slots). The row's type is Text's `sm` step (item.tsx).
  */
 
 /* ── Group ────────────────────────────────────────────────────────────────────── */
@@ -10,11 +10,11 @@
 	display: flex;
 	width: 100%;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 }
 
 .separator {
-	margin-block: var(--space-md);
+	margin-block: var(--gap-sm);
 }
 
 /*
@@ -35,7 +35,7 @@
 	inset-block-start: 0;
 	inset-inline: 0;
 	height: var(--border-width);
-	background-color: var(--border-60);
+	background-color: var(--border);
 }
 
 /* Rows without a surface go flush; `bordered` and `muted` rows keep their inset. */
@@ -46,36 +46,34 @@
 
 /* ── Item ─────────────────────────────────────────────────────────────────────── */
 
+/* Every row insets by the item padding, so a row's hover ground clears its content evenly. */
 .root {
 	display: flex;
 	width: 100%;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-lg);
-	padding-inline: var(--surface-px);
-	padding-block: var(--space-lg);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
 	/* A container, so the row adapts to the width it is given, not the viewport. */
 	container-type: inline-size;
 	container-name: item;
 	border: var(--border-width) solid transparent;
-	/* A plain row takes the control radius; rows that draw a surface take --radius (below). */
+	/* A plain row takes the item radius; rows that draw a surface take --radius (below). */
 	border-radius: var(--radius-sm);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	outline: none;
-	transition: background-color var(--duration-fast) var(--ease-out),
-		border-color var(--duration-fast) var(--ease-out),
-		color var(--duration-fast) var(--ease-out);
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
+/* Inside: a row runs the width of its list, and an outline outside it is cut by whatever frames it. */
 .root:focus-visible {
-	border-color: var(--focus-ring-color);
-	box-shadow: var(--focus-ring);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
-/* Hover only when rendered as a control, whatever element `render` chose. */
-.root:is(a[href], button:not(:disabled), [role="button"], [role="link"]):not([aria-current]):hover {
-	background-color: var(--accent-50);
+/* Hover only when rendered as an enabled control, whatever element `render` chose. */
+.root:is(a[href], button:not(:disabled), [role="button"], [role="link"]):not([aria-current], [aria-disabled="true"], [data-disabled]):hover {
+	background-color: var(--accent);
 }
 
 .surfaceBordered {
@@ -83,15 +81,16 @@
 }
 
 .surfaceMuted {
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 }
 
+/* The surface radius less the row's inset leaves the item radius for media inside it. */
 .surfaceBordered,
 .surfaceMuted {
 	border-radius: var(--radius);
 }
 
-/* Inside a card a row surface steps down to the control radius so the curves nest. */
+/* Inside a card a row surface steps down to the item radius so the curves nest. */
 :global([data-slot="card"]) .surfaceBordered,
 :global([data-slot="card"]) .surfaceMuted {
 	border-radius: var(--radius-sm);
@@ -109,7 +108,7 @@
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .media svg {
@@ -119,18 +118,18 @@
 /* With a description, media aligns to the first line instead of the row's centre. */
 .root:has([data-slot="item-description"]) .media {
 	align-self: flex-start;
-	transform: translateY(var(--item-media-offset));
+	transform: translateY(0.125rem);
 }
 
 .mediaIcon svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
+/* The medallion size, so icons and images align. */
 .mediaImage {
-	/* The medallion size, so icons and images align. */
-	width: var(--size-medallion);
-	height: var(--size-medallion);
+	width: 2.5rem;
+	height: 2.5rem;
 	overflow: hidden;
 	border-radius: var(--radius-sm);
 }
@@ -144,13 +143,16 @@
 /* ── Content ──────────────────────────────────────────────────────────────────── */
 
 .content {
-	/* Tight leading, matching overlay title/description pairs (including nested Text). */
-	--text-default--line-height: var(--leading-tight);
+	/*
+	 * Tight leading for a nested Text at the default size too, matching the title and
+	 * description (item.tsx) and overlay title/description pairs.
+	 */
+	--text-default--line-height: 1.25;
 	display: flex;
 	flex: 1;
 	flex-direction: column;
 	/* Keeps tight title/description lines from welding together. */
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 /* A second content block is a fixed trailing column (price, timestamp). */
@@ -158,12 +160,10 @@
 	flex: none;
 }
 
+/* Type, weight and colour come from Text. */
 .title {
 	width: fit-content;
-	font-size: var(--text-sm);
-	line-height: var(--leading-tight);
-	/* Weight and colour come from Text. */
-	text-underline-offset: var(--link-underline-offset);
+	text-underline-offset: 3px;
 
 	/* line-clamp-1 */
 	overflow: hidden;
@@ -174,9 +174,6 @@
 
 .description {
 	text-align: start;
-	font-size: var(--text-sm);
-	line-height: var(--leading-tight);
-	/* Colour comes from Text's `secondary` type. */
 
 	/* One line while narrow; the container query below restores two. */
 	overflow: hidden;
@@ -187,11 +184,11 @@
 
 .description > a {
 	text-decoration-line: underline;
-	text-underline-offset: var(--link-underline-offset);
+	text-underline-offset: 3px;
 }
 
 .description > a:hover {
-	color: var(--link-color);
+	color: var(--link);
 }
 
 /* ── Actions, header, footer ──────────────────────────────────────────────────── */
@@ -199,7 +196,7 @@
 .actions {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 /*
@@ -229,7 +226,7 @@
 	flex-basis: 100%;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 /*

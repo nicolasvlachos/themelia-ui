@@ -6,7 +6,6 @@ declare const styles: {
 	readonly actionsLeading: string
 	readonly actionsRow: string
 	readonly actionsTrailing: string
-	readonly errorSummary: string
 	readonly field: string
 	readonly fieldHorizontal: string
 	readonly fieldHorizontalBody: string

@@ -23,7 +23,7 @@ export function CardFooter({
 			direction="horizontal"
 			align="center"
 			wrap
-			gap="md"
+			gap="sm"
 			data-slot="card-footer"
 			className={cx("card--footer", styles.footer, divider && styles.footerDivider, className)}
 			{...props}

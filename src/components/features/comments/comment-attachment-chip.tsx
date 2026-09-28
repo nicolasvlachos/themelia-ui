@@ -73,7 +73,7 @@ export function CommentAttachmentChip({
 
 	/* The trailing text: progress, size, or the uploader's own error message when it gave one. */
 	const meta = uploading ? (
-		<SecondaryValue size="xs" className={styles.chipMeta}>
+		<SecondaryValue size="xs" truncate>
 			{copy.attachmentUploadingLabel}
 			{typeof attachment.progress === "number" && (
 				<>
@@ -83,11 +83,11 @@ export function CommentAttachmentChip({
 			)}
 		</SecondaryValue>
 	) : failed ? (
-		<SecondaryValue size="xs" className={styles.chipMeta}>
+		<SecondaryValue size="xs" truncate title={attachment.error ?? copy.attachmentFailedLabel}>
 			{attachment.error ?? copy.attachmentFailedLabel}
 		</SecondaryValue>
 	) : typeof attachment.size === "number" ? (
-		<FileSize value={attachment.size} size="xs" type="secondary" className={styles.chipMeta} />
+		<FileSize value={attachment.size} size="xs" type="secondary" />
 	) : null
 
 	const label = (
@@ -111,7 +111,7 @@ export function CommentAttachmentChip({
 					href={url}
 					target="_blank"
 					rel="noreferrer noopener"
-					aria-label={copy.attachmentDownloadLabel}
+					title={copy.attachmentDownloadLabel}
 					className={styles.chipLink}
 				>
 					{label}
@@ -134,7 +134,7 @@ export function CommentAttachmentChip({
 				<Button
 					type="button"
 					tone="destructive"
-					buttonStyle="ghost"
+					appearance="ghost"
 					onClick={() => onRetry(attachment.id)}
 					className={styles.chipRetry}
 				>
@@ -146,7 +146,7 @@ export function CommentAttachmentChip({
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					onClick={() => onRemove(attachment.id)}
 					aria-label={copy.attachmentRemoveLabel}

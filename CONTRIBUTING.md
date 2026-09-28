@@ -27,7 +27,7 @@ builds the package into `dist/`.
 | Base | `src/components/base/<module>` | `themelia-ui/base/<module>` |
 | Layout | `src/components/layout/<module>` | `themelia-ui/layout/<module>` |
 | Features | `src/components/features/<module>` | `themelia-ui/features/<module>` |
-| Blocks | `src/components/patterns/<module>`, `src/components/admin/patterns/<module>` | `themelia-ui/patterns/<module>`, `themelia-ui/admin/patterns/<module>` |
+| Blocks | `src/components/blocks/<module>`, `src/components/blocks/admin/<module>` | `themelia-ui/blocks/<module>`, `themelia-ui/blocks/admin/<module>` |
 
 | Path | Holds |
 | --- | --- |
@@ -125,8 +125,9 @@ These hold for every change:
 Components:
 
 - `tone` is semantic colour, from the shared `SemanticTone` union: `neutral`, `primary`,
-  `secondary`, `info`, `success`, `warning` and `destructive`. `variant` is structure and
-  `buttonStyle` is fill (`solid`, `outline`, `ghost`).
+  `secondary`, `info`, `success`, `warning` and `destructive`. `appearance` is fill
+  (`solid`, `outline`, `ghost`; `soft` on Badge) on every component that has one, and
+  `variant` is structure.
 - Controlled and uncontrolled state goes through `useControllableState`.
 - Element substitution uses `render`, never `asChild`.
 - Every public component carries `{name}--component` on its root and `{name}--{region}` on
@@ -138,18 +139,19 @@ Components:
   roles and gaps. Compose them instead of restyling what they render.
 - Wrappers of Base UI keep its focus, keyboard and accessible-name behaviour.
 
-Stylesheets (`npm run verify css` runs every group; name one to run only that group, such as
-`npm run verify composition`):
+Stylesheets (`npm run verify lint` runs stylelint over them, with the rules in
+`stylelint.config.mjs`; `npm run verify css` runs the CSS contracts, and naming a group, such
+as `npm run verify composition`, runs only that one):
 
-- Module rules compile into `@layer components`. No `!important`, and no inline style that
-  restates padding or type (`composition`).
-- Colours, radii and spacing come from theme variables, not literals (`composition`).
-  `--radius` is for containers, `--radius-sm` for anything inside one or smaller, and
-  `--radius-pill` is a shape.
-- Derived variables are declared at every scope boundary and raw inputs at `:root` only
-  (`scoping`); `src/styles/SCOPES.md` explains why.
-- Inside a CSS Module, a theme class is written `:global(.dark)` (`dark-overrides`), and an
-  animation goes through an `--animate-*` variable, never a bare keyframes name (`wiring`).
+- Module rules compile into `@layer components`. No `!important` (stylelint), and no inline
+  style that restates padding or type (`composition`).
+- Colours, radii, spacing and hairlines come from theme variables, not literals, and a
+  component module sets no type property (stylelint). `--radius` is for containers,
+  `--radius-sm` for anything inside one or smaller, and `--radius-pill` is a shape.
+- The theme is declared once at `:root`, and a colour switches mode through `light-dark()`
+  in its value, never a `.dark` or `prefers-color-scheme` selector (`composition`).
+- An animation goes through a `--keyframes-*` variable, never a bare keyframes name
+  (`wiring`).
 - Two components in one module never share a class name (`css-collisions`).
 
 ## Checks
@@ -215,9 +217,10 @@ changed: accept the change first, as described in [API compatibility](#api-compa
 | `.agents/skills/themelia-ui`, which ships in the package | `gen-agent-skill.mjs` | The component index and `docs/learn` |
 | The suites table in `tests/README.md` | `gen-test-docs.mjs` | The opening comment of each spec |
 | The status block below | `gen-status-docs.mjs` | `package.json`, the manifest and oxlint |
-| `src/styles/tailwind.css` | `gen-tailwind-bridge.mjs`, run by `npm run tokens:tailwind` | The theme variables |
-| `src/styles/themes/default.css` and `src/lib/ui-provider/tokens.generated.ts` | `gen-theme.mjs` and `gen-token-names.mjs`, run by `npm run tokens:theme` | `scripts/theme-manifest.mjs` |
-| `package.json` exports, CSS Module types and barrels | `gen-exports.mjs`, `gen-css-types.mjs` and `gen-barrels.mjs`, run by `npm run build:lib` | The build and the module barrels |
+| `src/styles/tailwind.css` | `gen-tailwind-bridge.mjs`, run by `npm run tokens:tailwind` | `src/styles/theme/*.css` |
+| `src/lib/ui-provider/tokens.generated.ts`: the colour and variable unions, and each variable's default | `gen-token-names.mjs`, run by `npm run tokens:theme` | `src/styles/theme/*.css` |
+| `dist/tokens.json`, the theme in the W3C design tokens format | `gen-dtcg-tokens.mjs`, run by `npm run build:lib` | `src/styles/theme/*.css` |
+| CSS Module types and barrels | `gen-css-types.mjs` and `gen-barrels.mjs`, run by `npm run build:lib` | The module stylesheets and barrels |
 
 Descriptions and defaults in the reference and in the site's API tables come from the
 declarations: a doc comment on each prop, member and part, and the default from the
@@ -307,11 +310,11 @@ so use it only when that exact build is the one to publish.
 
 The architecture manifest records a finer `layer` per module; `scripts/lib/tiers.mjs` maps it
 to the six tiers the docs and the component index use (`typography` is part of Base, and
-`patterns` and `admin` together are Blocks).
+`blocks` and `admin` together are Blocks).
 
 <!-- GENERATED:status by scripts/gen-status-docs.mjs — do not edit. -->
 
-Version `3.0.0` contains 97 modules across 6 tiers — Foundations 4, Primitives 1, Base 54, Layout 9, Features 24, Blocks 5.
+Version `3.1.0` contains 97 modules across 6 tiers — Foundations 4, Primitives 1, Base 54, Layout 9, Features 24, Blocks 5.
 
 The package publishes 98 exact JavaScript entrypoints and 93 exact CSS entrypoints. There are no broad aggregate barrels: a consumer imports the module it uses.
 

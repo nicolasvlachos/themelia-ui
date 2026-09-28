@@ -14,8 +14,8 @@ import { Button } from "@/components/base/buttons"
 import { useCopyToClipboard } from "@/components/base/copyable"
 import { IconBadge } from "@/components/base/display"
 import { PreviewImage } from "@/components/base/upload"
-import { Text, TextLink } from "@/components/base/typography"
-import { MonoValue, Number as NumberValue, SecondaryValue } from "@/components/primitives"
+import { Text, TextLink, textClassName } from "@/components/base/typography"
+import { MonoValue, Number as NumberValue } from "@/components/primitives"
 import { cx } from "@/lib/cx"
 
 import {
@@ -30,6 +30,9 @@ import styles from "./ai-chat.module.css"
 
 /** How long "Copied" stays up. */
 const COPIED_MS = 1500
+
+/* Code reads in the mono face at the small step, with a prose leading so dense lines breathe. */
+const codeType = textClassName({ size: "xs", lineHeight: "relaxed", mono: true })
 
 /**
  * Code as produced. There is deliberately no syntax highlighting — that means shipping a
@@ -60,13 +63,15 @@ export function AiCodeBlock({
 			{!hideHeader && (
 				<div className={styles.codeHeader}>
 					{/* Caps for a language label only; a filename is case-sensitive. */}
-					<MonoValue
-						size="xs"
-						data-caps={!filename || undefined}
-						className={styles.codeLabel}
-					>
-						{filename || language || copy.defaultLanguageLabel}
-					</MonoValue>
+					{filename ? (
+						<MonoValue size="xs" truncate className={styles.codeLabel}>
+							{filename}
+						</MonoValue>
+					) : (
+						<Text tag="span" size="xs" caps truncate className={styles.codeLabel}>
+							{language || copy.defaultLanguageLabel}
+						</Text>
+					)}
 					{!!filename && !!language && (
 						<MonoValue size="xs" type="secondary" className={styles.codeLanguage}>
 							{language}
@@ -77,7 +82,7 @@ export function AiCodeBlock({
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							iconOnly
 							aria-label={copy.copyAria}
 							onClick={() => void writeCopy(code)}
@@ -99,7 +104,7 @@ export function AiCodeBlock({
 				className={styles.codeScroll}
 			>
 				{showLineNumbers ? (
-					<pre className={styles.codeNumbered}>
+					<pre className={cx(styles.codeNumbered, codeType)}>
 						{lines.map((line, index) => {
 							const number = index + 1
 							return (
@@ -111,7 +116,7 @@ export function AiCodeBlock({
 						})}
 					</pre>
 				) : (
-					<pre className={styles.codePlain}>
+					<pre className={cx(styles.codePlain, codeType)}>
 						<code>{code}</code>
 					</pre>
 				)}
@@ -155,7 +160,7 @@ export function AiArtifact({
 								key={action.id}
 								type="button"
 								tone="neutral"
-								buttonStyle="ghost"
+								appearance="ghost"
 								onClick={action.onSelect}
 							>
 								{!!ActionIcon && <ActionIcon />}
@@ -167,7 +172,7 @@ export function AiArtifact({
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							iconOnly
 							aria-label={copy.copyAria}
 							onClick={() => void writeCopy(copyText)}
@@ -179,7 +184,7 @@ export function AiArtifact({
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							iconOnly
 							aria-label={copy.downloadAria}
 							onClick={onDownload}
@@ -191,7 +196,7 @@ export function AiArtifact({
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							iconOnly
 							aria-label={copy.openAria}
 							onClick={onOpen}
@@ -350,9 +355,9 @@ export function AiSources({
 				<AvatarStack sources={visible} onSelect={onSelect} />
 				<Text tag="span" size="xs" type="secondary">{title}</Text>
 				{overflow > 0 && (
-					<SecondaryValue size="xs" className={styles.numeric}>
+					<Text tag="span" size="xs" type="secondary" numeric>
 						+<NumberValue value={overflow} size="xs" type="secondary" />
-					</SecondaryValue>
+					</Text>
 				)}
 			</div>
 		)
@@ -441,9 +446,9 @@ export function AiAttachment({
 			<span className={styles.attachmentText}>
 				<Text tag="span" weight="medium" truncate>{name}</Text>
 				{!!meta && (
-					<SecondaryValue size="xs" truncate className={styles.numeric}>
+					<Text tag="span" size="xs" type="secondary" numeric truncate>
 						{meta}
-					</SecondaryValue>
+					</Text>
 				)}
 				{uploading && (
 					<span
@@ -455,7 +460,7 @@ export function AiAttachment({
 						className={styles.attachmentTrack}
 					>
 						<span
-							style={{ "--ai-progress": `${percent}%` } as React.CSSProperties}
+							style={{ "--_ai-progress": `${percent}%` } as React.CSSProperties}
 							className={styles.attachmentBar}
 						/>
 					</span>
@@ -486,7 +491,7 @@ export function AiAttachment({
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="ghost"
+					appearance="ghost"
 					iconOnly
 					aria-label={copy.removeAria}
 					onClick={onRemove}

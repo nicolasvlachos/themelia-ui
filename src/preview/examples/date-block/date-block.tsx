@@ -3,7 +3,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function DateBlockExample() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="start">
+		<Stack direction="horizontal" wrap align="start">
 			<DateBlock date="2026-08-16" />
 			<DateBlock date="2026-12-31" />
 			<DateBlock date="2027-01-04" showYear />

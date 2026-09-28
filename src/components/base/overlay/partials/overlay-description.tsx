@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { useOptionalOverlayContext } from "../overlay-context"
@@ -29,7 +29,12 @@ export const OverlayDescription = React.forwardRef<HTMLParagraphElement, React.C
 				ref={ref}
 				id={resolvedId}
 				data-slot="overlay-description"
-				className={cx("overlay--description", styles.description, className)}
+				className={cx(
+					"overlay--description",
+					styles.description,
+					textClassName({ lineHeight: "tight", type: "secondary" }),
+					className,
+				)}
 				{...props}
 			>
 				{simple ? (

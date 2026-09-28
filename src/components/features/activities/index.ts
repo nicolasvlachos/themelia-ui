@@ -32,7 +32,7 @@ export type {
 	ActivityAction,
 	ActivityActor,
 	ActivityChange,
-	ActivityDensity,
+	ActivityVariant,
 	ActivityEventConfig,
 	ActivityEventConfigMap,
 	ActivityFeedAccessors,

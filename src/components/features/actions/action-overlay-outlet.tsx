@@ -116,7 +116,7 @@ export function ActionOverlayOutlet({ strings }: ActionOverlayOutletProps = {}) 
 		// An overlay carries five tones; "primary" and "secondary" colour only the confirm.
 		tone: modality.tone && OVERLAY_TONES.has(modality.tone) ? (modality.tone as OverlayTone) : "neutral",
 		confirmTone: modality.tone ?? "primary",
-		confirmStyle: modality.confirmStyle ?? "solid",
+		confirmAppearance: modality.confirmAppearance ?? "solid",
 		className: cx("action-overlay-outlet--component", modality.contentClassName),
 	} as const
 

@@ -5,64 +5,6 @@
   },
   "families": [
     {
-      "id": "admin/patterns/access",
-      "profile": "admin",
-      "layer": "admin",
-      "source": "src/components/admin/patterns/access/index.ts",
-      "export": "./admin/patterns/access",
-      "cssExport": "./admin/patterns/access.css",
-      "optionalPeers": [],
-      "dependsOnFamilies": [
-        "base/action-menu",
-        "base/badge",
-        "base/buttons",
-        "base/copyable",
-        "base/display",
-        "base/feedback",
-        "base/item",
-        "base/typography"
-      ],
-      "documentationRoute": {
-        "path": "/blocks-admin",
-        "label": "Timelines, onboarding & admin"
-      },
-      "status": "stable"
-    },
-    {
-      "id": "admin/patterns/commerce",
-      "profile": "admin",
-      "layer": "admin",
-      "source": "src/components/admin/patterns/commerce/index.ts",
-      "export": "./admin/patterns/commerce",
-      "cssExport": "./admin/patterns/commerce.css",
-      "optionalPeers": [],
-      "dependsOnFamilies": [
-        "base/action-menu",
-        "base/avatar",
-        "base/badge",
-        "base/buttons",
-        "base/choice-inputs",
-        "base/copyable",
-        "base/display",
-        "base/feedback",
-        "base/forms",
-        "base/item",
-        "base/navigation",
-        "base/structure",
-        "base/table",
-        "base/text-inputs",
-        "base/timeline",
-        "base/typography",
-        "base/value-inputs",
-        "patterns/timelines"
-      ],
-      "documentationRoute": {
-        "path": "/blocks-commerce",
-        "label": "Cart, checkout & billing"
-      },
-      "status": "stable"
-    },
-    {
       "id": "base/accordion",
       "profile": "general",
       "layer": "base",
@@ -138,7 +80,9 @@
       "export": "./base/avatar",
       "cssExport": "./base/avatar.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/avatar",
         "label": "Avatar"
@@ -154,7 +98,8 @@
       "cssExport": "./base/badge.css",
       "optionalPeers": [],
       "dependsOnFamilies": [
-        "base/slot"
+        "base/slot",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/badge",
@@ -249,7 +194,9 @@
       "optionalPeers": [
         "recharts"
       ],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/chart",
         "label": "Chart"
@@ -305,7 +252,8 @@
       "dependsOnFamilies": [
         "base/dialog",
         "base/input-group",
-        "base/overlay"
+        "base/overlay",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/command",
@@ -322,7 +270,8 @@
       "cssExport": "./base/context-menu.css",
       "optionalPeers": [],
       "dependsOnFamilies": [
-        "base/dropdown-menu"
+        "base/dropdown-menu",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/dropdown-menu",
@@ -431,7 +380,9 @@
       "export": "./base/dropdown-menu",
       "cssExport": "./base/dropdown-menu.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/dropdown-menu",
         "label": "Dropdown & context menu"
@@ -486,7 +437,8 @@
       "optionalPeers": [],
       "dependsOnFamilies": [
         "base/choice-inputs",
-        "base/text-inputs"
+        "base/text-inputs",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/unit-inputs",
@@ -502,7 +454,9 @@
       "export": "./base/hover-card",
       "cssExport": "./base/hover-card.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/hover-card",
         "label": "Hover card"
@@ -571,7 +525,9 @@
       "export": "./base/menubar",
       "cssExport": "./base/menubar.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/menubar",
         "label": "Menubar"
@@ -608,7 +564,9 @@
       "export": "./base/navigation-menu",
       "cssExport": "./base/navigation-menu.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/navigation-menu",
         "label": "Navigation menu"
@@ -624,7 +582,8 @@
       "cssExport": "./base/otp-input.css",
       "optionalPeers": [],
       "dependsOnFamilies": [
-        "base/display"
+        "base/display",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/otp-input",
@@ -697,7 +656,9 @@
       "export": "./base/qr-code",
       "cssExport": "./base/qr-code.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/qr-code",
         "label": "QR code"
@@ -718,7 +679,8 @@
         "base/display",
         "base/forms",
         "base/structure",
-        "base/text-inputs"
+        "base/text-inputs",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/repeater",
@@ -791,7 +753,8 @@
       "cssExport": "./base/skeleton.css",
       "optionalPeers": [],
       "dependsOnFamilies": [
-        "base/display"
+        "base/display",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/skeleton",
@@ -869,7 +832,9 @@
       "export": "./base/text-inputs",
       "cssExport": "./base/text-inputs.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/input",
         "label": "Input"
@@ -902,7 +867,9 @@
       "export": "./base/toaster",
       "cssExport": "./base/toaster.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/toast",
         "label": "Toast"
@@ -917,7 +884,9 @@
       "export": "./base/toggle",
       "cssExport": "./base/toggle.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/toggle",
         "label": "Toggle"
@@ -933,7 +902,8 @@
       "cssExport": "./base/toolbar.css",
       "optionalPeers": [],
       "dependsOnFamilies": [
-        "base/buttons"
+        "base/buttons",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/toolbar",
@@ -949,7 +919,9 @@
       "export": "./base/tooltip",
       "cssExport": "./base/tooltip.css",
       "optionalPeers": [],
-      "dependsOnFamilies": [],
+      "dependsOnFamilies": [
+        "base/typography"
+      ],
       "documentationRoute": {
         "path": "/tooltip",
         "label": "Tooltip"
@@ -983,7 +955,8 @@
         "base/badge",
         "base/buttons",
         "base/display",
-        "base/feedback"
+        "base/feedback",
+        "base/typography"
       ],
       "documentationRoute": {
         "path": "/file-upload",
@@ -1010,6 +983,131 @@
       "documentationRoute": {
         "path": "/color-input",
         "label": "Color input"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "blocks/admin/access",
+      "profile": "admin",
+      "layer": "admin",
+      "source": "src/components/blocks/admin/access/index.ts",
+      "export": "./blocks/admin/access",
+      "cssExport": "./blocks/admin/access.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/badge",
+        "base/buttons",
+        "base/copyable",
+        "base/display",
+        "base/feedback",
+        "base/item",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/blocks-admin",
+        "label": "Timelines, onboarding & admin"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "blocks/admin/commerce",
+      "profile": "admin",
+      "layer": "admin",
+      "source": "src/components/blocks/admin/commerce/index.ts",
+      "export": "./blocks/admin/commerce",
+      "cssExport": "./blocks/admin/commerce.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/action-menu",
+        "base/avatar",
+        "base/badge",
+        "base/buttons",
+        "base/choice-inputs",
+        "base/copyable",
+        "base/display",
+        "base/feedback",
+        "base/forms",
+        "base/item",
+        "base/navigation",
+        "base/structure",
+        "base/table",
+        "base/text-inputs",
+        "base/timeline",
+        "base/typography",
+        "base/value-inputs",
+        "blocks/timelines"
+      ],
+      "documentationRoute": {
+        "path": "/blocks-commerce",
+        "label": "Cart, checkout & billing"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "blocks/analytics",
+      "profile": "general",
+      "layer": "blocks",
+      "source": "src/components/blocks/analytics/index.ts",
+      "export": "./blocks/analytics",
+      "cssExport": "./blocks/analytics.css",
+      "optionalPeers": [
+        "recharts"
+      ],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/buttons",
+        "base/cards",
+        "base/chart",
+        "base/display",
+        "base/feedback",
+        "base/skeleton",
+        "base/tooltip",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/analytics",
+        "label": "Analytics"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "blocks/onboarding",
+      "profile": "general",
+      "layer": "blocks",
+      "source": "src/components/blocks/onboarding/index.ts",
+      "export": "./blocks/onboarding",
+      "cssExport": "./blocks/onboarding.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/accordion",
+        "base/display",
+        "base/feedback",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/blocks-admin",
+        "label": "Timelines, onboarding & admin"
+      },
+      "status": "stable"
+    },
+    {
+      "id": "blocks/timelines",
+      "profile": "general",
+      "layer": "blocks",
+      "source": "src/components/blocks/timelines/index.ts",
+      "export": "./blocks/timelines",
+      "cssExport": "./blocks/timelines.css",
+      "optionalPeers": [],
+      "dependsOnFamilies": [
+        "base/badge",
+        "base/feedback",
+        "base/timeline",
+        "base/typography"
+      ],
+      "documentationRoute": {
+        "path": "/blocks-admin",
+        "label": "Timelines, onboarding & admin"
       },
       "status": "stable"
     },
@@ -1534,6 +1632,7 @@
         "base/forms-numeric",
         "base/structure",
         "base/text-inputs",
+        "base/typography",
         "base/value-inputs"
       ],
       "documentationRoute": {
@@ -1584,10 +1683,12 @@
         "base/display",
         "base/feedback",
         "base/navigation",
+        "base/skeleton",
         "base/table",
         "base/text-inputs",
         "base/toolbar",
-        "base/typography"
+        "base/typography",
+        "features/async-preview"
       ],
       "documentationRoute": {
         "path": "/data-view",
@@ -1848,73 +1949,6 @@
       "status": "stable"
     },
     {
-      "id": "patterns/analytics",
-      "profile": "general",
-      "layer": "patterns",
-      "source": "src/components/patterns/analytics/index.ts",
-      "export": "./patterns/analytics",
-      "cssExport": "./patterns/analytics.css",
-      "optionalPeers": [
-        "recharts"
-      ],
-      "dependsOnFamilies": [
-        "base/badge",
-        "base/buttons",
-        "base/cards",
-        "base/chart",
-        "base/display",
-        "base/feedback",
-        "base/skeleton",
-        "base/tooltip",
-        "base/typography"
-      ],
-      "documentationRoute": {
-        "path": "/analytics",
-        "label": "Analytics"
-      },
-      "status": "stable"
-    },
-    {
-      "id": "patterns/onboarding",
-      "profile": "general",
-      "layer": "patterns",
-      "source": "src/components/patterns/onboarding/index.ts",
-      "export": "./patterns/onboarding",
-      "cssExport": "./patterns/onboarding.css",
-      "optionalPeers": [],
-      "dependsOnFamilies": [
-        "base/accordion",
-        "base/display",
-        "base/feedback",
-        "base/typography"
-      ],
-      "documentationRoute": {
-        "path": "/blocks-admin",
-        "label": "Timelines, onboarding & admin"
-      },
-      "status": "stable"
-    },
-    {
-      "id": "patterns/timelines",
-      "profile": "general",
-      "layer": "patterns",
-      "source": "src/components/patterns/timelines/index.ts",
-      "export": "./patterns/timelines",
-      "cssExport": "./patterns/timelines.css",
-      "optionalPeers": [],
-      "dependsOnFamilies": [
-        "base/badge",
-        "base/feedback",
-        "base/timeline",
-        "base/typography"
-      ],
-      "documentationRoute": {
-        "path": "/blocks-admin",
-        "label": "Timelines, onboarding & admin"
-      },
-      "status": "stable"
-    },
-    {
       "id": "primitives",
       "profile": "general",
       "layer": "primitives",
@@ -1961,12 +1995,8 @@
   ],
   "nonFamilyExports": [
     {
-      "export": "./profiles/general.json",
-      "reason": "Machine-readable profile metadata: every subpath available below the general dependency ceiling, and the optional peers that come with them. Data, not code — a tool asking what it may import needs a list rather than a paragraph."
-    },
-    {
-      "export": "./profiles/admin.json",
-      "reason": "The same for the admin ceiling, including the general modules the two admin modules reach down into. A record listing only the admin modules would understate both the surface and the peers a consumer receives."
+      "export": "./profiles/*.json",
+      "reason": "Machine-readable profile metadata, one file per profile (general.json, admin.json): every subpath available below that dependency ceiling, and the optional peers that come with them. The admin record includes the general modules the admin modules reach down into. Data, not code — a tool asking what it may import needs a list rather than a paragraph."
     },
     {
       "export": "./style.css",

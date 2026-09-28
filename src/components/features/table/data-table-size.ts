@@ -6,7 +6,7 @@ import { createContext, useContext } from "react"
 
 import type { DataTableSize } from "./table.types"
 
-export const DataTableSizeContext = createContext<DataTableSize>("md")
+export const DataTableSizeContext = createContext<DataTableSize>("default")
 
 /** The table's `size` — its row density — for a part rendered inside a row. */
 export function useDataTableSize(): DataTableSize {

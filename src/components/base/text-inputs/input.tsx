@@ -5,6 +5,7 @@
 import { CircleXIcon, Loader2Icon } from "lucide-react"
 import * as React from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import type { StringsProp } from "@/lib/strings"
 
@@ -219,7 +220,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
 					)}
 					{trailing === "count" && (
 						<span
-							className={cx(styles.count, atLimit && styles.countOver)}
+							className={cx(styles.count, textClassName({ size: "xs", numeric: true, type: atLimit ? "error" : "secondary" }))}
 							aria-label={copy.characterCount(field.characterCount, maxLength as number)}
 						>
 							{field.characterCount} / {maxLength}

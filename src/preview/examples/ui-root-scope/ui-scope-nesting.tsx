@@ -6,8 +6,8 @@ import { Sample } from "./_shared"
 
 export default function UiScopeNesting() {
 	return (
-		<UIScope config={{ colorScheme: "dark" }} transparent={false} style={{ padding: "var(--space-xl)", borderRadius: "var(--radius)", background: "var(--background)" }}>
-			<Stack gap="lg">
+		<UIScope config={{ colorScheme: "dark" }} transparent={false} style={{ padding: "var(--padding)", borderRadius: "var(--radius)", background: "var(--background)" }}>
+			<Stack>
 				<Text size="xs" type="secondary">
 					outer: colorScheme=&quot;dark&quot;
 				</Text>

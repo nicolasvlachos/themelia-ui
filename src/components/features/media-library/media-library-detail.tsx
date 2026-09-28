@@ -88,7 +88,7 @@ export function MediaLibraryDetailPanel<TItem>({ item, collections = [], accesso
 		{renderDetail ? renderDetail(item, { accessors, update: onUpdate, remove: onRemove, close: onClose }) : <>
 			<div className={styles.detailHeader}>
 				<Text weight="semibold" truncate title={name}>{name}</Text>
-				<Button tone="neutral" buttonStyle="ghost" iconOnly aria-label={copy.close} onClick={onClose}><XIcon /></Button>
+				<Button tone="neutral" appearance="ghost" iconOnly aria-label={copy.close} onClick={onClose}><XIcon /></Button>
 			</div>
 			<div className={styles.detailBody}>
 				<MediaPreview item={item} accessors={accessors} className={styles.detailPreview} />
@@ -112,8 +112,8 @@ export function MediaLibraryDetailPanel<TItem>({ item, collections = [], accesso
 					<Text size="xs" type="secondary" role="status">{pending ? (pending === "save" ? copy.detail.saving : copy.detail.deleting) : feedback === "saved" ? copy.detail.saved : dirty ? copy.detail.unsaved : null}</Text>}
 			</div>
 			<div className={styles.detailFooter}>
-				<Button tone="destructive" buttonStyle="ghost" loading={pending === "delete"} disabled={!!pending} onClick={() => void run("delete")}><Trash2Icon />{copy.detail.delete}</Button>
-				{dirty && <Button tone="neutral" buttonStyle="ghost" disabled={!!pending} onClick={() => { setDraft(source); setFeedback(null) }}>{copy.detail.reset}</Button>}
+				<Button tone="destructive" appearance="ghost" loading={pending === "delete"} disabled={!!pending} onClick={() => void run("delete")}><Trash2Icon />{copy.detail.delete}</Button>
+				{dirty && <Button tone="neutral" appearance="ghost" disabled={!!pending} onClick={() => { setDraft(source); setFeedback(null) }}>{copy.detail.reset}</Button>}
 				<Button loading={pending === "save"} disabled={!!pending} onClick={() => void run("save")}>{copy.detail.save}</Button>
 			</div>
 		</>}

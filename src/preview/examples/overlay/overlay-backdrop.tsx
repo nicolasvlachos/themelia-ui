@@ -8,9 +8,9 @@ import { UIProvider } from "themelia-ui/ui-provider"
 
 export default function OverlayBackdrop() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="center">
+		<Stack direction="horizontal" wrap align="center">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Default scrim
 				</OverlayTrigger>
 				<DialogContent>
@@ -23,7 +23,7 @@ export default function OverlayBackdrop() {
 
 			<UIProvider config={{ overlay: { backdropBlur: 4 } }}>
 				<Overlay>
-					<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+					<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 						Blurred scrim
 					</OverlayTrigger>
 					<DialogContent>

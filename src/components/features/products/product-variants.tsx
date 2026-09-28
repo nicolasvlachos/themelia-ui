@@ -148,7 +148,7 @@ export function ProductVariantsTable({
 			headerEnd={
 				<>
 					{!!onCreateVariant && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onCreateVariant}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onCreateVariant}>
 							<PlusIcon />
 							{copy.createLabel}
 						</Button>
@@ -379,7 +379,7 @@ export function ProductVariantsBulkTable({
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="outline"
+							appearance="outline"
 							onClick={() => onBulkEdit(variants.filter((variant) => selectedSet.has(variant.id)))}
 						>
 							{copy.bulkEditLabel}
@@ -389,7 +389,7 @@ export function ProductVariantsBulkTable({
 						<Button
 							type="button"
 							tone="destructive"
-							buttonStyle="outline"
+							appearance="outline"
 							onClick={() => onBulkDelete(variants.filter((variant) => selectedSet.has(variant.id)))}
 						>
 							{copy.bulkDeleteLabel}
@@ -513,7 +513,7 @@ export function ProductVariantsBulkTable({
 											if (column === "price" || column === "inventory") {
 												return (
 													<TableCell key={column} align="end">
-														<Text tag="span" weight="medium" className={styles.numeric}>
+														<Text tag="span" weight="medium" numeric>
 															{column === "price"
 																? summariseRange(group.rows.map((row) => row.price))
 																: summariseTotal(group.rows.map((row) => row.inventory))}
@@ -527,7 +527,7 @@ export function ProductVariantsBulkTable({
 											<Button
 												type="button"
 												tone="neutral"
-												buttonStyle="ghost"
+												appearance="ghost"
 												iconOnly
 												aria-expanded={open}
 												aria-label={open ? copy.collapseGroup : copy.expandGroup}
@@ -714,13 +714,13 @@ export function ProductVariantsBulkTable({
 				<>
 					{headerEnd}
 					{!!onGenerateVariants && !emptyStateOwnsGenerate && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onGenerateVariants}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onGenerateVariants}>
 							<SparklesIcon />
 							{copy.generateLabel}
 						</Button>
 					)}
 					{!!onCreateVariant && (
-						<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onCreateVariant}>
+						<Button type="button" tone="neutral" appearance="ghost" onClick={onCreateVariant}>
 							<PlusIcon />
 							{copy.createLabel}
 						</Button>
@@ -794,7 +794,7 @@ export function ProductVariantsManager({
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							onClick={variantProps.onGenerateVariants}
 						>
 							<SparklesIcon />
@@ -805,7 +805,7 @@ export function ProductVariantsManager({
 						<Button
 							type="button"
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							onClick={variantProps.onCreateVariant}
 						>
 							<PlusIcon />

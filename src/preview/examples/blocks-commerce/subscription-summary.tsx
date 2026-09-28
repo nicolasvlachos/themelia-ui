@@ -1,6 +1,6 @@
 import { CheckIcon, CloudIcon, HeadphonesIcon, ShieldIcon } from "lucide-react"
 
-import { SubscriptionSummary } from "themelia-ui/admin/patterns/commerce"
+import { SubscriptionSummary } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 import { toast } from "themelia-ui/base/toaster"
 

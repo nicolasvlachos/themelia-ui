@@ -1,6 +1,8 @@
 /**
  * Composed skeletons — shapes that mirror the layouts they stand in for, so nothing
  * reflows. The shapes are `aria-hidden`; the wrapper is a live status announcing one label.
+ * Each takes the type of what it stands in for from Text (`textClassName`), and its bars
+ * measure against it.
  */
 import type { ComponentProps } from "react"
 import { resolveStrings } from "@/lib/strings"
@@ -8,10 +10,14 @@ import { resolveStrings } from "@/lib/strings"
 import { defaultSkeletonStrings, type SkeletonStrings } from "./skeleton.strings"
 
 import { VisuallyHidden } from "@/components/base/display"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { Skeleton } from "./skeleton"
 import styles from "./skeleton.module.css"
+
+/* A page title's step: the bar is its glyphs, the margin its leading. */
+const TITLE_TYPE = textClassName({ size: "xl" })
 
 export interface ContentSkeletonProps extends ComponentProps<"div"> {
 	/** Number of text lines. The last is short, so the block reads as prose. */
@@ -37,12 +43,12 @@ export function ContentSkeleton({
 		<div
 			role="status"
 			aria-live="polite"
-			className={cx("content-skeleton--component", styles.block, className)}
+			className={cx("content-skeleton--component", styles.block, textClassName({ size: "sm" }), className)}
 			{...props}
 		>
 			{/* Text, not aria-label: a live region announces its content. */}
 			<VisuallyHidden>{label ?? resolveStrings(defaultSkeletonStrings, strings).loading}</VisuallyHidden>
-			{showTitle && <Skeleton aria-hidden className={styles.title} />}
+			{showTitle && <Skeleton aria-hidden className={cx(styles.title, TITLE_TYPE)} />}
 			<div aria-hidden className={styles.lines}>
 				{Array.from({ length: lines }, (_, index) => (
 					<Skeleton
@@ -79,7 +85,7 @@ export function PageSkeleton({
 		<div
 			role="status"
 			aria-live="polite"
-			className={cx("page-skeleton--component", styles.block, className)}
+			className={cx("page-skeleton--component", styles.block, textClassName({ size: "sm" }), className)}
 			{...props}
 		>
 			{/* Text, not aria-label: a live region announces its content. */}
@@ -87,7 +93,7 @@ export function PageSkeleton({
 			{showHeader && (
 				<div aria-hidden className={styles.pageHeader}>
 					<div className={styles.pageHeaderText}>
-						<Skeleton className={styles.title} />
+						<Skeleton className={cx(styles.title, TITLE_TYPE)} />
 						<Skeleton className={cx(styles.line, styles.pageHeaderDescription)} />
 					</div>
 					<div className={styles.pageHeaderActions}>
@@ -107,7 +113,7 @@ export function PageSkeleton({
 function SkeletonPanel() {
 	return (
 		<div aria-hidden className={styles.panel}>
-			<Skeleton className={styles.heading} />
+			<Skeleton className={cx(styles.heading, textClassName({ size: "base" }))} />
 			<div className={styles.lines}>
 				<Skeleton className={styles.line} />
 				<Skeleton className={styles.line} />
@@ -130,12 +136,12 @@ export function TwoColumnPageSkeleton({ label, strings, className, ...props }: T
 		<div
 			role="status"
 			aria-live="polite"
-			className={cx("two-column-page-skeleton--component", styles.block, className)}
+			className={cx("two-column-page-skeleton--component", styles.block, textClassName({ size: "sm" }), className)}
 			{...props}
 		>
 			{/* Text, not aria-label: a live region announces its content. */}
 			<VisuallyHidden>{label ?? resolveStrings(defaultSkeletonStrings, strings).loadingPage}</VisuallyHidden>
-			<Skeleton aria-hidden className={styles.title} />
+			<Skeleton aria-hidden className={cx(styles.title, TITLE_TYPE)} />
 			<div className={styles.twoColumn}>
 				<SkeletonPanel />
 				<div aria-hidden className={styles.panel}>
@@ -203,13 +209,13 @@ export function TableSkeleton({
 		<div
 			role="status"
 			aria-live="polite"
-			className={cx("table-skeleton--component", styles.table, framed && styles.tableFramed, className)}
+			className={cx("table-skeleton--component", styles.table, framed && styles.tableFramed, textClassName({ size: "sm" }), className)}
 			{...props}
 		>
 			{/* Text, not aria-label: a live region announces its content. */}
 			<VisuallyHidden>{label ?? resolveStrings(defaultSkeletonStrings, strings).loadingTable}</VisuallyHidden>
 			{showHeader && (
-				<div aria-hidden className={cx(styles.tableRow, styles.tableHeadRow)}>
+				<div aria-hidden className={cx(styles.tableRow, styles.tableHeadRow, textClassName({ size: "xs" }))}>
 					{cells(-1)}
 				</div>
 			)}

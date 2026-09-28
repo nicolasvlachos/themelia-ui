@@ -6,6 +6,7 @@
 import * as React from "react"
 import * as Recharts from "recharts"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./chart.module.css"
@@ -78,7 +79,7 @@ export function ChartContainer({ config, label, description, className, children
 		<ChartContext.Provider value={{ config }}>
 			<div
 				data-slot="chart"
-				className={cx("chart--component", styles.container, className)}
+				className={cx("chart--component", styles.container, textClassName({ size: "xs" }), className)}
 				style={{ ...colorVars, ...style } as React.CSSProperties}
 				{...props}
 			>
@@ -221,8 +222,10 @@ export function ChartTooltipContent({
 	})()
 
 	return (
-		<div className={cx("chart--tooltip", styles.tooltip, className)} {...domProps(props)}>
-			{resolvedLabel != null && <div className={styles.tooltipLabel}>{resolvedLabel}</div>}
+		<div className={cx("chart--tooltip", styles.tooltip, textClassName({ size: "xs" }), className)} {...domProps(props)}>
+			{resolvedLabel != null && (
+				<div className={textClassName({ size: "inherit", weight: "medium" })}>{resolvedLabel}</div>
+			)}
 
 			{payload.map((item, index) => {
 				const series = seriesFor(config, item, nameKey)
@@ -241,12 +244,12 @@ export function ChartTooltipContent({
 										indicator === "line" && styles.indicatorLine,
 										indicator === "dashed" && styles.indicatorDashed,
 									)}
-									style={{ "--chart-indicator-color": color } as React.CSSProperties}
+									style={{ "--_indicator-color": color } as React.CSSProperties}
 								/>
 							))}
 						<span className={styles.tooltipName}>{name}</span>
 						{item.value != null && (
-							<span className={styles.tooltipValue}>
+							<span className={textClassName({ size: "inherit", weight: "medium", numeric: true })}>
 								{formatter
 									? formatter(item.value, item.name ?? "", item, index)
 									: // Locale grouping for readability.
@@ -297,7 +300,7 @@ export function ChartLegendContent({
 							) : (
 								<span
 									className={styles.indicator}
-									style={{ "--chart-indicator-color": item.color ?? item.fill } as React.CSSProperties}
+									style={{ "--_indicator-color": item.color ?? item.fill } as React.CSSProperties}
 								/>
 							))}
 						{series?.label ?? item.value ?? item.dataKey}

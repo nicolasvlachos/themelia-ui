@@ -119,7 +119,7 @@ export function FilterLayout({
 					<Button
 						type="button"
 						tone="neutral"
-						buttonStyle="ghost"
+						appearance="ghost"
 						disabled={isNavigating}
 						onClick={clearFilters}
 						className={styles.clear}

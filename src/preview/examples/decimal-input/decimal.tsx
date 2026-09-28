@@ -5,7 +5,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function Decimal() {
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Plain" helperText="Commas become dots; extra decimals are refused.">
 				<DecimalInput defaultValue="12.5" decimalPlaces={2} />
 			</FormField>

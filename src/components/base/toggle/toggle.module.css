@@ -1,31 +1,30 @@
 /*
  * Toggle — a button that stays pressed. Control height and radius, so it lines up with
- * buttons and fields; no tone system, since its colour is the pressed state.
+ * buttons and fields; no tone system, since its colour is the pressed state. The small
+ * padding makes a glyph toggle a square, as an icon button is. The label's type is Text's
+ * (toggle.tsx).
  */
 .toggle {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-sm);
-	min-width: var(--control-h);
-	height: var(--control-h);
-	padding-inline: var(--control-px);
+	gap: var(--gap-sm);
+	min-width: var(--control-height);
+	height: var(--control-height);
+	padding-inline: var(--padding-sm);
 	border: var(--border-width) solid transparent;
 	border-radius: var(--radius-sm);
 	background-color: transparent;
 	color: var(--foreground);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
 	cursor: pointer;
 	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		border-color var(--duration-fast) var(--ease-out),
-		color var(--duration-fast) var(--ease-out);
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
-.toggle[data-variant="outline"] {
-	border-color: var(--control-border);
+.toggle[data-appearance="outline"] {
+	border-color: var(--input);
 }
 
 /* The control hover every button shares. */
@@ -39,7 +38,7 @@
  */
 .toggle[data-pressed] {
 	background-color: var(--accent);
-	border-color: var(--control-border-hover);
+	border-color: color-mix(in oklab, var(--input), var(--foreground) 35%);
 	color: var(--foreground);
 }
 
@@ -48,43 +47,44 @@
 	cursor: not-allowed;
 }
 
+/* Above its neighbours, so a joined group does not clip the outline. */
 .toggle:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-	/* Above its neighbours, so a joined group does not clip the ring. */
-	z-index: var(--z-raised);
+	z-index: 1;
 }
 
 .toggle > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* ══ ToggleGroup ═══════════════════════════════════════════════════════════════════ */
 
+/* Separate toggles sit half the small gap apart, so two filled toggles never touch. */
 .group {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 /*
- * Attached: one framed control, one control row tall; the frame's padding and border come
- * out of the items, so they are shorter than a standalone toggle.
+ * Attached: one framed control, one control row tall; the frame's inset (half the small
+ * padding, a tight segmented control) and its border come out of the items, so they are
+ * shorter than a standalone toggle.
  */
 .group[data-attached] {
-	gap: var(--space-2xs);
-	border: var(--border-width) solid var(--control-border);
+	--_inset: calc(var(--padding-sm) / 2);
+	gap: var(--_inset);
+	border: var(--border-width) solid var(--input);
 	border-radius: var(--radius-sm);
-	padding: var(--space-2xs);
+	padding: var(--_inset);
 }
 .group[data-attached] .toggle {
-	height: calc(var(--control-h) - var(--space-2xs) * 2 - var(--border-width) * 2);
-	min-width: calc(var(--control-h) - var(--space-2xs) * 2 - var(--border-width) * 2);
+	height: calc(var(--control-height) - var(--_inset) * 2 - var(--border-width) * 2);
+	min-width: calc(var(--control-height) - var(--_inset) * 2 - var(--border-width) * 2);
 	border-color: transparent;
-	/* Concentric with the frame: its radius less the inset. */
-	border-radius: calc(var(--radius-sm) - var(--space-2xs));
+	/* Concentric with the frame: its radius less the border and the inset. */
+	border-radius: calc(var(--radius-sm) - var(--border-width) - var(--_inset));
 }
 .group[data-attached] .toggle[data-pressed] {
-	border-color: var(--control-border-hover);
+	border-color: color-mix(in oklab, var(--input), var(--foreground) 35%);
 }

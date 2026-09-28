@@ -9,7 +9,7 @@ import {
 	Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,
 } from "@/components/base/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/base/popover"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultPopoverMenuStrings, type PopoverMenuStrings } from "./popover-menu.strings"
@@ -398,7 +398,8 @@ export function PopoverMenuPanel<T = unknown>({
 											<Text
 												tag="span"
 												size="inherit"
-												weight={item.selected ? "medium" : "regular"}
+												lineHeight="tight"
+												weight={item.selected ? "medium" : "normal"}
 												truncate
 											>
 												{item.label}
@@ -424,7 +425,7 @@ export function PopoverMenuPanel<T = unknown>({
 
 			{/* Outside the list: a listbox may own only options and groups. */}
 			{belowMinimum && (
-				<div role="status" className={cx("popover-menu--status", styles.status)}>
+				<div role="status" className={cx("popover-menu--status", styles.status, textClassName({ size: "sm" }))}>
 					<Text tag="div" size="inherit" type="secondary">
 						{copy.formatTypeToSearch?.(minSearchLength)}
 					</Text>
@@ -434,14 +435,14 @@ export function PopoverMenuPanel<T = unknown>({
 			{failed && (
 				<div
 					role="alert"
-					className={cx("popover-menu--error", styles.status)}
+					className={cx("popover-menu--error", styles.status, textClassName({ size: "sm" }))}
 					onKeyDown={keepKeysOutOfList}
 				>
 					<Text tag="div" size="inherit" type="error">
 						{error === true ? copy.error : error}
 					</Text>
 					{onRetry && (
-						<Button type="button" tone="neutral" buttonStyle="outline" onClick={onRetry}>
+						<Button type="button" tone="neutral" appearance="outline" onClick={onRetry}>
 							<RotateCcwIcon />
 							{copy.retry}
 						</Button>

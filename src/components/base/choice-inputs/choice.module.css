@@ -1,54 +1,30 @@
 /*
  * Choice inputs — checkbox, radio, switch, plus card, list and pill groups.
- * The three controls share one size token so mixed controls on a row stay related.
+ * The three controls share one size so mixed controls on a row stay related.
  */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). */
-:root {
-	/* Card-grid track floor; a variable because .columns2/3/4 re-point it. */
-	--choice-card-min: 12rem;
-	/* Gap between the switch track and its thumb. */
-	--switch-thumb-inset: 2px;
-}
 
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	/*
-	 * Checkbox/radio box and switch track height. No size prop: the density factor drives
-	 * all three. Rounded to whole pixels — a fractional box renders soft, lopsided edges.
-	 */
-	--choice-size: round(calc(1.125rem * var(--density-scale, var(--scale))), 1px);
-
-	/* List-group marker dot. */
-	--choice-list-marker-dot: round(calc(0.625rem * var(--density-scale, var(--scale))), 1px);
+/*
+ * The checkbox and radio box and the switch track height, declared on each component that
+ * draws one. No size prop, and a whole-pixel box: a fractional one renders soft, lopsided edges.
+ */
+.field,
+.listRow,
+.row {
+	--_choice-size: 1.125rem;
 }
 
 /*
  * The visible control is a sibling of a visually-hidden native input, so keyboard,
  * form participation and labelling come from the platform; `:checked + .control` styles it.
+ * The label's type is Text's (checkbox.tsx, radio.tsx, switch.tsx).
  */
 
 .field {
 	display: inline-flex;
-	align-items: center;
-	gap: var(--space-md);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	cursor: pointer;
 	/* Align the control to the label's first line, not the centre of a wrapped block. */
 	align-items: flex-start;
-}
-
-/*
- * Centre the control on the label's first line box (`1lh`), at any scale or leading, on a
- * whole pixel: the type ramp's line boxes are fractional, and a half-pixel edge blurs.
- */
-.control {
-	margin-top: round(calc((1lh - var(--choice-size)) / 2), 1px);
+	gap: var(--gap-sm);
+	cursor: pointer;
 }
 
 /* The label takes the remaining width so long text wraps beside the control, not under. */
@@ -71,60 +47,63 @@
 	pointer-events: none;
 }
 
+/*
+ * Centred on the label's first line box (`1lh`), at any scale or leading, on a whole pixel:
+ * the type ramp's line boxes are fractional, and a half-pixel edge blurs.
+ */
 .control {
 	position: relative;
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
-	border: var(--border-width) solid var(--control-border);
-	background-color: var(--field-bg);
-	transition: var(--transition-control);
+	margin-top: round(calc((1lh - var(--_choice-size)) / 2), 1px);
+	border: var(--border-width) solid var(--input);
+	background-color: transparent;
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease);
 }
 
+/* The focused element is the hidden input, so the control beside it draws the outline. */
 .input:focus-visible + .control {
-	border-color: var(--focus-ring-color);
-	box-shadow: var(--focus-ring);
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * 2);
 }
 
 .input:checked + .radio {
-	border-color: var(--primary-accent);
+	border-color: var(--primary);
 }
 
 /* Hover never repaints an invalid edge. */
 .field:hover .input:not(:checked):not(:disabled):not([aria-invalid="true"]) + .control {
-	border-color: var(--control-border-hover);
+	border-color: color-mix(in oklab, var(--input), var(--foreground) 35%);
 }
 
 /*
- * Invalid is drawn, not only announced. Focus takes the ring; invalid keeps the border.
+ * Invalid is drawn, not only announced: the edge, and the focus outline in its colour.
  * `.field` lifts it over the checked checkbox's border further down.
  */
 .field .input[aria-invalid="true"] + .control {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
+	border-color: var(--destructive);
 }
 
 .field .input[aria-invalid="true"]:focus-visible + .control {
-	box-shadow: var(--focus-ring);
+	outline-color: var(--destructive);
 }
 
-/*
- * Forced colors: the global focus restoration (styles/forced-colors.css) outlines the
- * focused element, which here is the invisible .input — so ring the sibling control.
- */
+/* Forced colours: the outline takes the system highlight, as every other focused element does. */
 @media (forced-colors: active) {
 	.input:focus-visible + .control {
-		outline: var(--focus-ring-width) solid Highlight;
-		outline-offset: 2px;
+		outline-color: Highlight;
 	}
 }
 
 /* ── Checkbox ─────────────────────────────────────────────────────────────────── */
 
 .checkbox {
-	width: var(--choice-size);
-	height: var(--choice-size);
+	width: var(--_choice-size);
+	height: var(--_choice-size);
 	/* The item radius, like every control; a radio is the circle. */
 	border-radius: var(--radius-sm);
 }
@@ -162,21 +141,21 @@
 /* ── Radio ────────────────────────────────────────────────────────────────────── */
 
 .radio {
-	width: var(--choice-size);
-	height: var(--choice-size);
+	width: var(--_choice-size);
+	height: var(--_choice-size);
 	border-radius: 50%;
 }
 
 .dot {
 	width: 50%;
 	height: 50%;
-	fill: var(--primary-accent);
-	stroke: var(--primary-accent);
+	fill: var(--primary);
+	stroke: var(--primary);
 	opacity: 0;
 	transform: scale(0.5);
 	transition:
-		opacity var(--duration-instant) var(--ease-out),
-		transform var(--duration-fast) var(--ease-out);
+		opacity var(--duration-fast) var(--ease),
+		transform var(--duration-fast) var(--ease);
 }
 
 .input:checked + .radio .dot {
@@ -187,25 +166,23 @@
 /* ── Switch ───────────────────────────────────────────────────────────────────── */
 
 /*
- * The switch's copy of the `.control` nudge. Every `.switch` rule stays in this section:
- * `verify css-collisions` cannot tell a split rule from a collision across a banner.
+ * The track: the control's box, a pill, with the thumb two hairlines in from its edge.
+ * Every `.switch` rule stays in this section: `verify css-collisions` cannot tell a split
+ * rule from a collision across a banner.
  */
 .switch {
-	margin-top: round(calc((1lh - var(--choice-size)) / 2), 1px);
-}
-
-.switch {
-	width: round(calc(1.875rem * var(--density-scale, var(--scale))), 1px);
-	height: var(--choice-size);
+	width: 1.875rem;
+	height: var(--_choice-size);
 	border-radius: var(--radius-pill);
-	background-color: var(--control-border);
+	background-color: var(--input);
 	border-color: transparent;
 	justify-content: flex-start;
-	padding: var(--switch-thumb-inset);
+	padding: calc(var(--border-width) * 2);
+	container-type: inline-size;
 }
 
 .field:hover .input:not(:checked):not(:disabled) + .switch {
-	background-color: var(--control-border-hover);
+	background-color: color-mix(in oklab, var(--input), var(--foreground) 35%);
 }
 
 .thumb {
@@ -214,8 +191,8 @@
 	height: 100%;
 	border-radius: 50%;
 	background-color: var(--background);
-	box-shadow: var(--shadow-xs);
-	transition: translate var(--duration-fast) var(--ease-out);
+	box-shadow: var(--shadow);
+	transition: translate var(--duration-fast) var(--ease);
 }
 
 .input:checked + .switch {
@@ -227,14 +204,11 @@
 	translate: calc(100cqw - 100%) 0;
 }
 
-.switch {
-	container-type: inline-size;
-}
-
 /* ══ Choice surfaces ═══════════════════════════════════════════════════════════════
  *
  * Card, list and pill groups: one choice at three densities, sharing one selected
- * treatment so mixed groups on a page read as one product.
+ * treatment (the primary tint, and a primary edge on a large surface) so mixed groups on a
+ * page read as one product. Selection outranks hover.
  */
 
 /* ── Card groups ──────────────────────────────────────────────────────────────── */
@@ -244,20 +218,23 @@
  * from Chrome's first (one-column) layout pass and keeps the dead height.
  * The floor is a bare length: `minmax(min(100%, X), 1fr)` resolves against an indefinite
  * size in the intrinsic pass and collapses to one column. `.card { min-width: 0 }` covers
- * narrow containers instead. Floors are container widths, not viewport widths.
+ * narrow containers instead. Floors are container widths, not viewport widths; the column
+ * classes re-point `--_card-min`.
  */
 .cardGrid {
+	--_card-min: 12rem;
+
 	display: grid;
 	/* Definite width, so a wrapping flex parent can't size the grid from max-content. */
 	width: 100%;
-	gap: var(--space-lg);
-	grid-template-columns: repeat(auto-fit, minmax(var(--choice-card-min), 1fr));
+	gap: var(--gap);
+	grid-template-columns: repeat(auto-fit, minmax(var(--_card-min), 1fr));
 }
 
 .columns1 { grid-template-columns: minmax(0, 1fr); }
-.columns2 { --choice-card-min: 16rem; }
-.columns3 { --choice-card-min: 12rem; }
-.columns4 { --choice-card-min: 9rem; }
+.columns2 { --_card-min: 16rem; }
+.columns3 { --_card-min: 12rem; }
+.columns4 { --_card-min: 9rem; }
 
 .card {
 	position: relative;
@@ -266,92 +243,86 @@
 	min-width: 0;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--space-md);
-	padding: var(--surface-py) var(--surface-px);
+	gap: var(--gap-sm);
+	padding: var(--padding);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	background-color: var(--card);
 	text-align: start;
 	cursor: pointer;
-	outline: none;
 	transition:
-		color var(--duration-fast) var(--ease-in-out),
-		background-color var(--duration-fast) var(--ease-in-out),
-		border-color var(--duration-fast) var(--ease-in-out),
-		box-shadow var(--duration-fast) var(--ease-in-out);
+		color var(--duration-fast) var(--ease),
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease);
 }
 
-/* Inside a card a choice surface steps down to the control radius so the curves nest. */
+/* Inside a card a choice surface steps down to the item radius so the curves nest. */
 :global([data-slot="card"]) .card,
 :global([data-slot="card"]) .switchCard {
 	border-radius: var(--radius-sm);
 }
 
-/* Hover leaves a selected or invalid card alone: selection outranks hover. */
-.card:hover:not(:disabled):not([data-checked]):not([data-selected="true"]):not([aria-invalid="true"]) {
-	border-color: var(--foreground-20);
-	background-color: var(--accent-50);
-}
-
-.card:focus-visible {
-	box-shadow: var(--focus-ring);
+.card:hover:not(:disabled):not([data-disabled]):not([data-checked]):not([data-selected="true"]):not([aria-invalid="true"]) {
+	border-color: var(--input);
+	background-color: var(--accent);
 }
 
 .card[data-checked],
 .card[data-selected="true"] {
 	border-color: var(--primary);
-	background-color: var(--primary-5);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
+/* Invalid keeps its edge, and focus takes the invalid colour, as the fields draw it. */
 .card[aria-invalid="true"] {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
+	border-color: var(--destructive);
 }
 
 .card[aria-invalid="true"]:focus-visible {
-	box-shadow: var(--focus-ring);
+	outline-color: var(--destructive);
 }
 
-.card:disabled {
+.card:disabled,
+.card[data-disabled] {
 	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
 .cardMark {
 	position: absolute;
-	top: var(--space-md);
-	inset-inline-end: var(--space-md);
-	width: var(--size-icon);
-	height: var(--size-icon);
+	top: var(--padding-sm);
+	inset-inline-end: var(--padding-sm);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	color: var(--primary-foreground);
 	fill: var(--primary);
 	stroke: var(--primary-foreground);
 }
 
+/* A medallion: media within a surface, so the item radius, tighter than the card around it. */
 .cardIcon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: var(--size-medallion);
-	height: var(--size-medallion);
-	/* Media within a surface: tighter than the card around it, not the same 12px. */
+	width: 2.5rem;
+	height: 2.5rem;
 	border-radius: var(--radius-sm);
-	background-color: var(--foreground-8);
+	background-color: color-mix(in oklab, var(--foreground) var(--tint), transparent);
 	color: var(--muted-foreground);
 	transition:
-		background-color var(--duration-fast) var(--ease-in-out),
-		color var(--duration-fast) var(--ease-in-out);
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 .cardIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .card[data-checked] .cardIcon,
 .card[data-selected="true"] .cardIcon {
-	background-color: var(--primary-10);
-	color: var(--primary-accent);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
+	color: var(--primary);
 }
 
 /* ── List group ───────────────────────────────────────────────────────────────── */
@@ -363,12 +334,11 @@
 }
 
 .list[aria-invalid="true"] {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
+	border-color: var(--destructive);
 }
 
 .list[data-disabled] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
@@ -376,30 +346,28 @@
 	display: flex;
 	width: 100%;
 	align-items: flex-start;
-	gap: var(--space-lg);
-	padding: var(--space-lg) var(--surface-px);
+	gap: var(--gap);
+	padding: var(--padding);
 	text-align: start;
 	cursor: pointer;
-	outline: none;
-	transition: background-color var(--duration-fast) var(--ease-in-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .listRow + .listRow {
-	border-top: var(--border-width) solid var(--border-60);
+	border-top: var(--border-width) solid var(--border);
 }
 
 .listRow:hover:not([data-disabled]):not([data-checked]) {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 }
 
-/* Inset ring: `.list` clips its corners and would erase an outer one. */
+/* Drawn inside: `.list` clips its corners and would cut an outer outline. */
 .listRow:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring-inset);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 .listRow[data-checked] {
-	background-color: var(--primary-10);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .listRow[data-disabled] {
@@ -414,28 +382,28 @@
 	align-items: center;
 	justify-content: center;
 	/* The plain radio's size and border contrast. */
-	width: var(--choice-size);
-	height: var(--choice-size);
-	margin-top: round(calc((1lh - var(--choice-size)) / 2), 1px);
-	border: var(--border-width) solid var(--control-border);
+	width: var(--_choice-size);
+	height: var(--_choice-size);
+	margin-top: round(calc((1lh - var(--_choice-size)) / 2), 1px);
+	border: var(--border-width) solid var(--input);
 	border-radius: 50%;
-	transition: border-color var(--duration-fast) var(--ease-in-out);
+	transition: border-color var(--duration-fast) var(--ease);
 }
 
 .listRow[data-checked] .listMarker {
-	border-color: var(--primary-accent);
+	border-color: var(--primary);
 }
 
 .listMarkerDot {
-	width: var(--choice-list-marker-dot);
-	height: var(--choice-list-marker-dot);
-	fill: var(--primary-accent);
-	stroke: var(--primary-accent);
+	width: 0.625rem;
+	height: 0.625rem;
+	fill: var(--primary);
+	stroke: var(--primary);
 	opacity: 0;
 	transform: scale(0.5);
 	transition:
-		opacity var(--duration-instant) var(--ease-out),
-		transform var(--duration-fast) var(--ease-out);
+		opacity var(--duration-fast) var(--ease),
+		transform var(--duration-fast) var(--ease);
 }
 
 .listRow[data-checked] .listMarkerDot {
@@ -453,13 +421,13 @@
 .pillGroup {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	max-width: 100%;
 	overflow-x: auto;
 	overflow-y: hidden;
-	padding: var(--space-2xs);
-	border: var(--border-width) solid var(--control-border);
-	/* Control radius, not a pill, to sit beside buttons and inputs. */
+	padding: calc(var(--padding-sm) / 2);
+	border: var(--border-width) solid var(--input);
+	/* The item radius, not a pill, to sit beside buttons and inputs. */
 	border-radius: var(--radius-sm);
 }
 
@@ -469,35 +437,33 @@
 }
 
 .pillGroup[aria-invalid="true"] {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
+	border-color: var(--destructive);
 }
 
 .pillGroup[data-disabled] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
+/* A labelled, button-like option; its type is Text's (pill-radio-group.tsx). */
 .pill {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	/* Inside the group's inset and border, so the whole group is one control row tall. */
-	height: calc(var(--control-h) - var(--space-2xs) * 2 - var(--border-width) * 2);
-	padding-inline: var(--control-px);
+	height: calc(var(--control-height) - var(--padding-sm) - var(--border-width) * 2);
+	padding-inline: var(--padding);
 	border: 0;
 	/* Concentric with the frame: its radius less the inset. */
-	border-radius: calc(var(--radius-sm) - var(--space-2xs));
-	background-color: var(--field-bg);
+	border-radius: calc(var(--radius-sm) - var(--padding-sm) / 2);
+	background-color: transparent;
 	color: var(--foreground);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
 	white-space: nowrap;
 	cursor: pointer;
-	outline: none;
-	transition: background-color var(--duration-fast) var(--ease-in-out);
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 .pillFullWidth {
@@ -508,9 +474,9 @@
 	background-color: var(--accent);
 }
 
-/* Inset: the group's overflow clip would cut an outer ring. */
+/* Drawn inside: the group's overflow clip would cut an outer outline. */
 .pill:focus-visible {
-	box-shadow: var(--focus-ring-inset);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 .pill[aria-checked="true"] {
@@ -518,19 +484,19 @@
 	color: var(--primary-foreground);
 }
 
-/* The grey ring lacks contrast on the primary fill; use the pill's own ink. */
+/* The ring colour lacks contrast on the primary fill; the pill's own ink has it. */
 .pill[aria-checked="true"]:focus-visible {
-	box-shadow: inset 0 0 0 var(--focus-ring-width) var(--primary-foreground);
+	outline-color: var(--primary-foreground);
 }
 
 .pill:disabled {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
 .pill > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 }
 
@@ -539,42 +505,42 @@
 .row {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	border-radius: var(--radius-sm);
-	padding-block: var(--space-md);
+	padding-block: var(--padding-sm);
 }
 
-.rowDisabled {
-	pointer-events: none;
+/* The control inside dims itself; the row's copy stays readable. */
+.rowDisabled,
+.rowDisabled .rowLabel {
+	cursor: not-allowed;
 }
 
 .switchCard {
 	position: relative;
 	/* Card radius, matching the choice cards beside it. */
 	border-radius: var(--radius);
-	padding: var(--surface-py) var(--surface-px);
+	padding: var(--padding);
 	border: var(--border-width) solid var(--border);
 	background-color: var(--card);
 	cursor: pointer;
 	transition:
-		background-color var(--duration-fast) var(--ease-in-out),
-		border-color var(--duration-fast) var(--ease-in-out),
-		box-shadow var(--duration-fast) var(--ease-in-out);
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease);
 }
 
 .switchCard:hover:not([data-disabled]):not([data-checked="true"]):not([data-invalid]) {
-	border-color: var(--foreground-20);
-	background-color: var(--accent-50);
+	border-color: var(--input);
+	background-color: var(--accent);
 }
 
 .switchCard[data-checked="true"] {
 	border-color: var(--primary);
-	background-color: var(--primary-5);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .switchCard[data-invalid] {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
+	border-color: var(--destructive);
 }
 
 .switchCard[data-disabled] {
@@ -582,31 +548,30 @@
 	opacity: var(--disabled-opacity);
 }
 
+/* A medallion, as on the choice cards. */
 .switchCardIcon {
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
-	width: var(--size-medallion);
-	height: var(--size-medallion);
-	margin-top: var(--space-2xs);
-	/* Media within a surface: tighter than the card around it, not the same 12px. */
+	width: 2.5rem;
+	height: 2.5rem;
 	border-radius: var(--radius-sm);
-	background-color: var(--foreground-8);
+	background-color: color-mix(in oklab, var(--foreground) var(--tint), transparent);
 	color: var(--muted-foreground);
 	transition:
-		background-color var(--duration-fast) var(--ease-in-out),
-		color var(--duration-fast) var(--ease-in-out);
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 .switchCardIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .switchCard[data-checked="true"] .switchCardIcon {
-	background-color: var(--primary-10);
-	color: var(--primary-accent);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
+	color: var(--primary);
 }
 
 .rowText {
@@ -614,7 +579,7 @@
 	min-width: 0;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .rowControl {
@@ -622,7 +587,7 @@
 	flex-shrink: 0;
 	align-items: center;
 	/* Aligned to the label's optical centre-line, exactly as the inline controls are. */
-	margin-top: round(calc((1lh - var(--choice-size)) / 2), 1px);
+	margin-top: round(calc((1lh - var(--_choice-size)) / 2), 1px);
 }
 
 /* The row already applies the nudge. */
@@ -634,19 +599,13 @@
 	cursor: pointer;
 }
 
+/*
+ * Supporting copy in Text's `xs` (partials/choice-parts.tsx, toggle-field.tsx). Full
+ * secondary colour: hints are read, so they are quieter by size, not opacity (AA).
+ */
 .description,
 .hint {
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
 	text-wrap: pretty;
-}
-
-/*
- * Full secondary colour: hints are read, so quieten them with size, not opacity (AA). The
- * description is a Text, which takes it from type="secondary".
- */
-.hint {
-	color: var(--text-role-secondary);
 }
 
 /*
@@ -668,13 +627,8 @@
 }
 
 .info > svg {
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
-}
-
-.info:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /*
@@ -686,14 +640,16 @@
 	min-width: 0;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
+/*
+ * The label and its info glyph on the title's line box (Text's `sm`, choice-parts.tsx), so
+ * cards with and without a glyph align: a flex box has no strut, so `1lh` gives it one.
+ */
 .labelLine {
 	display: inline-flex;
 	align-items: center;
-	/* The title's line box, so cards with and without an info glyph align. */
-	line-height: var(--text-sm--line-height);
-	/* Horizontal gap between the label and its info glyph. */
-	gap: var(--space-xs);
+	min-height: 1lh;
+	gap: calc(var(--gap-sm) / 2);
 }

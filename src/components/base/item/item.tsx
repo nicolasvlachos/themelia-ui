@@ -5,7 +5,7 @@ import * as React from "react"
 import { Separator } from "@/components/base/display"
 import { cvm } from "@/lib/cvm"
 import { cx } from "@/lib/cx"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 
 import styles from "./item.module.css"
 
@@ -86,8 +86,8 @@ interface ItemProps extends useRender.ComponentProps<"div"> {
 }
 
 /**
- * A row — a list row, a menu row, a table row. No size prop: row height follows
- * `--density-scale`, so use a denser scope for a denser list.
+ * A row — a list row, a menu row, a table row. No size prop: row height follows the
+ * density, so use a denser scope for a denser list.
  */
 function Item({
 	className,
@@ -105,7 +105,7 @@ function Item({
 		defaultTagName: "div",
 		props: mergeProps<"div">(
 			{
-				className: cx("item--component", itemVariants({ surface, className })),
+				className: cx("item--component", textClassName({ size: "sm" }), itemVariants({ surface, className })),
 				...(inGroup && !render ? { role: "listitem" as const } : null),
 			},
 			props,
@@ -172,12 +172,13 @@ function ItemContent({ className, ...props }: React.ComponentProps<"div">) {
 	return <div data-slot="item-content" className={cx("item-content--component", styles.content, className)} {...props} />
 }
 
-/* Composed from Text so the slot doesn't invent its own type tokens. */
+/* Composed from Text so the slot doesn't invent its own type: the row's step, tight. */
 function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<Text
 			tag="div"
-			size="inherit"
+			size="sm"
+			lineHeight="tight"
 			weight="medium"
 			data-slot="item-title"
 			className={cx("item-title--component", styles.title, className)}
@@ -190,7 +191,8 @@ function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
 	return (
 		<Text
 			tag="p"
-			size="inherit"
+			size="sm"
+			lineHeight="tight"
 			type="secondary"
 			data-slot="item-description"
 			className={cx("item-description--component", styles.description, className)}

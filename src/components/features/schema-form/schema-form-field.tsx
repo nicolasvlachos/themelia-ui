@@ -14,6 +14,7 @@ import { FormField } from "@/components/base/forms"
 import { Input, Textarea } from "@/components/base/text-inputs"
 import { TagsInput } from "@/components/base/value-inputs"
 import { Badge } from "@/components/base/badge"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import type { SchemaFormStrings } from "./schema-form.strings"
@@ -153,7 +154,8 @@ function JsonControl({
 				invalid={!!(error ?? parseError)}
 				placeholder={field.placeholder}
 				spellCheck={false}
-				className={cx(styles.mono, field.controlClassName)}
+				/* The monospaced face, for source text: the field keeps its own size. */
+				className={cx(textClassName({ size: "inherit", mono: true }), field.controlClassName)}
 				onChange={(event) => {
 					const next = event.target.value
 					setDraft(next)

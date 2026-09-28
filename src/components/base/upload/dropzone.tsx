@@ -6,6 +6,7 @@
 import { useId, type ComponentProps, type ReactNode } from "react"
 import { UploadCloudIcon } from "lucide-react"
 
+import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultDropzoneStrings, type DropzoneStrings } from "./upload.strings"
@@ -100,11 +101,13 @@ export function Dropzone({
 				{icon ?? <UploadCloudIcon aria-hidden className={styles.dropzoneIcon} />}
 				{/* The prompt and its hint sit close together: one statement. */}
 				<span className={styles.dropzoneCopy}>
-					<span id={promptId} className={styles.dropzoneText}>
+					<Text tag="span" id={promptId} size="sm">
 						{prompt}
-					</span>
+					</Text>
 					{helper !== null && helper !== undefined && helper !== "" && (
-						<span className={styles.dropzoneHint}>{helper}</span>
+						<Text tag="span" size="xs" type="secondary" className={styles.dropzoneHint}>
+							{helper}
+						</Text>
 					)}
 				</span>
 			</label>

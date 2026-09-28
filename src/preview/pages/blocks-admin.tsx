@@ -48,6 +48,24 @@ export function BlocksAdminPage() {
 				description="The danger zone, as a component — so 'this is irreversible' gets stated the same way everywhere. It does not own the confirmation dialog: the action is a slot, so the destructive decision stays where its consequences are known."
 			/>
 
+			<Example
+				example="blocks-admin/blocks-changelog-blueprint"
+				title="Compose your own timeline"
+				description="The timelines are `Timeline` rows with a version and change badges. For a different record, pass your own items: `timestamp` takes any node, such as a `MonoValue` version, and `children` a row of `Badge`s."
+			/>
+
+			<Example
+				example="blocks-admin/blocks-checklist-blueprint"
+				title="Compose your own checklist"
+				description="The checklist is `Progress` above an `Accordion` whose items carry an `IconBadge` for their state. Compose it yourself when a step needs content the block does not take."
+			/>
+
+			<Example
+				example="blocks-admin/blocks-roles-blueprint"
+				title="Compose your own permissions"
+				description="A permissions grid is a `Table` with a column per role. Give each mark hidden text, so a screen reader hears granted or not rather than an icon."
+			/>
+
 			<Example id="blocks-props" title="Props">
 				<Callout>
 					These modules are blocks, which sit <strong>above</strong> Features: a block may

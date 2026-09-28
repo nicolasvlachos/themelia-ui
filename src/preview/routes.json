@@ -9,7 +9,7 @@
 		"base/forms-numeric": "Numeric inputs",
 		"base/date-pickers": "Date pickers",
 		"base/feedback": "Feedback",
-		"admin/patterns/commerce": "Commerce",
+		"blocks/admin/commerce": "Commerce",
 		"features/products": "Products"
 	},
 	"routes": [
@@ -76,7 +76,7 @@
 		{
 			"path": "/tokens",
 			"label": "Tokens & theming",
-			"summary": "Three levels: the palette carries no meaning, semantic tokens carry no value, and the theming layer computes everything else from them.",
+			"summary": "One level: about eighty variables at :root, each colour a light-dark() pair, and every length, shadow and tint in twos. Components derive the rest where they use it.",
 			"page": "tokens",
 			"component": "TokensPage",
 			"tier": "Foundations",
@@ -85,15 +85,15 @@
 				"theme",
 				"colour",
 				"color",
-				"palette",
+				"variables",
 				"dark mode",
-				"semantic"
+				"light-dark"
 			]
 		},
 		{
 			"path": "/scale",
 			"label": "Scale & density",
-			"summary": "One master factor keeps geometry and typography in proportion. Scoped spacing, density, and type overrides handle the few cases that need to disagree without adding per-component sizes.",
+			"summary": "One factor keeps geometry and type in proportion, and type can take its own. A denser region is a scope, and one variable can move one measurement everywhere.",
 			"page": "scale",
 			"component": "ScalePage",
 			"tier": "Foundations",
@@ -660,7 +660,7 @@
 		{
 			"path": "/button",
 			"label": "Button",
-			"summary": "The action primitive. Presentation splits along two independent axes: tone is semantic colour intent, buttonStyle is fill treatment.",
+			"summary": "The action primitive. Presentation splits along two independent axes: tone is semantic colour intent, appearance is fill treatment.",
 			"imports": [
 				{
 					"from": "themelia-ui/base/buttons",
@@ -3537,7 +3537,7 @@
 			"summary": "An order is not one list of goods with one status. It splits into fulfillment groups, each with its own state and location, and its money moves on an axis of its own — which is why an order can be Refunded and Unfulfilled at the same time.",
 			"imports": [
 				{
-					"from": "themelia-ui/admin/patterns/commerce",
+					"from": "themelia-ui/blocks/admin/commerce",
 					"names": [
 						"OrderHeader",
 						"FulfillmentGroup",
@@ -3553,7 +3553,7 @@
 			],
 			"page": "blocks-order",
 			"component": "BlocksOrderPage",
-			"module": "admin/patterns/commerce",
+			"module": "blocks/admin/commerce",
 			"topic": "Blocks",
 			"keywords": [
 				"order",
@@ -3580,7 +3580,7 @@
 			"summary": "Reusable blocks for checkout, fulfillment, billing, and customer accounts. Each adapts to its container and keeps application actions in consumer callbacks.",
 			"imports": [
 				{
-					"from": "themelia-ui/admin/patterns/commerce",
+					"from": "themelia-ui/blocks/admin/commerce",
 					"names": [
 						"CartSummary",
 						"TaxBreakdown",
@@ -3604,7 +3604,7 @@
 			],
 			"page": "blocks-commerce",
 			"component": "BlocksCommercePage",
-			"module": "admin/patterns/commerce",
+			"module": "blocks/admin/commerce",
 			"topic": "Blocks",
 			"keywords": [
 				"cart",
@@ -3633,7 +3633,7 @@
 			"summary": "Product search appearance, stock management, supplier profiles, and booking details. Structured for everyday catalogue operations.",
 			"imports": [
 				{
-					"from": "themelia-ui/admin/patterns/commerce",
+					"from": "themelia-ui/blocks/admin/commerce",
 					"names": [
 						"SeoListing",
 						"calculateSeoScore",
@@ -3645,7 +3645,7 @@
 			],
 			"page": "blocks-catalogue",
 			"component": "BlocksCataloguePage",
-			"module": "admin/patterns/commerce",
+			"module": "blocks/admin/commerce",
 			"topic": "Blocks",
 			"keywords": [
 				"seo",
@@ -3753,7 +3753,7 @@
 			"summary": "Every metric surface in the kit, on one data shape. A figure written as MetricData renders in a strip, a grid, a hero card or a comparison without being remapped — so the formatting, the trend inference and the empty case are decided once instead of at each call site.",
 			"imports": [
 				{
-					"from": "themelia-ui/patterns/analytics",
+					"from": "themelia-ui/blocks/analytics",
 					"names": [
 						"Metric",
 						"MetricBar",
@@ -3771,7 +3771,7 @@
 			],
 			"page": "analytics",
 			"component": "AnalyticsPage",
-			"module": "patterns/analytics",
+			"module": "blocks/analytics",
 			"topic": "Blocks",
 			"keywords": [
 				"metric",
@@ -3793,7 +3793,7 @@
 			"summary": "Domain presentation assembled from the tiers below it. The three timeline surfaces map a vocabulary onto base/timeline rather than redrawing the rail, and nothing here fetches, navigates, or confirms a destructive action — every one takes callbacks and slots.",
 			"imports": [
 				{
-					"from": "themelia-ui/patterns/timelines",
+					"from": "themelia-ui/blocks/timelines",
 					"names": [
 						"ChangelogTimeline",
 						"MilestonesTimeline",
@@ -3808,7 +3808,7 @@
 			],
 			"page": "blocks-admin",
 			"component": "BlocksAdminPage",
-			"module": "patterns/timelines",
+			"module": "blocks/timelines",
 			"topic": "Blocks",
 			"keywords": [
 				"changelog",

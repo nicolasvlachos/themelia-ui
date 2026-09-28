@@ -6,7 +6,7 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function DirectionSlot() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<DirectionProvider direction="rtl">
 				<div dir="rtl">
 					<ContentBlock surface="card" title="اتجاه من اليمين إلى اليسار">

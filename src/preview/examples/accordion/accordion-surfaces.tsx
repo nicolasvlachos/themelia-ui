@@ -5,7 +5,7 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function AccordionSurfaces() {
 	return (
-		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
 			{(["bordered", "card", "flat"] as const).map((surface) => (
 				<Stack key={surface} gap="sm">
 					<Text size="xs" type="secondary">

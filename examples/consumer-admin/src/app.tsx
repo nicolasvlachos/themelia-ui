@@ -99,10 +99,10 @@ export function App() {
           title="Orders"
           actions={
             <Stack direction="horizontal" gap="sm">
-              <Button buttonStyle="outline" onClick={() => setLoading((on) => !on)}>
+              <Button appearance="outline" onClick={() => setLoading((on) => !on)}>
                 {loading ? "Stop loading" : "Show loading"}
               </Button>
-              <Button buttonStyle="outline" onClick={() => setOrders([])}>
+              <Button appearance="outline" onClick={() => setOrders([])}>
                 Show empty
               </Button>
               <Button onClick={overlays.create.show}>New order</Button>
@@ -110,7 +110,7 @@ export function App() {
           }
         />
 
-        <Stack gap="lg" className="consumer-override">
+        <Stack className="consumer-override">
           {selected.length > 0 && (
             <Stack direction="horizontal" gap="sm">
               <Text>{selected.length} selected</Text>
@@ -127,7 +127,7 @@ export function App() {
             ) : orders.length === 0 ? (
               <Stack gap="sm">
                 <Text type="secondary">No orders yet.</Text>
-                <Button buttonStyle="outline" onClick={() => setOrders(ORDERS)}>
+                <Button appearance="outline" onClick={() => setOrders(ORDERS)}>
                   Restore
                 </Button>
               </Stack>
@@ -138,7 +138,7 @@ export function App() {
 
           <Stack direction="horizontal" gap="sm">
             <Button
-              buttonStyle="ghost"
+              appearance="ghost"
               onClick={() => setSelected(selected.length > 0 ? [] : orders.map((o) => o.id))}
             >
               {selected.length > 0 ? "Clear selection" : "Select all"}

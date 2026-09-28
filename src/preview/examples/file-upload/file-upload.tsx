@@ -12,7 +12,7 @@ export default function FileUploadExample() {
 	const [rejected, setRejected] = useState<FileRejection[]>([])
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "34rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "34rem", width: "100%" }}>
 			<FormField label="Attachments" helperText="Drag files in, or click to browse.">
 				<FileUpload
 					multiple

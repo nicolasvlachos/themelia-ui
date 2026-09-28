@@ -14,13 +14,13 @@ export default function Resizable() {
 		<div style={FRAME}>
 			<ResizablePanelGroup orientation="horizontal">
 				<ResizablePanel defaultSize="65%">
-					<div style={{ padding: "var(--space-lg)" }}>
+					<div style={{ padding: "var(--padding)" }}>
 						<Text size="sm" type="secondary">The document</Text>
 					</div>
 				</ResizablePanel>
 				<ResizableHandle withHandle />
 				<ResizablePanel defaultSize="35%">
-					<div style={{ padding: "var(--space-lg)" }}>
+					<div style={{ padding: "var(--padding)" }}>
 						<Text size="sm" type="secondary">The inspector</Text>
 					</div>
 				</ResizablePanel>

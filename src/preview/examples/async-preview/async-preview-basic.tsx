@@ -22,8 +22,8 @@ export default function AsyncPreviewBasic() {
 	}
 
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="center">
-			<Stack direction="horizontal" gap="xl" wrap>
+		<Stack direction="horizontal" wrap align="center">
+			<Stack direction="horizontal" wrap>
 				{Object.values(CUSTOMERS).map((customer) => (
 					<AsyncPreview.Root<Customer, { id: string }, "customer">
 						key={customer.id}
@@ -49,7 +49,7 @@ export default function AsyncPreviewBasic() {
 				<Stack direction="horizontal" gap="sm" align="center">
 					<Button
 						tone="neutral"
-						buttonStyle="outline"
+						appearance="outline"
 						onClick={() => {
 							clearAsyncPreviewCache()
 							setLog([])

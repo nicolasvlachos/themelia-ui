@@ -1,6 +1,10 @@
+import type { ReactNode, RefObject } from "react"
+
+import type { CssLength } from "@/lib/css-length"
+
 import type { OverlayStrings } from "./overlay.strings"
 
-import type { ReactNode, RefObject } from "react"
+export type { CssLength }
 
 /** Where the surface sits. Centre reads as a dialog; edges read as sheets and drawers. */
 export type OverlayPlacement =
@@ -21,16 +25,16 @@ export type OverlayModality = "modal" | "trap-focus" | "non-modal"
 export type OverlaySurface = "framed" | "bare"
 
 /** Cross-axis extent of an edge-placed surface (a side panel's width): a step or any CSS length. */
-export type OverlaySize = "sm" | "md" | "lg" | "full" | (string & {})
+export type OverlaySize = "default" | "sm" | "full" | CssLength
 
 /** Along-axis extent (a side panel's height). `full` welds it to both ends; less centres it. */
-export type OverlayLength = "full" | (string & {})
+export type OverlayLength = "full" | CssLength
 
 /**
  * The gap to the viewport edges: `false` is flush, `true` the kit's gap, or any CSS length.
  * An inset panel rounds all four corners.
  */
-export type OverlayInset = boolean | (string & {})
+export type OverlayInset = boolean | CssLength
 
 /** The two routes out of an overlay, each switchable on its own. */
 export interface OverlayDismissal {
@@ -67,7 +71,7 @@ export interface OverlayContentProps {
 	 * Cross-axis extent for an edge placement — the width of a side panel; a top or bottom
 	 * one sizes to its content and takes this as the ceiling. Named steps resolve to tokens;
 	 * any other CSS length is used as given. Ignored when centred.
-	 * @default "md"
+	 * @default "default"
 	 */
 	size?: OverlaySize
 	/**

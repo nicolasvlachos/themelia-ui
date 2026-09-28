@@ -60,6 +60,7 @@ export const CardCheckboxGroup = forwardRef<HTMLDivElement, CardCheckboxGroupPro
 			<div
 				ref={ref}
 				role="group"
+				// oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- FormField's invalid state, kept on the group it describes
 				aria-invalid={invalid || undefined}
 				aria-label={ariaLabel}
 				aria-labelledby={ariaLabelledby}
@@ -89,6 +90,7 @@ export const CardCheckboxGroup = forwardRef<HTMLDivElement, CardCheckboxGroupPro
 								<button
 									type="button"
 									aria-pressed={isSelected}
+									// oxlint-disable-next-line jsx-a11y/role-supports-aria-props -- each option carries the group's invalid state, as a radio in a radio group does
 									aria-invalid={invalid || undefined}
 									/* Described by its own note: a control can't sit inside a control (see `ChoiceLabel`). */
 									aria-describedby={option.tooltip == null ? undefined : noteId}

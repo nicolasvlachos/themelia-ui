@@ -1,7 +1,7 @@
 /*
- * Popover. --popover-shadow lives in styles/theming/overlay.css (hover cards and navigation
- * menus read it too). The surface declares its enter/exit once (theming/animation.css);
- * side rules set only the slide axis, and Base UI's `--transform-origin` anchors the zoom.
+ * Popover. A floating surface: the popover ground, the floating shadow over a hairline, the
+ * container radius. The surface declares its enter/exit once (styles/animation.css); side
+ * rules set only the slide axis, and Base UI's `--transform-origin` anchors the zoom.
  */
 
 .positioner {
@@ -13,28 +13,25 @@
 	z-index: var(--z-popover);
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xl);
-	width: calc(18rem * var(--scale));
-	padding: var(--surface-py) var(--surface-px);
+	gap: var(--gap);
+	width: 18rem;
+	padding: var(--padding);
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	--surface-ground: var(--popover);
 	color: var(--popover-foreground);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	box-shadow: var(--popover-shadow);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
+	/* The panel takes focus only when it holds nothing focusable; the open panel marks it. */
 	outline: none;
 	transform-origin: var(--transform-origin);
 
 	/* Fade and scale in from 95%; the exit reverses it. */
-	--enter-opacity: 0;
-	--enter-scale: 0.95;
-	--exit-opacity: 0;
-	--exit-scale: 0.95;
+	--_enter-opacity: 0;
+	--_enter-scale: 0.95;
+	--_exit-opacity: 0;
+	--_exit-scale: 0.95;
 
-	animation: var(--animate-exit);
-	/* A step faster than the default; a longhand after the shorthand (see theming/animation.css). */
-	animation-duration: var(--duration-instant);
+	animation: var(--keyframes-exit) var(--duration-fast) var(--ease);
 }
 
 /*
@@ -48,47 +45,40 @@
 }
 
 .content[data-open] {
-	animation: var(--animate-enter);
-	animation-duration: var(--duration-instant);
+	animation: var(--keyframes-enter) var(--duration-fast) var(--ease);
 }
 
 /* Slides away from the trigger: a popup below it starts slightly above its final position. */
 .content[data-side="bottom"] {
-	--enter-translate-y: calc(var(--slide-nudge) * -1);
-	--exit-translate-y: calc(var(--slide-nudge) * -1);
+	--_enter-y: calc(var(--gap-sm) * -1);
+	--_exit-y: calc(var(--gap-sm) * -1);
 }
 
 .content[data-side="top"] {
-	--enter-translate-y: var(--slide-nudge);
-	--exit-translate-y: var(--slide-nudge);
+	--_enter-y: var(--gap-sm);
+	--_exit-y: var(--gap-sm);
 }
 
 .content[data-side="left"],
 .content[data-side="inline-start"] {
-	--enter-translate-x: var(--slide-nudge);
-	--exit-translate-x: var(--slide-nudge);
+	--_enter-x: var(--gap-sm);
+	--_exit-x: var(--gap-sm);
 }
 
 .content[data-side="right"],
 .content[data-side="inline-end"] {
-	--enter-translate-x: calc(var(--slide-nudge) * -1);
-	--exit-translate-x: calc(var(--slide-nudge) * -1);
+	--_enter-x: calc(var(--gap-sm) * -1);
+	--_exit-x: calc(var(--gap-sm) * -1);
 }
 
+/* A title and its description: one group, the small gap. */
 .header {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-}
-
-.title {
-	font-weight: var(--weight-medium);
+	gap: var(--gap-sm);
 }
 
 .description {
-	color: var(--muted-foreground);
 	text-wrap: pretty;
 }
 
@@ -97,12 +87,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: var(--space-md);
-	padding-top: var(--surface-py);
-	border-top: var(--border-width) solid var(--border-60);
+	gap: var(--gap-sm);
+	padding-top: var(--padding);
+	border-top: var(--border-width) solid var(--border);
 }
 
 /* A flush popover has no surface padding, so the footer pays all four sides. */
 .insetFlush .footer {
-	padding: var(--surface-py) var(--surface-px);
+	padding: var(--padding);
 }

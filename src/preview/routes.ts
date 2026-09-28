@@ -58,7 +58,7 @@ function componentOf(entry: RouteData): ComponentType {
 /* The package's tiers in dependency order, after the site's own entry pages. */
 const TIERS = ["Get started", "Foundations", "Primitives", "Base", "Layout", "Features", "Blocks"]
 const FOUNDATION_MODULES = new Set(["ui-provider", "theming", "forms", "forms-rhf"])
-const TIER_OF_PREFIX: Record<string, string> = { base: "Base", layout: "Layout", features: "Features", patterns: "Blocks", admin: "Blocks" }
+const TIER_OF_PREFIX: Record<string, string> = { base: "Base", layout: "Layout", features: "Features", blocks: "Blocks" }
 
 function tierOf(entry: RouteData): string {
 	if (entry.tier) return entry.tier

@@ -1,13 +1,13 @@
 # Tests
 
 <!-- GENERATED:suites by scripts/gen-test-docs.mjs — do not edit between these markers. -->
-35 Playwright suites over the docs site, and 139 unit test files beside the
+35 Playwright suites over the docs site, and 141 unit test files beside the
 code they cover.
 
 | suite | covers | script |
 | --- | --- | --- |
 | `a11y.spec.ts` | An accessibility audit of every component page. | runs under `npm test` |
-| `activities-structure.spec.ts` | Activity rows expand into labelled detail groups, collapse again and follow the feed's density. | runs under `npm test` |
+| `activities-structure.spec.ts` | Activity rows expand into labelled detail groups, collapse again and follow the feed's variant. | runs under `npm test` |
 | `admin-layout-polish.spec.ts` | App-shell layouts: mobile navigation, collapsing and moving the rail, contained scrolling and configured widths. | runs under `npm test` |
 | `ai-chat-resource-assignment.spec.ts` | AI chat send, stop and retry, and resource assignment's failure, retry and cancel flows. | runs under `npm test` |
 | `audit/geometry.spec.ts` | An on-demand audit of sub-pixel geometry and corner radii across every page: whole-pixel circles, radius bands, near-circles, square icons, concentric nesting and skeleton parity. | `npm run audit` |
@@ -38,7 +38,7 @@ code they cover.
 | `sweep.spec.ts` | The smoke suite: every route renders, fits a phone, keeps the console clean with and without a pointer, holds still under reduced motion, and opens unscrolled. | runs under `npm test` |
 | `theme-consolidation.spec.ts` | Theme overrides: native color-scheme follows theme scopes, and the documented surface, font, padding and typography overrides reach the components that read them. | runs under `npm test` |
 | `theme-tweaker-live.spec.ts` | The theme tweaker: overflowing tab rails, the panel's fixed chrome, corner presets, locale input, exported themes and accessible panels. | runs under `npm test` |
-| `tokens.spec.ts` | The theming contract: every `var()` resolves, scope boundaries keep an explicit theme, density and text scale, and the type ladder holds its order under every factor. | runs under `npm test` |
+| `tokens.spec.ts` | The theming contract: every `var()` resolves, a region keeps an explicit scheme, density and type factor however deep it sits, and the type ladder holds its order under every factor. | runs under `npm test` |
 | `ux-polish.spec.ts` | Upload pickers, rejection messages and touch affordances, plus DataView debounce, paging, sorting and empty recovery. | runs under `npm test` |
 | `visual.spec.ts` | Local screenshots, one per preview example per theme, compared with baselines recorded on this machine. | `npm run screenshots` |
 
@@ -48,9 +48,6 @@ Unit tests run separately, under `npm run test:unit`, and are in the `verify` ch
 cover what a route cannot reach — SSR, hydration, two roots arbitrating over the document,
 portals, and hook behaviour across prop changes.
 
-- `src/components/admin/patterns/commerce/catalogue-polish.test.tsx`
-- `src/components/admin/patterns/commerce/commerce-polish.test.tsx`
-- `src/components/admin/patterns/empty-states.test.tsx`
 - `src/components/base/action-menu/context-actions.test.ts`
 - `src/components/base/buttons/button-group-loading.test.tsx`
 - `src/components/base/buttons/button.test.tsx`
@@ -106,6 +103,11 @@ portals, and hook behaviour across prop changes.
 - `src/components/base/value-inputs/color-input.test.tsx`
 - `src/components/base/value-inputs/tags-input-keyboard.test.tsx`
 - `src/components/base/value-inputs/value-inputs.test.tsx`
+- `src/components/blocks/admin/commerce/catalogue-polish.test.tsx`
+- `src/components/blocks/admin/commerce/commerce-polish.test.tsx`
+- `src/components/blocks/admin/empty-states.test.tsx`
+- `src/components/blocks/onboarding/checklist.test.tsx`
+- `src/components/blocks/timelines/steps.test.tsx`
 - `src/components/features/activities/activity-log.test.tsx`
 - `src/components/features/activities/activity-structure.test.tsx`
 - `src/components/features/activities/use-activity-feed.test.tsx`
@@ -150,6 +152,7 @@ portals, and hook behaviour across prop changes.
 - `src/components/features/schema-form/json-control.test.tsx`
 - `src/components/features/schema-form/schema-form.test.tsx`
 - `src/components/features/table/cell-value.test.tsx`
+- `src/components/features/table/data-table-expansion.test.tsx`
 - `src/components/features/theme-tweaker/theme-tweaker.utils.test.ts`
 - `src/components/layout/auth/auth-card.test.tsx`
 - `src/components/layout/header/header-notifications.test.tsx`
@@ -157,8 +160,6 @@ portals, and hook behaviour across prop changes.
 - `src/components/layout/sidebar/app-sidebar.test.tsx`
 - `src/components/layout/workspace/workspace-nav.test.tsx`
 - `src/components/layout/workspace/workspace-record-header.test.tsx`
-- `src/components/patterns/onboarding/checklist.test.tsx`
-- `src/components/patterns/timelines/steps.test.tsx`
 - `src/components/primitives/edge-cases.test.tsx`
 - `src/components/primitives/primitives.test.tsx`
 - `src/hooks/use-controllable-state.test.ts`
@@ -176,6 +177,7 @@ portals, and hook behaviour across prop changes.
 - `src/lib/strings.test.ts`
 - `src/lib/theming/contrast.test.ts`
 - `src/lib/theming/recipes.test.ts`
+- `src/lib/theming/theme-contrast.test.ts`
 - `src/lib/ui-provider/context.test.ts`
 - `src/lib/ui-provider/csp-provider.test.tsx`
 - `src/lib/ui-provider/dark-menus.test.tsx`

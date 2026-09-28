@@ -18,7 +18,6 @@ declare const styles: {
 	readonly menuBadge: string
 	readonly menuBadgeInline: string
 	readonly menuButton: string
-	readonly menuButtonLg: string
 	readonly menuButtonOutline: string
 	readonly menuButtonSm: string
 	readonly menuItem: string
@@ -27,7 +26,6 @@ declare const styles: {
 	readonly menuSkeletonText: string
 	readonly menuSub: string
 	readonly menuSubButton: string
-	readonly menuSubButtonSm: string
 	readonly menuSubItem: string
 	readonly mobile: string
 	readonly mobileInner: string

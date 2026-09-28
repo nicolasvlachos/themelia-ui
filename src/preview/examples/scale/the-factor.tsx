@@ -1,4 +1,5 @@
 import { Stack } from "themelia-ui/base/structure"
+import { Text } from "themelia-ui/base/typography"
 import { UIProvider } from "themelia-ui/ui-provider"
 
 import { ControlRow } from "./_shared"
@@ -10,8 +11,8 @@ export default function TheFactor() {
 		<>
 			{FACTORS.map((scale) => (
 				<UIProvider key={scale} config={{ scale }}>
-					<Stack direction="horizontal" gap="lg" align="center">
-						<code style={{ width: "4rem", fontSize: "var(--text-xs)" }}>{scale}</code>
+					<Stack direction="horizontal" align="center">
+						<Text tag="span" size="xs" mono style={{ width: "4rem", flex: "none" }}>{scale}</Text>
 						<ControlRow />
 					</Stack>
 				</UIProvider>

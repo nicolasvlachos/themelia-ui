@@ -9,7 +9,7 @@ export default function Inline() {
 			onClear={() => undefined}
 			strings={{ label: "Inline batch actions example" }}
 		>
-			<Button type="button" tone="neutral" buttonStyle="ghost">
+			<Button type="button" tone="neutral" appearance="ghost">
 				Assign
 			</Button>
 		</BatchActionBar>

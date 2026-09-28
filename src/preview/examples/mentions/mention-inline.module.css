@@ -6,18 +6,17 @@
 }
 
 .editor {
-	min-height: calc(var(--control-h) * 2.5);
-	padding: var(--space-lg);
+	min-height: calc(var(--control-height) * 2.5);
+	padding: var(--padding);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	background-color: var(--background);
-	line-height: var(--leading-relaxed);
 }
 
+/* A field's focus: the frame takes the ring colour and the ring is drawn over it. */
 .editor:focus-visible {
-	outline: none;
 	border-color: var(--ring);
-	box-shadow: var(--focus-ring);
+	outline-offset: calc(var(--border-width) * -1);
 }
 
 /* A contenteditable has no placeholder attribute, so the empty state is drawn. */
@@ -30,9 +29,8 @@
 /* Stored markup shown as markup — wrapped, because a body is longer than a line. */
 .source {
 	display: block;
-	padding: var(--space-md);
+	padding: var(--padding-sm);
 	border-radius: var(--radius-sm);
-	background-color: var(--muted-40);
-	font-family: var(--font-mono);
+	background-color: var(--muted);
 	overflow-wrap: anywhere;
 }

@@ -3,6 +3,116 @@
 What changes between versions, what to do when you upgrade, and which changes a stable major
 allows.
 
+## Upgrading to 3.1
+
+3.1 renames and removes public API as well as adding to it. Upgrade deliberately, not
+through a caret range: pin `themelia-ui` to `~3.0.0` until you have run the codemod and fixed
+what TypeScript reports.
+
+**Blocks are published under `blocks/`.** The tier the documentation, the component index
+and the finder call Blocks now has subpaths that say so:
+
+| was | is |
+| --- | --- |
+| `themelia-ui/patterns/analytics` | `themelia-ui/blocks/analytics` |
+| `themelia-ui/patterns/onboarding` | `themelia-ui/blocks/onboarding` |
+| `themelia-ui/patterns/timelines` | `themelia-ui/blocks/timelines` |
+| `themelia-ui/admin/patterns/access` | `themelia-ui/blocks/admin/access` |
+| `themelia-ui/admin/patterns/commerce` | `themelia-ui/blocks/admin/commerce` |
+
+Each stylesheet moved with its module, from `…/patterns/analytics.css` to
+`…/blocks/analytics.css`.
+
+**Fill style is `appearance`.** `tone` is colour, `appearance` is fill and `variant` is
+structure, on every component. TypeScript reports each rename:
+
+| was | is |
+| --- | --- |
+| `buttonStyle` on a Button, a Button-like component or an action definition | `appearance` |
+| `ButtonStyle`, `ActionButtonStyle` | `ButtonAppearance`, `ActionAppearance` |
+| `defaults: { button: { buttonStyle } }` | `defaults: { button: { appearance } }` |
+| `variant` on `Badge`, `Toggle` and `SidebarMenuButton` | `appearance` |
+| `BadgeVariant` | `BadgeAppearance` |
+| `badgeVariants({ tone, variant })` on your own element | `<Badge tone appearance render={<a … />}>` |
+| `badgeVariant` on a metadata badge value | `badgeAppearance` |
+| `confirmStyle` on an overlay or an action modality | `confirmAppearance` |
+
+Button renders `data-appearance` instead of `data-style`, and Toggle `data-appearance`
+instead of `data-variant`: update CSS that selects either.
+
+**Two steps for every size.** A size, padding or gap prop offers `default` and `sm`. `md` is
+`default`, which is also what leaving the prop out gives you; a step larger than the default
+is gone. The gaps map like this:
+
+| was | is |
+| --- | --- |
+| `gap="2xs"`, `"xs"`, `"sm"`, `"md"` | `gap="sm"` (8px) |
+| `gap="lg"`, `"xl"`, `"2xl"` | `gap="default"` (16px), or no `gap` |
+| no `gap` on a `Stack` or `Split` (8px) | 16px; write `gap="sm"` to keep 8px |
+
+Widths take `default`, `sm`, `full`, `none` or a CSS length such as `"48rem"`, and a free
+string no longer type-checks. `Slider` and `SliderField` lose `size`, `InputGroupButton`
+takes `iconOnly` instead of its icon sizes, and an action modality's `size`, which nothing
+read, is gone.
+
+**`density` belongs to the provider.** `MetadataList density="compact"` becomes
+`size="sm"`, `MediaLibrary density="compact"` becomes `size="sm"`, `ActivityFeed density`
+becomes `variant`, and `AiTask density="expanded"` becomes `defaultExpanded`. CSS that
+selects `[data-row-density]`, `[data-media-density]` or `[data-activity-density]` selects
+`[data-size]` or `[data-variant]`.
+
+`Text` drops `size="xxs"` and `weight="regular"`: write `xs` and `normal`.
+
+**The theme is one level.** It is about eighty variables, declared once at `:root`, each
+colour a `light-dark(light, dark)` pair. For a theme of your own:
+
+- Declare it on `:root` alone. The selector list 3.0 asked for (`:root, [data-ui-scope],
+  [data-density], [data-theme], .light, .dark`) is not needed: nothing below `:root` declares a
+  theme variable again.
+- Write a dark value into the colour's pair, `--primary: light-dark(#2563eb, #60a5fa)`, rather
+  than a `.dark { … }` block, which colours a dark page but misses a dark region inside a light
+  one.
+- The palette, the alpha steps, the spacing ladder, the control, icon and avatar ladders, the
+  derived role variables and the scale factors are gone. The codemod renames a variable that
+  has a successor and reports the rest:
+
+| was | is |
+| --- | --- |
+| `--space-2xs` to `--space-md` | `--gap-sm` between things, `--padding-sm` for an inset |
+| `--space-lg` to `--space-2xl` | `--gap` between things, `--padding` for an inset |
+| `--surface-px`, `--surface-py`; `--row-px`, `--row-py` | `--padding`; `--padding-sm` |
+| `--control-h`, `--control-h-sm` | `--control-height`, `--control-height-sm` |
+| `--size-icon`, `--size-icon-sm` | `--icon-size`, `--icon-size-sm` |
+| `--primary-10` and every other alpha step | `color-mix(in oklab, var(--primary) var(--tint), transparent)`; a line takes `--tint-strong` |
+| `--accent-50`, `--border-60`, `--muted-50` | `--accent`, `--border`, `--muted` |
+| `--control-border`, `--focus-ring-color`, `--link-color` | `--input`, `--ring`, `--link` |
+| `--shadow-xs`, `--shadow-sm`; `--shadow-md` to `--shadow-2xl`, `--popover-shadow` | `--shadow`; `--shadow-lg` |
+| `--duration-normal`, `--duration-instant`, `--ease-out` | `--duration`, `--duration-fast`, `--ease` |
+| `--leading-*`, `--weight-*`, `--tracking-*` | Text's `lineHeight`, `weight` and `caps` |
+| `--scale`, `--density-scale` | the provider's `scale` and `density` |
+| `--inverse-*` | a nested provider with `colorScheme: "dark"` |
+| `--animate-spin` and the other `--animate-*` | `--keyframes-spin` and the others, which hold the name alone: `animation: var(--keyframes-spin) 1s linear infinite` |
+
+`--text-scale` stays, and Text multiplies each step by it. A component variable you set from
+outside, such as `--content-block-p`, `--overlay-region-p`, `--field-label-width` or
+`--chart-aspect`, is the component's own now: set the theme variable it reads, or style the
+component through `className`. With Tailwind, `p-padding` and `gap-gap-sm` replace `p-md` and
+the other spacing keys, and `rounded` is the container radius.
+
+**A browser floor for `light-dark()`.** Safari 17.5 or newer; Chrome and Edge 125 and Firefox
+121 are unchanged.
+
+Run the codemod from your project, dry first. It rewrites the moved subpaths and their
+stylesheets, renames each theme variable that has a successor, and reports the rest:
+
+```sh
+node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/
+node node_modules/themelia-ui/scripts/consumer/codemod.mjs src/
+```
+
+Every change with its replacement is listed in the
+migration reference (`node_modules/themelia-ui/docs/generated/migration.md`).
+
 ## Upgrading to 3.0
 
 3.0 changes how the package loads, and gives a few props one shape.

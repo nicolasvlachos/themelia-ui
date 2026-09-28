@@ -4,7 +4,7 @@ import {
 	type ComponentProps, type ReactNode,
 } from "react"
 
-import { DisplayLabel, Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { observeResize } from "@/lib/observers"
 import { readScrollEdges } from "@/lib/scroll-edges"
@@ -139,7 +139,7 @@ export function Table({ className, containerClassName, strings, stickyHeader = f
 					data-fade-end={edges.end ? "" : undefined}
 					className={cx("table--container", styles.container, containerClassName)}
 				>
-					<table className={cx("table--component", styles.table, className)} {...props} />
+					<table className={cx("table--component", styles.table, textClassName({ size: "sm" }), className)} {...props} />
 				</div>
 			</TableStringsContext.Provider>
 		</TableCaptionContext.Provider>
@@ -155,7 +155,12 @@ export function TableBody({ className, ...props }: ComponentProps<"tbody">) {
 }
 
 export function TableFooter({ className, ...props }: ComponentProps<"tfoot">) {
-	return <tfoot className={cx("table--footer", styles.footer, className)} {...props} />
+	return (
+		<tfoot
+			className={cx("table--footer", styles.footer, textClassName({ size: "inherit", weight: "medium" }), className)}
+			{...props}
+		/>
+	)
 }
 
 /**
@@ -177,8 +182,17 @@ export function TableHead({
 	onSort,
 	...props
 }: TableHeadProps) {
+	// Labels recede behind the data; the sorted column's is the one in the body colour.
 	const label = isSimpleText(children) ? (
-		<DisplayLabel className="table--head-text">{children}</DisplayLabel>
+		<Text
+			tag="span"
+			size="inherit"
+			weight="medium"
+			type={sortable && sortDirection ? "main" : "secondary"}
+			className="table--head-text"
+		>
+			{children}
+		</Text>
 	) : (
 		children
 	)
@@ -197,6 +211,7 @@ export function TableHead({
 			className={cx(
 				"table--head",
 				styles.head,
+				textClassName({ size: "inherit", weight: "medium" }),
 				align && ALIGN[align],
 				wrap && styles.wrap,
 				className,
@@ -207,8 +222,7 @@ export function TableHead({
 				<button
 					type="button"
 					className={cx("table--head-sort", styles.headSort)}
-					// Drawn under 24px; the TARGET must not be. See styles/targets.css.
-					data-hit-area
+					// The whole cell is the target (table.module.css), so no `data-hit-area`.
 					data-active={sortDirection ? "" : undefined}
 					onClick={onSort}
 				>

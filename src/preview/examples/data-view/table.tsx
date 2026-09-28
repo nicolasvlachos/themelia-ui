@@ -50,7 +50,7 @@ export default function Table() {
 					},
 				]}
 				bulkActions={({ selectedRowCount }) => (
-					<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => setNote(`archive ${selectedRowCount}`)}>
+					<Button type="button" tone="neutral" appearance="outline" onClick={() => setNote(`archive ${selectedRowCount}`)}>
 						Archive selected
 					</Button>
 				)}

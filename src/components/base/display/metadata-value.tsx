@@ -106,7 +106,7 @@ export type MetadataBadgeValueDescriptor = DescriptorBase & ValueFallback & Disp
 	kind: "badge"
 	value: DisplayValue
 	badgeTone?: BadgeProps["tone"]
-	badgeVariant?: BadgeProps["variant"]
+	badgeAppearance?: BadgeProps["appearance"]
 }
 
 export type MetadataNodeValueDescriptor = {
@@ -197,7 +197,7 @@ export function MetadataValue(props: MetadataValueProps) {
 			)
 		case "badge":
 			return (
-				<Badge tone={props.badgeTone ?? "secondary"} variant={props.badgeVariant} className={className}>
+				<Badge tone={props.badgeTone ?? "secondary"} appearance={props.badgeAppearance} className={className}>
 					{props.display ?? props.value}
 				</Badge>
 			)

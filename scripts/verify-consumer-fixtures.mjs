@@ -132,7 +132,7 @@ run(
  * `@layer ...;` statement, so first appearance decides: a `components` block ahead of
  * `tokens` puts the base reset above every component rule, and a Button renders unstyled.
  */
-const LAYERS = ['tokens', 'theming', 'base', 'components', 'utilities']
+const LAYERS = ['tokens', 'base', 'components', 'utilities']
 function layerOrder(css) {
   const seen = []
   for (const match of css.matchAll(/@layer\s*([^{;]+)[;{]/g)) {
@@ -144,7 +144,7 @@ function layerOrder(css) {
 }
 function assertLayerOrder(css, what) {
   const order = layerOrder(css)
-  const missing = ['tokens', 'theming', 'base', 'components'].filter((layer) => !order.includes(layer))
+  const missing = ['tokens', 'base', 'components'].filter((layer) => !order.includes(layer))
   if (missing.length) throw new Error(`${what}: the bundle has no ${missing.join(', ')} layer — core.css was dropped`)
   const expected = LAYERS.filter((layer) => order.includes(layer))
   if (order.join() !== expected.join()) {

@@ -5,26 +5,17 @@
 
 /* Dotted, not solid: the trigger previews rather than navigates. */
 .trigger {
-	border: 0;
-	padding: 0;
-	background: none;
-	color: inherit;
-	font: inherit;
 	text-align: inherit;
 	text-decoration: underline dotted;
-	text-underline-offset: var(--link-underline-offset);
+	text-underline-offset: 3px;
 	cursor: help;
 	border-radius: var(--radius-sm);
 }
 
-.trigger:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
+/* Base UI's `--available-width` keeps the surface on screen beside a trigger near the edge. */
 .content {
-	min-width: min(calc(16rem * var(--scale)), var(--available-width));
-	max-width: min(calc(24rem * var(--scale)), var(--available-width));
+	min-width: min(16rem, var(--available-width));
+	max-width: min(24rem, var(--available-width));
 }
 
 /* A shared minimum height, so the popover does not jump between states. */
@@ -33,9 +24,9 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	/* Room for a spinner and one line of copy. */
-	min-height: calc(4rem * var(--scale));
+	min-height: 4rem;
 	text-align: center;
 }
 
@@ -50,30 +41,22 @@
  * ground is an even inset, pulled back by negative margins so text sits where plain text would.
  */
 .cell {
+	--_cell-inset: calc(var(--padding-sm) / 2);
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	max-width: 100%;
 	min-width: 0;
-	margin-block: calc(var(--space-xs) * -1);
-	margin-inline-start: calc(var(--space-xs) * -1);
-	border: 0;
+	margin-block: calc(var(--_cell-inset) * -1);
+	margin-inline-start: calc(var(--_cell-inset) * -1);
 	border-radius: var(--radius-sm);
-	padding: var(--space-xs);
-	background: none;
-	color: inherit;
-	font: inherit;
+	padding: var(--_cell-inset);
 	text-align: start;
 	cursor: pointer;
 }
 
 .cell:hover {
 	background: var(--accent);
-}
-
-.cell:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
 }
 
 /* No hover fill, pointer or negative pull. */
@@ -90,40 +73,36 @@
 .cellText {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 .cellValueRow {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 .cellIcon {
 	flex-shrink: 0;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	color: var(--muted-foreground);
 }
 
 /* Quiet until hovered, so a column of carets does not shout. Lives in the value row, after the badge. */
 .cellCaret {
 	flex-shrink: 0;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	color: var(--muted-foreground);
 	opacity: 0.5;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition: opacity var(--duration-fast) var(--ease);
 }
 
 .cell:hover .cellCaret,
 .cell:focus-visible .cellCaret,
 .cell[data-popup-open] .cellCaret {
 	opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.cellCaret { transition: none; }
 }

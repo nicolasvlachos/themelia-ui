@@ -113,7 +113,7 @@ export function GalleryPage() {
 				<Heading level={1} size="2xl">
 					Components
 				</Heading>
-				<div style={{ marginTop: "var(--space-lg)" }}>
+				<div style={{ marginTop: "var(--gap)" }}>
 					<Text type="secondary" size="lg">
 						{gallery.cards.length} documented pages, each with the line that says when to
 						reach for it — and when not to.
@@ -122,7 +122,7 @@ export function GalleryPage() {
 			</section>
 
 			<section className={styles.section}>
-				<Stack gap="md">
+				<Stack gap="sm">
 					<SearchInput
 						value={query}
 						onChange={(event) => setQuery(event.target.value)}
@@ -173,7 +173,7 @@ export function GalleryPage() {
 					border
 				/>
 			) : (
-				<AdaptiveGrid minColumnWidth="lg" gap="md">
+				<AdaptiveGrid minColumnWidth="20rem" gap="sm">
 					{matches.map((card) => (
 						<GalleryCard key={`${card.route}:${card.title}`} card={card} />
 					))}
@@ -191,7 +191,7 @@ function GalleryCard({ card }: { card: Card }) {
 		 * destination here.
 		 */
 		<Link to={card.route} className={styles.galleryCard}>
-			<Stack gap="xs">
+			<Stack gap="sm">
 				<div className={styles.galleryCardHead}>
 					<Heading level={2} size="sm">
 						{card.title}

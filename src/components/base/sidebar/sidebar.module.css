@@ -1,32 +1,11 @@
 /*
- * Sidebar. Colour tokens (--sidebar, --sidebar-accent, …) are theme semantics in
- * themes/default.css; the expanded width is the global --sidebar-width (tokens/layout.css).
+ * Sidebar: a colour region of its own, painted with the theme's `--sidebar*` colours. Inside
+ * it the hover fill is `--sidebar-accent` and focus is the shared outline in `--sidebar-ring`.
+ * The expanded width is the theme's `--sidebar-width`.
+ *
+ * Widths animate linearly: an eased width looks like it is catching up with the content
+ * beside it.
  */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). */
-:root {
-	/* Linear: an eased width looks like it is catching up with the content beside it. */
-	--sidebar-ease: linear;
-}
-
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	--sidebar-width-icon: round(calc(3rem * var(--density-scale, var(--scale))), 1px);
-
-
-	--sidebar-group-label-h: round(calc(2rem * var(--density-scale, var(--scale))), 1px);
-
-	--sidebar-menu-h-sm: round(calc(1.75rem * var(--density-scale, var(--scale))), 1px);
-	--sidebar-menu-h: round(calc(2rem * var(--density-scale, var(--scale))), 1px);
-	--sidebar-menu-h-lg: round(calc(3rem * var(--density-scale, var(--scale))), 1px);
-
-	--sidebar-badge-h: round(calc(1.25rem * var(--density-scale, var(--scale))), 1px);
-
-}
 
 /*
  * Two boxes for one panel: a fixed CONTAINER spans the viewport and slides off-canvas,
@@ -60,38 +39,15 @@
 .root {
 	display: none;
 	color: var(--sidebar-foreground);
+	/* Collapsed to icons: one square row, and the group's inset either side of it. */
+	--_rail-width: calc(var(--control-height) + var(--padding-sm) * 2);
 }
 
-/*
- * Each sidebar surface is the ground its halos and fades sit on, and its focus rings take
- * the theme's --sidebar-ring. It is a seed like --ring, so it gets focus.css's recipe: mixed
- * toward the ink in light, unmixed in dark (below). The rings are composed from the colour
- * where they are declared, so they are composed again here to pick it up.
- */
+/* Each sidebar surface is the ground its halos and fades sit on. */
 .root,
 .static,
 .mobile {
 	--surface-ground: var(--sidebar);
-	--focus-ring-color: color-mix(in oklab, var(--sidebar-ring) 70%, var(--sidebar-foreground) 30%);
-	--focus-ring:
-		0 0 0 var(--focus-ring-offset) var(--sidebar),
-		0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--focus-ring-color);
-	--focus-ring-inset:
-		inset 0 0 0 var(--focus-ring-offset) var(--sidebar),
-		inset 0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--focus-ring-color);
-	--field-focus-ring: 0 0 0 var(--focus-ring-width) color-mix(in oklab, var(--focus-ring-color) 22%, transparent);
-}
-
-/* Dark: the unmixed seed, which clears 3:1 against the shell, as the page ring does. */
-:is(:global(.dark), [data-theme="dark"]) :is(.root, .static, .mobile) {
-	--focus-ring-color: var(--sidebar-ring);
-}
-
-/* The same under the OS preference (`colorScheme: "system"`), outside any explicit light choice. */
-@media (prefers-color-scheme: dark) {
-	:is(.root, .static, .mobile):not(:where(:global(.light), [data-theme="light"]) *) {
-		--focus-ring-color: var(--sidebar-ring);
-	}
 }
 
 @media (--bp-md) {
@@ -104,7 +60,7 @@
 	position: relative;
 	width: var(--sidebar-width);
 	background-color: transparent;
-	transition: width var(--duration-normal) var(--sidebar-ease);
+	transition: width var(--duration) linear;
 }
 
 .root[data-collapsible="offcanvas"] .gap {
@@ -112,13 +68,13 @@
 }
 
 .root[data-collapsible="icon"] .gap {
-	width: var(--sidebar-width-icon);
+	width: var(--_rail-width);
 }
 
 /* Floating and inset panels carry their own inset, so the column has to allow for it. */
 .root[data-collapsible="icon"][data-variant="floating"] .gap,
 .root[data-collapsible="icon"][data-variant="inset"] .gap {
-	width: calc(var(--sidebar-width-icon) + var(--space-md) * 2);
+	width: calc(var(--_rail-width) + var(--padding-sm) * 2);
 }
 
 .container {
@@ -129,9 +85,9 @@
 	height: 100svh;
 	width: var(--sidebar-width);
 	transition:
-		left var(--duration-normal) var(--sidebar-ease),
-		right var(--duration-normal) var(--sidebar-ease),
-		width var(--duration-normal) var(--sidebar-ease);
+		left var(--duration) linear,
+		right var(--duration) linear,
+		width var(--duration) linear;
 }
 
 @media (--bp-md) {
@@ -153,7 +109,7 @@
 }
 
 .root[data-collapsible="icon"] .container {
-	width: var(--sidebar-width-icon);
+	width: var(--_rail-width);
 }
 
 .root[data-variant="sidebar"] .container[data-side="left"] {
@@ -166,12 +122,12 @@
 
 .root[data-variant="floating"] .container,
 .root[data-variant="inset"] .container {
-	padding: var(--space-md);
+	padding: var(--padding-sm);
 }
 
 .root[data-collapsible="icon"][data-variant="floating"] .container,
 .root[data-collapsible="icon"][data-variant="inset"] .container {
-	width: calc(var(--sidebar-width-icon) + var(--space-md) * 2 + var(--border-width) * 2);
+	width: calc(var(--_rail-width) + var(--padding-sm) * 2 + var(--border-width) * 2);
 }
 
 .inner {
@@ -182,9 +138,10 @@
 	background-color: var(--sidebar);
 }
 
+/* A container: its radius is a row's plus the group inset, so the rows sit concentric in it. */
 .root[data-variant="floating"] .inner {
 	border-radius: var(--radius);
-	box-shadow: var(--shadow-xs), 0 0 0 var(--border-width) var(--sidebar-border);
+	box-shadow: 0 0 0 var(--border-width) var(--sidebar-border), var(--shadow);
 }
 
 /* `collapsible="none"` — a plain panel in the flow, with no rail and no off-canvas. */
@@ -214,17 +171,20 @@
 
 /* ── Rail ─────────────────────────────────────────────────────────────────────── */
 
-/* A strip on the panel's edge. Not a tab stop (`tabIndex={-1}`): it duplicates the trigger. */
+/*
+ * A strip astride the panel's edge; its rule (::after) shows on hover. Not a tab stop
+ * (`tabIndex={-1}`): it duplicates the trigger.
+ */
 .rail {
 	position: absolute;
 	inset-block: 0;
-	z-index: var(--z-raised);
+	z-index: 1;
 	display: none;
-	width: var(--space-xl);
+	width: 1rem;
 	border: 0;
 	background: transparent;
 	translate: -50% 0;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 @media (--bp-sm) {
@@ -238,8 +198,8 @@
 	position: absolute;
 	inset-block: 0;
 	inset-inline-start: 50%;
-	width: var(--border-width-strong);
-	transition: background-color var(--duration-fast) var(--ease-out);
+	width: calc(var(--border-width) * 2);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .rail:hover::after {
@@ -247,7 +207,7 @@
 }
 
 .container[data-side="left"] .rail {
-	inset-inline-end: calc(var(--space-xl) * -1);
+	inset-inline-end: -1rem;
 	cursor: w-resize;
 }
 
@@ -286,15 +246,15 @@
 
 @media (--bp-md) {
 	.wrapper:has([data-variant="inset"]) .inset {
-		margin: var(--space-md);
+		margin: var(--padding-sm);
 		margin-inline-start: 0;
 		border-radius: var(--radius);
-		box-shadow: var(--shadow-xs);
+		box-shadow: var(--shadow);
 	}
 
 	/* Collapsed, the panel is gone and the inset needs its own leading margin back. */
 	.wrapper:has([data-variant="inset"][data-state="collapsed"]) .inset {
-		margin-inline-start: var(--space-md);
+		margin-inline-start: var(--padding-sm);
 	}
 }
 
@@ -304,8 +264,8 @@
 .footer {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
-	padding: var(--space-md);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
 }
 
 .content {
@@ -313,10 +273,10 @@
 	min-height: 0;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	position: relative;
 	overflow: auto;
-	/* A scrollbar in a 3rem rail would be most of the rail. */
+	/* A scrollbar in the icon rail would be most of the rail. */
 	scrollbar-width: none;
 }
 
@@ -330,7 +290,7 @@
 }
 
 .separator {
-	margin-inline: var(--space-md);
+	margin-inline: var(--padding-sm);
 	width: auto;
 	background-color: var(--sidebar-border);
 }
@@ -341,41 +301,39 @@
 	width: 100%;
 	min-width: 0;
 	flex-direction: column;
-	padding: var(--space-md);
+	padding: var(--padding-sm);
 }
 
+/* The caption's type is Text's (sidebar.tsx). */
 .groupLabel {
 	display: flex;
-	height: var(--sidebar-group-label-h);
+	height: var(--control-height-sm);
 	flex-shrink: 0;
 	align-items: center;
-	padding-inline: var(--space-md);
+	padding-inline: var(--padding-sm);
 	border-radius: var(--radius-sm);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	outline: none;
 	transition:
-		margin var(--duration-normal) var(--sidebar-ease),
-		opacity var(--duration-normal) var(--sidebar-ease);
-}
-
-.groupLabel:focus-visible {
-	box-shadow: var(--focus-ring);
+		margin var(--duration) linear,
+		opacity var(--duration) linear;
 }
 
 /* Collapsed, the caption is pulled up by its own height so the rows below slide, not jump. */
 .root[data-collapsible="icon"] .groupLabel {
-	margin-top: calc(var(--sidebar-group-label-h) * -1);
+	margin-top: calc(var(--control-height-sm) * -1);
 	opacity: 0;
 }
 
+/*
+ * A glyph button (the icon and the small padding) centred on the caption's line, and in the
+ * same column as the rows' actions below it.
+ */
 .groupAction {
 	position: absolute;
-	top: calc(var(--space-md) + (var(--sidebar-group-label-h) - var(--size-icon-lg)) / 2);
-	inset-inline-end: calc(var(--space-md) + var(--space-md) / 2);
+	top: calc(var(--padding-sm) + (var(--control-height-sm) - var(--icon-size) - var(--padding-sm)) / 2);
+	inset-inline-end: calc(var(--padding-sm) + (var(--control-height) - var(--icon-size) - var(--padding-sm)) / 2);
 	display: flex;
 	aspect-ratio: 1;
-	width: var(--size-icon-lg);
+	width: calc(var(--icon-size) + var(--padding-sm));
 	align-items: center;
 	justify-content: center;
 	padding: 0;
@@ -384,16 +342,16 @@
 	background: none;
 	color: var(--sidebar-foreground);
 	cursor: pointer;
-	outline: none;
 }
 
-.groupAction:hover {
+.groupAction:hover:not(:disabled) {
 	background-color: var(--sidebar-accent);
 	color: var(--sidebar-accent-foreground);
 }
 
-.groupAction:focus-visible {
-	box-shadow: var(--focus-ring);
+.groupAction:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
 }
 
 .root[data-collapsible="icon"] .groupAction {
@@ -402,18 +360,34 @@
 
 .groupContent {
 	width: 100%;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
+}
+
+/* ── Focus ────────────────────────────────────────────────────────────────────── */
+
+/* The shared outline, in the sidebar's own ring colour. */
+.groupLabel:focus-visible,
+.groupAction:focus-visible,
+.menuButton:focus-visible,
+.menuAction:focus-visible,
+.menuSubButton:focus-visible {
+	outline-color: var(--sidebar-ring);
+}
+
+/* The search field keeps the field's focus; only its colour is the sidebar's. */
+.input:focus-visible:not([aria-invalid="true"]) {
+	border-color: var(--sidebar-ring);
+	outline-color: var(--sidebar-ring);
 }
 
 /* ── Menu ─────────────────────────────────────────────────────────────────────── */
 
+/* The rows sit half the small gap apart, so two filled rows never touch. */
 .menu {
 	display: flex;
 	width: 100%;
 	min-width: 0;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -423,38 +397,32 @@
 	position: relative;
 }
 
+/* The row's type is Text's, and the current row's medium weight with it (sidebar.tsx). */
 .menuButton {
 	display: flex;
 	width: 100%;
 	align-items: center;
-	gap: var(--space-md);
-	height: var(--sidebar-menu-h);
-	padding: var(--space-md);
+	gap: var(--gap-sm);
+	/* A row with its own shape (an account or workspace switcher) sets --_menu-button-h. */
+	height: var(--_menu-button-h, var(--control-height));
+	padding: var(--padding-sm);
 	border: 0;
 	border-radius: var(--radius-sm);
 	background: none;
 	color: inherit;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	text-align: start;
 	overflow: hidden;
 	cursor: pointer;
-	outline: none;
 	transition:
-		width var(--duration-normal) var(--sidebar-ease),
-		height var(--duration-normal) var(--sidebar-ease),
-		padding var(--duration-normal) var(--sidebar-ease),
-		background-color var(--duration-fast) var(--ease-out);
+		width var(--duration) linear,
+		height var(--duration) linear,
+		padding var(--duration) linear,
+		background-color var(--duration-fast) var(--ease);
 }
 
-/* Hover is half the accent; the current page is all of it, at medium weight. */
-.menuButton:hover,
-.menuButton[data-open] {
-	background-color: var(--sidebar-accent-50);
-	color: var(--sidebar-accent-foreground);
-}
-
-.menuButton:active,
+/* One hover fill; the current page takes it too, lifted (below). */
+.menuButton:hover:not(:disabled, [aria-disabled="true"]),
+.menuButton[data-open],
 .menuButton[data-active] {
 	background-color: var(--sidebar-accent);
 	color: var(--sidebar-accent-foreground);
@@ -466,80 +434,78 @@
  */
 .menuButton[data-active],
 .menuSubButton[data-active] {
-	font-weight: var(--weight-medium);
-	box-shadow: var(--shadow-xs);
-}
-
-.menuButton:focus-visible,
-.menuButton[data-active]:focus-visible {
-	box-shadow: var(--focus-ring);
+	box-shadow: var(--shadow);
 }
 
 .menuButton:disabled,
 .menuButton[aria-disabled="true"] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
+/* A link cannot be disabled natively, so a disabled one stops taking the pointer. */
+a.menuButton[aria-disabled="true"] {
+	pointer-events: none;
+}
+
 .menuButton svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 }
 
-/* Unsized, lucide's 24px height would stretch these glyphs in a 20px button. */
+/* Unsized, lucide's 24px glyph would overflow these buttons. */
 .groupAction svg,
 .menuAction svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 }
 
-/* The label is the only part that gives way, so the glyph and any badge keep their space. */
-.menuButton > span:last-child {
+/*
+ * The label (the row's last span, before any trailing glyph) is the only part that gives
+ * way, so the glyph keeps its space and the icon rail shows the glyph alone.
+ */
+.menuButton > span:last-of-type {
 	min-width: 0;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
-.menuButtonSm { height: var(--sidebar-menu-h-sm); font-size: var(--text-xs);
-line-height: var(--text-xs--line-height); }
-.menuButtonLg { height: var(--sidebar-menu-h-lg); }
+.menuButtonSm {
+	height: var(--control-height-sm);
+}
 
 .menuButtonOutline {
 	background-color: var(--background);
 	box-shadow: 0 0 0 var(--border-width) var(--sidebar-border);
 }
 
-.menuButtonOutline:hover {
+.menuButtonOutline:hover:not(:disabled, [aria-disabled="true"]) {
 	box-shadow: 0 0 0 var(--border-width) var(--sidebar-accent);
 }
 
-/* Collapsed to the rail, every row becomes a square. */
+/* Collapsed to the rail, every row becomes a square with its glyph at the centre. */
 .root[data-collapsible="icon"] .menuButton {
-	width: var(--sidebar-menu-h);
-	height: var(--sidebar-menu-h);
-	padding: var(--space-md);
+	width: var(--control-height);
+	height: var(--control-height);
+	padding: var(--_menu-button-rail-p, calc((var(--control-height) - var(--icon-size)) / 2));
 }
 
-.root[data-collapsible="icon"] .menuButtonLg {
-	padding: 0;
-}
-
-/* A row with a trailing action reserves room for it, so the label never runs underneath. */
+/* A row with a trailing action keeps the square at its end for it, so the label never runs underneath. */
 .menuItem:has(.menuAction) .menuButton {
-	/* The action, its end offset, and the row's own inset beside it. */
-	padding-inline-end: calc(var(--size-icon-lg) + var(--space-xs) + var(--space-md));
+	padding-inline-end: var(--control-height);
 }
 
+/* A glyph button (the icon and the small padding), centred in the row's trailing square. */
 .menuAction {
 	position: absolute;
-	top: calc((var(--sidebar-menu-h) - var(--size-icon-lg)) / 2);
-	inset-inline-end: var(--space-xs);
+	top: calc((var(--control-height) - var(--icon-size) - var(--padding-sm)) / 2);
+	inset-inline-end: calc((var(--control-height) - var(--icon-size) - var(--padding-sm)) / 2);
 	display: flex;
 	aspect-ratio: 1;
-	width: var(--size-icon-lg);
+	width: calc(var(--icon-size) + var(--padding-sm));
 	align-items: center;
 	justify-content: center;
 	padding: 0;
@@ -548,16 +514,16 @@ line-height: var(--text-xs--line-height); }
 	background: none;
 	color: var(--sidebar-foreground);
 	cursor: pointer;
-	outline: none;
 }
 
-.menuAction:hover {
+.menuAction:hover:not(:disabled) {
 	background-color: var(--sidebar-accent);
 	color: var(--sidebar-accent-foreground);
 }
 
-.menuAction:focus-visible {
-	box-shadow: var(--focus-ring);
+.menuAction:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
 }
 
 .root[data-collapsible="icon"] .menuAction {
@@ -580,22 +546,22 @@ line-height: var(--text-xs--line-height); }
 	}
 }
 
+/*
+ * A count over the row's end: Badge's height (the small control less its padding), centred
+ * on the row. Its type is Text's (sidebar.tsx).
+ */
 .menuBadge {
 	position: absolute;
-	top: calc((var(--sidebar-menu-h) - var(--sidebar-badge-h)) / 2);
-	inset-inline-end: var(--space-md);
+	top: calc((var(--control-height) - var(--control-height-sm) + var(--padding-sm)) / 2);
+	inset-inline-end: var(--padding-sm);
 	display: flex;
-	height: var(--sidebar-badge-h);
-	min-width: var(--sidebar-badge-h);
+	height: calc(var(--control-height-sm) - var(--padding-sm));
+	min-width: calc(var(--control-height-sm) - var(--padding-sm));
 	align-items: center;
 	justify-content: center;
-	padding-inline: var(--space-xs);
-	/* Badge's count radius, for a caller who gives the count a fill. */
+	padding-inline: calc(var(--padding-sm) / 2);
+	/* Badge's radius, for a caller who gives the count a fill. */
 	border-radius: var(--radius-sm);
-	font-size: var(--text-xs);
-	line-height: var(--leading-12);
-	font-weight: var(--weight-medium);
-	font-variant-numeric: tabular-nums;
 	color: var(--sidebar-foreground);
 	pointer-events: none;
 	user-select: none;
@@ -613,21 +579,21 @@ line-height: var(--text-xs--line-height); }
 
 .menuSkeleton {
 	display: flex;
-	height: var(--sidebar-menu-h);
+	height: var(--control-height);
 	align-items: center;
-	gap: var(--space-md);
-	padding: var(--space-md);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
 	border-radius: var(--radius-sm);
 }
 
 .menuSkeletonIcon {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 }
 
 .menuSkeletonText {
-	height: var(--size-icon);
+	height: var(--icon-size);
 	max-width: 100%;
 	flex: 1;
 }
@@ -639,14 +605,16 @@ line-height: var(--text-xs--line-height); }
 	display: flex;
 	min-width: 0;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	margin: 0;
 	/*
-	 * Rule under the parent glyph (row inset + half the icon − rule width); the list's and
-	 * the child row's insets then put the child label on the parent's label column.
+	 * The rule runs under the parent's glyph (the row inset and half the icon, less the
+	 * rule). The list's start inset and the child row's own then put the child label on the
+	 * parent's label column: the row inset, the icon and the gap after it.
 	 */
-	margin-inline-start: calc(var(--space-md) + var(--size-icon) / 2 - var(--border-width));
-	padding: var(--space-2xs) var(--space-md);
+	margin-inline-start: calc(var(--padding-sm) + var(--icon-size) / 2 - var(--border-width));
+	padding-block: calc(var(--gap-sm) / 2);
+	padding-inline: calc(var(--icon-size) / 2 + var(--gap-sm) - var(--padding-sm)) var(--padding-sm);
 	border-inline-start: var(--border-width) solid var(--sidebar-border);
 	list-style: none;
 }
@@ -659,59 +627,45 @@ line-height: var(--text-xs--line-height); }
 	position: relative;
 }
 
+/* The same row whether it renders as a link or, with no href, a button. Its type is Text's. */
 .menuSubButton {
 	display: flex;
-	/* The same row whether it renders as a link or, with no href, a button. */
 	width: 100%;
 	border: 0;
 	background: none;
-	font: inherit;
 	text-align: start;
 	min-width: 0;
-	height: var(--sidebar-menu-h-sm);
+	height: var(--control-height-sm);
 	align-items: center;
-	gap: var(--space-md);
-	padding-inline: var(--space-md);
+	gap: var(--gap-sm);
+	padding-inline: var(--padding-sm);
 	border-radius: var(--radius-sm);
 	color: var(--sidebar-foreground);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	overflow: hidden;
 	text-decoration: none;
 	cursor: pointer;
-	outline: none;
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
-.menuSubButtonSm {
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-}
-
-.menuSubButton:hover {
-	background-color: var(--sidebar-accent-50);
-	color: var(--sidebar-accent-foreground);
-}
-
-.menuSubButton:active,
+.menuSubButton:hover:not(:disabled, [aria-disabled="true"]),
 .menuSubButton[data-active] {
 	background-color: var(--sidebar-accent);
 	color: var(--sidebar-accent-foreground);
 }
 
-.menuSubButton:focus-visible,
-.menuSubButton[data-active]:focus-visible {
-	box-shadow: var(--focus-ring);
-}
-
 .menuSubButton:disabled,
 .menuSubButton[aria-disabled="true"] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
+a.menuSubButton[aria-disabled="true"] {
+	pointer-events: none;
+}
+
 .menuSubButton svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 	color: var(--sidebar-accent-foreground);
 }
@@ -723,14 +677,12 @@ line-height: var(--text-xs--line-height); }
 	text-overflow: ellipsis;
 }
 
-/* The navigation search field, on the shell surface rather than the page's. */
+/* The navigation search field. */
 .input {
 	width: 100%;
-	background-color: var(--field-bg);
-	box-shadow: none;
 }
 
-/* Gone in the icon rail: a field clipped to 3rem has no room to type in. */
+/* Gone in the icon rail: a field clipped to a row's width has no room to type in. */
 .root[data-collapsible="icon"] .input {
 	display: none;
 }

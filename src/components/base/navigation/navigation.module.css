@@ -1,5 +1,6 @@
 /*
- * Navigation — Tabs, Breadcrumbs, Pagination.
+ * Navigation — Tabs, Breadcrumbs, Pagination. Labels take their type from Text (tabs.tsx,
+ * navigation-tabs.tsx); focus is the shared outline.
  */
 /* ── Tabs ─────────────────────────────────────────────────────────────────────── */
 
@@ -12,7 +13,7 @@
 .tabRail {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 	min-width: 0;
 	flex: none;
 }
@@ -32,18 +33,20 @@
 /*
  * Scrolls rather than wrapping: a second row of tabs reads as a second level of navigation.
  * The rule is an inset shadow, not a border — a scroll container clips both axes, so the
- * rule and the indicator (at `bottom: 0`) must both paint inside the padding box.
+ * rule and the indicator (at `bottom: 0`) must both paint inside the padding box. The tabs'
+ * own inset separates them, so they sit flush.
  */
 .tabList {
+	/* The edge fade's width. */
+	--_fade: calc(var(--gap) * 1.5);
 	min-width: 0;
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
 	position: relative;
 	overflow-x: auto;
 	scrollbar-width: none;
 	/* The fade's width, read back by the reveal so a selected tab never lands under it. */
-	scroll-padding-inline: var(--space-2xl);
+	scroll-padding-inline: var(--_fade);
 	box-shadow: inset 0 calc(var(--border-width) * -1) 0 var(--border);
 }
 
@@ -54,76 +57,76 @@
 /* Fade only the scrolling track, not the arrows. A mask works on any surface. */
 .tabList[data-fade-start]:dir(ltr),
 .tabList[data-fade-end]:dir(rtl) {
-	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+	mask-image: linear-gradient(to right, transparent, black var(--_fade));
 }
 
 .tabList[data-fade-end]:dir(ltr),
 .tabList[data-fade-start]:dir(rtl) {
-	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+	mask-image: linear-gradient(to left, transparent, black var(--_fade));
 }
 
 .tabList[data-fade-start][data-fade-end] {
-	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
+	mask-image: linear-gradient(to right, transparent, black var(--_fade), black calc(100% - var(--_fade)), transparent);
 }
 
 /*
  * Underline variant: the first tab's label aligns with the panel text below it. The list
- * clips, so the focus ring is inset; two ring widths of start padding, taken back out of the
- * margin, keep the ring off the first letter. Enclosed and pill tabs keep their inset.
+ * clips, so the focus outline is drawn inside the tab; two outline widths of start padding,
+ * taken back out of the margin, keep it off the first letter. Enclosed and pill tabs keep
+ * their inset.
  */
 .tabList:not(.tabListEnclosed, .tabsPill) {
-	margin-inline-start: calc(var(--focus-ring-width) * -2);
+	margin-inline-start: calc(var(--border-width) * -4);
 }
 
 .tabList:not(.tabListEnclosed, .tabsPill) > .tab:first-child {
-	padding-inline-start: calc(var(--focus-ring-width) * 2);
+	padding-inline-start: calc(var(--border-width) * 4);
 }
 
+/* A labelled control: the control height and a button's inset. */
 .tab {
 	position: relative;
 	flex-shrink: 0;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-sm);
-	height: var(--control-h);
-	padding-inline: var(--control-px);
+	gap: var(--gap-sm);
+	height: var(--control-height);
+	padding-inline: var(--padding);
 	border: 0;
 	background: none;
 	color: var(--muted-foreground);
-	font: inherit;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
 	white-space: nowrap;
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-in-out);
+	transition: color var(--duration-fast) var(--ease);
 	border-radius: var(--radius-sm);
 }
 
 .tab > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 }
 
-.tab:hover:not(:disabled) {
+.tab:hover:not(:disabled, [aria-disabled="true"]) {
 	color: var(--foreground);
 }
 
+/* The list is a scroll container and clips, so the outline is drawn inside the tab. */
 .tab:focus-visible {
-	outline: var(--focus-ring-width) solid var(--focus-ring-color);
-	outline-offset: calc(var(--focus-ring-width) * -1);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
-/*
- * A tab is a <button> (tab set) or an <a> (nav), so both disabled spellings share one rule.
- * pointer-events is what blocks the anchor.
- */
+/* A tab is a <button> (tab set) or an <a> (nav), so both disabled spellings share one rule. */
 .tab:disabled,
 .tab[aria-disabled="true"] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
+}
+
+/* An anchor cannot be disabled natively, so a disabled one stops taking the pointer. */
+a.tab[aria-disabled="true"] {
+	pointer-events: none;
 }
 
 /* A selected tab and NavigationTabs' current link (`aria-current="page"`) are drawn alike. */
@@ -139,17 +142,20 @@
 	position: absolute;
 	inset-inline: 0;
 	bottom: 0;
-	height: var(--border-width-strong);
+	height: calc(var(--border-width) * 2);
 	background-color: var(--primary);
 }
 
-/* Enclosed variant — a tinted rail with the active tab lifted out of it. */
+/*
+ * Enclosed variant — a tinted rail with the active tab lifted out of it. The rail's inset is
+ * half the small padding: a tight segmented control.
+ */
 .tabListEnclosed {
-	gap: 0;
-	padding: var(--space-2xs);
+	--_inset: calc(var(--padding-sm) / 2);
+	padding: var(--_inset);
 	box-shadow: none;
 	border-radius: var(--radius-sm);
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 }
 
 /*
@@ -157,8 +163,8 @@
  * it: its radius less the inset.
  */
 .tabListEnclosed .tab {
-	height: calc(var(--control-h) - var(--space-2xs) * 2);
-	border-radius: calc(var(--radius-sm) - var(--space-2xs));
+	height: calc(var(--control-height) - var(--_inset) * 2);
+	border-radius: calc(var(--radius-sm) - var(--_inset));
 }
 
 /*
@@ -167,7 +173,7 @@
  */
 .tabListEnclosed .tab[aria-selected="true"] {
 	background-color: var(--popover);
-	box-shadow: var(--shadow-xs);
+	box-shadow: var(--shadow);
 }
 
 .tabListEnclosed .tab[aria-selected="true"]::after {
@@ -185,8 +191,8 @@
 
 .tabsPill .tab {
 	transition:
-		color var(--duration-fast) var(--ease-in-out),
-		background-color var(--duration-fast) var(--ease-in-out);
+		color var(--duration-fast) var(--ease),
+		background-color var(--duration-fast) var(--ease);
 }
 
 .tabsPill .tab[aria-current="page"],
@@ -199,15 +205,16 @@
 	display: none;
 }
 
+/* The panel is a group of its own below the tab row. */
 .tabPanel {
 	min-width: 0;
-	padding-top: var(--space-lg);
+	padding-top: var(--gap);
 	border-radius: var(--radius-sm);
 }
 
+/* Drawn inside, so a panel flush with a clipping card still shows it. */
 .tabPanel:focus-visible {
-	outline: var(--focus-ring-width) solid var(--focus-ring-color);
-	outline-offset: calc(var(--focus-ring-width) * -1);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /* ── Breadcrumbs ──────────────────────────────────────────────────────────────── */
@@ -217,7 +224,7 @@
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 	margin: 0;
 	padding: 0;
@@ -227,7 +234,7 @@
 .breadcrumbItem {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -244,12 +251,7 @@
 .breadcrumbLink:hover {
 	color: var(--foreground);
 	text-decoration: underline;
-	text-underline-offset: var(--link-underline-offset);
-}
-
-.breadcrumbLink:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	text-underline-offset: 3px;
 }
 
 /* The current page truncates like the links do. */
@@ -268,20 +270,21 @@
 
 /* Sizes the default chevron; direct children only, since `separator` is a caller slot. */
 .breadcrumbSeparator > svg {
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* ── Pagination ───────────────────────────────────────────────────────────────── */
 
 /*
  * One row: page cells shrink to the small action size before anything wraps, so an arrow
- * never lands alone on a second line. Only the always-worded pager wraps.
+ * never lands alone on a second line. Only the always-worded pager wraps. The cells sit half
+ * the small gap apart, so two filled cells never touch.
  */
 .pagination {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	flex-wrap: nowrap;
 }
 
@@ -291,7 +294,7 @@
 
 .pagination > :not(:first-child, :last-child) {
 	flex-shrink: 1;
-	min-width: var(--control-h-sm);
+	min-width: var(--control-height-sm);
 }
 
 /*
@@ -311,7 +314,7 @@
 /* With its word hidden, the arrow is a square cell like the numbers. */
 @media (--bp-max-sm) {
 	.pagination[data-labels="responsive"] > :is(:first-child, :last-child) {
-		width: var(--control-h);
+		width: var(--control-height);
 		padding-inline: 0;
 	}
 }
@@ -321,8 +324,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: var(--control-h);
-	height: var(--control-h);
+	width: var(--control-height);
+	height: var(--control-height);
 	color: var(--muted-foreground);
 }
 
@@ -338,22 +341,22 @@
 }
 
 .pageHeadingCrumbs {
-	margin-bottom: var(--space-xl);
+	margin-bottom: var(--gap);
 }
 
 .pageHeadingRow {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--space-xl);
+	gap: var(--gap);
 }
 
 .pageHeadingLeading {
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	/* Nudges a leading control onto the title's optical line rather than the block's top. */
-	padding-top: var(--space-xs);
+	padding-top: calc(var(--padding-sm) / 2);
 }
 
 .pageHeadingMain {
@@ -361,7 +364,7 @@
 	min-width: 0;
 	flex: 1;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 }
 
 /* A grid, so the prefix centres on the title line and the description aligns with the title. */
@@ -370,9 +373,9 @@
 	width: 100%;
 	align-items: center;
 	grid-template-columns: minmax(0, 1fr);
-	/* The title-prefix to title rhythm, set without opening the gap under the title. */
-	column-gap: var(--space-md);
-	row-gap: var(--space-xs);
+	/* The title-prefix to title rhythm, and the title to its description. */
+	column-gap: var(--gap-sm);
+	row-gap: var(--gap-sm);
 }
 
 .pageHeadingGrid[data-has-prefix] {
@@ -390,8 +393,8 @@
 }
 
 .pageHeadingPrefix > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .pageHeadingGrid[data-has-prefix] > .pageHeadingBlock {
@@ -400,7 +403,7 @@
 
 /* A headline with actions is button-tall, so the description needs the wider gap. */
 .pageHeadingHeadline:has(.pageHeadingActions) + .pageHeadingBlock {
-	margin-top: var(--space-md);
+	margin-top: var(--gap-sm);
 }
 
 /* The title row and the actions, side by side once there is room for both. */
@@ -409,7 +412,7 @@
 	display: flex;
 	min-width: 0;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 }
 
 @media (--bp-sm) {
@@ -425,7 +428,7 @@
 	min-width: 0;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .pageHeadingTitle {
@@ -436,21 +439,21 @@
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 .pageHeadingActions {
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .pageHeadingBlock {
 	display: flex;
 	min-width: 0;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 }
 
 /* Capped at a reading measure. */
@@ -460,16 +463,17 @@
 }
 
 .pageHeadingChildren {
-	margin-top: var(--space-xl);
+	margin-top: var(--gap);
 }
 
 .pageHeadingSeparator {
-	margin-top: var(--space-xl);
+	margin-top: var(--gap);
 }
 
 /* ══ NavigationTabs track ══════════════════════════════════════════════════════════
  *
- * Scrolls rather than wrapping, so the row's height never changes as tabs switch.
+ * Scrolls rather than wrapping, so the row's height never changes as tabs switch. The
+ * tabs' own inset separates them, as in the tab list.
  */
 
 .tabBar {
@@ -477,12 +481,11 @@
 	display: flex;
 	min-width: 0;
 	align-items: center;
-	gap: var(--space-xs);
 	overflow-x: auto;
 	scrollbar-width: none;
 	scroll-snap-type: x proximity;
 	/* The fade's width: snapping, and the reveal after a key press, land clear of it. */
-	scroll-padding-inline: var(--space-2xl);
+	scroll-padding-inline: var(--_fade);
 }
 
 .tabBar::-webkit-scrollbar {
@@ -490,6 +493,8 @@
 }
 
 .tabBarWrap {
+	/* The edge fade's width, as on the tab list. */
+	--_fade: calc(var(--gap) * 1.5);
 	position: relative;
 	min-width: 0;
 }
@@ -497,15 +502,15 @@
 /* A fade at each edge with more tabs past it: a mask, as on the tab list, so any surface works. */
 .tabBarWrap[data-fade-start] > .tabBar:dir(ltr),
 .tabBarWrap[data-fade-end] > .tabBar:dir(rtl) {
-	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+	mask-image: linear-gradient(to right, transparent, black var(--_fade));
 }
 
 .tabBarWrap[data-fade-end] > .tabBar:dir(ltr),
 .tabBarWrap[data-fade-start] > .tabBar:dir(rtl) {
-	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+	mask-image: linear-gradient(to left, transparent, black var(--_fade));
 }
 
 .tabBarWrap[data-fade-start][data-fade-end] > .tabBar {
-	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
+	mask-image: linear-gradient(to right, transparent, black var(--_fade), black calc(100% - var(--_fade)), transparent);
 }
 

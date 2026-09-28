@@ -5,7 +5,6 @@ declare const styles: {
 	readonly chipIcon: string
 	readonly chipLabel: string
 	readonly chipLink: string
-	readonly chipMeta: string
 	readonly chipProgress: string
 	readonly chipProgressFill: string
 	readonly chipRemove: string
@@ -40,7 +39,6 @@ declare const styles: {
 	readonly reaction: string
 	readonly reactionAdd: string
 	readonly reactionChoice: string
-	readonly reactionEmoji: string
 	readonly reactionPicker: string
 	readonly replies: string
 	readonly repliesToggle: string

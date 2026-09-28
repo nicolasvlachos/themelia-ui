@@ -3,6 +3,7 @@ import { CircleIcon } from "lucide-react"
 import * as React from "react"
 
 import { Stack } from "@/components/base/structure"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./choice.module.css"
@@ -29,7 +30,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(function Rad
 	const group = React.useContext(RadioGroupContext)
 
 	return (
-		<label className={cx("radio--component", styles.field, className)}>
+		<label className={cx("radio--component", styles.field, textClassName({ size: "sm" }), className)}>
 			<input
 				ref={ref}
 				type="radio"
@@ -71,7 +72,7 @@ export function RadioGroup({
 				role="radiogroup"
 				data-slot="radio-group"
 				direction={orientation === "horizontal" ? "horizontal" : "vertical"}
-				gap={orientation === "horizontal" ? "xl" : "sm"}
+				gap={orientation === "horizontal" ? "default" : "sm"}
 				align="start"
 				wrap={orientation === "horizontal"}
 				className={cx("radio-group--component", className)}

@@ -7,7 +7,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function InputGroupInline() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem" }}>
+		<Stack style={{ maxWidth: "26rem" }}>
 			<InputGroup>
 				<InputGroupAddon>
 					<SearchIcon aria-hidden="true" />
@@ -28,7 +28,7 @@ export default function InputGroupInline() {
 			<InputGroup>
 				<InputGroupInput placeholder="Add a label" aria-label="Label" />
 				<InputGroupAddon align="inline-end">
-					<InputGroupButton size="icon-xs" aria-label="Add">
+					<InputGroupButton iconOnly aria-label="Add">
 						<ArrowRightIcon aria-hidden="true" />
 					</InputGroupButton>
 				</InputGroupAddon>

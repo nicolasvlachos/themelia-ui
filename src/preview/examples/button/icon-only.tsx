@@ -5,10 +5,10 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function IconOnly() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap align="center">
+		<Stack direction="horizontal" wrap align="center">
 			<Button iconOnly aria-label="Add"><PlusIcon /></Button>
-			<Button tone="neutral" buttonStyle="outline" iconOnly aria-label="Edit">✎</Button>
-			<Button tone="destructive" buttonStyle="ghost" iconOnly aria-label="Delete">🗑</Button>
+			<Button tone="neutral" appearance="outline" iconOnly aria-label="Edit">✎</Button>
+			<Button tone="destructive" appearance="ghost" iconOnly aria-label="Delete">🗑</Button>
 		</Stack>
 	)
 }

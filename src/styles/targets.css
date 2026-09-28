@@ -13,8 +13,8 @@
 		top: 50%;
 		left: 50%;
 		translate: -50% -50%;
-		/* `max()`: only ever grows the target. */
-		width: max(100%, var(--hit-area-min));
-		height: max(100%, var(--hit-area-min));
+		/* `max()`: only ever grows the target. A fixed 24px: the minimum does not scale. */
+		width: max(100%, 1.5rem);
+		height: max(100%, 1.5rem);
 	}
 }

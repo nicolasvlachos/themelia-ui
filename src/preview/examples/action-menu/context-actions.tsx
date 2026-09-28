@@ -25,9 +25,9 @@ const INVOICES: Invoice[] = [
 
 export default function ContextActions() {
 	return (
-		<Stack gap="lg" style={{ width: "100%" }}>
+		<Stack style={{ width: "100%" }}>
 			{INVOICES.map((invoice) => (
-				<Stack key={invoice.number} gap="xs">
+				<Stack key={invoice.number} gap="sm">
 					<Text size="xs" type="secondary">
 						{invoice.number} · {invoice.paid ? "paid, locked" : "unpaid"}
 					</Text>

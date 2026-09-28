@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { useOptionalOverlayContext } from "../overlay-context"
@@ -29,7 +29,12 @@ export const OverlayTitle = React.forwardRef<HTMLHeadingElement, React.Component
 				ref={ref}
 				id={resolvedId}
 				data-slot="overlay-title"
-				className={cx("overlay--title", styles.title, className)}
+				className={cx(
+					"overlay--title",
+					styles.title,
+					textClassName({ size: "base", weight: "semibold", lineHeight: "tight" }),
+					className,
+				)}
 				{...props}
 			>
 				{simple ? (

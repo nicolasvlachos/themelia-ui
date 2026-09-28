@@ -1,30 +1,7 @@
 /*
- * Button — component variables. Geometry resolves through the control and spacing scales
- * (no literals), so density scopes resize buttons like every other control.
- */
-/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	/*
-	 * No size prop: geometry follows the density/spacing axes; type follows the shared ramp,
-	 * so a density preset changes geometry without shrinking labels.
-	 */
-	--button-h: var(--control-h);
-
-
-	/* Rounded to whole pixels: a fractional circle renders as a soft oval (as in choice.module.css). */
-	--button-spinner-size: round(var(--size-icon-sm), 1px);
-
-}
-
-/*
- * Button — shared shell. The tone × style matrix lives in `button-tones.module.css`;
- * this file owns geometry, state and the loading affordance.
+ * Button: the shell, which owns geometry, state and the loading affordance. Colour is
+ * button-tones.module.css, over the shared tone rule; the label's type comes from Text.
+ * There is no size prop: the control height follows the density.
  */
 
 .root {
@@ -33,41 +10,37 @@
 	align-items: center;
 	justify-content: center;
 	position: relative;
-	white-space: nowrap;
-	user-select: none;
+	/* A container that sizes a nested button sets `--_button-height`. */
+	height: var(--_button-height, var(--control-height));
+	gap: var(--gap-sm);
+	padding-inline: var(--padding);
 	border: var(--border-width) solid transparent;
 	background-clip: padding-box;
 	/*
-	 * The item radius at every size, matching the fields beside it. A container that nests
-	 * buttons sets `--button-radius` to its own radius less the inset, so they sit concentric;
-	 * a genuinely round control sets `--radius-pill`.
+	 * The item radius, matching the fields beside it. A container that nests buttons sets
+	 * `--_button-radius` to its own radius less the inset, so they sit concentric in it.
 	 */
-	border-radius: var(--button-radius, var(--radius-sm));
-	font-family: inherit;
-	font-weight: var(--weight-medium);
-	outline: none;
+	border-radius: var(--_button-radius, var(--radius-sm));
+	white-space: nowrap;
+	user-select: none;
 	cursor: pointer;
-	transition: var(--transition-control);
-}
-
-.root:focus-visible {
-	border-color: var(--focus-ring-color);
-	box-shadow: var(--focus-ring);
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 .root:disabled,
 .root[aria-disabled="true"] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
-/* Busy is not disabled: a loading button keeps full ink; the spinner says "working". */
+/* Busy is not disabled: a loading button keeps full ink, and the spinner says "working". */
 .root[aria-busy="true"] {
 	opacity: 1;
 	cursor: progress;
 }
-
-/* No press transform: a scale shifts the label and pulls joined-group edges apart. */
 
 .root svg {
 	pointer-events: none;
@@ -75,23 +48,14 @@
 }
 
 .root svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
-/* One size. `line-height: 1` in a fixed height keeps the label centred at any scale. */
-.root {
-	height: var(--button-h);
-	gap: var(--space-sm);
-	padding-inline: var(--control-px);
-	font-size: var(--text-sm);
-	line-height: var(--leading-none);
-}
-
-/* Square, sized by the button height so it lines up with any control. */
+/* Square, sized by the control height so it lines up with any control. */
 .iconOnly {
 	padding-inline: 0;
-	width: var(--button-h);
+	width: var(--_button-height, var(--control-height));
 	aspect-ratio: 1;
 }
 
@@ -99,20 +63,18 @@
 	width: 100%;
 }
 
-/* Loading: the label keeps its space and only fades, so the button never resizes mid-press. */
 /*
  * `display: contents` keeps icon and label as flex items of the button, so they take its
- * gap; the wrapper exists only so `loading` can hide the words.
+ * gap; the wrapper exists only so `loading` can hide the words while keeping their space.
  */
 .label {
 	display: contents;
 }
 
-/* While loading it must be a box to take opacity; it restates the button's row layout. */
 .loadingLabel {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	opacity: 0;
 }
 
@@ -120,44 +82,36 @@
 .root[data-loading]::after {
 	content: "";
 	position: absolute;
-	width: var(--button-spinner-size);
-	height: var(--button-spinner-size);
-	border: var(--border-width-strong) solid currentColor;
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
+	border: calc(var(--border-width) * 2) solid currentColor;
 	border-top-color: transparent;
 	border-radius: 50%;
-	animation: var(--animate-spin);
+	animation: var(--keyframes-spin) 1s linear infinite;
 }
 
 /* ══ Text button ═══════════════════════════════════════════════════════════════════
- * A button styled as a link, for in-page actions; navigation should be an anchor.
- */
-
-/*
- * Takes the surrounding prose's size. The resting underline mixes the link colour, so the
- * link isn't distinguished by colour alone.
+ * A button styled as a link, for in-page actions; navigation should be an anchor. It takes
+ * the surrounding prose's size, and its resting underline mixes the ink, so the link is not
+ * told apart by colour alone.
  */
 .textButton {
 	height: auto;
 	padding: 0;
 	background: none;
-	font-size: inherit;
-	line-height: inherit;
 	text-decoration: underline;
 	text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
-	text-underline-offset: var(--link-underline-offset);
-	transition: text-decoration-color var(--duration-normal) var(--ease-out);
+	text-underline-offset: 3px;
+	transition: text-decoration-color var(--duration) var(--ease);
 }
 
 /* The default tone reads as a link; any other tone keeps its own ink. */
 .root.textButton[data-tone="primary"] {
-	color: var(--link-color);
+	color: var(--link);
 }
 
-/*
- * Clear the ghost hover and open fills: with no padding they paint a bare box round the
- * glyphs. Two classes outrank every tone rule whatever the bundle order.
- */
-.root.textButton:hover:not(:disabled):not([aria-disabled="true"]),
+/* No hover or open fill: with no padding it would paint a bare box round the glyphs. */
+.root.textButton:hover:not(:disabled, [aria-disabled="true"]),
 .root.textButton[data-popup-open]:not(:disabled) {
 	background: none;
 	text-decoration-color: currentColor;

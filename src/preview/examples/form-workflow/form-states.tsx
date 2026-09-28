@@ -4,7 +4,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function FormStates() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<Card>
 				<CardContent>
 					<LoadingState />

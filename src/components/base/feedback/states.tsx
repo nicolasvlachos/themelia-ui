@@ -88,7 +88,7 @@ export function ErrorState({
 			</Text>
 			{action ??
 				(onRetry ? (
-					<Button tone="neutral" buttonStyle="outline" onClick={onRetry}>
+					<Button tone="neutral" appearance="outline" onClick={onRetry}>
 						{copy.retry}
 					</Button>
 				) : null)}

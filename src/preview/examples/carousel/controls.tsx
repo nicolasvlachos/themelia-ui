@@ -10,7 +10,7 @@ export default function Controls() {
 		<Carousel controls="overlay" label="Gallery">
 			{["One", "Two", "Three"].map((name) => (
 				<CarouselSlide key={name}>
-					<Stack align="center" justify="center" className={styles.slide}>
+					<Stack gap="sm" align="center" justify="center" className={styles.slide}>
 						<Text size="lg" weight="semibold">{name}</Text>
 					</Stack>
 				</CarouselSlide>

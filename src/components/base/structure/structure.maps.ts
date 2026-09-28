@@ -7,16 +7,11 @@ import type {
 	StructureJustify,
 } from "./structure.types"
 
-/** Prop value → CSS value. Gaps are spacing tokens, so structure follows density. */
+/** Prop value → CSS value. Gaps are the theme's two gaps, so structure follows density. */
 export const GAP: Record<StructureGap, string> = {
 	none: "0",
-	"2xs": "var(--space-2xs)",
-	xs: "var(--space-xs)",
-	sm: "var(--space-sm)",
-	md: "var(--space-md)",
-	lg: "var(--space-lg)",
-	xl: "var(--space-xl)",
-	"2xl": "var(--space-2xl)",
+	sm: "var(--gap-sm)",
+	default: "var(--gap)",
 }
 
 export const DIRECTION: Record<StructureDirection, string> = {
@@ -41,19 +36,16 @@ export const JUSTIFY: Record<StructureJustify, string> = {
 	evenly: "space-evenly",
 }
 
+/** The narrowest a column may get before AdaptiveGrid drops a track. */
 export const ADAPTIVE_MIN: Record<AdaptiveGridMinimum, string> = {
-	sm: "var(--adaptive-grid-min-sm)",
-	md: "var(--adaptive-grid-min-md)",
-	lg: "var(--adaptive-grid-min-lg)",
+	default: "16rem",
+	sm: "12rem",
 }
 
 /** Width step → CSS value; anything else passes through as a length (`maxWidth="26rem"`). */
 export const WIDTH: Record<StructureWidth, string> = {
-	sm: "var(--content-width-sm)",
-	md: "var(--content-width-md)",
-	lg: "var(--content-width-lg)",
-	xl: "var(--content-width-xl)",
-	"2xl": "var(--content-width-2xl)",
+	default: "var(--content-width)",
+	sm: "40rem",
 	full: "100%",
 	none: "none",
 }

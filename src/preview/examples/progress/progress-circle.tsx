@@ -4,7 +4,7 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function ProgressCircleExample() {
 	return (
-		<Stack direction="horizontal" gap="lg" wrap>
+		<Stack direction="horizontal" wrap>
 			{[
 				{ value: 24, tone: undefined },
 				{ value: 60, tone: "info" as const },

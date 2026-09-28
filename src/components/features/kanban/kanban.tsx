@@ -314,7 +314,7 @@ export function KanbanItemHandle({
 			ref={setRef}
 			type="button"
 			tone="neutral"
-			buttonStyle="ghost"
+			appearance="ghost"
 			iconOnly
 			data-slot="kanban-item-handle"
 			data-stop-item-click
@@ -363,7 +363,7 @@ export function KanbanItemActions<T = unknown>({
 				buttonProps={{
 					iconOnly: true,
 					tone: "neutral",
-					buttonStyle: "ghost",
+					appearance: "ghost",
 					className: cx(styles.actionsTrigger, className),
 				}}
 			/>

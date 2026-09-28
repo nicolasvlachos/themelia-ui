@@ -1,0 +1,20 @@
+/*
+ * Typography, read only by Text and Heading: the font stacks, the size ramp and the one type
+ * factor. Text multiplies a size by `--text-scale` where it applies it; line heights, weights
+ * and tracking are Text's and Heading's own values.
+ */
+:root {
+	--font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+	--font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+	/* Optional: headings follow the sans stack until a theme sets this. */
+	--font-heading: initial;
+
+	--text-xs: 0.75rem;
+	--text-pxs: 0.8125rem;
+	--text-sm: 0.875rem; /* The default body size. */
+	--text-base: 1rem;
+	--text-lg: 1.125rem;
+	--text-xl: 1.25rem;
+	--text-2xl: 1.5rem;
+	--text-scale: 1;
+}

@@ -1,51 +1,27 @@
 /*
  * Products.
  *
- * One tone set (`--product-tone`) is declared once for every element that can carry a
- * `data-tone`; each shape decides whether to paint it as fill or foreground.
+ * Every element that can carry a tone renders `data-tone` and reads the shared tone rule's
+ * ink (styles/tone.css), which holds contrast on a card, amber included; each shape decides
+ * whether to paint it as fill or foreground.
  */
 
 .card {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
 /* ── Tone ──────────────────────────────────────────────────────────────────────── */
 
-:is(.dot, .rowMedia, .metricValue, .quoteValue) {
-	--product-tone: var(--muted-foreground);
-}
-
-:is(.dot, .rowMedia, .metricValue, .quoteValue)[data-tone="primary"] {
-	--product-tone: var(--primary-accent);
-}
-
-:is(.dot, .rowMedia, .metricValue, .quoteValue)[data-tone="success"] {
-	--product-tone: var(--success);
-}
-
-/* `--warning-accent`: the warning fill fails contrast as ink on a card. */
-:is(.dot, .rowMedia, .metricValue, .quoteValue)[data-tone="warning"] {
-	--product-tone: var(--warning-accent);
-}
-
-:is(.dot, .rowMedia, .metricValue, .quoteValue)[data-tone="destructive"] {
-	--product-tone: var(--destructive-accent);
-}
-
-:is(.dot, .rowMedia, .metricValue, .quoteValue)[data-tone="info"] {
-	--product-tone: var(--info);
-}
-
 /* Neutral paints nothing: the dot keeps its lane but only a real tone gets a mark. */
 .dot {
 	flex: none;
-	width: var(--space-md);
-	height: var(--space-md);
+	width: 0.5rem;
+	height: 0.5rem;
 	border-radius: var(--radius-pill);
-	background-color: var(--product-tone);
+	background-color: var(--tone-ink);
 }
 
 .dot:not([data-tone]),
@@ -62,7 +38,12 @@
 
 /* Coloured, not filled: a tinted well round an 8px dot is invisible. */
 .rowMedia {
-	color: var(--product-tone);
+	color: var(--tone-ink);
+}
+
+.rowMedia:not([data-tone]),
+.rowMedia[data-tone="neutral"] {
+	color: var(--muted-foreground);
 }
 
 /* One list with hairlines, not a stack of separate items. */
@@ -86,7 +67,7 @@
 	inset-block-start: 0;
 	inset-inline: 0;
 	height: var(--border-width);
-	background-color: var(--border-60);
+	background-color: var(--border);
 }
 
 .row .rowContent {
@@ -97,7 +78,7 @@
 	display: flex;
 	flex: none;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 .row[data-interactive] {
@@ -105,26 +86,21 @@
 	cursor: pointer;
 }
 
-.row[data-interactive]:hover {
-	background-color: var(--accent-50);
-}
-
-.row[data-interactive]:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+.row[data-interactive]:hover:not(:disabled) {
+	background-color: var(--accent);
 }
 
 .rowChevron {
 	flex: none;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	color: var(--muted-foreground);
 }
 
 /* The status dot belongs beside the TITLE, not centred against a two-line block. */
 .row .rowMedia {
 	align-self: flex-start;
-	margin-top: var(--space-xs);
+	margin-top: calc(var(--padding-sm) / 2);
 }
 
 /* Hide the media lane when no row carries a tone or glyph, so titles align with the heading. */
@@ -136,8 +112,7 @@
 .rowValues {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--space-xs);
-	margin-top: var(--space-xs);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -152,7 +127,7 @@
 .score {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -160,20 +135,18 @@
 	display: flex;
 	align-items: baseline;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 /* ── Metric tiles ──────────────────────────────────────────────────────────────── */
 
-.numeric {
-	font-variant-numeric: tabular-nums;
-}
-
-/* The label and caption belong to MetadataList; a metric is the value and its tone. */
+/*
+ * The label and caption belong to MetadataList; a metric is the value and its tone. The
+ * value's Text takes `type="inherit"`, so this colour reaches it.
+ */
 .metricValue {
-	font-variant-numeric: tabular-nums;
-	color: var(--product-tone);
+	color: var(--tone-ink);
 }
 
 .metricValue:not([data-tone]),
@@ -186,27 +159,27 @@
 .section {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 /* Sections after the first are divided by a rule; a rule at the top would read as a second card edge. */
 .section:not(:first-child) {
-	padding-block-start: var(--space-lg);
-	border-block-start: var(--border-width) solid var(--border-60);
+	padding-block-start: var(--gap);
+	border-block-start: var(--border-width) solid var(--border);
 }
 
 .sectionHead {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 .media {
 	overflow: hidden;
-	border: var(--border-width) solid var(--border-60);
+	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 }
 
@@ -224,8 +197,7 @@
 
 /* The tone lands on the value, not the label (a toned label fails contrast). */
 .quoteValue {
-	font-variant-numeric: tabular-nums;
-	color: var(--product-tone);
+	color: var(--tone-ink);
 }
 
 .quoteValue:not([data-tone]),
@@ -236,7 +208,7 @@
 .quoteTotal {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -244,7 +216,7 @@
 	display: flex;
 	align-items: baseline;
 	justify-content: space-between;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -253,50 +225,42 @@
 .matrix {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
 /*
  * One bordered card of hairline rows; Repeater draws the list, grips and add control.
- * `--option-row-inset` is where a row's text starts (Item border + padding): the inline
+ * `--_option-row-inset` is where a row's text starts (Item border + padding): the inline
  * editor and the add control start there too, so opening an option does not shift it.
- * Repeater's footer lines up with the names: this list's row inset plus that.
+ * Repeater's footer lines up with the names through its `--_repeater-footer-inset` hook:
+ * this list's row inset plus that.
  */
 .optionList {
-	--option-row-inset: calc(var(--border-width) + var(--space-md));
-	--repeater-footer-inset: calc(var(--space-md) + var(--option-row-inset));
-	border: var(--border-width) solid var(--border-60);
+	--_option-row-inset: calc(var(--border-width) + var(--padding-sm));
+	--_repeater-footer-inset: calc(var(--padding-sm) + var(--_option-row-inset));
+	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	min-width: 0;
-}
-
-.optionList [data-repeater-handle] {
-	align-self: flex-start;
-	margin-top: var(--space-xs);
 }
 
 /* The row's inset inside the card; the Item inside it (`.optionRow`) pads again. */
 .optionList > ul > li {
 	/* Inset on every side, so a hovered row's fill clears the hairlines. */
-	padding: var(--space-md);
-	border-bottom: var(--border-width) solid var(--border-60);
+	padding: var(--padding-sm);
+	border-bottom: var(--border-width) solid var(--border);
 }
 
 /* Square inset so a hovered row is never taller than it is wide around its text. */
 .optionList .optionRow {
-	padding: var(--space-md);
-}
-
-.optionList .optionRow [data-slot="item-content"] {
-	gap: var(--space-2xs);
+	padding: var(--padding-sm);
 }
 
 /* The add control is the card's last row, starting where the option names start. */
 .optionList > div:last-child {
 	/* Repeater supplies the gap above; this adds matching air below. */
-	padding-block: 0 calc(var(--space-md) + var(--option-row-inset));
-	padding-inline-end: var(--space-md);
+	padding-block: 0 calc(var(--padding-sm) + var(--_option-row-inset));
+	padding-inline-end: var(--padding-sm);
 }
 
 /* The whole row opens the editor. */
@@ -307,32 +271,26 @@
 	text-align: start;
 }
 
-.optionRow:hover {
-	background-color: var(--accent-50);
-}
-
-.optionRow:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+.optionRow:hover:not(:disabled) {
+	background-color: var(--accent);
 }
 
 .optionValues {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-xs);
-	margin-top: var(--space-xs);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 /* Inset like the row it replaces so labels do not jump when an option opens. */
 .optionEditor {
 	/* Reset the inherited footer inset: the nested values have no Item rows to indent past. */
-	--repeater-footer-inset: 0px;
+	--_repeater-footer-inset: 0px;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
-	padding: var(--option-row-inset);
+	gap: var(--gap);
+	padding: var(--_option-row-inset);
 	min-width: 0;
 }
 
@@ -342,7 +300,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -355,28 +313,28 @@
 .variants {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 .variantHead {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 .variantCell {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 .variantOptions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--space-xs);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -410,14 +368,14 @@
 }
 
 .groupRow > * {
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 }
 
 .groupChevron {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	transform: rotate(-90deg);
-	transition: transform var(--duration-fast) var(--ease-out);
+	transition: transform var(--duration-fast) var(--ease);
 }
 
 .groupChevron[data-expanded] {
@@ -425,12 +383,13 @@
 }
 
 /*
- * A nested variant indents both lead cells (checkbox and picture/name), added to the
- * cell's own inset, so the columns still line up with the group summary.
+ * A nested variant indents both lead cells (checkbox and picture/name) by one glyph's
+ * width (an icon and the small padding), added to the cell's own inset, so the columns
+ * still line up with the group summary.
  */
 .variantRow[data-nested] > *:first-child,
 .variantRow[data-nested] > *:nth-child(2) {
-	padding-inline-start: calc(var(--space-xl) + var(--space-2xl));
+	padding-inline-start: calc(var(--padding) + var(--icon-size) + var(--padding-sm));
 }
 
 /*
@@ -439,7 +398,7 @@
  */
 .manager .bulkBar {
 	width: auto;
-	margin: var(--space-md) var(--surface-px) 0;
+	margin: var(--padding-sm) var(--padding) 0;
 }
 /* ── Manager ───────────────────────────────────────────────────────────────────── */
 
@@ -459,21 +418,21 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
-	padding: var(--surface-py) var(--surface-px);
+	gap: var(--gap-sm);
+	padding: var(--padding);
 	min-width: 0;
 }
 
 .managerTitle {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 .managerTitle svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	color: var(--muted-foreground);
 }
 
@@ -481,12 +440,12 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-2xs);
+	gap: var(--gap-sm);
 	margin-inline-start: auto;
 }
 
 .managerOptions {
-	padding: 0 var(--surface-px) var(--surface-py);
+	padding: 0 var(--padding) var(--padding);
 	min-width: 0;
 }
 
@@ -495,10 +454,10 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-sm);
-	padding: var(--row-py) var(--surface-px);
-	border-top: var(--border-width) solid var(--border-60);
-	border-bottom: var(--border-width) solid var(--border-60);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm) var(--padding);
+	border-top: var(--border-width) solid var(--border);
+	border-bottom: var(--border-width) solid var(--border);
 	min-width: 0;
 }
 
@@ -517,21 +476,22 @@
 	container-name: product-variant-editor;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
 .editorForm {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 	min-width: 0;
 }
 
+/* The gap between fields is a gap between groups: each field is a label, a control and a hint. */
 .fields {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--space-md);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -551,9 +511,9 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
-	padding-top: var(--space-lg);
-	border-top: var(--border-width) solid var(--border-60);
+	gap: var(--gap-sm);
+	padding-top: var(--gap);
+	border-top: var(--border-width) solid var(--border);
 	min-width: 0;
 }
 
@@ -562,7 +522,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-end;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	margin-inline-start: auto;
 }
 
@@ -592,7 +552,7 @@
 		display: grid;
 		grid-template-columns: 6rem minmax(0, 1fr);
 		align-items: center;
-		gap: var(--space-md);
+		gap: var(--gap-sm);
 	}
 
 	.variantPairLabel {
@@ -614,8 +574,8 @@
 	overflow: hidden;
 	align-items: center;
 	justify-content: center;
-	width: var(--size-medallion);
-	height: var(--size-medallion);
+	width: 2.5rem;
+	height: 2.5rem;
 	padding: 0;
 	border: var(--border-width) dashed var(--border);
 	border-radius: var(--radius-sm);
@@ -629,32 +589,27 @@
 }
 
 .thumb svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 button.thumb {
 	cursor: pointer;
-	color: var(--primary-accent);
+	color: var(--primary);
 }
 
 /* The empty add slot takes the control edge, as the other add slots do. */
 button.thumb:not([data-filled]) {
-	border-color: var(--control-border);
+	border-color: var(--input);
 }
 
 /* Fill only, as the other add slots hover; a filled thumb also firms its edge. */
-button.thumb:hover {
-	background-color: var(--accent-50);
+button.thumb:hover:not(:disabled) {
+	background-color: var(--accent);
 }
 
-button.thumb[data-filled]:hover {
-	border-color: var(--foreground-20);
-}
-
-button.thumb:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+button.thumb[data-filled]:hover:not(:disabled) {
+	border-color: var(--input);
 }
 
 .thumbImage {

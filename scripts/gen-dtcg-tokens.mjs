@@ -1,225 +1,194 @@
 /*
- * Generates dist/tokens.json: the palette and theme in W3C DTCG format (current editor's
- * draft, designtokens.org/TR/drafts), for design tooling.
+ * Generates dist/tokens.json: the theme in W3C DTCG format (current editor's draft,
+ * designtokens.org/TR/drafts), for design tooling.
  *
- * Colours use the draft's object form with `colorSpace: "oklch"` plus the optional `hex`
- * fallback (clipped outside sRGB). `verify dtcg-tokens` pins this shape.
- * DTCG has no arithmetic or color-mix: `calc(var(--x) * n)` is resolved to a literal, and
- * shadows and other unrepresentable values are skipped — listed on stdout and in `$extensions`.
+ * Reads the theme's `:root` declarations (styles/theme/*.css), each with the comment beside
+ * it as its `$description`. A colour's `light-dark()` pair becomes a token in `theme.light`
+ * and one in `theme.dark`; every other variable is written once in `theme.light` and aliased
+ * from `theme.dark`. Colours use the draft's object form with `colorSpace: "oklch"` plus the
+ * optional `hex` fallback (clipped outside sRGB). A value no DTCG type expresses is skipped
+ * and listed, on stdout and in `$extensions`. `verify dtcg-tokens` checks the result.
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 
 import { converter, formatHex, inGamut, parse } from 'culori'
 
-import { theme, states } from './theme-manifest.mjs'
-
+const THEME_DIR = 'src/styles/theme'
 const OUT = 'dist/tokens.json'
-const PALETTE = 'src/styles/tokens/palette.css'
 
 const toOklch = converter('oklch')
 const inSrgb = inGamut('rgb')
+const round = (n) => Number(Number(n).toFixed(6))
 
-/* ── read the palette ramps ──────────────────────────────────────────────────────── */
+/* ── read the theme ──────────────────────────────────────────────────────────────── */
 
-const stripComments = (text) => text.replace(/\/\*[\s\S]*?\*\//g, '')
-
-/** `--neutral-0` → `['neutral', '0']`; `--series-1-dark` → `['series', '1-dark']`. */
-function splitName(name) {
-  const bare = name.replace(/^--/, '')
-  const cut = bare.indexOf('-')
-  return cut === -1 ? [bare, null] : [bare.slice(0, cut), bare.slice(cut + 1)]
-}
-
-const paletteSource = new Map()
-for (const match of stripComments(readFileSync(PALETTE, 'utf8')).matchAll(
-  /(?<=[;{\s])(--[a-zA-Z0-9_-]+)\s*:\s*([^;{}]+);/g,
-)) {
-  if (!paletteSource.has(match[1])) paletteSource.set(match[1], match[2].trim())
+/**
+ * name → { css, doc }. The first declaration wins: a `:root` block inside `@media` (reduced
+ * motion) restates a value for a condition, not the theme's value.
+ */
+const declared = new Map()
+for (const file of readdirSync(THEME_DIR).filter((name) => name.endsWith('.css')).sort()) {
+  const source = readFileSync(`${THEME_DIR}/${file}`, 'utf8')
+  for (const block of source.matchAll(/(^|\n)\s*:root\s*\{([^}]*)\}/g)) {
+    for (const [, name, css, doc] of block[2].matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);[ \t]*(?:\/\*\s*(.*?)\s*\*\/)?/g)) {
+      if (!declared.has(name)) declared.set(name, { css: css.trim().replace(/\s+/g, ' '), doc })
+    }
+  }
 }
 
 /* ── value conversion ────────────────────────────────────────────────────────────── */
 
 const skipped = []
-const skip = (name, reason) => {
-  skipped.push({ name, reason })
-  return null
+let outOfGamut = 0
+
+/** The top-level comma-separated parts of a value, keeping `oklch(… / …)` whole. */
+function topLevel(css, separator = ',') {
+  const parts = []
+  let depth = 0
+  let start = 0
+  for (let index = 0; index < css.length; index++) {
+    const character = css[index]
+    if (character === '(') depth++
+    else if (character === ')') depth--
+    else if (depth === 0 && (separator === ' ' ? /\s/.test(character) : character === separator)) {
+      parts.push(css.slice(start, index).trim())
+      start = index + 1
+    }
+  }
+  parts.push(css.slice(start).trim())
+  return parts.filter(Boolean)
 }
 
-/** A DTCG color value, with a `hex` fallback that is lossy outside sRGB (counted separately). */
+/** `light-dark(a, b)` → [a, b]; any other value is the same in both modes. */
+function halves(css) {
+  if (!css.startsWith('light-dark(') || !css.endsWith(')')) return null
+  const parts = topLevel(css.slice('light-dark('.length, -1))
+  return parts.length === 2 ? parts : null
+}
+
 function colorValue(css) {
   const parsed = parse(css)
   if (!parsed) return null
   const { l, c, h, alpha } = toOklch(parsed)
-  const value = {
-    colorSpace: 'oklch',
-    /* `h` is undefined for an achromatic colour; the spec's components must all be numbers. */
-    components: [round(l), round(c), round(h ?? 0)],
-  }
+  /* `h` is undefined for an achromatic colour; the spec's components must all be numbers. */
+  const value = { colorSpace: 'oklch', components: [round(l), round(c), round(h ?? 0)] }
   if (alpha !== undefined && alpha !== 1) value.alpha = round(alpha)
   const hex = formatHex(parsed)
   if (hex) value.hex = hex
-  return { value, outOfGamut: !inSrgb(parsed) }
+  if (!inSrgb(parsed)) outOfGamut++
+  return value
 }
 
-const round = (n) => Number(Number(n).toFixed(6))
-
-/** A DTCG dimension value: `{ value, unit }`, unit restricted to px or rem by the spec. */
+/** A DTCG dimension: px or rem only; a bare `0` is zero pixels. */
 function dimensionValue(css) {
-  const match = css.match(/^(-?[\d.]+)(px|rem)$/)
-  if (!match) return null
-  return { value: Number(match[1]), unit: match[2] }
+  if (css === '0') return { value: 0, unit: 'px' }
+  const match = /^(-?[\d.]+)(px|rem)$/.exec(css)
+  return match ? { value: Number(match[1]), unit: match[2] } : null
 }
 
-/** `calc(var(--x) * <number>)` resolved against a literal; any other shape is skipped, not guessed. */
-function resolveCalc(css, literals) {
-  const match = css.match(/^calc\(\s*var\((--[a-zA-Z0-9_-]+)\)\s*\*\s*([\d.]+)\s*\)$/)
-  if (!match) return null
-  const base = literals.get(match[1])
-  if (!base) return null
-  const dimension = dimensionValue(base)
-  if (!dimension) return null
-  return { value: round(dimension.value * Number(match[2])), unit: dimension.unit }
+function durationValue(css) {
+  const match = /^([\d.]+)(ms|s)$/.exec(css)
+  return match ? { value: Number(match[1]), unit: match[2] } : null
+}
+
+function cubicBezierValue(css) {
+  const match = /^cubic-bezier\(([^)]*)\)$/.exec(css)
+  const numbers = match?.[1].split(',').map(Number)
+  return numbers?.length === 4 && numbers.every(Number.isFinite) ? numbers : null
+}
+
+/** One layer: `offsetX offsetY blur spread color`, optionally `inset`. */
+function shadowLayer(css) {
+  const parts = topLevel(css, ' ')
+  const inset = parts[0] === 'inset' ? parts.shift() !== undefined : false
+  const color = colorValue(parts.at(-1) ?? '')
+  const lengths = parts.slice(0, -1).map(dimensionValue)
+  if (!color || lengths.length < 2 || lengths.length > 4 || lengths.some((length) => !length)) return null
+  const [offsetX, offsetY, blur = { value: 0, unit: 'px' }, spread = { value: 0, unit: 'px' }] = lengths
+  return { color, offsetX, offsetY, blur, spread, ...(inset ? { inset } : {}) }
+}
+
+function shadowValue(css) {
+  const layers = topLevel(css).map(shadowLayer)
+  return layers.every(Boolean) ? (layers.length === 1 ? layers[0] : layers) : null
+}
+
+function fontFamilyValue(css) {
+  if (!/[a-z]/i.test(css) || /\(/.test(css)) return null
+  return topLevel(css).map((family) => family.replace(/^['"]|['"]$/g, ''))
+}
+
+/** The DTCG type and value for one CSS value; `null` when none fits. */
+function typed(name, css) {
+  if (css === 'initial') return null
+  if (name.startsWith('--shadow')) {
+    const value = shadowValue(css)
+    return value && { $type: 'shadow', $value: value }
+  }
+  if (name.startsWith('--font-')) {
+    const value = fontFamilyValue(css)
+    return value && { $type: 'fontFamily', $value: value }
+  }
+  const color = /^(oklch|oklab|rgb|hsl|#)/.test(css) ? colorValue(css) : null
+  if (color) return { $type: 'color', $value: color }
+  const dimension = dimensionValue(css)
+  if (dimension) return { $type: 'dimension', $value: dimension }
+  const duration = durationValue(css)
+  if (duration) return { $type: 'duration', $value: duration }
+  const bezier = cubicBezierValue(css)
+  if (bezier) return { $type: 'cubicBezier', $value: bezier }
+  if (/^-?[\d.]+$/.test(css)) return { $type: 'number', $value: Number(css) }
+  return null
 }
 
 /* ── build the tree ──────────────────────────────────────────────────────────────── */
 
-const tokens = {
-  $description: 'themelia-ui design tokens in the W3C Design Tokens (DTCG) format.',
-}
-
-/* palette: the ramps every theme resolves against, as literal OKLCH. */
-const palette = { $type: 'color' }
-let outOfGamut = 0
-/** css custom-property name → DTCG path, for alias resolution below. */
-const path = new Map()
-
-for (const [name, css] of paletteSource) {
-  const color = colorValue(css)
-  if (!color) {
-    skip(name, `palette value is not a parseable colour: ${css}`)
+const light = {}
+const dark = {}
+for (const [name, { css, doc }] of declared) {
+  const key = name.slice(2)
+  const describe = (token) => (doc ? { $description: doc, ...token } : token)
+  const pair = halves(css)
+  if (pair) {
+    const [lightToken, darkToken] = pair.map((half) => typed(name, half))
+    if (!lightToken || !darkToken) {
+      skipped.push(`${name}: no DTCG type fits ${css}`)
+      continue
+    }
+    light[key] = describe(lightToken)
+    dark[key] = describe(darkToken)
     continue
   }
-  if (color.outOfGamut) outOfGamut++
-  const [group, step] = splitName(name)
-  const token = { $value: color.value }
-  if (step === null) {
-    palette[group] = token
-    path.set(name, `palette.${group}`)
-  } else {
-    palette[group] ??= {}
-    palette[group][step] = token
-    path.set(name, `palette.${group}.${step}`)
+  const token = typed(name, css)
+  if (!token) {
+    skipped.push(`${name}: ${css === 'initial' ? 'unset by default' : `no DTCG type fits ${css}`}`)
+    continue
   }
-}
-tokens.palette = palette
-
-/*
- * theme.light / theme.dark come from the manifest (themes/default.css is GENERATED from it),
- * which keeps `doc` → `$description` and `inherits` → a dark-to-light alias.
- */
-/* The shadow ladder, `--shadow` included; `--shadow-ink` is a plain colour and stays. */
-const SKIP_PREFIX = /^--shadow(-(?!ink$)|$)/
-const entries = [...Object.entries(theme), ...Object.entries(states)]
-
-/* Literals first, so `calc()` and aliases have something to resolve against. */
-const literals = new Map([...paletteSource])
-for (const [name, spec] of entries) if (!/^var\(|^calc\(/.test(spec.light)) literals.set(name, spec.light)
-
-/* Light first; dark only emits names light emitted, so no alias points at a skipped token. */
-const emitted = new Set()
-for (const mode of ['light', 'dark']) {
-  const group = {}
-  for (const [name, spec] of entries) {
-    if (SKIP_PREFIX.test(name)) {
-      if (mode === 'light') skip(name, 'multi-layer shadow with a color-mix colour — DTCG has no equivalent')
-      continue
-    }
-    if (mode === 'dark' && !emitted.has(name)) continue
-
-    /* `inherits`: the dark value is the light one, expressed as an alias. */
-    if (mode === 'dark' && spec.inherits) {
-      group[dtcgName(name)] = { $value: `{theme.light.${dtcgName(name)}}` }
-      continue
-    }
-
-    const css = mode === 'dark' ? (spec.dark ?? spec.light) : spec.light
-    const token = tokenFor(name, css, mode)
-    if (token) {
-      group[dtcgName(name)] = token
-      if (mode === 'light') emitted.add(name)
-    }
-  }
-  tokens.theme ??= {}
-  tokens.theme[mode] = group
+  light[key] = describe(token)
+  dark[key] = { $value: `{theme.light.${key}}` }
 }
 
-/** `--primary-foreground` → `primary-foreground`. Hyphens are legal in a DTCG name. */
-function dtcgName(name) {
-  return name.replace(/^--/, '')
-}
-
-function tokenFor(name, css, mode) {
-  const describe = (token) => {
-    const doc = theme[name]?.doc ?? states[name]?.doc
-    return doc ? { $description: doc, ...token } : token
-  }
-
-  /* A reference to another exported token becomes a DTCG alias. */
-  const reference = css.match(/^var\((--[a-zA-Z0-9_-]+)\)$/)
-  if (reference) {
-    const target = path.get(reference[1]) ?? (aliasWithinTheme(reference[1], mode) || null)
-    if (!target) return skip(name, `${mode}: references ${reference[1]}, which is not exported`)
-    return describe({ $value: `{${target}}` })
-  }
-
-  const dimension = dimensionValue(css) ?? resolveCalc(css, literals)
-  if (dimension) return describe({ $type: 'dimension', $value: dimension })
-
-  const color = colorValue(css)
-  if (color) {
-    if (color.outOfGamut) outOfGamut++
-    return describe({ $type: 'color', $value: color.value })
-  }
-
-  return skip(name, `${mode}: no DTCG type fits ${css}`)
-}
-
-/** A manifest token referencing another, e.g. `--popover-foreground: var(--foreground)`. */
-function aliasWithinTheme(reference, mode) {
-  const known = entries.some(([name]) => name === reference) && !SKIP_PREFIX.test(reference)
-  return known ? `theme.${mode}.${dtcgName(reference)}` : null
-}
-
-/* ── report ──────────────────────────────────────────────────────────────────────── */
-
-const count = (node) =>
-  Object.entries(node).reduce(
-    (sum, [key, value]) =>
-      key.startsWith('$') || typeof value !== 'object'
-        ? sum
-        : sum + ('$value' in value ? 1 : count(value)),
-    0,
-  )
-
-tokens.$extensions = {
-  'org.themelia-ui': {
-    skipped: skipped.map(({ name, reason }) => `${name}: ${reason}`),
-    outOfGamutColors: outOfGamut,
-    note:
-      'calc() is resolved to a literal, so a derived dimension no longer follows the token ' +
-      'it derives from. Shadows are absent: DTCG cannot express a color-mix.',
+const tokens = {
+  $description: 'themelia-ui design tokens in the W3C Design Tokens (DTCG) format.',
+  theme: { light, dark },
+  $extensions: {
+    'org.themelia-ui': {
+      skipped,
+      outOfGamutColors: outOfGamut,
+      note:
+        'Each colour is one CSS variable holding both modes as light-dark(); here it is a token per mode. ' +
+        'Every other variable is the same in both modes, so theme.dark aliases theme.light.',
+    },
   },
 }
 
 if (!existsSync('dist')) mkdirSync('dist', { recursive: true })
 writeFileSync(OUT, `${JSON.stringify(tokens, null, 2)}\n`)
 
-console.log(
-  `dtcg tokens: ${count(tokens.palette)} palette + ${count(tokens.theme.light)} light + ` +
-    `${count(tokens.theme.dark)} dark → ${OUT}`,
-)
+const count = (group) => Object.keys(group).length
+console.log(`dtcg tokens: ${count(light)} light + ${count(dark)} dark → ${OUT}`)
 console.log(`  ${outOfGamut} colour(s) outside sRGB, whose \`hex\` fallback is clipped`)
 if (skipped.length) {
   console.log(`  ${skipped.length} skipped:`)
-  for (const { name, reason } of skipped) console.log(`    ${name} — ${reason}`)
+  for (const line of skipped) console.log(`    ${line}`)
 }

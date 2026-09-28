@@ -6,7 +6,7 @@ import { OTPField } from "@base-ui/react/otp-field"
 import * as React from "react"
 
 import { VisuallyHidden } from "@/components/base/display"
-
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./otp-input.module.css"
@@ -85,7 +85,7 @@ export function OtpInput({
 								{...(position === 1
 									? { "aria-labelledby": labelledBy }
 									: { "aria-label": copy.slotLabel(position, length) })}
-								className={styles.slot}
+								className={cx(styles.slot, textClassName({ size: "lg", numeric: true }))}
 							/>
 						)
 					})}

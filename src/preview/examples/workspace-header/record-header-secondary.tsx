@@ -33,7 +33,7 @@ export default function RecordHeaderSecondary() {
 					{ label: "Branch", value: "main" },
 					{ label: "Author", value: "Raj Patel" },
 				]}
-				actions={<Button tone="neutral" buttonStyle="outline">Cancel</Button>}
+				actions={<Button tone="neutral" appearance="outline">Cancel</Button>}
 				secondaryActions={<ViewSwitch />}
 			/>
 		</Card>

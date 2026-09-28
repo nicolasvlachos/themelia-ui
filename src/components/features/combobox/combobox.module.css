@@ -9,7 +9,7 @@
 
 .error,
 .errorState {
-	margin-top: var(--space-sm);
+	margin-top: var(--gap-sm);
 }
 
 /* Above the popover level, so a dropdown inside a dialog is not painted behind it. */
@@ -34,18 +34,16 @@
 .status {
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
-	padding-inline: var(--row-px);
-	padding-block: var(--space-sm);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
 }
 
 .empty {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: var(--control-h);
-	padding-inline: var(--row-px);
-	padding-block: var(--space-sm);
+	min-height: var(--control-height);
+	padding: var(--padding-sm);
 	text-align: center;
 }
 
@@ -63,33 +61,31 @@
 .createRow {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 .createRow svg {
 	flex-shrink: 0;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .loadingMore {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding-inline: var(--row-px);
-	padding-block: var(--space-sm);
-	border-top: var(--border-width) solid var(--border-60);
+	padding: var(--padding-sm);
+	border-top: var(--border-width) solid var(--border);
 }
 
 .footer {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: var(--space-md);
-	padding-inline: var(--row-px);
-	padding-block: var(--space-sm);
-	border-top: var(--border-width) solid var(--border-60);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
+	border-top: var(--border-width) solid var(--border);
 }
 
 /* ── Option ────────────────────────────────────────────────────────────────────── */
@@ -97,17 +93,16 @@
 .option {
 	display: inline-flex;
 	align-items: baseline;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 	width: 100%;
-	line-height: var(--leading-tight);
 }
 
 .optionMeta {
 	display: inline-flex;
 	flex: 1;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 	overflow: hidden;
 	color: var(--muted-foreground);

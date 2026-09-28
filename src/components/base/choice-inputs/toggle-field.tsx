@@ -6,6 +6,7 @@
 import { forwardRef, useCallback, useId, useState, type MouseEvent, type ReactNode } from "react"
 
 import { Label } from "@/components/base/label"
+import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { Checkbox } from "./checkbox"
@@ -148,7 +149,11 @@ export const ToggleField = forwardRef<HTMLDivElement, ToggleFieldProps>(function
 						<ChoiceDescription>{description}</ChoiceDescription>
 					</span>
 				)}
-				{hint != null && <span className={styles.hint}>{hint}</span>}
+				{hint != null && (
+					<Text tag="span" size="xs" type="secondary" className={styles.hint}>
+						{hint}
+					</Text>
+				)}
 			</div>
 
 			{controlPosition === "trailing" && <div className={styles.rowControl}>{control}</div>}

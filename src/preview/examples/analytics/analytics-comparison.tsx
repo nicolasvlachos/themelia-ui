@@ -1,4 +1,4 @@
-import { MetricComparison } from "themelia-ui/patterns/analytics"
+import { MetricComparison } from "themelia-ui/blocks/analytics"
 
 export default function AnalyticsComparison() {
 	return (

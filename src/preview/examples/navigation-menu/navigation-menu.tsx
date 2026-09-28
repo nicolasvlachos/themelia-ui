@@ -6,7 +6,7 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function NavigationMenuExample() {
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<NavigationMenu aria-label="Documentation">
 				<NavigationMenuList>
 					<NavigationMenuItem>

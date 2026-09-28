@@ -49,7 +49,7 @@ cssModulesInComponentsLayer.postcss = true
  *
  * A media query condition cannot read `var()`, so breakpoints are the one part of the
  * token system that must be substituted rather than referenced. This keeps them declared
- * once in styles/theming/breakpoints.css instead of retyped as literals across modules.
+ * once in styles/breakpoints.css instead of retyped as literals across modules.
  *
  * `@media (--bp-md)` and `@container name (--cq-xl)` both resolve; unknown names are left
  * untouched and reported, since silently dropping a query would make a rule never match.
@@ -60,7 +60,7 @@ export function customMedia(): PostcssPlugin {
 	// order, so a module compiled before breakpoints.css would see an empty map and leave
 	// `@media (--bp-md)` unresolved — a query that then never matches, silently.
 	const definitions = new Map<string, string>()
-	const source = readFileSync(resolve(import.meta.dirname, "src/styles/theming/breakpoints.css"), "utf8")
+	const source = readFileSync(resolve(import.meta.dirname, "src/styles/breakpoints.css"), "utf8")
 	for (const match of source.matchAll(/@custom-media\s+(--[\w-]+)\s+([^;]+);/g)) {
 		if (match[1] && match[2]) definitions.set(match[1], match[2].trim())
 	}
@@ -89,11 +89,12 @@ customMedia.postcss = true
 
 /**
  * The oldest browsers the kit supports, set by CSS it cannot do without: `round()` (Chrome
- * 125), `:has()` (Firefox 121), `:dir()` (Safari 16.4). It is also both builds' CSS target:
- * below it, lightningcss rewrites `:dir(rtl)` as a list of right-to-left languages, which
- * ignores `dir="rtl"`.
+ * 125), `:has()` (Firefox 121), `light-dark()` (Safari 17.5). It is also both builds' CSS
+ * target: below it, lightningcss rewrites `:dir(rtl)` as a list of right-to-left languages,
+ * which ignores `dir="rtl"`, and `light-dark()` as variables that do not follow a nested
+ * `color-scheme`.
  */
-export const browserFloor = ["chrome125", "edge125", "firefox121", "safari16.4"]
+export const browserFloor = ["chrome125", "edge125", "firefox121", "safari17.5"]
 
 /**
  * `button__root___a1B2c`: the file, the class, and a hash of both with the file's path, so

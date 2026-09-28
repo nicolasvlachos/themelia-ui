@@ -10,9 +10,9 @@ const SUMMARY: MetadataInlineListItem[] = [
 
 export default function MetadataInline() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<MetadataList layout="inline" itemSeparator items={SUMMARY} />
-			<MetadataList layout="inline" itemSeparator="—" density="compact" items={SUMMARY} />
+			<MetadataList layout="inline" itemSeparator="—" size="sm" items={SUMMARY} />
 		</Stack>
 	)
 }

@@ -248,7 +248,7 @@ export function Card({
 
 			{isExpandable && hasContent && (
 				<div className={styles.expandToggle}>
-					<Button tone="neutral" buttonStyle="ghost" onClick={toggle} aria-expanded={isExpanded}>
+					<Button tone="neutral" appearance="ghost" onClick={toggle} aria-expanded={isExpanded}>
 						{isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
 						{isExpanded ? copy.collapse : copy.expand}
 					</Button>

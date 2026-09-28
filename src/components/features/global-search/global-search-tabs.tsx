@@ -39,7 +39,7 @@ export function GlobalSearchTabs<TGroup extends string = string>({
 					label: <>{tab.label}{" "}</>,
 					/* A quiet tabular count, not a badge, so the strip stays secondary. */
 					badge: (
-						<Text tag="span" size="xs" type="secondary" numeric className={styles.tabCount}>
+						<Text tag="span" size="xs" type="secondary" numeric>
 							{counts[tab.value] ?? 0}
 						</Text>
 					),

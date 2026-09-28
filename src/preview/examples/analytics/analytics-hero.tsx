@@ -1,4 +1,4 @@
-import { MetricGradient } from "themelia-ui/patterns/analytics"
+import { MetricGradient } from "themelia-ui/blocks/analytics"
 
 import { SERIES } from "./data"
 

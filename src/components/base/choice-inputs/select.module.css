@@ -1,13 +1,15 @@
 /*
  * Select. The trigger carries `data-field-control`, so height, border, radius, focus and
- * invalid state come from styles/fields.css; rows read the shared --menu-row-* tokens.
+ * invalid state come from styles/fields.css. The popup's rows are menu rows: a 32px floor,
+ * the small padding and the item radius, inset in the popup by its radius less theirs so
+ * they sit concentric in it. Type is Text's, lent through `textClassName` (select-popup.tsx).
  */
 
 .trigger {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	text-align: start;
 	white-space: nowrap;
 	cursor: default;
@@ -22,7 +24,7 @@
 	min-width: 0;
 	flex: 1;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -37,8 +39,8 @@
 }
 
 .triggerIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .positioner {
@@ -46,33 +48,34 @@
 	outline: none;
 }
 
+/* The highlighted row is the popup's focus indicator, so the popup draws none of its own. */
 .popup {
 	/* At least the trigger's width, so the listbox lines up with its field; wider options may grow it. */
-	min-width: max(var(--anchor-width), calc(9rem * var(--scale)));
+	min-width: max(var(--anchor-width), 9rem);
 	max-width: var(--available-width);
 	max-height: var(--available-height);
 	overflow-x: hidden;
 	overflow-y: auto;
-	padding: var(--space-md);
+	padding: calc(var(--radius) - var(--radius-sm));
 	border-radius: var(--radius);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
-	box-shadow: var(--popover-shadow);
+	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
 	outline: none;
 	transform-origin: var(--transform-origin);
 
-	--enter-opacity: 0;
-	--enter-scale: 0.95;
-	--exit-opacity: 0;
-	--exit-scale: 0.95;
+	--_enter-opacity: 0;
+	--_enter-scale: 0.95;
+	--_exit-opacity: 0;
+	--_exit-scale: 0.95;
 }
 
 .popup[data-open] {
-	animation: var(--animate-enter);
+	animation: var(--keyframes-enter) var(--duration-fast) var(--ease);
 }
 
 .popup[data-closed] {
-	animation: var(--animate-exit);
+	animation: var(--keyframes-exit) var(--duration-fast) var(--ease);
 }
 
 /* Aligned over the trigger already, so a moving entrance would read as a jump. */
@@ -84,19 +87,18 @@
 	padding: 0;
 }
 
+/* The menu cursor (`data-highlighted`) is the row's focus indicator. */
 .item {
 	position: relative;
 	display: flex;
 	width: 100%;
-	min-height: var(--menu-row-min-h);
+	min-height: 2rem;
 	align-items: center;
-	gap: var(--space-md);
-	padding: var(--menu-row-py) var(--row-px);
-	/* Clearance for the trailing check. */
-	padding-inline-end: calc(var(--size-icon) + var(--row-px) * 2);
+	gap: var(--gap-sm);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
+	/* Clearance for the trailing check: the icon and the row's inset either side. */
+	padding-inline-end: calc(var(--icon-size) + var(--padding-sm) * 2);
 	border-radius: var(--radius-sm);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	cursor: default;
 	user-select: none;
 	outline: none;
@@ -108,7 +110,7 @@
 }
 
 .item[data-disabled] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
@@ -117,7 +119,7 @@
 	min-width: 0;
 	flex: 1;
 	align-items: flex-start;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
 .optionIcon {
@@ -125,12 +127,12 @@
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
-	margin-top: calc((1lh - var(--size-icon)) / 2);
+	margin-top: calc((1lh - var(--icon-size)) / 2);
 }
 
 .optionIcon > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .optionText {
@@ -139,22 +141,18 @@
 	text-align: start;
 }
 
-
 /* Clamped to two lines so descriptions don't push options off screen. */
 .optionDescription {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
-	margin-top: var(--space-2xs);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--muted-foreground);
+	margin-top: calc(var(--gap-sm) / 2);
 }
 
 .indicator {
 	position: absolute;
-	inset-inline-end: var(--row-px);
+	inset-inline-end: var(--padding-sm);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -167,35 +165,33 @@
 }
 
 .indicator > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
+/* On the rows' inset, like the dropdown's label. */
 .label {
-	/* On the rows' inset, like the dropdown's label. */
-	padding: var(--space-sm) var(--row-px);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-medium);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	color: var(--muted-foreground);
 }
 
+/* Full-bleed through the popup's inset. */
 .separator {
 	height: var(--border-width);
-	margin-inline: calc(var(--space-md) * -1);
-	margin-block: var(--space-xs);
-	background-color: var(--border-60);
+	margin-inline: calc((var(--radius) - var(--radius-sm)) * -1);
+	margin-block: calc(var(--gap-sm) / 2);
+	background-color: var(--border);
 }
 
 /* The scroll arrows sit over the list, so they need the popup's background. */
 .scrollArrow {
 	position: sticky;
-	z-index: var(--z-raised);
+	z-index: 1;
 	display: flex;
 	width: 100%;
 	align-items: center;
 	justify-content: center;
-	padding-block: var(--space-xs);
+	padding-block: calc(var(--padding-sm) / 2);
 	background-color: var(--popover);
 	cursor: default;
 }
@@ -204,6 +200,6 @@
 .scrollArrowDown { bottom: 0; }
 
 .scrollArrow > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }

@@ -198,12 +198,15 @@ export function PlaceAutocomplete({
 					</InputGroup>
 				</div>
 
+				{/* The field's width, flush: the list draws its own rows to the edge. */}
 				<PopoverContent
 					align="start"
 					sideOffset={4}
 					initialFocus={false}
 					finalFocus={false}
-					className={styles.autocompleteResults}
+					width="trigger"
+					maxWidth="var(--available-width)"
+					inset="flush"
 				>
 					<CommandList className={styles.autocompleteList}>
 						{!!error && (

@@ -1,0 +1,9 @@
+/*
+ * Elevation: two shadows. `--shadow` lifts a surface a little off the page (a framed card,
+ * a raised chip, a slider thumb); `--shadow-lg` floats one above it (popovers, menus, dialogs,
+ * toasts). A popup pairs `--shadow-lg` with a hairline in `--border`.
+ */
+:root {
+	--shadow: 0 1px 2px 0 oklch(0 0 0 / 6%), 0 1px 1px -1px oklch(0 0 0 / 6%);
+	--shadow-lg: 0 4px 8px -2px oklch(0 0 0 / 10%), 0 12px 24px -12px oklch(0 0 0 / 18%);
+}

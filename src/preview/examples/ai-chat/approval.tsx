@@ -9,7 +9,7 @@ export default function Approval() {
 	const [approval, setApproval] = useState<"pending" | "approved" | "rejected">("pending")
 
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<AiConfirmation
 				title="Run the backfill on 4,102 invoices"
 				description="Rewrites every stored amount into cents. There is no undo."
@@ -19,8 +19,8 @@ export default function Approval() {
 				onReject={() => setApproval("rejected")}
 			/>
 			{approval !== "pending" && (
-				<Stack direction="horizontal" gap="md">
-					<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => setApproval("pending")}>
+				<Stack direction="horizontal" gap="sm">
+					<Button type="button" tone="neutral" appearance="outline" onClick={() => setApproval("pending")}>
 						Ask again
 					</Button>
 				</Stack>

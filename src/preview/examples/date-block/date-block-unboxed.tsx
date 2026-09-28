@@ -4,8 +4,8 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function DateBlockUnboxed() {
 	return (
-		<Stack gap="lg">
-			<Stack direction="horizontal" gap="xl" wrap align="start">
+		<Stack>
+			<Stack direction="horizontal" wrap align="start">
 				<DateBlock date="2026-08-27" boxed={false} />
 				<DateBlock date="2026-08-27" boxed={false} showWeekday={false} />
 			</Stack>

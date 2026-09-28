@@ -15,7 +15,7 @@ export function Demo({
 	const id = useId()
 	return (
 		<Overlay>
-			<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+			<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 				{label}
 			</OverlayTrigger>
 			<OverlayContent aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`} {...content}>
@@ -33,7 +33,7 @@ export function Demo({
 					</Text>
 				</OverlayBody>
 				<OverlayFooter>
-					<OverlayClose render={<Button tone="neutral" buttonStyle="outline" />}>
+					<OverlayClose render={<Button tone="neutral" appearance="outline" />}>
 						Close
 					</OverlayClose>
 				</OverlayFooter>

@@ -54,13 +54,14 @@ export function BatchActionBar({
 			data-placement={placement}
 			className={cx("batch-action-bar--component", styles.root, styles[placement], className)}
 		>
-			<Text size="sm" className={cx("batch-action-bar--summary", styles.summary)}>
+			{/* Tabular, so the changing count doesn't resize the centred bar. */}
+			<Text size="sm" numeric className={cx("batch-action-bar--summary", styles.summary)}>
 				{copy.summary(selectedCount, totalCount)}
 			</Text>
 			<div className={cx("batch-action-bar--actions", styles.actions)}>
 				{children}
 				{onClear ? (
-					<Button type="button" tone="neutral" buttonStyle="ghost" onClick={onClear}>
+					<Button type="button" tone="neutral" appearance="ghost" onClick={onClear}>
 						{copy.clear}
 					</Button>
 				) : null}

@@ -2,7 +2,7 @@ import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 import { ChevronDownIcon } from "lucide-react"
 import type { ReactNode } from "react"
 
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useDefaults } from "@/lib/ui-provider"
 
@@ -52,7 +52,14 @@ export function Accordion({ className, surface, items, media, children, ...props
 
 	return (
 		<AccordionPrimitive.Root
-			className={cx("accordion--component", styles.root, SURFACE[resolvedSurface], className)}
+			className={cx(
+				"accordion--component",
+				styles.root,
+				SURFACE[resolvedSurface],
+				/* The accordion's type: every part inherits the size. */
+				textClassName({ size: "sm" }),
+				className,
+			)}
 			data-surface={resolvedSurface}
 			{...props}
 		>
@@ -71,7 +78,12 @@ export function AccordionTrigger({ className, children, ...props }: AccordionTri
 	return (
 		<AccordionPrimitive.Header className={styles.header}>
 			<AccordionPrimitive.Trigger
-				className={cx("accordion-trigger--component", styles.trigger, className)}
+				className={cx(
+					"accordion-trigger--component",
+					styles.trigger,
+					textClassName({ size: "inherit", weight: "medium" }),
+					className,
+				)}
 				{...props}
 			>
 				{isSimpleText(children) ? (
@@ -90,7 +102,7 @@ export function AccordionTrigger({ className, children, ...props }: AccordionTri
 export function AccordionContent({ className, children, ...props }: AccordionContentProps) {
 	return (
 		<AccordionPrimitive.Panel className={cx("accordion-content--component", styles.panel)} {...props}>
-			<div className={cx(styles.content, className)}>
+			<div className={cx(styles.content, textClassName({ size: "inherit", lineHeight: "relaxed" }), className)}>
 				{isSimpleText(children) ? (
 					<Text tag="div" size="inherit" type="secondary" lineHeight="relaxed">
 						{children}

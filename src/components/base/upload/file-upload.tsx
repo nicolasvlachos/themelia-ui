@@ -220,9 +220,7 @@ export function FileUpload({
 							<FilePreview file={file} />
 							<div className={styles.rowBody}>
 								<span className={styles.rowName}>{file.name}</span>
-								<span className={styles.rowMeta}>
-									<FileSize value={file.size} />
-								</span>
+								<FileSize value={file.size} size="xs" type="secondary" />
 								{progress?.[file.name] !== undefined && (
 									<div
 										className={styles.progress}
@@ -238,7 +236,7 @@ export function FileUpload({
 							</div>
 							<Button
 								tone="neutral"
-								buttonStyle="ghost"
+								appearance="ghost"
 								iconOnly
 								aria-label={copy.remove(file.name)}
 								data-remove=""

@@ -10,7 +10,7 @@ import { UIPortalHost, UIScope } from "themelia-ui/ui-provider"
 function ActionsMenu() {
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger render={<Button buttonStyle="outline">Actions</Button>} />
+			<DropdownMenuTrigger render={<Button appearance="outline">Actions</Button>} />
 			<DropdownMenuContent>
 				<DropdownMenuItem>Duplicate</DropdownMenuItem>
 				<DropdownMenuItem>Move to…</DropdownMenuItem>
@@ -22,8 +22,8 @@ function ActionsMenu() {
 
 export default function UiPortalHostExample() {
 	return (
-		<Stack direction="horizontal">
-			<Grid columns={2} gap="lg">
+		<Stack gap="sm" direction="horizontal">
+			<Grid columns={2}>
 				<GridCell>
 					<Stack gap="sm">
 						<Text size="xs" type="secondary">

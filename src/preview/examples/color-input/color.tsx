@@ -9,7 +9,7 @@ export default function Color() {
 	const [color, setColor] = useState("oklch(0.45 0.12 155)")
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Brand" helperText="The swatch shows the painted colour, so var() and named colours work.">
 				<ColorInput value={color} onValueChange={setColor} />
 			</FormField>

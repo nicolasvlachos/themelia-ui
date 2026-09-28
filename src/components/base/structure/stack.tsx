@@ -10,8 +10,7 @@ import { mergeVars, responsiveVars } from "@/lib/responsive"
 import { ALIGN, DIRECTION, GAP, JUSTIFY, width } from "./structure.maps"
 import styles from "./structure.module.css"
 import type {
-	ResponsiveValue, StructureAlign, StructureDirection, StructureGap, StructureJustify,
-	StructureWidth,
+	CssLength, ResponsiveValue, StructureAlign, StructureDirection, StructureGap, StructureJustify, StructureWidth,
 } from "./structure.types"
 
 export interface StackProps extends Omit<React.ComponentProps<"div">, "dir"> {
@@ -21,8 +20,8 @@ export interface StackProps extends Omit<React.ComponentProps<"div">, "dir"> {
 	 */
 	direction?: ResponsiveValue<StructureDirection>
 	/**
-	 * Space between children, on the semantic spacing scale.
-	 * @default "md"
+	 * Space between children: `default` between groups, `sm` inside one.
+	 * @default "default"
 	 */
 	gap?: ResponsiveValue<StructureGap>
 	/**
@@ -41,11 +40,11 @@ export interface StackProps extends Omit<React.ComponentProps<"div">, "dir"> {
 	 */
 	wrap?: ResponsiveValue<boolean>
 	/**
-	 * Caps the box's width — a content step (`sm` to `2xl`, `full`, `none`) or any CSS
+	 * Caps the box's width — a content width (`default`, `sm`, `full`, `none`) or any CSS
 	 * length, such as a form's `26rem`. A field measure is a control decision rather than a
 	 * content one, which is why a raw length is allowed beside the scale.
 	 */
-	maxWidth?: ResponsiveValue<StructureWidth | (string & {})>
+	maxWidth?: ResponsiveValue<StructureWidth | CssLength>
 }
 
 export const Stack = React.forwardRef<HTMLDivElement, StackProps>(function Stack(
@@ -58,12 +57,12 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(function Stack
 			data-slot="stack"
 			className={cx("stack--component", styles.stack, className)}
 			style={mergeVars(
-				responsiveVars("stack-direction", direction, (v) => DIRECTION[v]),
-				responsiveVars("stack-gap", gap, (v) => GAP[v]),
-				responsiveVars("stack-align", align, (v) => ALIGN[v]),
-				responsiveVars("stack-justify", justify, (v) => JUSTIFY[v]),
-				responsiveVars("stack-wrap", wrap, (v) => (v ? "wrap" : "nowrap")),
-				responsiveVars("stack-max-width", maxWidth, width),
+				responsiveVars("_stack-direction", direction, (v) => DIRECTION[v]),
+				responsiveVars("_stack-gap", gap, (v) => GAP[v]),
+				responsiveVars("_stack-align", align, (v) => ALIGN[v]),
+				responsiveVars("_stack-justify", justify, (v) => JUSTIFY[v]),
+				responsiveVars("_stack-wrap", wrap, (v) => (v ? "wrap" : "nowrap")),
+				responsiveVars("_stack-max-width", maxWidth, width),
 				style ?? {},
 			)}
 			{...props}

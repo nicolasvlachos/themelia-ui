@@ -29,9 +29,9 @@ export default function SidebarShell() {
 	const [collapsible, setCollapsible] = useState<string | null>("icon")
 
 	return (
-		<Stack gap="lg" style={{ width: "100%" }}>
-			<Stack direction="horizontal" gap="xl" wrap>
-				<Stack gap="2xs">
+		<Stack style={{ width: "100%" }}>
+			<Stack direction="horizontal" wrap>
+				<Stack gap="sm">
 					<Text size="xs" type="secondary">
 						variant
 					</Text>
@@ -47,7 +47,7 @@ export default function SidebarShell() {
 						]}
 					/>
 				</Stack>
-				<Stack gap="2xs">
+				<Stack gap="sm">
 					<Text size="xs" type="secondary">
 						collapsible
 					</Text>

@@ -56,7 +56,7 @@ export default function ResourceIndex() {
 					<Button
 						key={option}
 						tone={state === option ? "primary" : "neutral"}
-						buttonStyle={state === option ? "solid" : "outline"}
+						appearance={state === option ? "solid" : "outline"}
 						onClick={() => setState(option)}
 					>
 						{option}
@@ -69,7 +69,7 @@ export default function ResourceIndex() {
 				description="Everything billed on this account."
 				actions={
 					<>
-						<Button tone="neutral" buttonStyle="outline">
+						<Button tone="neutral" appearance="outline">
 							<DownloadIcon />
 							Export
 						</Button>

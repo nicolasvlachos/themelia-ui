@@ -92,7 +92,7 @@ export interface ToastStore {
 	applyDefaultDuration(defaultDuration: number): void
 }
 
-/** The exit transition's length. Kept in sync with --duration-fast in theming/motion.css. */
+/** The exit transition's length. Kept in sync with --duration-fast in styles/theme/motion.css. */
 const LEAVE_MS = 150
 
 /**

@@ -12,7 +12,7 @@ export default function RecordHeader() {
 				title="Invoice #4417"
 				description="Northwind Traders — issued 1 September 2026."
 				media={
-					<Avatar size="lg">
+					<Avatar>
 						<AvatarFallback>NT</AvatarFallback>
 					</Avatar>
 				}
@@ -24,7 +24,7 @@ export default function RecordHeader() {
 				]}
 				actions={
 					<>
-						<Button tone="neutral" buttonStyle="outline">Duplicate</Button>
+						<Button tone="neutral" appearance="outline">Duplicate</Button>
 						<Button>Edit</Button>
 					</>
 				}

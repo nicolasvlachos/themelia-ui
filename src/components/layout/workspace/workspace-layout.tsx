@@ -72,7 +72,7 @@ export function WorkspaceLayout({
 			style={
 				{
 					...(sidebarWidth ? { "--sidebar-width": sidebarWidth } : null),
-					...(railWidth ? { "--workspace-rail-w": railWidth } : null),
+					...(railWidth ? { "--_workspace-rail-w": railWidth } : null),
 					...style,
 				} as CSSProperties
 			}

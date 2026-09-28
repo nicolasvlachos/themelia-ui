@@ -2,6 +2,7 @@
  * AuthFooterLinks: a row of links under the card, from data, so separators, wrapping and
  * the accessible name are decided once.
  */
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { resolveLinkRenderer } from "@/lib/navigation"
@@ -20,7 +21,10 @@ export function AuthFooterLinks({
 	if (visible.length === 0) return null
 
 	return (
-		<nav aria-label={label} className={cx("auth-footer-links--component", styles.links, className)}>
+		<nav
+			aria-label={label}
+			className={cx("auth-footer-links--component", styles.links, textClassName({ size: "xs" }), className)}
+		>
 			{!!leadingIcon && (
 				<span aria-hidden className={styles.linksIcon}>
 					{leadingIcon}

@@ -14,7 +14,7 @@ function RecoverableVenuePicker({
 	error,
 }: SharedResourceSelectorProps<VenueHit, { error: string | null }>) {
 	return (
-		<Stack gap="md">
+		<Stack gap="sm">
 			{!!error && <Alert tone="destructive">{error}</Alert>}
 			<VenuePicker selected={selected} onSelect={onSelect} inModal />
 		</Stack>

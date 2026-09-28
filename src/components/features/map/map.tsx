@@ -35,6 +35,7 @@ import {
 	DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
 	DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/base/dropdown-menu"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useUIConfig } from "@/lib/ui-provider"
 
@@ -155,8 +156,8 @@ export function Map({
 				surface === "flush" ? styles.surfaceFlush : styles.surfaceFramed,
 				className,
 			)}
-			/* A length feeds the same `--map-h` property the named steps set. */
-			style={named ? style : ({ ...style, "--map-h": height } as CSSProperties)}
+			/* A length feeds the same `--_map-h` property the named steps set. */
+			style={named ? style : ({ ...style, "--_map-h": height } as CSSProperties)}
 			{...props}
 		>
 			<MapStringsContext.Provider value={copy}>
@@ -443,7 +444,7 @@ export function MapLayersControl({
 							{...triggerProps}
 							type="button"
 							tone="neutral"
-							buttonStyle="outline"
+							appearance="outline"
 							iconOnly
 							aria-label={strings.selectLayers}
 							title={strings.selectLayers}
@@ -696,7 +697,7 @@ export function MapTooltip({
 
 	return (
 		<LeafletTooltip
-			className={cx("map-tooltip--component", styles.tooltip, className)}
+			className={cx("map-tooltip--component", styles.tooltip, textClassName({ size: "xs" }), className)}
 			data-side={side}
 			direction={side}
 			offset={offset}
@@ -765,7 +766,7 @@ export function MapZoomControl({
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="outline"
+					appearance="outline"
 					iconOnly
 					aria-label={strings.zoomIn}
 					title={strings.zoomIn}
@@ -778,7 +779,7 @@ export function MapZoomControl({
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="outline"
+					appearance="outline"
 					iconOnly
 					aria-label={strings.zoomOut}
 					title={strings.zoomOut}
@@ -836,7 +837,7 @@ export function MapFullscreenControl({
 			<Button
 				type="button"
 				tone="neutral"
-				buttonStyle="outline"
+				appearance="outline"
 				iconOnly
 				onClick={() => map.toggleFullscreen()}
 				aria-label={label}
@@ -929,7 +930,7 @@ export function MapLocateControl({
 			<Button
 				type="button"
 				tone={hasLocation ? "primary" : "neutral"}
-				buttonStyle={hasLocation ? "solid" : "outline"}
+				appearance={hasLocation ? "solid" : "outline"}
 				iconOnly
 				onClick={hasLocation ? stop : start}
 				disabled={isLocating}
@@ -1123,7 +1124,7 @@ function MapDrawShapeButton<T extends Draw.Feature>({
 			title={label}
 			className={cx(styles.controlButton, className)}
 			tone={isActive ? "primary" : "neutral"}
-			buttonStyle={isActive ? "solid" : "outline"}
+			appearance={isActive ? "solid" : "outline"}
 			// Disabled while editing or deleting: that handler owns the map's clicks.
 			disabled={activeMode === "edit" || activeMode === "delete"}
 			onClick={() => setActiveMode(isActive ? null : drawMode)}
@@ -1306,7 +1307,7 @@ function MapDrawActionButton<T extends EditToolbar.Edit | EditToolbar.Delete>({
 			aria-label={drawAction === "edit" ? strings.editShapes : strings.removeShapes}
 			title={drawAction === "edit" ? strings.editShapes : strings.removeShapes}
 			tone={isActive ? "primary" : "neutral"}
-			buttonStyle={isActive ? "solid" : "outline"}
+			appearance={isActive ? "solid" : "outline"}
 			// Nothing drawn, nothing to edit or remove.
 			disabled={layersCount === 0}
 			onClick={() => {
@@ -1399,7 +1400,7 @@ export function MapDrawUndo({ className, ...props }: ComponentProps<"button">) {
 		<Button
 			type="button"
 			tone="neutral"
-			buttonStyle="outline"
+			appearance="outline"
 			iconOnly
 			aria-label={label}
 			title={label}

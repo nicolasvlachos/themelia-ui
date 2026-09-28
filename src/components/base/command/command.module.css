@@ -9,7 +9,8 @@
 	height: 100%;
 	flex-direction: column;
 	overflow: hidden;
-	padding: var(--space-md);
+	/* The container radius less the row radius, so the rows' corners nest in the palette's. */
+	padding: calc(var(--radius) - var(--radius-sm));
 	border-radius: var(--radius);
 	/* Inline on a page the palette needs its own edge; inside a popover or dialog it drops it. */
 	border: var(--border-width) solid var(--border);
@@ -27,31 +28,32 @@
 	 * No side or top inset: the root's padding already places the field on the rows' edge,
 	 * and --radius-sm is the root radius less that inset.
 	 */
-	padding: 0 0 var(--space-md);
+	padding: 0 0 var(--gap-sm);
 }
 
-/* Quieter than a standalone input: tinted fill, no border or shadow; the palette frames it. */
+/* Quieter than a standalone input: a tinted well with its edge in the same tint; the palette frames it. */
 .inputGroup {
-	height: var(--control-h-sm);
+	height: var(--control-height-sm);
 	border-radius: var(--radius-sm);
-	border-color: var(--input-30);
-	background-color: var(--input-30);
+	border-color: color-mix(in oklab, var(--input) var(--tint-strong), transparent);
+	background-color: color-mix(in oklab, var(--input) var(--tint-strong), transparent);
 	box-shadow: none;
 }
 
-/* Focus firms the edge as on a field, without the halo: the palette already frames it. */
+/* Focus firms the edge and draws the ring over it, as on a field. */
 .inputGroup:has(.input:focus-visible) {
-	border-color: var(--focus-ring-color);
+	border-color: var(--ring);
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * -1);
 }
 
 .inputGroup [data-slot="input-group-addon"] {
-	padding-inline-start: var(--control-px-2xs);
+	padding-inline-start: var(--padding-sm);
 }
 
+/* The group draws the ring (above), so the field itself does not. */
 .input {
 	width: 100%;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	outline: none;
 }
 
@@ -62,8 +64,8 @@
 
 .searchIcon {
 	flex-shrink: 0;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	opacity: 0.5;
 }
 
@@ -75,8 +77,7 @@
 	max-height: 18rem;
 	overflow-x: hidden;
 	overflow-y: auto;
-	scroll-padding-block: var(--space-md);
-	outline: none;
+	scroll-padding-block: var(--padding-sm);
 	scrollbar-width: none;
 }
 
@@ -85,10 +86,8 @@
 }
 
 .empty {
-	padding-block: var(--space-2xl);
+	padding-block: var(--padding);
 	text-align: center;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 	color: var(--muted-foreground);
 }
 
@@ -106,36 +105,29 @@
 
 /* The heading takes the row inset, so it starts where its rows start. */
 .group [cmdk-group-heading] {
-	padding-inline: var(--row-px);
-	padding-block: var(--space-sm);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-medium);
-	color: var(--muted-foreground);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 }
 
 /* Bleeds into the palette's padding to span the full surface. */
 .separator {
 	height: var(--border-width);
 	width: auto;
-	margin-block: var(--space-xs);
-	margin-inline: calc(var(--space-md) * -1);
-	background-color: var(--border-60);
+	margin-block: calc(var(--gap-sm) / 2);
+	margin-inline: calc((var(--radius) - var(--radius-sm)) * -1);
+	background-color: var(--border);
 }
 
+/* A row is at least an icon with the small padding above and below it. */
 .item {
 	position: relative;
 	display: flex;
 	cursor: default;
 	align-items: center;
-	gap: var(--space-md);
-	min-height: var(--menu-row-min-h);
-	padding-inline: var(--row-px);
-	padding-block: var(--menu-row-py);
+	gap: var(--gap-sm);
+	min-height: calc(var(--icon-size) + var(--padding-sm) * 2);
+	padding-inline: var(--padding-sm);
+	padding-block: calc(var(--padding-sm) / 2);
 	border-radius: var(--radius-sm);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	outline: none;
 	user-select: none;
 }
 
@@ -145,8 +137,8 @@
 }
 
 .item svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* The same highlight as every other listbox and menu row. */
@@ -159,8 +151,9 @@
 	color: var(--accent-foreground);
 }
 
+/* cmdk neither selects a disabled row on hover nor lands on it from the keys. */
 .item[data-disabled="true"] {
-	pointer-events: none;
+	cursor: not-allowed;
 	opacity: var(--disabled-opacity);
 }
 
@@ -177,9 +170,6 @@
 
 .shortcut {
 	margin-inline-start: auto;
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	letter-spacing: var(--tracking-widest);
 	color: var(--muted-foreground);
 }
 

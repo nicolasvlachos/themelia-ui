@@ -1,0 +1,12 @@
+/*
+ * The focus rule: one outline for every focusable element, drawn by the browser, so it follows
+ * the element's corners, survives forced-colours mode, and never shifts layout. Zero
+ * specificity in `base`, so a component that must draw it inside its box (under a clipping
+ * ancestor) sets a negative `outline-offset` on its own rule.
+ */
+@layer base {
+	:where(:focus-visible) {
+		outline: calc(var(--border-width) * 2) solid var(--ring);
+		outline-offset: calc(var(--border-width) * 2);
+	}
+}

@@ -9,7 +9,7 @@
 import { useEffect, useMemo, useRef } from "react"
 
 import { TextButton } from "@/components/base/buttons"
-import { Text } from "@/components/base/typography"
+import { Text, textClassName } from "@/components/base/typography"
 import { LoadingState } from "@/components/base/feedback"
 import { ScrollArea, VisuallyHidden } from "@/components/base/display"
 import { cx } from "@/lib/cx"
@@ -139,7 +139,7 @@ export function GlobalSearch<TGroup extends string = string>({
 					<div className={styles.results}>
 						{Object.entries(search.visibleGrouped).map(([groupKey, items]) => (
 							<div key={groupKey} className={styles.group}>
-								<div className={styles.groupHeader}>
+								<div className={cx(styles.groupHeader, textClassName({ size: "xs" }))}>
 									{/* A section label in the menu-label role, quieter than the result titles. */}
 									<Text tag="span" size="xs" type="secondary" weight="medium">
 										{groupLabels?.[groupKey as TGroup] ?? groupKey}

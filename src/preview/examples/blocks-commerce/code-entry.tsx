@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { CodeEntry } from "themelia-ui/admin/patterns/commerce"
+import { CodeEntry } from "themelia-ui/blocks/admin/commerce"
 import { AdaptiveGrid, GridCell } from "themelia-ui/base/structure"
 
 function CodeEntryDemo({ gift = false }: { gift?: boolean }) {
@@ -29,7 +29,7 @@ function CodeEntryDemo({ gift = false }: { gift?: boolean }) {
 export default function CodeEntryExample() {
 	/* Two instances: empty on the left, applied on the right, covering both kinds. */
 	return (
-		<AdaptiveGrid minColumnWidth="lg" gap="xl">
+		<AdaptiveGrid minColumnWidth="20rem">
 			<GridCell>
 				<CodeEntryDemo />
 			</GridCell>

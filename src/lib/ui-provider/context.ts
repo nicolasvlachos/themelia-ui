@@ -47,7 +47,6 @@ export function mergeUIConfig(parent: ResolvedUIConfig, config: UIConfig = {}): 
 			...parent.theme,
 			...config.theme,
 			colors: mergeRecord(parent.theme?.colors, config.theme?.colors),
-			palette: mergeRecord(parent.theme?.palette, config.theme?.palette),
 			vars: mergeRecord(parent.theme?.vars, config.theme?.vars),
 		},
 		typography: {

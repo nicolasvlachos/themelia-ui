@@ -17,9 +17,9 @@
 	container-name: page;
 }
 
+/* It fills a parent that clips, so the outline is drawn inside. */
 .pageViewport:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring-inset);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /* Container: the single owner of content width and the inline gutter. */
@@ -28,38 +28,43 @@
 	margin-inline: auto;
 }
 
-.maxSm { max-width: var(--content-width-sm); }
-.maxMd { max-width: var(--content-width-md); }
-.maxLg { max-width: var(--content-width-lg); }
-.maxXl { max-width: var(--content-width-xl); }
-.max2xl { max-width: var(--content-width-2xl); }
+/* The reading measures; `lg` is the theme's `--content-width`. */
+.maxSm { max-width: 40rem; }
+.maxMd { max-width: 48rem; }
+.maxLg { max-width: var(--content-width); }
+.maxXl { max-width: 80rem; }
+.max2xl { max-width: 96rem; }
 .maxFull { max-width: none; }
 
 .gutterNone { padding-inline: 0; }
-/* The inline gutter a Container reserves at each step. */
-.gutterSm { padding-inline: var(--space-xl); }
-.gutterMd { padding-inline: var(--space-2xl); }
-.gutterLg { padding-inline: calc(var(--space-xl) * 2); }
+/* The inline gutter a Container reserves at each step: the container inset, one and a half times it, twice it. */
+.gutterSm { padding-inline: var(--padding); }
+.gutterMd { padding-inline: calc(var(--padding) * 1.5); }
+.gutterLg { padding-inline: calc(var(--padding) * 2); }
 
-/* Section: the vertical rhythm between the groups inside one page. */
+/* Section: the vertical rhythm between the groups inside one page, twice the gap between groups. */
 .section {
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--space-xl) * 2);
+	gap: calc(var(--gap) * 2);
 	min-width: 0;
 }
 
-/* TwoColumnLayout: main and aside in a stable DOM order; the grid does any visual reordering. */
+/*
+ * TwoColumnLayout: main and aside in a stable DOM order; the grid does any visual reordering.
+ * The columns sit a section's rhythm apart; the aside has a floor before they stack.
+ */
 .twoColumn {
+	--_column-gap: calc(var(--gap) * 2);
 	display: grid;
 	min-width: 0;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--layout-column-gap);
+	gap: var(--_column-gap);
 }
 
 @media (--bp-lg) {
 	.twoColumn {
-		grid-template-columns: minmax(0, 2fr) minmax(var(--layout-aside-min), 1fr);
+		grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
 	}
 }
 
@@ -69,7 +74,7 @@
  */
 @media (--bp-lg) {
 	.twoColumnAsideStart {
-		grid-template-columns: minmax(var(--layout-aside-min), 1fr) minmax(0, 2fr);
+		grid-template-columns: minmax(18rem, 1fr) minmax(0, 2fr);
 		grid-auto-flow: row dense;
 	}
 
@@ -98,7 +103,7 @@
 @media (--bp-lg) {
 	.twoColumnAsideSticky {
 		position: sticky;
-		top: var(--layout-column-gap);
+		top: var(--_column-gap);
 		align-self: start;
 	}
 }

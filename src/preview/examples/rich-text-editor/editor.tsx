@@ -21,14 +21,14 @@ export default function Editor() {
 				maxLength={280}
 			/>
 
-			<Stack gap="xs">
+			<Stack gap="sm">
 				<DisplayLabel>Emitted HTML</DisplayLabel>
-				<Text size="xs" type="secondary" className={styles.source}>
+				<Text size="xs" type="secondary" mono className={styles.source}>
 					{body || "(empty)"}
 				</Text>
 			</Stack>
 
-			<Stack gap="xs">
+			<Stack gap="sm">
 				<DisplayLabel>Rendered through RichText</DisplayLabel>
 				<RichText html={body} />
 			</Stack>

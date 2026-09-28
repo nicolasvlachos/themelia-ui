@@ -16,7 +16,7 @@ import type {
 	OverlayActionStrings,
 } from "./overlays.strings"
 import type {
-	OverlayButtonStyle, OverlayButtonTone, OverlayTone,
+	OverlayButtonAppearance, OverlayButtonTone, OverlayTone,
 } from "./overlays.types"
 import styles from "./overlays.module.css"
 
@@ -71,7 +71,7 @@ export interface OverlayFooterActionsProps {
 	showCancel: boolean
 	showConfirm: boolean
 	confirmTone: OverlayButtonTone
-	confirmStyle: OverlayButtonStyle
+	confirmAppearance: OverlayButtonAppearance
 	busy: boolean
 	formId?: string
 	onCancel: () => void
@@ -83,7 +83,7 @@ export function OverlayFooterActions({
 	showCancel,
 	showConfirm,
 	confirmTone,
-	confirmStyle,
+	confirmAppearance,
 	busy,
 	formId,
 	onCancel,
@@ -98,7 +98,7 @@ export function OverlayFooterActions({
 				<Button
 					type="button"
 					tone="neutral"
-					buttonStyle="outline"
+					appearance="outline"
 					// Disabled while pending so cancel cannot race the in-flight confirm.
 					disabled={busy}
 					onClick={onCancel}
@@ -112,7 +112,7 @@ export function OverlayFooterActions({
 					type={formId ? "submit" : "button"}
 					form={formId}
 					tone={confirmTone}
-					buttonStyle={confirmStyle}
+					appearance={confirmAppearance}
 					loading={busy}
 					onClick={formId ? undefined : () => void onConfirm()}
 				>

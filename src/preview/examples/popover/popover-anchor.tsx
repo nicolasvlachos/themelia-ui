@@ -8,13 +8,13 @@ import { Text } from "themelia-ui/base/typography"
 export default function PopoverAnchorExample() {
 	return (
 		<Popover>
-			<Stack direction="horizontal" gap="2xl" align="center">
+			<Stack direction="horizontal" align="center">
 				<PopoverAnchor>
 					<Text size="xs" type="secondary">
 						<CalendarIcon aria-hidden="true" /> 14–28 August
 					</Text>
 				</PopoverAnchor>
-				<PopoverTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<PopoverTrigger render={<Button tone="neutral" appearance="outline" />}>
 					Change the range
 				</PopoverTrigger>
 			</Stack>

@@ -5,6 +5,7 @@
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./toggle.module.css"
@@ -16,7 +17,7 @@ export interface ToggleProps
 	 * Sunk when engaged, or outlined. Match whatever sits beside it in the row — `outline`
 	 * for a lone control, `ghost` inside a group.
 	 */
-	variant?: "ghost" | "outline"
+	appearance?: "ghost" | "outline"
 }
 
 /**
@@ -25,12 +26,12 @@ export interface ToggleProps
  * with the next one. Inside a `ToggleGroup`, `value` names the toggle, and the group reads it
  * into its own value; outside a group it is unused.
  */
-export function Toggle({ variant = "ghost", className, ...props }: ToggleProps) {
+export function Toggle({ appearance = "ghost", className, ...props }: ToggleProps) {
 	return (
 		<TogglePrimitive
 			data-slot="toggle"
-			data-variant={variant}
-			className={cx("toggle--component", styles.toggle, className)}
+			data-appearance={appearance}
+			className={cx("toggle--component", styles.toggle, textClassName({ size: "sm", weight: "medium" }), className)}
 			{...props}
 		/>
 	)

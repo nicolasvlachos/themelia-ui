@@ -11,7 +11,7 @@ export default function CollapsibleExample() {
 				</Text>
 			</CollapsibleTrigger>
 			<CollapsibleContent>
-				<Stack gap="sm" style={{ paddingTop: "var(--space-md)" }}>
+				<Stack gap="sm" style={{ paddingTop: "var(--gap-sm)" }}>
 					<Text type="secondary" size="sm">
 						Content that expands to its natural height.
 					</Text>

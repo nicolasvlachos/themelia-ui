@@ -13,11 +13,11 @@ export default function HoverCardExample() {
 					@jane
 				</HoverCardTrigger>
 				<HoverCardContent>
-					<Stack direction="horizontal" gap="md" align="start">
+					<Stack direction="horizontal" gap="sm" align="start">
 						<Avatar>
 							<AvatarFallback>JM</AvatarFallback>
 						</Avatar>
-						<Stack gap="2xs">
+						<Stack gap="sm">
 							<Text weight="medium">Jane McDonald</Text>
 							<Text size="xs" type="secondary">Billing · joined March 2024</Text>
 						</Stack>

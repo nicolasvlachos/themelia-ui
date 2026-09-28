@@ -1,0 +1,86 @@
+/*
+ * Colour. Every value is a literal, declared once at `:root`, and every colour is
+ * `light-dark(light, dark)`: the used `color-scheme` of the element that paints picks the half.
+ * `.light`, `.dark` and `[data-theme]` set only `color-scheme`, so a dark island inside a light
+ * page, and a consumer's `:root { --primary: … }`, reach every component without re-declaring
+ * anything below `:root`.
+ *
+ * The names are shadcn's where shadcn has one, so a shadcn theme drops in.
+ */
+:root {
+	color-scheme: light dark;
+
+	/* Surfaces and ink. */
+	--background: light-dark(oklch(1 0 0), oklch(0.205 0 0)); /* The page and the app shell. */
+	--foreground: light-dark(oklch(0.28 0 0), oklch(0.985 0 0)); /* Primary text and icons. */
+	--card: light-dark(oklch(1 0 0), oklch(0.25 0 0)); /* Framed regions: cards, table frames, panels. */
+	--card-foreground: light-dark(oklch(0.28 0 0), oklch(0.985 0 0));
+	--popover: light-dark(oklch(1 0 0), oklch(0.28 0 0)); /* Anchored popups, menus, palettes, toasts. */
+	--popover-foreground: light-dark(oklch(0.28 0 0), oklch(0.985 0 0));
+	--muted: light-dark(oklch(0.97 0 0), oklch(0.23 0 0)); /* Wells and placeholders. */
+	--muted-foreground: light-dark(oklch(0.5 0 0), oklch(0.708 0 0)); /* Supporting text. */
+	--accent: light-dark(oklch(0.97 0 0), oklch(0.33 0 0)); /* The one hover and current fill. */
+	--accent-foreground: light-dark(oklch(0.205 0 0), oklch(0.985 0 0));
+	--border: light-dark(oklch(0.922 0 0), oklch(1 0 0 / 10%)); /* Every divider and frame. */
+	--input: light-dark(oklch(0.73 0 0), oklch(1 0 0 / 28%)); /* Control frames. */
+	--ring: light-dark(oklch(0.58 0 0), oklch(0.62 0 0)); /* Focus. */
+
+	/* Tones: a solid fill and the text on it. */
+	--primary: light-dark(oklch(0.45 0.124 167.35), oklch(0.7 0.13 167.35));
+	--primary-foreground: light-dark(oklch(0.985 0 0), oklch(0.18 0.03 167.35));
+	--secondary: light-dark(oklch(0.97 0 0), oklch(0.25 0 0));
+	--secondary-foreground: light-dark(oklch(0.205 0 0), oklch(0.985 0 0));
+	--destructive: light-dark(oklch(0.5 0.245 27.325), oklch(0.74 0.158 22.216));
+	--destructive-foreground: light-dark(oklch(0.99 0 0), oklch(0.18 0.05 22));
+	--success: light-dark(oklch(0.4 0.16 145), oklch(0.76 0.16 145));
+	--success-foreground: light-dark(oklch(0.985 0 0), oklch(0.18 0.05 145));
+	--warning: light-dark(oklch(0.72 0.16 90), oklch(0.82 0.16 90));
+	--warning-foreground: light-dark(oklch(0.2 0.05 80), oklch(0.18 0.05 80));
+	--info: light-dark(oklch(0.45 0.214 276.966), oklch(0.72 0.14 250));
+	--info-foreground: light-dark(oklch(0.99 0 0), oklch(0.18 0.05 250));
+	--link: light-dark(oklch(0.462 0.1776 259.13), oklch(0.72 0.12 259.13));
+
+	/*
+	 * Two tint strengths, applied at the use site:
+	 * `color-mix(in oklab, var(--tone) var(--tint), transparent)`.
+	 */
+	--tint: 10%; /* Soft fills: a selected row, a soft badge, an alert's wash. */
+	--tint-strong: 30%; /* Tinted lines and edges. */
+
+	/* Categorical chart series. Hue is the series' identity; only lightness moves by mode. */
+	--chart-1: light-dark(oklch(0.56 0.11 167), oklch(0.74 0.13 167));
+	--chart-2: light-dark(oklch(0.56 0.11 230), oklch(0.72 0.14 230));
+	--chart-3: light-dark(oklch(0.56 0.17 285), oklch(0.72 0.15 285));
+	--chart-4: light-dark(oklch(0.58 0.16 330), oklch(0.74 0.15 330));
+	--chart-5: light-dark(oklch(0.6 0.14 60), oklch(0.78 0.14 60));
+
+	/* The application sidebar. */
+	--sidebar: light-dark(oklch(0.96 0 0), oklch(0.16 0 0));
+	--sidebar-foreground: light-dark(oklch(0.28 0 0), oklch(0.985 0 0));
+	--sidebar-accent: light-dark(oklch(0.98 0 0), oklch(0.28 0 0));
+	--sidebar-accent-foreground: light-dark(oklch(0.205 0 0), oklch(0.985 0 0));
+	--sidebar-border: light-dark(oklch(0.922 0 0), oklch(1 0 0 / 10%));
+	--sidebar-ring: light-dark(oklch(0.58 0 0), oklch(0.62 0 0));
+
+	/* The scrim behind a modal. */
+	--overlay-backdrop: oklch(0 0 0 / 0.5);
+}
+
+.light,
+[data-theme="light"] {
+	color-scheme: light;
+}
+
+.dark,
+[data-theme="dark"] {
+	color-scheme: dark;
+}
+
+/*
+ * `--surface-ground` is the ground a surface painted, for a sticky cell or a fade that must
+ * match it. A colour island resets it, so a reader inside falls back to the island's own
+ * `--background` instead of a ground resolved in the other mode.
+ */
+:where([data-theme], .light, .dark) {
+	--surface-ground: initial;
+}

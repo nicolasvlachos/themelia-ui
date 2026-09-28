@@ -18,9 +18,9 @@ const ILLUSTRATIONS = [
 
 export default function EmptyIllustrations() {
 	return (
-		<Grid columns={{ base: 1, sm: 2, lg: 3 }} gap="2xl">
+		<Grid columns={{ base: 1, sm: 2, lg: 3 }}>
 			{ILLUSTRATIONS.map(({ name, Component, use }) => (
-				<Stack key={name} gap="md" align="center">
+				<Stack key={name} gap="sm" align="center">
 					<Component />
 					<Stack gap="none" align="center">
 						<Text size="sm" weight="medium">{name}</Text>

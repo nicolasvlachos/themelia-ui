@@ -14,7 +14,7 @@ const DEMO_BOX: React.CSSProperties = {
 	transform: "translate(0)",
 	minHeight: "12rem",
 	width: "100%",
-	padding: "var(--space-lg)",
+	padding: "var(--padding)",
 	border: "var(--border-width) dashed var(--border)",
 	borderRadius: "var(--radius)",
 }
@@ -23,9 +23,9 @@ export default function Floating() {
 	const [selected, setSelected] = useState(3)
 
 	return (
-		<Stack gap="md" style={{ width: "100%" }}>
+		<Stack gap="sm" style={{ width: "100%" }}>
 			<Stack direction="horizontal" gap="sm" align="center">
-				<Button type="button" tone="neutral" buttonStyle="outline" onClick={() => setSelected((n) => n + 1)}>
+				<Button type="button" tone="neutral" appearance="outline" onClick={() => setSelected((n) => n + 1)}>
 					Select one more
 				</Button>
 				<Text size="sm" type="secondary">
@@ -37,10 +37,10 @@ export default function Floating() {
 					The bar below is contained to this box for the demo. In an app it docks to the viewport.
 				</Text>
 				<BatchActionBar selectedCount={selected} totalCount={250} onClear={() => setSelected(0)}>
-					<Button type="button" tone="neutral" buttonStyle="ghost">
+					<Button type="button" tone="neutral" appearance="ghost">
 						Export
 					</Button>
-					<Button type="button" tone="destructive" buttonStyle="ghost">
+					<Button type="button" tone="destructive" appearance="ghost">
 						Delete
 					</Button>
 				</BatchActionBar>

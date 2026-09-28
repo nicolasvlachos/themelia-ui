@@ -1,29 +1,15 @@
 /**
  * ProgressCircle — a determinate ring with the reading inside it, for tiles, scores and
  * grids of small measures. A conic gradient masked into a ring (one sweep, no
- * circumference maths); size comes from `--progress-circle`, with no size prop.
+ * circumference maths); one fixed size, with no size prop.
  */
 import * as React from "react"
 
-import { cvm } from "@/lib/cvm"
 import { cx } from "@/lib/cx"
 
 import type { ProgressTone } from "./progress"
 import { normalizeProgressRange } from "./progress-range"
 import styles from "./progress-circle.module.css"
-
-const circleVariants = cvm(styles.root, {
-	variants: {
-		tone: {
-			primary: undefined,
-			success: styles.toneSuccess,
-			warning: styles.toneWarning,
-			destructive: styles.toneDestructive,
-			info: styles.toneInfo,
-		},
-	},
-	defaultVariants: { tone: "primary" },
-})
 
 export interface ProgressCircleProps extends React.ComponentProps<"div"> {
 	/**
@@ -50,12 +36,12 @@ export interface ProgressCircleProps extends React.ComponentProps<"div"> {
 
 /**
  * A determinate ring with the reading inside it, for tiles, scores and grids of small
- * measures. Its size comes from `--progress-circle`; there is no size prop.
+ * measures. It has one size, big enough for a percentage in the hole; there is no size prop.
  */
 export function ProgressCircle({
 	value,
 	max = 100,
-	tone,
+	tone = "primary",
 	label,
 	children,
 	className,
@@ -67,14 +53,15 @@ export function ProgressCircle({
 	return (
 		<div
 			data-slot="progress-circle"
+			data-tone={tone}
 			role="progressbar"
 			aria-label={label}
 			aria-valuemin={0}
 			aria-valuemax={range.max}
 			aria-valuenow={range.value}
-			className={cx("progress-circle--component", circleVariants({ tone }), className)}
+			className={cx("progress-circle--component", styles.root, className)}
 			/* Data drives the sweep. */
-			style={{ "--progress-sweep": `${range.percent}%`, ...style } as React.CSSProperties}
+			style={{ "--_progress-sweep": `${range.percent}%`, ...style } as React.CSSProperties}
 			{...props}
 		>
 			<span className={styles.inner}>{children}</span>

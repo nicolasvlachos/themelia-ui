@@ -12,7 +12,7 @@ import { cx } from "@/lib/cx"
 import {
 	defaultEventCalendarEventCardStrings, type EventCalendarEventCardStrings,
 } from "./event-calendar.strings"
-import { resolveCategoryColorToken, type EventCalendarEventCardProps } from "./event-calendar.types"
+import { resolveCategoryTone, type EventCalendarEventCardProps } from "./event-calendar.types"
 import styles from "./event-calendar.module.css"
 
 export interface EventCalendarEventCardPropsWithStrings extends EventCalendarEventCardProps {
@@ -50,7 +50,7 @@ export function EventCalendarEventCard({
 						<span className={styles.cardCategory}>
 							<span
 								aria-hidden
-								data-token={resolveCategoryColorToken(category)}
+								data-tone={resolveCategoryTone(category)}
 								className={styles.dot}
 							/>
 							<Text tag="span" size="xs" weight="medium">{category.label}</Text>

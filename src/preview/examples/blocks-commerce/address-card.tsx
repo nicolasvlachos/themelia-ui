@@ -1,4 +1,4 @@
-import { AddressCard } from "themelia-ui/admin/patterns/commerce"
+import { AddressCard } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 import { toast } from "themelia-ui/base/toaster"
 

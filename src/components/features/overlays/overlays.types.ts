@@ -5,7 +5,8 @@
  */
 import type { CSSProperties, ReactNode, RefObject } from "react"
 
-import type { ButtonStyle } from "@/components/base/buttons"
+import type { ButtonAppearance } from "@/components/base/buttons"
+import type { OverlayInset, OverlayLength, OverlaySize } from "@/components/base/overlay"
 import type { SheetSide } from "@/components/base/sheet"
 import type { SemanticTone } from "@/lib/component-vocabulary"
 
@@ -19,7 +20,7 @@ export type OverlayTone = Extract<
 
 export type OverlayButtonTone = SemanticTone
 /** Ghost is excluded: a footer's confirm must look like a commitment. */
-export type OverlayButtonStyle = Exclude<ButtonStyle, "ghost">
+export type OverlayButtonAppearance = Exclude<ButtonAppearance, "ghost">
 
 export interface OverlayBaseProps {
 	/** Controlled: hands the open state to the caller. Supply this OR `trigger`, not both. */
@@ -81,7 +82,7 @@ export interface OverlayActionProps {
 	 */
 	closeOnAsyncComplete?: boolean
 	confirmTone?: OverlayButtonTone
-	confirmStyle?: OverlayButtonStyle
+	confirmAppearance?: OverlayButtonAppearance
 	/** Forces the pending presentation, for confirm work owned outside the overlay. */
 	loading?: boolean
 	/**
@@ -137,11 +138,11 @@ export interface ActionSheetProps
 		OverlayActionProps,
 		OverlayEmphasisProps {
 	side?: SheetSide
-	/** Cross-axis extent: a side panel's width. */
-	size?: string
+	/** Cross-axis extent: a side panel's width, `default`, `sm`, `full` or a CSS length. */
+	size?: OverlaySize
 	/** How far it runs along its edge; `inset` sets the gap from the viewport. See base/sheet. */
-	length?: string
-	inset?: boolean | string
+	length?: OverlayLength
+	inset?: OverlayInset
 	showFooter?: boolean
 	/**
 	 * How much of the page it takes hostage. `modal` traps focus, locks scroll and makes the page

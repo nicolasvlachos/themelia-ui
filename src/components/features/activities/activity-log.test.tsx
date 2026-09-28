@@ -46,13 +46,13 @@ describe("ActivityFeed state slots", () => {
 	it("keeps loaded details mounted while refreshing and offers recovery after failure", () => {
 		const activities = [{ id: "one", event: "created", headline: "Created record", details: <Input aria-label="Detail draft" />, defaultExpanded: true }]
 		const onRetry = vi.fn()
-		const { rerender } = render(<ActivityFeed activities={activities} density="rich" />)
+		const { rerender } = render(<ActivityFeed activities={activities} variant="rich" />)
 		fireEvent.change(screen.getByRole("textbox", { name: "Detail draft" }), { target: { value: "Keep detail" } })
-		rerender(<ActivityFeed activities={activities} density="rich" loading />)
+		rerender(<ActivityFeed activities={activities} variant="rich" loading />)
 		expect(screen.getByText("Created record")).toBeInTheDocument()
 		expect(screen.getByRole("textbox", { name: "Detail draft" })).toHaveValue("Keep detail")
 		expect(screen.getByRole("status")).toHaveTextContent("Updating activity")
-		rerender(<ActivityFeed activities={activities} density="rich" error="Connection lost" onRetry={onRetry} />)
+		rerender(<ActivityFeed activities={activities} variant="rich" error="Connection lost" onRetry={onRetry} />)
 		expect(screen.getByRole("alert")).toHaveTextContent("Connection lost")
 		expect(screen.getByRole("textbox", { name: "Detail draft" })).toHaveValue("Keep detail")
 		fireEvent.click(screen.getByRole("button", { name: "Try again" }))

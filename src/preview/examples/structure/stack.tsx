@@ -9,7 +9,7 @@ export default function StackExample() {
 				<Box>vertical, gap sm</Box>
 				<Box>second</Box>
 			</Stack>
-			<Stack direction="horizontal" gap="md" justify="between" align="center">
+			<Stack direction="horizontal" gap="sm" justify="between" align="center">
 				<Box>horizontal</Box>
 				<Box>justify between</Box>
 				<Box>align center</Box>

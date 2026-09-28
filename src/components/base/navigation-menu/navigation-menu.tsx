@@ -5,6 +5,7 @@
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu"
 import { ChevronDownIcon } from "lucide-react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
 
@@ -90,7 +91,7 @@ export function NavigationMenuTrigger({ className, ...props }: NavigationMenuPri
 	return (
 		<NavigationMenuPrimitive.Trigger
 			data-slot="navigation-menu-trigger"
-			className={cx("navigation-menu-trigger--component", styles.trigger, className)}
+			className={cx("navigation-menu-trigger--component", styles.trigger, textClassName({ size: "sm", weight: "medium" }), className)}
 			{...props}
 		/>
 	)
@@ -104,7 +105,7 @@ export function NavigationMenuLink({ className, ...props }: NavigationMenuPrimit
 	return (
 		<NavigationMenuPrimitive.Link
 			data-slot="navigation-menu-link"
-			className={cx("navigation-menu-link--component", styles.link, className)}
+			className={cx("navigation-menu-link--component", styles.link, textClassName({ size: "sm", weight: "medium" }), className)}
 			{...props}
 		/>
 	)

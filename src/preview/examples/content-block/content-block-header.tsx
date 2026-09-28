@@ -8,14 +8,14 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function ContentBlockHeader() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<ContentBlock
 				surface="card"
 				icon={<TruckIcon aria-hidden="true" />}
 				title="Shipment"
 				titleSuffix={<Badge tone="info">In transit</Badge>}
 				headerEnd={
-					<Button tone="neutral" buttonStyle="ghost">
+					<Button tone="neutral" appearance="ghost">
 						Track
 					</Button>
 				}

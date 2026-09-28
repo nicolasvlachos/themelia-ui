@@ -157,16 +157,16 @@ function OptionContent({ option }: { option: SelectOption }) {
 					tag="span"
 					size="inherit"
 					lineHeight="tight"
-					weight={option.description ? "medium" : "regular"}
+					weight={option.description ? "medium" : "normal"}
 					truncate
 					className="select--option-label"
 				>
 					{option.label}
 				</Text>
 				{!!option.description && (
-					<span className={cx("select--option-description", styles.optionDescription)}>
+					<Text tag="span" size="xs" type="secondary" className={cx("select--option-description", styles.optionDescription)}>
 						{option.description}
-					</span>
+					</Text>
 				)}
 			</span>
 		</>

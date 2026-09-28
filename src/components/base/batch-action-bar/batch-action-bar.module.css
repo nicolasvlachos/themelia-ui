@@ -3,8 +3,8 @@
  * `inline` sits in flow for panels that scroll their own body.
  */
 /*
- * Both placements share geometry: the container radius with a menu's inset, so the buttons
- * sit concentric in it (`--radius` less `--space-md` is `--radius-sm`). Floating adds only
+ * Both placements share geometry: the container radius with an inset of `--radius` less
+ * `--radius-sm`, so the buttons (`--radius-sm`) sit concentric in it. Floating adds only
  * position, a raised ground and a shadow.
  */
 .root {
@@ -12,19 +12,17 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
-	padding: var(--space-md);
-	border: var(--border-width) solid var(--border-60);
+	padding: calc(var(--radius) - var(--radius-sm));
+	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 }
 
 .summary {
 	min-width: 0;
-	padding-inline: var(--space-sm);
-	/* Tabular, so the changing count doesn't resize the centred bar. */
-	font-variant-numeric: tabular-nums;
+	padding-inline: var(--padding-sm);
 }
 
 .actions {
@@ -35,7 +33,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	/* A menu's tight rhythm: verbs in one strip. */
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 /*
@@ -46,7 +44,7 @@
 	content: "";
 	align-self: stretch;
 	width: var(--border-width);
-	margin-block: var(--space-xs);
+	margin-block: calc(var(--gap-sm) / 2);
 	background-color: var(--border);
 }
 
@@ -64,7 +62,7 @@
 	position: fixed;
 	/* Above sticky headers, below the menus its own actions open. */
 	z-index: var(--z-docked);
-	bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+	bottom: calc(var(--padding) + env(safe-area-inset-bottom, 0px));
 	left: 50%;
 	translate: -50% 0;
 	width: max-content;
@@ -72,15 +70,15 @@
 	 * 100%, not 100vw: a fixed box resolves against a transformed ancestor when docked in one,
 	 * and 100vw would overhang it.
 	 */
-	max-width: calc(100% - var(--surface-px) * 2);
+	max-width: calc(100% - var(--padding) * 2);
 	/* Raised ground, edge and shadow, so the dock doesn't read as part of the list below it. */
 	background-color: var(--popover);
 	color: var(--popover-foreground);
 	border-color: var(--border);
 	box-shadow: var(--shadow-lg);
 	transition:
-		opacity var(--duration-fast) var(--ease-out),
-		translate var(--duration-fast) var(--ease-out);
+		opacity var(--duration-fast) var(--ease),
+		translate var(--duration-fast) var(--ease);
 }
 
 /*
@@ -90,7 +88,7 @@
 @starting-style {
 	.floating {
 		opacity: 0;
-		translate: -50% round(calc(0.75rem * var(--density-scale, var(--scale))), 1px);
+		translate: -50% 0.75rem;
 	}
 }
 

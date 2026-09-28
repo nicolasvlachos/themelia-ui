@@ -12,6 +12,7 @@ import {
 	MutedValue, Name, Number as NumberPrimitive, Percent, Phone, RelativeTime,
 	SecondaryValue, Time, Value, type FileSizeUnit, type MoneyUnit,
 } from "@/components/primitives"
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { UIConfigContext } from "@/lib/ui-provider"
 
@@ -196,7 +197,7 @@ export function CellStack({ values, className }: CellStackProps) {
 	if (entries.length === 0) return <EmptyValue />
 
 	return (
-		<span className={cx("cell-stack--component", styles.cellStack, className)}>
+		<span className={cx("cell-stack--component", styles.cellStack, textClassName({ size: "inherit", lineHeight: "tight" }), className)}>
 			{entries.map((entry, index) => {
 				const key = `cell-${index}`
 

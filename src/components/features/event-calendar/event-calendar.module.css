@@ -1,9 +1,9 @@
 /*
  * EventCalendar.
  *
- * A category's colour token maps once, via `[data-token]`, to `--cal-fill`, `--cal-soft`,
- * `--cal-line` and `--cal-hover`; dot, chip, border, hover and legend swatch all read them.
- * A new token is one line.
+ * A category's colour token reaches its marks as `data-tone` (`amber` and `yellow` name the
+ * warning tone), so dot, chip, border, hover and legend swatch all read the shared tone rule
+ * in styles/tone.css: `--tone` for fills and lines, `--tone-ink` for marks.
  */
 
 .root {
@@ -11,7 +11,7 @@
 	container-name: event-calendar;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -19,39 +19,25 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: var(--space-2xl);
+	padding: var(--padding);
 }
 
-/* ── The token map ─────────────────────────────────────────────────────────────── */
+/* ── Category marks ────────────────────────────────────────────────────────────── */
 
-/*
- * `--cal-fill` is the mark (dot and swatch), so warning draws in its accent ink; the soft
- * chip, its line and its hover step read the tone itself. Success and info have no 20 step.
- */
-[data-token="neutral"] { --cal-fill: var(--muted-foreground); --cal-soft: var(--foreground-8); --cal-line: var(--border); --cal-hover: var(--accent); }
-[data-token="destructive"] { --cal-fill: var(--destructive); --cal-soft: var(--destructive-10); --cal-line: var(--destructive-30); --cal-hover: var(--destructive-20); }
-/* `amber` and `yellow` are accepted names for the warning set. */
-[data-token="warning"], [data-token="amber"], [data-token="yellow"] { --cal-fill: var(--warning-accent); --cal-soft: var(--warning-10); --cal-line: var(--warning-40); --cal-hover: var(--warning-20); }
-[data-token="success"] { --cal-fill: var(--success); --cal-soft: var(--success-10); --cal-line: var(--success-30); --cal-hover: color-mix(in oklab, var(--success) 20%, transparent); }
-[data-token="info"] { --cal-fill: var(--info); --cal-soft: var(--info-10); --cal-line: var(--info-30); --cal-hover: color-mix(in oklab, var(--info) 20%, transparent); }
-[data-token="primary"] { --cal-fill: var(--primary); --cal-soft: var(--primary-10); --cal-line: var(--primary-30); --cal-hover: var(--primary-20); }
-
-.dot {
-	display: inline-block;
-	flex: none;
-	width: var(--space-md);
-	height: var(--space-md);
-	border-radius: var(--radius-pill);
-	background-color: var(--cal-fill, var(--muted-foreground));
-}
-
+/* A whole, even size, as Badge's dot, so the circle lands on whole pixels. */
+.dot,
 .swatch {
 	display: inline-block;
 	flex: none;
-	width: var(--space-md);
-	height: var(--space-md);
+	width: 0.5rem;
+	height: 0.5rem;
 	border-radius: var(--radius-pill);
-	background-color: var(--cal-fill, var(--muted-40));
+	background-color: var(--tone-ink, var(--muted-foreground));
+}
+
+/* A hidden category's swatch carries no tone: the mark empties. */
+.swatch:not([data-tone]) {
+	background-color: var(--muted);
 }
 
 /* ── The header ────────────────────────────────────────────────────────────────── */
@@ -67,7 +53,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -75,7 +61,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -83,7 +69,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
@@ -91,20 +77,21 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
+/* Half a control's height, centred on the row of controls it divides. */
 .headerSeparator {
 	display: none;
 	width: var(--border-width);
-	height: var(--space-xl);
+	height: calc(var(--control-height) / 2);
 	background-color: var(--border);
 }
 
 /* A menu's inset: the picker inside sits concentric with the popover. */
 .jumpPopover {
-	padding: var(--space-md);
+	padding: calc(var(--radius) - var(--radius-sm));
 }
 
 .viewSelect {
@@ -116,7 +103,7 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
-		gap: var(--space-xl);
+		gap: var(--gap);
 	}
 
 	.headerControls {
@@ -139,15 +126,17 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
+/* Badge's geometry: the small control less its padding, so the key reads as one family with it. */
 .chip {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-xs);
-	padding: var(--space-2xs) var(--space-md);
+	gap: calc(var(--gap-sm) / 2);
+	min-height: calc(var(--control-height-sm) - var(--padding-sm));
+	padding-inline: var(--padding-sm);
 	border: var(--border-width) solid var(--border);
 	/* The control radius, not a pill, to match the toolbar controls above. */
 	border-radius: var(--radius-sm);
@@ -156,24 +145,19 @@
 }
 
 .chipButton {
-	border-color: var(--control-border);
+	border-color: var(--input);
 	cursor: pointer;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .chipButton:hover {
 	background-color: var(--accent);
 }
 
-.chipButton:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 /* Dashed and unfilled: the category is hidden. */
 .chipButton[data-off] {
 	border-style: dashed;
-	border-color: var(--control-border);
+	border-color: var(--input);
 	background-color: transparent;
 }
 
@@ -184,8 +168,8 @@
 }
 
 .legendIcon > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 /* ── The grid ──────────────────────────────────────────────────────────────────── */
@@ -202,7 +186,7 @@
 .weekdays,
 .days {
 	display: grid;
-	grid-template-columns: repeat(var(--calendar-columns, 7), minmax(0, 1fr));
+	grid-template-columns: repeat(var(--_calendar-columns, 7), minmax(0, 1fr));
 }
 
 /*
@@ -220,7 +204,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: var(--space-2xl);
+	padding-block: calc(var(--padding-sm) / 2);
 	color: var(--muted-foreground);
 }
 
@@ -239,15 +223,15 @@
 }
 
 .weekdays[data-variant="tinted"] {
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 }
 
 .weekdays[data-variant="accent"] {
-	background-color: var(--primary-10);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .weekdays[data-variant="accent"] .weekday {
-	color: var(--primary-accent);
+	color: var(--primary);
 }
 
 /* ── One day ───────────────────────────────────────────────────────────────────── */
@@ -271,25 +255,25 @@
 	flex: 1;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	width: 100%;
-	min-height: round(calc(6rem * var(--density-scale, var(--scale))), 1px);
-	padding: var(--space-sm);
-	transition: background-color var(--duration-fast) var(--ease-out);
+	min-height: 6rem;
+	padding: var(--padding-sm);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 .cell:hover {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 }
 
 .cell[data-compact] {
-	min-height: round(calc(5rem * var(--density-scale, var(--scale))), 1px);
-	padding: var(--space-2xs);
+	min-height: 5rem;
+	padding: calc(var(--padding-sm) / 2);
 }
 
 /* Today inks its number, as the agenda does, and leaves the cell's fill to hover. */
 .cell[data-today] .dayNumber {
-	color: var(--primary-accent);
+	color: var(--primary);
 }
 
 /* Outside-month days mute only the number: an opacity wash fails contrast, and a tint would read as a state. */
@@ -304,8 +288,8 @@
 .dayNumber {
 	display: inline-grid;
 	place-items: center start;
-	inline-size: var(--size-icon-lg);
-	block-size: var(--size-icon-lg);
+	inline-size: 1.25rem;
+	block-size: 1.25rem;
 	padding: 0;
 	border: 0;
 	/* A glyph button takes the item radius, like every control. */
@@ -313,54 +297,57 @@
 	background: none;
 	color: inherit;
 	cursor: pointer;
-	line-height: var(--leading-none);
 }
 
+/* The outline hugs the number: a cell leaves only a small gap above its first event. */
 .dayNumber:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	outline-offset: 0;
 }
 
 .cellEvents {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	width: 100%;
 	min-width: 0;
 }
 
 /* ── One chip ──────────────────────────────────────────────────────────────────── */
 
+/*
+ * Badge's height and its soft appearance, so the two read as one family. The inset is half
+ * Badge's: a tight chip interior, so a narrow cell keeps room for the title.
+ */
 .badge {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	width: 100%;
 	min-width: 0;
-	/* Content-height, on the same inset as `Badge`, so the two read as one family. */
-	padding: var(--space-2xs) var(--space-sm);
-	border: var(--border-width) solid var(--cal-line, var(--border-60));
+	min-height: calc(var(--control-height-sm) - var(--padding-sm));
+	padding: 0 calc(var(--padding-sm) / 2);
+	border: var(--border-width) solid color-mix(in oklab, var(--tone) var(--tint-strong), transparent);
 	border-radius: var(--radius-sm);
-	background-color: var(--cal-soft, var(--card));
+	background-color: color-mix(in oklab, var(--tone) var(--tint), transparent);
 	color: inherit;
 	text-align: start;
 	cursor: pointer;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
-/* A compact cell keeps the type step and drops the padding. */
+/* A compact cell keeps the type step and drops the chip to its content's height. */
 .badge[data-compact] {
-	padding-block: 0;
+	min-height: 0;
 }
 
 /* Hover deepens the chip's own tone rather than a neutral fill. */
 .badge:hover {
-	background-color: var(--cal-hover, var(--accent));
+	background-color: color-mix(in oklab, var(--tone) var(--tint-strong), transparent);
 }
 
+/* Inside the chip: chips stack tightly, and the grid clips its outer edge. */
 .badge:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 .badgeTitle {
@@ -386,7 +373,8 @@
 /* Below ~5rem only the centred dot remains. */
 @container event-calendar-day (width < 5rem) {
 	.badge {
-		height: var(--space-md);
+		height: 0.5rem;
+		min-height: 0;
 		justify-content: center;
 		gap: 0;
 		padding: 0;
@@ -403,8 +391,8 @@
 .overflow {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
-	padding-inline: calc(var(--space-sm) + var(--border-width));
+	gap: calc(var(--gap-sm) / 2);
+	padding-inline: calc(var(--padding-sm) / 2 + var(--border-width));
 }
 
 .overflow [data-overflow-label="compact"] {
@@ -416,8 +404,9 @@
 	align-items: center;
 }
 
+/* Stacked dots, each ringed in the cell's ground so the overlap reads as two marks. */
 .overflowDots > .dot + .dot {
-	margin-inline-start: calc(var(--space-2xs) * -1);
+	margin-inline-start: calc(var(--border-width) * -2);
 	box-shadow: 0 0 0 var(--border-width) var(--surface-ground, var(--background));
 }
 
@@ -445,10 +434,10 @@
 .card {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	width: 100%;
 	min-width: 0;
-	padding: var(--surface-py) var(--surface-px);
+	padding: var(--padding);
 	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
 	background-color: var(--card);
@@ -459,27 +448,22 @@
 	cursor: pointer;
 	color: inherit;
 	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		border-color var(--duration-fast) var(--ease-out),
-		box-shadow var(--duration-fast) var(--ease-out);
+		background-color var(--duration-fast) var(--ease),
+		border-color var(--duration-fast) var(--ease),
+		box-shadow var(--duration-fast) var(--ease);
 }
 
 /* A clickable Card's hover: the edge firms and the card lifts. */
 .cardButton:hover {
-	border-color: var(--foreground-20);
-	box-shadow: var(--shadow-sm);
-}
-
-.cardButton:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
+	border-color: var(--input);
+	box-shadow: var(--shadow);
 }
 
 .cardHeader {
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -487,43 +471,43 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 .cardCategory {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 .cardFacts {
 	display: grid;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	grid-template-columns: minmax(0, 1fr);
 }
 
 .cardFact {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 .cardGlyph {
 	flex: none;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	color: var(--muted-foreground);
 }
 
 .cardWhen {
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
-	padding-top: var(--space-sm);
-	border-top: var(--border-width) solid var(--border-60);
+	gap: var(--gap-sm);
+	padding-top: var(--padding-sm);
+	border-top: var(--border-width) solid var(--border);
 }
 
 @container event-calendar (width >= 34rem) {
@@ -537,7 +521,7 @@
 .agenda {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	min-width: 0;
 }
 
@@ -545,7 +529,7 @@
 .agendaDay {
 	display: grid;
 	grid-template-columns: 3rem minmax(0, 1fr);
-	gap: var(--space-lg);
+	gap: var(--gap);
 	align-items: start;
 	min-width: 0;
 }
@@ -554,17 +538,17 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: var(--space-2xs);
-	padding-top: var(--space-sm);
+	gap: calc(var(--gap-sm) / 2);
+	padding-top: var(--padding-sm);
 }
 
 .agendaDay[data-today] .agendaDate {
-	color: var(--primary-accent);
+	color: var(--primary);
 }
 
 .agendaEvents {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	min-width: 0;
 }

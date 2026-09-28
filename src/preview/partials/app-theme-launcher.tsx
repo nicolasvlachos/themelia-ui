@@ -71,14 +71,14 @@ export function AppThemeLauncher() {
 			setOpen(next)
 			if (!next) { setAdvanced(false); setAccentDraft(null); setColorError(false) }
 		}}>
-			<PopoverTrigger render={<Button iconOnly tone="neutral" buttonStyle="outline" className={styles.themeLauncher} />} aria-label="Customize theme" title="Customize theme" data-app-theme-launcher>
+			<PopoverTrigger render={<Button iconOnly tone="neutral" appearance="outline" className={styles.themeLauncher} />} aria-label="Customize theme" title="Customize theme" data-app-theme-launcher>
 				<PaletteIcon />
 			</PopoverTrigger>
 			<PopoverContent side="top" align="end" sideOffset={12} width="min(26rem, 90vw)" inset="flush" className={styles.themePanel}>
 				<PopoverHeader className={styles.themePanelHeader}>
 					<Stack direction="horizontal" align="center" justify="between" gap="sm" wrap={false}>
 						<PopoverTitle render={<Heading level={2} size="base" />}>Theme settings</PopoverTitle>
-						<Button iconOnly tone="neutral" buttonStyle="ghost" aria-label="Close theme settings" onClick={() => { setOpen(false); setAdvanced(false); setAccentDraft(null); setColorError(false) }}><XIcon /></Button>
+						<Button iconOnly tone="neutral" appearance="ghost" aria-label="Close theme settings" onClick={() => { setOpen(false); setAdvanced(false); setAccentDraft(null); setColorError(false) }}><XIcon /></Button>
 					</Stack>
 				</PopoverHeader>
 				<Tabs value={advanced ? "advanced" : "appearance"} onValueChange={value => { setAdvanced(value === "advanced"); setAccentDraft(null); setColorError(false) }} className={styles.themePanelTabs}>
@@ -88,7 +88,7 @@ export function AppThemeLauncher() {
 					</TabList>
 					<ScrollArea key={advanced ? "advanced" : "appearance"} className={styles.themePanelBody} aria-label={advanced ? "Theme variables" : "Appearance settings"}>
 						<TabPanel value="appearance" className={styles.themePanelView}>
-							<Stack gap="lg">
+							<Stack>
 								<FormField label="Color scheme" htmlFor={false}>
 									<PillRadioGroup fullWidth value={appliedConfig.colorScheme ?? "system"} onValueChange={value => updateConfig({ ...appliedConfig, colorScheme: value as ColorScheme })} options={[
 										{ value: "light", label: "Light", icon: <SunIcon /> },
@@ -99,7 +99,7 @@ export function AppThemeLauncher() {
 								<FormField label="Accent color" error={colorError ? "Enter a valid color." : undefined}>
 									<ColorInput value={accentDraft ?? theme[theme.mode]["--primary"] ?? ""} previewValue="var(--primary)" placeholder="Current accent" onValueChange={accent} />
 								</FormField>
-								<Grid columns={2} gap="md">
+								<Grid columns={2} gap="sm">
 									<FormField label="Density">
 										<NativeSelect value={appliedConfig.density ?? "default"} onChange={event => updateConfig({ ...appliedConfig, density: event.target.value as Density })}>
 											<option value="compact">Compact</option><option value="default">Default</option><option value="comfortable">Comfortable</option>
@@ -126,7 +126,7 @@ export function AppThemeLauncher() {
 				</Tabs>
 				<PopoverFooter className={styles.themePanelFooter}>
 					<Text size="xs" type="secondary">Saved in this browser</Text>
-					<Button tone="neutral" buttonStyle="ghost" onClick={resetApp}>Reset</Button>
+					<Button tone="neutral" appearance="ghost" onClick={resetApp}>Reset</Button>
 				</PopoverFooter>
 			</PopoverContent>
 		</Popover>

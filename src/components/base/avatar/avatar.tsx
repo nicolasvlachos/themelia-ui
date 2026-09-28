@@ -1,16 +1,21 @@
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
 import * as React from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./avatar.module.css"
 
 /** An avatar keeps a size prop: it has no content to scale with. */
-export type AvatarSize = "default" | "sm" | "lg"
+export type AvatarSize = "default" | "sm"
 export type AvatarProps = AvatarPrimitive.Root.Props & {
 	/** Disc size. One of the kit's few size props: an avatar has no content to scale with. */
 	size?: AvatarSize
 }
+
+/* The disc's size and whether it sits in a group, for the initials' type step. */
+const AvatarSizeContext = React.createContext<AvatarSize>("default")
+const AvatarGroupContext = React.createContext(false)
 
 /** A person or an entity as a disc: an image, with initials behind it for when there is none. */
 function Avatar({
@@ -19,12 +24,14 @@ function Avatar({
 	...props
 }: AvatarProps) {
 	return (
-		<AvatarPrimitive.Root
-			data-slot="avatar"
-			data-size={size}
-			className={cx("avatar--component", styles.root, className)}
-			{...props}
-		/>
+		<AvatarSizeContext.Provider value={size}>
+			<AvatarPrimitive.Root
+				data-slot="avatar"
+				data-size={size}
+				className={cx("avatar--component", styles.root, className)}
+				{...props}
+			/>
+		</AvatarSizeContext.Provider>
 	)
 }
 
@@ -45,12 +52,23 @@ function AvatarImage({
 	)
 }
 
-/** Shown when there is no image. Initials, not a placeholder glyph. */
+/**
+ * Shown when there is no image. Initials, not a placeholder glyph. They take the smaller
+ * step on a small disc, and in a group, so the overlap doesn't clip them.
+ */
 function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props) {
+	const size = React.useContext(AvatarSizeContext)
+	const inGroup = React.useContext(AvatarGroupContext)
+
 	return (
 		<AvatarPrimitive.Fallback
 			data-slot="avatar-fallback"
-			className={cx("avatar-fallback--component", styles.fallback, className)}
+			className={cx(
+				"avatar-fallback--component",
+				styles.fallback,
+				textClassName({ size: size === "sm" || inGroup ? "xs" : "sm" }),
+				className,
+			)}
 			{...props}
 		/>
 	)
@@ -63,7 +81,11 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
 
 /** A row of overlapping avatars. */
 function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="avatar-group" className={cx("avatar-group--component", styles.group, className)} {...props} />
+	return (
+		<AvatarGroupContext.Provider value={true}>
+			<div data-slot="avatar-group" className={cx("avatar-group--component", styles.group, className)} {...props} />
+		</AvatarGroupContext.Provider>
+	)
 }
 
 /**
@@ -72,7 +94,11 @@ function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
  */
 function AvatarGroupCount({ className, ...props }: React.ComponentProps<"div">) {
 	return (
-		<div data-slot="avatar-group-count" className={cx("avatar-group-count--component", styles.count, className)} {...props} />
+		<div
+			data-slot="avatar-group-count"
+			className={cx("avatar-group-count--component", styles.count, textClassName({ size: "xs" }), className)}
+			{...props}
+		/>
 	)
 }
 

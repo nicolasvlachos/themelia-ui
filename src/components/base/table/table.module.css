@@ -1,74 +1,67 @@
 /*
- * Table. The scroll container is its own tabbable element (with a focus ring), so a
- * keyboard user can scroll a wide table.
+ * Table. The scroll container is its own tabbable element (with a focus outline), so a
+ * keyboard user can scroll a wide table. The type is Text's `sm` step, set on the `<table>`
+ * (table.tsx). Cells pad `--padding`, so their content lines up with a surrounding toolbar
+ * and footer.
  */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). */
-:root {
-	/*
-	 * DataTable's bounded body (set inline from `maxBodyHeight`). Declared as `none` so the
-	 * `max-height` reading it stays valid when no cap is passed.
-	 */
-	--data-table-body-max-height: none;
-}
 
 .container {
 	position: relative;
 	width: 100%;
 	overflow-x: auto;
 	/* The fade's width, so focus scrolls a control clear of the mask. */
-	scroll-padding-inline: var(--space-2xl);
+	scroll-padding-inline: var(--_fade);
 	border-radius: var(--radius-sm);
+	--_fade: 1.5rem;
 }
 
-/* A fade at each edge with more columns past it: a mask, as on the tab list. */
-.container[data-fade-start]:dir(ltr),
-.container[data-fade-end]:dir(rtl) {
-	mask-image: linear-gradient(to right, transparent, black var(--space-2xl));
+/*
+ * A fade at each edge with more columns past it: a mask, as on the tab list. A focused
+ * container drops it: the outline runs round the container's edges, which the fades would eat.
+ */
+.container[data-fade-start]:not(:focus-visible):dir(ltr),
+.container[data-fade-end]:not(:focus-visible):dir(rtl) {
+	mask-image: linear-gradient(to right, transparent, black var(--_fade));
 }
 
-.container[data-fade-end]:dir(ltr),
-.container[data-fade-start]:dir(rtl) {
-	mask-image: linear-gradient(to left, transparent, black var(--space-2xl));
+.container[data-fade-end]:not(:focus-visible):dir(ltr),
+.container[data-fade-start]:not(:focus-visible):dir(rtl) {
+	mask-image: linear-gradient(to left, transparent, black var(--_fade));
 }
 
-.container[data-fade-start][data-fade-end] {
-	mask-image: linear-gradient(to right, transparent, black var(--space-2xl), black calc(100% - var(--space-2xl)), transparent);
+.container[data-fade-start][data-fade-end]:not(:focus-visible) {
+	mask-image: linear-gradient(to right, transparent, black var(--_fade), black calc(100% - var(--_fade)), transparent);
 }
 
+/* Inside: an outline outside a full-width container is clipped by whatever frames it. */
 .container:focus-visible {
-	/* The ring runs round the container's edges, which the fades would eat. */
-	mask-image: none;
-	outline: none;
-	/* Inset: an outer ring on a full-width container is clipped by whatever frames it. */
-	box-shadow: var(--focus-ring-inset);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 .table {
 	width: 100%;
 	caption-side: bottom;
 	border-collapse: collapse;
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 }
 
 .row {
-	border-bottom: var(--border-width) solid var(--border-60);
-	transition: background-color var(--duration-fast) var(--ease-out);
+	border-bottom: var(--border-width) solid var(--border);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
 /* Body rows only, and not the empty row. */
 .body .row:not(:has(> .empty)):hover {
-	background-color: var(--accent-50);
+	background-color: var(--accent);
 }
 
 /* Selected in the DataTable's colour, and above hover. */
 .row[data-state="selected"],
 .body .row[data-state="selected"]:hover {
-	background-color: var(--primary-10);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 .header .row {
-	border-bottom: var(--border-width) solid var(--border-60);
+	border-bottom: var(--border-width) solid var(--border);
 }
 
 .body .row:last-child {
@@ -76,19 +69,21 @@
 }
 
 .head {
-	/* Taller than a body row, so it reads as chrome. TableSkeleton reads the same token. */
-	height: var(--table-head-h);
-	padding: var(--space-lg) var(--surface-px);
+	/*
+	 * The control height plus the small inset, so the head follows density with no step of
+	 * its own. TableSkeleton reserves the same (skeleton.module.css).
+	 */
+	height: calc(var(--control-height) + var(--padding-sm));
+	padding: var(--padding-sm) var(--padding);
 	text-align: start;
 	vertical-align: middle;
 	white-space: nowrap;
 	color: var(--foreground);
-	font-weight: var(--weight-medium);
 }
 
 .cell {
-	/* --space-lg, and TableSkeleton's row reserves the same, so a loaded table does not jump. */
-	padding: var(--space-lg) var(--surface-px);
+	/* TableSkeleton's row reserves the same insets, so a loaded table does not jump. */
+	padding: var(--padding);
 	vertical-align: middle;
 	white-space: nowrap;
 }
@@ -100,9 +95,8 @@
 }
 
 .footer {
-	background-color: var(--muted-50);
-	border-top: var(--border-width) solid var(--border-60);
-	font-weight: var(--weight-medium);
+	background-color: var(--muted);
+	border-top: var(--border-width) solid var(--border);
 }
 
 .footer .row:last-child {
@@ -110,10 +104,8 @@
 }
 
 .caption {
-	margin-top: var(--space-xl);
+	margin-top: var(--gap);
 	color: var(--muted-foreground);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
 }
 
 /* Alignment escape hatches — the one thing a numeric column genuinely needs. */
@@ -126,20 +118,45 @@
 
 /* ── Sortable header ──────────────────────────────────────────────────────────── */
 
-/* The whole label is the target, not just the chevron. */
 .headSort {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	width: 100%;
 	padding: 0;
 	border: 0;
-	border-radius: var(--radius-sm);
 	background: none;
 	color: inherit;
-	font: inherit;
 	text-align: inherit;
 	cursor: pointer;
+}
+
+/*
+ * The whole cell is the target, not just the label: the control's pseudo-element covers it.
+ * At zero specificity, so a sticky head or pinned column keeps its own positioning.
+ */
+:where(.head:has(> .headSort)) {
+	position: relative;
+}
+
+.headSort::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.head:has(> .headSort:hover) {
+	background-image: linear-gradient(var(--accent), var(--accent));
+}
+
+/* The cell draws the ring, round the target it actually is. */
+.headSort:focus-visible {
+	outline: none;
+}
+
+.head:has(> .headSort:focus-visible) {
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * -2);
 }
 
 /*
@@ -152,22 +169,26 @@
 }
 .alignCenter .headSort { justify-content: center; }
 
-/* The label is already full strength; the indicator firms up on hover. */
-.headSort:hover .headSortIcon {
-	opacity: 0.75;
-}
-
-.headSort:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
+/* Faint but present where nothing can hover to find it: a touch screen. */
 .headSortIcon {
 	flex-shrink: 0;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
-	/* Faint but present, so a sortable column is discoverable without hover. */
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
+	color: var(--muted-foreground);
 	opacity: 0.45;
+	transition: opacity var(--duration-fast) var(--ease);
+}
+
+/* A pointer finds the control by hovering, so an unsorted column's arrow waits for it. */
+@media (hover: hover) {
+	.headSort:not([data-active]) .headSortIcon {
+		opacity: 0;
+	}
+}
+
+.headSort:hover .headSortIcon,
+.headSort:focus-visible .headSortIcon {
+	opacity: 0.75;
 }
 
 .headSort[data-active] .headSortIcon {
@@ -178,7 +199,7 @@
 /* ── Empty ────────────────────────────────────────────────────────────────────── */
 
 .empty {
-	padding-block: calc(var(--space-xl) * 2);
+	padding-block: calc(var(--padding) * 2);
 	text-align: center;
 }
 
@@ -188,7 +209,7 @@
 .container[data-sticky-header] .head {
 	position: sticky;
 	top: 0;
-	z-index: var(--z-raised);
+	z-index: 1;
 	/* The ground the table sits on, so the head matches it on the page, in a card or a popup. */
 	background-color: var(--surface-ground, var(--background));
 }

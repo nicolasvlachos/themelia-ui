@@ -21,7 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/base/avatar"
 import { Badge } from "@/components/base/badge"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/base/popover"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/base/tooltip"
-import { Text, TextLink } from "@/components/base/typography"
+import { Text, TextLink, textClassName } from "@/components/base/typography"
 import { ConfirmDialog, useOverlayVisibility } from "@/components/features/overlays"
 import {
 	InlineList, Number as NumberValue, RelativeTime, formatInitials, parseDateInput,
@@ -149,7 +149,7 @@ function ReactionAdd({
 								onPick(emoji)
 								setOpen(false)
 							}}
-							className={styles.reactionChoice}
+							className={cx(styles.reactionChoice, textClassName({ size: "base", lineHeight: "none" }))}
 						>
 							{emoji}
 						</button>
@@ -428,7 +428,7 @@ export function CommentItem<
 										{authorName}
 									</Text>
 									{/* Outlined: a soft neutral badge would be grey on the grey bubble. */}
-									{!!statusLabel && <Badge tone="neutral" variant="outline">{statusLabel}</Badge>}
+									{!!statusLabel && <Badge tone="neutral" appearance="outline">{statusLabel}</Badge>}
 									{(created || comment.isEdited) && (
 										<span className={styles.itemMeta}>
 											{created && (
@@ -516,7 +516,7 @@ export function CommentItem<
 									)
 								})}
 								{tags.map((tag) => (
-									<Badge key={tag} tone="neutral" variant="outline">
+									<Badge key={tag} tone="neutral" appearance="outline">
 										{tag}
 									</Badge>
 								))}
@@ -549,7 +549,7 @@ export function CommentItem<
 									/* The visible emoji and localized count form the accessible name. */
 									const face = (
 										<>
-											<span className={styles.reactionEmoji}>{reaction.emoji}</span>{" "}
+											<Text tag="span" size="sm" lineHeight="none" type="inherit">{reaction.emoji}</Text>{" "}
 											<NumberValue value={reaction.count} size="xs" type="inherit" />
 										</>
 									)

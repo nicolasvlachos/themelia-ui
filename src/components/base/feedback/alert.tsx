@@ -3,27 +3,19 @@ import {
 } from "lucide-react"
 import * as React from "react"
 
+import { Text, textClassName } from "@/components/base/typography"
+import type { SemanticTone } from "@/lib/component-vocabulary"
 import { cvm, type VariantProps } from "@/lib/cvm"
 import { cx } from "@/lib/cx"
-import { Text } from "@/components/base/typography"
 
 import styles from "./alert.module.css"
 
 /*
- * `tone` is semantic colour intent, `variant` structural presentation (the kit's
- * vocabulary); `neutral`, never `default`.
+ * `tone` is semantic colour intent, rendered as `data-tone` for the shared tone rule;
+ * `variant` is structural presentation (the kit's vocabulary); `neutral`, never `default`.
  */
 const alertVariants = cvm(styles.root, {
 	variants: {
-		tone: {
-			neutral: styles.toneNeutral,
-			primary: styles.tonePrimary,
-			secondary: styles.toneSecondary,
-			destructive: styles.toneDestructive,
-			warning: styles.toneWarning,
-			success: styles.toneSuccess,
-			info: styles.toneInfo,
-		},
 		/* Structural: an inverse alert keeps its tone, presented as a solid slab. */
 		variant: {
 			default: undefined,
@@ -31,19 +23,12 @@ const alertVariants = cvm(styles.root, {
 		},
 	},
 	defaultVariants: {
-		tone: "neutral",
 		variant: "default",
 	},
 })
 
-export type AlertTone =
-	| "neutral"
-	| "primary"
-	| "secondary"
-	| "destructive"
-	| "warning"
-	| "success"
-	| "info"
+/** Semantic colour: the kit's one tone union. */
+export type AlertTone = SemanticTone
 
 export type AlertVariant = "default" | "inverse"
 
@@ -92,7 +77,7 @@ function Alert({ className, tone = "neutral", variant = "default", icon, childre
 			data-variant={variant}
 			/* `alert` interrupts the screen reader: right for errors only; everything else is `status`. */
 			role={tone === "destructive" ? "alert" : "status"}
-			className={cx("alert--component", alertVariants({ tone, variant, className }))}
+			className={cx("alert--component", alertVariants({ variant }), textClassName({ size: "sm" }), className)}
 			{...props}
 		>
 			{resolvedIcon || null}
@@ -103,7 +88,7 @@ function Alert({ className, tone = "neutral", variant = "default", icon, childre
 
 /*
  * The title inherits the alert's ink, and the description is the secondary role. The inverse
- * slab re-points both, so they follow it.
+ * slab is a dark colour island, so both resolve in its colours.
  */
 /** The alert's heading. It inherits the alert's ink. */
 function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
@@ -125,7 +110,7 @@ function AlertDescription({ className, ...props }: React.ComponentProps<"div">) 
 	return (
 		<Text
 			tag="div"
-			size="inherit"
+			size="sm"
 			type="secondary"
 			data-slot="alert-description"
 			className={cx("alert-description--component", styles.description, className)}

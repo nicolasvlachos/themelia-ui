@@ -6,13 +6,13 @@ const TONES: BadgeTone[] = ["neutral", "primary", "secondary", "success", "info"
 
 export default function BadgeTones() {
 	return (
-		<Stack gap="lg" style={{ width: "100%" }}>
-			{(["soft", "solid", "outline"] as const).map((variant) => (
-				<Stack key={variant} gap="xs">
-					<Text size="xs" type="secondary">{variant}</Text>
+		<Stack style={{ width: "100%" }}>
+			{(["soft", "solid", "outline"] as const).map((appearance) => (
+				<Stack key={appearance} gap="sm">
+					<Text size="xs" type="secondary">{appearance}</Text>
 					<Stack direction="horizontal" gap="sm" wrap>
 						{TONES.map((tone) => (
-							<Badge key={tone} tone={tone} variant={variant}>{tone}</Badge>
+							<Badge key={tone} tone={tone} appearance={appearance}>{tone}</Badge>
 						))}
 					</Stack>
 				</Stack>

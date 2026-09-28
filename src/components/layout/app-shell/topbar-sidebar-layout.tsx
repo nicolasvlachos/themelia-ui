@@ -46,7 +46,7 @@ export interface TopbarSidebarLayoutProps
 	 * `collapsible="none"` and `sidebarTrigger={false}`.
 	 */
 	mobileSidebarMode?: TopbarSidebarMobileMode
-	/** Any CSS length. Falls back to the shell's own token. */
+	/** Any CSS length. Falls back to the theme's `--header-height`. */
 	headerHeight?: string
 	sidebarWidth?: string
 	/** Shorthands for the matching `slots` entry, for a shell with only a few regions. */
@@ -138,7 +138,7 @@ export function TopbarSidebarLayout({
 				className={cx("topbar-sidebar-layout--component", styles.topbar, className)}
 				style={
 					{
-						...(headerHeight ? { "--shell-header-h": headerHeight } : null),
+						...(headerHeight ? { "--header-height": headerHeight } : null),
 						...(sidebarWidth ? { "--sidebar-width": sidebarWidth } : null),
 						...style,
 					} as CSSProperties

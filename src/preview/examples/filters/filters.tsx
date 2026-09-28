@@ -115,7 +115,7 @@ export default function Filters() {
 	return (
 		<>
 			<Stack direction="horizontal" gap="sm">
-				<Button tone="neutral" buttonStyle="outline" onClick={() => setNavigating((current) => !current)}>
+				<Button tone="neutral" appearance="outline" onClick={() => setNavigating((current) => !current)}>
 					{navigating ? "Resume filtering" : "Show pending state"}
 				</Button>
 			</Stack>

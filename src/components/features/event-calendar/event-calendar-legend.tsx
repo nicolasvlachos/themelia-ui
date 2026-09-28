@@ -7,7 +7,7 @@ import { Text } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultEventCalendarStrings } from "./event-calendar.strings"
-import { resolveCategoryColorToken, type EventCalendarLegendProps } from "./event-calendar.types"
+import { resolveCategoryTone, type EventCalendarLegendProps } from "./event-calendar.types"
 import styles from "./event-calendar.module.css"
 
 /**
@@ -40,7 +40,7 @@ export function EventCalendarLegend({
 					<>
 						<span
 							aria-hidden
-							data-token={visible ? resolveCategoryColorToken(category) : undefined}
+							data-tone={visible ? resolveCategoryTone(category) : undefined}
 							className={styles.swatch}
 						/>
 						{!!category.icon && <span className={styles.legendIcon}>{category.icon}</span>}

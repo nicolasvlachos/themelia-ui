@@ -8,7 +8,6 @@ declare const styles: {
 	readonly affordanceTextareaEnd: string
 	readonly clear: string
 	readonly count: string
-	readonly countOver: string
 	readonly frame: string
 	readonly revealButton: string
 	readonly search: string

@@ -40,7 +40,7 @@ export {
 export {
 	ACTION_GLOBAL_SCOPE,
 	type ActiveActionState,
-	type ActionButtonStyle,
+	type ActionAppearance,
 	type ActionContext,
 	type ActionDefinition,
 	type ActionDrawerDirection,
@@ -61,7 +61,6 @@ export {
 	type ActionModalityConfig,
 	type ActionModalityType,
 	type ActionOverlayOutletProps,
-	type ActionOverlaySize,
 	type ActionOverlayStrings,
 	type ActionPlacement,
 	type ActionPredicate,

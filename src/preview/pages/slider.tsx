@@ -8,19 +8,13 @@ export function SliderPage() {
 			<Example
 				example="slider/slider"
 				title="SliderField"
-				description="One number in a range. Emits both a bare value and a native-shaped change event, because a form library registers a field by handing it an onChange and reading event.target.value."
-			/>
-
-			<Example
-				example="slider/slider-sizes"
-				title="Sizes"
-				description="One of the few surviving size props in the kit, and it survives for a reason: a slider is dragged. A thumb sized for a settings row is a poor target on a touch screen or in a media control, and one sized for those dominates a form."
+				description="One number in a range. Emits both a bare value and a native-shaped change event, because a form library registers a field by handing it an onChange and reading event.target.value. A slider is dragged, so under a finger (a coarse pointer) its track and thumb grow into a larger target; there is no size prop."
 			/>
 
 			<Example
 				example="slider/slider-orientation"
 				title="Vertical, and a range"
-				description="A vertical track takes its height from `--slider-vertical-min-h` rather than from its content, because a slider has none. Two values make it a range: the same field, one more number in the array."
+				description="A vertical track is at least 10rem long, because a slider has no content to size it; give its container a height for a longer one. Two values make it a range: the same field, one more number in the array."
 			/>
 
 			<Example

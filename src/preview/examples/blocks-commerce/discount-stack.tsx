@@ -1,4 +1,4 @@
-import { DiscountStack } from "themelia-ui/admin/patterns/commerce"
+import { DiscountStack } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 export default function DiscountStackExample() {

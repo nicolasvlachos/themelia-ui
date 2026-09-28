@@ -7,7 +7,7 @@ const SPARK_FLAT = [11, 12, 11, 13, 12, 12, 13, 12]
 
 export default function ChartSparkline() {
 	return (
-		<Grid columns={3} gap="xl">
+		<Grid columns={3}>
 			<GridCell>
 				<Sparkline data={SPARK_UP} tone="success" label="Revenue, trending up" />
 			</GridCell>

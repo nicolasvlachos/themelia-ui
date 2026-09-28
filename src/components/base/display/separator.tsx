@@ -20,8 +20,8 @@ export interface SeparatorProps
 	 */
 	variant?: SeparatorVariant
 	/**
-	 * The rule's thickness: a CSS length, or a number in pixels. Overrides
-	 * `--separator-thickness` for this rule, e.g. a seam between panels.
+	 * The rule's thickness: a CSS length, or a number in pixels. Overrides the hairline for
+	 * this rule, e.g. a seam between panels.
 	 */
 	thickness?: string | number
 	/**
@@ -49,7 +49,7 @@ export function Separator({
 	...props
 }: SeparatorProps) {
 	const sized = {
-		...(thickness === undefined ? null : { "--separator-thickness": length(thickness) }),
+		...(thickness === undefined ? null : { "--_separator-thickness": length(thickness) }),
 		...style,
 	} as React.CSSProperties
 

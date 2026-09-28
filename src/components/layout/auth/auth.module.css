@@ -2,25 +2,6 @@
  * Auth shells: the layouts a sign-in surface uses. Layout only; the form, providers and
  * flow belong to the application.
  */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). */
-:root {
-	/* The panel's track. Wide enough for a testimonial, capped so the form keeps the page. */
-	--auth-panel-min: 24rem;
-	--auth-panel-max: 34rem;
-}
-
-/* Derived tokens: declared at every scope boundary (styles/SCOPES.md). */
-:root,
-[data-ui-scope],
-[data-density],
-[data-theme],
-:global(.light),
-:global(.dark) {
-
-	/* The card's width. .sizeSm and .sizeLg re-point it, so it stays a variable. */
-	--auth-width: calc(24rem * var(--scale));
-
-}
 
 /* The page. The shell inside it centres; this owns the canvas and the full height. */
 .root {
@@ -31,7 +12,7 @@
 	min-width: 0;
 	min-height: 100dvh;
 	flex-direction: column;
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 	color: var(--foreground);
 }
 
@@ -45,43 +26,44 @@
 	flex: 1;
 	flex-direction: column;
 	align-items: center;
-	gap: var(--space-2xl);
-	padding: var(--space-2xl);
+	gap: var(--gap);
+	padding: var(--padding);
 }
 
 .shellAlignStart > .surface {
 	margin-block: 0;
 }
 
+/* The card's width, `--_width`, which `.sizeSm` re-points. */
 .surface {
+	--_width: 24rem;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xl);
+	gap: var(--gap);
 	width: 100%;
-	max-width: var(--auth-width);
+	max-width: var(--_width);
 	margin-block: auto;
 	flex-shrink: 0;
 }
 
-.sizeSm { --auth-width: calc(20rem * var(--scale)); }
-.sizeLg { --auth-width: calc(28rem * var(--scale)); }
+.sizeSm { --_width: 20rem; }
 
 .brand {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	text-align: center;
 }
 
 .brand a {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	border-radius: var(--radius-sm);
 	color: inherit;
 	text-decoration: none;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition: opacity var(--duration-fast) var(--ease);
 }
 
 .brand a:hover {
@@ -94,11 +76,12 @@
 	align-items: center;
 }
 
+/* The label over its description, each on its own Text line box. */
 .brandText {
 	display: inline-flex;
 	min-width: 0;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	text-align: start;
 }
 
@@ -107,17 +90,17 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: var(--space-lg);
+	gap: var(--gap);
 	text-align: center;
 }
 
 /* ── AuthCard ─────────────────────────────────────────────────────────────────────
- * A Card with a wider inset, a heavier shadow and a wrapping page-scale title, reached
- * through Card's public hooks (`card--title`).
+ * A Card with a wider inset (Card's `--_card-px`/`--_card-py` hooks), a heavier shadow and
+ * a wrapping page-scale title (auth-card.tsx), reached through Card's `card--title` hook.
  */
 .card {
-	--card-px: calc(var(--space-xl) * 2);
-	--card-py: calc(var(--space-xl) * 2);
+	--_card-px: calc(var(--padding) * 2);
+	--_card-py: calc(var(--padding) * 2);
 }
 
 /* Framed card only: this outranks Card's flat surface. */
@@ -127,37 +110,29 @@
 
 /* `bare` keeps the header/body/footer rhythm and drops both the frame and its inset. */
 .card[data-surface="bare"] {
-	--card-px: 0px;
-	--card-py: var(--space-2xl);
+	--_card-px: 0;
+	--_card-py: var(--padding);
 }
 
+/* The title wraps where a card title truncates. */
 .card :global(.card--title) {
-	font-size: var(--text-xl);
-	line-height: var(--leading-tight);
 	white-space: normal;
 	overflow: visible;
 }
 
-/* A page-scale title needs more air above the description than Card gives. */
-.card :global(.card--description) {
-	margin-top: var(--space-xs);
-}
-
 .cardMedia {
-	min-height: calc(3rem * var(--scale));
-	border-bottom: var(--border-width) solid var(--border-60);
-	background-color: var(--muted-50);
+	min-height: 3rem;
+	border-bottom: var(--border-width) solid var(--border);
+	background-color: var(--muted);
 }
 
-/* ── AuthFooterLinks ── separated by a dot ──────────────────────────────────────── */
+/* ── AuthFooterLinks ── separated by a dot; the row's type is Text's ────────────── */
 .links {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-md);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
+	gap: var(--gap-sm);
 	color: var(--muted-foreground);
 }
 
@@ -169,20 +144,13 @@
 
 .link + .link::before {
 	content: "·";
-	margin-inline-end: var(--space-md);
+	margin-inline-end: var(--gap-sm);
 }
+
 .link,
 .linkButton {
 	border-radius: var(--radius-sm);
 }
-
-/* A link-styled button draws no ring of its own. */
-.link:focus-visible,
-.linkButton:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 
 .link a,
 .linkButton {
@@ -194,14 +162,13 @@
 .linkButton:hover {
 	color: var(--foreground);
 	text-decoration: underline;
-	text-underline-offset: var(--link-underline-offset);
+	text-underline-offset: 3px;
 }
 
 .linkButton {
 	border: 0;
 	padding: 0;
 	background: none;
-	font: inherit;
 	cursor: pointer;
 }
 
@@ -217,7 +184,10 @@
 	flex-direction: column;
 }
 
+/* The panel's track: wide enough for a testimonial, capped so the form keeps the page. */
 .split {
+	--_panel-min: 24rem;
+	--_panel-max: 34rem;
 	display: grid;
 	min-width: 0;
 	flex: 1;
@@ -227,11 +197,11 @@
 /* The query owner is outside the grid, so both tracks answer the same available width. */
 @container auth (--cq-4xl) {
 	.split[data-panel] {
-		grid-template-columns: minmax(0, 1fr) minmax(var(--auth-panel-min), var(--auth-panel-max));
+		grid-template-columns: minmax(0, 1fr) minmax(var(--_panel-min), var(--_panel-max));
 	}
 
 	.split[data-panel="start"] {
-		grid-template-columns: minmax(var(--auth-panel-min), var(--auth-panel-max)) minmax(0, 1fr);
+		grid-template-columns: minmax(var(--_panel-min), var(--_panel-max)) minmax(0, 1fr);
 	}
 
 	.split[data-panel="start"] > .splitPanel {
@@ -252,12 +222,12 @@
 	min-width: 0;
 	align-items: center;
 	justify-content: center;
-	padding: var(--space-2xl);
+	padding: var(--padding);
 }
 
 /*
  * Hidden below the split threshold unless the caller asks. The panel stays dark in both
- * themes: the aside is a `data-theme="dark"` scope, so every token inside re-derives to its
+ * themes: the aside is a `data-theme="dark"` island, so every colour inside resolves to its
  * dark value — the text roles, links and any control the caller drops in.
  */
 .splitPanel {
@@ -265,8 +235,8 @@
 	min-width: 0;
 	flex-direction: column;
 	justify-content: space-between;
-	gap: var(--space-2xl);
-	padding: calc(var(--space-2xl) * 2);
+	gap: var(--gap);
+	padding: calc(var(--padding) * 2);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
 }

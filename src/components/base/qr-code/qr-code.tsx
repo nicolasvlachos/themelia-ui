@@ -1,6 +1,7 @@
 /**
- * QRCode — a scannable SVG symbol in the theme's colours. Encoding is async (in an effect),
- * so a placeholder renders first.
+ * QRCode — a scannable SVG symbol in the theme's colours, resolved light so the modules are
+ * dark on a light plate in both themes. Encoding is async (in an effect), so a placeholder
+ * renders first.
  */
 import { formatHex, parse } from "culori"
 import { resolveStrings } from "@/lib/strings"
@@ -10,6 +11,7 @@ import QR from "qrcode"
 import * as React from "react"
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type ComponentProps } from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useUIConfig } from "@/lib/ui-provider"
 
@@ -28,13 +30,13 @@ export interface QRCodeProps extends Omit<ComponentProps<"div">, "children"> {
 	 */
 	value: string
 	/**
-	 * Overrides the dark modules. Defaults to the inverse background, dark in both themes.
-	 * Any CSS colour; it is converted to hex for the encoder.
+	 * Overrides the dark modules. Defaults to the theme's foreground as the light theme draws
+	 * it, dark in both themes. Any CSS colour; it is converted to hex for the encoder.
 	 */
 	foreground?: string
 	/**
-	 * Overrides the light modules. Defaults to the inverse foreground, light in both themes.
-	 * Any CSS colour; it is converted to hex for the encoder.
+	 * Overrides the light modules. Defaults to the theme's background as the light theme draws
+	 * it, light in both themes. Any CSS colour; it is converted to hex for the encoder.
 	 */
 	background?: string
 	/**
@@ -55,7 +57,10 @@ export interface QRCodeProps extends Omit<ComponentProps<"div">, "children"> {
 	label?: string
 }
 
-/** Resolves a CSS colour (e.g. a computed `oklch(...)` token) to hex, the only form the encoder takes. */
+/**
+ * Resolves a CSS colour (e.g. a computed `oklch(...)`) to hex, the only form the encoder
+ * takes. A transparent colour has no hex to give, so it takes the fallback.
+ */
 function toHex(color: string, fallback: string): string {
 	const trimmed = color.trim()
 	if (!trimmed) return fallback
@@ -63,7 +68,8 @@ function toHex(color: string, fallback: string): string {
 
 	try {
 		const parsed = parse(trimmed)
-		return parsed ? (formatHex(parsed) ?? fallback) : fallback
+		if (!parsed || parsed.alpha === 0) return fallback
+		return formatHex(parsed) ?? fallback
 	} catch {
 		return fallback
 	}
@@ -128,11 +134,12 @@ export const QRCode = forwardRef<HTMLDivElement, QRCodeProps>(function QRCode(
 
 		const encode = async () => {
 			try {
-				// Resolved theme colours, read at encode time (the theme may apply after load).
+				// Resolved theme colours, read at encode time (the theme may apply after load): the
+				// root is a light colour island, so its ink and plate are the light theme's.
 				// Falls back to <html> when the root is not attached (a null ref under a test renderer).
 				const computed = getComputedStyle(rootRef.current ?? document.documentElement)
-				const dark = toHex(foreground ?? computed.getPropertyValue("--qr-foreground"), "#000000")
-				const light = toHex(background ?? computed.getPropertyValue("--qr-background"), "#ffffff")
+				const dark = toHex(foreground ?? computed.color, "#000000")
+				const light = toHex(background ?? computed.backgroundColor, "#ffffff")
 
 				const generated = await QR.toString(text, {
 					type: "svg",
@@ -165,7 +172,7 @@ export const QRCode = forwardRef<HTMLDivElement, QRCodeProps>(function QRCode(
 	return (
 		<div ref={rootRef} className={cx("qr-code--component", styles.root, className)} {...props}>
 			{isEmpty ? (
-				<div className={styles.placeholder}>{emptyState}</div>
+				<div className={cx(styles.placeholder, styles.empty, textClassName({ size: "xs" }))}>{emptyState}</div>
 			) : svg ? (
 				<div
 					// The symbol carries no meaning to a screen reader; the label does.
@@ -175,7 +182,7 @@ export const QRCode = forwardRef<HTMLDivElement, QRCodeProps>(function QRCode(
 					dangerouslySetInnerHTML={{ __html: svg }}
 				/>
 			) : (
-				<div className={styles.placeholder}>
+				<div className={cx(styles.placeholder, textClassName({ size: "xs" }))}>
 					{failed ? copy.failed : (placeholder ?? copy.generating)}
 				</div>
 			)}

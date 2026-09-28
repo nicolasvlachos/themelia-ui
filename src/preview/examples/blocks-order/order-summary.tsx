@@ -1,4 +1,4 @@
-import { OrderSummary } from "themelia-ui/admin/patterns/commerce"
+import { OrderSummary } from "themelia-ui/blocks/admin/commerce"
 
 export default function OrderSummaryExample() {
 	return (

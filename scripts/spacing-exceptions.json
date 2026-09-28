@@ -1,8 +1,0 @@
-{
-	"note": "Spacing set from a raw length instead of a --space-* step. The list may shrink and never grow: a new finding fails as unexpected, and an entry that stops matching fails as stale.",
-	"why": "The preview site's own section and pager margins sit above the spacing ladder's top step.",
-	"findings": [
-		"literal-space|src/preview/preview.module.css|.pager|margin-top|4rem",
-		"literal-space|src/preview/preview.module.css|.section|margin-top|5rem"
-	]
-}

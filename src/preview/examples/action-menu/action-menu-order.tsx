@@ -13,17 +13,17 @@ const DESTRUCTIVE_FIRST: ActionDefinition[] = [
 export default function ActionMenuOrder() {
 	return (
 		// The same delete-first array: default ordering on the left, `preserveOrder` on the right.
-		<Stack direction="horizontal" gap="lg" align="center">
+		<Stack direction="horizontal" align="center">
 			<ActionMenu
 				actions={DESTRUCTIVE_FIRST}
 				label="Sorted"
-				buttonProps={{ tone: "neutral", buttonStyle: "outline" }}
+				buttonProps={{ tone: "neutral", appearance: "outline" }}
 			/>
 			<ActionMenu
 				actions={DESTRUCTIVE_FIRST}
 				preserveOrder
 				label="preserveOrder"
-				buttonProps={{ tone: "neutral", buttonStyle: "outline" }}
+				buttonProps={{ tone: "neutral", appearance: "outline" }}
 			/>
 		</Stack>
 	)

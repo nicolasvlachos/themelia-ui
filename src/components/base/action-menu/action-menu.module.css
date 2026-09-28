@@ -1,5 +1,4 @@
-
-
+/* ActionMenu and ActionButtons: the trigger label, the button row and the link appearance. */
 .triggerLabel {
 	white-space: nowrap;
 }
@@ -10,13 +9,13 @@
 	flex-wrap: wrap;
 	max-width: 100%;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 }
 
-/* `buttonStyle: "link"`: a ghost button with an underline, not a separate style per tone. */
+/* `appearance: "link"`: a ghost button with an underline, not a separate style per tone. */
 .linkButton {
 	text-decoration: underline;
-	text-underline-offset: var(--link-underline-offset);
+	text-underline-offset: 3px;
 }
 
 /* `labelVisibility`: visually hidden (below the breakpoint for `responsive`), so the name survives. */

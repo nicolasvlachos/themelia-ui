@@ -9,7 +9,7 @@ export default function Tags() {
 	const [tags, setTags] = useState(["invoice", "q4"])
 
 	return (
-		<Stack gap="xl" style={{ maxWidth: "26rem", width: "100%" }}>
+		<Stack style={{ maxWidth: "26rem", width: "100%" }}>
 			<FormField label="Labels" helperText="Try pasting: alpha, beta, gamma">
 				<TagsInput value={tags} onValueChange={setTags} maxTags={5} showCount showClearAll />
 			</FormField>

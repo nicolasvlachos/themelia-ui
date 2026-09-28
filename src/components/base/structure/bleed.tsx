@@ -13,8 +13,9 @@ import type { BleedAxis, ResponsiveValue, StructureGap } from "./structure.types
 
 export interface BleedProps extends React.ComponentProps<"div"> {
 	/**
-	 * How far to escape, on the spacing scale. Match it to the padding being cancelled — a
-	 * surface at `--space-md` bleeds `md` — so the two move together under a density change.
+	 * How far to escape: one of the two gaps, which equal the two paddings. Match it to the
+	 * padding being cancelled — a surface padded by `--padding-sm` bleeds `sm` — so the two
+	 * move together under a density change.
 	 * @default "none"
 	 */
 	amount?: ResponsiveValue<StructureGap>
@@ -36,7 +37,7 @@ export const Bleed = React.forwardRef<HTMLDivElement, BleedProps>(function Bleed
 			data-axis={axis}
 			className={cx("bleed--component", styles.bleed, className)}
 			style={mergeVars(
-				responsiveVars("bleed-amount", amount, (v) => GAP[v]),
+				responsiveVars("_bleed-amount", amount, (v) => GAP[v]),
 				style ?? {},
 			)}
 			{...props}

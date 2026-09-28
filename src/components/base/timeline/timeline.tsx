@@ -6,6 +6,7 @@ import type { LucideIcon } from "lucide-react"
 import type { ComponentProps, ReactNode } from "react"
 
 import { Text } from "@/components/base/typography"
+import type { SemanticTone } from "@/lib/component-vocabulary"
 import { cx } from "@/lib/cx"
 
 import styles from "./timeline.module.css"
@@ -24,6 +25,19 @@ export type TimelineStatus =
 	| "warning"
 	| "destructive"
 	| "neutral"
+
+/*
+ * The tone each status paints its dot and connector in, through the shared tone rule.
+ * Neutral and pending draw no hue.
+ */
+const STATUS_TONE: Partial<Record<TimelineStatus, SemanticTone>> = {
+	progress: "primary",
+	current: "primary",
+	completed: "success",
+	success: "success",
+	warning: "warning",
+	destructive: "destructive",
+}
 
 /** One entry of a `Timeline`. Everything an entry needs travels in the item. */
 export interface TimelineItem {
@@ -72,6 +86,7 @@ export function Timeline({ items, className, ...props }: TimelineProps) {
 				<li
 					key={item.id}
 					data-status={item.status ?? "neutral"}
+					data-tone={STATUS_TONE[item.status ?? "neutral"]}
 					className={cx("timeline--item", styles.item)}
 				>
 					{/* Decoration: the entry's words already say what the dot's tone and icon show. */}

@@ -4,6 +4,7 @@
  */
 import type { ComponentProps } from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./display.module.css"
@@ -14,7 +15,13 @@ import styles from "./display.module.css"
  * attribute passes through.
  */
 export function Kbd({ className, ...props }: ComponentProps<"kbd">) {
-	return <kbd data-slot="kbd" className={cx("kbd--component", styles.kbd, className)} {...props} />
+	return (
+		<kbd
+			data-slot="kbd"
+			className={cx("kbd--component", styles.kbd, textClassName({ size: "xs", lineHeight: "none", mono: true }), className)}
+			{...props}
+		/>
+	)
 }
 
 /**

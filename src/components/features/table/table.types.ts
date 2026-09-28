@@ -58,6 +58,48 @@ export interface ColumnGroup {
 	columns: string[]
 }
 
+/** What an open row's `render` is handed beside the row's data. */
+export interface DataTableExpandedRowContext<TDetail> {
+	/** What `onLoad` resolved to. `undefined` when there is no `onLoad`. */
+	detail: TDetail
+	/** Loads again, skipping the cache. Does nothing without `onLoad`. */
+	refresh: () => void
+	/** Closes this row's panel — after a save inside it, say. */
+	collapse: () => void
+}
+
+/**
+ * Expandable rows: a panel under an open row, opened by a toggle at the row's start. Passing
+ * `expandedRow` at all turns it on; `render` is the one required field.
+ */
+export interface DataTableExpandedRow<TData extends RowData, TDetail = unknown> {
+	/** The panel under an open row. */
+	render: (row: TData, context: DataTableExpandedRowContext<TDetail>) => ReactNode
+	/**
+	 * Fetches what the panel shows when its row opens. The table shows a skeleton meanwhile,
+	 * aborts the request (`signal`) when the row closes, offers Retry on failure and keeps the
+	 * result for five minutes per row. `null` or `undefined` means the row has no details.
+	 * Write it before `render`: TypeScript types `detail` from it, left to right.
+	 */
+	onLoad?: (row: TData, args: { signal: AbortSignal }) => Promise<TDetail | null | undefined>
+	/** Rows it refuses get no toggle and never open. */
+	canExpand?: (row: TData) => boolean
+	/**
+	 * Several rows open at once. `false` closes the open row when another opens.
+	 * @default true
+	 */
+	multiple?: boolean
+	/**
+	 * The open rows, keyed by row id. Controlled: rendered as given, even several under
+	 * `multiple: false`. Supply `getRowId` when `data` can reorder or page, or an open panel
+	 * follows a position rather than a record.
+	 */
+	expanded?: Record<string, boolean>
+	/** The rows open at first, keyed by row id. */
+	defaultExpanded?: Record<string, boolean>
+	onExpandedChange?: (expanded: Record<string, boolean>) => void
+}
+
 export interface DataTableSelectionToolbarContext<TData extends RowData> {
 	table: Table<TData>
 	selectedRows: TData[]
@@ -67,7 +109,10 @@ export interface DataTableSelectionToolbarContext<TData extends RowData> {
 	clearSelection: () => void
 }
 
-/** Density of the whole table: row spacing only, not type size. */
+/**
+ * Row spacing for the whole table, not type size. Unset, a compact provider density picks
+ * `sm`.
+ */
 export type DataTableSize = ComponentScale
 
 /**
@@ -81,7 +126,7 @@ export type RowActionsDisplayMode = "menu" | "inline" | "auto"
 
 export type ClassNameFor<TData extends RowData> = string | ((column: string, row: Row<TData> | null) => string)
 
-export interface DataTableProps<TData extends RowData, TValue = unknown> {
+export interface DataTableProps<TData extends RowData, TValue = unknown, TDetail = unknown> {
 	size?: DataTableSize
 	/**
 	 * The wrapper's chrome. `card` is the ordinary treatment; `glass` is a hairline outline for a
@@ -210,6 +255,11 @@ export interface DataTableProps<TData extends RowData, TValue = unknown> {
 	pageSize?: number
 
 	onRowClick?: RowClickHandler<TData>
+	/**
+	 * Turns on expandable rows: a toggle column at the row's start AND the panel it opens,
+	 * with the state behind them. Without it the table has neither.
+	 */
+	expandedRow?: DataTableExpandedRow<TData, TDetail>
 	onRowSelectionChange?: RowSelectionHandler
 	onSortingChange?: SortingHandler
 	onColumnVisibilityChange?: ColumnVisibilityHandler
@@ -250,6 +300,8 @@ export interface DataTableHeaderProps<TData extends RowData> {
 	stickyFirstColumn?: boolean
 	/** Whether column 0 is the selection checkbox, so the pinned pair covers the identity column too. */
 	hasSelectionColumn?: boolean
+	/** Whether the expand toggle column leads the row (after any checkbox), for the pinned group. */
+	hasExpandColumn?: boolean
 	columnGroups?: ColumnGroup[]
 	headerTransparent?: boolean
 }
@@ -264,6 +316,12 @@ export interface DataTableBodyProps<TData extends RowData> {
 	stickyFirstColumn?: boolean
 	/** Whether column 0 is the selection checkbox, so the pinned pair covers the identity column too. */
 	hasSelectionColumn?: boolean
+	/** Whether the expand toggle column leads the row (after any checkbox), for the pinned group. */
+	hasExpandColumn?: boolean
+	/** The expanded-row config. Open rows render its panel under them. */
+	expandedRow?: DataTableExpandedRow<TData, unknown>
+	/** Prefixes each panel's id and cache key, so two tables never share either. */
+	expansionId?: string
 	striped?: boolean
 	strings?: DataTableStrings
 }

@@ -1,4 +1,4 @@
-import { VendorProfile } from "themelia-ui/admin/patterns/commerce"
+import { VendorProfile } from "themelia-ui/blocks/admin/commerce"
 import { ContentBlock } from "themelia-ui/base/display"
 import { AdaptiveGrid } from "themelia-ui/base/structure"
 import { toast } from "themelia-ui/base/toaster"
@@ -6,7 +6,7 @@ import { Number as NumberValue } from "themelia-ui/primitives"
 
 export default function CatalogueVendor() {
 	return (
-		<AdaptiveGrid minColumnWidth="lg" gap="xl" align="start">
+		<AdaptiveGrid minColumnWidth="20rem" align="start">
 			<ContentBlock surface="bordered">
 				<VendorProfile
 					name="Northwind Traders"

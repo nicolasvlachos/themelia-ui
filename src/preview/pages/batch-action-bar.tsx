@@ -25,7 +25,7 @@ export function BatchActionBarPage() {
 				title="API"
 				description="The summary takes both counts because the sentence differs per language — that is why it is a function rather than a template the component assembles."
 			>
-				<Stack gap="lg" style={{ width: "100%" }}>
+				<Stack style={{ width: "100%" }}>
 					<Callout>
 						Omit <code>onClear</code> to render no clear control. A selection the reader cannot drop
 						needs a deliberate reason.

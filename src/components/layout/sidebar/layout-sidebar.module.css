@@ -3,7 +3,7 @@
 .disclosure {
 	margin-inline-start: auto;
 	flex-shrink: 0;
-	transition: rotate var(--duration-fast) var(--ease-out);
+	transition: rotate var(--duration-fast) var(--ease);
 }
 
 .disclosure[data-expanded] {
@@ -12,21 +12,32 @@
 
 /* ══ SidebarLogo ═══════════════════════════════════════════════════════════════════ */
 
+/* As tall as the switcher rows below it, so a logo header and a workspace header match. */
 .logo {
 	display: flex;
 	align-items: center;
 	min-width: 0;
-	min-height: var(--sidebar-menu-h-lg);
+	min-height: calc(var(--control-height) + var(--padding-sm) * 2);
 }
 
 /* ══ SidebarWorkspace ══════════════════════════════════════════════════════════════
  * The whole header row is one trigger.
  */
 
+/*
+ * The switcher rows are as tall as the icon rail is wide (a row and its inset either side),
+ * taller than a navigation row; collapsed, their content fills the rail's square.
+ */
+.workspaceTrigger,
+.userTrigger {
+	--_menu-button-h: calc(var(--control-height) + var(--padding-sm) * 2);
+	--_menu-button-rail-p: 0;
+}
+
 .workspaceTrigger {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	width: 100%;
 	min-width: 0;
 }
@@ -35,15 +46,15 @@
 	display: flex;
 	flex: 1;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 /* Fixed-size: a long workspace name truncates instead. */
 .workspaceChevron {
 	flex-shrink: 0;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	margin-inline-start: auto;
 	color: var(--muted-foreground);
 }
@@ -53,20 +64,18 @@
 .userTrigger {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	width: 100%;
 	min-width: 0;
 }
 
+/* Name over email, each on its own Text line box. */
 .userIdentity {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	/* Separates name and email, which `--leading-tight` would otherwise press together. */
-	gap: var(--space-2xs);
 	min-width: 0;
 	text-align: start;
-	line-height: var(--leading-tight);
 }
 
 .userIdentity > * {
@@ -83,8 +92,8 @@
 
 .userChevron {
 	flex-shrink: 0;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	margin-inline-start: auto;
 	color: var(--muted-foreground);
 }

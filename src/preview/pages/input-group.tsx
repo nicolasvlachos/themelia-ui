@@ -20,8 +20,8 @@ export function InputGroupPage() {
 
 			<Example
 				example="input-group/input-group-buttons"
-				title="Button sizes inside the shell"
-				description="A control inside a field cannot be a full-height control — it would set the field's height instead of fitting in it. The four sizes here are the ones that fit: two text sizes and their icon-only twins."
+				title="A button inside the shell"
+				description="A control inside a field cannot be a full-height control — it would set the field's height instead of fitting in it. InputGroupButton has one size that fits, inset so its corner nests in the field's; iconOnly makes it square."
 			/>
 
 			<Example id="input-group-rule" title="One box, one ring">

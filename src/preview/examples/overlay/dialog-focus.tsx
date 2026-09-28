@@ -13,9 +13,9 @@ export default function DialogFocus() {
 	const nameRef = useRef<HTMLInputElement>(null)
 
 	return (
-		<Stack direction="horizontal">
+		<Stack gap="sm" direction="horizontal">
 			<Overlay>
-				<OverlayTrigger render={<Button tone="neutral" buttonStyle="outline" />}>
+				<OverlayTrigger render={<Button tone="neutral" appearance="outline" />}>
 					New workspace
 				</OverlayTrigger>
 				<OverlayContent initialFocusRef={nameRef}>
@@ -23,7 +23,7 @@ export default function DialogFocus() {
 						<OverlayTitle>New workspace</OverlayTitle>
 					</OverlayHeader>
 					<OverlayBody>
-						<Stack gap="md">
+						<Stack gap="sm">
 							<FormField label="Name">
 								<Input ref={nameRef} placeholder="Acme design" />
 							</FormField>
@@ -34,7 +34,7 @@ export default function DialogFocus() {
 					</OverlayBody>
 					<OverlayFooter>
 						<OverlayDismissArea>
-							<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+							<Button tone="neutral" appearance="outline">Cancel</Button>
 							<Button>Create</Button>
 						</OverlayDismissArea>
 					</OverlayFooter>

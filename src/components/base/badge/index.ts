@@ -1,2 +1,1 @@
-export { Badge, type BadgeProps, type BadgeTone, type BadgeVariant } from "./badge"
-export { badgeVariants } from "./badge.variants"
+export { Badge, type BadgeProps, type BadgeTone, type BadgeAppearance } from "./badge"

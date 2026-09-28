@@ -24,7 +24,7 @@ function Label({ className, ...props }: LabelProps) {
 	return (
 		<Text
 			tag="label"
-			size="inherit"
+			size="sm"
 			weight="medium"
 			data-slot="label"
 			className={cx("label--component", styles.root, className)}

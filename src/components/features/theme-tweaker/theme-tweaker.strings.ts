@@ -70,9 +70,8 @@ export interface ThemeTweakerStrings {
 	>
 	sections: Record<
 		| "surfaces-content" | "brand-actions" | "charts" | "sidebar" | "semantic-feedback"
-		| "inverse-surfaces" | "font-families" | "type-scale" | "radius" | "elevation"
-		| "global-scales" | "actions-controls" | "rows-surfaces" | "media"
-		| "application-shell" | "content-widths" | "adaptive-layout",
+		| "tints" | "font-families" | "type-scale" | "radius" | "elevation" | "spacing"
+		| "controls" | "motion" | "application-shell",
 		string
 	>
 }
@@ -120,14 +119,14 @@ export const defaultThemeTweakerStrings: ThemeTweakerStrings = {
 	providerOutputDescription: "Display defaults to pass to your application's provider.",
 	autoPalette: "Derive supporting colours",
 	autoPaletteDescription:
-		"Keep muted, accent, borders, charts, links, and sidebar actions coherent with the primary colour.",
+		"Keep muted, accent, borders, charts, links and the sidebar coherent with the primary colour.",
 	typeRecipeTitle: "Calculated type scale",
 	typeRecipeDescription:
-		"Generate every font step and line height from one body anchor and one modular ratio.",
+		"Every font step from one body size and one heading ratio. Line heights follow each size.",
 	baseTypeSize: "Base size",
 	typeRatio: "Heading ratio",
 	elevationRecipeTitle: "Calculated elevation",
-	elevationRecipeDescription: "Generate the whole shadow ladder from one restrained intensity.",
+	elevationRecipeDescription: "Both shadows, raised and floating, from one intensity.",
 	elevationIntensity: "Shadow intensity",
 	previewTitle: "Semantic preview",
 	previewDescription:
@@ -151,10 +150,10 @@ export const defaultThemeTweakerStrings: ThemeTweakerStrings = {
 	},
 	groupDescriptions: {
 		colors: "Application surfaces, brand actions, charts, and sidebar colours.",
-		states: "Semantic feedback and inverse-surface pairs.",
+		states: "Semantic feedback colours and the two tint strengths.",
 		typography: "Font families and the calculated type scale.",
-		shape: "Corner radius and the elevation ladder.",
-		structure: "Density, spacing, controls, rows, media, and shell geometry.",
+		shape: "Corner radius, the hairline and the two shadows.",
+		structure: "Spacing, control and icon sizes, motion, and the shell's measures.",
 		defaults: "Formatting and display defaults applied through UIProvider.",
 	},
 	sections: {
@@ -163,18 +162,15 @@ export const defaultThemeTweakerStrings: ThemeTweakerStrings = {
 		charts: "Charts",
 		sidebar: "Sidebar",
 		"semantic-feedback": "Semantic feedback",
-		"inverse-surfaces": "Inverse surfaces",
+		tints: "Tints",
 		"font-families": "Font families",
 		"type-scale": "Type scale",
-		radius: "Radius",
+		radius: "Radius & hairline",
 		elevation: "Elevation",
-		"global-scales": "Global scales",
-		"actions-controls": "Actions & controls",
-		"rows-surfaces": "Rows & surfaces",
-		media: "Media",
+		spacing: "Spacing",
+		controls: "Controls & icons",
+		motion: "Motion",
 		"application-shell": "Application shell",
-		"content-widths": "Content widths",
-		"adaptive-layout": "Adaptive layout",
 	},
 }
 

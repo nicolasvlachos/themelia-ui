@@ -7,10 +7,10 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function InputGroupBlock() {
 	return (
-		<Stack gap="lg" style={{ maxWidth: "26rem" }}>
+		<Stack style={{ maxWidth: "26rem" }}>
 			<InputGroup>
 				<InputGroupAddon align="block-start">
-					<InputGroupButton size="icon-xs" aria-label="Favourite">
+					<InputGroupButton iconOnly aria-label="Favourite">
 						<StarIcon aria-hidden="true" />
 					</InputGroupButton>
 					<InputGroupText>Internal note</InputGroupText>

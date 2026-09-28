@@ -5,24 +5,24 @@ import { toast } from "themelia-ui/base/toaster"
 export default function ToastStatuses() {
 	return (
 		<Stack direction="horizontal" gap="sm" wrap>
-			<Button buttonStyle="outline" tone="neutral" onClick={() => toast("Draft saved")}>
+			<Button appearance="outline" tone="neutral" onClick={() => toast("Draft saved")}>
 				Neutral
 			</Button>
 			<Button
-				buttonStyle="outline"
+				appearance="outline"
 				tone="neutral"
 				onClick={() => toast.success("Invoice sent", { description: "Northwind Traders · $1,299.50" })}
 			>
 				Success
 			</Button>
-			<Button buttonStyle="outline" tone="neutral" onClick={() => toast.info("Two seats left on this plan")}>
+			<Button appearance="outline" tone="neutral" onClick={() => toast.info("Two seats left on this plan")}>
 				Info
 			</Button>
-			<Button buttonStyle="outline" tone="neutral" onClick={() => toast.warning("Your card expires next month")}>
+			<Button appearance="outline" tone="neutral" onClick={() => toast.warning("Your card expires next month")}>
 				Warning
 			</Button>
 			<Button
-				buttonStyle="outline"
+				appearance="outline"
 				tone="neutral"
 				onClick={() => toast.error("Could not reach the server", { description: "Retrying in 30 seconds." })}
 			>

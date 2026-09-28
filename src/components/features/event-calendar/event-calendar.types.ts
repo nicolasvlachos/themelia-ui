@@ -7,6 +7,7 @@ import type { ReactNode } from "react"
 import type { Locale } from "date-fns"
 
 import type { ActionDefinition } from "@/components/base/action-menu"
+import type { SemanticTone } from "@/lib/component-vocabulary"
 
 import type { EventCalendarStrings, EventCalendarEventCardStrings } from "./event-calendar.strings"
 
@@ -39,6 +40,12 @@ export interface EventCategory {
 /** The only fallback: a category that is missing entirely. */
 export function resolveCategoryColorToken(category?: EventCategory | null): CalendarColorToken {
 	return category?.colorToken ?? "neutral"
+}
+
+/** The shared tone a category's marks render as `data-tone`: `amber` and `yellow` name warning. */
+export function resolveCategoryTone(category?: EventCategory | null): Extract<SemanticTone, CalendarColorToken> {
+	const token = resolveCategoryColorToken(category)
+	return token === "amber" || token === "yellow" ? "warning" : token
 }
 
 export type CalendarViewMode = "month" | "week" | "agenda"

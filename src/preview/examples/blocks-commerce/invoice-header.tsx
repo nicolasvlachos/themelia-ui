@@ -1,4 +1,4 @@
-import { InvoiceHeader } from "themelia-ui/admin/patterns/commerce"
+import { InvoiceHeader } from "themelia-ui/blocks/admin/commerce"
 import { Stack } from "themelia-ui/base/structure"
 
 export default function InvoiceHeaderExample() {

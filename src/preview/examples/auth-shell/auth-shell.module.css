@@ -18,7 +18,7 @@
 }
 
 .expandedDialog {
-	--overlay-max-width: var(--content-width-xl);
+	--_overlay-max-width: 80rem;
 }
 
 .formColumn {
@@ -31,5 +31,5 @@
 	width: 1em;
 	height: 1em;
 	vertical-align: middle;
-	margin-inline-end: var(--space-xs);
+	margin-inline-end: var(--gap-sm);
 }

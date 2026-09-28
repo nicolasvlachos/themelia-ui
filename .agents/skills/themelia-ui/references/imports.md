@@ -67,6 +67,9 @@ JavaScript imports no CSS, so a module without its stylesheet renders unstyled.
 | `base/typography` | `themelia-ui/base/typography` | `themelia-ui/base/typography.css` | — |
 | `base/upload` | `themelia-ui/base/upload` | `themelia-ui/base/upload.css` | — |
 | `base/value-inputs` | `themelia-ui/base/value-inputs` | `themelia-ui/base/value-inputs.css` | — |
+| `blocks/analytics` | `themelia-ui/blocks/analytics` | `themelia-ui/blocks/analytics.css` | recharts |
+| `blocks/onboarding` | `themelia-ui/blocks/onboarding` | `themelia-ui/blocks/onboarding.css` | — |
+| `blocks/timelines` | `themelia-ui/blocks/timelines` | `themelia-ui/blocks/timelines.css` | — |
 | `features/actions` | `themelia-ui/features/actions` | `themelia-ui/features/actions.css` | — |
 | `features/activities` | `themelia-ui/features/activities` | `themelia-ui/features/activities.css` | @tiptap/core, @tiptap/pm, @tiptap/starter-kit |
 | `features/ai-chat` | `themelia-ui/features/ai-chat` | `themelia-ui/features/ai-chat.css` | — |
@@ -102,9 +105,6 @@ JavaScript imports no CSS, so a module without its stylesheet renders unstyled.
 | `layout/settings` | `themelia-ui/layout/settings` | `themelia-ui/layout/settings.css` | — |
 | `layout/sidebar` | `themelia-ui/layout/sidebar` | `themelia-ui/layout/sidebar.css` | — |
 | `layout/workspace` | `themelia-ui/layout/workspace` | `themelia-ui/layout/workspace.css` | — |
-| `patterns/analytics` | `themelia-ui/patterns/analytics` | `themelia-ui/patterns/analytics.css` | recharts |
-| `patterns/onboarding` | `themelia-ui/patterns/onboarding` | `themelia-ui/patterns/onboarding.css` | — |
-| `patterns/timelines` | `themelia-ui/patterns/timelines` | `themelia-ui/patterns/timelines.css` | — |
 | `primitives` | `themelia-ui/primitives` | `themelia-ui/primitives.css` | — |
 | `theming` | `themelia-ui/theming` | — | — |
 | `ui-provider` | `themelia-ui/ui-provider` | — | — |
@@ -113,8 +113,8 @@ JavaScript imports no CSS, so a module without its stylesheet renders unstyled.
 
 | module | import | stylesheet | optional peers |
 | --- | --- | --- | --- |
-| `admin/patterns/access` | `themelia-ui/admin/patterns/access` | `themelia-ui/admin/patterns/access.css` | — |
-| `admin/patterns/commerce` | `themelia-ui/admin/patterns/commerce` | `themelia-ui/admin/patterns/commerce.css` | — |
+| `blocks/admin/access` | `themelia-ui/blocks/admin/access` | `themelia-ui/blocks/admin/access.css` | — |
+| `blocks/admin/commerce` | `themelia-ui/blocks/admin/commerce` | `themelia-ui/blocks/admin/commerce.css` | — |
 
 ## Optional peers — 15 of them
 
@@ -137,4 +137,4 @@ resolves it. Release verification rejects a module that reaches an undeclared pe
 | `react-hook-form` | `features/sync`, `forms-rhf` |
 | `react-leaflet` | `features/map` |
 | `react-leaflet-markercluster` | `features/map` |
-| `recharts` | `base/chart`, `patterns/analytics` |
+| `recharts` | `base/chart`, `blocks/analytics` |

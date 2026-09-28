@@ -88,7 +88,7 @@ export function LanguageSwitcher({
 					render={
 						<Button
 							tone="neutral"
-							buttonStyle="ghost"
+							appearance="ghost"
 							aria-labelledby={active ? `${nameId} ${valueId}` : label ? undefined : nameId}
 						>
 							<GlobeIcon />

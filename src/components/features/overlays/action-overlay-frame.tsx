@@ -80,7 +80,7 @@ export function ActionOverlayFrame({
 	onError,
 	closeOnAsyncComplete = true,
 	confirmTone = "primary",
-	confirmStyle = "solid",
+	confirmAppearance = "solid",
 	loading = false,
 	formId,
 	footer,
@@ -182,7 +182,7 @@ export function ActionOverlayFrame({
 								showCancel={showCancel}
 								showConfirm={showConfirm}
 								confirmTone={actions.confirmTone}
-								confirmStyle={confirmStyle}
+								confirmAppearance={confirmAppearance}
 								busy={actions.busy}
 								formId={formId}
 								onCancel={actions.cancel}

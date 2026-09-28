@@ -28,8 +28,8 @@ export default function SyncRangeFormExample() {
 				syncOptions={SYNC_OPTIONS}
 				onSubmit={(data) => setSubmitted(`${data.hours}h · ${data.options.join(", ") || "everything"}`)}
 			/>
-			<Stack direction="horizontal" gap="md" align="center">
-				<Button type="submit" form="sync-demo" buttonStyle="outline">
+			<Stack direction="horizontal" gap="sm" align="center">
+				<Button type="submit" form="sync-demo" appearance="outline">
 					Run sync
 				</Button>
 				{!!submitted && <Text size="sm" type="secondary">submitted: {submitted}</Text>}

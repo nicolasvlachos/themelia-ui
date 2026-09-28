@@ -10,7 +10,7 @@ import { mergeVars, responsiveVars } from "@/lib/responsive"
 import { ALIGN, GAP, width } from "./structure.maps"
 import styles from "./structure.module.css"
 import type {
-	GridColumns, GridSpan, ResponsiveValue, StructureAlign, StructureGap, StructureWidth,
+	CssLength, GridColumns, GridSpan, ResponsiveValue, StructureAlign, StructureGap, StructureWidth,
 } from "./structure.types"
 
 export interface GridProps extends React.ComponentProps<"div"> {
@@ -21,7 +21,7 @@ export interface GridProps extends React.ComponentProps<"div"> {
 	columnGap?: ResponsiveValue<StructureGap>
 	align?: ResponsiveValue<StructureAlign>
 	/** Caps the grid's width — a content step, or any CSS length. Same scale as `Stack`. */
-	maxWidth?: ResponsiveValue<StructureWidth | (string & {})>
+	maxWidth?: ResponsiveValue<StructureWidth | CssLength>
 }
 
 export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
@@ -34,12 +34,12 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(function Grid(
 			data-slot="grid"
 			className={cx("grid--component", styles.grid, className)}
 			style={mergeVars(
-				responsiveVars("grid-columns", columns),
-				responsiveVars("grid-gap", gap, (v) => GAP[v]),
-				responsiveVars("grid-row-gap", rowGap, (v) => GAP[v]),
-				responsiveVars("grid-column-gap", columnGap, (v) => GAP[v]),
-				responsiveVars("grid-align", align, (v) => ALIGN[v]),
-				responsiveVars("grid-max-width", maxWidth, width),
+				responsiveVars("_grid-columns", columns),
+				responsiveVars("_grid-gap", gap, (v) => GAP[v]),
+				responsiveVars("_grid-row-gap", rowGap, (v) => GAP[v]),
+				responsiveVars("_grid-column-gap", columnGap, (v) => GAP[v]),
+				responsiveVars("_grid-align", align, (v) => ALIGN[v]),
+				responsiveVars("_grid-max-width", maxWidth, width),
 				style ?? {},
 			)}
 			{...props}
@@ -64,7 +64,7 @@ export const GridCell = React.forwardRef<HTMLDivElement, GridCellProps>(function
 			className={cx("grid-cell--component", styles.cell, className)}
 			style={mergeVars(
 				// `full` cannot be a span count, because the track count is only known to CSS.
-				isFull ? { gridColumn: "1 / -1" } : responsiveVars("cell-span", span as ResponsiveValue<number>),
+				isFull ? { gridColumn: "1 / -1" } : responsiveVars("_cell-span", span as ResponsiveValue<number>),
 				style ?? {},
 			)}
 			{...props}

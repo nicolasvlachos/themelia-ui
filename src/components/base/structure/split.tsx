@@ -10,7 +10,9 @@ import { mergeVars, responsiveVars } from "@/lib/responsive"
 
 import { GAP, width } from "./structure.maps"
 import styles from "./structure.module.css"
-import type { ResponsiveValue, SplitSide, StructureGap, StructureWidth } from "./structure.types"
+import type {
+	CssLength, ResponsiveValue, SplitSide, StructureGap, StructureWidth,
+} from "./structure.types"
 
 export interface SplitProps extends React.ComponentProps<"div"> {
 	/**
@@ -25,10 +27,10 @@ export interface SplitProps extends React.ComponentProps<"div"> {
 	 * to nothing.
 	 * @default "18rem"
 	 */
-	sideWidth?: ResponsiveValue<StructureWidth | (string & {})>
+	sideWidth?: ResponsiveValue<StructureWidth | CssLength>
 	/**
 	 * Space between the two columns.
-	 * @default "md"
+	 * @default "default"
 	 */
 	gap?: ResponsiveValue<StructureGap>
 	/**
@@ -50,8 +52,8 @@ export const Split = React.forwardRef<HTMLDivElement, SplitProps>(function Split
 			data-collapse={collapseBelow}
 			className={cx("split--component", styles.split, className)}
 			style={mergeVars(
-				responsiveVars("split-width", sideWidth, width),
-				responsiveVars("split-gap", gap, (v) => GAP[v]),
+				responsiveVars("_split-width", sideWidth, width),
+				responsiveVars("_split-gap", gap, (v) => GAP[v]),
 				style ?? {},
 			)}
 			{...props}

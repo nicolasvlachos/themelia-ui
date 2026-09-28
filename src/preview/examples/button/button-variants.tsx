@@ -4,18 +4,18 @@ import { Text } from "themelia-ui/base/typography"
 
 export default function ButtonVariants() {
 	return (
-		<Stack direction="horizontal" gap="xl" wrap align="center">
+		<Stack direction="horizontal" wrap align="center">
 			<Text size="xs" type="secondary">
 				Changed your mind? <TextButton>Undo the import</TextButton>
 			</Text>
 			<LoaderButton
 				tone="neutral"
-				buttonStyle="outline"
+				appearance="outline"
 				onClick={() => new Promise((resolve) => setTimeout(resolve, 1200))}
 			>
 				Save and wait
 			</LoaderButton>
-			<TooltipButton tooltip="Archive this order" tone="neutral" buttonStyle="outline">
+			<TooltipButton tooltip="Archive this order" tone="neutral" appearance="outline">
 				Archive
 			</TooltipButton>
 		</Stack>

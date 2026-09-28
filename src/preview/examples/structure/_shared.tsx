@@ -1,14 +1,17 @@
+import { Text } from "themelia-ui/base/typography"
+
 export function Box({ children }: { children: React.ReactNode }) {
 	return (
-		<div
+		<Text
+			tag="div"
+			size="sm"
 			style={{
-				padding: "var(--space-md) var(--space-lg)",
+				padding: "var(--padding-sm) var(--padding)",
 				borderRadius: "var(--radius-sm)",
 				background: "var(--muted)",
-				fontSize: "var(--text-sm)",
 			}}
 		>
 			{children}
-		</div>
+		</Text>
 	)
 }

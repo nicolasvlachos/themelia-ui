@@ -18,7 +18,7 @@
 
 	html {
 		font-family: var(--font-sans);
-		line-height: var(--text-sm--line-height);
+		line-height: calc(1.25 / 0.875);
 		-webkit-text-size-adjust: 100%;
 		tab-size: 4;
 	}
@@ -26,8 +26,9 @@
 	body {
 		background-color: var(--background);
 		color: var(--foreground);
-		font-size: var(--text-sm);
-		line-height: var(--text-sm--line-height);
+		/* Text's `sm` step: the size of anything the kit's own type does not reach. */
+		font-size: calc(var(--text-sm) * var(--text-scale));
+		line-height: calc(1.25 / 0.875);
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
@@ -39,7 +40,7 @@
 	}
 
 	:is(input, textarea, [contenteditable="true"]) {
-		caret-color: var(--primary-accent);
+		caret-color: var(--primary);
 	}
 
 	code,
@@ -75,8 +76,8 @@
 	mark {
 		margin-inline: -0.125em;
 		padding-inline: 0.125em;
-		/* 30, not 20: 20 turns faint on a dark card. */
-		background-color: var(--warning-30);
+		/* The strong tint: a light one turns faint on a dark card. */
+		background-color: color-mix(in oklab, var(--warning) var(--tint-strong), transparent);
 		color: var(--foreground);
 		-webkit-box-decoration-break: clone;
 		box-decoration-break: clone;

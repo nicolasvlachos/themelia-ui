@@ -13,7 +13,7 @@ export default function SidebarControlled() {
 	const [open, setOpen] = useState(true)
 
 	return (
-		<Stack gap="md">
+		<Stack gap="sm">
 			<Text size="xs" type="secondary">
 				open: {String(open)}
 			</Text>
@@ -47,7 +47,7 @@ export default function SidebarControlled() {
 					</Sidebar>
 					{/* embedded in a docs page, so the page's own <main> stays the only one */}
 					<SidebarInset render={<div />}>
-						<Stack style={{ padding: "var(--space-xl)" }}>
+						<Stack gap="sm" style={{ padding: "var(--padding)" }}>
 							<SidebarTrigger />
 						</Stack>
 					</SidebarInset>

@@ -8,6 +8,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { XIcon } from "lucide-react"
 
 import { Slot } from "@/components/base/slot"
+import { textClassName } from "@/components/base/typography"
 import { useNativeDialog } from "@/hooks/use-native-dialog"
 import { cvm } from "@/lib/cvm"
 import { cx } from "@/lib/cx"
@@ -22,19 +23,18 @@ import type {
 	OverlayContentProps, OverlayInset, OverlayLength, OverlayRootProps, OverlaySize,
 } from "./overlay.types"
 
-/** Named cross-axis steps resolve to tokens; anything else is used as the length it is. */
-const SIZE_TOKEN: Record<string, string> = {
-	sm: "var(--overlay-edge-sm)",
-	md: "var(--overlay-edge-md)",
-	lg: "var(--overlay-edge-lg)",
-	full: "var(--overlay-edge-full)",
+/** Named cross-axis steps are viewport shares; anything else is used as the length it is. */
+const SIZE_SHARE: Record<string, string> = {
+	default: "75%",
+	sm: "55%",
+	full: "100%",
 }
 
 /* The wide-screen ceiling for each preset; an explicit length caps itself. */
-const SIZE_CAP: Record<string, string> = { sm: "20rem", md: "24rem", lg: "32rem", full: "100%" }
+const SIZE_CAP: Record<string, string> = { default: "24rem", sm: "20rem", full: "100%" }
 
 /** The space the insets leave — what `length` is a fraction of. */
-const INSET_BOX = "calc(100% - var(--overlay-edge-inset) * 2)"
+const INSET_BOX = "calc(100% - var(--_edge-inset) * 2)"
 
 /**
  * A percentage length is rewritten as a fraction of the inset box, not the viewport, so the
@@ -49,11 +49,12 @@ function resolveLength(length: OverlayLength) {
 function edgeVars(size?: OverlaySize, length?: OverlayLength, inset?: OverlayInset) {
 	const vars: Record<string, string> = {}
 	if (size) {
-		vars["--overlay-edge-size"] = SIZE_TOKEN[size] ?? size
-		vars["--overlay-edge-cap"] = SIZE_CAP[size] ?? size
+		vars["--_edge-size"] = SIZE_SHARE[size] ?? size
+		vars["--_edge-cap"] = SIZE_CAP[size] ?? size
 	}
-	if (length) vars["--overlay-edge-length"] = resolveLength(length)
-	if (inset) vars["--overlay-edge-inset"] = inset === true ? "var(--overlay-edge-inset-default)" : inset
+	if (length) vars["--_edge-length"] = resolveLength(length)
+	/* `true` is the kit's gap, the same one a centred surface keeps from the viewport. */
+	if (inset) vars["--_edge-inset"] = inset === true ? "var(--gap)" : inset
 	return vars
 }
 
@@ -243,7 +244,16 @@ function OverlayContent({
 			 */}
 			<UIPortalHost>{children}</UIPortalHost>
 			{!!showCloseButton && (
-				<OverlayClose render={<button type="button" className={styles.close} aria-label={copy.close} />}>
+				<OverlayClose
+					render={
+						<button
+							type="button"
+							/* The title's type, so the stylesheet's `1lh` centres the glyph on its first line. */
+							className={cx(styles.close, textClassName({ size: "base", lineHeight: "tight" }))}
+							aria-label={copy.close}
+						/>
+					}
+				>
 					<XIcon />
 				</OverlayClose>
 			)}

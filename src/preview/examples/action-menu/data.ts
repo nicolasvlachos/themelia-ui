@@ -1,2 +1,2 @@
 /* One primary and the rest quiet, as a real toolbar looks. */
-export const QUIET = { buttonStyle: "outline", tone: "neutral" } as const
+export const QUIET = { appearance: "outline", tone: "neutral" } as const

@@ -1,9 +1,9 @@
-import { OrderCustomer } from "themelia-ui/admin/patterns/commerce"
+import { OrderCustomer } from "themelia-ui/blocks/admin/commerce"
 import { Grid, GridCell } from "themelia-ui/base/structure"
 
 export default function OrderCustomerExample() {
 	return (
-		<Grid columns={{ base: 1, md: 2 }} gap="xl">
+		<Grid columns={{ base: 1, md: 2 }}>
 			<GridCell>
 				<OrderCustomer
 					name="Alice Mercer"

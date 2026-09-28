@@ -4,7 +4,7 @@ import { Box } from "./_shared"
 
 export default function GridExample() {
 	return (
-		<Grid columns={{ base: 1, md: 3 }} gap="md">
+		<Grid columns={{ base: 1, md: 3 }} gap="sm">
 			<GridCell span="full"><Box>span full</Box></GridCell>
 			<GridCell><Box>one</Box></GridCell>
 			<GridCell><Box>two</Box></GridCell>

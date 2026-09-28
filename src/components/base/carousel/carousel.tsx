@@ -151,7 +151,7 @@ export function Carousel({
 	const previous = (
 		<Button
 			tone="neutral"
-			buttonStyle="outline"
+			appearance="outline"
 			iconOnly
 			aria-label={copy.previous}
 			disabled={atStart}
@@ -164,7 +164,7 @@ export function Carousel({
 	const next = (
 		<Button
 			tone="neutral"
-			buttonStyle="outline"
+			appearance="outline"
 			iconOnly
 			aria-label={copy.next}
 			disabled={atEnd}
@@ -252,7 +252,7 @@ export function CarouselControl({ direction, className, children, ...props }: Ca
 	return (
 		<Button
 			tone="neutral"
-			buttonStyle="outline"
+			appearance="outline"
 			iconOnly
 			aria-label={isPrevious ? strings.previous : strings.next}
 			// Disabled at the end, not wrapped: jumping back to the start disorients.

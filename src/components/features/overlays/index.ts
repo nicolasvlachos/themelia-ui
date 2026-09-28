@@ -19,5 +19,5 @@ export type {
 	OverlayWidth,
 	ActionDialogProps, ActionSheetProps, ConfirmDialogProps,
 	OverlayBaseProps, OverlayActionProps, OverlayEmphasisProps,
-	OverlayTone, OverlayButtonTone, OverlayButtonStyle,
+	OverlayTone, OverlayButtonTone, OverlayButtonAppearance,
 } from "./overlays.types"

@@ -11,14 +11,14 @@ const TOOLBAR: ActionDefinition[] = [
 	{ label: "Duplicate", icon: ShareIcon, ...QUIET, onClick: () => {} },
 	{ label: "Export", icon: DownloadIcon, ...QUIET, onClick: () => {} },
 	{ label: "Archive", icon: ArchiveIcon, ...QUIET, onClick: () => {} },
-	{ label: "Delete", icon: TrashIcon, buttonStyle: "outline", tone: "destructive", onClick: () => {} },
+	{ label: "Delete", icon: TrashIcon, appearance: "outline", tone: "destructive", onClick: () => {} },
 ]
 
 export default function ActionButtonsExample() {
 	return (
-		<Stack gap="lg" style={{ width: "100%" }}>
+		<Stack style={{ width: "100%" }}>
 			{[5, 3, 1].map((max) => (
-				<Stack key={max} gap="xs">
+				<Stack key={max} gap="sm">
 					<Text size="xs" type="secondary">max={max}</Text>
 					<ActionButtons actions={TOOLBAR} max={max} />
 				</Stack>

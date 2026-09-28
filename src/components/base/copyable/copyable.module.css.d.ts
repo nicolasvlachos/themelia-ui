@@ -2,7 +2,6 @@
 declare const styles: {
 	readonly confirmIcon: string
 	readonly content: string
-	readonly mono: string
 	readonly root: string
 	readonly trigger: string
 	readonly triggerCompact: string

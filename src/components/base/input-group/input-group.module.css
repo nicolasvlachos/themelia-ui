@@ -1,13 +1,8 @@
 /*
- * Input group — a bordered shell that owns the focus ring for the control inside it; the
- * control is stripped of its own chrome.
+ * Input group — a bordered shell that owns the frame and the focus outline for the control
+ * inside it; the control is stripped of its own chrome. It keeps its own copy of the field
+ * frame (styles/fields.css) because its addons run edge to edge.
  */
-/* Raw inputs: declared once at :root (styles/SCOPES.md). */
-:root {
-	/* Addons tuck buttons and kbds into the shell's inset so they sit optically flush. */
-	--input-group-addon-button-pull: -0.25rem;
-	--input-group-addon-kbd-pull: -0.125rem;
-}
 
 /*
  * Focus rules use `:has()` on the control's own state, not `:focus-within`: focusing an
@@ -20,24 +15,22 @@
 	width: 100%;
 	min-width: 0;
 	align-items: center;
-	/* The shared field surface: height, fill and idle edge match every other field. */
-	height: var(--control-h);
-	border: var(--border-width) solid var(--control-border);
+	/* The shared field frame: height, fill and idle edge match every other field. */
+	height: var(--control-height);
+	border: var(--border-width) solid var(--input);
 	border-radius: var(--radius-sm);
-	background-color: var(--field-bg);
-	box-shadow: none;
-	outline: none;
-	transition: border-color var(--duration-fast) var(--ease-in-out),
-		box-shadow var(--duration-fast) var(--ease-in-out);
+	background-color: transparent;
+	transition: border-color var(--duration-fast) var(--ease);
 }
 
 /*
  * `[data-field-control]`: set by both Input and Textarea (they overwrite `data-slot`), and
- * absent on addon buttons.
+ * absent on addon buttons. The outline is drawn over the frame, as fields.css draws it.
  */
 .root:has([data-field-control]:focus-visible) {
-	border-color: var(--focus-ring-color);
-	box-shadow: var(--field-focus-ring);
+	border-color: var(--ring);
+	outline: calc(var(--border-width) * 2) solid var(--ring);
+	outline-offset: calc(var(--border-width) * -1);
 }
 
 .root:hover:not(:has([data-field-control]:disabled)):not(
@@ -45,17 +38,13 @@
 	):not(:has([data-field-control]:focus-visible)):not(
 		:has([data-field-control][aria-invalid="true"])
 	) {
-	border-color: var(--control-border-hover);
+	border-color: color-mix(in oklab, var(--input), var(--foreground) 35%);
 }
 
+/* Invalid keeps its edge, and focus takes the invalid colour, as fields.css draws it. */
 .root:has([data-field-control][aria-invalid="true"]) {
-	border-color: var(--invalid-ring-border);
-	box-shadow: var(--invalid-ring);
-}
-
-/* Invalid and focused shows the focus ring, as fields.css does for every field. */
-.root:has([data-field-control][aria-invalid="true"]):has([data-field-control]:focus-visible) {
-	box-shadow: var(--field-focus-ring);
+	border-color: var(--destructive);
+	outline-color: var(--destructive);
 }
 
 /* Disabled dims the whole group once — border, icons and text together. */
@@ -69,25 +58,28 @@
 }
 
 /*
- * One box, one ring: inner controls (including a Textarea's own shell) give up border and
- * ring. These selectors outrank fields.css's invalid-plus-focus rules.
+ * One box, one outline: inner controls (including a Textarea's own shell) give up their
+ * edge and outline to the group's. These selectors outrank fields.css's invalid-plus-focus
+ * rules.
  */
 .root [data-field-control]:focus-visible,
 .root [data-field-control][aria-invalid="true"],
 .root [data-field-control][aria-invalid="true"]:focus-visible {
 	border-color: transparent;
-	box-shadow: none;
+	outline: none;
 }
 
+/* A Textarea's own shell keeps the field's inline inset, so its text clears the frame. */
 .root [data-field-shell],
 .root [data-field-shell]:has([data-field-control]:focus-visible),
 .root [data-field-shell]:has([data-field-control][aria-invalid="true"]) {
 	flex: 1;
 	min-height: 0;
-	padding: 0;
+	padding-block: 0;
+	padding-inline: var(--padding-sm);
 	border: 0;
 	background: none;
-	box-shadow: none;
+	outline: none;
 }
 
 .root textarea {
@@ -107,31 +99,29 @@
 }
 
 /* The control yields padding on whichever edge an addon occupies. */
-.root:has(> [data-align="block-start"]) > input { padding-bottom: var(--space-lg); }
-.root:has(> [data-align="block-end"]) > input { padding-top: var(--space-lg); }
-.root:has(> [data-align="inline-start"]) > input { padding-inline-start: var(--space-sm); }
-.root:has(> [data-align="inline-end"]) > input { padding-inline-end: var(--space-sm); }
+.root:has(> [data-align="block-start"]) > input { padding-bottom: var(--padding-sm); }
+.root:has(> [data-align="block-end"]) > input { padding-top: var(--padding-sm); }
+.root:has(> [data-align="inline-start"]) > input { padding-inline-start: var(--padding-sm); }
+.root:has(> [data-align="inline-end"]) > input { padding-inline-end: var(--padding-sm); }
 
 /* ── Addon ────────────────────────────────────────────────────────────────────── */
 
+/* The addon's type is Text's (input-group.tsx). */
 .addon {
 	display: flex;
 	height: auto;
 	cursor: text;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-md);
-	padding-block: var(--space-sm);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	font-weight: var(--weight-medium);
+	gap: var(--gap-sm);
+	padding-block: calc(var(--padding-sm) / 2);
 	color: var(--muted-foreground);
 	user-select: none;
 }
 
 .addon > svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .addon > kbd {
@@ -142,84 +132,59 @@
 	opacity: var(--disabled-opacity);
 }
 
+/*
+ * A button pulls toward the edge until its inset matches the one above and below it, so it
+ * sits concentric in the frame; a kbd pulls a little less, being shorter.
+ */
 .alignInlineStart {
 	order: -1;
-	padding-inline-start: var(--control-px-2xs);
+	padding-inline-start: var(--padding-sm);
 }
-.alignInlineStart:has(> button) { margin-inline-start: var(--input-group-addon-button-pull); }
-.alignInlineStart:has(> kbd) { margin-inline-start: var(--input-group-addon-kbd-pull); }
+.alignInlineStart:has(> button) { margin-inline-start: calc(var(--padding-sm) / -2); }
+.alignInlineStart:has(> kbd) { margin-inline-start: calc(var(--padding-sm) / -4); }
 
 .alignInlineEnd {
 	order: 1;
-	padding-inline-end: var(--control-px-2xs);
+	padding-inline-end: var(--padding-sm);
 }
-.alignInlineEnd:has(> button) { margin-inline-end: var(--input-group-addon-button-pull); }
-.alignInlineEnd:has(> kbd) { margin-inline-end: var(--input-group-addon-kbd-pull); }
+.alignInlineEnd:has(> button) { margin-inline-end: calc(var(--padding-sm) / -2); }
+.alignInlineEnd:has(> kbd) { margin-inline-end: calc(var(--padding-sm) / -4); }
 
 .alignBlockStart {
 	order: -1;
 	width: 100%;
 	justify-content: flex-start;
-	padding-inline: var(--control-px-sm);
-	padding-top: var(--space-md);
+	padding-inline: var(--padding-sm);
+	padding-top: var(--padding-sm);
 }
 
 .alignBlockEnd {
 	order: 1;
 	width: 100%;
 	justify-content: flex-start;
-	padding-inline: var(--control-px-sm);
-	padding-bottom: var(--space-md);
+	padding-inline: var(--padding-sm);
+	padding-bottom: var(--padding-sm);
 }
 
 /* ── Button ───────────────────────────────────────────────────────────────────── */
 
-/* Inset by `--space-xs` inside the group, so concentric with it: the group's radius less the inset. */
-
+/*
+ * Inset inside the group, so concentric with it: an icon plus the small padding tall, and
+ * the group's radius less the inset. Button reads both hooks.
+ */
 .button {
+	--_button-height: calc(var(--icon-size) + var(--padding-sm));
+	--_button-radius: calc(var(--radius-sm) - var(--padding-sm) / 2);
+
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
-	box-shadow: none;
+	gap: calc(var(--gap-sm) / 2);
+	padding-inline: var(--padding-sm);
 }
 
-.buttonXs {
-	height: var(--control-h-2xs);
-	gap: var(--space-xs);
-	padding-inline: var(--control-px-2xs);
-	border-radius: calc(var(--radius-sm) - var(--space-xs));
-}
-
-.buttonXs > svg:not([data-sized]) {
-	width: var(--size-icon-md);
-	height: var(--size-icon-md);
-}
-
-.buttonIconXs {
-	width: var(--control-h-2xs);
-	height: var(--control-h-2xs);
-	padding: 0;
-	border-radius: calc(var(--radius-sm) - var(--space-xs));
-}
-
-/* Sized to fit inside the group's border, with the nested radius cap. */
-.buttonSm {
-	height: var(--control-h-sm);
-	padding-inline: var(--control-px-sm);
-	border-radius: calc(var(--radius-sm) - var(--space-xs));
-}
-
-.buttonIconSm {
-	width: var(--control-h-sm);
-	height: var(--control-h-sm);
-	padding: 0;
-	border-radius: calc(var(--radius-sm) - var(--space-xs));
-}
-
-.buttonIconXs:has(> svg),
-.buttonIconSm:has(> svg) {
+/* Square: Button's own icon-only width follows the full control height, not this one. */
+.buttonIcon {
+	width: var(--_button-height);
 	padding: 0;
 }
 
@@ -228,9 +193,7 @@
 .text {
 	display: flex;
 	align-items: center;
-	gap: var(--space-md);
-	font-size: var(--text-sm);
-	line-height: var(--text-sm--line-height);
+	gap: var(--gap-sm);
 }
 
 .text svg {
@@ -238,27 +201,21 @@
 }
 
 .text svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* ── Controls ─────────────────────────────────────────────────────────────────── */
 
-/* The shell owns the chrome, including the invalid ring. */
+/* The shell owns the chrome, including the invalid edge. */
 .control {
 	flex: 1;
 	border: 0;
 	border-radius: 0;
 	background-color: transparent;
-	box-shadow: none;
-}
-
-.control:focus-visible,
-.control[aria-invalid="true"] {
-	box-shadow: none;
 }
 
 .controlTextarea {
-	padding-block: var(--space-md);
+	padding-block: var(--padding-sm);
 	resize: none;
 }

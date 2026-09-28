@@ -6,9 +6,9 @@
 /* A textarea grows with its content and sets a floor rather than a fixed height. */
 .textarea {
 	height: auto;
-	min-height: calc(4rem * var(--scale));
+	min-height: 4rem;
 	field-sizing: content;
-	padding-block: var(--space-md);
+	padding-block: var(--padding-sm);
 	resize: vertical;
 }
 
@@ -19,9 +19,12 @@
 	width: 100%;
 }
 
-/* Room for the corner affordance, so the last line of text never runs under it. */
+/*
+ * Room for the corner affordance, so the last line of text never runs under it: the
+ * affordance's inset and height, and half a gap above it.
+ */
 .textareaFrame[data-trailing] .textarea {
-	padding-bottom: calc(var(--space-md) + var(--size-icon) + var(--space-2xs));
+	padding-bottom: calc(var(--padding-sm) + var(--icon-size) + var(--gap-sm) / 2);
 }
 
 /* Compound, so it outranks `.affordance` (declared later), which centres a single-line lane. */
@@ -29,11 +32,11 @@
 	position: absolute;
 	top: auto;
 	translate: none;
-	inset-inline-end: var(--control-px-sm);
-	bottom: var(--space-md);
+	inset-inline-end: var(--padding-sm);
+	bottom: var(--padding-sm);
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	/* The resize handle lives in this corner too; let it stay grabbable. */
 	pointer-events: none;
 }
@@ -50,8 +53,8 @@
 }
 
 .addon svg:not([data-sized]) {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* The reveal control sits inside the shell, so it needs no field chrome of its own. */
@@ -67,25 +70,21 @@
 	cursor: pointer;
 	/* A glyph button takes the item radius, like every control. */
 	border-radius: var(--radius-sm);
+	transition: color var(--duration-fast) var(--ease);
 }
 
 .revealButton svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .revealButton:hover:not(:disabled) {
 	color: var(--foreground);
 }
 
-.revealButton:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
-}
-
 /*
  * Select. The UA arrow cannot be recoloured, so it is replaced by an icon (`.selectChevron`)
- * in a trailing lane the padding reserves.
+ * in a trailing lane the padding reserves: the icon and the field's inset either side.
  */
 .selectFrame {
 	position: relative;
@@ -96,7 +95,7 @@
 
 .select {
 	appearance: none;
-	padding-inline-end: var(--field-icon-lane);
+	padding-inline-end: calc(var(--icon-size) + var(--padding-sm) * 2);
 	cursor: pointer;
 }
 
@@ -104,10 +103,10 @@
 .selectChevron {
 	position: absolute;
 	top: 50%;
-	inset-inline-end: var(--control-px-sm);
+	inset-inline-end: var(--padding-sm);
 	translate: 0 -50%;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	color: var(--muted-foreground);
 	pointer-events: none;
 }
@@ -131,7 +130,9 @@
 /* ══ Inline affordances ════════════════════════════════════════════════════════════
  *
  * Icons, prefix/suffix, clear, spinner and count each occupy a lane inside the frame; the
- * control's padding widens by that lane via `--field-pad-start` / `--field-pad-end`.
+ * control's padding widens by that lane via `--_pad-start` / `--_pad-end`. An icon's lane
+ * is the icon and the field's inset either side; a text addon or a count reserves a fixed
+ * width, room for a currency symbol or "12 / 80".
  */
 
 .frame {
@@ -141,24 +142,24 @@
 	width: 100%;
 	min-width: 0;
 
-	--field-pad-start: var(--control-px-sm);
-	--field-pad-end: var(--control-px-sm);
+	--_pad-start: var(--padding-sm);
+	--_pad-end: var(--padding-sm);
 }
 
 /* Inside a field shell the shell owns the inline inset; the frame pads only for an affordance. */
 [data-field-shell] .frame {
-	--field-pad-start: 0px;
-	--field-pad-end: 0px;
+	--_pad-start: 0px;
+	--_pad-end: 0px;
 }
 
-.frame[data-start-icon] { --field-pad-start: var(--field-icon-lane); }
-.frame[data-start-addon] { --field-pad-start: var(--field-addon-lane); }
-.frame[data-end-icon] { --field-pad-end: var(--field-icon-lane); }
-.frame[data-end-addon] { --field-pad-end: var(--field-addon-lane); }
-.frame[data-count] { --field-pad-end: round(calc(3rem * var(--density-scale, var(--scale))), 1px); }
+.frame[data-start-icon] { --_pad-start: calc(var(--icon-size) + var(--padding-sm) * 2); }
+.frame[data-start-addon] { --_pad-start: 2.5rem; }
+.frame[data-end-icon] { --_pad-end: calc(var(--icon-size) + var(--padding-sm) * 2); }
+.frame[data-end-addon] { --_pad-end: 2.5rem; }
+.frame[data-count] { --_pad-end: 3rem; }
 
 .frame > [data-field-control] {
-	padding-inline: var(--field-pad-start) var(--field-pad-end);
+	padding-inline: var(--_pad-start) var(--_pad-end);
 }
 
 /*
@@ -171,17 +172,17 @@
 	translate: 0 -50%;
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 	color: var(--muted-foreground);
 	pointer-events: none;
 }
 
-.affordanceStart { inset-inline-start: var(--space-md); }
-.affordanceEnd { inset-inline-end: var(--space-md); }
+.affordanceStart { inset-inline-start: var(--padding-sm); }
+.affordanceEnd { inset-inline-end: var(--padding-sm); }
 
 .affordance > svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	flex-shrink: 0;
 }
 
@@ -203,22 +204,19 @@
 	color: var(--muted-foreground);
 	cursor: pointer;
 	pointer-events: auto;
-	transition: var(--transition-control);
+	transition:
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 .clear svg {
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 .clear:hover:not(:disabled) {
 	background-color: var(--accent);
 	color: var(--foreground);
-}
-
-.clear:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring);
 }
 
 .clear:disabled,
@@ -228,18 +226,10 @@
 }
 
 .spinner {
-	animation: var(--animate-spin);
+	animation: var(--keyframes-spin) 1s linear infinite;
 }
 
+/* The count's type and colour are Text's (`xs`, tabular; the error ink once over the limit). */
 .count {
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-variant-numeric: tabular-nums;
-	color: var(--muted-foreground);
 	white-space: nowrap;
-}
-
-/* Over the limit the count is the only warning, so it carries the colour. */
-.countOver {
-	color: var(--destructive);
 }

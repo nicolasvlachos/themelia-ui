@@ -19,7 +19,7 @@ export default function Scale() {
 							scale {scale}
 						</MonoValue>
 						<Button>Save</Button>
-						<Button tone="neutral" buttonStyle="outline">Cancel</Button>
+						<Button tone="neutral" appearance="outline">Cancel</Button>
 						<Button iconOnly aria-label="Add"><PlusIcon /></Button>
 						<Checkbox label="Also this" defaultChecked />
 					</div>

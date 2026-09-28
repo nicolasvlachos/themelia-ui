@@ -5,24 +5,24 @@
 	container-name: filter-layout;
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xl);
+	gap: var(--gap);
 	min-width: 0;
 }
 
 .layout[data-variant="compact"] {
-	gap: var(--space-lg);
+	gap: var(--gap-sm);
 }
 
 .bar {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 
 .layout[data-variant="compact"] .bar {
-	gap: var(--space-sm);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 /* Dimmed and inert while busy, not hidden, so the reader keeps their place. */
@@ -77,33 +77,33 @@
 }
 
 .mobileBody {
-	padding: var(--surface-py-xs) var(--surface-px-xs);
+	padding: var(--padding-sm);
 	min-height: 0;
 }
 
 .mobileFilters {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .mobileFilterRow {
 	display: flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .mobileValue {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .mobileFilters .mobileFilter {
 	flex-wrap: nowrap;
-	padding: var(--menu-row-py) var(--row-px);
-	min-height: var(--control-h);
+	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
+	min-height: var(--control-height);
 	width: 100%;
 	text-align: start;
 	cursor: pointer;
@@ -111,13 +111,12 @@
 	background: none;
 }
 
-.mobileFilter:hover { background-color: var(--accent); }
+.mobileFilter:hover:not(:disabled) { background-color: var(--accent); }
 .mobileFilter:disabled { opacity: var(--disabled-opacity); cursor: not-allowed; }
-.mobileFilter:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.mobileFilter > svg { width: var(--size-icon); height: var(--size-icon); color: var(--muted-foreground); }
+.mobileFilter > svg { width: var(--icon-size); height: var(--icon-size); color: var(--muted-foreground); }
 
 .mobileEditor { min-width: 0; }
-.mobileOperator { display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs) var(--row-px); }
+.mobileOperator { display: flex; align-items: center; justify-content: space-between; padding: calc(var(--padding-sm) / 2) var(--padding-sm); }
 
 .clear {
 	margin-inline-start: auto;
@@ -126,11 +125,11 @@
 .loadingChip {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-sm);
-	height: var(--control-h);
-	padding-inline: var(--control-px);
+	gap: var(--gap-sm);
+	height: var(--control-height);
+	padding-inline: var(--padding-sm);
 	border-radius: var(--radius-sm);
-	background-color: var(--muted-50);
+	background-color: var(--muted);
 }
 
 /* ── The pill ──────────────────────────────────────────────────────────────────── */
@@ -140,19 +139,19 @@
 	position: relative;
 	display: inline-flex;
 	align-items: stretch;
-	height: var(--control-h);
+	height: var(--control-height);
 	min-width: 0;
 	max-width: 100%;
 	overflow: hidden;
 	/* The control edge, matching the fields and outline buttons beside it. */
-	border: var(--border-width) solid var(--control-border);
+	border: var(--border-width) solid var(--input);
 	border-radius: var(--radius-sm);
-	background-color: var(--field-bg);
+	background-color: transparent;
 }
 
 .pill[data-active] {
-	border-color: var(--primary-30);
-	background-color: var(--primary-5);
+	border-color: color-mix(in oklab, var(--primary) var(--tint-strong), transparent);
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
 }
 
 /* Mirrors the pill's bounds for popup positioning; clicks pass through to the segments. */
@@ -166,38 +165,46 @@
 	display: inline-flex;
 	flex: none;
 	align-items: center;
-	gap: var(--space-sm);
-	padding-inline: var(--control-px);
+	gap: var(--gap-sm);
+	padding-inline: var(--padding-sm);
 	border: 0;
 	background: none;
 	color: inherit;
 	cursor: pointer;
 	white-space: nowrap;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
-.segment:hover {
+.segment:hover:not(:disabled) {
 	background-color: var(--accent);
 }
 
-/* Inset: the pill clips an outer ring. */
+/* An applied pill is tinted, so its segments hover with the tint. */
+.pill[data-active] .segment:hover:not(:disabled) {
+	background-color: color-mix(in oklab, var(--primary) var(--tint), transparent);
+}
+
+/* Inside: the pill clips an outline drawn outside the segment. */
 .segment:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-ring-inset);
+	outline-offset: calc(var(--border-width) * -2);
+}
+
+.segment:disabled {
+	cursor: not-allowed;
+	opacity: var(--disabled-opacity);
 }
 
 .segmentClear {
 	color: var(--muted-foreground);
-	padding-inline: var(--space-sm);
 }
 
-.segmentClear:hover {
+.segmentClear:hover:not(:disabled) {
 	color: var(--foreground);
 }
 
 .segmentGlyph {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .pillIcon {
@@ -207,8 +214,8 @@
 }
 
 .pillIcon > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 /* Segments paint no borders, so dividers are explicit: inner rules, softer than the pill's frame. */
@@ -216,7 +223,7 @@
 	flex: none;
 	width: var(--border-width);
 	align-self: stretch;
-	background-color: var(--border-60);
+	background-color: var(--border);
 }
 
 /* A button; `.segment` supplies the rest. */
@@ -225,13 +232,13 @@
 	flex: 1;
 	align-items: center;
 	min-width: 0;
-	padding-inline: var(--control-px);
+	padding-inline: var(--padding-sm);
 }
 
 .operatorStatic {
 	display: inline-flex;
 	align-items: center;
-	padding-inline: var(--control-px);
+	padding-inline: var(--padding-sm);
 	white-space: nowrap;
 }
 
@@ -240,15 +247,15 @@
 .valueDisplay {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
 }
 
 
 .valueGlyph {
 	flex: none;
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 	color: var(--muted-foreground);
 }
 
@@ -264,8 +271,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: var(--size-icon);
-	height: var(--size-icon);
+	width: var(--icon-size);
+	height: var(--icon-size);
 	border: var(--border-width) solid var(--surface-ground, var(--background));
 	border-radius: var(--radius-pill);
 	background-color: var(--surface-ground, var(--background));
@@ -274,13 +281,13 @@
 /* Size the svg too: lucide's default 24px would overflow the disc. */
 .valueIcon > svg,
 .valueIconCount > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }
 
 .valueIcon + .valueIcon,
 .valueIcon + .valueIconCount {
-	margin-inline-start: calc(var(--space-sm) * -1);
+	margin-inline-start: calc(var(--gap-sm) * -1);
 }
 
 .valueIconCount {
@@ -307,20 +314,20 @@
 .editorHeader {
 	display: flex;
 	align-items: center;
-	gap: var(--space-sm);
-	padding: var(--surface-py-xs) var(--surface-px-xs);
-	border-bottom: var(--border-width) solid var(--border-60);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
+	border-bottom: var(--border-width) solid var(--border);
 }
 
 
 .editorBody {
-	padding: var(--surface-py-xs) var(--surface-px-xs);
+	padding: var(--padding-sm);
 }
 
 .rangeBody {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: var(--space-sm);
+	gap: var(--gap-sm);
 }
 
 /*
@@ -336,30 +343,32 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
-	padding: var(--surface-py-xs) var(--surface-px-xs);
-	border-top: var(--border-width) solid var(--border-60);
+	gap: var(--gap-sm);
+	padding: var(--padding-sm);
+	border-top: var(--border-width) solid var(--border);
 }
 
 /* A label over a description, inside a Command row. */
 .optionBody {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-2xs);
+	gap: calc(var(--gap-sm) / 2);
 	min-width: 0;
-	line-height: var(--leading-tight);
 }
 
-/* The error boundary's message: tinted, so it reads as a failure rather than another filter. */
+/*
+ * The error boundary's message: tinted in its destructive tone (`data-tone`, styles/tone.css),
+ * so it reads as a failure rather than another filter.
+ */
 .errorBoundary {
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-xs);
-	padding: var(--surface-py) var(--surface-px);
-	border: var(--border-width) solid var(--destructive-30);
+	gap: calc(var(--gap-sm) / 2);
+	padding: var(--padding);
+	border: var(--border-width) solid color-mix(in oklab, var(--tone) var(--tint-strong), transparent);
 	border-radius: var(--radius-sm);
-	background-color: var(--destructive-5);
-	color: var(--destructive-accent);
+	background-color: color-mix(in oklab, var(--tone) var(--tint), transparent);
+	color: var(--tone-ink);
 	min-width: 0;
 }
 
@@ -367,7 +376,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	min-width: 0;
 }
 

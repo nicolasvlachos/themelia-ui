@@ -199,13 +199,48 @@ describe("UIScope", () => {
 			</UIScope>,
 		)
 
-		const inner = container.querySelector("[data-density]")
-		expect(inner?.getAttribute("data-density")).toBe("compact")
+		const inner = container.querySelector('[data-density="compact"]')
 		expect(inner?.getAttribute("data-theme")).toBe("dark")
 	})
 
+	it("writes no preset for the default density, so a consumer's :root lengths apply", () => {
+		const { getByText } = render(
+			<UIScope config={{ density: "default" }} transparent={false}>
+				<span>x</span>
+			</UIScope>,
+		)
+
+		expect(getByText("x").closest("[data-density]")).toBeNull()
+	})
+
+	it("resets a density set further out", () => {
+		const { getByText } = render(
+			<UIScope config={{ density: "compact" }} transparent={false}>
+				<UIScope config={{ density: "default" }} transparent={false}>
+					<span>x</span>
+				</UIScope>
+			</UIScope>,
+		)
+
+		expect(getByText("x").closest("[data-density]")?.getAttribute("data-density")).toBe("default")
+	})
+
+	it("sizes a density it sets at the scale it inherits", () => {
+		const { getByText } = render(
+			<UIScope config={{ scale: 1.25 }} transparent={false}>
+				<UIScope config={{ density: "compact" }} transparent={false}>
+					<span>x</span>
+				</UIScope>
+			</UIScope>,
+		)
+
+		const inner = getByText("x").closest<HTMLElement>('[data-density="compact"]')
+		expect(inner?.style.getPropertyValue("--padding")).toBe("round(0.9375rem, 1px)")
+		expect(inner?.style.getPropertyValue("--control-height")).toBe("round(2.5rem, 1px)")
+	})
+
 	it("keeps an enclosing scope's colours across a nested boundary", () => {
-		/* Semantic colours are declared again at every boundary, so inheriting them is not enough. */
+		/* A scope restates what enclosing scopes wrote, and its own overrides land beside them. */
 		const { container } = render(
 			<UIScope config={{ theme: { colors: { primary: "red", secondary: "green" } } }} transparent={false}>
 				<UIScope config={{ density: "compact", theme: { colors: { primary: "blue" } } }} transparent={false}>

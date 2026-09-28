@@ -19,7 +19,7 @@ export {
 	defaultMediaLibraryStrings, type MediaLibraryStrings,
 } from "./media-library.strings"
 export type {
-	MediaLibraryAccessors, MediaLibraryCollectionOption, MediaLibraryDensity,
+	MediaLibraryAccessors, MediaLibraryCollectionOption, MediaLibrarySize,
 	MediaLibraryDetailRenderContext, MediaLibraryDialogProps, MediaLibraryFetchParams,
 	MediaLibraryFetchResult, MediaLibraryFetcher, MediaLibraryItem, MediaLibraryItemPatch,
 	MediaLibraryBulkActionContext, MediaLibraryItemRenderContext, MediaLibraryItemType, MediaLibraryProps,

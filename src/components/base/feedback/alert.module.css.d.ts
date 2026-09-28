@@ -4,13 +4,6 @@ declare const styles: {
 	readonly description: string
 	readonly root: string
 	readonly title: string
-	readonly toneDestructive: string
-	readonly toneInfo: string
-	readonly toneNeutral: string
-	readonly tonePrimary: string
-	readonly toneSecondary: string
-	readonly toneSuccess: string
-	readonly toneWarning: string
 	readonly variantInverse: string
 }
 export default styles

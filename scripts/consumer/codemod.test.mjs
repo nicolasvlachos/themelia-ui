@@ -31,16 +31,18 @@ test('every rename lands on a token the package declares', () => {
 
 test('a stylesheet has its reads and its overrides renamed, and the overrides reported', () => {
   const css = [
-    '.card { border-radius: var(--radius-surface); padding: var(--menu-surface-p); }',
+    '.card { border-radius: var(--radius-surface); padding: var(--surface-px); }',
     '.theme { --radius-lg: 12px; --height-action: 2.25rem; }',
     '.small { font-size: var(--text-xxs); line-height: var(--text-xxs--line-height); }',
   ].join('\n')
   const { text, notes } = rewriteSource(css, 'app.css', maps)
   assert.match(text, /border-radius: var\(--radius\);/)
-  assert.match(text, /padding: var\(--space-md\);/)
-  assert.match(text, /--radius: 12px; --height-control: 2\.25rem;/)
-  /* The line-height token is its own name, not `--text-xxs` with a suffix left dangling. */
-  assert.match(text, /font-size: var\(--text-xs\); line-height: var\(--text-xs--line-height\);/)
+  assert.match(text, /padding: var\(--padding\);/)
+  /* A rename two releases old lands on the current name, not on one a later release removed. */
+  assert.match(text, /--radius: 12px; --control-height: 2\.25rem;/)
+  /* The line-height token is its own name, not `--text-xxs` with a suffix left dangling; it is gone, so it is reported. */
+  assert.match(text, /font-size: var\(--text-xs\); line-height: var\(--text-xxs--line-height\);/)
+  assert.ok(notes.some((note) => note.startsWith('removed-token') && note.includes('--text-xxs--line-height')))
   assert.ok(notes.some((note) => note.startsWith('override') && note.includes('--radius-lg')))
   assert.ok(notes.some((note) => note.startsWith('override') && note.includes('--height-action')))
 })
@@ -60,15 +62,15 @@ test('a removed token is reported, never guessed at', () => {
 test('a script renames style keys, var() reads and CSSOM calls — not an argv string', () => {
   const tsx = [
     'const style = { "--radius-control": "6px", width: "var(--field-h)" }',
-    'element.style.setProperty("--toast-icon", "20px")',
+    'element.style.setProperty("--row-px", "20px")',
     'run("--action")',
     'const bar = "h-(--action) [--link-fg:red]"',
   ].join('\n')
   const { text } = rewriteSource(tsx, 'app.tsx', maps)
-  assert.match(text, /"--radius-sm": "6px", width: "var\(--control-h\)"/)
-  assert.match(text, /setProperty\("--size-icon-lg"/)
+  assert.match(text, /"--radius-sm": "6px", width: "var\(--control-height\)"/)
+  assert.match(text, /setProperty\("--padding-sm"/)
   assert.match(text, /run\("--action"\)/)
-  assert.match(text, /h-\(--control-h\) \[--link-color:red\]/)
+  assert.match(text, /h-\(--control-height\) \[--link:red\]/)
 })
 
 test('utilities are renamed with their side and variant, and look-alikes are only reported', () => {
@@ -107,8 +109,8 @@ test('a moved family takes its stylesheet along, in a script and in an @import',
     rewriteSource(tsx, 'app.tsx', maps).text,
     'import "themelia-ui/features/combobox.css"\nimport { SuggestionsCombobox } from "themelia-ui/features/combobox"',
   )
-  const css = '@import "themelia-ui/blocks/analytics.css";'
-  assert.equal(rewriteSource(css, 'app.css', maps).text, '@import "themelia-ui/patterns/analytics.css";')
+  const css = '@import "themelia-ui/patterns/analytics.css";'
+  assert.equal(rewriteSource(css, 'app.css', maps).text, '@import "themelia-ui/blocks/analytics.css";')
 })
 
 test('run from the command line, --dry-run reports and writes nothing', () => {

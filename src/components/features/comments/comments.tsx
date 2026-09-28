@@ -194,7 +194,7 @@ export function Comments<
 	)
 
 	const body = (
-		<Stack gap="xl" className={styles.body}>
+		<Stack className={styles.body}>
 			{props.headerSlot}
 			{composerPosition === "top" && composer}
 			<CommentInlineComposerContext.Provider value={inline}>{timeline}</CommentInlineComposerContext.Provider>

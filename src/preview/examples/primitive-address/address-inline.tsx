@@ -5,7 +5,7 @@ import { DE, UK, US } from "./data"
 
 export default function AddressInline() {
 	return (
-		<Stack gap="xs">
+		<Stack gap="sm">
 			<Address value={UK} format="inline" />
 			<Address value={US} format="inline" />
 			<Address value={DE} format="inline" />

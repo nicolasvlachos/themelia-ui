@@ -154,7 +154,7 @@ export function ObjectRepeater({
 		>
 			{(row, { index }) => (
 				/* Horizontal and wrapping, so short fields share a line until the row narrows. */
-				<Stack direction="horizontal" gap="md" wrap>
+				<Stack direction="horizontal" gap="sm" wrap>
 					{fields.map((field) => {
 						const context: ObjectRepeaterFieldContext = {
 							index,

@@ -1,6 +1,7 @@
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 import { createContext, useContext, useId, useState } from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 import { useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
 
@@ -93,7 +94,7 @@ function TooltipContent({
 	side = "top",
 	/*
 	 * Clears the arrow's protrusion (half its diagonal: 0.5rem × 0.707 ≈ 6px). A literal —
-	 * keep in step with --tooltip-arrow-size.
+	 * keep in step with the arrow's `--_size` in tooltip.module.css.
 	 */
 	sideOffset = 6,
 	align = "center",
@@ -120,7 +121,7 @@ function TooltipContent({
 				<TooltipPrimitive.Popup
 					id={props.id ?? description?.id}
 					data-slot="tooltip-content"
-					className={cx("tooltip-content--component", styles.content, className)}
+					className={cx("tooltip-content--component", styles.content, textClassName({ size: "xs" }), className)}
 					{...props}
 				>
 					{children}

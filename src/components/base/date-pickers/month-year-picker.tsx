@@ -7,6 +7,7 @@ import { useDatesConfig } from "@/lib/ui-provider"
 import { format, setMonth, setYear } from "date-fns"
 import { useMemo, useState, type ComponentProps } from "react"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import { defaultCalendarStrings, type CalendarStrings } from "./date-pickers.strings"
@@ -70,7 +71,7 @@ export function MonthYearPicker({
 				>
 					<ChevronLeftIcon aria-hidden />
 				</button>
-				<span className={styles.caption} aria-live="polite">
+				<span className={cx(styles.caption, textClassName({ size: "sm", weight: "medium" }))} aria-live="polite">
 					{year}
 				</span>
 				<button
@@ -94,7 +95,7 @@ export function MonthYearPicker({
 						<button
 							key={label}
 							type="button"
-							className={styles.monthCell}
+							className={cx(styles.monthCell, textClassName({ size: "sm" }))}
 							data-selected={selected || undefined}
 							data-today={
 								(index === now.getMonth() && year === now.getFullYear()) || undefined

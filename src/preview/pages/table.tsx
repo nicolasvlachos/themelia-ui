@@ -39,7 +39,7 @@ export function TablePage() {
 			<Example
 				example="table/table-sorting"
 				title="Sortable columns"
-				description="The whole label is the target, not a small chevron beside it, and the neutral state still shows an icon — a sortable column that looks identical to a fixed one until hovered is undiscoverable by touch and by keyboard alike. aria-sort lives on the th, so the order is announced rather than only drawn."
+				description="The whole head cell is the target, not a small chevron beside it. An unsorted column shows its arrow when a pointer hovers it or the keyboard focuses it; on a touch screen, where nothing can hover to find it, the arrow stays faintly in view. The sorted column's label is the one in the body colour. aria-sort lives on the th, so the order is announced rather than only drawn."
 			/>
 
 			<Example
@@ -52,7 +52,7 @@ export function TablePage() {
 				<PropTable owners={["Table", "TableHead", "TableRow", "TableCell", "TableEmpty", "TableCaption"]} />
 				<PropTable
 					rows={[
-						{ name: "--density-scale", api: ["css:--density-scale"], type: "number", default: "var(--scale)", description: "Global density factor. Scope it to make one region denser than the page." },
+						{ name: "data-density", api: ["css:--padding-sm"], type: '"compact" | "default" | "comfortable"', description: "On any ancestor, or through a provider's `density`: one region denser than the page." },
 					]}
 				/>
 			</Example>

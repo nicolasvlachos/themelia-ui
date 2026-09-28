@@ -8,7 +8,7 @@ import type { Customer } from "./data"
 
 export function CustomerCard({ customer }: { customer: Customer }) {
 	return (
-		<Stack gap="md">
+		<Stack gap="sm">
 			<Stack direction="horizontal" gap="sm" align="center">
 				<Avatar>
 					<AvatarFallback>{formatInitials(customer.name)}</AvatarFallback>

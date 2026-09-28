@@ -5,7 +5,7 @@ import { Sample } from "./_shared"
 
 export default function UiScopeDensity() {
 	return (
-		<Grid columns={3} gap="lg">
+		<Grid columns={3}>
 			{(["compact", "default", "comfortable"] as const).map((density) => (
 				<GridCell key={density}>
 					<UIScope config={{ density }}>

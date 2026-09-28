@@ -1,6 +1,7 @@
 /*
- * Toaster. The surface is inverse (flipping with the theme), so a toast never reads as part
- * of the page. One fixed viewport region: one live region, one hover target for pausing.
+ * Toaster. Each toast is a dark island (`color-scheme: dark`) in both modes, so it never
+ * reads as part of the page; the theme's colours inside it take their dark half. One fixed
+ * viewport region: one live region, one hover target for pausing.
  */
 
 .viewport {
@@ -8,10 +9,10 @@
 	z-index: var(--z-toast);
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-md);
+	gap: var(--gap-sm);
 	/* Percentages, not vw: they follow a transformed scoped host as well as the viewport. */
 	width: min(92%, 24rem);
-	max-width: calc(100% - 2 * var(--space-xl));
+	max-width: calc(100% - 2 * var(--gap));
 	/* Clicks beside a toast reach the page; toasts opt back in below. */
 	pointer-events: none;
 }
@@ -21,16 +22,16 @@
 }
 
 /* Vertical edge, clear of the safe area. */
-.top { top: calc(var(--space-xl) + env(safe-area-inset-top, 0px)); }
+.top { top: calc(var(--gap) + env(safe-area-inset-top, 0px)); }
 /* Bottom stacks grow upward via flex direction, keeping the DOM in chronological order. */
 .bottom {
-	bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
+	bottom: calc(var(--gap) + env(safe-area-inset-bottom, 0px));
 	flex-direction: column-reverse;
 }
 
 /* Horizontal edge. */
-.start { inset-inline-start: var(--space-xl); }
-.end { inset-inline-end: var(--space-xl); }
+.start { inset-inline-start: var(--gap); }
+.end { inset-inline-end: var(--gap); }
 
 /* Auto margins between both insets centre the sized viewport in either direction. */
 .center {
@@ -39,22 +40,25 @@
 }
 
 .toast {
+	/* The glyph buttons: an icon plus the small padding. */
+	--_button: calc(var(--icon-size) + var(--padding-sm));
+
+	color-scheme: dark;
 	position: relative;
 	display: flex;
 	align-items: center;
-	gap: var(--space-lg);
-	min-height: round(calc(2.75rem * var(--density-scale, var(--scale))), 1px);
-	padding: var(--space-lg);
+	gap: var(--gap-sm);
+	padding: var(--padding);
 	/* Room for the absolutely positioned close button. */
-	padding-inline-end: calc(var(--control-h-2xs) + 2 * var(--space-lg));
-	border: var(--border-width) solid var(--inverse-border);
+	padding-inline-end: calc(var(--padding) + var(--_button) + var(--gap-sm));
+	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius);
-	background-color: var(--inverse-background);
-	color: var(--inverse-foreground);
+	background-color: var(--popover);
+	color: var(--popover-foreground);
 	box-shadow: var(--shadow-lg);
 	transition:
-		opacity var(--duration-fast) var(--ease-out),
-		translate var(--duration-fast) var(--ease-out);
+		opacity var(--duration-fast) var(--ease),
+		translate var(--duration-fast) var(--ease);
 }
 
 /*
@@ -67,11 +71,11 @@
 	}
 
 	.top .toast {
-		translate: 0 calc(-1 * var(--space-xl));
+		translate: 0 calc(-1 * var(--gap));
 	}
 
 	.bottom .toast {
-		translate: 0 var(--space-xl);
+		translate: 0 var(--gap);
 	}
 }
 
@@ -81,11 +85,11 @@
 }
 
 .top .toast[data-leaving] {
-	translate: 0 calc(-1 * var(--space-xl));
+	translate: 0 calc(-1 * var(--gap));
 }
 
 .bottom .toast[data-leaving] {
-	translate: 0 var(--space-xl);
+	translate: 0 var(--gap);
 }
 
 .icon {
@@ -94,9 +98,9 @@
 	align-self: center;
 	align-items: center;
 	justify-content: center;
-	width: var(--size-icon-lg);
-	height: var(--size-icon-lg);
-	color: var(--inverse-muted);
+	width: var(--icon-size);
+	height: var(--icon-size);
+	color: var(--muted-foreground);
 }
 
 .icon > svg {
@@ -104,33 +108,22 @@
 	height: 100%;
 }
 
-/* Status colours lifted toward the inverse ink, so they stay legible on the inverse surface. */
-.statusSuccess .icon { color: color-mix(in oklab, var(--success) 60%, var(--inverse-foreground)); }
-.statusInfo .icon { color: color-mix(in oklab, var(--info) 60%, var(--inverse-foreground)); }
-.statusWarning .icon { color: color-mix(in oklab, var(--warning) 60%, var(--inverse-foreground)); }
-.statusError .icon { color: color-mix(in oklab, var(--destructive) 60%, var(--inverse-foreground)); }
+/* A status toast carries its tone (`data-tone`); the glyph takes the tone's ink. */
+.toast[data-tone] .icon {
+	color: var(--tone-ink);
+}
 
 .spinner {
-	animation: var(--animate-spin);
+	animation: var(--keyframes-spin) 1s linear infinite;
 }
 
 .content {
 	display: grid;
 	min-width: 0;
-	gap: var(--space-2xs);
-}
-
-.title {
-	font-size: var(--text-sm);
-	font-weight: var(--weight-medium);
-	line-height: var(--text-sm--line-height);
-	color: var(--inverse-foreground);
+	gap: calc(var(--gap-sm) / 2);
 }
 
 .description {
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	color: var(--inverse-muted);
 	text-wrap: pretty;
 }
 
@@ -138,7 +131,7 @@
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: var(--space-xs);
+	gap: calc(var(--gap-sm) / 2);
 	margin-inline-start: auto;
 }
 
@@ -146,74 +139,63 @@
 .cancel {
 	display: inline-flex;
 	align-items: center;
-	height: var(--control-h-2xs);
-	padding-inline: var(--control-px-2xs);
+	height: var(--_button);
+	padding-inline: var(--padding-sm);
 	border: 0;
 	border-radius: var(--radius-sm);
-	font-size: var(--text-xs);
-	line-height: var(--text-xs--line-height);
-	font-weight: var(--weight-medium);
 	cursor: pointer;
 	white-space: nowrap;
-	transition: background-color var(--duration-fast) var(--ease-out);
+	transition: background-color var(--duration-fast) var(--ease);
 }
 
+/* The one solid control on the island: its ink as the fill. */
 .action {
-	background-color: var(--inverse-foreground);
-	color: var(--inverse-background);
+	background-color: var(--foreground);
+	color: var(--background);
 }
 
+/* The quieter answer: a soft fill that strengthens under the pointer or focus. */
 .cancel {
-	background-color: var(--inverse-surface);
-	color: var(--inverse-foreground);
+	background-color: color-mix(in oklab, var(--foreground) var(--tint), transparent);
+	color: var(--foreground);
 }
 
-.action:hover {
-	background-color: color-mix(in oklab, var(--inverse-foreground) 86%, var(--inverse-background));
+.action:is(:hover, :focus-visible) {
+	background-color: color-mix(in oklab, var(--foreground) 88%, var(--background));
 }
 
-.cancel:hover {
-	background-color: var(--inverse-surface-strong);
-}
-
-.action:focus-visible,
-.cancel:focus-visible,
-.close:focus-visible {
-	outline: none;
-	/* An inverse-surface ring: --focus-ring bakes in --background, so it is composed here. */
-	box-shadow: 0 0 0 var(--focus-ring-offset) var(--inverse-background),
-		0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--inverse-foreground);
+.cancel:is(:hover, :focus-visible) {
+	background-color: color-mix(in oklab, var(--foreground) var(--tint-strong), transparent);
 }
 
 .close {
 	position: absolute;
-	inset-inline-end: var(--space-lg);
+	inset-inline-end: var(--padding);
 	top: 50%;
 	translate: 0 -50%;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: var(--control-h-2xs);
-	height: var(--control-h-2xs);
+	width: var(--_button);
+	height: var(--_button);
 	padding: 0;
-	border: var(--border-width) solid var(--inverse-border);
+	border: var(--border-width) solid var(--border);
 	border-radius: var(--radius-sm);
 	background-color: transparent;
-	color: var(--inverse-foreground);
-	opacity: 0.6;
+	color: var(--muted-foreground);
 	cursor: pointer;
 	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		opacity var(--duration-fast) var(--ease-out);
+		background-color var(--duration-fast) var(--ease),
+		color var(--duration-fast) var(--ease);
 }
 
 .close:hover,
 .close:focus-visible {
-	background-color: var(--inverse-surface);
-	opacity: 1;
+	background-color: var(--accent);
+	color: var(--foreground);
 }
 
 .close > svg {
-	width: var(--size-icon-sm);
-	height: var(--size-icon-sm);
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
 }

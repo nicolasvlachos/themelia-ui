@@ -6,6 +6,7 @@
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 
+import { textClassName } from "@/components/base/typography"
 import { cx } from "@/lib/cx"
 
 import styles from "./menubar.module.css"
@@ -39,7 +40,7 @@ export function MenubarTrigger({ className, ...props }: MenuPrimitive.Trigger.Pr
 	return (
 		<MenuPrimitive.Trigger
 			data-slot="menubar-trigger"
-			className={cx("menubar-menu--component", styles.trigger, className)}
+			className={cx("menubar-menu--component", styles.trigger, textClassName({ size: "sm", weight: "medium" }), className)}
 			{...props}
 		/>
 	)

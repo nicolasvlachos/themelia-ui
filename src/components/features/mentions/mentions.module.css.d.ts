@@ -7,7 +7,6 @@ declare const styles: {
 	readonly panel: string
 	readonly panelHeader: string
 	readonly panelInline: string
-	readonly panelQuery: string
 	readonly row: string
 	readonly rowIcon: string
 	readonly rowText: string

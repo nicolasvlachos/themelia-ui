@@ -4,6 +4,8 @@ import {
 import { useCallback, useEffect, useRef, useSyncExternalStore, type ReactNode } from "react"
 import { createPortal } from "react-dom"
 
+import { Text, textClassName } from "@/components/base/typography"
+import type { SemanticTone } from "@/lib/component-vocabulary"
 import { cx } from "@/lib/cx"
 import { useDefaults, useUIPortalContainer, type UIPortalContainer } from "@/lib/ui-provider"
 
@@ -23,14 +25,18 @@ const STATUS_ICON: Record<Exclude<ToastStatus, "neutral">, ReactNode> = {
 	loading: <Loader2Icon aria-hidden className={styles.spinner} />,
 }
 
-const STATUS_CLASS: Record<ToastStatus, string | undefined> = {
+/* Each status that has a colour, as the shared tone; the glyph reads it through the tone rule. */
+const STATUS_TONE: Record<ToastStatus, Extract<SemanticTone, "success" | "info" | "warning" | "destructive"> | undefined> = {
 	neutral: undefined,
-	success: styles.statusSuccess,
-	info: styles.statusInfo,
-	warning: styles.statusWarning,
-	error: styles.statusError,
+	success: "success",
+	info: "info",
+	warning: "warning",
+	error: "destructive",
 	loading: undefined,
 }
+
+/* The pill's buttons carry the small step, medium. */
+const BUTTON_TYPE = textClassName({ size: "xs", weight: "medium" })
 
 export interface ToasterProps {
 	/**
@@ -217,8 +223,9 @@ function Toast({
 
 	return (
 		<div
-			className={cx("toast--component", styles.toast, STATUS_CLASS[record.status])}
+			className={cx("toast--component", styles.toast)}
 			data-status={record.status}
+			data-tone={STATUS_TONE[record.status]}
 			data-toast-id={record.id}
 			data-leaving={record.leaving || undefined}
 			/* An error interrupts; everything else is announced by the polite region. */
@@ -228,9 +235,13 @@ function Toast({
 			{icon != null && <span className={styles.icon}>{icon}</span>}
 
 			<div className={cx("toast--content", styles.content)}>
-				<div className={styles.title}>{record.title}</div>
+				<Text tag="div" size="sm" weight="medium">
+					{record.title}
+				</Text>
 				{record.description != null && (
-					<div className={styles.description}>{record.description}</div>
+					<Text tag="div" size="xs" type="secondary" className={styles.description}>
+						{record.description}
+					</Text>
 				)}
 			</div>
 
@@ -239,7 +250,7 @@ function Toast({
 					{record.cancel && (
 						<button
 							type="button"
-							className={styles.cancel}
+							className={cx(styles.cancel, BUTTON_TYPE)}
 							onClick={() => {
 								record.cancel?.onClick()
 								onDismiss(record.id)
@@ -251,7 +262,7 @@ function Toast({
 					{record.action && (
 						<button
 							type="button"
-							className={styles.action}
+							className={cx(styles.action, BUTTON_TYPE)}
 							onClick={() => {
 								record.action?.onClick()
 								onDismiss(record.id)

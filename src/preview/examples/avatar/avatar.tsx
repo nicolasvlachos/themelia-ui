@@ -3,8 +3,8 @@ import { Stack } from "themelia-ui/base/structure"
 
 export default function AvatarExample() {
 	return (
-		<Stack direction="horizontal" gap="lg" align="center">
-			{(["sm", "default", "lg"] as const).map((size) => (
+		<Stack direction="horizontal" align="center">
+			{(["sm", "default"] as const).map((size) => (
 				<Avatar key={size} size={size}>
 					<AvatarFallback>JM</AvatarFallback>
 				</Avatar>

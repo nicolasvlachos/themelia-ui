@@ -12,7 +12,7 @@ const MEMBERS = [
 
 export default function Stacked() {
 	return (
-		<Stack gap="lg">
+		<Stack>
 			<StackedAvatars users={MEMBERS} max={4} />
 			<StackedAvatars users={MEMBERS} max={2} />
 			<AvatarGroup>

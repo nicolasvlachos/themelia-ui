@@ -216,7 +216,6 @@ export function SchemaForm({
 		<Empty
 			title={copy.emptyTitle}
 			description={copy.emptyDescription}
-			padding="md"
 			border
 		/>
 	)

@@ -43,8 +43,8 @@ export function UIScope({
 
 	/* What enclosing scopes wrote, then this scope's own, so the CSS merges as the config does. */
 	const vars = useMemo(
-		() => ({ ...inheritedVars, ...configToCssVars(config ?? {}) }),
-		[inheritedVars, config],
+		() => ({ ...inheritedVars, ...configToCssVars(config ?? {}, resolved) }),
+		[inheritedVars, config, resolved],
 	)
 
 	const scopedStyle = useMemo<CSSProperties>(
@@ -57,11 +57,16 @@ export function UIScope({
 	)
 
 	/*
-	 * Attributes from the resolved config, not only this scope's overrides: derived tokens
-	 * re-derive at every `[data-ui-scope]`, so a scope that sets only density must still
-	 * restate the inherited theme or it re-derives as light (styles/SCOPES.md).
+	 * Attributes from the resolved config, so each scope states the scheme and density in
+	 * effect. The variables it restates above are inline and outrank the density preset, so
+	 * stating an inherited density never undoes an inherited scale. An explicit `default`
+	 * inside a denser or roomier region is written too, since it resets that region.
 	 */
-	const attributes = useMemo(() => configToAttributes(resolved), [resolved])
+	const resets = config?.density === "default" && parent.density !== "default"
+	const attributes = useMemo(
+		() => ({ ...configToAttributes(resolved), ...(resets ? { "data-density": "default" } : null) }),
+		[resolved, resets],
+	)
 
 	const element = useRender({
 		defaultTagName: "div",

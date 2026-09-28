@@ -43,7 +43,7 @@ it("uses the same finite percentage for linear and circular visuals", () => {
 	const fill = container.querySelector('[data-slot="progress"] > div')
 	const circle = screen.getByRole("progressbar", { name: "Circle" })
 	expect(fill).toHaveStyle({ width: "0%" })
-	expect(circle).toHaveStyle({ "--progress-sweep": "0%" })
+	expect(circle).toHaveStyle({ "--_progress-sweep": "0%" })
 })
 
 it("keeps the linear indeterminate contract free of value metadata", () => {

@@ -4,7 +4,7 @@ import { Box } from "./_shared"
 
 export default function AdaptiveGridExample() {
 	return (
-		<AdaptiveGrid minColumnWidth="sm" gap="md">
+		<AdaptiveGrid minColumnWidth="sm" gap="sm">
 			{Array.from({ length: 6 }, (_, i) => (
 				<Box key={i}>card {i + 1}</Box>
 			))}

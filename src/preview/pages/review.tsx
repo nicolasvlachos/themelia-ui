@@ -84,38 +84,38 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="buttons">
-				<Stack gap="md">
+				<Stack gap="sm">
 					<Stack direction="horizontal" gap="sm" wrap align="center">
 						<Button>Solid</Button>
-						<Button buttonStyle="outline" tone="neutral">Outline</Button>
-						<Button buttonStyle="ghost" tone="neutral">Ghost</Button>
+						<Button appearance="outline" tone="neutral">Outline</Button>
+						<Button appearance="ghost" tone="neutral">Ghost</Button>
 						<Button tone="destructive">Destructive</Button>
 						<Button loading>Loading</Button>
 						<Button disabled>Disabled</Button>
 						<Button iconOnly aria-label="Edit"><PencilIcon /></Button>
-						<TooltipButton tooltip="Archive" iconOnly buttonStyle="outline" tone="neutral"><ArchiveIcon /></TooltipButton>
+						<TooltipButton tooltip="Archive" iconOnly appearance="outline" tone="neutral"><ArchiveIcon /></TooltipButton>
 						<LoaderButton onClick={() => new Promise((r) => setTimeout(r, 900))}>Async</LoaderButton>
 						<TextButton>Text button</TextButton>
 					</Stack>
-					<Stack direction="horizontal" gap="lg" wrap align="center">
+					<Stack direction="horizontal" wrap align="center">
 						<ButtonGroup>
-							<Button buttonStyle="outline" tone="neutral">One</Button>
-							<Button buttonStyle="outline" tone="neutral">Two</Button>
+							<Button appearance="outline" tone="neutral">One</Button>
+							<Button appearance="outline" tone="neutral">Two</Button>
 						</ButtonGroup>
 						<ButtonGroup>
 							<ButtonGroupText>https://</ButtonGroupText>
-							<Button buttonStyle="outline" tone="neutral">Copy</Button>
+							<Button appearance="outline" tone="neutral">Copy</Button>
 							<ButtonGroupSeparator />
-							<Button buttonStyle="outline" tone="neutral">Open</Button>
+							<Button appearance="outline" tone="neutral">Open</Button>
 						</ButtonGroup>
-						<ActionButtons actions={[{ label: "Save", onClick: () => {} }, { label: "Cancel", buttonStyle: "outline", tone: "neutral", onClick: () => {} }]} />
+						<ActionButtons actions={[{ label: "Save", onClick: () => {} }, { label: "Cancel", appearance: "outline", tone: "neutral", onClick: () => {} }]} />
 						<ActionMenu actions={ACTIONS} />
 					</Stack>
 				</Stack>
 			</Block>
 
 			<Block title="text-inputs">
-				<AdaptiveGrid minColumnWidth="sm" gap="lg">
+				<AdaptiveGrid minColumnWidth="sm">
 					<FormField label="Plain"><Input placeholder="Placeholder" /></FormField>
 					<FormField label="Leading icon"><Input startIcon={SearchIcon} placeholder="Search" /></FormField>
 					<FormField label="Addons"><Input startAddon="$" endAddon="USD" defaultValue="1200" /></FormField>
@@ -134,8 +134,8 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="choice-inputs">
-				<Stack gap="lg">
-					<Stack direction="horizontal" gap="xl" wrap align="start">
+				<Stack>
+					<Stack direction="horizontal" wrap align="start">
 						<Stack gap="sm">
 							<Checkbox label="Unchecked" />
 							<Checkbox label="Checked" defaultChecked />
@@ -152,7 +152,7 @@ export function ReviewPage() {
 							<Switch label="Disabled" disabled />
 						</Stack>
 					</Stack>
-					<AdaptiveGrid minColumnWidth="sm" gap="lg">
+					<AdaptiveGrid minColumnWidth="sm">
 						<FormField label="Select"><Select options={[{ value: "a", label: "Option A", description: "With a description." }, { value: "b", label: "Option B" }]} defaultValue="a" /></FormField>
 						<FormField label="Pills"><PillRadioGroup name="review-pills" value="a" onValueChange={() => {}} options={[{ value: "a", label: "Grid" }, { value: "b", label: "List" }]} /></FormField>
 					</AdaptiveGrid>
@@ -164,7 +164,7 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="value-inputs · forms-numeric">
-				<AdaptiveGrid minColumnWidth="sm" gap="lg">
+				<AdaptiveGrid minColumnWidth="sm">
 					<FormField label="Slider"><SliderField defaultValue={40} showValue unit="%" /></FormField>
 					<FormField label="Tags"><TagsInput value={tags} onValueChange={setTags} /></FormField>
 					<FormField label="Colour"><ColorInput defaultValue="oklch(0.45 0.12 155)" /></FormField>
@@ -179,7 +179,7 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="repeaters · upload">
-				<AdaptiveGrid minColumnWidth="sm" gap="lg">
+				<AdaptiveGrid minColumnWidth="sm">
 					<FormField label="Strings"><StringRepeater value={["acme.com"]} onValueChange={() => {}} sortable /></FormField>
 					<FormField label="Key / value"><KeyValueEditor value={[{ key: "X-Trace", value: "on" }]} onValueChange={() => {}} /></FormField>
 					<FormField label="Localized"><LocalizedStringField locales={["en", "nl"]} value={{ en: "Name" }} onValueChange={() => {}} /></FormField>
@@ -198,7 +198,7 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="feedback">
-				<Stack gap="lg">
+				<Stack>
 					{(["neutral", "primary", "secondary", "info", "success", "warning", "destructive"] as const).map((tone) => (
 						<Alert key={tone} tone={tone}>
 							<AlertTitle>{tone}</AlertTitle>
@@ -217,12 +217,12 @@ export function ReviewPage() {
 					</Alert>
 					<ErrorSummary errors={["Name is required.", "Email is not valid."]} />
 					<DirtyStateBanner actions={<Button>Save</Button>} />
-					<Stack direction="horizontal" gap="xl" wrap align="center">
+					<Stack direction="horizontal" wrap align="center">
 						<Progress value={62} />
 						<Progress />
 						<Spinner />
 					</Stack>
-					<AdaptiveGrid minColumnWidth="sm" gap="lg">
+					<AdaptiveGrid minColumnWidth="sm">
 						<Empty title="No invoices" description="Nothing has been billed yet." />
 						<LoadingState />
 						<ErrorState onRetry={() => {}} />
@@ -231,8 +231,8 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="display">
-				<Stack gap="lg">
-					<Stack direction="horizontal" gap="md" wrap align="center">
+				<Stack>
+					<Stack direction="horizontal" gap="sm" wrap align="center">
 						{(["neutral", "primary", "success", "warning", "destructive", "info"] as const).map((tone) => (
 							<IconBadge key={tone} tone={tone} icon={BellIcon} />
 						))}
@@ -240,7 +240,7 @@ export function ReviewPage() {
 							<IconBadge key={`${tone}-solid`} tone={tone} solid shape="circle" icon={BellIcon} />
 						))}
 					</Stack>
-					<Stack direction="horizontal" gap="md" wrap align="center">
+					<Stack direction="horizontal" gap="sm" wrap align="center">
 						<DateBlock date="2026-08-27" />
 						<DateBlock date="2026-08-27" time="09:00 – 10:30" />
 						<DateBlock date="2026-08-27" layout="inline" />
@@ -250,7 +250,7 @@ export function ReviewPage() {
 						<Text size="sm" type="secondary">Body.</Text>
 					</ContentBlock>
 					<Separator />
-					<Stack direction="horizontal" gap="md" wrap align="center">
+					<Stack direction="horizontal" gap="sm" wrap align="center">
 						<Avatar><AvatarFallback>JM</AvatarFallback></Avatar>
 						<StackedAvatars users={[{ name: "Jane McDonald" }, { name: "Raj Patel" }, { name: "Mei Chen" }, { name: "Sam Okafor" }, { name: "Ada Byron" }]} max={3} />
 						<Badge>Badge</Badge>
@@ -262,17 +262,17 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="cards · item">
-				<Stack gap="lg">
-					<AdaptiveGrid minColumnWidth="sm" gap="lg">
+				<Stack>
+					<AdaptiveGrid minColumnWidth="sm">
 						{(["card", "framed", "flat", "bordered"] as const).map((surface) => (
 							<Card key={surface} surface={surface} title={surface} description="Supporting sentence.">
 								<Text size="sm" type="secondary">Content.</Text>
 							</Card>
 						))}
 					</AdaptiveGrid>
-					<AdaptiveGrid minColumnWidth="sm" gap="lg">
+					<AdaptiveGrid minColumnWidth="sm">
 						<Card surface="bordered" title="With actions" description="An action strip at the foot." actions={ACTIONS}>
-							<CardActionStrip actions={[{ label: "Approve", onClick: () => {} }, { label: "Reject", buttonStyle: "outline", tone: "neutral", onClick: () => {} }]} separator />
+							<CardActionStrip actions={[{ label: "Approve", onClick: () => {} }, { label: "Reject", appearance: "outline", tone: "neutral", onClick: () => {} }]} separator />
 						</Card>
 						<CardSkeleton surface="bordered" />
 					</AdaptiveGrid>
@@ -290,7 +290,7 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="navigation">
-				<Stack gap="lg">
+				<Stack>
 					<PageHeading
 						eyebrow="Billing"
 						title="Invoices"
@@ -316,7 +316,7 @@ export function ReviewPage() {
 							{ label: "Customers", href: "/app/customers" },
 						]}
 					/>
-					<Stack direction="horizontal" gap="xl" wrap align="center">
+					<Stack direction="horizontal" wrap align="center">
 						<Pagination page={3} total={10} onPageChange={() => {}} />
 						<LanguageSwitcher locales={[{ value: "en", label: "English" }, { value: "nl", label: "Nederlands" }]} value="en" onSelect={() => {}} />
 					</Stack>
@@ -324,7 +324,7 @@ export function ReviewPage() {
 			</Block>
 
 			<Block title="table · accordion · skeleton">
-				<Stack gap="lg">
+				<Stack>
 					<Table>
 						<TableHeader>
 							<TableRow>
@@ -348,7 +348,7 @@ export function ReviewPage() {
 							{ value: "b", title: "Second section", content: "Body copy." },
 						]}
 					/>
-					<AdaptiveGrid minColumnWidth="sm" gap="lg">
+					<AdaptiveGrid minColumnWidth="sm">
 						<ContentSkeleton lines={3} showTitle />
 						<TableSkeleton rows={3} columns={3} />
 					</AdaptiveGrid>
@@ -359,13 +359,13 @@ export function ReviewPage() {
 			<Block title="forms workflow">
 				<FormSection title="Section" description="A group of fields under a heading.">
 					<FieldGroup legend="Name">
-						<AdaptiveGrid minColumnWidth="sm" gap="lg">
+						<AdaptiveGrid minColumnWidth="sm">
 							<FormField label="First name"><Input /></FormField>
 							<FormField label="Last name"><Input /></FormField>
 						</AdaptiveGrid>
 					</FieldGroup>
 					<FormActionsBar leading="Last saved 2 minutes ago">
-						<Button buttonStyle="ghost" tone="neutral">Cancel</Button>
+						<Button appearance="ghost" tone="neutral">Cancel</Button>
 						<SubmitStateButton state="idle" />
 					</FormActionsBar>
 				</FormSection>

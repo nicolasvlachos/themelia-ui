@@ -2,17 +2,17 @@
 
 /* Lanes keep a minimum measure; on a phone the board scrolls on its own. */
 .board {
-	grid-template-columns: repeat(3, minmax(var(--adaptive-grid-min-md), 1fr));
+	grid-template-columns: repeat(3, minmax(16rem, 1fr));
 }
 
+/* Inset by the radius difference, so a card's item radius sits concentric in the column. */
 .column {
-	gap: var(--space-md);
-	padding: var(--space-md);
-	border: var(--border-width) solid var(--border-60);
-	background-color: var(--muted-20);
+	gap: var(--gap-sm);
+	padding: calc(var(--radius) - var(--radius-sm));
+	border: var(--border-width) solid var(--border);
+	background-color: color-mix(in oklab, var(--muted) var(--tint-strong), transparent);
 }
 
-/* An item inside the column's --space-md inset takes the item radius, concentric with the column. */
 .card {
 	border-radius: var(--radius-sm);
 }
@@ -22,7 +22,7 @@
 	min-width: 0;
 }
 
-/* Aligned under the title: clears the drag handle and the row's --space-xs gap. */
+/* Aligned under the title: clears the drag handle and the row's small gap. */
 .cardMeta {
-	padding-inline-start: calc(var(--control-h) + var(--space-xs));
+	padding-inline-start: calc(var(--control-height) + var(--gap-sm));
 }

@@ -23,8 +23,8 @@ export default function CommandDialogExample() {
 	}, [])
 
 	return (
-		<Stack direction="horizontal" gap="lg" align="center">
-			<Button buttonStyle="outline" tone="neutral" onClick={() => setOpen(true)}>
+		<Stack direction="horizontal" align="center">
+			<Button appearance="outline" tone="neutral" onClick={() => setOpen(true)}>
 				Open palette
 			</Button>
 			<Text size="sm" type="secondary">or press ⌘K</Text>
