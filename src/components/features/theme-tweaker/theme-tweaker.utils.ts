@@ -5,7 +5,7 @@
  * `;`, `}` or control characters (CSS injection). Serialising throws on a bad entry, so an
  * export never silently drops one; the live preview skips it, since half-typed values are normal.
  */
-import { DEFAULT_UI_CONFIG, mergeUIConfig, type UIConfig } from "@/lib/ui-provider"
+import { DEFAULT_UI_CONFIG, mergeUIConfig, type ThemeConfig, type UIConfig } from "@/lib/ui-provider"
 import { THEME_DEFAULTS } from "@/lib/ui-provider/tokens.generated"
 
 import type {
@@ -27,6 +27,28 @@ export function createTheme(value: Partial<ThemeDefinition> = {}): ThemeDefiniti
 		light: { ...(value.light ?? {}) },
 		dark: { ...(value.dark ?? {}) },
 	}
+}
+
+/**
+ * A provider theme, such as one of `themes` from `themelia-ui/theming`, as a definition the
+ * tweaker can edit and export: each `light-dark()` colour split into its two halves, a single
+ * colour kept for both modes, the radii and extra variables shared.
+ */
+export function themeFromConfig(config: ThemeConfig, mode: ThemeMode = "light"): ThemeDefinition {
+	const theme = createTheme({ mode })
+	if (config.radius) theme.shared["--radius"] = config.radius
+	if (config.radiusSm) theme.shared["--radius-sm"] = config.radiusSm
+	for (const [name, value] of Object.entries(config.colors ?? {})) {
+		if (!value) continue
+		const variable = `--${name}` as ThemeVariableName
+		const [light, dark] = splitLightDark(value) ?? [value, value]
+		theme.light[variable] = light
+		theme.dark[variable] = dark
+	}
+	for (const [name, value] of Object.entries(config.vars ?? {})) {
+		theme.shared[`--${name}` as ThemeVariableName] = value
+	}
+	return theme
 }
 
 export function isThemeVariableName(value: string): value is ThemeVariableName {

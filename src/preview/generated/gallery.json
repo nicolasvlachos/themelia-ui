@@ -3047,6 +3047,28 @@
       "avoidWhen": "Defaults are set once at the root and never change."
     },
     {
+      "title": "Themes",
+      "summary": "Four ready-made styles, Soft, Sharp, Dense and Editorial, each a provider config that sets colours, corners, shadows, spacing, type, motion and how components draw themselves.",
+      "route": "/themes",
+      "import": "themelia-ui/theming",
+      "exports": [
+        "themes",
+        "type ThemePreset",
+        "type ThemeName"
+      ],
+      "keywords": [
+        "themes",
+        "presets",
+        "theme switcher",
+        "style",
+        "brand",
+        "dark mode"
+      ],
+      "module": "theming",
+      "chooseWhen": null,
+      "avoidWhen": null
+    },
+    {
       "title": "Time picker",
       "summary": "A time of day, and the combined date-and-time field built from it.",
       "route": "/time-picker",

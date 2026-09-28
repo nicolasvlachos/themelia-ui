@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
 
-import { createTheme, serializeTheme, splitLightDark, themeToStyle } from "./theme-tweaker.utils"
+import { themes } from "@/lib/theming"
+
+import { createTheme, serializeTheme, splitLightDark, themeFromConfig, themeToStyle } from "./theme-tweaker.utils"
 
 /* Browser behaviour of the pairs is checked in tests/theme-tweaker-live.spec.ts. */
 describe("serializeTheme", () => {
@@ -49,5 +51,23 @@ describe("themeToStyle", () => {
 	it("carries both modes in the style, so the element's color-scheme picks", () => {
 		const style = themeToStyle(createTheme({ mode: "dark", light: { "--primary": "red" }, dark: { "--primary": "blue" } }))
 		expect(style["--primary"]).toBe("light-dark(red, blue)")
+	})
+})
+
+describe("themeFromConfig", () => {
+	it.each(Object.entries(themes))("loads the %s theme so the style it produces is the theme itself", (_name, preset) => {
+		const theme = preset.config.theme ?? {}
+		const style = themeToStyle(themeFromConfig(theme))
+		expect(style["--radius"]).toBe(theme.radius)
+		expect(style["--radius-sm"]).toBe(theme.radiusSm)
+		for (const [name, value] of Object.entries({ ...theme.colors, ...theme.vars })) {
+			expect(style[`--${name}`]).toBe(value)
+		}
+	})
+
+	it("keeps a single colour for both modes", () => {
+		const theme = themeFromConfig({ colors: { primary: "oklch(0.5 0.1 200)" } })
+		expect(theme.light["--primary"]).toBe("oklch(0.5 0.1 200)")
+		expect(theme.dark["--primary"]).toBe("oklch(0.5 0.1 200)")
 	})
 })

@@ -91,6 +91,33 @@
 			]
 		},
 		{
+			"path": "/themes",
+			"label": "Themes",
+			"summary": "Four ready-made styles, Soft, Sharp, Dense and Editorial, each a provider config that sets colours, corners, shadows, spacing, type, motion and how components draw themselves.",
+			"imports": [
+				{
+					"from": "themelia-ui/theming",
+					"names": [
+						"themes",
+						"type ThemePreset",
+						"type ThemeName"
+					]
+				}
+			],
+			"page": "themes",
+			"component": "ThemesPage",
+			"tier": "Foundations",
+			"topic": "Foundations",
+			"keywords": [
+				"themes",
+				"presets",
+				"theme switcher",
+				"style",
+				"brand",
+				"dark mode"
+			]
+		},
+		{
 			"path": "/scale",
 			"label": "Scale & density",
 			"summary": "One factor keeps geometry and type in proportion, and type can take its own. A denser region is a scope, and one variable can move one measurement everywhere.",

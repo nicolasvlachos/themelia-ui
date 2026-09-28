@@ -7,11 +7,13 @@
  * Values are read from the stylesheets, so a retuned colour is measured as it ships, and
  * mapped into sRGB first, as a standard display shows them.
  * tests/contrast.spec.ts measures the pages; this measures the theme alone, including pairs
- * no page happens to show.
+ * no page happens to show. Every ready-made theme is measured the same way, laid over the kit's.
  */
 import { readFileSync } from "node:fs"
 import { converter, interpolate, parse, toGamut, wcagContrast, type Color, type Rgb } from "culori"
 import { describe, expect, it } from "vitest"
+
+import { themes } from "./themes"
 
 type Mode = "light" | "dark"
 
@@ -53,8 +55,17 @@ function halves(value: string): [string, string] {
 	throw new Error(`Unbalanced light-dark(): ${value}`)
 }
 
+/** The kit's declarations with a theme's colours laid over them, as the provider writes them. */
+function withTheme(colors: Record<string, string | undefined>): Map<string, string> {
+	const merged = new Map(declared)
+	for (const [name, value] of Object.entries(colors)) if (value) merged.set(`--${name}`, value)
+	return merged
+}
+
+let active = declared
+
 function colour(name: string, mode: Mode): Color {
-	const value = declared.get(name)
+	const value = active.get(name)
 	if (!value) throw new Error(`${name} is not declared in styles/theme/colour.css`)
 	const parsed = parse(halves(value)[mode === "light" ? 0 : 1])
 	if (!parsed) throw new Error(`${name} does not parse in ${mode}`)
@@ -147,8 +158,14 @@ function ringPairs(mode: Mode): Pair[] {
 const below = (pairs: Pair[], floor: number) =>
 	pairs.filter((pair) => pair.ratio < floor).map((pair) => `${pair.label}: ${pair.ratio}`)
 
-describe.each(["light", "dark"] as const)("the %s theme", (mode) => {
+const THEMES: [string, Map<string, string>][] = [
+	["default", declared],
+	...Object.entries(themes).map(([name, preset]): [string, Map<string, string>] => [name, withTheme(preset.config.theme?.colors ?? {})]),
+]
+
+describe.each(THEMES.flatMap(([name, declarations]) => (["light", "dark"] as const).map((mode) => [name, mode, declarations] as const)))("the %s theme, %s", (name, mode, declarations) => {
 	it(`holds text at ${TEXT_FLOOR}:1 on every ground it sits on`, () => {
+		active = declarations
 		const pairs = textPairs(mode)
 		const strong = pairs.filter(
 			(pair) =>
@@ -157,12 +174,13 @@ describe.each(["light", "dark"] as const)("the %s theme", (mode) => {
 				pair.ratio > SUPPORTING_CEILING,
 		)
 		if (strong.length) {
-			console.info(`${mode}: supporting text above ${SUPPORTING_CEILING}:1\n${strong.map((pair) => `  ${pair.label}: ${pair.ratio}`).join("\n")}`)
+			console.info(`${name}, ${mode}: supporting text above ${SUPPORTING_CEILING}:1\n${strong.map((pair) => `  ${pair.label}: ${pair.ratio}`).join("\n")}`)
 		}
 		expect(below(pairs, TEXT_FLOOR)).toEqual([])
 	})
 
 	it(`holds the focus ring at ${RING_FLOOR}:1`, () => {
+		active = declarations
 		expect(below(ringPairs(mode), RING_FLOOR)).toEqual([])
 	})
 })

@@ -10564,6 +10564,10 @@
             "optional": true,
             "type": "boolean"
           },
+          "heading": {
+            "optional": true,
+            "type": "boolean"
+          },
           "caps": {
             "optional": true,
             "type": "boolean"
@@ -10631,6 +10635,10 @@
             "type": "TextWeight"
           },
           "mono": {
+            "optional": true,
+            "type": "boolean"
+          },
+          "heading": {
             "optional": true,
             "type": "boolean"
           },
@@ -35564,6 +35572,10 @@
           }
         }
       },
+      "themeFromConfig": {
+        "kind": "callable",
+        "signature": "(config: ThemeConfig, mode?: ThemeMode) => ThemeDefinition"
+      },
       "ThemeMode": {
         "kind": "type",
         "signature": "\"light\" | \"dark\""
@@ -40522,6 +40534,10 @@
         "kind": "type",
         "signature": "\"light\" | \"dark\""
       },
+      "ThemeName": {
+        "kind": "type",
+        "signature": "keyof typeof themes"
+      },
       "ThemeOverrides": {
         "kind": "type",
         "signature": "Partial<Record<ThemeVariableName, string>>"
@@ -40538,6 +40554,27 @@
             "type": "ThemeMode"
           }
         }
+      },
+      "ThemePreset": {
+        "kind": "interface",
+        "members": {
+          "label": {
+            "optional": false,
+            "type": "string"
+          },
+          "description": {
+            "optional": false,
+            "type": "string"
+          },
+          "config": {
+            "optional": false,
+            "type": "UIConfig"
+          }
+        }
+      },
+      "themes": {
+        "kind": "const",
+        "signature": "{ soft: ThemePreset; sharp: ThemePreset; dense: ThemePreset; editorial: ThemePreset; }"
       },
       "ThemeTypeScaleRecipe": {
         "kind": "interface",

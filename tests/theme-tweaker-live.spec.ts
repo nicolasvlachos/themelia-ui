@@ -165,11 +165,17 @@ test('a corner preset moves both radii as a pair: containers take one, their con
 	const fieldRadius = await page.locator('main [data-field-control]').first().evaluate(element => parseFloat(getComputedStyle(element).borderRadius))
 	expect(fieldRadius).toBeCloseTo(10, 2)
 
+	// A menu hangs off a control, so it takes the control's radius, and its rows nest in its inset.
 	await page.goto(url('/action-menu'))
 	await page.locator('main [aria-haspopup]').first().click()
 	const menu = page.locator("[data-slot='dropdown-menu-content']:visible").first()
-	await expect(menu).toHaveCSS('border-radius', '20px')
-	await expect(menu.getByRole('menuitem').first()).toHaveCSS('border-radius', '10px')
+	await expect(menu).toHaveCSS('border-radius', `${fieldRadius}px`)
+	const [menuRadius, inset, rowRadius] = await menu.evaluate((element) => {
+		const row = element.querySelector('[role="menuitem"]')!
+		return [element, element, row].map((node, index) =>
+			parseFloat(index === 1 ? getComputedStyle(node).paddingTop : getComputedStyle(node).borderTopLeftRadius))
+	})
+	expect(rowRadius).toBeCloseTo(Math.max(0, menuRadius - inset), 1)
 })
 
 test.describe('from source', () => {

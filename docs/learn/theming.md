@@ -43,6 +43,71 @@ that subtree; render it into the provider with `UIPortalHost` (see
 [Provider and scoping](./provider-and-scoping.md#portals-and-scopes)), or set the value on
 `:root` instead.
 
+## Ready-made themes
+
+Four themes ship with the kit, each a style rather than a colour: Soft (large corners,
+diffuse shadows, comfortable spacing), Sharp (square corners, hairlines, no shadows), Dense
+(compact spacing and small corners, for data) and Editorial (serif headings on warm paper, a
+step larger type). Each is a `ThemePreset`: a `label`, a `description`, and the provider
+`config` it sets. That config reaches past colour to radii, shadows and border weight, density,
+typography, motion and component defaults, such as the card surface. Every theme's colours
+hold WCAG AA contrast in both modes, as the kit's own do.
+
+```tsx fragment — shape only, not a program
+import { themes } from "themelia-ui/theming"
+
+<UIProvider config={themes.sharp.config}>
+```
+
+Switching themes is handing the provider another theme's config. Keep the choice in state,
+and wrap the application in `UIPortalHost`, so menus and popovers, which portal to `<body>`,
+take the theme too:
+
+```tsx fragment — shape only, not a program
+const [name, setName] = useState<ThemeName>("soft")
+
+<UIProvider config={themes[name].config}>
+  <UIPortalHost>
+    <App onThemeChange={setName} />
+  </UIPortalHost>
+</UIProvider>
+```
+
+A nested provider themes one region the same way. Settings of your own go beside a theme's:
+`config={{ ...themes.dense.config, formatting: { locale: "de-DE" } }}`.
+
+A theme of your own is the same shape. Start from one of these and change what you need:
+
+```tsx fragment — shape only, not a program
+const brand: ThemePreset = {
+  label: "Brand",
+  description: "Our product's look.",
+  config: {
+    ...themes.sharp.config,
+    density: "comfortable",
+    theme: {
+      ...themes.sharp.config.theme,
+      colors: {
+        ...themes.sharp.config.theme?.colors,
+        primary: "light-dark(oklch(0.5 0.19 15), oklch(0.76 0.13 15))",
+        "primary-foreground": "light-dark(oklch(0.985 0 0), oklch(0.2 0.05 15))",
+      },
+    },
+  },
+}
+```
+
+A square theme should set `defaults.card.surface` to `"card"`: the default `framed` surface is
+a band that follows the corner, and with no corner to follow it reads as a box in a box. Write
+a zero radius as `0px`: the kit subtracts lengths from the radii, and `calc()` cannot subtract
+a length from a bare `0`. Write no shadow as `0 0 transparent`, not `none`: a popup lists
+`--shadow-lg` after its hairline, and `none` cannot stand in a list, so the popup would lose
+its edge.
+
+To edit a theme's colours and variables visually, load them into the theme editor with
+`themeFromConfig(themes.soft.config.theme)` from `themelia-ui/features/theme-tweaker`; the
+editor exports the result as CSS or provider config.
+
 ## Start with the shared controls
 
 Most adjustments need only these, and they follow a component's role rather than its name:

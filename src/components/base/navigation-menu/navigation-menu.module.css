@@ -60,9 +60,9 @@
 	z-index: var(--z-popover);
 }
 
-/* A floating surface: the large shadow over a hairline. */
+/* A floating surface: the large shadow over a hairline, at a control's radius, as every menu is. */
 .popup {
-	border-radius: var(--radius);
+	border-radius: var(--radius-sm);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
 	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
@@ -84,14 +84,14 @@
 }
 
 /*
- * A panel is a list of destinations, one per row. Its inset is the popup's radius less a
- * row's, so the rows sit concentric in it.
+ * A panel is a list of destinations, one per row. Its inset is half the small padding and a
+ * row takes the popup's radius less that, so the rows sit concentric in it.
  */
 .content {
 	display: grid;
 	gap: calc(var(--gap-sm) / 2);
 	min-width: 12rem;
-	padding: calc(var(--radius) - var(--radius-sm));
+	padding: calc(var(--padding-sm) / 2);
 }
 
 /* A panel row: the whole width is the target, inset as a list row is. */
@@ -99,5 +99,5 @@
 	justify-content: flex-start;
 	width: 100%;
 	padding-inline: var(--padding-sm);
-	border-radius: var(--radius-sm);
+	border-radius: max(0px, calc(var(--radius-sm) - var(--padding-sm) / 2));
 }

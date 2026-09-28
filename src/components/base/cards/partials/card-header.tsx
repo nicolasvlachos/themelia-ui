@@ -56,7 +56,7 @@ export function CardHeader({
 							{title}
 						</Heading>
 					) : (
-						<Text tag="span" size="base" weight="semibold" lineHeight="tight" truncate className={cx("card--title", styles.title)}>
+						<Text tag="span" size="base" weight="semibold" lineHeight="tight" heading truncate className={cx("card--title", styles.title)}>
 							{title}
 						</Text>
 					))}

@@ -81,6 +81,11 @@
 	font-family: var(--font-mono);
 }
 
+/* The heading face, for a title that is not a document heading; the body face until a theme sets one. */
+.heading {
+	font-family: var(--font-heading, var(--font-sans));
+}
+
 /* Uppercase with open tracking, for an overline or a keyboard hint. */
 .caps {
 	text-transform: uppercase;

@@ -62,6 +62,7 @@ export const textVariants = cvm(styles.root, {
 		numeric: { true: styles.numeric, false: undefined },
 		truncate: { true: styles.truncate, false: undefined },
 		mono: { true: styles.mono, false: undefined },
+		heading: { true: styles.heading, false: undefined },
 		caps: { true: styles.caps, false: undefined },
 	},
 })
@@ -77,6 +78,7 @@ export interface TextClassNameOptions {
 	numeric?: boolean
 	truncate?: boolean
 	mono?: boolean
+	heading?: boolean
 	caps?: boolean
 }
 

@@ -38,7 +38,7 @@ export const OverlayTitle = React.forwardRef<HTMLHeadingElement, React.Component
 				{...props}
 			>
 				{simple ? (
-					<Text tag="span" size="inherit" weight="semibold">
+					<Text tag="span" size="inherit" weight="semibold" heading>
 						{children}
 					</Text>
 				) : (

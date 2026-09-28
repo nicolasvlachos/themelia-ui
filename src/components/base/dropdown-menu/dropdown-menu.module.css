@@ -26,9 +26,13 @@
 	max-width: min(20rem, var(--available-width));
 	overflow-x: hidden;
 	overflow-y: auto;
-	/* The container radius less the row radius, so the rows' corners nest in the menu's. */
-	padding: calc(var(--radius) - var(--radius-sm));
-	border-radius: var(--radius);
+	/*
+	 * A menu hangs off a control, so it takes the control's radius. Its rows sit half the small
+	 * padding in and take the radius less that inset, so their corners nest in the menu's; the
+	 * inset is spacing, so a theme with square corners keeps it.
+	 */
+	padding: calc(var(--padding-sm) / 2);
+	border-radius: var(--radius-sm);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
 	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
@@ -82,7 +86,7 @@
 	min-height: calc(var(--icon-size) + var(--padding-sm) * 2);
 	padding-inline: var(--padding-sm);
 	padding-block: calc(var(--padding-sm) / 2);
-	border-radius: var(--radius-sm);
+	border-radius: max(0px, calc(var(--radius-sm) - var(--padding-sm) / 2));
 	/* The highlight fill is the row's focus indicator. */
 	outline: none;
 	user-select: none;
@@ -165,7 +169,7 @@
 /* The rule bleeds into the menu's own padding so it spans the full surface. */
 .separator {
 	height: var(--border-width);
-	margin-inline: calc((var(--radius) - var(--radius-sm)) * -1);
+	margin-inline: calc(var(--padding-sm) / -2);
 	margin-block: calc(var(--gap-sm) / 2);
 	background-color: var(--border);
 }

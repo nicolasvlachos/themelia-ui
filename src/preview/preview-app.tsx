@@ -8,8 +8,9 @@ import { FormField } from "@/components/base/forms"
 import { Text } from "@/components/base/typography"
 import { Toaster } from "@/components/base/toaster"
 import { AppThemeProvider } from "./app-theme"
-import { useAppTheme } from "./app-theme-state"
+import { useAppTheme, type AppThemePreset } from "./app-theme-state"
 import { AppThemeLauncher } from "./partials/app-theme-launcher"
+import { themes, type ThemeName } from "@/lib/theming"
 import type { ColorScheme, Density } from "@/lib/ui-provider"
 
 import { SiteSearch } from "./partials/site-search"
@@ -20,17 +21,26 @@ import { SiteToc } from "./partials/site-toc"
 import styles from "./preview.module.css"
 import { MOVED_ROUTES, ROUTES } from "./routes"
 
+const THEME_OPTIONS: { value: Exclude<AppThemePreset, "custom">; label: string }[] = [
+	{ value: "default", label: "Default" },
+	...(Object.keys(themes) as ThemeName[]).map((name) => ({ value: name, label: themes[name].label })),
+]
+
 function Header({
 	density,
 	setDensity,
 	scheme,
 	setScheme,
+	preset,
+	setPreset,
 	onToggleNav,
 }: {
 	density: Density
 	setDensity: (value: Density) => void
 	scheme: ColorScheme
 	setScheme: (value: ColorScheme) => void
+	preset: AppThemePreset
+	setPreset: (value: Exclude<AppThemePreset, "custom">) => void
 	onToggleNav?: () => void
 }) {
 	const [systemDark, setSystemDark] = useState(false)
@@ -74,6 +84,18 @@ function Header({
 
 			<div className={styles.headerActions}>
 
+				{/* The ready-made themes; an edit in the theme editor reads as Custom until another is picked. */}
+				<FormField label="Theme" orientation="horizontal" className={styles.densityField}>
+					<NativeSelect
+						value={preset}
+						onChange={(event) => setPreset(event.target.value as Exclude<AppThemePreset, "custom">)}
+					>
+						{THEME_OPTIONS.map((option) => (
+							<option key={option.value} value={option.value}>{option.label}</option>
+						))}
+						{preset === "custom" && <option value="custom" disabled>Custom</option>}
+					</NativeSelect>
+				</FormField>
 				{/* A labelled kit select for density. */}
 				<FormField
 					label="Density"
@@ -119,6 +141,8 @@ function Shell({
 	setDensity,
 	scheme,
 	setScheme,
+	preset,
+	setPreset,
 }: Omit<Parameters<typeof Header>[0], "onToggleNav">) {
 	const [navOpen, setNavOpen] = useState(false)
 
@@ -128,6 +152,8 @@ function Shell({
 			<Header
 				density={density}
 				setDensity={setDensity}
+				preset={preset}
+				setPreset={setPreset}
 				scheme={scheme}
 				setScheme={setScheme}
 				onToggleNav={() => setNavOpen((open) => !open)}
@@ -154,7 +180,7 @@ function Shell({
 }
 
 function Site() {
-	const { appliedConfig, updateConfig } = useAppTheme()
+	const { appliedConfig, updateConfig, preset, applyPreset } = useAppTheme()
 	return (
 		<>
 			<Shell
@@ -162,6 +188,8 @@ function Site() {
 				setDensity={density => updateConfig({ ...appliedConfig, density })}
 				scheme={appliedConfig.colorScheme ?? "system"}
 				setScheme={colorScheme => updateConfig({ ...appliedConfig, colorScheme })}
+				preset={preset}
+				setPreset={applyPreset}
 			/>
 			<AppThemeLauncher />
 		</>

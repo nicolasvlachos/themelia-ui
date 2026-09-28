@@ -65,8 +65,8 @@ node node_modules/themelia-ui/scripts/consumer/find-component.mjs --peer=@tansta
 node node_modules/themelia-ui/scripts/consumer/find-component.mjs --help
 ```
 
-It indexes 97 modules, 393 attributed live recipes, and
-118 live preview routes by public symbol, module id, recipe title, preview route,
+It indexes 97 modules, 395 attributed live recipes, and
+119 live preview routes by public symbol, module id, recipe title, preview route,
 component capabilities, descriptions, and positive selection guidance. Negative `avoidWhen` guidance is never treated as a
 recommendation. `--json` includes the exact
 `publicImport`, `cssImport`, `apiDoc`, optional peers, dependencies, and alternatives.
@@ -102,7 +102,7 @@ Selection rules:
 | Features (`features`) | 24 | an owned interaction lifecycle — a context, a hook, a state machine | `themelia-ui/features/actions` |
 | Blocks (`blocks`) | 5 | an arrangement rendering a subject; the admin blocks make up the admin profile | `themelia-ui/blocks/admin/access` |
 
-97 modules, 752 public components, 1071 exported symbols in total.
+97 modules, 752 public components, 1073 exported symbols in total.
 <!-- /GENERATED:tiers -->
 
 Dependencies flow downward:

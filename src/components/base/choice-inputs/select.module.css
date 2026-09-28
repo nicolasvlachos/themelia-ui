@@ -1,8 +1,8 @@
 /*
  * Select. The trigger carries `data-field-control`, so height, border, radius, focus and
  * invalid state come from styles/fields.css. The popup's rows are menu rows: a 32px floor,
- * the small padding and the item radius, inset in the popup by its radius less theirs so
- * they sit concentric in it. Type is Text's, lent through `textClassName` (select-popup.tsx).
+ * the small padding and the field's radius less their inset (half the small padding), so they
+ * sit concentric in the popup. Type is Text's, lent through `textClassName` (select-popup.tsx).
  */
 
 .trigger {
@@ -56,8 +56,9 @@
 	max-height: var(--available-height);
 	overflow-x: hidden;
 	overflow-y: auto;
-	padding: calc(var(--radius) - var(--radius-sm));
-	border-radius: var(--radius);
+	/* The field's radius; the rows sit half the small padding in and take the radius less that, so their corners nest. */
+	padding: calc(var(--padding-sm) / 2);
+	border-radius: var(--radius-sm);
 	background-color: var(--popover);
 	color: var(--popover-foreground);
 	box-shadow: 0 0 0 var(--border-width) var(--border), var(--shadow-lg);
@@ -98,7 +99,7 @@
 	padding: calc(var(--padding-sm) / 2) var(--padding-sm);
 	/* Clearance for the trailing check: the icon and the row's inset either side. */
 	padding-inline-end: calc(var(--icon-size) + var(--padding-sm) * 2);
-	border-radius: var(--radius-sm);
+	border-radius: max(0px, calc(var(--radius-sm) - var(--padding-sm) / 2));
 	cursor: default;
 	user-select: none;
 	outline: none;
@@ -178,7 +179,7 @@
 /* Full-bleed through the popup's inset. */
 .separator {
 	height: var(--border-width);
-	margin-inline: calc((var(--radius) - var(--radius-sm)) * -1);
+	margin-inline: calc(var(--padding-sm) / -2);
 	margin-block: calc(var(--gap-sm) / 2);
 	background-color: var(--border);
 }

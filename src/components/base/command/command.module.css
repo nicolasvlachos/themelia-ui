@@ -22,6 +22,19 @@
 	border: 0;
 }
 
+/*
+ * In a popover the palette is a menu, hanging off a control: the control's radius, its rows
+ * half the small padding in at the radius less that, as DropdownMenu and Select draw theirs.
+ */
+:where([data-slot="popover-content"]) .root {
+	padding: calc(var(--padding-sm) / 2);
+	border-radius: var(--radius-sm);
+}
+
+:where([data-slot="popover-content"]) .root :is(.item, .inputGroup) {
+	border-radius: max(0px, calc(var(--radius-sm) - var(--padding-sm) / 2));
+}
+
 /* The search band, spaced from the first row so the list doesn't read as part of the input. */
 .inputWrapper {
 	/*

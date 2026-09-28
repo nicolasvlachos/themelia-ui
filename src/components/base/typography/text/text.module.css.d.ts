@@ -4,6 +4,7 @@ declare const styles: {
 	readonly alignLeft: string
 	readonly alignRight: string
 	readonly caps: string
+	readonly heading: string
 	readonly leadingLoose: string
 	readonly leadingNone: string
 	readonly leadingNormal: string

@@ -11,7 +11,7 @@ export {
 	countThemeOverrides, createScopedThemeSelectors, createSerializableUIConfig,
 	createTheme, createThemeExportArtifact, defaultThemeSelectors, downloadTextFile,
 	downloadTheme, getActiveThemeOverrides, isThemeVariableName, serializeTheme,
-	serializeUIConfig, themeToStyle,
+	serializeUIConfig, themeFromConfig, themeToStyle,
 } from "./theme-tweaker.utils"
 /* The recipes live in `lib/theming` (published as `./theming`) and are re-exported here unchanged. */
 export {

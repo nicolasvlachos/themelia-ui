@@ -61,6 +61,11 @@ export interface TextProps
 	weight?: TextWeight
 	/** The monospaced face, for identifiers, codes and keys. */
 	mono?: boolean
+	/**
+	 * The heading face (`--font-heading`), for a title that is not a document heading: a
+	 * card's, a dialog's. A theme that sets a heading font reaches it here as in `Heading`.
+	 */
+	heading?: boolean
 	/** Uppercase with open tracking, for an overline or a keyboard hint. */
 	caps?: boolean
 	/** Text content. Takes precedence over `content`. */
@@ -87,6 +92,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
 		numeric = false,
 		truncate = false,
 		mono = false,
+		heading = false,
 		caps = false,
 		tag: Tag = "p",
 		...props
@@ -94,7 +100,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
 	ref,
 ) {
 	const size = sizeProp ?? "default"
-	const textClassNames = textVariants({ type, size, align, lineHeight, weight, numeric, truncate, mono, caps, className })
+	const textClassNames = textVariants({ type, size, align, lineHeight, weight, numeric, truncate, mono, heading, caps, className })
 
 	const body = children !== undefined && children !== null ? children : content
 

@@ -95,6 +95,14 @@ node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/
 
 ### Added
 
+- Four ready-made themes in `themelia-ui/theming`, each a style rather than a colour: Soft,
+  Sharp, Dense and Editorial. A theme is a `ThemePreset` (a label, a description and the
+  provider config it sets), so it reaches past colour to radii, shadows, density, type, motion
+  and component defaults such as the card surface. Every theme's colours hold WCAG AA contrast
+  in both modes. The theme editor's `themeFromConfig()` loads a theme's colours and variables to
+  edit and export. The documentation site gains a Themes page and a Theme menu in its header.
+- `Text` takes `heading`, the heading face (`--font-heading`) for a title that is not a
+  document heading. Card and dialog titles use it, so a theme's heading font reaches them.
 - `DataTable` rows expand. `expandedRow` turns on a toggle at each row's start and the panel it
   opens under the row: `render` draws the panel, and `onLoad` optionally fetches what it shows
   when the row opens, with a skeleton meanwhile, the request aborted when the row closes, Retry
@@ -123,6 +131,10 @@ node node_modules/themelia-ui/scripts/consumer/codemod.mjs --dry-run src/
   `neutral`, the kit's tone names, instead of `positive` and `negative`.
 - Checkboxes, radios and switches keep one size, 1.125rem, at every density.
 - A disabled control shows the not-allowed cursor and dims; it no longer ignores the pointer.
+- Menus take the radius of the control they open from: DropdownMenu, ContextMenu, ActionMenu,
+  Menubar, Select, Combobox, PopoverMenu, NavigationMenu and a Command inside a popover draw
+  `--radius-sm`, with rows at half of it inset by the other half, so the corners still nest.
+  Content popovers, hover cards and dialogs keep the container radius.
 - Table headers are quieter: labels in the muted colour, with the sorted column's in the body
   colour, a lighter band on `DataTable`, and 42px instead of 48px, following density. The whole
   head cell sorts, and an unsorted column's arrow shows on hover or keyboard focus; touch

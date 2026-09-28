@@ -2,8 +2,10 @@
  * PopoverMenu. The list is Command's; only the bands (header, footer, loading, status) are
  * here. The popover is `inset="flush"`, so each band carries its own inline inset.
  */
-.content {
+/* A menu, so a control's radius rather than the popover's container radius (Command draws the rows to match). */
+.content[data-slot="popover-content"] {
 	width: 13rem;
+	border-radius: var(--radius-sm);
 }
 
 /* Header and footer bands on the rows' rhythm, so text starts on the row inset. */
@@ -22,9 +24,9 @@
 }
 
 .list {
-	/* The Command root already carries the container inset. */
+	/* The Command root already carries the menu's inset. */
 	padding: 0;
-	border-radius: var(--radius-sm);
+	border-radius: max(0px, calc(var(--radius-sm) - var(--padding-sm) / 2));
 }
 
 /*
